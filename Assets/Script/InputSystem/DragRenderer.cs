@@ -2,19 +2,19 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// µå·¡±× ¼±ÅÃ ¿µ¿ªÀÇ ½Ã°¢Àû ·»´õ¸µÀ» ´ã´ç
-/// µ¶¸³ ¸ğµå: ÀÚÃ¼ÀûÀ¸·Î ¸¶¿ì½º ÀÔ·Â Ã³¸®
-/// ¿ÜºÎ Á¦¾î ¸ğµå: SelectionManager µî ¿ÜºÎ¿¡¼­ IsDragging, StartMousePos ¼³Á¤
+/// ë“œë˜ê·¸ ì„ íƒ ì˜ì—­ì˜ ì‹œê°ì  ë Œë”ë§ì„ ë‹´ë‹¹
+/// ë…ë¦½ ëª¨ë“œ: ìì²´ì ìœ¼ë¡œ ë§ˆìš°ìŠ¤ ì…ë ¥ ì²˜ë¦¬
+/// ì™¸ë¶€ ì œì–´ ëª¨ë“œ: SelectionManager ë“± ì™¸ë¶€ì—ì„œ IsDragging, StartMousePos ì„¤ì •
 /// </summary>
 public class DragRenderer : MonoBehaviour {
     [Header("Settings")]
-    [SerializeField] private bool useStandaloneMode = true; // µ¶¸³ ¸ğµå »ç¿ë ¿©ºÎ
+    [SerializeField] private bool useStandaloneMode = true; // ë…ë¦½ ëª¨ë“œ ì‚¬ìš© ì—¬ë¶€
 
     private Texture2D selectionTexture;
     private bool isDragging;
     private Vector2 startMousePos;
 
-    // ¿ÜºÎ Á¦¾î¿ë ÇÁ·ÎÆÛÆ¼ (µ¶¸³ ¸ğµå°¡ ¾Æ´Ò ¶§ »ç¿ë)
+    // ì™¸ë¶€ ì œì–´ìš© í”„ë¡œí¼í‹° (ë…ë¦½ ëª¨ë“œê°€ ì•„ë‹ ë•Œ ì‚¬ìš©)
     public bool IsDragging {
         get => isDragging;
         set => isDragging = value;
@@ -29,26 +29,26 @@ public class DragRenderer : MonoBehaviour {
     }
 
     private void Update() {
-        // µ¶¸³ ¸ğµåÀÏ ¶§¸¸ ÀÚÃ¼ÀûÀ¸·Î ¸¶¿ì½º ÀÔ·Â Ã³¸®
+        // ë…ë¦½ ëª¨ë“œì¼ ë•Œë§Œ ìì²´ì ìœ¼ë¡œ ì…ë ¥ ì²˜ë¦¬
         if (!useStandaloneMode) return;
 
-        // µå·¡±× ½ÃÀÛ
-        if (Mouse.current.leftButton.wasPressedThisFrame) {
-            startMousePos = Mouse.current.position.ReadValue();
+        // ë“œë˜ê·¸ ì‹œì‘ (í„°ì¹˜/ë§ˆìš°ìŠ¤ ì§€ì›)
+        if (MouseProvider.WasPressedThisFrame()) {
+            startMousePos = MouseProvider.GetScreenPosition();
             isDragging = true;
         }
-        // µå·¡±× Á¾·á
-        if (Mouse.current.leftButton.wasReleasedThisFrame) {
+        // ë“œë˜ê·¸ ì¢…ë£Œ
+        if (MouseProvider.WasReleasedThisFrame()) {
             isDragging = false;
         }
     }
 
     /// <summary>
-    /// µå·¡±× ¹üÀ§¸¦ È­¸é¿¡ Ç¥½Ã
+    /// ë“œë˜ê·¸ ë²”ìœ„ë¥¼ í™”ë©´ì— í‘œì‹œ
     /// </summary>
     private void OnGUI() {
         if (isDragging) {
-            Vector2 currentMousePos = Mouse.current.position.ReadValue();
+            Vector2 currentMousePos = MouseProvider.GetScreenPosition();
             var rect = GetDragRect(startMousePos, currentMousePos);
             rect.y = Screen.height - rect.y - rect.height;
             GUI.DrawTexture(rect, selectionTexture);
@@ -56,7 +56,7 @@ public class DragRenderer : MonoBehaviour {
     }
 
     /// <summary>
-    /// µå·¡±× ¹üÀ§ Ç¥½Ã¸¦ À§ÇÑ ¹İÅõ¸í ÅØ½ºÃ³ »ı¼º
+    /// ë“œë˜ê·¸ ë²”ìœ„ í‘œì‹œë¥¼ ìœ„í•œ ë°˜íˆ¬ëª… í…ìŠ¤ì²˜ ìƒì„±
     /// </summary>
     private void InitializeDragTexture() {
         selectionTexture = new Texture2D(1, 1);
@@ -66,7 +66,7 @@ public class DragRenderer : MonoBehaviour {
     }
 
     /// <summary>
-    /// µÎ ½ºÅ©¸° ÁÂÇ¥·ÎºÎÅÍ µå·¡±× ¿µ¿ª Rect »ı¼º
+    /// ë‘ ìŠ¤í¬ë¦° ì¢Œí‘œë¡œë¶€í„° ë“œë˜ê·¸ ì˜ì—­ Rect ìƒì„±
     /// </summary>
     public static Rect GetDragRect(Vector2 screenPos1, Vector2 screenPos2) {
         var topLeft = Vector2.Min(screenPos1, screenPos2);
