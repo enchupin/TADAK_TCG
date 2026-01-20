@@ -23,6 +23,19 @@ public class DragRenderer : MonoBehaviour {
         InitializeDragTexture();
     }
 
+    private void Update() {
+        // 드래그 시작
+        if (MouseProvider.WasPressedThisFrame()) {
+            startMousePos = MouseProvider.GetScreenPosition();
+            isDragging = true;
+        }
+        
+        // 드래그 종료
+        if (MouseProvider.WasReleasedThisFrame()) {
+            isDragging = false;
+        }
+    }
+
     /// <summary>
     /// 드래그 범위를 화면에 표시
     /// </summary>
