@@ -1,0 +1,142 @@
+{
+  "cards": [
+    {
+      "cardId": "CARD_001",
+      "name": "화염구",
+      "cost": 2,
+      "rarity": "common",
+      "addressables": {
+        "artwork": "Cards/Fireball/Art",
+        "effect": "Effects/Fire",
+        "sound": "Sounds/Fire"
+      },
+      "effects": [
+        {
+          "type": "Damage",
+          "amount": 8,
+          "target": "SingleEnemy"
+        }
+      ]
+    },
+    {
+      "cardId": "CARD_002",
+      "name": "방패 올리기",
+      "cost": 1,
+      "rarity": "common",
+      "addressables": {
+        "artwork": "Cards/Shield/Art",
+        "effect": "Effects/Shield",
+        "sound": "Sounds/Shield"
+      },
+      "effects": [
+        {
+          "type": "Defense",
+          "amount": 5
+        }
+      ]
+    },
+    {
+      "cardId": "CARD_003",
+      "name": "전술적 후퇴",
+      "cost": 1,
+      "rarity": "uncommon",
+      "addressables": {
+        "artwork": "Cards/TacticalRetreat/Art",
+        "effect": "Effects/Shield",
+        "sound": "Sounds/Shield"
+      },
+      "effects": [
+        {
+          "type": "Defense",
+          "amount": 3
+        },
+        {
+          "type": "Draw",
+          "amount": 2
+        }
+      ]
+    },
+    {
+      "cardId": "CARD_004",
+      "name": "연계 공격",
+      "cost": 1,
+      "rarity": "rare",
+      "addressables": {
+        "artwork": "Cards/ComboStrike/Art",
+        "effect": "Effects/Fire",
+        "sound": "Sounds/Fire"
+      },
+      "effects": [
+        {
+          "type": "DamagePerCardPlayed",
+          "baseDamage": 3,
+          "bonusPerCard": 2
+        }
+      ]
+    },
+    {
+      "cardId": "CARD_005",
+      "name": "필사의 일격",
+      "cost": 2,
+      "rarity": "rare",
+      "addressables": {
+        "artwork": "Cards/Execute/Art",
+        "effect": "Effects/Fire",
+        "sound": "Sounds/Fire"
+      },
+      "effects": [
+        {
+          "type": "ExecuteDamage",
+          "baseDamage": 10,
+          "hpThreshold": 0.5,
+          "multiplier": 2.0
+        }
+      ]
+    },
+    {
+      "cardId": "CARD_006",
+      "name": "강력한 일격",
+      "cost": 2,
+      "rarity": "uncommon",
+      "addressables": {
+        "artwork": "Cards/PowerStrike/Art",
+        "effect": "Effects/Fire",
+        "sound": "Sounds/Fire"
+      },
+      "effects": [
+        {
+          "type": "Damage",
+          "amount": 12,
+          "target": "SingleEnemy"
+        },
+        {
+          "type": "Buff",
+          "stat": "Strength",
+          "amount": 1,
+          "duration": 0
+        }
+      ]
+    },
+    {
+      "cardId": "CARD_007",
+      "name": "명상",
+      "cost": 0,
+      "rarity": "common",
+      "addressables": {
+        "artwork": "Cards/Meditate/Art",
+        "effect": "Effects/Heal",
+        "sound": "Sounds/Heal"
+      },
+      "effects": [
+        {
+          "type": "Energy",
+          "amount": 2
+        },
+        {
+          "type": "Draw",
+          "amount": 1
+        }
+      ]
+    }
+  ]
+}
