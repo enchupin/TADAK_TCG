@@ -1,10 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-
-#if UNITY_TEXTMESHPRO
 using TMPro;
-#endif
 
 /// <summary>
 /// 카드 UI 컴포넌트
@@ -14,15 +11,9 @@ using TMPro;
 public class CardUI : MonoBehaviour, IPointerClickHandler
 {
     [Header("UI 컴포넌트")]
-#if UNITY_TEXTMESHPRO
     [SerializeField] private TextMeshProUGUI cardNameText;
     [SerializeField] private TextMeshProUGUI costText;
     [SerializeField] private TextMeshProUGUI descriptionText;
-#else
-    [SerializeField] private Text cardNameText;
-    [SerializeField] private Text costText;
-    [SerializeField] private Text descriptionText;
-#endif
     [SerializeField] private Image backgroundImage;
     [SerializeField] private Image cardArtwork;
     
@@ -87,22 +78,22 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
             if (effect is DamageEffect dmg)
             {
                 string target = dmg.target == TargetType.AllEnemies ? "모든 적에게" : "적에게";
-                description += $"⚔ {target} 데미지 {dmg.amount}\n";
+                description += $"{target} 데미지 {dmg.amount}\n";
             }
             else if (effect is DefenseEffect def)
-                description += $"🛡 방어력 +{def.amount}\n";
+                description += $"방어력 +{def.amount}\n";
             else if (effect is DrawEffect draw)
-                description += $"📜 카드 {draw.amount}장 뽑기\n";
+                description += $"카드 {draw.amount}장 뽑기\n";
             else if (effect is BuffEffect buff)
-                description += $"💪 {buff.stat} +{buff.amount}\n";
+                description += $"{buff.stat} +{buff.amount}\n";
             else if (effect is EnergyEffect energy)
-                description += $"⚡ 에너지 +{energy.amount}\n";
+                description += $"에너지 +{energy.amount}\n";
             else if (effect is DamagePerCardPlayedEffect combo)
-                description += $"⚔ 데미지 {combo.baseDamage}\n💥 카드당 +{combo.bonusPerCard}\n";
+                description += $"데미지 {combo.baseDamage}\n카드당 +{combo.bonusPerCard}\n";
             else if (effect is ExecuteDamageEffect exe)
             {
                 int threshold = Mathf.RoundToInt(exe.hpThreshold * 100);
-                description += $"💀 처형 (HP {threshold}% 이하)\n⚔ 데미지 {exe.baseDamage}×{exe.multiplier}\n";
+                description += $"처형 (HP {threshold}% 이하)\n데미지 {exe.baseDamage}×{exe.multiplier}\n";
             }
         }
         
@@ -119,12 +110,12 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     {
         switch (rarity.ToLower())
         {
-            case "common": return "⬜ 일반";
-            case "uncommon": return "🟦 고급";
-            case "rare": return "🟪 희귀";
-            case "epic": return "🟨 영웅";
-            case "legendary": return "🟧 전설";
-            default: return "⬜ 일반";
+            case "common": return "[일반]";
+            case "uncommon": return "[고급]";
+            case "rare": return "[희귀]";
+            case "epic": return "[영웅]";
+            case "legendary": return "[전설]";
+            default: return "[일반]";
         }
     }
     

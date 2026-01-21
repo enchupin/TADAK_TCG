@@ -67,8 +67,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 5d346aab3032ee943b4b589b10738d3e, type: 2}
+  m_sharedMaterial: {fileID: 8615436175362255158, guid: 5d346aab3032ee943b4b589b10738d3e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -204,8 +204,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: CardName
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 5d346aab3032ee943b4b589b10738d3e, type: 2}
+  m_sharedMaterial: {fileID: 8615436175362255158, guid: 5d346aab3032ee943b4b589b10738d3e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -367,9 +367,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb2f977149beb8144b67269e986ebf49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardUI
-  cardNameText: {fileID: 0}
-  costText: {fileID: 0}
-  descriptionText: {fileID: 0}
+  cardNameText: {fileID: 5194070512402103804}
+  costText: {fileID: 6973884561520195343}
+  descriptionText: {fileID: 5575262321193615248}
   backgroundImage: {fileID: 0}
   cardArtwork: {fileID: 0}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
@@ -475,8 +475,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 2
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 5d346aab3032ee943b4b589b10738d3e, type: 2}
+  m_sharedMaterial: {fileID: 8615436175362255158, guid: 5d346aab3032ee943b4b589b10738d3e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
