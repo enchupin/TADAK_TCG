@@ -2,11 +2,15 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System;
 
 public class SelectedButtonControl : MonoBehaviour
 {
     public static List<Character> selectedCharacterList = new List<Character>();
     private const int MAX_SELECTION = 3;
+    
+    // 선택 상태가 변경될 때 발생하는 이벤트
+    public static event Action<int> OnSelectionChanged;
     
     private Color selectedColor = Color.cyan;
     private Color normalColor = Color.white;
@@ -61,6 +65,9 @@ public class SelectedButtonControl : MonoBehaviour
             buttonImage.color = selectedColor;
         }
 
+        // 선택 상태 변경 이벤트 발생
+        OnSelectionChanged?.Invoke(selectedCharacterList.Count);
+
     }
 
     private void DeselectCharacter()
@@ -76,6 +83,9 @@ public class SelectedButtonControl : MonoBehaviour
         {
             buttonImage.color = normalColor;
         }
+
+        // 선택 상태 변경 이벤트 발생
+        OnSelectionChanged?.Invoke(selectedCharacterList.Count);
     }
 
     // 선택 상태 초기화 (씬 전환 시 등에 사용)
