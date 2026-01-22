@@ -6,24 +6,24 @@ using UnityEngine;
 /// </summary>
 public class SaveDeck : MonoBehaviour
 {
-    // 직업별 보유 카드 목록
-    private Dictionary<Character, List<Card>> decksByCharacter = new Dictionary<Character, List<Card>>();
+
+    // 직업별 보유 카드 목록 -> 추후 데이터 베이스 연동으로 변경 예정
+    public static Dictionary<Character, List<Card>> decksByCharacter = new Dictionary<Character, List<Card>>();
     
     private void Awake()
     {
         InitializeDecks();
     }
-    
 
 
-    // 덱 관리 변수 초기화
-    private void InitializeDecks()
-    {
-        foreach (Character character in System.Enum.GetValues(typeof(Character)))
-        {
-            decksByCharacter[character] = new List<Card>();
-        }
+
+    // 특정 직업의 카드 목록 가져오기 -> 추후 데이터 베이스 연동으로 변경 예정
+    public static List<Card> GetCards(Character character) {
+        return new List<Card>(decksByCharacter[character]);
     }
+
+
+
 
     // 특정 직업의 카드 데이터 초기화
     public void ClearCards(Character character) {
@@ -40,11 +40,6 @@ public class SaveDeck : MonoBehaviour
 
 
 
-    // 특정 직업의 카드 목록 가져오기
-    public List<Card> GetCards(Character character)
-    {
-        return new List<Card>(decksByCharacter[character]);
-    }
 
     
     // 특정 직업의 카드 수 가져오기
@@ -79,10 +74,19 @@ public class SaveDeck : MonoBehaviour
     {
         return decksByCharacter[character].Contains(card);
     }
-    
 
 
-    
+
+
+
+    // 덱 관리 변수 초기화
+    private void InitializeDecks() {
+        foreach (Character character in System.Enum.GetValues(typeof(Character))) {
+            decksByCharacter[character] = new List<Card>();
+        }
+    }
+
+
 
 
 
