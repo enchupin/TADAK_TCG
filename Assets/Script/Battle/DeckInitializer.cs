@@ -19,7 +19,7 @@ public class DeckInitializer
         }
 
         // usableDeck 초기화
-        UsableDeckManager.Instance.usableDeck = new List<Card>();
+        UsableDeckManager.Instance.usableDeck = new Queue<Card>();
 
         // 선택된 캐릭터가 없는 경우 체크
         if (SelectedButtonControl.selectedCharacterList == null || 
@@ -37,8 +37,11 @@ public class DeckInitializer
             
             if (characterCards != null && characterCards.Count > 0)
             {
-                // 사용 덱에 카드 추가
-                UsableDeckManager.Instance.usableDeck.AddRange(characterCards);
+                // Queue에 카드 추가 (Enqueue 사용)
+                foreach (Card card in characterCards)
+                {
+                    UsableDeckManager.Instance.usableDeck.Enqueue(card);
+                }
                 Debug.Log($"{character} 직업의 카드 {characterCards.Count}장을 덱에 추가했습니다.");
             }
             else

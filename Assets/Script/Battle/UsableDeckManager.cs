@@ -14,7 +14,7 @@ public class UsableDeckManager : MonoBehaviour
 
 
 
-    public List<Card> usableDeck;
+    public Queue<Card> usableDeck;
 
     private void Awake()
     {
@@ -38,7 +38,7 @@ public class UsableDeckManager : MonoBehaviour
         Singleton();
 
         // usableDeck 초기화
-        if (usableDeck == null) usableDeck = new List<Card>();
+        if (usableDeck == null) usableDeck = new Queue<Card>();
 
         // 저장 덱 불러오기
         deckInitializer.InitializeDeck();
