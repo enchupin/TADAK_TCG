@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8947926882913876343}
   - component: {fileID: 949242994117032938}
   m_Layer: 5
-  m_Name: Button
+  m_Name: CharacterSelectButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -147,6 +147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SelectedButtonControl
   characterType: 0
+  buttonClickSound: {fileID: 8300000, guid: 82af027809aaa624dace286eb760e8a2, type: 3}
 --- !u!1 &6486638747072497124
 GameObject:
   m_ObjectHideFlags: 0
