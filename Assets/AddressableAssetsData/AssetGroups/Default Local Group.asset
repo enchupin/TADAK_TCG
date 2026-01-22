@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Default Local Group
+  m_GUID: efbf86c6e79d3784780e6574d2a944a2
+  m_SerializeEntries:
+  - m_GUID: 00a238c0da4991946802c67d6a7d79b7
+    m_Address: "Cards/CARD_003_\uC804\uC220\uC801 \uD6C4\uD1F4"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 061d996b12861074ebafed6dc65b5a99
+    m_Address: CardCollection
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 31d34faef3011984ba8ab29a7aa99b31
+    m_Address: "Cards/CARD_004_\uC5F0\uACC4 \uACF5\uACA9"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3e052ecfbd5298c4aa7eef5ee8618b95
+    m_Address: "Cards/CARD_005_\uD544\uC0AC\uC758 \uC77C\uACA9"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4d92454e3334ccf4eb16d0c77aa4a70e
+    m_Address: "Cards/CARD_001_\uD654\uC5FC\uAD6C"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 59eefb137ce1712469058c00288bab4c
+    m_Address: "Cards/CARD_006_\uAC15\uB825\uD55C \uC77C\uACA9"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cc0c941cf063c20428f8dfe64acfd14c
+    m_Address: "Cards/CARD_007_\uBA85\uC0C1"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d97bf9181dbee9a46b0d92545ecebe68
+    m_Address: "Cards/CARD_002_\uBC29\uD328 \uC62C\uB9AC\uAE30"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: df0381bf71c9e4444b6855ed65c40e41, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: f8047c2b0c39e044eb742247e15a0a1a, type: 2}
+    - {fileID: 11400000, guid: 1e090ebd29333244fa8345216572945b, type: 2}
