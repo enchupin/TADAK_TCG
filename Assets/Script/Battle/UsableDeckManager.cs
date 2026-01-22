@@ -45,7 +45,7 @@ public class UsableDeckManager : MonoBehaviour
 
 
     /// <summary>
-    /// 덱에서 카드를 드로우 (O(1) 성능)
+    /// 덱에서 카드 1장을 드로우
     /// </summary>
     public Card DrawCard() {
         if (usableDeck == null || usableDeck.Count == 0) {
@@ -55,6 +55,35 @@ public class UsableDeckManager : MonoBehaviour
 
         return usableDeck.Dequeue();
     }
+
+    /// <summary>
+    /// 덱에서 지정된 수만큼 카드를 드로우
+    /// </summary>
+    public List<Card> DrawCard(int count) {
+        List<Card> drawnCards = new List<Card>();
+
+        if (usableDeck == null || usableDeck.Count == 0) {
+            Debug.LogWarning("덱에 카드가 없습니다!");
+            return drawnCards;
+        }
+
+        // 요청한 수와 실제 덱에 남은 카드 수 중 작은 값만큼 드로우
+        int actualDrawCount = Mathf.Min(count, usableDeck.Count);
+
+        for (int i = 0; i < actualDrawCount; i++) {
+            drawnCards.Add(usableDeck.Dequeue());
+        }
+
+        if (actualDrawCount < count) {
+            Debug.LogWarning($"덱에 {count}장을 요청했지만 {actualDrawCount}장만 드로우했습니다.");
+        }
+
+        return drawnCards;
+    }
+
+
+
+
 
     /// <summary>
     /// 덱 셔플

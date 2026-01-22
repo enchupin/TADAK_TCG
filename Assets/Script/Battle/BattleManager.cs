@@ -97,7 +97,7 @@ public class BattleManager : MonoBehaviour
     /// </summary>
     void DrawCards(int count)
     {
-        battleContext.DrawCards(count);
+        UsableDeckManager.Instance.DrawCard(count);
         
         // UI 업데이트
         if (handManager != null)
