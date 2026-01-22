@@ -15,10 +15,14 @@ public class SelectedButtonControl : MonoBehaviour
     private Color selectedColor = Color.cyan;
     private Color normalColor = Color.white;
     private bool isSelected = false;
-    
     private Image buttonImage;
+
     [SerializeField]
     private Character characterType;
+
+    // 버튼 클릭음
+    [SerializeField]
+    private AudioClip buttonClickSound;
 
     private void Awake()
     {
@@ -33,6 +37,12 @@ public class SelectedButtonControl : MonoBehaviour
 
     public void OnCharacterSelectButtonClicked()
     {
+        // 버튼 클릭 효과음 재생
+        if (SFXControl.Instance != null)
+        {
+            SFXControl.Instance.PlaySFX(buttonClickSound);
+        }
+
         if (isSelected)
         {
             // 이미 선택된 버튼을 다시 클릭 -> 선택 해제
