@@ -10,6 +10,8 @@ public class DrawEffect : ICardEffect
     
     public void Execute(BattleContext context)
     {
-        context.DrawCards(amount);
+        // 드로우 구현
+
+
     }
 }
