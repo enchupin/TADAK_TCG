@@ -1,7 +1,7 @@
 {
     "buffs": [
         {
-            "buffId": "101",
+            "buffId": 101,
             "name": "재생",
             "type": 1,
             "effects": {
@@ -17,7 +17,7 @@
             "description": "턴이 끝날 때 수치만큼 회복합니다."
         },
         {
-            "buffId": "102",
+            "buffId": 102,
             "name": "전환: 파괴",
             "type": 1,
             "effects": {
@@ -30,13 +30,58 @@
             "description": "부식 대신 파괴를 부여합니다."
         },
         {
+            "buffId": 103,
+            "name": "포션 제조실",
+            "type": 1,
+            "effects": {
+                "timing": "turnStart",
+                "type": "RandGenerate",
+                "amount": "value",
+                "RandomCard": [
+                    {
+                        "cardId": 101050,
+                        "weight": 1
+                    },
+                    {
+                        "cardId": 101052,
+                        "weight": 1
+                    },
+                    {
+                        "cardId": 101054,
+                        "weight": 1
+                    },
+                    {
+                        "cardId": 101056,
+                        "weight": 1
+                    }
+                ]
+            },
+            "description": ""
+        },
+        {
+            "buffId": 104,
+            "name": "피해 증폭",
+            "type": 1,
+            "effects": {
+                "timing": "damaging",
+                "type": "extraDamage",
+                "amount": "damageValue",
+                "target": "Enemy"
+            },
+            "decrease": {
+                "timing": "damaging",
+                "amount": 1
+            },
+            "description": ""
+        },
+        {
             "buffId": "201",
             "name": "부식",
             "type": 2,
             "effects": {
                 "timing": "damaged",
                 "type": "Damage",
-                "amount": "0.25 * value",
+                "amount": "0.25 * damageValue",
                 "target": "Self"
             },
             "decrease": {
