@@ -6,19 +6,24 @@
             "maxHp": 30,
             "cost": 0,
             "identity": {
-                "cost": 0,
+                "cost": 6,
                 "effect": [
+                    {
+                        "type": "Draw",
+                        "amount": 2
+                    },
                     {
                         "type": "Buff",
                         "buffType": "전환: 파괴",
                         "target": "Self"
                     },
                     {
-                        "type": "Draw",
-                        "amount": 2
+                        "type": "Buff",
+                        "buffType": "파괴",
+                        "target": "AllEnemies"
                     }
                 ],
-                "description": "카드를 2장 뽑습니다. 부식이 파괴로 대체됩니다."
+                "description": "카드를 2장 뽑습니다. 전환: 파괴를 획득합니다. 해당 버프를 이미 보유 중이라면, 대신 모든 적에게 파괴를 3 부여합니다."
             },
             "addressables": {
                 "artwork": "Characters/Kloe/Art",
@@ -30,7 +35,7 @@
                 "101020",
                 "101030",
                 "101040",
-                "101050"
+                "101060"
             ]
         }
     ]
