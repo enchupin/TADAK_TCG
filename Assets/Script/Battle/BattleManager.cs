@@ -1,28 +1,33 @@
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 /// <summary>
-/// 전투 매니저 - UI 통합 버전
+/// 전투 매니저 - Addressables 버전
 /// </summary>
 public class BattleManager : MonoBehaviour
 {
-    [Header("카드 데이터베이스")]
-    public CardDatabase cardDatabase;
-    
     [Header("UI 시스템")]
     public HandManager handManager;
     public BattleUI battleUI;
     
     [Header("테스트 모드")]
     [Tooltip("체크하면 시작 시 자동으로 카드 테스트 실행")]
-    public bool isTestMode = false;  // ← 기본값 false로 변경 (UI 모드)
+    public bool isTestMode = false;
     
     [Header("전투 컨텍스트")]
     private BattleContext battleContext;
     
-    void Start()
+    // Addressables로 로드할 CardCollection
+    private CardCollection cardCollection;
+    
+    async void Start()
     {
         InitializeBattle();
         InitializeUI();
+        
+        // CardCollection을 Addressables로 로드
+        await LoadCardCollection();
         
         if (isTestMode)
         {
@@ -31,6 +36,28 @@ public class BattleManager : MonoBehaviour
         else
         {
             StartGame();  // 실제 게임: UI 모드
+        }
+    }
+    
+    /// <summary>
+    /// CardCollection을 Addressables로 로드
+    /// </summary>
+    async System.Threading.Tasks.Task LoadCardCollection()
+    {
+        Debug.Log("[BattleManager] CardCollection 로딩 중...");
+        
+        try
+        {
+            AsyncOperationHandle<CardCollection> handle = 
+                Addressables.LoadAssetAsync<CardCollection>("CardCollection");
+            
+            cardCollection = await handle.Task;
+            
+            Debug.Log($"[BattleManager] CardCollection 로드 완료! 카드 수: {cardCollection.allCards.Count}");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[BattleManager] CardCollection 로드 실패: {e.Message}");
         }
     }
     
@@ -76,14 +103,14 @@ public class BattleManager : MonoBehaviour
     /// </summary>
     void StartGame()
     {
-        if (cardDatabase == null || cardDatabase.allCards.Count == 0)
+        if (cardCollection == null || cardCollection.allCards.Count == 0)
         {
-            Debug.LogError("CardDatabase가 없거나 카드가 로드되지 않았습니다!");
+            Debug.LogError("CardCollection이 없거나 카드가 로드되지 않았습니다!");
             return;
         }
         
-        // 덱 초기화
-        battleContext.deck.AddRange(cardDatabase.allCards);
+        // 덱 초기화 (ScriptableObject → Card 변환)
+        battleContext.deck.AddRange(cardCollection.GetAllCards());
         ShuffleDeck();
         
         // 시작 손패 뽑기
