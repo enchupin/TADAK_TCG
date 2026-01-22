@@ -1,0 +1,61 @@
+{
+    "buffs": [
+        {
+            "buffId": "101",
+            "name": "재생",
+            "type": 1,
+            "effects": {
+                "timing": "turnEnd",
+                "type": "Heal",
+                "amount": "value",
+                "target": "Self"
+            },
+            "decrease": {
+                "timing": "turnEnd",
+                "amount": 1
+            },
+            "description": "턴이 끝날 때 수치만큼 회복합니다."
+        },
+        {
+            "buffId": "102",
+            "name": "전환: 파괴",
+            "type": 1,
+            "effects": {
+                "timing": "buff",
+                "type": "Buff",
+                "buffType": "파괴",
+                "amount": "value",
+                "target": "부식"
+            },
+            "description": "부식 대신 파괴를 부여합니다."
+        },
+        {
+            "buffId": "201",
+            "name": "부식",
+            "type": 2,
+            "effects": {
+                "timing": "damaged",
+                "type": "Damage",
+                "amount": "0.25 * value",
+                "target": "Self"
+            },
+            "decrease": {
+                "timing": "damaged",
+                "amount": 1
+            },
+            "description": "피해를 입을 때 25% 만큼 피해를 더 받습니다."
+        },
+        {
+            "buffId": "202",
+            "name": "파괴",
+            "type": 2,
+            "effects": {
+                "timing": "damaged",
+                "type": "Destroy",
+                "amount": "0.5 * value",
+                "target": "Self"
+            },
+            "description": "피해를 입을 때 50% 만큼 피해를 더 받습니다."
+        }
+    ]
+}
