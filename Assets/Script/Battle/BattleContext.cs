@@ -54,40 +54,6 @@ public class BattleContext
     }
     
     /// <summary>
-    /// 카드를 드로우합니다.
-    /// </summary>
-    public void DrawCards(int count)
-    {
-        for (int i = 0; i < count; i++)
-        {
-            if (deck.Count == 0)
-            {
-                // 덱이 비었으면 버리기 더미를 섞어서 덱으로
-                if (discardPile.Count > 0)
-                {
-                    deck.AddRange(discardPile);
-                    discardPile.Clear();
-                    ShuffleDeck();
-                    Debug.Log("버리기 더미를 섞어서 덱으로 만들었습니다.");
-                }
-                else
-                {
-                    Debug.Log("덱과 버리기 더미가 모두 비어있어 카드를 뽑을 수 없습니다.");
-                    return;
-                }
-            }
-            
-            if (deck.Count > 0)
-            {
-                Card drawnCard = deck[0];
-                deck.RemoveAt(0);
-                hand.Add(drawnCard);
-                Debug.Log($"카드 드로우: {drawnCard.cardName}");
-            }
-        }
-    }
-    
-    /// <summary>
     /// 플레이어에게 버프를 추가합니다.
     /// </summary>
     public void AddBuff(string statName, int amount)
@@ -110,19 +76,5 @@ public class BattleContext
     {
         playerEnergy += amount;
         Debug.Log($"에너지 +{amount} (현재: {playerEnergy})");
-    }
-    
-    /// <summary>
-    /// 덱을 섞습니다.
-    /// </summary>
-    private void ShuffleDeck()
-    {
-        for (int i = deck.Count - 1; i > 0; i--)
-        {
-            int randomIndex = Random.Range(0, i + 1);
-            Card temp = deck[i];
-            deck[i] = deck[randomIndex];
-            deck[randomIndex] = temp;
-        }
     }
 }
