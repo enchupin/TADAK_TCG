@@ -6,32 +6,50 @@ using System;
 
 public class SelectedButtonControl : MonoBehaviour
 {
+    // 정적 변수
     public static List<Character> selectedCharacterList = new List<Character>();
     private const int MAX_SELECTION = 3;
     
     // 선택 상태가 변경될 때 발생하는 이벤트
     public static event Action<int> OnSelectionChanged;
-    
-    private Color selectedColor = Color.cyan;
-    private Color normalColor = Color.white;
-    private bool isSelected = false;
-    private Image buttonImage;
+
 
     [SerializeField]
     private Character characterType;
+    private bool isSelected = false;
 
-    // 버튼 클릭음
-    [SerializeField]
-    private AudioClip buttonClickSound;
+
+
+
+    // Addressables
+    public string soundAddress; // Addressables 주소
+    private AudioClip buttonClickSound; // 로드된 버튼 클릭음
+
+
+
+
+
+    // 임시 변수
+    private Color selectedColor = Color.cyan;
+    private Color normalColor = Color.white;
+    private Image characterImage;
+
+
+
 
     private void Awake()
     {
-        buttonImage = GetComponent<Image>();
-        if (buttonImage == null)
+
+        // 임시코드
+        characterImage = GetComponent<Image>();
+        if (characterImage == null)
         {
             Debug.LogError("Button에 Image 컴포넌트가 없습니다!");
         }
+
+
         ClearSelection();
+        LoadAssetsAsync();
     }
 
 
@@ -70,9 +88,9 @@ public class SelectedButtonControl : MonoBehaviour
         isSelected = true;
         
         // 버튼 색상을 하늘색으로 변경
-        if (buttonImage != null)
+        if (characterImage != null)
         {
-            buttonImage.color = selectedColor;
+            characterImage.color = selectedColor;
         }
 
         // 선택 상태 변경 이벤트 발생
@@ -89,9 +107,9 @@ public class SelectedButtonControl : MonoBehaviour
         isSelected = false;
         
         // 버튼 색상을 원래대로 복원
-        if (buttonImage != null)
+        if (characterImage != null)
         {
-            buttonImage.color = normalColor;
+            characterImage.color = normalColor;
         }
 
         // 선택 상태 변경 이벤트 발생
@@ -99,14 +117,24 @@ public class SelectedButtonControl : MonoBehaviour
     }
 
     // 선택 상태 초기화 (씬 전환 시 등에 사용)
-    public static void ClearSelection()
+    private static void ClearSelection()
     {
         selectedCharacterList.Clear();
     }
 
-    
+    private void LoadAssetsAsync() {
+        // Addressables 패키지 설치 후 구현 예정
+        Debug.Log("버튼 관련 에셋 로딩은 Addressables 설치 후 구현됩니다.");
 
 
+        /*
+        // 사운드 클립 로드
+        if (!string.IsNullOrEmpty(soundAddress))
+        {
+            var soundHandle = Addressables.LoadAssetAsync<AudioClip>(soundAddress);
+            soundClip = await soundHandle.Task;
+        }
+        */
 
-
+    }
 }
