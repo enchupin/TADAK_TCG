@@ -8,7 +8,7 @@ public class SaveDeck : MonoBehaviour
 {
 
     // 직업별 보유 카드 목록 -> 추후 데이터 베이스 연동으로 변경 예정
-    public static Dictionary<Character, List<Card>> decksByCharacter = new Dictionary<Character, List<Card>>();
+    public static Dictionary<Character, List<int>> decksByCharacter = new Dictionary<Character, List<int>>();
     
     private void Awake()
     {
@@ -18,8 +18,8 @@ public class SaveDeck : MonoBehaviour
 
 
     // 특정 직업의 카드 목록 가져오기 -> 추후 데이터 베이스 연동으로 변경 예정
-    public static List<Card> GetCards(Character character) {
-        return new List<Card>(decksByCharacter[character]);
+    public static List<int> GetCards(Character character) {
+        return new List<int>(decksByCharacter[character]);
     }
 
 
@@ -52,7 +52,7 @@ public class SaveDeck : MonoBehaviour
 
     // 아마 ID로 관리될 예정일 듯 하여 추가 수정 필요
     // 특정 직업에 카드 추가
-    public void AddCard(Character character, Card card)
+    public void AddCard(Character character, int card)
     {
         if (card != null && !decksByCharacter[character].Contains(card))
         {
@@ -62,7 +62,7 @@ public class SaveDeck : MonoBehaviour
 
     // 아마 ID로 관리될 예정일 듯 하여 추가 수정 필요
     // 특정 직업에서 카드 제거
-    public bool RemoveCard(Character character, Card card)
+    public bool RemoveCard(Character character, int card)
     {
         return decksByCharacter[character].Remove(card);
     }
@@ -70,7 +70,7 @@ public class SaveDeck : MonoBehaviour
 
     // 아마 ID로 관리될 예정일 듯 하여 추가 수정 필요
     // 특정 직업의 카드 보유 여부 확인
-    public bool HasCard(Character character, Card card)
+    public bool HasCard(Character character, int card)
     {
         return decksByCharacter[character].Contains(card);
     }
@@ -82,7 +82,7 @@ public class SaveDeck : MonoBehaviour
     // 덱 관리 변수 초기화
     private void InitializeDecks() {
         foreach (Character character in System.Enum.GetValues(typeof(Character))) {
-            decksByCharacter[character] = new List<Card>();
+            decksByCharacter[character] = new List<int>();
         }
     }
 
