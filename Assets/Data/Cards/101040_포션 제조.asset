@@ -10,22 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b4bd1118fb042d4bbad8fdee171a572, type: 3}
-  m_Name: "CARD_001_\uD654\uC5FC\uAD6C"
+  m_Name: "101040_\uD3EC\uC158 \uC81C\uC870"
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  cardId: CARD_001
-  cardName: "\uD654\uC5FC\uAD6C"
-  cost: 2
-  rarity: common
-  artworkAddress: Cards/Fireball/Art
-  effectAddress: Effects/Fire
-  soundAddress: Sounds/Fire
-  effects:
-  - type: 0
-    amount: 8
-    target: 0
-    stat: 
-    duration: 0
-    baseDamage: 0
-    bonusPerCard: 0
-    hpThreshold: 0
-    multiplier: 0
+  cardId: 101040
+  cardName: "\uD3EC\uC158 \uC81C\uC870"
+  cost: 0
+  rarity: 
+  artworkAddress: 
+  effectAddress: 
+  soundAddress: 
+  effects: []
