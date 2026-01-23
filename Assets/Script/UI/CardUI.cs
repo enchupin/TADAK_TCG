@@ -20,22 +20,25 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     [Header("설정")]
     [SerializeField] private Color normalColor = Color.white;
     [SerializeField] private Color unplayableColor = Color.gray;
+
+
+
+
     
     private Card cardData;
-    private BattleManager battleManager;
     private bool isPlayable = true;
-    
+
+
+
     /// <summary>
-    /// 카드 데이터로 UI 초기화
+    /// 카드가 생성될 때 호출
     /// </summary>
-    public void Initialize(Card card, BattleManager manager)
-    {
-        cardData = card;
-        battleManager = manager;
-        
+    public void InitializeCardUI(int cardId) {
+        cardData = CardDatabase.Instance.GetCardById(cardId);
         UpdateDisplay();
     }
-    
+
+
     /// <summary>
     /// UI 업데이트
     /// </summary>
@@ -157,12 +160,11 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     /// </summary>
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log($"[CardUI] 클릭됨: {cardData?.cardName ?? "null"} (Playable: {isPlayable}, Manager: {battleManager != null})");
+        Debug.Log($"[CardUI] 클릭됨: {cardData?.cardName ?? "null"} (Playable: {isPlayable})");
         
-        if (isPlayable && battleManager != null && cardData != null)
-        {
-            battleManager.PlayCard(cardData);
-        }
+
+        // 카드 냈을 때 효과 발동
+
     }
     
     /// <summary>

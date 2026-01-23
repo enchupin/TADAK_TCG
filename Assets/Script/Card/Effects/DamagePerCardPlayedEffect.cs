@@ -17,4 +17,15 @@ public class DamagePerCardPlayedEffect : ICardEffect
         
         Debug.Log($"연계 공격! 기본 {baseDamage} + ({bonusPerCard} x {cardsPlayedThisTurn}) = {totalDamage}");
     }
+
+    // 인자를 2개만 전달받았다면 기본적으로 0으로 처리
+    public void Execute(PlayerData player, Monster target) {
+        int cardsPlayedThisTurn = 0;
+        int totalDamage = baseDamage + (bonusPerCard * cardsPlayedThisTurn);
+        target.TakeDamage(totalDamage, player.strength);
+
+        Debug.Log($"연계 공격! 기본 {baseDamage} + ({bonusPerCard} x {cardsPlayedThisTurn}) = {totalDamage}");
+    }
+
+
 }

@@ -29,6 +29,18 @@ public class Monster
     }
 
     /// <summary>
+    /// 플레이어를 공격합니다.
+    /// </summary>
+    public void EnemyTurn(PlayerData target)
+    {
+        // 간단한 AI: 랜덤 데미지 (나중에 패턴 추가 가능)
+        int damage = Random.Range(attackPower - 2, attackPower + 3); // 공격력 오차 범위 적용
+        
+        Debug.Log($"[적] {name} 공격! {damage} 데미지!");
+        target.TakeDamage(damage);
+    }
+
+    /// <summary>
     /// 데미지를 받습니다. (방어력 적용)
     /// </summary>
     public void TakeDamage(int amount, int playerStrength = 0)

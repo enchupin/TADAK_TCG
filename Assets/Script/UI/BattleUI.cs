@@ -138,12 +138,15 @@ public class BattleUI : MonoBehaviour
     /// <summary>
     /// 모든 UI 업데이트
     /// </summary>
-    public void UpdateAllUI(BattleContext context)
+    /// <summary>
+    /// 모든 UI 업데이트
+    /// </summary>
+    public void UpdateAllUI(PlayerData playerData, Monster monster)
     {
-        UpdatePlayerHP(context.playerData.hp, context.playerData.maxHP);
-        UpdateEnemyHP(context.monster.hp, context.monster.maxHP);
-        UpdateEnergy(context.playerData.energy, context.playerData.maxEnergy);
-        UpdatePlayerDefense(context.playerData.defense);
-        UpdateEnemyDefense(context.monster.defense);
+        UpdatePlayerHP(playerData.hp, playerData.maxHP);
+        UpdateEnemyHP(monster.hp, monster.maxHP);
+        UpdateEnergy(playerData.energy, playerData.maxEnergy);
+        UpdatePlayerDefense(playerData.defense);
+        UpdateEnemyDefense(monster.defense);
     }
 }
