@@ -12,10 +12,6 @@ public class BattleManager : MonoBehaviour {
     // [Header("UI 시스템")]
     // public BattleUI battleUI;
 
-    [Header("테스트 모드")]
-    [Tooltip("체크하면 시작 시 자동으로 카드 테스트 실행")]
-    public bool isTestMode = false;  // ← 기본값 false로 변경 (UI 모드)
-
     [Header("전투 데이터")]
     public PlayerData playerData;
     public Monster monster; // 임시 호출
@@ -25,7 +21,7 @@ public class BattleManager : MonoBehaviour {
     public UsableDeckManager usableDeckManager;
     public HandManager handManager;
 
-    private const int START_CARD_COUNT = 6;
+    public int drawCardCount = 6;
 
 
 
@@ -41,10 +37,14 @@ public class BattleManager : MonoBehaviour {
     void InitializeBattle() {
 
         playerData = new PlayerData();
+
+        // 임시 호출
         monster = new Monster();
 
+        if (cardDatabase == null)
+            return;
 
-
+        usableDeckManager.InitializeDeck();
     }
 
     /// <summary>
@@ -53,12 +53,12 @@ public class BattleManager : MonoBehaviour {
     void InitializeUI() {
 
 
-            /*
-            if (battleUI != null) {
-                battleUI.Initialize(this);
-                battleUI.UpdateAllUI(playerData, monster);
-            }
-            */
+    /*
+    if (battleUI != null) {
+        battleUI.Initialize(this);
+        battleUI.UpdateAllUI(playerData, monster);
+    }
+    */
 
 
     }
@@ -74,29 +74,21 @@ public class BattleManager : MonoBehaviour {
             Debug.LogError("CardDatabase가 없거나 카드가 로드되지 않았습니다!");
             return;
         }
-
         if (usableDeckManager == null) {
             Debug.LogError("usableDeckManager가 없거나 카드가 로드되지 않았습니다!");
             return;
-
         }
-
         if (handManager == null) {
             Debug.LogError("handManager가 없거나 카드가 로드되지 않았습니다!");
             return;
-
         }
-
-
         if (playerData == null) {
             Debug.LogError("playerData가 없거나 카드가 로드되지 않았습니다!");
             return;
         }
-
         if (monster == null) {
             Debug.LogError("monster가 없거나 카드가 로드되지 않았습니다!");
             return;
-
         }
 
 
@@ -104,7 +96,7 @@ public class BattleManager : MonoBehaviour {
         usableDeckManager.ShuffleDeck();
 
         // 시작 손패 뽑기
-        DrawCards(START_CARD_COUNT);
+        DrawCards(drawCardCount);
 
         Debug.Log("게임 시작! 카드를 클릭해서 사용하세요.");
     }
@@ -117,11 +109,6 @@ public class BattleManager : MonoBehaviour {
     /// UsableDeckManager에서 카드를 드로우하여 손패에 추가
     /// </summary>
     public void DrawCards(int count) {
-        if (usableDeckManager == null || handManager == null) {
-            Debug.LogError("UsableDeckManager가 초기화되지 않았습니다!");
-            return;
-        }
-
         List<int> drawnCardIds = usableDeckManager.DrawCard(count);
         handManager.AddCardById(drawnCardIds);
     }
@@ -132,20 +119,11 @@ public class BattleManager : MonoBehaviour {
     /// </summary>
     public void PlayCard(int cardId) {
 
-        if (playerData == null || monster == null) {
-             Debug.LogError("PlayerData 또는 Monster가 초기화되지 않았습니다!");
-             return;
-        }
 
         // 에너지 체크
         if (playerData.energy < 0) {
             return;
         }
-
-
-        // 손패에 있는지 확인 - HandManager가 관리하므로 UI에서 호출된 시점에서 이미 존재한다고 가정 가능
-        // 하지만 안전을 위해 체크 로직을 유지하려면 HandManager를 통해 확인해야 함
-        // 여기서는 간단히 패스 (HandManager에서 RemoveCard 실패시 처리 가능)
 
         // 에너지 소모
 
@@ -153,10 +131,13 @@ public class BattleManager : MonoBehaviour {
         // 카드 사용
         Debug.Log($"\n[플레이어] {cardId} 카드 사용!");
         
+
+
+
         // 현재 턴 카드 사용 횟수 전달
         // card.Play(playerData, monster, battleContext.cardsPlayedThisTurn);
 
-        // 턴 상태 업데이트 (Card.Play에서 빠졌으므로 여기서 처리)
+        // 턴 상태 업데이트
         // battleContext.cardsPlayedThisTurn++;
         // battleContext.cardsPlayedThisTurnList.Add(card);
 

@@ -9,10 +9,6 @@ public class UsableDeckManager : MonoBehaviour
     public Queue<int> usableDeck;
     public List<int> discardPile = new List<int>(); // 버린 카드 더미
 
-    private void Awake()
-    {
-        Initialize();
-    }
 
     /// <summary>
     /// 버리기 더미에 카드 추가
@@ -31,18 +27,6 @@ public class UsableDeckManager : MonoBehaviour
     }
 
 
-
-    private void Initialize() {
-
-        // usableDeck 초기화
-        if (usableDeck == null) usableDeck = new Queue<int>();
-
-        // 저장 덱 불러오기
-        InitializeDeck();
-        
-
-
-    }
 
 
 
@@ -132,7 +116,13 @@ public class UsableDeckManager : MonoBehaviour
         if (SelectedButtonControl.selectedCharacterList == null ||
             SelectedButtonControl.selectedCharacterList.Count != 3) {
             Debug.LogWarning("캐릭터 선택이 잘못되었습니다! (3개의 캐릭터를 선택해야 합니다)");
-            return;
+
+            // 테스트 용, 직업을 선택하지 않았다면 자동 추가
+            SelectedButtonControl.selectedCharacterList.Clear();
+            SelectedButtonControl.selectedCharacterList.Add(Character.Warrior);
+            SelectedButtonControl.selectedCharacterList.Add(Character.Archer);
+            SelectedButtonControl.selectedCharacterList.Add(Character.Knight);
+
         }
 
         // 선택된 각 캐릭터의 카드를 가져와서 usableDeck에 추가

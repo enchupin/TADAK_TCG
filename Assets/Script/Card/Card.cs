@@ -30,14 +30,14 @@ public class Card
     /// <summary>
     /// 카드를 사용합니다.
     /// </summary>
-    public void Play(PlayerData player, Monster target, int cardsPlayedThisTurn = 0)
+    public void Play(BattleManager battlemanager)
     {
         Debug.Log($"[{cardName}] 카드 사용!");
         
         // 모든 효과 실행
         foreach (var effect in effects)
         {
-            effect.Execute(player, target, cardsPlayedThisTurn);
+            effect.Execute(battlemanager);
         }
     }
     

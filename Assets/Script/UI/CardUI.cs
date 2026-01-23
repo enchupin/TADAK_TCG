@@ -25,7 +25,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
 
 
     
-    private Card cardData;
+    private Card card;
     private bool isPlayable = true;
 
 
@@ -34,7 +34,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     /// 카드가 생성될 때 호출
     /// </summary>
     public void InitializeCardUI(int cardId) {
-        cardData = CardDatabase.Instance.GetCardById(cardId);
+        card = CardDatabase.Instance.GetCardById(cardId);
         UpdateDisplay();
     }
 
@@ -44,26 +44,26 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     /// </summary>
     public void UpdateDisplay()
     {
-        if (cardData == null) return;
+        if (card == null) return;
         
         // 텍스트 업데이트
         if (cardNameText != null)
-            cardNameText.text = cardData.cardName;
+            cardNameText.text = card.cardName;
         
         if (costText != null)
-            costText.text = cardData.cost.ToString();
+            costText.text = card.cost.ToString();
         
         if (descriptionText != null)
             descriptionText.text = GetCardDescription();
         
         // 카드 이미지 (나중에 Addressables로 로드)
-        if (cardArtwork != null && cardData.artwork != null)
-            cardArtwork.sprite = cardData.artwork;
+        if (cardArtwork != null && card.artwork != null)
+            cardArtwork.sprite = card.artwork;
         
         // 레어도에 따른 카드 배경색 설정
         if (backgroundImage != null)
         {
-            Color rarityColor = GetRarityColor(cardData.rarity);
+            Color rarityColor = GetRarityColor(card.rarity);
             backgroundImage.color = rarityColor;
             normalColor = rarityColor;  // 정상 색상도 업데이트
         }
@@ -76,7 +76,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     {
         string description = "";
         
-        foreach (var effect in cardData.effects)
+        foreach (var effect in card.effects)
         {
             if (effect is DamageEffect dmg)
             {
@@ -101,7 +101,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         }
         
         // 레어도 추가
-        description += $"\n{GetRarityText(cardData.rarity)}";
+        description += $"\n{GetRarityText(card.rarity)}";
         
         return description.TrimEnd();
     }
@@ -160,18 +160,8 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     /// </summary>
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log($"[CardUI] 클릭됨: {cardData?.cardName ?? "null"} (Playable: {isPlayable})");
-        
-
-        // 카드 냈을 때 효과 발동
-
+        Debug.Log($"[CardUI] 클릭됨: {card?.cardName ?? "null"} (Playable: {isPlayable})");
     }
-    
-    /// <summary>
-    /// 카드 데이터 반환
-    /// </summary>
-    public Card GetCard()
-    {
-        return cardData;
-    }
+
+
 }
