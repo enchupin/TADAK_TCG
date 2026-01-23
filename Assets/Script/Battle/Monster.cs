@@ -16,17 +16,10 @@ public class Monster
     public string name;
     public int attackPower; // 기본 공격력
 
-    /// <summary>
-    /// Monster 생성자
-    /// </summary>
-    public Monster(string name, int maxHP, int attackPower = 10)
-    {
-        this.name = name;
-        this.maxHP = maxHP;
-        this.hp = maxHP;
-        this.attackPower = attackPower;
-        this.defense = 0;
-    }
+
+    
+
+
 
     /// <summary>
     /// 플레이어를 공격합니다.

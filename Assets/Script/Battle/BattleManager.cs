@@ -40,8 +40,8 @@ public class BattleManager : MonoBehaviour {
     /// </summary>
     void InitializeBattle() {
 
-
-
+        playerData = new PlayerData();
+        monster = new Monster();
 
 
 
@@ -74,6 +74,31 @@ public class BattleManager : MonoBehaviour {
             Debug.LogError("CardDatabase가 없거나 카드가 로드되지 않았습니다!");
             return;
         }
+
+        if (usableDeckManager == null) {
+            Debug.LogError("usableDeckManager가 없거나 카드가 로드되지 않았습니다!");
+            return;
+
+        }
+
+        if (handManager == null) {
+            Debug.LogError("handManager가 없거나 카드가 로드되지 않았습니다!");
+            return;
+
+        }
+
+
+        if (playerData == null) {
+            Debug.LogError("playerData가 없거나 카드가 로드되지 않았습니다!");
+            return;
+        }
+
+        if (monster == null) {
+            Debug.LogError("monster가 없거나 카드가 로드되지 않았습니다!");
+            return;
+
+        }
+
 
         // 덱 초기화 및 셔플
         usableDeckManager.ShuffleDeck();
