@@ -14,6 +14,16 @@
             "keywordId": 3,
             "name": "파워",
             "description": "이 카드는 사용 시 이번 전투 동안 파티에 종속됩니다."
+        },
+        {
+            "keywordId": 4,
+            "name": "개시",
+            "description": "이 카드는 전투 시작 시 드로우됩니다."
+        },
+        {
+            "keywordId": 5,
+            "name": "그림자",
+            "description": "이 카드는 사용 시 이번 턴이 끝날 때 까지 복제됩니다."
         }
     ]
 }
