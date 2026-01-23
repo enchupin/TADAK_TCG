@@ -36,13 +36,170 @@
                 "effect": "Effects/Kloe",
                 "sound": "Sounds/Kloe"
             },
+            "characterColor": "green",
             "startDeck": [
                 "101010",
                 "101020",
                 "101030",
                 "101040",
-                "101060"
+                "101050",
+                "101060",
+                "101070"
             ]
+        },
+        {
+            "characterId": "102",
+            "name": "A",
+            "maxHp": 30,
+            "cost": 0,
+            "identity": {},
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            },
+            "characterColor": "blue",
+            "startDeck": []
+        },
+        {
+            "characterId": "103",
+            "name": "B",
+            "maxHp": 30,
+            "cost": 0,
+            "identity": {},
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            },
+            "characterColor": "purple",
+            "startDeck": []
+        },
+        {
+            "characterId": "104",
+            "name": "C",
+            "maxHp": 30,
+            "cost": 0,
+            "identity": {},
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            },
+            "characterColor": "skyblue",
+            "startDeck": []
+        },
+        {
+            "characterId": "201",
+            "name": "D",
+            "maxHp": 30,
+            "cost": 0,
+            "identity": {},
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            },
+            "characterColor": "red",
+            "startDeck": []
+        },
+        {
+            "characterId": "202",
+            "name": "E",
+            "maxHp": 30,
+            "cost": 0,
+            "identity": {},
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            },
+            "characterColor": "violet",
+            "startDeck": []
+        },
+        {
+            "characterId": "203",
+            "name": "F",
+            "maxHp": 30,
+            "cost": 0,
+            "identity": {},
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            },
+            "characterColor": "orange",
+            "startDeck": []
+        },
+        {
+            "characterId": "204",
+            "name": "G",
+            "maxHp": 30,
+            "cost": 0,
+            "identity": {},
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            },
+            "characterColor": "crimson",
+            "startDeck": []
+        },
+        {
+            "characterId": "301",
+            "name": "H",
+            "maxHp": 30,
+            "cost": 0,
+            "identity": {},
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            },
+            "characterColor": "yellow",
+            "startDeck": []
+        },
+        {
+            "characterId": "302",
+            "name": "I",
+            "maxHp": 30,
+            "cost": 0,
+            "identity": {},
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            },
+            "characterColor": "white",
+            "startDeck": []
+        },
+        {
+            "characterId": "303",
+            "name": "J",
+            "maxHp": 30,
+            "cost": 0,
+            "identity": {},
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            },
+            "characterColor": "brown",
+            "startDeck": []
+        },
+        {
+            "characterId": "304",
+            "name": "K",
+            "maxHp": 30,
+            "cost": 0,
+            "identity": {},
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            },
+            "characterColor": "beige",
+            "startDeck": []
         }
     ]
 }

@@ -3,7 +3,7 @@
         {
             "buffId": 101,
             "name": "재생",
-            "type": 1,
+            "buffType": 1,
             "effects": {
                 "timing": "turnEnd",
                 "type": "Heal",
@@ -19,23 +19,23 @@
         {
             "buffId": 102,
             "name": "피해 증폭",
-            "type": 1,
+            "buffType": 1,
             "effects": {
-                "timing": "damaging",
-                "type": "extraDamage",
-                "amount": "damageValue",
-                "target": "Enemy"
+                "timing": "damage",
+                "type": "addDamage",
+                "amount": "value",
+                "target": "Card"
             },
             "decrease": {
-                "timing": "damaging",
+                "timing": "damage",
                 "amount": 1
             },
-            "description": "다음 피해를 입힐 때 피해량이 100% 증가합니다."
+            "description": "다음 피해를 입힐 때 피해량이 2배로 증가합니다."
         },
         {
             "buffId": 103,
             "name": "포션 제조",
-            "type": 1,
+            "buffType": 1,
             "effects": {
                 "timing": "turnStart",
                 "type": "RandGenerate",
@@ -67,9 +67,70 @@
             "description": "턴 시작 시 무작위 포션 카드 {value}장을 제작합니다."
         },
         {
+            "buffId": 104,
+            "name": "따끔 열매즙",
+            "buffType": 1,
+            "effects": {
+                "timing": "UseCard",
+                "type": "Conditional",
+                "condition": "cardId",
+                "conditionValue": [
+                    101080,
+                    101081,
+                    101082,
+                    101083,
+                    101084,
+                    101085,
+                    101086,
+                    101087
+                ],
+                "effect": {
+                    "type": "Buff",
+                    "buffType": "부식",
+                    "amount": "value",
+                    "target": "RandEnemy"
+                }
+            },
+            "description": "포션을 사용할 때마다 무작위 적에게 부식을 {value} 부여합니다."
+        },
+        {
+            "buffId": 105,
+            "name": "잔혹함",
+            "buffType": 1,
+            "effects": {
+                "timing": "Buff",
+                "type": "Conditional",
+                "condition": "buffType",
+                "conditionValue": 2,
+                "effect": {
+                    "type": "Damage",
+                    "amount": "value",
+                    "target": "Enemy"
+                }
+            },
+            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 {value} 줍니다."
+        },
+        {
+            "buffId": 106,
+            "name": "광역: 잔혹함",
+            "buffType": 1,
+            "effects": {
+                "timing": "Buff",
+                "type": "Conditional",
+                "condition": "buffType",
+                "conditionValue": 2,
+                "effect": {
+                    "type": "Damage",
+                    "amount": "value",
+                    "target": "AllEnemies"
+                }
+            },
+            "description": "적에게 부정적인 효과를 입힐 때마다 모든 적에게 피해를 {value} 줍니다."
+        },
+        {
             "buffId": 201,
             "name": "부식",
-            "type": 2,
+            "buffType": 2,
             "effects": {
                 "timing": "damaged",
                 "type": "Damage",
@@ -85,7 +146,7 @@
         {
             "buffId": 202,
             "name": "강화된 부식",
-            "type": 2,
+            "buffType": 2,
             "effects": {
                 "timing": "damaged",
                 "type": "Damage",
@@ -101,7 +162,7 @@
         {
             "buffId": 301,
             "name": "강화: 부식",
-            "type": 3,
+            "buffType": 3,
             "effects": {
                 "timing": "Buff",
                 "type": "Conditional",
@@ -119,7 +180,7 @@
         {
             "buffId": 302,
             "name": "포션 제조실",
-            "type": 3,
+            "buffType": 3,
             "effects": {
                 "timing": "turnEnd",
                 "type": "Buff",
@@ -132,19 +193,18 @@
         {
             "buffId": 303,
             "name": "드로우 강화",
-            "type": 3,
+            "buffType": 3,
             "effects": {
                 "timing": "turnStart",
                 "type": "Draw",
-                "amount": "value",
-                "target": "Self"
+                "amount": "value"
             },
             "description": "매 턴 시작 시 카드를 {value}장 더 뽑습니다."
         },
         {
             "buffId": 304,
             "name": "포션 강화",
-            "type": 3,
+            "buffType": 3,
             "effects": {
                 "timing": "GenerateCard",
                 "type": "Conditional",
@@ -166,9 +226,9 @@
         {
             "buffId": 305,
             "name": "포션 순환",
-            "type": 3,
+            "buffType": 3,
             "effects": {
-                "timing": "UseCard",
+                "timing": "GetCard",
                 "type": "Conditional",
                 "condition": "cardId",
                 "conditionValue": [
@@ -183,18 +243,17 @@
                 ],
                 "effect": [
                     {
-                        "type": "GenerateCard",
-                        "cardId": "useCardId",
-                        "target": "Trash"
+                        "type": "RemoveKeyword",
+                        "keywordId": 2,
+                        "target": "Self"
                     },
                     {
                         "type": "Draw",
-                        "amount": 1,
-                        "target": "Self"
+                        "amount": 1
                     }
                 ]
             },
-            "description": "포션을 사용하면 소멸되는 대신 카드를 1장 더 뽑습니다."
+            "description": "내 포션 카드가 소멸되지 않습니다. 포션 카드를 사용할 때 마다 카드를 1장 뽑습니다."
         }
     ]
 }
