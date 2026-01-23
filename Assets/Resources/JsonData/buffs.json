@@ -14,24 +14,27 @@
                 "timing": "turnEnd",
                 "amount": 1
             },
-            "description": "턴이 끝날 때 수치만큼 회복합니다."
+            "description": "턴 종료 시 수치만큼 회복합니다."
         },
         {
             "buffId": 102,
-            "name": "전환: 파괴",
+            "name": "피해 증폭",
             "type": 1,
             "effects": {
-                "timing": "buff",
-                "type": "Buff",
-                "buffType": "파괴",
-                "amount": "value",
-                "target": "부식"
+                "timing": "damaging",
+                "type": "extraDamage",
+                "amount": "damageValue",
+                "target": "Enemy"
             },
-            "description": "부식 대신 파괴를 부여합니다."
+            "decrease": {
+                "timing": "damaging",
+                "amount": 1
+            },
+            "description": "다음 피해를 입힐 때 피해량이 100% 증가합니다."
         },
         {
             "buffId": 103,
-            "name": "포션 제조실",
+            "name": "포션 제조",
             "type": 1,
             "effects": {
                 "timing": "turnStart",
@@ -54,28 +57,17 @@
                         "cardId": 101056,
                         "weight": 1
                     }
-                ]
-            },
-            "description": ""
-        },
-        {
-            "buffId": 104,
-            "name": "피해 증폭",
-            "type": 1,
-            "effects": {
-                "timing": "damaging",
-                "type": "extraDamage",
-                "amount": "damageValue",
-                "target": "Enemy"
+                ],
+                "target": "Hand"
             },
             "decrease": {
-                "timing": "damaging",
-                "amount": 1
+                "timing": "turnStart",
+                "amount": "value"
             },
-            "description": ""
+            "description": "턴 시작 시 무작위 포션 카드 {value}장을 제작합니다."
         },
         {
-            "buffId": "201",
+            "buffId": 201,
             "name": "부식",
             "type": 2,
             "effects": {
@@ -85,22 +77,124 @@
                 "target": "Self"
             },
             "decrease": {
-                "timing": "damaged",
+                "timing": "turnEnd",
                 "amount": 1
             },
-            "description": "피해를 입을 때 25% 만큼 피해를 더 받습니다."
+            "description": "25%의 추가 피해를 받습니다."
         },
         {
-            "buffId": "202",
-            "name": "파괴",
+            "buffId": 202,
+            "name": "강화된 부식",
             "type": 2,
             "effects": {
                 "timing": "damaged",
-                "type": "Destroy",
-                "amount": "0.5 * value",
+                "type": "Damage",
+                "amount": "0.5 * damageValue",
                 "target": "Self"
             },
-            "description": "피해를 입을 때 50% 만큼 피해를 더 받습니다."
+            "decrease": {
+                "timing": "turnEnd",
+                "amount": 1
+            },
+            "description": "50%의 추가 피해를 받습니다."
+        },
+        {
+            "buffId": 301,
+            "name": "강화: 부식",
+            "type": 3,
+            "effects": {
+                "timing": "Buff",
+                "type": "Conditional",
+                "condition": "buffType",
+                "conditionValue": "부식",
+                "effect": {
+                    "type": "Buff",
+                    "buffType": "강화된 부식",
+                    "amount": "value",
+                    "target": "Enemy"
+                }
+            },
+            "description": "부식을 부여할 때 대신 강화된 부식을 부여합니다."
+        },
+        {
+            "buffId": 302,
+            "name": "포션 제조실",
+            "type": 3,
+            "effects": {
+                "timing": "turnEnd",
+                "type": "Buff",
+                "buffType": "포션 제조",
+                "amount": "value",
+                "target": "Self"
+            },
+            "description": "매 턴 종료 시 포션 제조를 {value} 얻습니다."
+        },
+        {
+            "buffId": 303,
+            "name": "드로우 강화",
+            "type": 3,
+            "effects": {
+                "timing": "turnStart",
+                "type": "Draw",
+                "amount": "value",
+                "target": "Self"
+            },
+            "description": "매 턴 시작 시 카드를 {value}장 더 뽑습니다."
+        },
+        {
+            "buffId": 304,
+            "name": "포션 강화",
+            "type": 3,
+            "effects": {
+                "timing": "GenerateCard",
+                "type": "Conditional",
+                "condition": "cardId",
+                "conditionValue": [
+                    101050,
+                    101052,
+                    101054,
+                    101056
+                ],
+                "effect": {
+                    "type": "ChangeCard",
+                    "cardId": "value + 1",
+                    "target": "Hand"
+                }
+            },
+            "description": "모든 포션이 강화됩니다."
+        },
+        {
+            "buffId": 305,
+            "name": "포션 순환",
+            "type": 3,
+            "effects": {
+                "timing": "UseCard",
+                "type": "Conditional",
+                "condition": "cardId",
+                "conditionValue": [
+                    101050,
+                    101051,
+                    101052,
+                    101053,
+                    101054,
+                    101055,
+                    101056,
+                    101057
+                ],
+                "effect": [
+                    {
+                        "type": "GenerateCard",
+                        "cardId": "useCardId",
+                        "target": "Trash"
+                    },
+                    {
+                        "type": "Draw",
+                        "amount": 1,
+                        "target": "Self"
+                    }
+                ]
+            },
+            "description": "포션을 사용하면 소멸되는 대신 카드를 1장 더 뽑습니다."
         }
     ]
 }
