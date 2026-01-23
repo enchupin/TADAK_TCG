@@ -11,15 +11,30 @@ public class SaveDeck : MonoBehaviour
     // 직업별 보유 카드 목록 (카드 ID, 보유 수량) -> 추후 데이터 베이스 연동으로 변경 예정
     public static Dictionary<Character, Dictionary<int, int>> decksByCharacter = new Dictionary<Character, Dictionary<int, int>>();
     
+    private static bool isInitialized = false;
+
     private void Awake()
     {
         InitializeDecks();
     }
 
+    // 초기화 메서드 (필요시 수동 호출 가능)
+    public static void InitializeDecks() {
+        if (isInitialized) return;
+        
+        foreach (Character character in System.Enum.GetValues(typeof(Character))) {
+            if (!decksByCharacter.ContainsKey(character))
+                decksByCharacter[character] = new Dictionary<int, int>();
+        }
+        
+        LoadDefaultDeckIfNeeded();
+        isInitialized = true;
+    }
 
-
-    // 특정 직업의 카드 목록 가져오기 (수량만큼 카드 ID를 반복하여 반환) -> 추후 데이터 베이스 연동으로 변경 예정
+    // 특정 직업의 카드 목록 가져오기 (수량만큼 카드 ID를 반복하여 반환)
     public static List<int> GetCards(Character character) {
+        if (!isInitialized) InitializeDecks();
+        
         List<int> cardList = new List<int>();
         
         if (decksByCharacter.ContainsKey(character))
@@ -39,6 +54,72 @@ public class SaveDeck : MonoBehaviour
         
         return cardList;
     }
+
+    // ... (ClearCards, ClearAllCards omitted - no change needed, but they are instance methods. If SaveDeck is not in scene, these won't be called. But GetCards is static. Let's focus on GetCards.)
+    
+    // Static version of AddCard for internal use
+    private static void AddCardStatic(Character character, int cardId, int quantity)
+    {
+        if (!decksByCharacter.ContainsKey(character))
+            decksByCharacter[character] = new Dictionary<int, int>();
+            
+        if (decksByCharacter[character].ContainsKey(cardId))
+        {
+            decksByCharacter[character][cardId] += quantity;
+        }
+        else
+        {
+            decksByCharacter[character][cardId] = quantity;
+        }
+    }
+
+    // 저장된 카드가 없을 경우 임시 카드 데이터 로드
+    private static void LoadDefaultDeckIfNeeded() {
+        // 모든 캐릭터의 카드가 0장인지 확인
+        bool isEmpty = true;
+        foreach (var deck in decksByCharacter.Values) {
+            if (deck.Count > 0) {
+                isEmpty = false;
+                break;
+            }
+        }
+        
+        if (isEmpty) {
+            Debug.Log("저장된 덱이 없습니다. 임시 카드 데이터를 로드합니다.");
+            LoadDefaultCards();
+        }
+    }
+    
+    private static void LoadDefaultCards() {
+        TextAsset jsonFile = Resources.Load<TextAsset>("JsonData/choleCards");
+        if (jsonFile == null) {
+            Debug.LogError("임시 카드 데이터를 찾을 수 없습니다: JsonData/choleCards");
+            return;
+        }
+        
+        CardDataList dataList = JsonUtility.FromJson<CardDataList>(jsonFile.text);
+        if (dataList == null || dataList.cards == null) {
+            Debug.LogError("JSON 파싱 실패");
+            return;
+        }
+        
+        // 테스트를 위해 모든 캐릭터에게 동일한 덱 지급
+        foreach (Character character in System.Enum.GetValues(typeof(Character))) {
+            foreach (var cardData in dataList.cards) {
+                // 기본 카드는 3장씩 지급
+                AddCardStatic(character, cardData.cardId, 3);
+            }
+            
+            // 101010번 카드 확인 및 추가
+             if (!decksByCharacter[character].ContainsKey(101010)) {
+                AddCardStatic(character, 101010, 3);
+            }
+        }
+    }
+    
+    // (Rest of the class methods need to check initialization if they access decksByCharacter directly? 
+    // Actually most are instance methods. If the user calls instance methods, they expect an instance. 
+    // But GetCards is static. Let's fix GetCards and initialization first.)
 
 
 
@@ -190,12 +271,15 @@ public class SaveDeck : MonoBehaviour
 
 
 
-    // 덱 관리 변수 초기화
-    private void InitializeDecks() {
-        foreach (Character character in System.Enum.GetValues(typeof(Character))) {
-            decksByCharacter[character] = new Dictionary<int, int>();
-        }
-    }
+    // 덱 관리 변수 초기화 (Static version used above)
+    // private void InitializeDecks() { ... }
+    
+    // 저장된 카드가 없을 경우 임시 카드 데이터 로드 (Static version used above)
+    // private void LoadDefaultDeckIfNeeded() { ... }
+    
+    // private void LoadDefaultCards() { ... }
+    
+    // private Character GetCharacterById(int characterId) { ... }
 
 
 

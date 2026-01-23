@@ -9,7 +9,7 @@ using System.Collections.Generic;
 public class CardData : ScriptableObject
 {
     [Header("기본 정보")]
-    public string cardId;
+    public int cardId;
     public string cardName;
     public int cost;
     public string rarity;  // "common", "uncommon", "rare", "epic", "legendary"

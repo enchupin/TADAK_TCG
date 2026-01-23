@@ -3,7 +3,7 @@ using UnityEngine;
 
 /// <summary>
 /// 손패 관리 시스템
-/// 카드 UI 생성/제거, 레이아웃 관리
+/// 카드 ID를 정수로 관리하며, UI 생성/제거, 레이아웃 관리
 /// </summary>
 public class HandManager : MonoBehaviour
 {
@@ -14,6 +14,10 @@ public class HandManager : MonoBehaviour
     [SerializeField] private Transform handContainer;
     [SerializeField] private float cardSpacing = 150f;
     
+    [Header("참조")]
+    [SerializeField] private CardDatabase cardDatabase;
+    
+    private List<int> handCardIds = new List<int>(); // 손패를 카드 ID로 관리
     private List<CardUI> cardUIList = new List<CardUI>();
     private BattleManager battleManager;
     
@@ -26,13 +30,43 @@ public class HandManager : MonoBehaviour
     }
     
     /// <summary>
-    /// 손패에 카드 추가
+    /// UsableDeckManager에서 카드를 드로우하여 손패에 추가
     /// </summary>
-    public void AddCard(Card card)
+    public void DrawCards(int count)
+    {
+        if (UsableDeckManager.Instance == null)
+        {
+            Debug.LogError("UsableDeckManager가 초기화되지 않았습니다!");
+            return;
+        }
+        
+        List<int> drawnCardIds = UsableDeckManager.Instance.DrawCard(count);
+        
+        foreach (int cardId in drawnCardIds)
+        {
+            AddCardById(cardId);
+        }
+    }
+    
+    /// <summary>
+    /// 손패에 카드 ID 추가 (UI 생성)
+    /// </summary>
+    public void AddCardById(int cardId)
     {
         if (cardUIPrefab == null || handContainer == null)
         {
             Debug.LogError("CardUI 프리팹 또는 Hand Container가 설정되지 않았습니다!");
+            return;
+        }
+        
+        // 손패에 카드 ID 추가
+        handCardIds.Add(cardId);
+        
+        // CardDatabase에서 카드 정보 가져오기
+        Card card = cardDatabase?.GetCardById(cardId);
+        if (card == null)
+        {
+            Debug.LogWarning($"카드 ID {cardId}를 찾을 수 없습니다!");
             return;
         }
         
@@ -50,6 +84,21 @@ public class HandManager : MonoBehaviour
     }
     
     /// <summary>
+    /// 손패에 카드 추가 (기존 호환성 유지)
+    /// </summary>
+    public void AddCard(Card card)
+    {
+        if (card == null)
+        {
+            Debug.LogWarning("유효하지 않은 카드입니다!");
+            return;
+        }
+        
+        // 카드 ID를 정수로 변환하여 추가
+        AddCardById(card.cardId);
+    }
+    
+    /// <summary>
     /// 손패에서 카드 제거
     /// </summary>
     public void RemoveCard(Card card)
@@ -58,8 +107,13 @@ public class HandManager : MonoBehaviour
         
         if (targetUI != null)
         {
+            // UI에서 제거
             cardUIList.Remove(targetUI);
             Destroy(targetUI.gameObject);
+            
+            // 손패 데이터에서 제거
+            handCardIds.Remove(card.cardId);
+            
             UpdateLayout();
         }
     }
@@ -76,6 +130,7 @@ public class HandManager : MonoBehaviour
         }
         
         cardUIList.Clear();
+        handCardIds.Clear();
     }
     
     /// <summary>
@@ -108,6 +163,14 @@ public class HandManager : MonoBehaviour
     /// </summary>
     public int GetCardCount()
     {
-        return cardUIList.Count;
+        return handCardIds.Count;
+    }
+    
+    /// <summary>
+    /// 손패의 카드 ID 목록 반환
+    /// </summary>
+    public List<int> GetHandCardIds()
+    {
+        return new List<int>(handCardIds);
     }
 }

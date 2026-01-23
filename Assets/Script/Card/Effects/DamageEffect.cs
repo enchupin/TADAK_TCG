@@ -9,16 +9,16 @@ public class DamageEffect : ICardEffect
     public int amount;
     public TargetType target = TargetType.SingleEnemy;
     
-    public void Execute(BattleContext context)
+    public void Execute(PlayerData player, Monster target)
     {
-        switch (target)
+        switch (this.target)
         {
             case TargetType.SingleEnemy:
-                context.DealDamage(amount);
+                target.TakeDamage(amount, player.strength);
                 break;
             case TargetType.AllEnemies:
                 // 나중에 여러 적 지원 시 구현
-                context.DealDamage(amount);
+                target.TakeDamage(amount, player.strength);
                 break;
         }
     }
