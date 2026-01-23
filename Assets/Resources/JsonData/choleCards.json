@@ -5,7 +5,7 @@
             "name": "폭발 실험",
             "characterId": 101,
             "cost": 1,
-            "description": "피해를 6 줍니다.",
+            "description": "피해를 6 입힙니다.",
             "effects": [
                 {
                     "type": "Damage",
@@ -75,6 +75,36 @@
         },
         {
             "cardId": 101031,
+            "name": "우당탕탕",
+            "characterId": 101,
+            "cost": 0,
+            "keywords": [
+                "보존"
+            ],
+            "description": "카드를 1장 뽑습니다. 보존: 손에 든 카드 1장을 선택해 보존을 1 부여합니다.",
+            "effects": [
+                {
+                    "type": "Draw",
+                    "amount": 1
+                },
+                {
+                    "type": "ChoiceHand",
+                    "amount": 1,
+                    "effect": {
+                        "type": "Keyword",
+                        "keyword": "보존",
+                        "amount": 1
+                    }
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 101032,
             "name": "우당탕탕 +",
             "characterId": 101,
             "cost": 1,
@@ -101,10 +131,10 @@
             }
         },
         {
-            "cardId": 101032,
+            "cardId": 101033,
             "name": "우당탕탕 +",
             "characterId": 101,
-            "cost": 2,
+            "cost": 1,
             "keywords": [
                 "파워"
             ],
@@ -128,46 +158,12 @@
             }
         },
         {
-            "cardId": 101033,
-            "name": "우당탕탕",
-            "characterId": 101,
-            "cost": 0,
-            "keywords": [
-                "보존"
-            ],
-            "description": "카드를 1장 뽑고, 손의 카드 1장을 선택해 보존을 1 부여합니다.",
-            "effects": [
-                {
-                    "type": "Draw",
-                    "amount": 1
-                },
-                {
-                    "type": "ChoiceHand",
-                    "amount": 1,
-                    "effect": {
-                        "type": "Keyword",
-                        "keyword": "보존",
-                        "amount": 1
-                    }
-                }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
-        },
-        {
             "cardId": 101034,
             "name": "우당탕탕 +",
             "characterId": 101,
             "cost": 1,
-            "description": "카드를 1장 뽑고, 손의 카드 1장을 선택해 보존을 1 부여합니다. 그 카드가 포션일 경우, 모든 적에게 부식을 2 부여합니다.",
+            "description": "손에 든 카드 1장을 선택해 보존을 1 부여합니다. 그 카드가 포션일 경우, 모든 적에게 부식을 2 부여합니다.",
             "effects": [
-                {
-                    "type": "Draw",
-                    "amount": 1
-                },
                 {
                     "type": "ChoiceHand",
                     "amount": 1,
@@ -209,7 +205,7 @@
             "name": "우당탕탕 +",
             "characterId": 101,
             "cost": 1,
-            "description": "카드를 1장 뽑고, 손의 카드 1장을 선택해 보존을 1 부여합니다. 그 카드가 포션일 경우 복제합니다.",
+            "description": "카드를 1장 뽑고, 손의 카드 1장을 선택해 보존을 1 부여합니다. 그 카드가 포션일 경우, 복제합니다.",
             "effects": [
                 {
                     "type": "Draw",
@@ -252,9 +248,6 @@
             "name": "보글보글",
             "characterId": 101,
             "cost": 0,
-            "keywords": [
-                "소멸"
-            ],
             "description": "무작위 포션 카드를 1장 제작합니다.",
             "effects": [
                 {
@@ -298,9 +291,6 @@
             "name": "보글보글 +",
             "characterId": 101,
             "cost": 0,
-            "keywords": [
-                "소멸"
-            ],
             "description": "무작위 포션 카드를 2장 제작합니다.",
             "effects": [
                 {
@@ -337,9 +327,6 @@
             "name": "보글보글 +",
             "characterId": 101,
             "cost": 0,
-            "keywords": [
-                "소멸"
-            ],
             "description": "포션 카드를 1장 선택해서 제작합니다.",
             "effects": [
                 {
@@ -364,9 +351,6 @@
             "name": "보글보글 +",
             "characterId": 101,
             "cost": 0,
-            "keywords": [
-                "소멸"
-            ],
             "description": "무작위 강화된 포션 카드를 1장 제작합니다.",
             "effects": [
                 {
@@ -403,26 +387,34 @@
             "name": "보글보글 +",
             "characterId": 101,
             "cost": 0,
-            "description": "무작위 포션 카드를 1장 제작합니다.",
+            "description": "손에 든 카드 한 장을 선택해 버립니다. 무작위 강화된 포션 카드를 2장 제작합니다.",
             "effects": [
                 {
-                    "type": "RandGenerate",
+                    "type": "ChoiceHand",
                     "amount": 1,
+                    "effect": {
+                        "type": "Discard",
+                        "amount": 1
+                    }
+                },
+                {
+                    "type": "RandGenerate",
+                    "amount": 2,
                     "RandomCard": [
                         {
-                            "cardId": 101050,
+                            "cardId": 101051,
                             "weight": 1
                         },
                         {
-                            "cardId": 101052,
+                            "cardId": 101053,
                             "weight": 1
                         },
                         {
-                            "cardId": 101054,
+                            "cardId": 101055,
                             "weight": 1
                         },
                         {
-                            "cardId": 101056,
+                            "cardId": 101057,
                             "weight": 1
                         }
                     ]
@@ -459,14 +451,14 @@
         },
         {
             "cardId": 101050,
-            "name": "실험 끝",
+            "name": "실험 끝!",
             "characterId": 101,
-            "cost": 1,
-            "description": "이번 전투에 사용한 포션 카드 수 만큼 피해를 입힙니다.",
+            "cost": 2,
+            "description": "이번 전투에 사용한 포션의 개수 X 3 만큼 피해를 입힙니다.",
             "effects": [
                 {
                     "type": "Damage",
-                    "amount": "UseCardInCombat",
+                    "amount": "UseCardInCombat * 3",
                     "cardId": [
                         101080,
                         101081,
@@ -495,17 +487,17 @@
         },
         {
             "cardId": 101051,
-            "name": "실험 끝 +",
+            "name": "실험 끝! +",
             "characterId": 101,
-            "cost": 1,
+            "cost": 2,
             "keywords": [
                 "보존"
             ],
-            "description": "이번 전투에 사용한 포션 카드 수 만큼 피해를 입힙니다. 보존: 다음 턴 시작 시 무작위 포션 카드를 1장 제작합니다.",
+            "description": "이번 전투에 사용한 포션의 개수 X 3 만큼 피해를 입힙니다. 보존: 다음 턴 시작 시 무작위 포션 카드를 1장 제작합니다.",
             "effects": [
                 {
                     "type": "Damage",
-                    "amount": "UseCardInCombat",
+                    "amount": "UseCardInCombat * 3",
                     "cardId": [
                         101080,
                         101081,
@@ -536,7 +528,7 @@
         },
         {
             "cardId": 101052,
-            "name": "실험 끝 +",
+            "name": "실험 끝! +",
             "characterId": 101,
             "cost": 1,
             "description": "이번 전투에 사용한 포션 카드 수 만큼 체력을 회복합니다.",
@@ -565,14 +557,14 @@
         },
         {
             "cardId": 101053,
-            "name": "실험 끝 +",
+            "name": "실험 끝! +",
             "characterId": 101,
             "cost": 1,
-            "description": "모든 적에게 이번 전투에 사용한 포션 수 만큼 피해를 입힙니다.",
+            "description": "모든 적에게 이번 전투에 사용한 포션의 개수 X 3 만큼 피해를 입힙니다.",
             "effects": [
                 {
                     "type": "Damage",
-                    "amount": "UseCardInCombat",
+                    "amount": "UseCardInCombat * 3",
                     "cardId": [
                         101080,
                         101081,
@@ -755,7 +747,7 @@
             "cardId": 101064,
             "name": "따끔 열매즙 +",
             "characterId": 101,
-            "cost": 1,
+            "cost": 0,
             "keywords": [
                 "개시"
             ],
@@ -804,7 +796,7 @@
             "cardId": 101070,
             "name": "생체 실험",
             "characterId": 101,
-            "cost": 1,
+            "cost": 2,
             "keywords": [
                 "파워"
             ],
@@ -827,7 +819,7 @@
             "cardId": 101071,
             "name": "생체 실험 +",
             "characterId": 101,
-            "cost": 1,
+            "cost": 2,
             "keywords": [
                 "파워",
                 "개시"
@@ -851,7 +843,7 @@
             "cardId": 101072,
             "name": "생체 실험 +",
             "characterId": 101,
-            "cost": 0,
+            "cost": 1,
             "keywords": [
                 "파워"
             ],
@@ -874,7 +866,7 @@
             "cardId": 101073,
             "name": "생체 실험 +",
             "characterId": 101,
-            "cost": 1,
+            "cost": 2,
             "keywords": [
                 "파워"
             ],
@@ -897,7 +889,7 @@
             "cardId": 101074,
             "name": "생체 실험 +",
             "characterId": 101,
-            "cost": 1,
+            "cost": 2,
             "keywords": [
                 "파워"
             ],
@@ -1080,7 +1072,7 @@
             "keywords": [
                 "소멸"
             ],
-            "description": "적에게 부식을 2 부여합니다.",
+            "description": "부식을 1 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -1103,7 +1095,7 @@
             "keywords": [
                 "소멸"
             ],
-            "description": "적에게 부식을 4 부여합니다.",
+            "description": "부식을 2 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
