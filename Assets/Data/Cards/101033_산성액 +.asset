@@ -10,22 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b4bd1118fb042d4bbad8fdee171a572, type: 3}
-  m_Name: "CARD_004_\uC5F0\uACC4 \uACF5\uACA9"
+  m_Name: "101033_\uC0B0\uC131\uC561 +"
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  cardId: CARD_004
-  cardName: "\uC5F0\uACC4 \uACF5\uACA9"
-  cost: 1
-  rarity: rare
-  artworkAddress: Cards/ComboStrike/Art
-  effectAddress: Effects/Fire
-  soundAddress: Sounds/Fire
+  cardId: 101033
+  cardName: "\uC0B0\uC131\uC561 +"
+  character: 0
+  cost: 0
+  rarity: 
+  artworkAddress: 
+  effectAddress: 
+  soundAddress: 
   effects:
-  - type: 5
-    amount: 0
+  - type: 3
+    amount: 2
     target: 0
     stat: 
     duration: 0
-    baseDamage: 3
-    bonusPerCard: 2
+    baseDamage: 0
+    bonusPerCard: 0
     hpThreshold: 0
     multiplier: 0

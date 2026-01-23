@@ -10,6 +10,7 @@ public class Card
     // 기본 정보
     public int cardId;
     public string cardName;
+    public Character character;
     public int cost;
     public string rarity;
     

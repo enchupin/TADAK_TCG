@@ -11,6 +11,7 @@ public class CardData : ScriptableObject
     [Header("기본 정보")]
     public int cardId;
     public string cardName;
+    public Character character;
     public int cost;
     public string rarity;  // "common", "uncommon", "rare", "epic", "legendary"
     
@@ -31,6 +32,7 @@ public class CardData : ScriptableObject
         {
             cardId = this.cardId,
             cardName = this.cardName,
+            character = this.character,
             cost = this.cost,
             rarity = this.rarity,
             artworkAddress = this.artworkAddress,

@@ -1,13 +1,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// 카드 데이터베이스
-/// JSON에서 카드 데이터를 로드하고 Card 객체를 생성합니다.
-/// </summary>
-public class CardDatabase : MonoBehaviour
-{
-    // json 파일 경로
+
+
+
+
+public class CardDatabase : MonoBehaviour {
+    /// <summary>
+    /// 카드 데이터베이스
+    /// JSON에서 카드 데이터를 로드하고 Card 객체를 생성합니다.
+    /// </summary>
+    public static CardDatabase Instance { get; private set; }
+
+    [Header("Card Collection (ScriptableObject)")]
+    [SerializeField] private CardCollection cardCollection;
+    
+    // json 파일 경로 (Legacy)
     private string jsonFileName = "choleCards";
     
     [Header("로드된 카드들")]
@@ -15,14 +23,51 @@ public class CardDatabase : MonoBehaviour
     
     void Awake()
     {
-        LoadCardsFromJSON();
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+        
+        if (cardCollection != null)
+        {
+            LoadCardsFromCollection();
+        }
+        else
+        {
+            LoadCardsFromJSON();
+        }
     }
     
     /// <summary>
-    /// JSON 파일에서 카드 데이터를 로드합니다.
+    /// ScriptableObject Collection에서 카드 로드
+    /// </summary>
+    public void LoadCardsFromCollection()
+    {
+        if (cardCollection == null) return;
+        
+        allCards.Clear();
+        foreach (var cardData in cardCollection.allCards)
+        {
+            if (cardData != null)
+            {
+                allCards.Add(cardData.ToCard());
+            }
+        }
+        
+        Debug.Log($"CardCollection에서 총 {allCards.Count}장의 카드가 로드되었습니다!");
+    }
+    
+    /// <summary>
+    /// JSON 파일에서 카드 데이터를 로드합니다. (Legacy)
     /// </summary>
     public void LoadCardsFromJSON()
     {
+        // ... (Existing implementation)
         // Resources 폴더에서 JSON 파일 로드
         TextAsset jsonFile = Resources.Load<TextAsset>($"JsonData/{jsonFileName}");
         
@@ -48,11 +93,9 @@ public class CardDatabase : MonoBehaviour
         {
             Card card = CreateCardFromData(cardData);
             allCards.Add(card);
-            
-            // Debug.Log($"카드 로드: [{card.cardId}] {card.cardName} (코스트: {card.cost}, 효과: {card.effects.Count}개)");
         }
         
-        Debug.Log($"총 {allCards.Count}장의 카드가 로드되었습니다!");
+        Debug.Log($"JSON에서 총 {allCards.Count}장의 카드가 로드되었습니다!");
     }
     
     /// <summary>
