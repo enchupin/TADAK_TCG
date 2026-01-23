@@ -8,10 +8,27 @@ public class UsableDeckManager : MonoBehaviour
 {
     public static UsableDeckManager Instance { get; private set; }
     public Queue<int> usableDeck;
+    public List<int> discardPile = new List<int>(); // 버린 카드 더미
 
     private void Awake()
     {
         Initialize();
+    }
+
+    /// <summary>
+    /// 버리기 더미에 카드 추가
+    /// </summary>
+    public void AddToDiscard(int cardId)
+    {
+        discardPile.Add(cardId);
+    }
+
+    /// <summary>
+    /// 버리기 더미에 카드 리스트 추가
+    /// </summary>
+    public void AddToDiscard(List<int> cardIds)
+    {
+        discardPile.AddRange(cardIds);
     }
 
 

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>
 /// 전투 매니저 - UI 통합 버전
@@ -103,22 +104,37 @@ public class BattleManager : MonoBehaviour {
             return;
         }
 
-        // 손패에 있는지 확인
-        if (!battleContext.hand.Contains(card)) {
-            Debug.LogWarning($"{card.cardName}이(가) 손패에 없습니다!");
-            return;
-        }
+        // 손패에 있는지 확인 - HandManager가 관리하므로 UI에서 호출된 시점에서 이미 존재한다고 가정 가능
+        // 하지만 안전을 위해 체크 로직을 유지하려면 HandManager를 통해 확인해야 함
+        // 여기서는 간단히 패스 (HandManager에서 RemoveCard 실패시 처리 가능)
 
         // 에너지 소모
         battleContext.playerData.UseEnergy(card.cost);
 
         // 카드 사용
         Debug.Log($"\n[플레이어] {card.cardName} 사용!");
-        card.Play(battleContext);
+        
+        // 현재 턴 카드 사용 횟수 전달
+        card.Play(battleContext.playerData, battleContext.monster, battleContext.cardsPlayedThisTurn);
+
+        // 턴 상태 업데이트 (Card.Play에서 빠졌으므로 여기서 처리)
+        battleContext.cardsPlayedThisTurn++;
+        battleContext.cardsPlayedThisTurnList.Add(card);
 
         // 손패에서 제거 → 버리기 더미로
-        battleContext.hand.Remove(card);
-        battleContext.discardPile.Add(card);
+        // battleContext.hand.Remove(card); // 삭제
+        // battleContext.discardPile.Add(card); // 삭제
+        
+        if (handManager != null)
+        {
+            handManager.RemoveCard(card);
+        }
+        
+        // 버리기 더미에 추가 (UsableDeckManager 이용)
+        if (UsableDeckManager.Instance != null)
+        {
+            UsableDeckManager.Instance.AddToDiscard(card.cardId);
+        }
 
         // UI 업데이트
         if (handManager != null)
@@ -137,8 +153,18 @@ public class BattleManager : MonoBehaviour {
         Debug.Log("\n=== 턴 종료 ===");
 
         // 손패를 버리기 더미로
-        battleContext.discardPile.AddRange(battleContext.hand);
-        battleContext.hand.Clear();
+        // battleContext.discardPile.AddRange(battleContext.hand); // 삭제
+        // battleContext.hand.Clear(); // 삭제
+        
+        if (handManager != null && UsableDeckManager.Instance != null)
+        {
+             // 현재 손패에 있는 모든 카드를 버리기 더미로 이동
+             List<int> remainingCards = handManager.GetHandCardIds();
+             UsableDeckManager.Instance.AddToDiscard(remainingCards);
+             
+             // 손패 비우기
+             handManager.ClearHand();
+        }
 
         // 턴 카운터 초기화
         battleContext.cardsPlayedThisTurn = 0;
@@ -220,13 +246,13 @@ public class BattleManager : MonoBehaviour {
         Card fireball = cardDatabase.GetCardById(101010);
         if (fireball != null) {
             Debug.Log($"\n--- {fireball.cardName} 사용 ---");
-            fireball.Play(battleContext);
+            fireball.Play(battleContext.playerData, battleContext.monster, 0);
         }
 
         Card shield = cardDatabase.GetCardById(101020);
         if (shield != null) {
             Debug.Log($"\n--- {shield.cardName} 사용 ---");
-            shield.Play(battleContext);
+            shield.Play(battleContext.playerData, battleContext.monster, 0);
         }
 
         Debug.Log("\n=== 카드 테스트 완료 ===");

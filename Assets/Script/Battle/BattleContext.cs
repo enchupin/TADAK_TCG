@@ -16,10 +16,7 @@ public class BattleContext {
     public int cardsPlayedThisTurn;
     public List<Card> cardsPlayedThisTurnList = new List<Card>();
 
-    // 카드 관리 (나중에 CardManager로 교체)
-    public List<Card> deck = new List<Card>();
-    public List<Card> hand = new List<Card>();
-    public List<Card> discardPile = new List<Card>();
+
 
     /// <summary>
     /// BattleContext 생성자
