@@ -7,7 +7,7 @@ using UnityEngine;
 public class UsableDeckManager : MonoBehaviour
 {
     public static UsableDeckManager Instance { get; private set; }
-    public Queue<Card> usableDeck;
+    public Queue<int> usableDeck;
 
     private void Awake()
     {
@@ -31,7 +31,7 @@ public class UsableDeckManager : MonoBehaviour
         Singleton();
 
         // usableDeck 초기화
-        if (usableDeck == null) usableDeck = new Queue<Card>();
+        if (usableDeck == null) usableDeck = new Queue<int>();
 
         // 저장 덱 불러오기
         InitializeDeck();
@@ -47,10 +47,10 @@ public class UsableDeckManager : MonoBehaviour
     /// <summary>
     /// 덱에서 카드 1장을 드로우
     /// </summary>
-    public Card DrawCard() {
+    public int DrawCard() {
         if (usableDeck == null || usableDeck.Count == 0) {
             Debug.LogWarning("덱에 카드가 없습니다!");
-            return null;
+            return 0;
         }
 
         return usableDeck.Dequeue();
@@ -59,8 +59,8 @@ public class UsableDeckManager : MonoBehaviour
     /// <summary>
     /// 덱에서 지정된 수만큼 카드를 드로우
     /// </summary>
-    public List<Card> DrawCard(int count) {
-        List<Card> drawnCards = new List<Card>();
+    public List<int> DrawCard(int count) {
+        List<int> drawnCards = new List<int>();
 
         if (usableDeck == null || usableDeck.Count == 0) {
             Debug.LogWarning("덱에 카드가 없습니다!");
@@ -94,18 +94,18 @@ public class UsableDeckManager : MonoBehaviour
         }
 
         // Queue를 List로 변환하여 셔플
-        List<Card> tempList = new List<Card>(usableDeck);
+        List<int> tempList = new List<int>(usableDeck);
 
         // Fisher-Yates 셔플 알고리즘
         for (int i = tempList.Count - 1; i > 0; i--) {
             int randomIndex = Random.Range(0, i + 1);
-            Card temp = tempList[i];
+            int temp = tempList[i];
             tempList[i] = tempList[randomIndex];
             tempList[randomIndex] = temp;
         }
 
         // 다시 Queue로 변환
-        usableDeck = new Queue<Card>(tempList);
+        usableDeck = new Queue<int>(tempList);
         Debug.Log("덱을 섞었습니다.");
     }
 
@@ -127,7 +127,7 @@ public class UsableDeckManager : MonoBehaviour
         }
 
         // usableDeck 초기화
-        UsableDeckManager.Instance.usableDeck = new Queue<Card>();
+        UsableDeckManager.Instance.usableDeck = new Queue<int>();
 
         // 선택된 캐릭터가 없는 경우 체크
         if (SelectedButtonControl.selectedCharacterList == null ||
@@ -139,11 +139,11 @@ public class UsableDeckManager : MonoBehaviour
         // 선택된 각 캐릭터의 카드를 가져와서 usableDeck에 추가
         foreach (Character character in SelectedButtonControl.selectedCharacterList) {
             // 추후 데이터 베이스 연결하는 방식으로 변경 필요
-            List<Card> characterCards = SaveDeck.GetCards(character);
+            List<int> characterCards = SaveDeck.GetCards(character);
 
             if (characterCards != null && characterCards.Count > 0) {
                 // Queue에 카드 추가 (Enqueue 사용)
-                foreach (Card card in characterCards) {
+                foreach (int card in characterCards) {
                     UsableDeckManager.Instance.usableDeck.Enqueue(card);
                 }
                 Debug.Log($"{character} 직업의 카드 {characterCards.Count}장을 덱에 추가했습니다.");
