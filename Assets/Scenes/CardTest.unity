@@ -522,7 +522,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 545740005}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1662233724}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -606,7 +606,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be78a3ef3b6d16f4e91e3e65d024a488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardDatabase
-  jsonFileName: cards
+  cardCollection: {fileID: 0}
 --- !u!4 &1622819082
 Transform:
   m_ObjectHideFlags: 0
@@ -651,7 +651,8 @@ Transform:
   m_LocalPosition: {x: -5.31611, y: 0.40415, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1162622628}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1662233725
@@ -669,7 +670,6 @@ MonoBehaviour:
   cardUIPrefab: {fileID: 3192966017208014355, guid: df592ae6592a32d4b8266e0a5479e78e, type: 3}
   handContainer: {fileID: 545740005}
   cardSpacing: 150
-  cardDatabase: {fileID: 2081641998}
 --- !u!1 &1755021452
 GameObject:
   m_ObjectHideFlags: 0
@@ -822,7 +822,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be78a3ef3b6d16f4e91e3e65d024a488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardDatabase
-  jsonFileName: cards
+  cardCollection: {fileID: 11400000, guid: 061d996b12861074ebafed6dc65b5a99, type: 2}
 --- !u!4 &2081641999
 Transform:
   m_ObjectHideFlags: 0
@@ -845,7 +845,6 @@ SceneRoots:
   - {fileID: 709190163}
   - {fileID: 2081641999}
   - {fileID: 1545498653}
-  - {fileID: 1162622628}
   - {fileID: 1871534452}
   - {fileID: 1662233724}
   - {fileID: 681918272}

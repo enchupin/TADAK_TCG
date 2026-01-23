@@ -91,30 +91,23 @@ public class SaveDeck : MonoBehaviour
     }
     
     private static void LoadDefaultCards() {
-        TextAsset jsonFile = Resources.Load<TextAsset>("JsonData/choleCards");
-        if (jsonFile == null) {
-            Debug.LogError("임시 카드 데이터를 찾을 수 없습니다: JsonData/choleCards");
+        if (CardDatabase.Instance == null) {
+            Debug.LogError("CardDatabase가 초기화되지 않았습니다. 데이터를 로드할 수 없습니다.");
             return;
         }
-        
-        CardDataList dataList = JsonUtility.FromJson<CardDataList>(jsonFile.text);
-        if (dataList == null || dataList.cards == null) {
-            Debug.LogError("JSON 파싱 실패");
-            return;
+
+        if (CardDatabase.Instance.allCards.Count == 0) {
+            Debug.LogWarning("CardDatabase에 로드된 카드가 없습니다. JSON(Legacy) 또는 Collection을 확인하세요.");
+            // CardDatabase가 아직 로드 안되었을 수도 있음. 강제 로드 시도?
+            // CardDatabase.Instance.LoadCardsFromCollection(); // Public access needed?
         }
         
-        // 테스트를 위해 모든 캐릭터에게 동일한 덱 지급
-        foreach (Character character in System.Enum.GetValues(typeof(Character))) {
-            foreach (var cardData in dataList.cards) {
-                // 기본 카드는 3장씩 지급
-                AddCardStatic(character, cardData.cardId, 3);
-            }
-            
-            // 101010번 카드 확인 및 추가
-             if (!decksByCharacter[character].ContainsKey(101010)) {
-                AddCardStatic(character, 101010, 3);
-            }
+        foreach (Card card in CardDatabase.Instance.allCards) {
+            // 기본 카드는 3장씩 지급
+            AddCardStatic(card.character, card.cardId, 3);
         }
+        
+        Debug.Log("기본 덱 생성 완료 (from CardDatabase)");
     }
     
     // (Rest of the class methods need to check initialization if they access decksByCharacter directly? 

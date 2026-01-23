@@ -4,6 +4,7 @@ using UnityEngine;
 /// 전투 매니저 - UI 통합 버전
 /// </summary>
 public class BattleManager : MonoBehaviour {
+
     [Header("카드 데이터베이스")]
     public CardDatabase cardDatabase;
 

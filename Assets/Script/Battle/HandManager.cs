@@ -14,9 +14,6 @@ public class HandManager : MonoBehaviour
     [SerializeField] private Transform handContainer;
     [SerializeField] private float cardSpacing = 150f;
     
-    [Header("참조")]
-    [SerializeField] private CardDatabase cardDatabase;
-    
     private List<int> handCardIds = new List<int>(); // 손패를 카드 ID로 관리
     private List<CardUI> cardUIList = new List<CardUI>();
     private BattleManager battleManager;
@@ -63,7 +60,7 @@ public class HandManager : MonoBehaviour
         handCardIds.Add(cardId);
         
         // CardDatabase에서 카드 정보 가져오기
-        Card card = cardDatabase?.GetCardById(cardId);
+        Card card = CardDatabase.Instance?.GetCardById(cardId);
         if (card == null)
         {
             Debug.LogWarning($"카드 ID {cardId}를 찾을 수 없습니다!");
