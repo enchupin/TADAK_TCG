@@ -27,7 +27,10 @@ public class CardCollection : ScriptableObject
     /// <summary>
     /// ID로 카드 찾기
     /// </summary>
-    public CardData GetCardById(string cardId)
+    /// <summary>
+    /// ID로 카드 찾기
+    /// </summary>
+    public CardData GetCardById(int cardId)
     {
         return allCards.Find(c => c.cardId == cardId);
     }
@@ -35,10 +38,10 @@ public class CardCollection : ScriptableObject
     /// <summary>
     /// ID 리스트로 Card 객체 리스트 생성
     /// </summary>
-    public List<Card> GetCardsByIds(List<string> cardIds)
+    public List<Card> GetCardsByIds(List<int> cardIds)
     {
         List<Card> cards = new List<Card>();
-        foreach (string id in cardIds)
+        foreach (int id in cardIds)
         {
             CardData cardData = GetCardById(id);
             if (cardData != null)

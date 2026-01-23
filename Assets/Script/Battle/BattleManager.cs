@@ -33,19 +33,10 @@ public class BattleManager : MonoBehaviour {
     /// 전투 초기화
     /// </summary>
     void InitializeBattle() {
-        battleContext = new BattleContext();
+        battleContext = new BattleContext(80, 3); // maxHP=80, maxEnergy=3
 
-        // 플레이어 초기 상태
-        battleContext.playerHP = 80;
-        battleContext.playerMaxHP = 80;
-        battleContext.playerDefense = 0;
-        battleContext.playerEnergy = 3;
-        battleContext.playerStrength = 0;
-
-        // 적 초기 상태
-        battleContext.enemyHP = 50;
-        battleContext.enemyMaxHP = 50;
-        battleContext.enemyDefense = 0;
+        // 몬스터 초기화
+        battleContext.monster = new Monster("슬라임", 50, 10); // 이름, HP, 공격력
 
         Debug.Log("=== 전투 시작! ===");
     }
@@ -72,9 +63,8 @@ public class BattleManager : MonoBehaviour {
             return;
         }
 
-        // 덱 초기화
-        battleContext.deck.AddRange(cardDatabase.allCards);
-        ShuffleDeck();
+        // 덱 초기화 및 셔플은 UsableDeckManager에서 수행됨
+        UsableDeckManager.Instance.ShuffleDeck();
 
         // 시작 손패 뽑기
         DrawCards(5);
@@ -82,37 +72,20 @@ public class BattleManager : MonoBehaviour {
         Debug.Log("게임 시작! 카드를 클릭해서 사용하세요.");
     }
 
+
     /// <summary>
     /// 카드 뽑기
     /// </summary>
     void DrawCards(int count) {
-        UsableDeckManager.Instance.DrawCard(count);
-
-        // UI 업데이트
         if (handManager != null) {
-            // 새로 뽑은 카드들을 UI에 추가
-            int startIndex = battleContext.hand.Count - count;
-            if (startIndex < 0) startIndex = 0;
-
-            for (int i = startIndex; i < battleContext.hand.Count; i++) {
-                handManager.AddCard(battleContext.hand[i]);
-            }
-
+            // HandManager가 UsableDeckManager에서 카드를 드로우하고 UI도 업데이트함
+            handManager.DrawCards(count);
             UpdateHandUI();
         }
     }
 
-    /// <summary>
-    /// 덱 섞기
-    /// </summary>
-    void ShuffleDeck() {
-        for (int i = battleContext.deck.Count - 1; i > 0; i--) {
-            int randomIndex = Random.Range(0, i + 1);
-            Card temp = battleContext.deck[i];
-            battleContext.deck[i] = battleContext.deck[randomIndex];
-            battleContext.deck[randomIndex] = temp;
-        }
-    }
+
+
 
     /// <summary>
     /// 카드 사용 (UI에서 호출)
@@ -124,8 +97,8 @@ public class BattleManager : MonoBehaviour {
         }
 
         // 에너지 체크
-        if (battleContext.playerEnergy < card.cost) {
-            Debug.LogWarning($"에너지 부족! (필요: {card.cost}, 현재: {battleContext.playerEnergy})");
+        if (battleContext.playerData.energy < card.cost) {
+            Debug.LogWarning($"에너지 부족! (필요: {card.cost}, 현재: {battleContext.playerData.energy})");
             return;
         }
 
@@ -136,7 +109,7 @@ public class BattleManager : MonoBehaviour {
         }
 
         // 에너지 소모
-        battleContext.playerEnergy -= card.cost;
+        battleContext.playerData.UseEnergy(card.cost);
 
         // 카드 사용
         Debug.Log($"\n[플레이어] {card.cardName} 사용!");
@@ -162,9 +135,6 @@ public class BattleManager : MonoBehaviour {
     public void EndTurn() {
         Debug.Log("\n=== 턴 종료 ===");
 
-        // 방어력 초기화
-        battleContext.playerDefense = 0;
-
         // 손패를 버리기 더미로
         battleContext.discardPile.AddRange(battleContext.hand);
         battleContext.hand.Clear();
@@ -173,8 +143,9 @@ public class BattleManager : MonoBehaviour {
         battleContext.cardsPlayedThisTurn = 0;
         battleContext.cardsPlayedThisTurnList.Clear();
 
-        // 에너지 회복
-        battleContext.playerEnergy = 3;
+        // 플레이어 턴 종료 처리 (방어력 리셋, 에너지 회복)
+        battleContext.playerData.OnTurnEnd();
+        battleContext.playerData.OnTurnStart();
 
         // UI 손패 클리어
         if (handManager != null)
@@ -197,12 +168,9 @@ public class BattleManager : MonoBehaviour {
     void EnemyTurn() {
         // 간단한 AI: 랜덤 데미지
         int damage = Random.Range(5, 15);
-        int finalDamage = Mathf.Max(0, damage - battleContext.playerDefense);
+        battleContext.playerData.TakeDamage(damage);
 
-        battleContext.playerHP -= finalDamage;
-        battleContext.playerDefense = Mathf.Max(0, battleContext.playerDefense - damage);
-
-        Debug.Log($"[적] 공격! 플레이어에게 {finalDamage} 데미지!");
+        Debug.Log($"[적] 공격! {damage} 데미지!");
 
         CheckBattleEnd();
     }
@@ -211,10 +179,10 @@ public class BattleManager : MonoBehaviour {
     /// 전투 종료 체크
     /// </summary>
     void CheckBattleEnd() {
-        if (battleContext.enemyHP <= 0) {
+        if (battleContext.monster.IsDead()) {
             Debug.Log("\n🎉 승리! 적을 물리쳤습니다!");
             // 승리 UI 표시 (나중에 구현)
-        } else if (battleContext.playerHP <= 0) {
+        } else if (battleContext.playerData.IsDead()) {
             Debug.Log("\n💀 패배... 플레이어가 쓰러졌습니다.");
             // 패배 UI 표시 (나중에 구현)
         }
@@ -235,7 +203,7 @@ public class BattleManager : MonoBehaviour {
     /// </summary>
     void UpdateHandUI() {
         if (handManager != null)
-            handManager.UpdatePlayableCards(battleContext.playerEnergy);
+            handManager.UpdatePlayableCards(battleContext.playerData.energy);
     }
 
     // ========== 테스트 모드 (기존 코드) ==========
@@ -248,13 +216,13 @@ public class BattleManager : MonoBehaviour {
 
         Debug.Log("\n=== 카드 테스트 시작 ===\n");
 
-        Card fireball = cardDatabase.GetCardById("CARD_001");
+        Card fireball = cardDatabase.GetCardById(101010);
         if (fireball != null) {
             Debug.Log($"\n--- {fireball.cardName} 사용 ---");
             fireball.Play(battleContext);
         }
 
-        Card shield = cardDatabase.GetCardById("CARD_002");
+        Card shield = cardDatabase.GetCardById(101020);
         if (shield != null) {
             Debug.Log($"\n--- {shield.cardName} 사용 ---");
             shield.Play(battleContext);

@@ -8,7 +8,7 @@ using UnityEngine;
 public class Card
 {
     // 기본 정보
-    public string cardId;
+    public int cardId;
     public string cardName;
     public int cost;
     public string rarity;
@@ -27,21 +27,41 @@ public class Card
     public AudioClip soundClip;
     
     /// <summary>
-    /// 카드를 사용합니다.
+    /// 카드를 사용합니다. (턴 기반 모드용)
     /// </summary>
     public void Play(BattleContext context)
+    {
+        Debug.Log($"[{cardName}] 카드 사용!");
+        
+        // 모든 효과 실행 (PlayerData와 Monster 추출하여 전달)
+        foreach (var effect in effects)
+        {
+            // DamagePerCardPlayedEffect 특수 처리
+            if (effect is DamagePerCardPlayedEffect damagePerCard)
+            {
+                damagePerCard.cardsPlayedThisTurn = context.cardsPlayedThisTurn;
+            }
+            
+            effect.Execute(context.playerData, context.monster);
+        }
+        
+        // 턴 상태 업데이트
+        context.cardsPlayedThisTurn++;
+        context.cardsPlayedThisTurnList.Add(this);
+    }
+    
+    /// <summary>
+    /// 카드를 사용합니다. (턴 개념 없는 모드용)
+    /// </summary>
+    public void Play(PlayerData player, Monster target)
     {
         Debug.Log($"[{cardName}] 카드 사용!");
         
         // 모든 효과 실행
         foreach (var effect in effects)
         {
-            effect.Execute(context);
+            effect.Execute(player, target);
         }
-        
-        // 턴 상태 업데이트
-        context.cardsPlayedThisTurn++;
-        context.cardsPlayedThisTurnList.Add(this);
     }
     
     /// <summary>

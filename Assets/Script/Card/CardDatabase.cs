@@ -7,13 +7,13 @@ using UnityEngine;
 /// </summary>
 public class CardDatabase : MonoBehaviour
 {
-    [Header("JSON 파일 경로")]
-    [SerializeField] private string jsonFileName = "cards";
+    // json 파일 경로
+    private string jsonFileName = "choleCards";
     
     [Header("로드된 카드들")]
     public List<Card> allCards = new List<Card>();
     
-    void Awake()  // ← Start에서 Awake로 변경!
+    void Awake()
     {
         LoadCardsFromJSON();
     }
@@ -49,7 +49,7 @@ public class CardDatabase : MonoBehaviour
             Card card = CreateCardFromData(cardData);
             allCards.Add(card);
             
-            Debug.Log($"카드 로드: [{card.cardId}] {card.cardName} (코스트: {card.cost}, 효과: {card.effects.Count}개)");
+            // Debug.Log($"카드 로드: [{card.cardId}] {card.cardName} (코스트: {card.cost}, 효과: {card.effects.Count}개)");
         }
         
         Debug.Log($"총 {allCards.Count}장의 카드가 로드되었습니다!");
@@ -121,7 +121,7 @@ public class CardDatabase : MonoBehaviour
             case "Buff":
                 return new BuffEffect
                 {
-                    stat = data.stat,
+                    stat = data.buffType, // buffType을 stat에 매핑하거나 새로운 필드 사용 필요
                     amount = data.amount,
                     duration = data.duration
                 };
@@ -148,7 +148,7 @@ public class CardDatabase : MonoBehaviour
                 };
             
             default:
-                Debug.LogWarning($"알 수 없는 효과 타입: {data.type}");
+                // Debug.LogWarning($"알 수 없는 효과 타입: {data.type}");
                 return null;
         }
     }
@@ -163,6 +163,7 @@ public class CardDatabase : MonoBehaviour
             case "SingleEnemy":
                 return TargetType.SingleEnemy;
             case "AllEnemies":
+            case "AllEnemy": // JSON 호환성
                 return TargetType.AllEnemies;
             case "Self":
                 return TargetType.Self;
@@ -176,7 +177,7 @@ public class CardDatabase : MonoBehaviour
     /// <summary>
     /// 카드 ID로 카드를 찾습니다.
     /// </summary>
-    public Card GetCardById(string cardId)
+    public Card GetCardById(int cardId)
     {
         return allCards.Find(c => c.cardId == cardId);
     }

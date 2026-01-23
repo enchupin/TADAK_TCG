@@ -8,8 +8,8 @@ public class DefenseEffect : ICardEffect
 {
     public int amount;
     
-    public void Execute(BattleContext context)
+    public void Execute(PlayerData player, Monster target)
     {
-        context.AddDefense(amount);
+        player.AddDefense(amount);
     }
 }

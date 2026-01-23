@@ -6,6 +6,7 @@ public interface ICardEffect
     /// <summary>
     /// 효과를 실행합니다.
     /// </summary>
-    /// <param name="context">전투 컨텍스트 (플레이어, 적, 턴 정보 등)</param>
-    void Execute(BattleContext context);
+    /// <param name="player">플레이어 데이터</param>
+    /// <param name="target">타겟 몬스터</param>
+    void Execute(PlayerData player, Monster target);
 }

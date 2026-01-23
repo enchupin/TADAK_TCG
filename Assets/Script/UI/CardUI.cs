@@ -108,6 +108,8 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     /// </summary>
     private string GetRarityText(string rarity)
     {
+        if (string.IsNullOrEmpty(rarity)) return "[일반]";
+
         switch (rarity.ToLower())
         {
             case "common": return "[일반]";
@@ -124,6 +126,8 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     /// </summary>
     private Color GetRarityColor(string rarity)
     {
+        if (string.IsNullOrEmpty(rarity)) return new Color(0.9f, 0.9f, 0.9f);
+
         switch (rarity.ToLower())
         {
             case "common": return new Color(0.9f, 0.9f, 0.9f);      // 밝은 회색

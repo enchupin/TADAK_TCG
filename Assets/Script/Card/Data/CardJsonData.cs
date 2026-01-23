@@ -14,10 +14,14 @@ public class CardDataList
 [Serializable]
 public class CardJsonData
 {
-    public string cardId;
+    public int cardId;
     public string name;
+    public int characterId;
     public int cost;
-    public string rarity;
+    public string rarity; // Optional, might not be in choleCards
+    public string description;
+    public List<string> keywords;
+    public List<int> enforce;
     public AddressablesData addressables;
     public List<EffectJsonData> effects;
 }
@@ -35,9 +39,9 @@ public class EffectJsonData
 {
     public string type;
     
-    // DamageEffect
+    // Common
     public int amount;
-    public string target; // "SingleEnemy", "AllEnemies"
+    public string target; // "SingleEnemy", "AllEnemies", "Self", etc.
     
     // DamagePerCardPlayedEffect
     public int baseDamage;
@@ -48,6 +52,18 @@ public class EffectJsonData
     public float multiplier;
     
     // BuffEffect
-    public string stat;
+    public string stat; // Legacy?
+    public string buffType; // New field in choleCards
     public int duration;
+    
+    // Generator Effects
+    public List<RandomCardData> RandomCard;
+    public List<int> cardId; // For ChoiceGenerate
+}
+
+[Serializable]
+public class RandomCardData
+{
+    public int cardId;
+    public int weight;
 }
