@@ -9,7 +9,7 @@ using System.Collections.Generic;
 /// </summary>
 public class JSONToScriptableObjectConverter : EditorWindow
 {
-    private TextAsset jsonFile;
+    private string jsonFilePath = "Assets/Resources/JsonData/choleCards.json";
     private string outputPath = "Assets/Data/Cards";
     private bool createCollection = true;
     
@@ -24,7 +24,7 @@ public class JSONToScriptableObjectConverter : EditorWindow
         GUILayout.Label("JSON to ScriptableObject Converter", EditorStyles.boldLabel);
         GUILayout.Space(10);
         
-        jsonFile = (TextAsset)EditorGUILayout.ObjectField("JSON File", jsonFile, typeof(TextAsset), false);
+        jsonFilePath = EditorGUILayout.TextField("JSON File Path", jsonFilePath);
         outputPath = EditorGUILayout.TextField("Output Path", outputPath);
         createCollection = EditorGUILayout.Toggle("Create Collection", createCollection);
         
@@ -37,7 +37,7 @@ public class JSONToScriptableObjectConverter : EditorWindow
         
         GUILayout.Space(10);
         EditorGUILayout.HelpBox(
-            "1. JSON 파일을 선택하세요\n" +
+            "1. JSON 파일 경로를 확인하세요\n" +
             "2. 출력 경로를 설정하세요\n" +
             "3. Convert All Cards 버튼을 클릭하세요", 
             MessageType.Info);
@@ -45,9 +45,11 @@ public class JSONToScriptableObjectConverter : EditorWindow
     
     void ConvertJSONToScriptableObjects()
     {
+        TextAsset jsonFile = AssetDatabase.LoadAssetAtPath<TextAsset>(jsonFilePath);
+
         if (jsonFile == null)
         {
-            EditorUtility.DisplayDialog("Error", "Please select a JSON file!", "OK");
+            EditorUtility.DisplayDialog("Error", $"Could not find JSON file at {jsonFilePath}", "OK");
             return;
         }
         

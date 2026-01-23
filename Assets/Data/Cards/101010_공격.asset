@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardId: 101010
   cardName: "\uACF5\uACA9"
+  character: 0
   cost: 1
   rarity: 
   artworkAddress: 

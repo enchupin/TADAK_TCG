@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardId: 101040
   cardName: "\uD3EC\uC158 \uC81C\uC870"
+  character: 0
   cost: 0
   rarity: 
   artworkAddress: 
