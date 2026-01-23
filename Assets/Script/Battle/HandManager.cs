@@ -12,7 +12,11 @@ public class HandManager : MonoBehaviour
     
     [Header("레이아웃")]
     [SerializeField] private Transform handContainer;
-    [SerializeField] private float cardSpacing = 150f;
+
+
+
+    // never using
+    // [SerializeField] private float cardSpacing = 150f;
     
     private List<int> handCardIds = new List<int>(); // 손패를 카드 ID로 관리
     private List<CardUI> cardUIList = new List<CardUI>();

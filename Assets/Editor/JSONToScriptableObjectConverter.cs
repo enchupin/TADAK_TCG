@@ -78,24 +78,41 @@ public class JSONToScriptableObjectConverter : EditorWindow
         // 각 카드를 ScriptableObject로 변환
         foreach (var cardJson in cardDataList.cards)
         {
-            CardData cardData = CreateCardData(cardJson);
+            // 파일 이름 생성
+            string fileName = $"{cardJson.cardId}_{cardJson.name}.asset";
+            // 특수문자 제거나 안전한 파일명 처리 로직이 있다면 여기에 추가
             
-            if (cardData != null)
+            string assetPath = Path.Combine(outputPath, fileName).Replace("\\", "/");
+            
+            // 이미 존재하는 에셋인지 확인
+            CardData cardData = AssetDatabase.LoadAssetAtPath<CardData>(assetPath);
+            bool isNew = false;
+            
+            if (cardData == null)
             {
-                // 파일로 저장
-                string fileName = $"{cardData.cardId}_{cardData.cardName}.asset";
-                string assetPath = Path.Combine(outputPath, fileName);
-                
-                AssetDatabase.CreateAsset(cardData, assetPath);
-                
-                // Collection에 추가
-                if (collection != null)
-                {
-                    collection.allCards.Add(cardData);
-                }
-                
-                successCount++;
+                cardData = ScriptableObject.CreateInstance<CardData>();
+                isNew = true;
             }
+            
+            // 데이터 업데이트
+            UpdateCardData(cardData, cardJson);
+            
+            if (isNew)
+            {
+                AssetDatabase.CreateAsset(cardData, assetPath);
+            }
+            else
+            {
+                EditorUtility.SetDirty(cardData);
+            }
+
+            // Collection에 추가
+            if (collection != null)
+            {
+                collection.allCards.Add(cardData);
+            }
+            
+            successCount++;
         }
         
         // CardCollection 저장
@@ -112,10 +129,8 @@ public class JSONToScriptableObjectConverter : EditorWindow
             $"Successfully converted {successCount} cards!\nSaved to: {outputPath}", "OK");
     }
     
-    CardData CreateCardData(CardJsonData jsonData)
+    void UpdateCardData(CardData cardData, CardJsonData jsonData)
     {
-        CardData cardData = ScriptableObject.CreateInstance<CardData>();
-        
         // 기본 정보
         cardData.cardId = jsonData.cardId;
         cardData.cardName = jsonData.name;
@@ -132,6 +147,7 @@ public class JSONToScriptableObjectConverter : EditorWindow
         }
         
         // 효과 변환
+        cardData.effects.Clear(); // 줄 바뀐 효과나 삭제된 효과 반영을 위해 초기화
         if (jsonData.effects != null)
         {
             foreach (var effectJson in jsonData.effects)
@@ -143,8 +159,6 @@ public class JSONToScriptableObjectConverter : EditorWindow
                 }
             }
         }
-        
-        return cardData;
     }
     
     private Character GetCharacterFromId(int characterId)
