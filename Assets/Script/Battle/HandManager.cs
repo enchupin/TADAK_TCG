@@ -14,8 +14,7 @@ public class HandManager : MonoBehaviour
     [SerializeField] private Transform handContainer;
 
     [Header("손패")]
-    private List<int> handCardIds = new List<int>(); // 손패를 카드 ID로 관리
-
+    private List<int> handCardIdList = new List<int>(); // 손패를 카드 ID로 관리
 
     // never using
     // [SerializeField] private float cardSpacing = 150f;
@@ -30,7 +29,7 @@ public class HandManager : MonoBehaviour
             Debug.LogError("CardUI 프리팹 또는 Hand Container가 설정되지 않았습니다!");
             return;
         }
-        handCardIds.Add(cardId);
+        handCardIdList.Add(cardId);
         InstantiateCardUI(cardId);
     }
 
@@ -48,7 +47,7 @@ public class HandManager : MonoBehaviour
 
         // 카드 추가
         foreach (int cardId in cardIds) { 
-            handCardIds.Add(cardId);
+            handCardIdList.Add(cardId);
             InstantiateCardUI(cardId);
         }
         
@@ -74,17 +73,49 @@ public class HandManager : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// 손패에서 특정 카드 제거 (카드 사용 시)
+    /// </summary>
+    public void RemoveCardFromHand(CardUI cardUI)
+    {
+        if (cardUI == null)
+        {
+            Debug.LogWarning("[HandManager] CardUI가 null입니다!");
+            return;
+        }
 
+        int cardId = cardUI.card.cardId;
+        
+        // 손패 리스트에서 제거
+        if (handCardIdList.Contains(cardId))
+        {
+            handCardIdList.Remove(cardId);
+            Debug.Log($"[HandManager] 손패에서 카드 ID {cardId} 제거");
+        }
+
+        // UI 오브젝트 파괴
+        Destroy(cardUI.gameObject);
+        
+        UpdateLayout();
+    }
+
+    
 
 
     
     /// <summary>
-    /// 손패 비우기
+    /// 손패 비우기 (턴 종료 시)
     /// </summary>
     public List<int> ClearHand()
     {
-        List<int> discardedCards = new List<int>(handCardIds);
-        handCardIds.Clear();
+        List<int> discardedCards = new List<int>(handCardIdList);
+        handCardIdList.Clear();
+
+        // 손패 UI 모두 파괴
+        foreach (Transform child in handContainer)
+        {
+            Destroy(child.gameObject);
+        }
 
         return discardedCards;
     }
@@ -105,7 +136,7 @@ public class HandManager : MonoBehaviour
     /// </summary>
     public int GetCardCount()
     {
-        return handCardIds.Count;
+        return handCardIdList.Count;
     }
     
     /// <summary>
@@ -113,7 +144,7 @@ public class HandManager : MonoBehaviour
     /// </summary>
     public List<int> GetHandCardIds()
     {
-        return new List<int>(handCardIds);
+        return new List<int>(handCardIdList);
     }
 
 

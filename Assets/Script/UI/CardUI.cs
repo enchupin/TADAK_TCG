@@ -25,7 +25,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
 
 
     
-    private Card card;
+    public Card card;
     private bool isPlayable = true;
 
 
@@ -156,12 +156,25 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     // 호버 효과는 UIHoverEffect 컴포넌트가 담당
     
     /// <summary>
-    /// 클릭 시
+    /// 클릭 시 - 이벤트 발행
     /// </summary>
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log($"[CardUI] 클릭됨: {card?.cardName ?? "null"} (Playable: {isPlayable})");
+        if (card == null) {
+            Debug.LogWarning("[CardUI] 카드가 null입니다!");
+            return;
+        }
+
+        if (!isPlayable) {
+            Debug.Log($"[CardUI] {card.cardName} - 사용 불가능");
+            return;
+        }
+
+        Debug.Log($"[CardUI] {card.cardName} 클릭 - 이벤트 발행");
+        
+        // CardUI 데이터 전달 (자기 자신을 BattleManager에 전달)
+        CardClickedEventData cardClickData = new CardClickedEventData(this);
+        // 이벤트 발행 (BattleManager가 구독하여 처리)
+        CardGameEvents.RaiseCardClicked(cardClickData);
     }
-
-
 }

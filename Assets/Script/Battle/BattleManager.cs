@@ -26,9 +26,17 @@ public class BattleManager : MonoBehaviour {
 
 
     void Start() {
+        // 이벤트 구독
+        CardGameEvents.OnCardClicked += HandleCardClicked;
+        
         InitializeBattle();
         InitializeUI();
         StartGame();
+    }
+
+    void OnDestroy() {
+        // 이벤트 구독 해제
+        CardGameEvents.OnCardClicked -= HandleCardClicked;
     }
 
     /// <summary>
@@ -115,50 +123,38 @@ public class BattleManager : MonoBehaviour {
 
 
     /// <summary>
-    /// 카드 사용 (UI에서 호출)
+    /// 카드 클릭 이벤트 핸들러
     /// </summary>
-    public void PlayCard(int cardId) {
+    private void HandleCardClicked(CardClickedEventData eventData)
+    {
+        Debug.Log($"[BattleManager] 카드 클릭 이벤트 받음: {eventData.card.cardName}");
+        PlayCard(eventData.cardUI);
+    }
 
-
-        // 에너지 체크
-        if (playerData.energy < 0) {
-            return;
-        }
+    /// <summary>
+    /// 카드 사용
+    /// </summary>
+    private void PlayCard(CardUI playedCardUI) {
+        Card playedCard = playedCardUI.card;
+        int playedCardId = playedCard.cardId;
 
         // 에너지 소모
+        playerData.energy -= playedCard.cost;
+        Debug.Log($"\n[플레이어] {playedCard.cardName} 카드 사용! (에너지: {playerData.energy + playedCard.cost} → {playerData.energy})");
 
+        // 카드 효과 실행
+        playedCard.Play(this);
 
-        // 카드 사용
-        Debug.Log($"\n[플레이어] {cardId} 카드 사용!");
-        
-
-
-
-        // 현재 턴 카드 사용 횟수 전달
-        // card.Play(playerData, monster, battleContext.cardsPlayedThisTurn);
-
-        // 턴 상태 업데이트
-        // battleContext.cardsPlayedThisTurn++;
-        // battleContext.cardsPlayedThisTurnList.Add(card);
-
-
-
-
-
-        // 손패에서 제거 -> 버리기 더미로
-        // 버리기 더미에 추가 (UsableDeckManager 이용)
-        
-
-
-
-
-
+        // 손패에서 제거
+        if (handManager != null) {
+            handManager.RemoveCardFromHand(playedCardUI);
+        }
 
         // UI 업데이트
-        UpdateAllUI();
+        // UpdateAllUI();
 
         // 전투 종료 체크
-        CheckBattleEnd();
+        // CheckBattleEnd();
     }
 
     /// <summary>
@@ -186,10 +182,6 @@ public class BattleManager : MonoBehaviour {
         // 플레이어 턴 종료 처리 (방어력 리셋, 에너지 회복)
         playerData.OnTurnEnd();
         playerData.OnTurnStart();
-
-        // UI 손패 클리어
-        if (handManager != null)
-            handManager.ClearHand();
 
         // 적 턴 (간단한 AI)
         monster.EnemyTurn(playerData);
