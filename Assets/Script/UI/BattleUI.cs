@@ -36,20 +36,9 @@ public class BattleUI : MonoBehaviour
     [Header("버튼")]
     [SerializeField] private Button endTurnButton;
     
-    private BattleManager battleManager;
-    
-    /// <summary>
-    /// 초기화
-    /// </summary>
-    public void Initialize(BattleManager manager)
+    void Start()
     {
-        battleManager = manager;
-        
-        // 턴 종료 버튼 이벤트
-        if (endTurnButton != null)
-        {
-            endTurnButton.onClick.AddListener(OnEndTurnClicked);
-        }
+
     }
     
     /// <summary>
@@ -129,9 +118,9 @@ public class BattleUI : MonoBehaviour
     /// </summary>
     private void OnEndTurnClicked()
     {
-        if (battleManager != null)
+        if (BattleManager.Instance != null)
         {
-            battleManager.EndTurn();
+            BattleManager.Instance.EndTurn();
         }
     }
     

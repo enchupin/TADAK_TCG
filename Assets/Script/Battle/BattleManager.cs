@@ -2,9 +2,12 @@ using UnityEngine;
 using System.Collections.Generic;
 
 /// <summary>
-/// 전투 매니저 - UI 통합 버전
+/// 전투 매니저 - UI 통합 버전 (싱글톤)
 /// </summary>
 public class BattleManager : MonoBehaviour {
+
+    // 싱글톤 인스턴스
+    public static BattleManager Instance { get; private set; }
 
     [Header("카드 데이터베이스")]
     public CardDatabase cardDatabase;
@@ -24,6 +27,16 @@ public class BattleManager : MonoBehaviour {
     public int drawCardCount = 6;
 
 
+
+    void Awake() {
+        // 싱글톤 초기화
+        if (Instance == null) {
+            Instance = this;
+        } else {
+            Destroy(gameObject);
+            return;
+        }
+    }
 
     void Start() {
         // 이벤트 구독

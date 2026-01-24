@@ -51,7 +51,6 @@ public class HandManager : MonoBehaviour
             InstantiateCardUI(cardId);
         }
         
-        UpdateLayout();
     }
 
 
@@ -96,7 +95,6 @@ public class HandManager : MonoBehaviour
         // UI 오브젝트 파괴
         Destroy(cardUI.gameObject);
         
-        UpdateLayout();
     }
 
     
@@ -121,15 +119,6 @@ public class HandManager : MonoBehaviour
     }
     
 
-
-    /// <summary>
-    /// 레이아웃 업데이트
-    /// </summary>
-    private void UpdateLayout()
-    {
-        // Horizontal Layout Group이 자동으로 처리
-        // 필요시 수동 배치 로직 추가 가능
-    }
     
     /// <summary>
     /// 손패 카드 수 반환
