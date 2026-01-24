@@ -164,12 +164,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 360046345}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 590.8121, y: 280.03653, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 589.28546, y: 278.99, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1545498653}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &545740004
 GameObject:
@@ -607,6 +607,7 @@ Transform:
   - {fileID: 882557962}
   - {fileID: 1662233724}
   - {fileID: 2081641999}
+  - {fileID: 360046347}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1545498654
@@ -622,6 +623,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleManager
   cardDatabase: {fileID: 1622819081}
+  battleUI: {fileID: 360046346}
   usableDeckManager: {fileID: 882557961}
   handManager: {fileID: 1662233725}
   drawCardCount: 6
@@ -848,6 +850,5 @@ SceneRoots:
   - {fileID: 709190163}
   - {fileID: 1871534452}
   - {fileID: 681918272}
-  - {fileID: 360046347}
   - {fileID: 1622819082}
   - {fileID: 1545498653}
