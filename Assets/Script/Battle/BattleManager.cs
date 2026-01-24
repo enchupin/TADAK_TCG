@@ -12,8 +12,8 @@ public class BattleManager : MonoBehaviour {
     [Header("카드 데이터베이스")]
     public CardDatabase cardDatabase;
 
-    // [Header("UI 시스템")]
-    // public BattleUI battleUI;
+    [Header("UI 시스템")]
+    public BattleUI battleUI;
 
     [Header("전투 데이터")]
     public PlayerData playerData;
@@ -66,6 +66,7 @@ public class BattleManager : MonoBehaviour {
             return;
 
         usableDeckManager.InitializeDeck();
+        UpdateAllUI();
     }
 
     /// <summary>
@@ -162,9 +163,9 @@ public class BattleManager : MonoBehaviour {
         if (handManager != null) {
             handManager.RemoveCardFromHand(playedCardUI);
         }
-
-        // UI 업데이트
-        // UpdateAllUI();
+        
+        
+        UpdateAllUI();
 
         // 전투 종료 체크
         // CheckBattleEnd();
@@ -176,8 +177,8 @@ public class BattleManager : MonoBehaviour {
     public void EndTurn() {
         Debug.Log("\n=== 턴 종료 ===");
 
-        // 손패를 버리기 더미로 (이전 주석 삭제)
-        
+
+        // 손패 비우기
         if (handManager != null && usableDeckManager != null)
         {
              // 현재 손패에 있는 모든 카드를 버리기 더미로 이동
@@ -200,7 +201,7 @@ public class BattleManager : MonoBehaviour {
         monster.EnemyTurn(playerData);
 
         // 새 손패 뽑기
-        DrawCards(5);
+        DrawCards(drawCardCount);
 
         UpdateAllUI();
 
@@ -225,10 +226,7 @@ public class BattleManager : MonoBehaviour {
     /// 모든 UI 업데이트
     /// </summary>
     void UpdateAllUI() {
-
-        // if (battleUI != null) battleUI.UpdateAllUI(playerData, monster);
-
-
+        if (battleUI != null) battleUI.UpdateAllUI();
     }
 
 
