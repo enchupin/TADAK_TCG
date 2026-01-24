@@ -8,7 +8,7 @@ public class DamageEffect : ICardEffect
 {
     public int amount;
     public TargetType target = TargetType.SingleEnemy;
-    
+    /*
     public void Execute(PlayerData player, Monster target)
     {
         switch (this.target)
@@ -22,6 +22,11 @@ public class DamageEffect : ICardEffect
                 break;
         }
     }
+    */
+    public void Execute(BattleManager battleManager) {
+    }
+
+
 }
 
 /// <summary>

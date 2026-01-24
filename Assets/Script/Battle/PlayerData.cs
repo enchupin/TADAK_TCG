@@ -19,18 +19,6 @@ public class PlayerData
     // 버프/디버프
     public int strength; // 힘 버프
 
-    /// <summary>
-    /// PlayerData 생성자
-    /// </summary>
-    public PlayerData(int maxHP, int maxEnergy)
-    {
-        this.maxHP = maxHP;
-        this.hp = maxHP;
-        this.maxEnergy = maxEnergy;
-        this.energy = maxEnergy;
-        this.defense = 0;
-        this.strength = 0;
-    }
 
     /// <summary>
     /// 방어력을 추가합니다.

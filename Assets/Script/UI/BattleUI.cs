@@ -1,3 +1,4 @@
+using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -36,27 +37,16 @@ public class BattleUI : MonoBehaviour
     [Header("버튼")]
     [SerializeField] private Button endTurnButton;
     
-    private BattleManager battleManager;
-    
-    /// <summary>
-    /// 초기화
-    /// </summary>
-    public void Initialize(BattleManager manager)
-    {
-        battleManager = manager;
-        
-        // 턴 종료 버튼 이벤트
-        if (endTurnButton != null)
-        {
-            endTurnButton.onClick.AddListener(OnEndTurnClicked);
-        }
-    }
-    
+
+
     /// <summary>
     /// 플레이어 HP 업데이트
     /// </summary>
-    public void UpdatePlayerHP(int current, int max)
+    public void UpdatePlayerHP()
     {
+        if (BattleManager.Instance == null) return;
+        int current = BattleManager.Instance.playerData.hp;
+        int max = BattleManager.Instance.playerData.maxHP;
         if (playerHPSlider != null)
         {
             playerHPSlider.maxValue = max;
@@ -72,8 +62,11 @@ public class BattleUI : MonoBehaviour
     /// <summary>
     /// 적 HP 업데이트
     /// </summary>
-    public void UpdateEnemyHP(int current, int max)
+    public void UpdateEnemyHP()
     {
+        if (BattleManager.Instance == null) return;
+        int current = BattleManager.Instance.monster.hp;
+        int max = BattleManager.Instance.monster.maxHP;
         if (enemyHPSlider != null)
         {
             enemyHPSlider.maxValue = max;
@@ -89,8 +82,11 @@ public class BattleUI : MonoBehaviour
     /// <summary>
     /// 에너지 업데이트
     /// </summary>
-    public void UpdateEnergy(int current, int max)
+    public void UpdateEnergy()
     {
+        if (BattleManager.Instance == null) return;
+        int current = BattleManager.Instance.playerData.energy;
+        int max = BattleManager.Instance.playerData.maxEnergy;
         if (playerEnergyText != null)
         {
             string energyDisplay = "";
@@ -105,8 +101,10 @@ public class BattleUI : MonoBehaviour
     /// <summary>
     /// 플레이어 방어력 업데이트
     /// </summary>
-    public void UpdatePlayerDefense(int defense)
+    public void UpdatePlayerDefense()
     {
+        if (BattleManager.Instance == null) return;
+        int defense = BattleManager.Instance.playerData.defense;
         if (playerDefenseText != null)
         {
             playerDefenseText.text = defense > 0 ? $"🛡 {defense}" : "";
@@ -116,8 +114,10 @@ public class BattleUI : MonoBehaviour
     /// <summary>
     /// 적 방어력 업데이트
     /// </summary>
-    public void UpdateEnemyDefense(int defense)
+    public void UpdateEnemyDefense()
     {
+        if (BattleManager.Instance == null) return;
+        int defense = BattleManager.Instance.monster.defense;
         if (enemyDefenseText != null)
         {
             enemyDefenseText.text = defense > 0 ? $"🛡 {defense}" : "";
@@ -129,21 +129,19 @@ public class BattleUI : MonoBehaviour
     /// </summary>
     private void OnEndTurnClicked()
     {
-        if (battleManager != null)
-        {
-            battleManager.EndTurn();
-        }
+        if (BattleManager.Instance == null) return;
+        BattleManager.Instance.EndTurn();
     }
     
     /// <summary>
     /// 모든 UI 업데이트
     /// </summary>
-    public void UpdateAllUI(BattleContext context)
+    public void UpdateAllUI()
     {
-        UpdatePlayerHP(context.playerData.hp, context.playerData.maxHP);
-        UpdateEnemyHP(context.monster.hp, context.monster.maxHP);
-        UpdateEnergy(context.playerData.energy, context.playerData.maxEnergy);
-        UpdatePlayerDefense(context.playerData.defense);
-        UpdateEnemyDefense(context.monster.defense);
+        UpdatePlayerHP();
+        UpdateEnemyHP();
+        UpdateEnergy();
+        UpdatePlayerDefense();
+        UpdateEnemyDefense();
     }
 }

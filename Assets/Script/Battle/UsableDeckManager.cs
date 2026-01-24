@@ -6,39 +6,27 @@ using UnityEngine;
 /// </summary>
 public class UsableDeckManager : MonoBehaviour
 {
-    public static UsableDeckManager Instance { get; private set; }
     public Queue<int> usableDeck;
+    public List<int> discardPile = new List<int>(); // 버린 카드 더미
 
-    private void Awake()
+
+    /// <summary>
+    /// 버리기 더미에 카드 추가
+    /// </summary>
+    public void AddToDiscard(int cardId)
     {
-        Initialize();
+        discardPile.Add(cardId);
+    }
+
+    /// <summary>
+    /// 버리기 더미에 카드 리스트 추가
+    /// </summary>
+    public void AddToDiscard(List<int> cardIds)
+    {
+        discardPile.AddRange(cardIds);
     }
 
 
-    // 싱글톤 패턴
-    private void Singleton() {
-        if (Instance == null) {
-            Instance = this;
-        } else {
-            Destroy(gameObject);
-            return;
-        }
-    }
-
-
-    private void Initialize() {
-        // 싱글톤
-        Singleton();
-
-        // usableDeck 초기화
-        if (usableDeck == null) usableDeck = new Queue<int>();
-
-        // 저장 덱 불러오기
-        InitializeDeck();
-        
-
-
-    }
 
 
 
@@ -120,20 +108,21 @@ public class UsableDeckManager : MonoBehaviour
     /// 선택된 캐릭터의 저장 덱 불러오기
     /// </summary>
     public void InitializeDeck() {
-        // UsableDeckManager 체크
-        if (UsableDeckManager.Instance == null) {
-            Debug.LogError("UsableDeckManager를 찾을 수 없습니다!");
-            return;
-        }
 
         // usableDeck 초기화
-        UsableDeckManager.Instance.usableDeck = new Queue<int>();
+        usableDeck = new Queue<int>();
 
         // 선택된 캐릭터가 없는 경우 체크
         if (SelectedButtonControl.selectedCharacterList == null ||
             SelectedButtonControl.selectedCharacterList.Count != 3) {
             Debug.LogWarning("캐릭터 선택이 잘못되었습니다! (3개의 캐릭터를 선택해야 합니다)");
-            return;
+
+            // 테스트 용, 직업을 선택하지 않았다면 자동 추가
+            SelectedButtonControl.selectedCharacterList.Clear();
+            SelectedButtonControl.selectedCharacterList.Add(Character.Warrior);
+            SelectedButtonControl.selectedCharacterList.Add(Character.Archer);
+            SelectedButtonControl.selectedCharacterList.Add(Character.Knight);
+
         }
 
         // 선택된 각 캐릭터의 카드를 가져와서 usableDeck에 추가
@@ -144,7 +133,7 @@ public class UsableDeckManager : MonoBehaviour
             if (characterCards != null && characterCards.Count > 0) {
                 // Queue에 카드 추가 (Enqueue 사용)
                 foreach (int card in characterCards) {
-                    UsableDeckManager.Instance.usableDeck.Enqueue(card);
+                    usableDeck.Enqueue(card);
                 }
                 Debug.Log($"{character} 직업의 카드 {characterCards.Count}장을 덱에 추가했습니다.");
             } else {
@@ -153,7 +142,7 @@ public class UsableDeckManager : MonoBehaviour
             }
         }
 
-        Debug.Log($"총 {UsableDeckManager.Instance.usableDeck.Count}장의 카드로 덱을 초기화했습니다.");
+        Debug.Log($"총 {usableDeck.Count}장의 카드로 덱을 초기화했습니다.");
     }
 
 }

@@ -6,7 +6,12 @@ public interface ICardEffect
     /// <summary>
     /// 효과를 실행합니다.
     /// </summary>
-    /// <param name="player">플레이어 데이터</param>
-    /// <param name="target">타겟 몬스터</param>
-    void Execute(PlayerData player, Monster target);
+    void Execute(BattleManager battlemanager);
+
+
+    void Execute(BattleManager battlemanager, int amount) {
+        Execute(battlemanager);
+    }
+
+
 }

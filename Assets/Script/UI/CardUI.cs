@@ -20,47 +20,50 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     [Header("설정")]
     [SerializeField] private Color normalColor = Color.white;
     [SerializeField] private Color unplayableColor = Color.gray;
+
+
+
+
     
-    private Card cardData;
-    private BattleManager battleManager;
+    public Card card;
     private bool isPlayable = true;
-    
+
+
+
     /// <summary>
-    /// 카드 데이터로 UI 초기화
+    /// 카드가 생성될 때 호출
     /// </summary>
-    public void Initialize(Card card, BattleManager manager)
-    {
-        cardData = card;
-        battleManager = manager;
-        
+    public void InitializeCardUI(int cardId) {
+        card = CardDatabase.Instance.GetCardById(cardId);
         UpdateDisplay();
     }
-    
+
+
     /// <summary>
     /// UI 업데이트
     /// </summary>
     public void UpdateDisplay()
     {
-        if (cardData == null) return;
+        if (card == null) return;
         
         // 텍스트 업데이트
         if (cardNameText != null)
-            cardNameText.text = cardData.cardName;
+            cardNameText.text = card.cardName;
         
         if (costText != null)
-            costText.text = cardData.cost.ToString();
+            costText.text = card.cost.ToString();
         
         if (descriptionText != null)
             descriptionText.text = GetCardDescription();
         
         // 카드 이미지 (나중에 Addressables로 로드)
-        if (cardArtwork != null && cardData.artwork != null)
-            cardArtwork.sprite = cardData.artwork;
+        if (cardArtwork != null && card.artwork != null)
+            cardArtwork.sprite = card.artwork;
         
         // 레어도에 따른 카드 배경색 설정
         if (backgroundImage != null)
         {
-            Color rarityColor = GetRarityColor(cardData.rarity);
+            Color rarityColor = GetRarityColor(card.rarity);
             backgroundImage.color = rarityColor;
             normalColor = rarityColor;  // 정상 색상도 업데이트
         }
@@ -73,7 +76,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     {
         string description = "";
         
-        foreach (var effect in cardData.effects)
+        foreach (var effect in card.effects)
         {
             if (effect is DamageEffect dmg)
             {
@@ -98,7 +101,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         }
         
         // 레어도 추가
-        description += $"\n{GetRarityText(cardData.rarity)}";
+        description += $"\n{GetRarityText(card.rarity)}";
         
         return description.TrimEnd();
     }
@@ -153,23 +156,25 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     // 호버 효과는 UIHoverEffect 컴포넌트가 담당
     
     /// <summary>
-    /// 클릭 시
+    /// 클릭 시 - 이벤트 발행
     /// </summary>
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log($"[CardUI] 클릭됨: {cardData?.cardName ?? "null"} (Playable: {isPlayable}, Manager: {battleManager != null})");
-        
-        if (isPlayable && battleManager != null && cardData != null)
-        {
-            battleManager.PlayCard(cardData);
+        if (card == null) {
+            Debug.LogWarning("[CardUI] 카드가 null입니다!");
+            return;
         }
-    }
-    
-    /// <summary>
-    /// 카드 데이터 반환
-    /// </summary>
-    public Card GetCard()
-    {
-        return cardData;
+
+        if (!isPlayable) {
+            Debug.Log($"[CardUI] {card.cardName} - 사용 불가능");
+            return;
+        }
+
+        Debug.Log($"[CardUI] {card.cardName} 클릭 - 이벤트 발행");
+        
+        // CardUI 데이터 전달 (자기 자신을 BattleManager에 전달)
+        CardClickedEventData cardClickData = new CardClickedEventData(this);
+        // 이벤트 발행 (BattleManager가 구독하여 처리)
+        CardGameEvents.RaiseCardClicked(cardClickData);
     }
 }

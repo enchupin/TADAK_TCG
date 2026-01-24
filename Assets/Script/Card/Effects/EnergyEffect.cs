@@ -8,8 +8,8 @@ public class EnergyEffect : ICardEffect
 {
     public int amount;
     
-    public void Execute(PlayerData player, Monster target)
+    public void Execute(BattleManager battleManager)
     {
-        player.AddEnergy(amount);
+        battleManager.playerData.AddEnergy(amount);
     }
 }

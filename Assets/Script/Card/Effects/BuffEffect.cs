@@ -9,7 +9,7 @@ public class BuffEffect : ICardEffect
     public string stat; // "Strength", "Dexterity" 등
     public int amount;
     public int duration; // 나중에 턴 기반 버프 구현 시 사용
-    
+    /*
     public void Execute(PlayerData player, Monster target)
     {
         switch (stat.ToLower())
@@ -24,4 +24,11 @@ public class BuffEffect : ICardEffect
                 break;
         }
     }
+    */
+
+
+
+    public void Execute(BattleManager battleManager) {
+    }
+
 }

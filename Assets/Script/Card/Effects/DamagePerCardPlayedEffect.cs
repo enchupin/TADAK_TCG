@@ -9,16 +9,27 @@ public class DamagePerCardPlayedEffect : ICardEffect
 {
     public int baseDamage;
     public int bonusPerCard;
-    
-    // 턴 정보를 저장하기 위한 필드 (BattleContext에서 설정)
-    [System.NonSerialized]
-    public int cardsPlayedThisTurn = 0;
-    
-    public void Execute(PlayerData player, Monster target)
+    /*
+    public void Execute(PlayerData player, Monster target, int cardsPlayedThisTurn = 0)
     {
         int totalDamage = baseDamage + (bonusPerCard * cardsPlayedThisTurn);
         target.TakeDamage(totalDamage, player.strength);
         
         Debug.Log($"연계 공격! 기본 {baseDamage} + ({bonusPerCard} x {cardsPlayedThisTurn}) = {totalDamage}");
     }
+
+    // 인자를 2개만 전달받았다면 기본적으로 0으로 처리
+    public void Execute(PlayerData player, Monster target) {
+        int cardsPlayedThisTurn = 0;
+        int totalDamage = baseDamage + (bonusPerCard * cardsPlayedThisTurn);
+        target.TakeDamage(totalDamage, player.strength);
+
+        Debug.Log($"연계 공격! 기본 {baseDamage} + ({bonusPerCard} x {cardsPlayedThisTurn}) = {totalDamage}");
+    }
+    */
+
+
+    public void Execute(BattleManager battleManager) {
+    }
+
 }

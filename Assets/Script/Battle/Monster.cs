@@ -16,16 +16,21 @@ public class Monster
     public string name;
     public int attackPower; // 기본 공격력
 
+
+    
+
+
+
     /// <summary>
-    /// Monster 생성자
+    /// 플레이어를 공격합니다.
     /// </summary>
-    public Monster(string name, int maxHP, int attackPower = 10)
+    public void EnemyTurn(PlayerData target)
     {
-        this.name = name;
-        this.maxHP = maxHP;
-        this.hp = maxHP;
-        this.attackPower = attackPower;
-        this.defense = 0;
+        // 간단한 AI: 랜덤 데미지 (나중에 패턴 추가 가능)
+        int damage = Random.Range(attackPower - 2, attackPower + 3); // 공격력 오차 범위 적용
+        
+        Debug.Log($"[적] {name} 공격! {damage} 데미지!");
+        target.TakeDamage(damage);
     }
 
     /// <summary>
