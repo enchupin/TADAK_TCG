@@ -91,23 +91,56 @@ public class SaveDeck : MonoBehaviour
     }
     
     private static void LoadDefaultCards() {
-        if (CardDatabase.Instance == null) {
-            Debug.LogError("CardDatabase가 초기화되지 않았습니다. 데이터를 로드할 수 없습니다.");
+        Debug.Log("[SaveDeck] choleCards.json 기반 덱 초기화 중...");
+        
+        // choleCards.json 로드
+        TextAsset jsonFile = Resources.Load<TextAsset>("JsonData/choleCards");
+        
+        if (jsonFile == null)
+        {
+            Debug.LogError("[SaveDeck] choleCards.json 파일을 찾을 수 없습니다!");
             return;
         }
-
-        if (CardDatabase.Instance.allCards.Count == 0) {
-            Debug.LogWarning("CardDatabase에 로드된 카드가 없습니다. JSON(Legacy) 또는 Collection을 확인하세요.");
-            // CardDatabase가 아직 로드 안되었을 수도 있음. 강제 로드 시도?
-            // CardDatabase.Instance.LoadCardsFromCollection(); // Public access needed?
+        
+        // JSON 파싱
+        CardDataList cardDataList = JsonUtility.FromJson<CardDataList>(jsonFile.text);
+        
+        if (cardDataList == null || cardDataList.cards == null)
+        {
+            Debug.LogError("[SaveDeck] JSON 파싱 실패!");
+            return;
         }
         
-        foreach (Card card in CardDatabase.Instance.allCards) {
-            // 기본 카드는 3장씩 지급
-            AddCardStatic(card.character, card.cardId, 3);
+        Debug.Log($"[SaveDeck] {cardDataList.cards.Count}장의 카드 발견");
+        
+        int totalCardsAdded = 0;
+        
+        // 각 카드를 characterId로 분류하여 저장
+        foreach (var cardData in cardDataList.cards)
+        {
+            // characterId → Character enum 변환
+            Character character = CardJsonData.GetCharacterFromId(cardData.characterId);
+            
+            // 각 캐릭터에게 카드 3장씩 지급
+            AddCardStatic(character, cardData.cardId, 3);
+            totalCardsAdded += 3;
         }
         
-        Debug.Log("기본 덱 생성 완료 (from CardDatabase)");
+        Debug.Log($"[SaveDeck] 덱 초기화 완료! 총 {totalCardsAdded}장 추가");
+        
+        // 캐릭터별 카드 수 로그
+        foreach (Character character in System.Enum.GetValues(typeof(Character)))
+        {
+            if (decksByCharacter.ContainsKey(character))
+            {
+                int cardCount = 0;
+                foreach (var count in decksByCharacter[character].Values)
+                {
+                    cardCount += count;
+                }
+                Debug.Log($"[SaveDeck] {character}: {cardCount}장");
+            }
+        }
     }
     
     // (Rest of the class methods need to check initialization if they access decksByCharacter directly? 
