@@ -72,6 +72,7 @@ public class SaveDeck : MonoBehaviour
             decksByCharacter[character][cardId] = quantity;
         }
     }
+    //test
 
     // 저장된 카드가 없을 경우 임시 카드 데이터 로드
     private static void LoadDefaultDeckIfNeeded() {
