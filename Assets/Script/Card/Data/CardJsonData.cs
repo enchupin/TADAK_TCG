@@ -24,6 +24,22 @@ public class CardJsonData
     public List<int> enforce;
     public AddressablesData addressables;
     public List<EffectJsonData> effects;
+    
+    /// <summary>
+    /// characterId를 Character enum으로 변환
+    /// </summary>
+    public static Character GetCharacterFromId(int characterId)
+    {
+        switch (characterId)
+        {
+            case 101: return Character.Warrior;
+            case 102: return Character.Archer;
+            case 103: return Character.Knight;
+            default:
+                UnityEngine.Debug.LogWarning($"Unknown characterId: {characterId}, defaulting to Warrior");
+                return Character.Warrior;
+        }
+    }
 }
 
 [Serializable]

@@ -32,11 +32,25 @@ public class AddressablesAutoSetup
         foreach (string guid in cardGuids)
         {
             string path = AssetDatabase.GUIDToAssetPath(guid);
+            CardData cardData = AssetDatabase.LoadAssetAtPath<CardData>(path);
+            
             var entry = settings.CreateOrMoveEntry(guid, settings.DefaultGroup);
             
-            // 주소 설정: "Cards/CARD_001_화염구"
+            // 주소 설정: "Cards/CARD_101010"
             string fileName = System.IO.Path.GetFileNameWithoutExtension(path);
-            entry.address = $"Cards/{fileName}";
+            
+            // 파일명에서 cardId 추출 (예: "101012_몸에 좋은 약" → "101012")
+            string cardId = fileName.Split('_')[0];
+            entry.address = $"Cards/CARD_{cardId}";
+            
+            // Labels 추가: 캐릭터별 필터링용
+            string characterLabel = cardData.character.ToString();
+            if (!entry.labels.Contains(characterLabel))
+            {
+                entry.labels.Add(characterLabel);
+            }
+            
+            Debug.Log($"등록: {entry.address}, Label: {characterLabel}");
             
             cardCount++;
         }

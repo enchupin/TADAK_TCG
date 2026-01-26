@@ -34,7 +34,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     /// 카드가 생성될 때 호출
     /// </summary>
     public void InitializeCardUI(int cardId) {
-        card = CardDatabase.Instance.GetCardById(cardId);
+        card = BattleManager.Instance.GetCardById(cardId);
         UpdateDisplay();
     }
 

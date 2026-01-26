@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 /// <summary>
 /// 현재 사용 가능한 덱을 관리하는 매니저
@@ -117,25 +118,29 @@ public class UsableDeckManager : MonoBehaviour
             SelectedButtonControl.selectedCharacterList.Count != 3) {
             Debug.LogWarning("캐릭터 선택이 잘못되었습니다! (3개의 캐릭터를 선택해야 합니다)");
 
-            // 테스트 용, 직업을 선택하지 않았다면 자동 추가
+            // 테스트 용: choleCards.json에 Warrior(101) 카드만 있으므로 Warrior만 사용
             SelectedButtonControl.selectedCharacterList.Clear();
             SelectedButtonControl.selectedCharacterList.Add(Character.Warrior);
-            SelectedButtonControl.selectedCharacterList.Add(Character.Archer);
-            SelectedButtonControl.selectedCharacterList.Add(Character.Knight);
+            SelectedButtonControl.selectedCharacterList.Add(Character.Warrior);
+            SelectedButtonControl.selectedCharacterList.Add(Character.Warrior);
 
         }
 
         // 선택된 각 캐릭터의 카드를 가져와서 usableDeck에 추가
         foreach (Character character in SelectedButtonControl.selectedCharacterList) {
-            // 추후 데이터 베이스 연결하는 방식으로 변경 필요
-            List<int> characterCards = SaveDeck.GetCards(character);
+            // BattleManager에서 로드된 카드 중 해당 캐릭터 카드만 필터링
+            var characterCards = BattleManager.Instance.loadedCards.Values
+                .Where(cardData => cardData.character == character)
+                .ToList();
 
             if (characterCards != null && characterCards.Count > 0) {
-                // Queue에 카드 추가 (Enqueue 사용)
-                foreach (int card in characterCards) {
-                    usableDeck.Enqueue(card);
+                // Queue에 카드 추가 (각 카드 3장씩)
+                foreach (var cardData in characterCards) {
+                    for (int i = 0; i < 3; i++) {
+                        usableDeck.Enqueue(cardData.cardId);
+                    }
                 }
-                Debug.Log($"{character} 직업의 카드 {characterCards.Count}장을 덱에 추가했습니다.");
+                Debug.Log($"{character} 직업의 카드 {characterCards.Count * 3}장을 덱에 추가했습니다.");
             } else {
                 // 예외 처리
                 Debug.LogWarning($"{character} 직업의 카드가 없습니다!");

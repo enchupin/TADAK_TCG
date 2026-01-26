@@ -1,5 +1,9 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using System.Threading.Tasks;
+using System.Linq;
 
 /// <summary>
 /// 전투 매니저 - UI 통합 버전 (싱글톤)
@@ -9,8 +13,8 @@ public class BattleManager : MonoBehaviour {
     // 싱글톤 인스턴스
     public static BattleManager Instance { get; private set; }
 
-    [Header("카드 데이터베이스")]
-    public CardDatabase cardDatabase;
+    [Header("카드 데이터")]
+    public Dictionary<int, CardData> loadedCards = new Dictionary<int, CardData>();  // 플레이어 덱만 로드
 
     [Header("UI 시스템")]
     public BattleUI battleUI;
@@ -38,9 +42,15 @@ public class BattleManager : MonoBehaviour {
         }
     }
 
-    void Start() {
+    async void Start() {
         // 이벤트 구독
         CardGameEvents.OnCardClicked += HandleCardClicked;
+        
+        // 캐릭터 선택 초기화
+        InitializeCharacterSelection();
+        
+        // 플레이어 덱 카드만 로드 (Addressables Labels 사용)
+        await LoadPlayerDeck();
         
         InitializeBattle();
         InitializeUI();
@@ -50,6 +60,33 @@ public class BattleManager : MonoBehaviour {
     void OnDestroy() {
         // 이벤트 구독 해제
         CardGameEvents.OnCardClicked -= HandleCardClicked;
+    }
+    
+    /// <summary>
+    /// 캐릭터 선택 초기화
+    /// </summary>
+    void InitializeCharacterSelection()
+    {
+        // 선택된 캐릭터가 없으면 기본값 설정
+        if (SelectedButtonControl.selectedCharacterList == null ||
+            SelectedButtonControl.selectedCharacterList.Count != 3)
+        {
+            Debug.LogWarning("[BattleManager] 캐릭터 선택이 없습니다. 기본값으로 설정합니다.");
+            
+            if (SelectedButtonControl.selectedCharacterList == null)
+            {
+                SelectedButtonControl.selectedCharacterList = new System.Collections.Generic.List<Character>();
+            }
+            
+            SelectedButtonControl.selectedCharacterList.Clear();
+            
+            // 테스트용: Warrior만 사용 (choleCards.json에 Warrior 카드만 있음)
+            SelectedButtonControl.selectedCharacterList.Add(Character.Warrior);
+            SelectedButtonControl.selectedCharacterList.Add(Character.Warrior);
+            SelectedButtonControl.selectedCharacterList.Add(Character.Warrior);
+            
+            Debug.Log($"[BattleManager] 기본 캐릭터 설정 완료: {SelectedButtonControl.selectedCharacterList.Count}명");
+        }
     }
 
     /// <summary>
@@ -62,8 +99,11 @@ public class BattleManager : MonoBehaviour {
         // 임시 호출
         monster = new Monster();
 
-        if (cardDatabase == null)
+        if (loadedCards == null || loadedCards.Count == 0)
+        {
+            Debug.LogError("카드가 로드되지 않았습니다!");
             return;
+        }
 
         usableDeckManager.InitializeDeck();
         UpdateAllUI();
@@ -85,6 +125,62 @@ public class BattleManager : MonoBehaviour {
 
     }
 
+    /// <summary>
+    /// 플레이어 덱 카드만 Addressables Labels로 로드
+    /// </summary>
+    async Task LoadPlayerDeck()
+    {
+        Debug.Log("[BattleManager] 플레이어 덱 로딩 중...");
+        
+        loadedCards.Clear();
+        int totalLoaded = 0;
+        
+        // 선택된 캐릭터별로 로드
+        foreach (Character character in SelectedButtonControl.selectedCharacterList)
+        {
+            Debug.Log($"[BattleManager] {character} 카드 로딩 중...");
+            
+            try
+            {
+                // Addressables Label로 필터링하여 로드
+                var handle = Addressables.LoadAssetsAsync<CardData>(
+                    character.ToString(),  // "Warrior", "Archer", "Knight"
+                    (CardData card) => {
+                        // 중복 방지
+                        if (!loadedCards.ContainsKey(card.cardId))
+                        {
+                            loadedCards[card.cardId] = card;
+                            totalLoaded++;
+                        }
+                    }
+                );
+                
+                await handle.Task;
+                
+                Debug.Log($"[BattleManager] {character}: {handle.Result.Count}장 로드 완료");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[BattleManager] {character} 카드 로드 실패: {e.Message}");
+            }
+        }
+        
+        Debug.Log($"[BattleManager] 카드 로드 완료! 총 {totalLoaded}장 (중복 제거 후: {loadedCards.Count}장)");
+    }
+
+    /// <summary>
+    /// 카드 ID로 Card 객체 가져오기
+    /// </summary>
+    public Card GetCardById(int cardId)
+    {
+        if (loadedCards.ContainsKey(cardId))
+        {
+            return loadedCards[cardId].ToCard();
+        }
+        
+        Debug.LogError($"[BattleManager] 카드 ID {cardId}가 로드되지 않았습니다!");
+        return null;
+    }
 
 
 
@@ -92,8 +188,8 @@ public class BattleManager : MonoBehaviour {
     /// 게임 시작 (UI 모드)
     /// </summary>
     void StartGame() {
-        if (cardDatabase == null || cardDatabase.allCards.Count == 0) {
-            Debug.LogError("CardDatabase가 없거나 카드가 로드되지 않았습니다!");
+        if (loadedCards == null || loadedCards.Count == 0) {
+            Debug.LogError("카드가 로드되지 않았습니다!");
             return;
         }
         if (usableDeckManager == null) {
@@ -236,23 +332,23 @@ public class BattleManager : MonoBehaviour {
     // ========== 테스트 모드 (기존 코드) ==========
     /*
     void TestCards() {
-        if (cardDatabase == null || cardDatabase.allCards.Count == 0) {
-            Debug.LogError("CardDatabase가 없거나 카드가 로드되지 않았습니다!");
+        if (cardCollection == null || cardCollection.allCards.Count == 0) {
+            Debug.LogError("CardCollection이 없거나 카드가 로드되지 않았습니다!");
             return;
         }
 
         Debug.Log("\n=== 카드 테스트 시작 ===\n");
 
-        Card fireball = cardDatabase.GetCardById(101010);
+        Card fireball = GetCardById(101010);
         if (fireball != null) {
             Debug.Log($"\n--- {fireball.cardName} 사용 ---");
-            fireball.Play(playerData, monster, 0);
+            fireball.Play(this);
         }
 
-        Card shield = cardDatabase.GetCardById(101020);
+        Card shield = GetCardById(101020);
         if (shield != null) {
             Debug.Log($"\n--- {shield.cardName} 사용 ---");
-            shield.Play(playerData, monster, 0);
+            shield.Play(this);
         }
 
         Debug.Log("\n=== 카드 테스트 완료 ===");
