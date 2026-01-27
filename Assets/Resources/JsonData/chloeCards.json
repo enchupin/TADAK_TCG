@@ -41,7 +41,7 @@
         },
         {
             "cardId": 101030,
-            "name": "우당탕탕",
+            "name": "실험 재료 준비",
             "characterId": 101,
             "cost": 1,
             "description": "카드를 1장 뽑고, 손의 카드 1장을 선택해 보존을 1 부여합니다.",
@@ -75,26 +75,14 @@
         },
         {
             "cardId": 101031,
-            "name": "우당탕탕",
+            "name": "실험 재료 준비 +",
             "characterId": 101,
             "cost": 0,
-            "keywords": [
-                "보존"
-            ],
-            "description": "카드를 1장 뽑습니다. 보존: 손에 든 카드 1장을 선택해 보존을 1 부여합니다.",
+            "description": "카드를 1장 뽑습니다.",
             "effects": [
                 {
                     "type": "Draw",
                     "amount": 1
-                },
-                {
-                    "type": "ChoiceHand",
-                    "amount": 1,
-                    "effect": {
-                        "type": "Keyword",
-                        "keyword": "보존",
-                        "amount": 1
-                    }
                 }
             ],
             "addressables": {
@@ -105,7 +93,7 @@
         },
         {
             "cardId": 101032,
-            "name": "우당탕탕 +",
+            "name": "실험 재료 준비 +",
             "characterId": 101,
             "cost": 1,
             "description": "카드를 2장 뽑고, 손의 카드 1장을 선택해 보존을 2 부여합니다.",
@@ -120,7 +108,7 @@
                     "effect": {
                         "type": "Keyword",
                         "keyword": "보존",
-                        "amount": 1
+                        "amount": 2
                     }
                 }
             ],
@@ -132,23 +120,17 @@
         },
         {
             "cardId": 101033,
-            "name": "우당탕탕 +",
+            "name": "실험 재료 준비 +",
             "characterId": 101,
             "cost": 1,
-            "keywords": [
-                "파워"
-            ],
-            "description": "카드를 2장 뽑습니다. 매 턴 시작 시 카드를 1장 더 뽑습니다.",
+            "description": "버린 카드 더미에서 카드를 1장 선택해 손으로 가져옵니다.",
             "effects": [
                 {
-                    "type": "Draw",
-                    "amount": 2
-                },
-                {
-                    "type": "Buff",
-                    "buffType": "드로우 강화",
+                    "type": "ChoiceDiscard",
                     "amount": 1,
-                    "target": "Self"
+                    "effect": {
+                        "type": "Pickup"
+                    }
                 }
             ],
             "addressables": {
@@ -159,7 +141,7 @@
         },
         {
             "cardId": 101034,
-            "name": "우당탕탕 +",
+            "name": "실험 재료 준비 +",
             "characterId": 101,
             "cost": 1,
             "description": "손에 든 카드 1장을 선택해 보존을 1 부여합니다. 그 카드가 포션일 경우, 모든 적에게 부식을 2 부여합니다.",
@@ -202,20 +184,19 @@
         },
         {
             "cardId": 101035,
-            "name": "우당탕탕 +",
+            "name": "실험 재료 준비 +",
             "characterId": 101,
             "cost": 1,
-            "description": "카드를 1장 뽑고, 손의 카드 1장을 선택해 보존을 1 부여합니다. 그 카드가 포션일 경우, 복제합니다.",
+            "description": "손의 카드 1장을 선택해 보존을 1 부여합니다. 그 카드가 포션일 경우, 복제합니다.",
             "effects": [
                 {
-                    "type": "Draw",
-                    "amount": 1
-                },
-                {
-                    "type": "Keyword",
-                    "keyword": "보존",
-                    "target": "Hand",
-                    "amount": 1
+                    "type": "ChoiceHand",
+                    "amount": 1,
+                    "effect": {
+                        "type": "Keyword",
+                        "keyword": "보존",
+                        "amount": 1
+                    }
                 },
                 {
                     "type": "Conditional",
@@ -270,7 +251,8 @@
                             "cardId": 101056,
                             "weight": 1
                         }
-                    ]
+                    ],
+                    "target": "Hand"
                 }
             ],
             "enforce": [
@@ -313,7 +295,8 @@
                             "cardId": 101056,
                             "weight": 1
                         }
-                    ]
+                    ],
+                    "target": "Hand"
                 }
             ],
             "addressables": {
@@ -337,7 +320,8 @@
                         101052,
                         101054,
                         101056
-                    ]
+                    ],
+                    "target": "Hand"
                 }
             ],
             "addressables": {
@@ -373,7 +357,8 @@
                             "cardId": 101057,
                             "weight": 1
                         }
-                    ]
+                    ],
+                    "target": "Hand"
                 }
             ],
             "addressables": {
@@ -417,7 +402,8 @@
                             "cardId": 101057,
                             "weight": 1
                         }
-                    ]
+                    ],
+                    "target": "Hand"
                 }
             ],
             "addressables": {
@@ -493,7 +479,7 @@
             "keywords": [
                 "보존"
             ],
-            "description": "이번 전투에 사용한 포션의 개수 X 3 만큼 피해를 입힙니다. 보존: 다음 턴 시작 시 무작위 포션 카드를 1장 제작합니다.",
+            "description": "이번 전투에 사용한 포션의 개수 X 3 만큼 피해를 입힙니다. 보존: 비용이 1 감소합니다.",
             "effects": [
                 {
                     "type": "Damage",
@@ -513,10 +499,8 @@
                 {
                     "type": "Keep",
                     "effect": {
-                        "type": "Buff",
-                        "buffType": "포션 제조",
-                        "amount": 1,
-                        "target": "Self"
+                        "type": "Cost",
+                        "amount": -1
                     }
                 }
             ],
@@ -592,21 +576,11 @@
             "keywords": [
                 "파워"
             ],
-            "description": "이번 전투 동안 모든 포션 카드를 강화합니다. 무작위 포션을 1개 생성합니다.",
+            "description": "앞으로 획득하는 모든 포션 카드가 강화됩니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffType": "포션 강화",
-                    "target": "Self"
-                },
-                {
-                    "type": "GenerateCard",
-                    "cardId": [
-                        101081,
-                        101083,
-                        101085,
-                        101087
-                    ],
                     "target": "Self"
                 }
             ],
@@ -640,15 +614,18 @@
         },
         {
             "cardId": 101060,
-            "name": "따끔 열매즙",
+            "name": "실험 폐기물",
             "characterId": 101,
             "cost": 0,
-            "description": "부식을 1 부여합니다.",
+            "keywords": [
+                "소멸"
+            ],
+            "description": "부식을 2 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffType": "부식",
-                    "amount": 1,
+                    "amount": 2,
                     "target": "Self"
                 }
             ],
@@ -667,19 +644,22 @@
         },
         {
             "cardId": 101061,
-            "name": "따끔 열매즙 +",
+            "name": "실험 폐기물 +",
             "characterId": 101,
             "cost": 0,
-            "description": "카드를 1장 뽑습니다. 부식을 1 부여합니다.",
+            "keywords": [
+                "소멸"
+            ],
+            "description": "카드를 2장 뽑습니다. 부식을 2 부여합니다.",
             "effects": [
                 {
                     "type": "Draw",
-                    "amount": 1
+                    "amount": 2
                 },
                 {
                     "type": "Buff",
                     "buffType": "부식",
-                    "amount": 1,
+                    "amount": 2,
                     "target": "Self"
                 }
             ],
@@ -691,26 +671,32 @@
         },
         {
             "cardId": 101062,
-            "name": "따끔 열매즙 +",
+            "name": "실험 폐기물 +",
             "characterId": 101,
             "cost": 0,
-            "description": "부식을 1 부여합니다. 대상이 이미 부식이라면, 대신 적 전체에 부여합니다.",
+            "keywords": [
+                "소멸"
+            ],
+            "description": "부식을 2 부여합니다. 대상이 이미 부식 상태라면, 무작위 포션 카드를 1장 제작합니다.",
             "effects": [
+                {
+                    "type": "Buff",
+                    "buffType": "부식",
+                    "amount": 2,
+                    "target": "Enemy"
+                },
                 {
                     "type": "Conditional",
                     "condition": "hasBuff",
                     "conditionValue": "부식",
                     "effect": {
-                        "type": "Buff",
-                        "buffType": "부식",
-                        "amount": 1,
-                        "target": "AllEnemies"
-                    },
-                    "elseEffect": {
-                        "type": "Buff",
-                        "buffType": "부식",
-                        "amount": 1,
-                        "target": "Enemy"
+                        "type": "CreateCard",
+                        "cardId": [
+                            101080,
+                            101082,
+                            101084,
+                            101086
+                        ]
                     }
                 }
             ],
@@ -722,7 +708,7 @@
         },
         {
             "cardId": 101063,
-            "name": "따끔 열매즙 +",
+            "name": "실험 폐기물 +",
             "characterId": 101,
             "cost": 1,
             "keywords": [
@@ -732,7 +718,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffType": "따끔 열매즙",
+                    "buffType": "실험 폐기물",
                     "amount": 1,
                     "target": "Self"
                 }
@@ -745,7 +731,7 @@
         },
         {
             "cardId": 101064,
-            "name": "따끔 열매즙 +",
+            "name": "실험 폐기물 +",
             "characterId": 101,
             "cost": 0,
             "keywords": [
@@ -768,7 +754,7 @@
         },
         {
             "cardId": 101065,
-            "name": "따끔 열매즙 +",
+            "name": "실험 폐기물 +",
             "characterId": 101,
             "cost": 1,
             "description": "부식을 2 부여합니다. 피해 증폭을 1 얻습니다.",
@@ -800,12 +786,12 @@
             "keywords": [
                 "파워"
             ],
-            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 1 줍니다.",
+            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 2 줍니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffType": "잔혹함",
-                    "amount": 1,
+                    "amount": 2,
                     "target": "Self"
                 }
             ],
@@ -824,12 +810,12 @@
                 "파워",
                 "개시"
             ],
-            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 1 줍니다.",
+            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 2 줍니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffType": "잔혹함",
-                    "amount": 1,
+                    "amount": 2,
                     "target": "Self"
                 }
             ],
@@ -844,29 +830,6 @@
             "name": "생체 실험 +",
             "characterId": 101,
             "cost": 1,
-            "keywords": [
-                "파워"
-            ],
-            "description": "적에게 부정적인 효과를 입힐 때 마다 피해를 1 줍니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffType": "잔혹함",
-                    "amount": 1,
-                    "target": "Self"
-                }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
-        },
-        {
-            "cardId": 101073,
-            "name": "생체 실험 +",
-            "characterId": 101,
-            "cost": 2,
             "keywords": [
                 "파워"
             ],
@@ -886,6 +849,29 @@
             }
         },
         {
+            "cardId": 101073,
+            "name": "생체 실험 +",
+            "characterId": 101,
+            "cost": 2,
+            "keywords": [
+                "파워"
+            ],
+            "description": "적에게 부정적인 효과를 입힐 때 마다 피해를 4 줍니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffType": "잔혹함",
+                    "amount": 4,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
             "cardId": 101074,
             "name": "생체 실험 +",
             "characterId": 101,
@@ -893,12 +879,12 @@
             "keywords": [
                 "파워"
             ],
-            "description": "적에게 부정적인 효과를 입힐 때 마다 모든 적에게 피해를 1 줍니다.",
+            "description": "적에게 부정적인 효과를 입힐 때 마다 모든 적에게 피해를 2 줍니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffType": "광역: 잔혹함",
-                    "amount": 1,
+                    "amount": 2,
                     "target": "Self"
                 }
             ],
@@ -934,18 +920,18 @@
         },
         {
             "cardId": 101080,
-            "name": "아야 포션",
+            "name": "고통 포션",
             "characterId": 101,
             "cost": 0,
             "keywords": [
                 "소멸"
             ],
-            "description": "피해를 4 줍니다.",
+            "description": "피해를 3 줍니다.",
             "effects": [
                 {
                     "type": "Damage",
-                    "amount": 4,
-                    "target": "Self"
+                    "amount": 3,
+                    "target": "Enemy"
                 }
             ],
             "addressables": {
@@ -956,18 +942,18 @@
         },
         {
             "cardId": 101081,
-            "name": "아야 포션 +",
+            "name": "고통 포션 +",
             "characterId": 101,
             "cost": 0,
             "keywords": [
                 "소멸"
             ],
-            "description": "피해를 8 줍니다.",
+            "description": "피해를 6 줍니다.",
             "effects": [
                 {
                     "type": "Damage",
-                    "amount": 8,
-                    "target": "Self"
+                    "amount": 6,
+                    "target": "Enemy"
                 }
             ],
             "addressables": {
@@ -978,7 +964,7 @@
         },
         {
             "cardId": 101082,
-            "name": "쇽쇽 포션",
+            "name": "순환 포션",
             "characterId": 101,
             "cost": 0,
             "keywords": [
@@ -999,7 +985,7 @@
         },
         {
             "cardId": 101083,
-            "name": "쇽쇽 포션",
+            "name": "순환 포션 +",
             "characterId": 101,
             "cost": 0,
             "keywords": [
@@ -1026,11 +1012,10 @@
             "keywords": [
                 "소멸"
             ],
-            "description": "재생을 3 얻습니다.",
+            "description": "체력을 3 회복합니다.",
             "effects": [
                 {
-                    "type": "Buff",
-                    "buffType": "재생",
+                    "type": "Heal",
                     "amount": 3,
                     "target": "Self"
                 }
@@ -1049,12 +1034,11 @@
             "keywords": [
                 "소멸"
             ],
-            "description": "재생을 5 얻습니다.",
+            "description": "체력을 6 회복합니다.",
             "effects": [
                 {
-                    "type": "Buff",
-                    "buffType": "재생",
-                    "amount": 5,
+                    "type": "Heal",
+                    "amount": 6,
                     "target": "Self"
                 }
             ],
