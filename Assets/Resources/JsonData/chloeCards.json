@@ -781,12 +781,12 @@
             "keywords": [
                 "파워"
             ],
-            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 1 줍니다.",
+            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 2 줍니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffType": "잔혹함",
-                    "amount": 1,
+                    "amount": 2,
                     "target": "Self"
                 }
             ],
@@ -805,12 +805,12 @@
                 "파워",
                 "개시"
             ],
-            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 1 줍니다.",
+            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 2 줍니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffType": "잔혹함",
-                    "amount": 1,
+                    "amount": 2,
                     "target": "Self"
                 }
             ],
@@ -825,29 +825,6 @@
             "name": "생체 실험 +",
             "characterId": 101,
             "cost": 1,
-            "keywords": [
-                "파워"
-            ],
-            "description": "적에게 부정적인 효과를 입힐 때 마다 피해를 1 줍니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffType": "잔혹함",
-                    "amount": 1,
-                    "target": "Self"
-                }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
-        },
-        {
-            "cardId": 101073,
-            "name": "생체 실험 +",
-            "characterId": 101,
-            "cost": 2,
             "keywords": [
                 "파워"
             ],
@@ -867,6 +844,29 @@
             }
         },
         {
+            "cardId": 101073,
+            "name": "생체 실험 +",
+            "characterId": 101,
+            "cost": 2,
+            "keywords": [
+                "파워"
+            ],
+            "description": "적에게 부정적인 효과를 입힐 때 마다 피해를 4 줍니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffType": "잔혹함",
+                    "amount": 4,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
             "cardId": 101074,
             "name": "생체 실험 +",
             "characterId": 101,
@@ -874,12 +874,12 @@
             "keywords": [
                 "파워"
             ],
-            "description": "적에게 부정적인 효과를 입힐 때 마다 모든 적에게 피해를 1 줍니다.",
+            "description": "적에게 부정적인 효과를 입힐 때 마다 모든 적에게 피해를 2 줍니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffType": "광역: 잔혹함",
-                    "amount": 1,
+                    "amount": 2,
                     "target": "Self"
                 }
             ],
@@ -915,18 +915,18 @@
         },
         {
             "cardId": 101080,
-            "name": "아야 포션",
+            "name": "고통 포션",
             "characterId": 101,
             "cost": 0,
             "keywords": [
                 "소멸"
             ],
-            "description": "피해를 4 줍니다.",
+            "description": "피해를 3 줍니다.",
             "effects": [
                 {
                     "type": "Damage",
-                    "amount": 4,
-                    "target": "Self"
+                    "amount": 3,
+                    "target": "Enemy"
                 }
             ],
             "addressables": {
@@ -937,18 +937,18 @@
         },
         {
             "cardId": 101081,
-            "name": "아야 포션 +",
+            "name": "고통 포션 +",
             "characterId": 101,
             "cost": 0,
             "keywords": [
                 "소멸"
             ],
-            "description": "피해를 8 줍니다.",
+            "description": "피해를 6 줍니다.",
             "effects": [
                 {
                     "type": "Damage",
-                    "amount": 8,
-                    "target": "Self"
+                    "amount": 6,
+                    "target": "Enemy"
                 }
             ],
             "addressables": {
@@ -959,7 +959,7 @@
         },
         {
             "cardId": 101082,
-            "name": "쇽쇽 포션",
+            "name": "순환 포션",
             "characterId": 101,
             "cost": 0,
             "keywords": [
@@ -980,7 +980,7 @@
         },
         {
             "cardId": 101083,
-            "name": "쇽쇽 포션",
+            "name": "순환 포션 +",
             "characterId": 101,
             "cost": 0,
             "keywords": [
@@ -1007,11 +1007,10 @@
             "keywords": [
                 "소멸"
             ],
-            "description": "재생을 3 얻습니다.",
+            "description": "체력을 3 회복합니다.",
             "effects": [
                 {
-                    "type": "Buff",
-                    "buffType": "재생",
+                    "type": "Heal",
                     "amount": 3,
                     "target": "Self"
                 }
@@ -1030,12 +1029,11 @@
             "keywords": [
                 "소멸"
             ],
-            "description": "재생을 5 얻습니다.",
+            "description": "체력을 6 회복합니다.",
             "effects": [
                 {
-                    "type": "Buff",
-                    "buffType": "재생",
-                    "amount": 5,
+                    "type": "Heal",
+                    "amount": 6,
                     "target": "Self"
                 }
             ],
