@@ -2,15 +2,15 @@
     "cards": [
         {
             "cardId": 301010,
-            "name": "",
+            "name": "무게 증가",
             "characterId": 301,
             "cost": 1,
             "description": "피해를 6 줍니다.",
             "effects": [
                 {
                     "type": "Damage",
-                    "amount": 0,
-                    "target": "Enemy"
+                    "amount": 6,
+                    "target": "SingleEnemy"
                 }
             ],
             "addressables": {

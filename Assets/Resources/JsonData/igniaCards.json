@@ -2,15 +2,15 @@
     "cards": [
         {
             "cardId": 201010,
-            "name": "",
+            "name": "화염탄",
             "characterId": 201,
             "cost": 1,
             "description": "피해를 6 줍니다.",
             "effects": [
                 {
                     "type": "Damage",
-                    "amount": 0,
-                    "target": "Enemy"
+                    "amount": 6,
+                    "target": "SingleEnemy"
                 }
             ],
             "addressables": {
