@@ -1,35 +1,21 @@
 {
     "characters": [
         {
-            "characterId": "101",
+            "characterId": 101,
             "name": "클로이",
             "maxHp": 30,
             "cost": 0,
             "identity": {
                 "cost": 8,
-                "effect": [
-                    {
-                        "type": "Draw",
-                        "amount": 2
-                    },
-                    {
-                        "type": "Conditional",
-                        "condition": "Buff",
-                        "conditionValue": "강화: 부식",
-                        "effect": {
-                            "type": "Buff",
-                            "buffType": "부식",
-                            "amount": 3,
-                            "target": "AllEnemies"
-                        }
-                    },
+                "effects": [
                     {
                         "type": "Buff",
-                        "buffType": "강화: 부식",
-                        "target": "Self"
+                        "buffType": "부식",
+                        "amount": 3,
+                        "target": "AllEnemies"
                     }
                 ],
-                "description": "카드를 2장 뽑습니다. 강화: 부식을 획득합니다. 해당 버프를 이미 보유 중이라면, 대신 모든 적에게 부식을 3 부여합니다."
+                "description": "카드를 2장 뽑습니다. 모든 적에게 부식을 3 부여합니다."
             },
             "addressables": {
                 "artwork": "Characters/Kloe/Art",
@@ -48,7 +34,7 @@
             ]
         },
         {
-            "characterId": "102",
+            "characterId": 102,
             "name": "A",
             "maxHp": 30,
             "cost": 0,
@@ -62,7 +48,7 @@
             "startDeck": []
         },
         {
-            "characterId": "103",
+            "characterId": 103,
             "name": "B",
             "maxHp": 30,
             "cost": 0,
@@ -76,7 +62,7 @@
             "startDeck": []
         },
         {
-            "characterId": "104",
+            "characterId": 104,
             "name": "C",
             "maxHp": 30,
             "cost": 0,
@@ -90,13 +76,13 @@
             "startDeck": []
         },
         {
-            "characterId": "201",
+            "characterId": 201,
             "name": "이그니아",
             "maxHp": 40,
             "cost": 0,
             "identity": {
                 "cost": 5,
-                "effect": [
+                "effects": [
                     {
                         "type": "Buff",
                         "buffType": "공격 강화",
@@ -123,7 +109,7 @@
             ]
         },
         {
-            "characterId": "202",
+            "characterId": 202,
             "name": "E",
             "maxHp": 30,
             "cost": 0,
@@ -137,7 +123,7 @@
             "startDeck": []
         },
         {
-            "characterId": "203",
+            "characterId": 203,
             "name": "F",
             "maxHp": 30,
             "cost": 0,
@@ -151,7 +137,7 @@
             "startDeck": []
         },
         {
-            "characterId": "204",
+            "characterId": 204,
             "name": "G",
             "maxHp": 30,
             "cost": 0,
@@ -165,13 +151,13 @@
             "startDeck": []
         },
         {
-            "characterId": "301",
+            "characterId": 301,
             "name": "데클란",
             "maxHp": 80,
             "cost": 0,
             "identity": {
                 "cost": 3,
-                "effect": [
+                "effects": [
                     {
                         "type": "GenerateCard",
                         "cardId": 301080,
@@ -190,7 +176,7 @@
             "startDeck": []
         },
         {
-            "characterId": "302",
+            "characterId": 302,
             "name": "I",
             "maxHp": 30,
             "cost": 0,
@@ -204,7 +190,7 @@
             "startDeck": []
         },
         {
-            "characterId": "303",
+            "characterId": 303,
             "name": "J",
             "maxHp": 30,
             "cost": 0,
@@ -218,7 +204,7 @@
             "startDeck": []
         },
         {
-            "characterId": "304",
+            "characterId": 304,
             "name": "K",
             "maxHp": 30,
             "cost": 0,

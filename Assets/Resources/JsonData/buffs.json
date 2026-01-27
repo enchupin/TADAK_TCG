@@ -105,7 +105,7 @@
                 "effect": {
                     "type": "Damage",
                     "amount": "value",
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             },
             "description": "적에게 부정적인 효과를 입힐 때마다 피해를 {value} 줍니다."
@@ -134,13 +134,13 @@
             "effects": {
                 "timing": "Buff",
                 "type": "Conditional",
-                "condition": "buffType",
-                "conditionValue": "부식",
+                "condition": "buffId",
+                "conditionValue": 201,
                 "effect": {
                     "type": "Buff",
                     "buffType": "강화된 부식",
                     "amount": "value",
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             },
             "description": "부식을 부여할 때 대신 강화된 부식을 부여합니다."
@@ -221,7 +221,7 @@
                     }
                 ]
             },
-            "description": "내 포션 카드가 소멸되지 않습니다. 포션 카드를 사용할 때 마다 카드를 1장 뽑습니다."
+            "description": "내 포션 카드가 소멸되지 않습니다. 포션 카드를 사용할 때마다 카드를 1장 뽑습니다."
         },
         {
             "buffId": 112,
@@ -231,7 +231,7 @@
                 "timing": "Attack",
                 "type": "Damage",
                 "amount": "value",
-                "target": "Enemy"
+                "target": "SingleEnemy"
             },
             "description": "다음 공격이 {value}만큼 추가 피해를 입힙니다."
         },

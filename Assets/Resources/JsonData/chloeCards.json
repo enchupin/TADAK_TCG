@@ -24,11 +24,10 @@
             "name": "몸에 좋은 약",
             "characterId": 101,
             "cost": 1,
-            "description": "재생을 4 얻습니다.",
+            "description": "체력을 4 회복합니다.",
             "effects": [
                 {
-                    "type": "Buff",
-                    "buffType": "재생",
+                    "type": "Heal",
                     "amount": 4,
                     "target": "Self"
                 }
@@ -418,7 +417,7 @@
             "characterId": 101,
             "cost": 1,
             "keywords": [
-                "파워"
+                4
             ],
             "description": "매 턴 시작 시 무작위 포션 카드를 1장 제작합니다.",
             "effects": [
@@ -455,7 +454,7 @@
                         101086,
                         101087
                     ],
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ],
             "enforce": [
@@ -477,7 +476,7 @@
             "characterId": 101,
             "cost": 2,
             "keywords": [
-                "보존"
+                1
             ],
             "description": "이번 전투에 사용한 포션의 개수 X 3 만큼 피해를 입힙니다. 보존: 비용이 1 감소합니다.",
             "effects": [
@@ -618,7 +617,7 @@
             "characterId": 101,
             "cost": 0,
             "keywords": [
-                "소멸"
+                3
             ],
             "description": "부식을 2 부여합니다.",
             "effects": [
@@ -807,8 +806,8 @@
             "characterId": 101,
             "cost": 2,
             "keywords": [
-                "파워",
-                "개시"
+                4,
+                5
             ],
             "description": "적에게 부정적인 효과를 입힐 때마다 피해를 2 줍니다.",
             "effects": [
@@ -833,7 +832,7 @@
             "keywords": [
                 "파워"
             ],
-            "description": "적에게 부정적인 효과를 입힐 때 마다 피해를 2 줍니다.",
+            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 2 줍니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -856,7 +855,7 @@
             "keywords": [
                 "파워"
             ],
-            "description": "적에게 부정적인 효과를 입힐 때 마다 피해를 4 줍니다.",
+            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 4 줍니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -879,7 +878,7 @@
             "keywords": [
                 "파워"
             ],
-            "description": "적에게 부정적인 효과를 입힐 때 마다 모든 적에게 피해를 2 줍니다.",
+            "description": "적에게 부정적인 효과를 입힐 때마다 모든 적에게 피해를 2 줍니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -900,10 +899,10 @@
             "characterId": 101,
             "cost": 1,
             "keywords": [
-                "파워",
-                "그림자"
+                4,
+                6
             ],
-            "description": "적에게 부정적인 효과를 입힐 때 마다 피해를 1 줍니다.",
+            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 1 줍니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -926,7 +925,7 @@
             "keywords": [
                 "소멸"
             ],
-            "description": "피해를 3 줍니다.",
+            "description": "피해를 3 입힙니다.",
             "effects": [
                 {
                     "type": "Damage",
@@ -948,7 +947,7 @@
             "keywords": [
                 "소멸"
             ],
-            "description": "피해를 6 줍니다.",
+            "description": "피해를 6 입힙니다.",
             "effects": [
                 {
                     "type": "Damage",
@@ -1061,7 +1060,7 @@
                 {
                     "type": "Buff",
                     "buffType": "부식",
-                    "amount": 2,
+                    "amount": 1,
                     "target": "Enemy"
                 }
             ],
@@ -1084,7 +1083,7 @@
                 {
                     "type": "Buff",
                     "buffType": "부식",
-                    "amount": 4,
+                    "amount": 2,
                     "target": "Enemy"
                 }
             ],
