@@ -1,9 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
-using System.Threading.Tasks;
-using System.Linq;
 
 /// <summary>
 /// 전투 매니저 - UI 통합 버전 (싱글톤)
@@ -12,9 +8,6 @@ public class BattleManager : MonoBehaviour {
 
     // 싱글톤 인스턴스
     public static BattleManager Instance { get; private set; }
-
-    [Header("카드 데이터")]
-    public Dictionary<int, CardData> loadedCards = new Dictionary<int, CardData>();  // 플레이어 덱만 로드
 
     [Header("UI 시스템")]
     public BattleUI battleUI;
@@ -42,15 +35,14 @@ public class BattleManager : MonoBehaviour {
         }
     }
 
-    async void Start() {
+    void Start() {
         // 이벤트 구독
         CardGameEvents.OnCardClicked += HandleCardClicked;
         
         // 캐릭터 선택 초기화
         InitializeCharacterSelection();
         
-        // 플레이어 덱 카드만 로드 (Addressables Labels 사용)
-        await LoadPlayerDeck();
+        // CardManager는 자동으로 초기화됨 (RuntimeInitializeOnLoadMethod)
         
         InitializeBattle();
         InitializeUI();
@@ -99,9 +91,10 @@ public class BattleManager : MonoBehaviour {
         // 임시 호출
         monster = new Monster();
 
-        if (loadedCards == null || loadedCards.Count == 0)
+        // CardManager는 자동으로 초기화되어 있음
+        if (!CardManager.IsInitialized())
         {
-            Debug.LogError("카드가 로드되지 않았습니다!");
+            Debug.LogError("[BattleManager] CardManager가 초기화되지 않았습니다!");
             return;
         }
 
@@ -125,60 +118,20 @@ public class BattleManager : MonoBehaviour {
 
     }
 
-    /// <summary>
-    /// 플레이어 덱 카드만 Addressables Labels로 로드
-    /// </summary>
-    async Task LoadPlayerDeck()
-    {
-        Debug.Log("[BattleManager] 플레이어 덱 로딩 중...");
-        
-        loadedCards.Clear();
-        int totalLoaded = 0;
-        
-        // 선택된 캐릭터별로 로드
-        foreach (Character character in SelectedButtonControl.selectedCharacterList)
-        {
-            Debug.Log($"[BattleManager] {character} 카드 로딩 중...");
-            
-            try
-            {
-                // Addressables Label로 필터링하여 로드
-                var handle = Addressables.LoadAssetsAsync<CardData>(
-                    character.ToString(),  // "Warrior", "Archer", "Knight"
-                    (CardData card) => {
-                        // 중복 방지
-                        if (!loadedCards.ContainsKey(card.cardId))
-                        {
-                            loadedCards[card.cardId] = card;
-                            totalLoaded++;
-                        }
-                    }
-                );
-                
-                await handle.Task;
-                
-                Debug.Log($"[BattleManager] {character}: {handle.Result.Count}장 로드 완료");
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError($"[BattleManager] {character} 카드 로드 실패: {e.Message}");
-            }
-        }
-        
-        Debug.Log($"[BattleManager] 카드 로드 완료! 총 {totalLoaded}장 (중복 제거 후: {loadedCards.Count}장)");
-    }
+
 
     /// <summary>
     /// 카드 ID로 Card 객체 가져오기
     /// </summary>
     public Card GetCardById(int cardId)
     {
-        if (loadedCards.ContainsKey(cardId))
+        CardData cardData = CardManager.GetCard(cardId);
+        if (cardData != null)
         {
-            return loadedCards[cardId].ToCard();
+            return cardData.ToCard();
         }
         
-        Debug.LogError($"[BattleManager] 카드 ID {cardId}가 로드되지 않았습니다!");
+        Debug.LogWarning($"[BattleManager] Card not found: {cardId}");
         return null;
     }
 
@@ -188,8 +141,8 @@ public class BattleManager : MonoBehaviour {
     /// 게임 시작 (UI 모드)
     /// </summary>
     void StartGame() {
-        if (loadedCards == null || loadedCards.Count == 0) {
-            Debug.LogError("카드가 로드되지 않았습니다!");
+        if (!CardManager.IsInitialized()) {
+            Debug.LogError("[BattleManager] CardManager가 초기화되지 않았습니다!");
             return;
         }
         if (usableDeckManager == null) {

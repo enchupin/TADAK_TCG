@@ -1,0 +1,109 @@
+using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
+
+/// <summary>
+/// 카드 데이터를 관리하는 Static 클래스
+/// CardCollection SO를 로드하여 Dictionary로 캐싱합니다.
+/// </summary>
+public static class CardManager
+{
+    private static Dictionary<int, CardData> cardCache;
+    private static Dictionary<Character, List<CardData>> characterCache;
+    private static bool isInitialized = false;
+    
+    /// <summary>
+    /// 게임 시작 시 자동으로 초기화
+    /// </summary>
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void Initialize()
+    {
+        if (isInitialized) return;
+        
+        // CardCollection SO 로드
+        CardCollection collection = Resources.Load<CardCollection>("CardCollection");
+        
+        if (collection == null)
+        {
+            Debug.LogError("[CardManager] CardCollection not found in Resources folder!");
+            return;
+        }
+        
+        // Dictionary 캐싱 (cardId로 조회)
+        cardCache = new Dictionary<int, CardData>();
+        foreach (var card in collection.allCards)
+        {
+            if (!cardCache.ContainsKey(card.cardId))
+            {
+                cardCache[card.cardId] = card;
+            }
+            else
+            {
+                Debug.LogWarning($"[CardManager] Duplicate cardId found: {card.cardId}");
+            }
+        }
+        
+        // 캐릭터별 캐싱 (빠른 필터링용)
+        characterCache = collection.allCards
+            .GroupBy(c => c.character)
+            .ToDictionary(g => g.Key, g => g.ToList());
+        
+        isInitialized = true;
+        
+        Debug.Log($"[CardManager] 초기화 완료: 총 {cardCache.Count}장의 카드 로드");
+        foreach (var kvp in characterCache)
+        {
+            Debug.Log($"[CardManager] {kvp.Key}: {kvp.Value.Count}장");
+        }
+    }
+    
+    /// <summary>
+    /// 카드 ID로 CardData 조회 (O(1))
+    /// </summary>
+    public static CardData GetCard(int cardId)
+    {
+        if (!isInitialized) Initialize();
+        
+        if (cardCache.ContainsKey(cardId))
+        {
+            return cardCache[cardId];
+        }
+        
+        Debug.LogWarning($"[CardManager] Card not found: {cardId}");
+        return null;
+    }
+    
+    /// <summary>
+    /// 캐릭터별 카드 목록 조회 (O(1))
+    /// </summary>
+    public static List<CardData> GetCardsByCharacter(Character character)
+    {
+        if (!isInitialized) Initialize();
+        
+        if (characterCache.ContainsKey(character))
+        {
+            return characterCache[character];
+        }
+        
+        Debug.LogWarning($"[CardManager] No cards found for character: {character}");
+        return new List<CardData>();
+    }
+    
+    /// <summary>
+    /// 모든 카드 조회
+    /// </summary>
+    public static List<CardData> GetAllCards()
+    {
+        if (!isInitialized) Initialize();
+        
+        return cardCache.Values.ToList();
+    }
+    
+    /// <summary>
+    /// 초기화 여부 확인
+    /// </summary>
+    public static bool IsInitialized()
+    {
+        return isInitialized;
+    }
+}

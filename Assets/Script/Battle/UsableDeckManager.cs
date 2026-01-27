@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 /// <summary>
 /// 현재 사용 가능한 덱을 관리하는 매니저
@@ -126,12 +125,10 @@ public class UsableDeckManager : MonoBehaviour
 
         }
 
-        // 선택된 각 캐릭터의 카드를 가져와서 usableDeck에 추가
+        // 선택된 각 캐릭터의 카드를 CardManager에서 가져와서 usableDeck에 추가
         foreach (Character character in SelectedButtonControl.selectedCharacterList) {
-            // BattleManager에서 로드된 카드 중 해당 캐릭터 카드만 필터링
-            var characterCards = BattleManager.Instance.loadedCards.Values
-                .Where(cardData => cardData.character == character)
-                .ToList();
+            // CardManager에서 해당 캐릭터 카드 가져오기 (O(1) 조회)
+            var characterCards = CardManager.GetCardsByCharacter(character);
 
             if (characterCards != null && characterCards.Count > 0) {
                 // Queue에 카드 추가 (각 카드 3장씩)
