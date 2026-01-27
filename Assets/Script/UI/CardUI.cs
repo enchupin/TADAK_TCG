@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
+
 using TMPro;
 
 /// <summary>
@@ -8,7 +8,7 @@ using TMPro;
 /// 카드 데이터를 받아서 UI에 표시하고 클릭 이벤트 처리
 /// 호버 효과는 UIHoverEffect 컴포넌트가 담당
 /// </summary>
-public class CardUI : MonoBehaviour, IPointerClickHandler
+public class CardUI : MonoBehaviour
 {
     [Header("UI 컴포넌트")]
     [SerializeField] private TextMeshProUGUI cardNameText;
@@ -27,6 +27,15 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     
     public Card card;
     private bool isPlayable = true;
+    public bool IsPlayable => isPlayable;
+
+    private void Awake()
+    {
+        if (GetComponent<CardInputControl>() == null)
+        {
+            gameObject.AddComponent<CardInputControl>();
+        }
+    }
 
 
 
@@ -158,23 +167,5 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     /// <summary>
     /// 클릭 시 - 이벤트 발행
     /// </summary>
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        if (card == null) {
-            Debug.LogWarning("[CardUI] 카드가 null입니다!");
-            return;
-        }
 
-        if (!isPlayable) {
-            Debug.Log($"[CardUI] {card.cardName} - 사용 불가능");
-            return;
-        }
-
-        Debug.Log($"[CardUI] {card.cardName} 클릭 - 이벤트 발행");
-        
-        // CardUI 데이터 전달 (자기 자신을 BattleManager에 전달)
-        CardClickedEventData cardClickData = new CardClickedEventData(this);
-        // 이벤트 발행 (BattleManager가 구독하여 처리)
-        CardGameEvents.RaiseCardClicked(cardClickData);
-    }
 }
