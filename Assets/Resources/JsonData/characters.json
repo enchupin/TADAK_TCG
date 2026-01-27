@@ -38,13 +38,13 @@
             },
             "characterColor": "green",
             "startDeck": [
-                "101010",
-                "101020",
-                "101030",
-                "101040",
-                "101050",
-                "101060",
-                "101070"
+                101010,
+                101020,
+                101030,
+                101040,
+                101050,
+                101060,
+                101070
             ]
         },
         {
@@ -91,17 +91,36 @@
         },
         {
             "characterId": "201",
-            "name": "D",
-            "maxHp": 30,
+            "name": "이그니아",
+            "maxHp": 40,
             "cost": 0,
-            "identity": {},
+            "identity": {
+                "cost": 5,
+                "effect": [
+                    {
+                        "type": "Buff",
+                        "buffType": "공격 강화",
+                        "amount": 20,
+                        "target": "Self"
+                    }
+                ],
+                "description": "다음 공격이 20의 추가 피해를 입힙니다."
+            },
             "addressables": {
                 "artwork": "",
                 "effect": "",
                 "sound": ""
             },
             "characterColor": "red",
-            "startDeck": []
+            "startDeck": [
+                201010,
+                201020,
+                201030,
+                201040,
+                201050,
+                201060,
+                201070
+            ]
         },
         {
             "characterId": "202",

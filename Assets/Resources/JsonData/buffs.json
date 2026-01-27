@@ -68,7 +68,7 @@
         },
         {
             "buffId": 104,
-            "name": "따끔 열매즙",
+            "name": "실험 폐기물",
             "buffType": 1,
             "effects": {
                 "timing": "UseCard",
@@ -128,6 +128,114 @@
             "description": "적에게 부정적인 효과를 입힐 때마다 모든 적에게 피해를 {value} 줍니다."
         },
         {
+            "buffId": 107,
+            "name": "강화: 부식",
+            "buffType": 3,
+            "effects": {
+                "timing": "Buff",
+                "type": "Conditional",
+                "condition": "buffType",
+                "conditionValue": "부식",
+                "effect": {
+                    "type": "Buff",
+                    "buffType": "강화된 부식",
+                    "amount": "value",
+                    "target": "Enemy"
+                }
+            },
+            "description": "부식을 부여할 때 대신 강화된 부식을 부여합니다."
+        },
+        {
+            "buffId": 108,
+            "name": "포션 제조실",
+            "buffType": 3,
+            "effects": {
+                "timing": "turnEnd",
+                "type": "Buff",
+                "buffType": "포션 제조",
+                "amount": "value",
+                "target": "Self"
+            },
+            "description": "매 턴 종료 시 포션 제조를 {value} 얻습니다."
+        },
+        {
+            "buffId": 109,
+            "name": "드로우 강화",
+            "buffType": 3,
+            "effects": {
+                "timing": "turnStart",
+                "type": "Draw",
+                "amount": "value"
+            },
+            "description": "매 턴 시작 시 카드를 {value}장 더 뽑습니다."
+        },
+        {
+            "buffId": 110,
+            "name": "포션 강화",
+            "buffType": 3,
+            "effects": {
+                "timing": "GenerateCard",
+                "type": "Conditional",
+                "condition": "cardId",
+                "conditionValue": [
+                    101050,
+                    101052,
+                    101054,
+                    101056
+                ],
+                "effect": {
+                    "type": "ChangeCard",
+                    "cardId": "value + 1",
+                    "target": "Hand"
+                }
+            },
+            "description": "앞으로 획득하는 모든 포션 카드가 강화됩니다."
+        },
+        {
+            "buffId": 111,
+            "name": "포션 순환",
+            "buffType": 3,
+            "effects": {
+                "timing": "GetCard",
+                "type": "Conditional",
+                "condition": "cardId",
+                "conditionValue": [
+                    101050,
+                    101051,
+                    101052,
+                    101053,
+                    101054,
+                    101055,
+                    101056,
+                    101057
+                ],
+                "effect": [
+                    {
+                        "type": "RemoveKeyword",
+                        "keywordId": 3,
+                        "target": "Self"
+                    },
+                    {
+                        "type": "Draw",
+                        "amount": 1
+                    }
+                ]
+            },
+            "description": "내 포션 카드가 소멸되지 않습니다. 포션 카드를 사용할 때 마다 카드를 1장 뽑습니다."
+        },
+        {
+            "buffId": 112,
+            "name": "공격 강화",
+            "buffType": 2,
+            "effects": {
+                "timing": "Attack",
+                "type": "Damage",
+                "amount": "value",
+                "target": "Enemy"
+            },
+            "description": "다음 공격이 {value}만큼 추가 피해를 입힙니다."
+        },
+        {
             "buffId": 201,
             "name": "부식",
             "buffType": 2,
@@ -158,102 +266,6 @@
                 "amount": 1
             },
             "description": "50%의 추가 피해를 받습니다."
-        },
-        {
-            "buffId": 301,
-            "name": "강화: 부식",
-            "buffType": 3,
-            "effects": {
-                "timing": "Buff",
-                "type": "Conditional",
-                "condition": "buffType",
-                "conditionValue": "부식",
-                "effect": {
-                    "type": "Buff",
-                    "buffType": "강화된 부식",
-                    "amount": "value",
-                    "target": "Enemy"
-                }
-            },
-            "description": "부식을 부여할 때 대신 강화된 부식을 부여합니다."
-        },
-        {
-            "buffId": 302,
-            "name": "포션 제조실",
-            "buffType": 3,
-            "effects": {
-                "timing": "turnEnd",
-                "type": "Buff",
-                "buffType": "포션 제조",
-                "amount": "value",
-                "target": "Self"
-            },
-            "description": "매 턴 종료 시 포션 제조를 {value} 얻습니다."
-        },
-        {
-            "buffId": 303,
-            "name": "드로우 강화",
-            "buffType": 3,
-            "effects": {
-                "timing": "turnStart",
-                "type": "Draw",
-                "amount": "value"
-            },
-            "description": "매 턴 시작 시 카드를 {value}장 더 뽑습니다."
-        },
-        {
-            "buffId": 304,
-            "name": "포션 강화",
-            "buffType": 3,
-            "effects": {
-                "timing": "GenerateCard",
-                "type": "Conditional",
-                "condition": "cardId",
-                "conditionValue": [
-                    101050,
-                    101052,
-                    101054,
-                    101056
-                ],
-                "effect": {
-                    "type": "ChangeCard",
-                    "cardId": "value + 1",
-                    "target": "Hand"
-                }
-            },
-            "description": "모든 포션이 강화됩니다."
-        },
-        {
-            "buffId": 305,
-            "name": "포션 순환",
-            "buffType": 3,
-            "effects": {
-                "timing": "GetCard",
-                "type": "Conditional",
-                "condition": "cardId",
-                "conditionValue": [
-                    101050,
-                    101051,
-                    101052,
-                    101053,
-                    101054,
-                    101055,
-                    101056,
-                    101057
-                ],
-                "effect": [
-                    {
-                        "type": "RemoveKeyword",
-                        "keywordId": 2,
-                        "target": "Self"
-                    },
-                    {
-                        "type": "Draw",
-                        "amount": 1
-                    }
-                ]
-            },
-            "description": "내 포션 카드가 소멸되지 않습니다. 포션 카드를 사용할 때 마다 카드를 1장 뽑습니다."
         }
     ]
 }
