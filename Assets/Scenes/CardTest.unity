@@ -285,6 +285,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DragManager
       objectReference: {fileID: 0}
+    - target: {fileID: 7840660339025736701, guid: edd29293cf9bdfc4e802558791da8d99, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
