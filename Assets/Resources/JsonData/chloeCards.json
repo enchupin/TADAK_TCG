@@ -251,7 +251,8 @@
                             "cardId": 101056,
                             "weight": 1
                         }
-                    ]
+                    ],
+                    "target": "Hand"
                 }
             ],
             "enforce": [
@@ -294,7 +295,8 @@
                             "cardId": 101056,
                             "weight": 1
                         }
-                    ]
+                    ],
+                    "target": "Hand"
                 }
             ],
             "addressables": {
@@ -318,7 +320,8 @@
                         101052,
                         101054,
                         101056
-                    ]
+                    ],
+                    "target": "Hand"
                 }
             ],
             "addressables": {
@@ -354,7 +357,8 @@
                             "cardId": 101057,
                             "weight": 1
                         }
-                    ]
+                    ],
+                    "target": "Hand"
                 }
             ],
             "addressables": {
@@ -398,7 +402,8 @@
                             "cardId": 101057,
                             "weight": 1
                         }
-                    ]
+                    ],
+                    "target": "Hand"
                 }
             ],
             "addressables": {

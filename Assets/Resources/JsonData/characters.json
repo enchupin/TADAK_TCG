@@ -166,10 +166,21 @@
         },
         {
             "characterId": "301",
-            "name": "H",
-            "maxHp": 30,
+            "name": "데클란",
+            "maxHp": 80,
             "cost": 0,
-            "identity": {},
+            "identity": {
+                "cost": 3,
+                "effect": [
+                    {
+                        "type": "GenerateCard",
+                        "cardId": 301080,
+                        "amount": 2,
+                        "target": "Hand"
+                    }
+                ],
+                "description": ""
+            },
             "addressables": {
                 "artwork": "",
                 "effect": "",
