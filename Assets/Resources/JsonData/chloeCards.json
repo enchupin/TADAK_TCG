@@ -169,7 +169,7 @@
                     ],
                     "effect": {
                         "type": "Buff",
-                        "buffType": "부식",
+                        "buffId": 201,
                         "amount": 2,
                         "target": "AllEnemies"
                     }
@@ -423,7 +423,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffType": "포션 제조실",
+                    "buffId": 108,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -579,7 +579,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffType": "포션 강화",
+                    "buffId": 110,
                     "target": "Self"
                 }
             ],
@@ -601,7 +601,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffType": "포션 순환",
+                    "buffId": 111,
                     "target": "Self"
                 }
             ],
@@ -623,7 +623,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffType": "부식",
+                    "buffId": 201,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -657,7 +657,7 @@
                 },
                 {
                     "type": "Buff",
-                    "buffType": "부식",
+                    "buffId": 201,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -680,7 +680,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffType": "부식",
+                    "buffId": 201,
                     "amount": 2,
                     "target": "Enemy"
                 },
@@ -717,7 +717,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffType": "실험 폐기물",
+                    "buffId": 104,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -740,7 +740,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffType": "부식",
+                    "buffId": 201,
                     "amount": 2,
                     "target": "Enemy"
                 }
@@ -760,13 +760,13 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffType": "부식",
+                    "buffId": 201,
                     "amount": 2,
                     "target": "Enemy"
                 },
                 {
                     "type": "Buff",
-                    "buffType": "피해 증폭",
+                    "buffId": 102,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -789,7 +789,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffType": "잔혹함",
+                    "buffId": 105,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -813,7 +813,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffType": "잔혹함",
+                    "buffId": 105,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -836,7 +836,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffType": "잔혹함",
+                    "buffId": 105,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -859,7 +859,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffType": "잔혹함",
+                    "buffId": 105,
                     "amount": 4,
                     "target": "Self"
                 }
@@ -882,7 +882,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffType": "광역: 잔혹함",
+                    "buffId": 106,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -906,7 +906,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffType": "잔혹함",
+                    "buffId": 105,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -932,6 +932,9 @@
                     "amount": 3,
                     "target": "Enemy"
                 }
+            ],
+            "enforce": [
+                101081
             ],
             "addressables": {
                 "artwork": "",
@@ -976,6 +979,9 @@
                     "amount": 1
                 }
             ],
+            "enforce": [
+                101083
+            ],
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -1019,6 +1025,9 @@
                     "target": "Self"
                 }
             ],
+            "enforce": [
+                101085
+            ],
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -1059,10 +1068,13 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffType": "부식",
+                    "buffId": 201,
                     "amount": 1,
                     "target": "Enemy"
                 }
+            ],
+            "enforce": [
+                101086
             ],
             "addressables": {
                 "artwork": "",
@@ -1082,7 +1094,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffType": "부식",
+                    "buffId": 201,
                     "amount": 2,
                     "target": "Enemy"
                 }

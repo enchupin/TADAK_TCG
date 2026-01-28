@@ -5,12 +5,362 @@
             "name": "화염탄",
             "characterId": 201,
             "cost": 1,
-            "description": "피해를 6 줍니다.",
+            "description": "피해를 6 입힙니다.",
             "effects": [
                 {
                     "type": "Damage",
                     "amount": 6,
                     "target": "SingleEnemy"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 201020,
+            "name": "드래곤 스케일",
+            "characterId": 201,
+            "cost": 1,
+            "description": "방어도를 6 얻습니다.",
+            "effects": [
+                {
+                    "type": "Defense",
+                    "amount": 6,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 201030,
+            "name": "폴리모프",
+            "characterId": 201,
+            "cost": 1,
+            "keywords": [
+                1
+            ],
+            "description": "이번 턴 동안 내 카드의 피해량이 20% 증가합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 113,
+                    "amount": 2,
+                    "target": "Self"
+                }
+            ],
+            "enforce": [
+                201031,
+                201032
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 201031,
+            "name": "폴리모프 +",
+            "characterId": 201,
+            "cost": 1,
+            "keywords": [
+                1
+            ],
+            "description": "이번 턴 동안 내 카드의 피해량이 40% 증가합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffType": "화력 충전",
+                    "amount": 4,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 201032,
+            "name": "폴리모프 +",
+            "characterId": 201,
+            "cost": 0,
+            "keywords": [
+                5
+            ],
+            "description": "이번 턴 동안 내 카드의 피해량이 20% 증가합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffType": "화력 충전",
+                    "amount": 2,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 201040,
+            "name": "드래곤 브레스",
+            "characterId": 201,
+            "cost": 2,
+            "keywords": [
+                7
+            ],
+            "description": "피해를 24 입힙니다.",
+            "effects": [
+                {
+                    "type": "Damage",
+                    "amount": 24,
+                    "target": "SingleEnemy"
+                }
+            ],
+            "enforce": [
+                201041
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 201041,
+            "name": "드래곤 브레스 +",
+            "characterId": 201,
+            "cost": 2,
+            "keywords": [
+                7
+            ],
+            "description": "피해를 32 입힙니다.",
+            "effects": [
+                {
+                    "type": "Damage",
+                    "amount": 32,
+                    "target": "SingleEnemy"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 201050,
+            "name": "화염 고리",
+            "characterId": 201,
+            "cost": 1,
+            "description": "내 기본 카드를 1장 뽑습니다. 이번 턴에 그 카드의 비용이 1 감소합니다.",
+            "effects": [],
+            "enforce": [
+                201051,
+                201052,
+                201053,
+                201054
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 201051,
+            "name": "화염 고리 +",
+            "characterId": 201,
+            "cost": 1,
+            "description": "내 기본 카드를 2장 뽑습니다. 이번 턴에 그 카드들의 비용이 1 감소합니다.",
+            "effects": [],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 201052,
+            "name": "화염 고리 +",
+            "characterId": 201,
+            "cost": 0,
+            "description": "내 기본 카드를 1장 뽑습니다. 이번 턴에 내 카드의 피해량이 20% 증가합니다.",
+            "effects": [],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 201053,
+            "name": "화염 고리 +",
+            "characterId": 201,
+            "cost": 1,
+            "description": "내 카드를 1장 뽑습니다. 이번 턴에 그 카드의 비용이 0이 됩니다.",
+            "effects": [],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 201054,
+            "name": "화염 고리 +",
+            "characterId": 201,
+            "cost": 1,
+            "description": "카드를 2장 뽑습니다. 뽑은 카드의 비용이 2라면 이번 턴에 그 카드의 비용이 0이 됩니다.",
+            "effects": [],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 201060,
+            "name": "지옥불",
+            "characterId": 201,
+            "cost": 1,
+            "description": "모든 적에게 피해를 4 입힙니다. 적이 혼자인 경우, 피해량이 3배가 됩니다.",
+            "effects": [
+                {
+                    "type": "Conditional",
+                    "condition": "enemyCount",
+                    "conditionValue": 1,
+                    "effect": {
+                        "type": "Damage",
+                        "amount": 12,
+                        "target": "AllEnemies"
+                    },
+                    "elseEffects": [
+                        {
+                            "type": "Damage",
+                            "amount": 4,
+                            "target": "AllEnemies"
+                        }
+                    ]
+                }
+            ],
+            "enforce": [
+                201061,
+                201062
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 201061,
+            "name": "지옥불 +",
+            "characterId": 201,
+            "cost": 1,
+            "description": "모든 적에게 피해를 4 입힙니다. 적이 혼자인 경우, 피해량이 5배가 됩니다.",
+            "effects": [
+                {
+                    "type": "Conditional",
+                    "condition": "enemyCount",
+                    "conditionValue": 1,
+                    "effect": {
+                        "type": "Damage",
+                        "amount": 20,
+                        "target": "AllEnemies"
+                    },
+                    "elseEffects": [
+                        {
+                            "type": "Damage",
+                            "amount": 4,
+                            "target": "AllEnemies"
+                        }
+                    ]
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 201062,
+            "name": "지옥불 +",
+            "characterId": 201,
+            "cost": 1,
+            "description": "모든 적에게 화염 낙인을 4 부여합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 203,
+                    "amount": 4,
+                    "target": "AllEnemies"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 201070,
+            "name": "뜨거운 피부",
+            "characterId": 201,
+            "cost": 1,
+            "keywords": [
+                4
+            ],
+            "description": "공격받을 때마다 공격한 적에게 피해를 3 줍니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 114,
+                    "amount": 3,
+                    "target": "Self"
+                }
+            ],
+            "enforce": [
+                201071
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 201071,
+            "name": "뜨거운 피부 +",
+            "characterId": 201,
+            "cost": 1,
+            "keywords": [
+                4
+            ],
+            "description": "방어도를 6 얻습니다. 공격받을 때마다 공격한 적에게 피해를 3 줍니다.",
+            "effects": [
+                {
+                    "type": "Defense",
+                    "amount": 6,
+                    "target": "Self"
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 114,
+                    "amount": 3,
+                    "target": "Self"
                 }
             ],
             "addressables": {

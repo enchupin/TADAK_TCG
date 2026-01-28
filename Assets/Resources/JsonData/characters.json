@@ -10,7 +10,7 @@
                 "effects": [
                     {
                         "type": "Buff",
-                        "buffType": "부식",
+                        "buffId": 201,
                         "amount": 3,
                         "target": "AllEnemies"
                     }
@@ -18,7 +18,8 @@
                 "description": "카드를 2장 뽑습니다. 모든 적에게 부식을 3 부여합니다."
             },
             "addressables": {
-                "artwork": "Characters/Kloe/Art",
+                "artwork": "Characters/Kloe/Artwork",
+                "standing": "Characters/Kloe/Standing",
                 "effect": "Effects/Kloe",
                 "sound": "Sounds/Kloe"
             },
@@ -85,7 +86,7 @@
                 "effects": [
                     {
                         "type": "Buff",
-                        "buffType": "공격 강화",
+                        "buffId": 112,
                         "amount": 20,
                         "target": "Self"
                     }
