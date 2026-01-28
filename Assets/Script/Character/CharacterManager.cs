@@ -20,18 +20,28 @@ public static class CharacterManager
     {
         if (isInitialized) return;
         
-        // Resources 폴더에서 모든 CharacterData 로드
-        CharacterData[] characters = Resources.LoadAll<CharacterData>("CharacterData");
+        // Resources 폴더에서 CharacterCollection 로드
+        CharacterCollection collection = Resources.Load<CharacterCollection>("CharacterCollection");
         
-        if (characters == null || characters.Length == 0)
+        if (collection == null)
         {
-            Debug.LogError("[CharacterManager] No CharacterData found in Resources/CharacterData folder!");
+            Debug.LogError("[CharacterManager] CharacterCollection not found in Resources folder!");
+            Debug.LogError("[CharacterManager] Please create CharacterCollection.asset in Assets/Resources/");
+            return;
+        }
+        
+        if (collection.allCharacters == null || collection.allCharacters.Count == 0)
+        {
+            Debug.LogWarning("[CharacterManager] CharacterCollection is empty!");
+            characterCache = new Dictionary<int, CharacterData>();
+            nameCache = new Dictionary<string, CharacterData>();
+            isInitialized = true;
             return;
         }
         
         // Dictionary 캐싱 (characterId로 조회)
         characterCache = new Dictionary<int, CharacterData>();
-        foreach (var character in characters)
+        foreach (var character in collection.allCharacters)
         {
             if (!characterCache.ContainsKey(character.characterId))
             {
@@ -44,7 +54,18 @@ public static class CharacterManager
         }
         
         // 이름별 캐싱 (빠른 조회용)
-        nameCache = characters.ToDictionary(c => c.characterName, c => c);
+        nameCache = new Dictionary<string, CharacterData>();
+        foreach (var character in collection.allCharacters)
+        {
+            if (!nameCache.ContainsKey(character.characterName))
+            {
+                nameCache[character.characterName] = character;
+            }
+            else
+            {
+                Debug.LogWarning($"[CharacterManager] Duplicate character name found: {character.characterName}");
+            }
+        }
         
         isInitialized = true;
         
