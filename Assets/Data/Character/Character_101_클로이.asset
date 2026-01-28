@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30ceac27afe41c54eac3f4b122eda671, type: 3}
+  m_Name: "Character_101_\uD074\uB85C\uC774"
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  characterId: 101
+  characterName: "\uD074\uB85C\uC774"
+  maxHp: 30
+  cost: 0
+  characterColor: green
+  identity:
+    cost: 8
+    description: "\uCE74\uB4DC\uB97C 2\uC7A5 \uBF51\uC2B5\uB2C8\uB2E4. \uBAA8\uB4E0
+      \uC801\uC5D0\uAC8C \uBD80\uC2DD\uC744 3 \uBD80\uC5EC\uD569\uB2C8\uB2E4."
+    effects:
+    - type: 0
+      amount: 3
+      target: 1
+      buffType: "\uBD80\uC2DD"
+      cardId: 0
+  artworkAddress: Characters/Kloe/Art
+  effectAddress: Effects/Kloe
+  soundAddress: Sounds/Kloe
+  startDeckCardIds: 928a01009c8a0100a68a0100b08a0100ba8a0100c48a0100ce8a0100
