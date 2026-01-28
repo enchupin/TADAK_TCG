@@ -62,14 +62,32 @@ MonoBehaviour:
     m_SerializedLabels:
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 14df202bb644abf428ed70137fc187c4
+    m_Address: Cards/CARD_101032
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 183156bba37894a4c8ab937e43bb8602
     m_Address: Cards/CARD_101010
     m_ReadOnly: 0
     m_SerializedLabels:
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1864ea45eb1f10343a4c5fdfb201d67d
+    m_Address: Cards/CARD_101061
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 27f96b2921936aa41873962975e8422f
     m_Address: Cards/CARD_101054
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 29617f5b25933e04190e3a3bc8c3785b
+    m_Address: Cards/CARD_101083
     m_ReadOnly: 0
     m_SerializedLabels:
     - Warrior
@@ -86,8 +104,20 @@ MonoBehaviour:
     m_SerializedLabels:
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2eccc8ec9a0f28c43b8e1dd1bbc238a8
+    m_Address: Cards/CARD_101082
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 341dade9a4680e549bbfe39708cf9f4e
     m_Address: Cards/CARD_101082
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3aac96f69b463b64ea76a1d6dafb8c1d
+    m_Address: Cards/CARD_101030
     m_ReadOnly: 0
     m_SerializedLabels:
     - Warrior
@@ -136,6 +166,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4dc7ce0bd90824e49b12978b29b8c104
     m_Address: Cards/CARD_101061
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 53fc4c9d5913a9041b52ef235e7d183e
+    m_Address: Cards/CARD_101035
     m_ReadOnly: 0
     m_SerializedLabels:
     - Warrior
@@ -206,6 +242,18 @@ MonoBehaviour:
     m_SerializedLabels:
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 74e4538b50604954582254fc352c8432
+    m_Address: Cards/CARD_101033
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 75fb652ae8b32494ea06084336d16a07
+    m_Address: Cards/CARD_101081
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 764ecec99fd0d4e46953301f314c1e04
     m_Address: Cards/CARD_101084
     m_ReadOnly: 0
@@ -272,8 +320,26 @@ MonoBehaviour:
     m_SerializedLabels:
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 970df2dd7b98c4846a372a7150f332f7
+    m_Address: Cards/CARD_101034
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 97e7832bc9e698b4f8f6a762359fbe1c
+    m_Address: Cards/CARD_101065
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9c7132c809eec144fa7a5313536de5bf
     m_Address: Cards/CARD_101064
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9c9778cbb19561c4bb6427ae4e8c3ac4
+    m_Address: Cards/CARD_101060
     m_ReadOnly: 0
     m_SerializedLabels:
     - Warrior
@@ -308,6 +374,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ae8d53923e0be5d42ba64b83245eccd9
+    m_Address: Cards/CARD_101063
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b63ba1a4e7d97954f84a0556edc33f42
     m_Address: Cards/CARD_101034
     m_ReadOnly: 0
@@ -326,6 +398,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c11ac4e1687e267428e556bc38dc8a14
+    m_Address: Cards/CARD_101080
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c6bab79ddebc5c549ad394bd4bfa4576
     m_Address: Cards/CARD_101062
     m_ReadOnly: 0
@@ -334,6 +412,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c902e75a67e3f624491831d4ff7c44c6
     m_Address: Cards/CARD_101031
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c9d7926390804f64497e407ab90eeec7
+    m_Address: Cards/CARD_101062
     m_ReadOnly: 0
     m_SerializedLabels:
     - Warrior
@@ -374,6 +458,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e6465d12fb629a642b747cefe1ddbec6
+    m_Address: Cards/CARD_101031
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ec8ec3171d36deb46a828b11f675fc96
     m_Address: Cards/CARD_101056
     m_ReadOnly: 0
@@ -388,6 +478,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f44e70ff7ab2b3e439d1a530b0e55a79
     m_Address: Cards/CARD_101071
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f84e2b890812ea548b55d75c2c4801da
+    m_Address: Cards/CARD_101064
     m_ReadOnly: 0
     m_SerializedLabels:
     - Warrior

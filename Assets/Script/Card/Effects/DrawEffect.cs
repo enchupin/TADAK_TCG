@@ -8,7 +8,7 @@ using UnityEngine;
 public class DrawEffect : ICardEffect
 {
     public int amount;
-    public void Execute(BattleManager battleManager)
+    public void Execute(TrainingBattleManager battleManager)
     {
         battleManager.drawCardCount++;
     }

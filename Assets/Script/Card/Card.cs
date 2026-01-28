@@ -30,7 +30,7 @@ public class Card
     /// <summary>
     /// 카드를 사용합니다.
     /// </summary>
-    public void Play(BattleManager battlemanager)
+    public void Play(TrainingBattleManager battlemanager)
     {
         Debug.Log($"[{cardName}] 카드 사용!");
         

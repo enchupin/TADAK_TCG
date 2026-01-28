@@ -8,7 +8,7 @@ public class DefenseEffect : ICardEffect
 {
     public int amount;
     
-    public void Execute(BattleManager battleManager)
+    public void Execute(TrainingBattleManager battleManager)
     {
         // player.AddDefense(amount);
     }

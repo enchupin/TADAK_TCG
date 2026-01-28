@@ -44,9 +44,9 @@ public class BattleUI : MonoBehaviour
     /// </summary>
     public void UpdatePlayerHP()
     {
-        if (BattleManager.Instance == null) return;
-        int current = BattleManager.Instance.playerData.hp;
-        int max = BattleManager.Instance.playerData.maxHP;
+        if (TrainingBattleManager.Instance == null) return;
+        int current = TrainingBattleManager.Instance.playerData.hp;
+        int max = TrainingBattleManager.Instance.playerData.maxHP;
         if (playerHPSlider != null)
         {
             playerHPSlider.maxValue = max;
@@ -64,9 +64,9 @@ public class BattleUI : MonoBehaviour
     /// </summary>
     public void UpdateEnemyHP()
     {
-        if (BattleManager.Instance == null) return;
-        int current = BattleManager.Instance.monster.hp;
-        int max = BattleManager.Instance.monster.maxHP;
+        if (TrainingBattleManager.Instance == null) return;
+        int current = TrainingBattleManager.Instance.monster.hp;
+        int max = TrainingBattleManager.Instance.monster.maxHP;
         if (enemyHPSlider != null)
         {
             enemyHPSlider.maxValue = max;
@@ -84,9 +84,9 @@ public class BattleUI : MonoBehaviour
     /// </summary>
     public void UpdateEnergy()
     {
-        if (BattleManager.Instance == null) return;
-        int current = BattleManager.Instance.playerData.energy;
-        int max = BattleManager.Instance.playerData.maxEnergy;
+        if (TrainingBattleManager.Instance == null) return;
+        int current = TrainingBattleManager.Instance.playerData.energy;
+        int max = TrainingBattleManager.Instance.playerData.maxEnergy;
         if (playerEnergyText != null)
         {
             string energyDisplay = "";
@@ -103,8 +103,8 @@ public class BattleUI : MonoBehaviour
     /// </summary>
     public void UpdatePlayerDefense()
     {
-        if (BattleManager.Instance == null) return;
-        int defense = BattleManager.Instance.playerData.defense;
+        if (TrainingBattleManager.Instance == null) return;
+        int defense = TrainingBattleManager.Instance.playerData.defense;
         if (playerDefenseText != null)
         {
             playerDefenseText.text = defense > 0 ? $"🛡 {defense}" : "";
@@ -116,8 +116,8 @@ public class BattleUI : MonoBehaviour
     /// </summary>
     public void UpdateEnemyDefense()
     {
-        if (BattleManager.Instance == null) return;
-        int defense = BattleManager.Instance.monster.defense;
+        if (TrainingBattleManager.Instance == null) return;
+        int defense = TrainingBattleManager.Instance.monster.defense;
         if (enemyDefenseText != null)
         {
             enemyDefenseText.text = defense > 0 ? $"🛡 {defense}" : "";
@@ -129,8 +129,8 @@ public class BattleUI : MonoBehaviour
     /// </summary>
     private void OnEndTurnClicked()
     {
-        if (BattleManager.Instance == null) return;
-        BattleManager.Instance.EndTurn();
+        if (TrainingBattleManager.Instance == null) return;
+        TrainingBattleManager.Instance.EndTurn();
     }
     
     /// <summary>

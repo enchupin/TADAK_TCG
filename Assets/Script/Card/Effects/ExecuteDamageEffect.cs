@@ -9,7 +9,7 @@ public class ExecuteDamageEffect : ICardEffect
     public float hpThreshold = 0.5f; // 기본값 50%
     public float multiplier = 2.0f;  // 기본값 2배
     
-    public void Execute(BattleManager battleManager)
+    public void Execute(TrainingBattleManager battleManager)
     {
         Monster monster = battleManager.monster;
         PlayerData player = battleManager.playerData;

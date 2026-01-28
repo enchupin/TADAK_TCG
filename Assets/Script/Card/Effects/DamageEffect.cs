@@ -23,7 +23,7 @@ public class DamageEffect : ICardEffect
         }
     }
     */
-    public void Execute(BattleManager battleManager) {
+    public void Execute(TrainingBattleManager battleManager) {
     }
 
 

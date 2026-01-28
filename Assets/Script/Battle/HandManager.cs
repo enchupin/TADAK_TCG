@@ -58,7 +58,7 @@ public class HandManager : MonoBehaviour
     /// 카드 UI 생성
     /// </summary>
     public void InstantiateCardUI(int cardId) {
-        Card card = BattleManager.Instance?.GetCardById(cardId);
+        Card card = TrainingBattleManager.Instance?.GetCardById(cardId);
         if (card == null) {
             Debug.LogWarning($"카드 ID {cardId}를 찾을 수 없습니다!");
             return;
