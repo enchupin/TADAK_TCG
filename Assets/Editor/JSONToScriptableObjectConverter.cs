@@ -9,7 +9,7 @@ using System.Collections.Generic;
 /// </summary>
 public class JSONToScriptableObjectConverter : EditorWindow
 {
-    private string jsonFilePath = "Assets/Resources/JsonData/chloeCards.json";
+    private string jsonFolderPath = "Assets/Resources/JsonData"; // 기본값: 폴더 경로
     private string outputPath = "Assets/Data/Cards";
     
     [MenuItem("Tools/TCG/JSON to ScriptableObject Converter")]
@@ -20,178 +20,159 @@ public class JSONToScriptableObjectConverter : EditorWindow
     
     void OnGUI()
     {
-        GUILayout.Label("JSON to ScriptableObject Converter", EditorStyles.boldLabel);
+        GUILayout.Label("JSON Batch Converter", EditorStyles.boldLabel);
         GUILayout.Space(10);
         
-        jsonFilePath = EditorGUILayout.TextField("JSON File Path", jsonFilePath);
+        jsonFolderPath = EditorGUILayout.TextField("JSON Folder Path", jsonFolderPath);
         outputPath = EditorGUILayout.TextField("Output Path", outputPath);
         
         GUILayout.Space(10);
         
-        if (GUILayout.Button("Convert All Cards", GUILayout.Height(30)))
+        if (GUILayout.Button("Convert All JSONs in Folder", GUILayout.Height(30)))
         {
             ConvertJSONToScriptableObjects();
         }
         
         GUILayout.Space(10);
         EditorGUILayout.HelpBox(
-            "1. JSON 파일 경로를 확인하세요\n" +
-            "2. 출력 경로를 설정하세요\n" +
-            "3. Convert All Cards 버튼을 클릭하세요\n\n" +
+            "지정된 폴더 내의 모든 '*Cards.json' 파일을 변환합니다.\n" +
+            "(예: chloeCards.json, igniaCards.json 등)\n\n" +
             "CardCollection은 자동으로 생성/업데이트됩니다.", 
             MessageType.Info);
     }
     
     void ConvertJSONToScriptableObjects()
     {
-        TextAsset jsonFile = AssetDatabase.LoadAssetAtPath<TextAsset>(jsonFilePath);
+        // 1. 단일 파일 처리 지원 (입력된 경로가 .json으로 끝나는 경우)
+        if (!string.IsNullOrEmpty(jsonFolderPath) && jsonFolderPath.EndsWith(".json") && File.Exists(jsonFolderPath))
+        {
+            Debug.Log($"[Converter] 단일 파일 변환 모드: {jsonFolderPath}");
+            ConvertSingleFileFromPath(jsonFolderPath);
+            return;
+        }
 
-        if (jsonFile == null)
+        // 2. 폴더 내 일괄 처리
+        if (!Directory.Exists(jsonFolderPath))
         {
-            EditorUtility.DisplayDialog("Error", $"Could not find JSON file at {jsonFilePath}", "OK");
+            Debug.LogError($"[Converter] 폴더를 찾을 수 없습니다: {jsonFolderPath}");
+            EditorUtility.DisplayDialog("Error", "폴더 경로를 확인해주세요.", "OK");
             return;
         }
-        
-        // JSON 파싱
-        CardDataList cardDataList = JsonUtility.FromJson<CardDataList>(jsonFile.text);
-        
-        if (cardDataList == null || cardDataList.cards == null)
+
+        string[] jsonFiles = Directory.GetFiles(jsonFolderPath, "*Cards.json");
+        if (jsonFiles.Length == 0)
         {
-            EditorUtility.DisplayDialog("Error", "Invalid JSON format!", "OK");
+            EditorUtility.DisplayDialog("Info", $"해당 폴더에 변환할 파일이 없습니다.\n(*Cards.json 패턴)\n\nPath: {jsonFolderPath}", "OK");
             return;
         }
+
+        Debug.Log($"[Converter] 일괄 변환 시작. 총 {jsonFiles.Length}개의 파일 발견.");
         
-        // ✅ 기존 CardData SO 파일들 모두 삭제
-        if (Directory.Exists(outputPath))
+        // 기존 데이터 삭제 (Clean Build) - 필요 시 주석 해제하여 사용
+        // ClearOutputFolder(); 
+
+        int totalSuccessCount = 0;
+        CardCollection collection = GetOrCreateCardCollection();
+
+        foreach (string filePath in jsonFiles)
         {
-            // outputPath의 모든 .asset 파일 찾기
-            string[] existingAssets = Directory.GetFiles(outputPath, "*.asset", SearchOption.TopDirectoryOnly);
-            
-            int deletedCount = 0;
-            foreach (string assetPath in existingAssets)
-            {
-                // CardCollection.asset은 제외 (나중에 업데이트)
-                if (!assetPath.Contains("CardCollection.asset"))
-                {
-                    AssetDatabase.DeleteAsset(assetPath.Replace("\\", "/"));
-                    deletedCount++;
-                }
-            }
-            
-            Debug.Log($"[Converter] 기존 CardData SO {deletedCount}개 삭제 완료");
+            int count = ConvertFileInternal(filePath, collection);
+            totalSuccessCount += count;
         }
-        else
+
+        // 최종 저장
+        EditorUtility.SetDirty(collection);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+
+        EditorUtility.DisplayDialog("Success", 
+            $"Batch Conversion Complete!\nFiles: {jsonFiles.Length}\nTotal Cards: {collection.allCards.Count}", "OK");
+    }
+
+    /// <summary>
+    /// 단일 파일 변환 (외부 호출 또는 버튼 클릭)
+    /// </summary>
+    void ConvertSingleFileFromPath(string path)
+    {
+        CardCollection collection = GetOrCreateCardCollection();
+        int count = ConvertFileInternal(path, collection);
+        
+        if (count > 0)
         {
-            // 출력 폴더 생성
-            Directory.CreateDirectory(outputPath);
-        }
-        
-        // ✅ CardCollection 항상 생성/업데이트
-        Debug.Log("[Converter] CardCollection 생성/업데이트 시작");
-        
-        // 기존 CardCollection 로드 시도
-        string collectionPath = "Assets/Resources/CardCollection.asset";
-        CardCollection collection = AssetDatabase.LoadAssetAtPath<CardCollection>(collectionPath);
-        
-        if (collection == null)
-        {
-            Debug.Log($"[Converter] CardCollection이 {collectionPath}에 없음. 새로 생성합니다.");
-            
-            // Resources 폴더 확인
-            if (!System.IO.Directory.Exists("Assets/Resources"))
-            {
-                System.IO.Directory.CreateDirectory("Assets/Resources");
-                AssetDatabase.Refresh();
-                Debug.Log("[Converter] Assets/Resources 폴더 생성");
-            }
-            
-            // 없으면 새로 생성
-            collection = ScriptableObject.CreateInstance<CardCollection>();
-            AssetDatabase.CreateAsset(collection, collectionPath);
+            EditorUtility.SetDirty(collection);
             AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();  // ✅ Refresh 추가!
-            
-            // 다시 로드하여 확인
-            collection = AssetDatabase.LoadAssetAtPath<CardCollection>(collectionPath);
-            if (collection != null)
-            {
-                Debug.Log($"[Converter] 새 CardCollection 생성 완료: {collectionPath}");
-            }
-            else
-            {
-                Debug.LogError($"[Converter] CardCollection 생성 실패! {collectionPath}");
-            }
+            AssetDatabase.Refresh();
+            EditorUtility.DisplayDialog("Success", $"Converted {count} cards from {Path.GetFileName(path)}", "OK");
         }
-        else
-        {
-            // 기존 컬렉션 초기화
-            Debug.Log($"[Converter] 기존 CardCollection 발견: {collectionPath}, 현재 카드 수: {collection.allCards.Count}");
-            collection.allCards.Clear();
-            Debug.Log("[Converter] 기존 CardCollection 초기화 완료");
-        }
-        
-        int successCount = 0;
-        List<string> createdCardPaths = new List<string>();
-        
-        // 각 카드를 ScriptableObject로 변환
+    }
+
+    /// <summary>
+    /// 내부 변환 로직 (파일 1개 -> SO 변환 -> Collection 추가)
+    /// </summary>
+    int ConvertFileInternal(string path, CardCollection collection)
+    {
+        TextAsset jsonFile = AssetDatabase.LoadAssetAtPath<TextAsset>(path.Replace("\\", "/"));
+        if (jsonFile == null) return 0;
+
+        CardDataList cardDataList = JsonUtility.FromJson<CardDataList>(jsonFile.text);
+        if (cardDataList == null || cardDataList.cards == null) return 0;
+
+        // 출력 폴더 생성
+        if (!Directory.Exists(outputPath)) Directory.CreateDirectory(outputPath);
+
+        int count = 0;
         foreach (var cardJson in cardDataList.cards)
         {
-            // 파일 이름 생성
             string fileName = $"{cardJson.cardId}_{cardJson.name}.asset";
-            // 특수문자 제거나 안전한 파일명 처리 로직이 있다면 여기에 추가
-            
             string assetPath = Path.Combine(outputPath, fileName).Replace("\\", "/");
-            
-            // 이미 존재하는 에셋인지 확인
+
             CardData cardData = AssetDatabase.LoadAssetAtPath<CardData>(assetPath);
             bool isNew = false;
-            
+
             if (cardData == null)
             {
                 cardData = ScriptableObject.CreateInstance<CardData>();
                 isNew = true;
             }
-            
-            // 데이터 업데이트
+
             UpdateCardData(cardData, cardJson);
-            
-            if (isNew)
+
+            if (isNew) AssetDatabase.CreateAsset(cardData, assetPath);
+            else EditorUtility.SetDirty(cardData);
+
+            // Collection에 추가 (중복 방지: 동일 ID의 기존 카드가 있으면 제거하고 새 것으로 교체)
+            // 주의: List.Contains는 참조 비교이므로, ID 기반으로 찾아야 함
+            int existingIndex = collection.allCards.FindIndex(c => c != null && c.cardId == cardData.cardId);
+            if (existingIndex >= 0)
             {
-                AssetDatabase.CreateAsset(cardData, assetPath);
+                collection.allCards[existingIndex] = cardData; // 갱신
             }
             else
             {
-                EditorUtility.SetDirty(cardData);
+                collection.allCards.Add(cardData); // 신규 추가
             }
-
-            // 생성된 카드 경로 저장
-            createdCardPaths.Add(assetPath);
             
-            successCount++;
+            count++;
         }
         
-        // ✅ 먼저 모든 CardData 저장
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        
-        // ✅ 저장된 CardData를 다시 로드하여 CardCollection에 추가
-        foreach (string cardPath in createdCardPaths)
+        Debug.Log($"[Converter] {Path.GetFileName(path)}: {count}장 변환 완료");
+        return count;
+    }
+
+    CardCollection GetOrCreateCardCollection()
+    {
+        string collectionPath = "Assets/Resources/CardCollection.asset";
+        CardCollection collection = AssetDatabase.LoadAssetAtPath<CardCollection>(collectionPath);
+
+        if (collection == null)
         {
-            CardData savedCard = AssetDatabase.LoadAssetAtPath<CardData>(cardPath);
-            if (savedCard != null)
-            {
-                collection.allCards.Add(savedCard);
-            }
+            if (!Directory.Exists("Assets/Resources")) Directory.CreateDirectory("Assets/Resources");
+            
+            collection = ScriptableObject.CreateInstance<CardCollection>();
+            AssetDatabase.CreateAsset(collection, collectionPath);
+            Debug.Log("[Converter] 새 CardCollection 생성");
         }
-        
-        EditorUtility.SetDirty(collection);
-        Debug.Log($"[Converter] CardCollection에 {collection.allCards.Count}장의 카드 추가 완료");
-        
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        
-        EditorUtility.DisplayDialog("Success", 
-            $"Successfully converted {successCount} cards!\nCardCollection: {collection.allCards.Count} cards\nSaved to: {outputPath}", "OK");
+        return collection;
     }
     
     void UpdateCardData(CardData cardData, CardJsonData jsonData)
@@ -230,13 +211,15 @@ public class JSONToScriptableObjectConverter : EditorWindow
     {
         switch (characterId)
         {
-            case 101: return Character.Warrior;
+            case 101: return Character.Chloe;
+            case 201: return Character.Ignia;
+            case 301: return Character.Declan;
             case 102: return Character.Mage;
             case 103: return Character.Archer;
             case 104: return Character.Assassin;
             case 105: return Character.Priest;
             case 106: return Character.Knight;
-            default: return Character.Warrior;
+            default: return Character.Chloe;
         }
     }
     
