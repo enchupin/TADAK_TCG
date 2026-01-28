@@ -86,7 +86,7 @@
                 ],
                 "effect": {
                     "type": "Buff",
-                    "buffType": "부식",
+                    "buffId": 201,
                     "amount": "value",
                     "target": "RandEnemy"
                 }
@@ -138,7 +138,7 @@
                 "conditionValue": 201,
                 "effect": {
                     "type": "Buff",
-                    "buffType": "강화된 부식",
+                    "buffId": 202,
                     "amount": "value",
                     "target": "SingleEnemy"
                 }
@@ -152,7 +152,7 @@
             "effects": {
                 "timing": "turnEnd",
                 "type": "Buff",
-                "buffType": "포션 제조",
+                "buffId": 103,
                 "amount": "value",
                 "target": "Self"
             },
@@ -266,6 +266,51 @@
                 "amount": 1
             },
             "description": "50%의 추가 피해를 받습니다."
+        },
+        {
+            "buffId": 113,
+            "name": "화력 충전",
+            "buffType": 1,
+            "effects": {
+                "timing": "damage",
+                "type": "Conditional",
+                "condition": "characterId",
+                "conditionValue": 201,
+                "effect": {
+                    "type": "addDamage",
+                    "amount": "value * 10%",
+                    "target": "Card"
+                }
+            },
+            "decrease": {
+                "timing": "turnEnd",
+                "amount": "all"
+            },
+            "description": "이그니아가 이번 턴 동안 {value * 10}% 만큼 피해를 더 입힙니다."
+        },
+        {
+            "buffId": 114,
+            "name": "가시",
+            "buffType": 1,
+            "effects": {
+                "timing": "damaged",
+                "type": "Damage",
+                "amount": "value",
+                "target": "Attacker"
+            },
+            "description": "공격받을 때마다 공격한 적에게 {value}의 피해를 줍니다."
+        },
+        {
+            "buffId": 203,
+            "name": "화염 낙인",
+            "buffType": 2,
+            "effects": {
+                "timing": "turnEnd",
+                "type": "Damage",
+                "amount": "value",
+                "target": "Self"
+            },
+            "description": "턴 종료 시 화염 낙인 수치만큼 피해를 받습니다."
         }
     ]
 }
