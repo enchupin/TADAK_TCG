@@ -66,8 +66,50 @@ public class CharacterJSONConverter : EditorWindow
             Directory.CreateDirectory(outputPath);
         }
         
+        // ✅ CharacterCollection 생성/업데이트
+        string collectionPath = "Assets/Resources/CharacterCollection.asset";
+        CharacterCollection collection = AssetDatabase.LoadAssetAtPath<CharacterCollection>(collectionPath);
+        
+        if (collection == null)
+        {
+            Debug.Log($"[CharacterJSONConverter] CharacterCollection이 {collectionPath}에 없음. 새로 생성합니다.");
+            
+            // Resources 폴더 확인
+            if (!Directory.Exists("Assets/Resources"))
+            {
+                Directory.CreateDirectory("Assets/Resources");
+                AssetDatabase.Refresh();
+                Debug.Log("[CharacterJSONConverter] Assets/Resources 폴더 생성");
+            }
+            
+            // 새로 생성
+            collection = ScriptableObject.CreateInstance<CharacterCollection>();
+            AssetDatabase.CreateAsset(collection, collectionPath);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            
+            // 다시 로드하여 확인
+            collection = AssetDatabase.LoadAssetAtPath<CharacterCollection>(collectionPath);
+            if (collection != null)
+            {
+                Debug.Log($"[CharacterJSONConverter] 새 CharacterCollection 생성 완료: {collectionPath}");
+            }
+            else
+            {
+                Debug.LogError($"[CharacterJSONConverter] CharacterCollection 생성 실패! {collectionPath}");
+            }
+        }
+        else
+        {
+            // 기존 컬렉션 초기화
+            Debug.Log($"[CharacterJSONConverter] 기존 CharacterCollection 발견: {collectionPath}, 현재 캐릭터 수: {collection.allCharacters.Count}");
+            collection.allCharacters.Clear();
+            Debug.Log("[CharacterJSONConverter] 기존 CharacterCollection 초기화 완료");
+        }
+        
         int successCount = 0;
         int failCount = 0;
+        List<string> createdCharacterPaths = new List<string>();
         
         // 각 캐릭터를 ScriptableObject로 변환
         foreach (var jsonChar in jsonRoot.characters)
@@ -102,6 +144,9 @@ public class CharacterJSONConverter : EditorWindow
                     Debug.Log($"Updated: {assetPath}");
                 }
                 
+                // 생성된 캐릭터 경로 저장
+                createdCharacterPaths.Add(assetPath);
+                
                 successCount++;
             }
             catch (System.Exception e)
@@ -111,6 +156,23 @@ public class CharacterJSONConverter : EditorWindow
             }
         }
         
+        // ✅ 먼저 모든 CharacterData 저장
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        
+        // ✅ 저장된 CharacterData를 다시 로드하여 CharacterCollection에 추가
+        foreach (string characterPath in createdCharacterPaths)
+        {
+            CharacterData savedCharacter = AssetDatabase.LoadAssetAtPath<CharacterData>(characterPath);
+            if (savedCharacter != null)
+            {
+                collection.allCharacters.Add(savedCharacter);
+            }
+        }
+        
+        EditorUtility.SetDirty(collection);
+        Debug.Log($"[CharacterJSONConverter] CharacterCollection에 {collection.allCharacters.Count}명의 캐릭터 추가 완료");
+        
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         
@@ -119,6 +181,7 @@ public class CharacterJSONConverter : EditorWindow
         {
             message += $"Failed: {failCount}\n";
         }
+        message += $"CharacterCollection: {collection.allCharacters.Count} characters\n";
         message += $"Saved to: {outputPath}";
         
         EditorUtility.DisplayDialog("Conversion Complete", message, "OK");

@@ -180,7 +180,7 @@ public class JSONToScriptableObjectConverter : EditorWindow
         // 기본 정보
         cardData.cardId = jsonData.cardId;
         cardData.cardName = jsonData.name;
-        cardData.character = GetCharacterFromId(jsonData.characterId);
+        cardData.character = CharacterManager.GetCharacterEnumById(jsonData.characterId);
         cardData.cost = jsonData.cost;
         cardData.rarity = jsonData.rarity;
         
@@ -206,22 +206,7 @@ public class JSONToScriptableObjectConverter : EditorWindow
             }
         }
     }
-    
-    private Character GetCharacterFromId(int characterId)
-    {
-        switch (characterId)
-        {
-            case 101: return Character.Chloe;
-            case 201: return Character.Ignia;
-            case 301: return Character.Declan;
-            case 102: return Character.Mage;
-            case 103: return Character.Archer;
-            case 104: return Character.Assassin;
-            case 105: return Character.Priest;
-            case 106: return Character.Knight;
-            default: return Character.Chloe;
-        }
-    }
+
     
     CardEffectData CreateEffectData(EffectJsonData jsonData)
     {
