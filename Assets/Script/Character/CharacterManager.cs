@@ -126,4 +126,23 @@ public static class CharacterManager
         return isInitialized;
     }
     
+    /// <summary>
+    /// characterId를 Character enum으로 변환
+    /// 새로운 캐릭터 추가 시 이 메서드를 업데이트하세요.
+    /// </summary>
+    public static Character GetCharacterEnumById(int characterId)
+    {
+        switch (characterId)
+        {
+            case 101: return Character.Warrior;
+            case 102: return Character.Mage;
+            case 103: return Character.Archer;
+            case 104: return Character.Assassin;
+            case 105: return Character.Priest;
+            case 106: return Character.Knight;
+            default:
+                Debug.LogWarning($"[CharacterManager] Unknown characterId: {characterId}, defaulting to Warrior");
+                return Character.Warrior;
+        }
+    }
 }
