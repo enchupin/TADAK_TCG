@@ -2,19 +2,20 @@ using UnityEngine;
 using System.Collections.Generic;
 
 /// <summary>
-/// 전투 매니저 - UI 통합 버전 (싱글톤)
+/// 훈련 모드 전투 매니저 (싱글톤)
+/// 3명의 캐릭터를 선택하여 하나의 플레이어로 플레이하는 훈련 모드 전용
 /// </summary>
-public class BattleManager : MonoBehaviour {
+public class TrainingBattleManager : MonoBehaviour {
 
     // 싱글톤 인스턴스
-    public static BattleManager Instance { get; private set; }
+    public static TrainingBattleManager Instance { get; private set; }
 
     [Header("UI 시스템")]
     public BattleUI battleUI;
 
     [Header("전투 데이터")]
     public PlayerData playerData;
-    public Monster monster; // 임시 호출
+    public Monster monster;
 
 
     [Header("카드 데이터")]

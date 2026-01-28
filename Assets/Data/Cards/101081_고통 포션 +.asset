@@ -10,14 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b4bd1118fb042d4bbad8fdee171a572, type: 3}
-  m_Name: "101084_\uD2BC\uD2BC \uD3EC\uC158"
+  m_Name: "101081_\uACE0\uD1B5 \uD3EC\uC158 +"
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  cardId: 101084
-  cardName: "\uD2BC\uD2BC \uD3EC\uC158"
+  cardId: 101081
+  cardName: "\uACE0\uD1B5 \uD3EC\uC158 +"
   character: 0
   cost: 0
   rarity: 
   artworkAddress: 
   effectAddress: 
   soundAddress: 
-  effects: []
+  effects:
+  - type: 0
+    amount: 6
+    target: 0
+    stat: 
+    duration: 0
+    baseDamage: 0
+    bonusPerCard: 0
+    hpThreshold: 0
+    multiplier: 0

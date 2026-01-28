@@ -43,7 +43,7 @@ public class CardUI : MonoBehaviour
     /// 카드가 생성될 때 호출
     /// </summary>
     public void InitializeCardUI(int cardId) {
-        card = BattleManager.Instance.GetCardById(cardId);
+        card = TrainingBattleManager.Instance.GetCardById(cardId);
         UpdateDisplay();
     }
 

@@ -8,7 +8,7 @@ public class EnergyEffect : ICardEffect
 {
     public int amount;
     
-    public void Execute(BattleManager battleManager)
+    public void Execute(TrainingBattleManager battleManager)
     {
         battleManager.playerData.AddEnergy(amount);
     }

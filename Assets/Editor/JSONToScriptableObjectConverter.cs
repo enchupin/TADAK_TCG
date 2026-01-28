@@ -68,11 +68,27 @@ public class JSONToScriptableObjectConverter : EditorWindow
             Directory.CreateDirectory(outputPath);
         }
         
-        // CardCollection 생성
+        // CardCollection 로드 또는 생성
         CardCollection collection = null;
         if (createCollection)
         {
-            collection = ScriptableObject.CreateInstance<CardCollection>();
+            // 기존 CardCollection 로드 시도
+            string collectionPath = "Assets/Resources/CardCollection.asset";
+            collection = AssetDatabase.LoadAssetAtPath<CardCollection>(collectionPath);
+            
+            if (collection == null)
+            {
+                // 없으면 새로 생성
+                collection = ScriptableObject.CreateInstance<CardCollection>();
+                AssetDatabase.CreateAsset(collection, collectionPath);
+                Debug.Log("[Converter] 새 CardCollection 생성");
+            }
+            else
+            {
+                // 기존 컬렉션 초기화
+                collection.allCards.Clear();
+                Debug.Log("[Converter] 기존 CardCollection 업데이트");
+            }
         }
         
         int successCount = 0;
@@ -120,8 +136,7 @@ public class JSONToScriptableObjectConverter : EditorWindow
         // CardCollection 저장
         if (collection != null)
         {
-            string collectionPath = Path.Combine(outputPath, "CardCollection.asset");
-            AssetDatabase.CreateAsset(collection, collectionPath);
+            EditorUtility.SetDirty(collection);
         }
         
         AssetDatabase.SaveAssets();

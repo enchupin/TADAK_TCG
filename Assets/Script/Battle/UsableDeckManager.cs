@@ -117,34 +117,34 @@ public class UsableDeckManager : MonoBehaviour
             SelectedButtonControl.selectedCharacterList.Count != 3) {
             Debug.LogWarning("캐릭터 선택이 잘못되었습니다! (3개의 캐릭터를 선택해야 합니다)");
 
-            // 테스트 용: choleCards.json에 Warrior(101) 카드만 있으므로 Warrior만 사용
+            // 테스트 용: Warrior 3명 선택
             SelectedButtonControl.selectedCharacterList.Clear();
             SelectedButtonControl.selectedCharacterList.Add(Character.Warrior);
             SelectedButtonControl.selectedCharacterList.Add(Character.Warrior);
             SelectedButtonControl.selectedCharacterList.Add(Character.Warrior);
-
         }
+        
+        Debug.Log($"[UsableDeckManager] 선택된 캐릭터: {SelectedButtonControl.selectedCharacterList.Count}명");
 
-        // 선택된 각 캐릭터의 카드를 CardManager에서 가져와서 usableDeck에 추가
+        // ✅ 훈련 모드: 선택된 각 캐릭터의 카드를 1장씩 덱에 추가
+        // 예: Warrior 3명 선택 → Warrior 카드 40종을 3번 추가 = 120장
         foreach (Character character in SelectedButtonControl.selectedCharacterList) {
             // CardManager에서 해당 캐릭터 카드 가져오기 (O(1) 조회)
             var characterCards = CardManager.GetCardsByCharacter(character);
 
             if (characterCards != null && characterCards.Count > 0) {
-                // Queue에 카드 추가 (각 카드 3장씩)
+                // Queue에 카드 추가 (각 카드 1장씩)
                 foreach (var cardData in characterCards) {
-                    for (int i = 0; i < 3; i++) {
-                        usableDeck.Enqueue(cardData.cardId);
-                    }
+                    usableDeck.Enqueue(cardData.cardId);
                 }
-                Debug.Log($"{character} 직업의 카드 {characterCards.Count * 3}장을 덱에 추가했습니다.");
+                Debug.Log($"[UsableDeckManager] {character} 직업의 카드 {characterCards.Count}장을 덱에 추가했습니다.");
             } else {
                 // 예외 처리
-                Debug.LogWarning($"{character} 직업의 카드가 없습니다!");
+                Debug.LogWarning($"[UsableDeckManager] {character} 직업의 카드가 없습니다!");
             }
         }
 
-        Debug.Log($"총 {usableDeck.Count}장의 카드로 덱을 초기화했습니다.");
+        Debug.Log($"[UsableDeckManager] 총 {usableDeck.Count}장의 카드로 덱을 초기화했습니다.");
     }
 
 }
