@@ -32,12 +32,14 @@ public class CardJsonData
     {
         switch (characterId)
         {
-            case 101: return Character.Warrior;
+            case 101: return Character.Chloe;
+            case 201: return Character.Ignia;
+            case 301: return Character.Declan;
             case 102: return Character.Archer;
             case 103: return Character.Knight;
             default:
-                UnityEngine.Debug.LogWarning($"Unknown characterId: {characterId}, defaulting to Warrior");
-                return Character.Warrior;
+                UnityEngine.Debug.LogWarning($"Unknown characterId: {characterId}, defaulting to Chloe");
+                return Character.Chloe;
         }
     }
 }
