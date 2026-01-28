@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 /// <summary>
 /// 캐릭터 데이터를 저장하는 ScriptableObject
-/// JSON에서 변환되어 .asset 파일로 저장됩니다.
+/// JSON에서 변환되어 .asset 파일로 저장
 /// </summary>
 [CreateAssetMenu(fileName = "New Character", menuName = "TCG/Character Data")]
 public class CharacterData : ScriptableObject
