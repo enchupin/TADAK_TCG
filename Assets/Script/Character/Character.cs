@@ -1,7 +1,9 @@
 public enum Character
 {
-    Warrior,    // 전사
-    Mage,       // 마법사
+    Chloe,      // 클로이 (101)
+    Ignia,      // 이그니아 (201)
+    Declan,     // 데클란 (301)
+    Mage,       // 마법사 (Legacy)
     Archer,     // 궁수
     Assassin,   // 암살자
     Priest,     // 성직자
