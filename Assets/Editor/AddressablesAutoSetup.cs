@@ -27,12 +27,31 @@ public class AddressablesAutoSetup
         int cardCount = 0;
         int collectionCount = 0;
         
-        // CardData 등록
-        string[] cardGuids = AssetDatabase.FindAssets("t:CardData", new[] { "Assets/Data/Cards" });
+        // ✅ JSON 컨버터와 동일한 경로 사용
+        string cardDataPath = "Assets/Data/Cards";
+        
+        // CardData 등록 (outputPath의 카드만)
+        string[] cardGuids = AssetDatabase.FindAssets("t:CardData", new[] { cardDataPath });
+        
+        Debug.Log($"[Addressables] {cardDataPath}에서 CardData 검색 중...");
+        
         foreach (string guid in cardGuids)
         {
             string path = AssetDatabase.GUIDToAssetPath(guid);
+            
+            // CardCollection.asset은 제외
+            if (path.Contains("CardCollection.asset"))
+            {
+                continue;
+            }
+            
             CardData cardData = AssetDatabase.LoadAssetAtPath<CardData>(path);
+            
+            if (cardData == null)
+            {
+                Debug.LogWarning($"[Addressables] CardData 로드 실패: {path}");
+                continue;
+            }
             
             var entry = settings.CreateOrMoveEntry(guid, settings.DefaultGroup);
             
@@ -50,13 +69,13 @@ public class AddressablesAutoSetup
                 entry.labels.Add(characterLabel);
             }
             
-            Debug.Log($"등록: {entry.address}, Label: {characterLabel}");
+            Debug.Log($"[Addressables] 등록: {entry.address}, Label: {characterLabel}");
             
             cardCount++;
         }
         
         // CardCollection 등록
-        string[] collectionGuids = AssetDatabase.FindAssets("t:CardCollection", new[] { "Assets/Data/Cards" });
+        string[] collectionGuids = AssetDatabase.FindAssets("t:CardCollection", new[] { "Assets/Resources" });
         foreach (string guid in collectionGuids)
         {
             var entry = settings.CreateOrMoveEntry(guid, settings.DefaultGroup);
