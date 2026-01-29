@@ -5,22 +5,22 @@ using System.Collections.Generic;
 
 /// <summary>
 /// JSON을 ScriptableObject로 자동 변환하는 에디터 툴
-/// Tools → TCG → JSON to ScriptableObject Converter
+/// Tools → TCG → Card JSON Converter
 /// </summary>
-public class JSONToScriptableObjectConverter : EditorWindow
+public class CardJSONConverter : EditorWindow
 {
     private string jsonFolderPath = "Assets/Resources/JsonData"; // 기본값: 폴더 경로
     private string outputPath = "Assets/Data/Cards";
     
-    [MenuItem("Tools/TCG/JSON to ScriptableObject Converter")]
+    [MenuItem("Tools/TCG/Card JSON Converter")]
     public static void ShowWindow()
     {
-        GetWindow<JSONToScriptableObjectConverter>("Card Converter");
+        GetWindow<CardJSONConverter>("Card Converter");
     }
     
     void OnGUI()
     {
-        GUILayout.Label("JSON Batch Converter", EditorStyles.boldLabel);
+        GUILayout.Label("Card JSON Batch Converter", EditorStyles.boldLabel);
         GUILayout.Space(10);
         
         jsonFolderPath = EditorGUILayout.TextField("JSON Folder Path", jsonFolderPath);

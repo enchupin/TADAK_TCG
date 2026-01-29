@@ -125,6 +125,18 @@ public class BattleUI : MonoBehaviour
     }
     
     /// <summary>
+    /// 초기화 (매니저 연결 등)
+    /// </summary>
+    public void Initialize()
+    {
+        if (endTurnButton != null)
+        {
+            endTurnButton.onClick.RemoveAllListeners();
+            endTurnButton.onClick.AddListener(OnEndTurnClicked);
+        }
+    }
+
+    /// <summary>
     /// 턴 종료 버튼 클릭
     /// </summary>
     private void OnEndTurnClicked()

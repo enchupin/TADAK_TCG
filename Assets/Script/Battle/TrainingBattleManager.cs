@@ -73,14 +73,18 @@ public class TrainingBattleManager : MonoBehaviour {
             
             SelectedButtonControl.selectedCharacterList.Clear();
             
-            // 테스트용: Chloe만 사용 (chloeCards.json에 Chloe 카드만 있음)
+            // 테스트용: Chloe, Ignia, Declan 사용
             SelectedButtonControl.selectedCharacterList.Add(Character.Chloe);
-            SelectedButtonControl.selectedCharacterList.Add(Character.Chloe);
-            SelectedButtonControl.selectedCharacterList.Add(Character.Chloe);
+            SelectedButtonControl.selectedCharacterList.Add(Character.Ignia);
+            SelectedButtonControl.selectedCharacterList.Add(Character.Declan);
             
             Debug.Log($"[BattleManager] 기본 캐릭터 설정 완료: {SelectedButtonControl.selectedCharacterList.Count}명");
         }
     }
+
+    [Header("덱 시스템")]
+    // 런 동안 유지되는 영구 덱 (씬이 바뀌어도 유지되도록 static)
+    public static BuildingDeck buildingDeck;
 
     /// <summary>
     /// 전투 초기화
@@ -88,18 +92,30 @@ public class TrainingBattleManager : MonoBehaviour {
     void InitializeBattle() {
 
         playerData = new PlayerData();
-
-        // 임시 호출
         monster = new Monster();
 
-        // CardManager는 자동으로 초기화되어 있음
         if (!CardManager.IsInitialized())
         {
             Debug.LogError("[BattleManager] CardManager가 초기화되지 않았습니다!");
             return;
         }
 
-        usableDeckManager.InitializeDeck();
+        // 1. BuildingDeck 초기화 (게임 최초 실행 시 한 번만)
+        if (buildingDeck == null)
+        {
+            Debug.Log("[BattleManager] 새로운 Run 시작: BuildingDeck을 생성합니다.");
+            buildingDeck = new BuildingDeck();
+            buildingDeck.Initialize(SelectedButtonControl.selectedCharacterList);
+        }
+        else
+        {
+             Debug.Log($"[BattleManager] 기존 Run 이어하기: BuildingDeck 유지됨 ({buildingDeck.CopyDeck().Count}장)");
+        }
+
+        // 2. 전투용 덱(UsableDeck) 설정 - 영구 덱에서 복사
+        List<int> battleDeck = buildingDeck.CopyDeck();
+        usableDeckManager.SetDeck(battleDeck);
+
         UpdateAllUI();
     }
 
@@ -107,16 +123,11 @@ public class TrainingBattleManager : MonoBehaviour {
     /// UI 초기화
     /// </summary>
     void InitializeUI() {
-
-
-    /*
-    if (battleUI != null) {
-        battleUI.Initialize(this);
-        battleUI.UpdateAllUI(playerData, monster);
-    }
-    */
-
-
+        if (battleUI != null)
+        {
+            battleUI.Initialize();
+            battleUI.UpdateAllUI();
+        }
     }
 
 
@@ -278,36 +289,6 @@ public class TrainingBattleManager : MonoBehaviour {
     void UpdateAllUI() {
         if (battleUI != null) battleUI.UpdateAllUI();
     }
-
-
-
-
-
-    // ========== 테스트 모드 (기존 코드) ==========
-    /*
-    void TestCards() {
-        if (cardCollection == null || cardCollection.allCards.Count == 0) {
-            Debug.LogError("CardCollection이 없거나 카드가 로드되지 않았습니다!");
-            return;
-        }
-
-        Debug.Log("\n=== 카드 테스트 시작 ===\n");
-
-        Card fireball = GetCardById(101010);
-        if (fireball != null) {
-            Debug.Log($"\n--- {fireball.cardName} 사용 ---");
-            fireball.Play(this);
-        }
-
-        Card shield = GetCardById(101020);
-        if (shield != null) {
-            Debug.Log($"\n--- {shield.cardName} 사용 ---");
-            shield.Play(this);
-        }
-
-        Debug.Log("\n=== 카드 테스트 완료 ===");
-    }
-    */
 
 
 }

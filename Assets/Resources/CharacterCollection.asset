@@ -14,14 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCollection
   allCharacters:
   - {fileID: 11400000, guid: 51f18a21f2abe2b43b95618c2dda03b9, type: 2}
-  - {fileID: 11400000, guid: 1f73ef9450f752448949c62bd913c2f7, type: 2}
-  - {fileID: 11400000, guid: cdb4d65daa9f3314f9e043c801ab3a95, type: 2}
-  - {fileID: 11400000, guid: e92fad7f995f3fb4eac981d967763009, type: 2}
   - {fileID: 11400000, guid: cb8977c814c44a5479ba27589cb3ee7a, type: 2}
-  - {fileID: 11400000, guid: d20225aea70dd7044b3f6611fabfb9a7, type: 2}
-  - {fileID: 11400000, guid: 27490e1e0051c634583d2becd3814a40, type: 2}
-  - {fileID: 11400000, guid: 10d73db324ee57c41a52bc194c02b962, type: 2}
   - {fileID: 11400000, guid: a818e49ca0b1ff9489deaaa704054aae, type: 2}
-  - {fileID: 11400000, guid: bb9fd6fd8f07f4b498adbc86bad6e089, type: 2}
-  - {fileID: 11400000, guid: 99a9926b94bda714a843c4954e6da2a6, type: 2}
-  - {fileID: 11400000, guid: 63798f395ec835247b6862733b397fa7, type: 2}

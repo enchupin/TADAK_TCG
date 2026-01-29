@@ -105,51 +105,16 @@ public class UsableDeckManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 선택된 캐릭터의 저장 덱 불러오기
+    /// 외부에서 덱을 설정 (전투 시작 시 호출)
     /// </summary>
-    public void InitializeDeck() {
-
-        // usableDeck 초기화
+    public void SetDeck(List<int> cardIds) {
         usableDeck = new Queue<int>();
-
-        // 선택된 캐릭터가 없는 경우 체크
-        if (SelectedButtonControl.selectedCharacterList == null ||
-            SelectedButtonControl.selectedCharacterList.Count != 3) {
-            Debug.LogWarning("캐릭터 선택이 잘못되었습니다! (3개의 캐릭터를 선택해야 합니다)");
-
-            // 테스트 용: Chloe 3명 선택
-            SelectedButtonControl.selectedCharacterList.Clear();
-            SelectedButtonControl.selectedCharacterList.Add(Character.Chloe);
-            SelectedButtonControl.selectedCharacterList.Add(Character.Chloe);
-            SelectedButtonControl.selectedCharacterList.Add(Character.Chloe);
+        
+        foreach (int id in cardIds) {
+            usableDeck.Enqueue(id);
         }
         
-        Debug.Log($"[UsableDeckManager] 선택된 캐릭터: {SelectedButtonControl.selectedCharacterList.Count}명");
-
-        // ✅ 훈련 모드: 선택된 각 캐릭터의 카드 1장씩 덱에 추가 (기본 카드만 필터링)
-        // 기본 카드 조건: ID 끝자리가 0이고, 뒷자리 두 개가 70 이하인 경우 (예: 101010, 101020 ... 101070)
-        foreach (Character character in SelectedButtonControl.selectedCharacterList) {
-            // CardManager에서 해당 캐릭터 카드 가져오기 (O(1) 조회)
-            var characterCards = CardManager.GetCardsByCharacter(character);
-
-            if (characterCards != null && characterCards.Count > 0) {
-                int addedCount = 0;
-                foreach (var cardData in characterCards) {
-                    // ✅ 기본 카드 필터링 로직
-                    if (cardData.cardId % 10 == 0 && (cardData.cardId % 100) <= 70)
-                    {
-                        usableDeck.Enqueue(cardData.cardId);
-                        addedCount++;
-                    }
-                }
-                Debug.Log($"[UsableDeckManager] {character} 직업의 카드 중 {addedCount}장의 기본 카드를 덱에 추가했습니다.");
-            } else {
-                // 예외 처리
-                Debug.LogWarning($"[UsableDeckManager] {character} 직업의 카드가 없습니다!");
-            }
-        }
-
-        Debug.Log($"[UsableDeckManager] 총 {usableDeck.Count}장의 카드로 덱을 초기화했습니다.");
+        Debug.Log($"[UsableDeckManager] 덱 설정 완료: 총 {usableDeck.Count}장");
     }
 
 }

@@ -156,14 +156,34 @@ public static class CharacterManager
         switch (characterId)
         {
             case 101: return Character.Chloe;
-            case 102: return Character.Mage;
-            case 103: return Character.Archer;
-            case 104: return Character.Assassin;
-            case 105: return Character.Priest;
-            case 106: return Character.Knight;
+            case 201: return Character.Ignia;
+            case 301: return Character.Declan;
             default:
-                Debug.LogWarning($"[CharacterManager] Unknown characterId: {characterId}, defaulting to Warrior");
+                Debug.LogWarning($"[CharacterManager] Unknown characterId: {characterId}, defaulting to Chloe");
                 return Character.Chloe;
         }
+    }
+
+    /// <summary>
+    /// Character Enum을 characterId로 변환
+    /// </summary>
+    public static int GetCharacterIdFromEnum(Character character)
+    {
+        switch (character)
+        {
+            case Character.Chloe: return 101;
+            case Character.Ignia: return 201;
+            case Character.Declan: return 301;
+            default: return 101;
+        }
+    }
+
+    /// <summary>
+    /// Character Enum으로 CharacterData 조회
+    /// </summary>
+    public static CharacterData GetCharacterByEnum(Character character)
+    {
+        int id = GetCharacterIdFromEnum(character);
+        return GetCharacter(id);
     }
 }
