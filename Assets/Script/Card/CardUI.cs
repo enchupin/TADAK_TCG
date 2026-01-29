@@ -20,39 +20,19 @@ public class CardUI : MonoBehaviour
     [SerializeField] private Color normalColor = Color.white;
     [SerializeField] private Color unplayableColor = Color.gray;
 
-
-
-
-    
-    public Card card;
     private bool isPlayable = true;
     public bool IsPlayable => isPlayable;
 
-    private void Awake()
+    /// <summary>
+    /// UI 업데이트 - CardController로부터 Card 데이터를 받아서 표시
+    /// </summary>
+    public void UpdateDisplay(Card card)
     {
-        if (GetComponent<CardInputControl>() == null)
+        if (card == null)
         {
-            gameObject.AddComponent<CardInputControl>();
+            Debug.LogWarning("[CardUI] Card is null!");
+            return;
         }
-    }
-
-
-
-    /// <summary>
-    /// 카드가 생성될 때 호출
-    /// </summary>
-    public void InitializeCardUI(int cardId) {
-        card = TrainingBattleManager.Instance.GetCardById(cardId);
-        UpdateDisplay();
-    }
-
-
-    /// <summary>
-    /// UI 업데이트
-    /// </summary>
-    public void UpdateDisplay()
-    {
-        if (card == null) return;
         
         // 텍스트 업데이트
         if (cardNameText != null)
@@ -62,7 +42,7 @@ public class CardUI : MonoBehaviour
             costText.text = card.cost.ToString();
         
         if (descriptionText != null)
-            descriptionText.text = GetCardDescription();
+            descriptionText.text = GetCardDescription(card);
         
         // 카드 이미지 (나중에 Addressables로 로드)
         if (cardArtwork != null && card.artwork != null)
@@ -80,7 +60,7 @@ public class CardUI : MonoBehaviour
     /// <summary>
     /// 카드 설명 생성
     /// </summary>
-    private string GetCardDescription()
+    private string GetCardDescription(Card card)
     {
         string description = "";
         

@@ -30,10 +30,25 @@ public class CardClickedEventData
     public Card card;
     public int cardId;
     
+    // CardController를 받는 생성자
+    public CardClickedEventData(CardController cardController)
+    {
+        this.cardUI = cardController.UI;
+        this.card = cardController.Card;
+        this.cardId = cardController.Card.cardId;
+    }
+    
+    // 하위 호환성을 위한 CardUI 생성자 (deprecated)
+    [System.Obsolete("Use CardClickedEventData(CardController) instead")]
     public CardClickedEventData(CardUI cardUI)
     {
         this.cardUI = cardUI;
-        this.card = cardUI.card;
-        this.cardId = cardUI.card.cardId;
+        // CardController를 통해 Card 가져오기
+        var controller = cardUI.GetComponent<CardController>();
+        if (controller != null)
+        {
+            this.card = controller.Card;
+            this.cardId = controller.Card.cardId;
+        }
     }
 }

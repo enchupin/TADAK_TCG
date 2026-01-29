@@ -58,17 +58,18 @@ public class HandManager : MonoBehaviour
     /// 카드 UI 생성
     /// </summary>
     public void InstantiateCardUI(int cardId) {
-        Card card = TrainingBattleManager.Instance?.GetCardById(cardId);
-        if (card == null) {
-            Debug.LogWarning($"카드 ID {cardId}를 찾을 수 없습니다!");
-            return;
-        }
-
         GameObject cardObj = Instantiate(cardUIPrefab, handContainer);
-        CardUI cardUI = cardObj.GetComponent<CardUI>();
-        cardUI.InitializeCardUI(cardId);
-
-
+        
+        // CardController를 통해 초기화
+        CardController controller = cardObj.GetComponent<CardController>();
+        if (controller != null)
+        {
+            controller.Initialize(cardId);
+        }
+        else
+        {
+            Debug.LogWarning($"[HandManager] CardController를 찾을 수 없습니다!");
+        }
     }
 
 
@@ -83,7 +84,16 @@ public class HandManager : MonoBehaviour
             return;
         }
 
-        int cardId = cardUI.card.cardId;
+        // CardController를 통해 cardId 가져오기
+        CardController controller = cardUI.GetComponent<CardController>();
+        if (controller == null || controller.Card == null)
+        {
+            Debug.LogWarning("[HandManager] CardController 또는 Card를 찾을 수 없습니다!");
+            Destroy(cardUI.gameObject);
+            return;
+        }
+        
+        int cardId = controller.Card.cardId;
         
         // 손패 리스트에서 제거
         if (handCardIdList.Contains(cardId))
@@ -94,7 +104,6 @@ public class HandManager : MonoBehaviour
 
         // UI 오브젝트 파괴
         Destroy(cardUI.gameObject);
-        
     }
 
     
