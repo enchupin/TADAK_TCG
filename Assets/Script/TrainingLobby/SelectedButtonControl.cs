@@ -65,6 +65,10 @@ public class SelectedButtonControl : MonoBehaviour
         }
     }
 
+
+    /// <summary>
+    /// 캐릭터 선택
+    /// </summary>
     private void SelectCharacter()
     {
         // 최대 선택 개수 체크
@@ -95,6 +99,10 @@ public class SelectedButtonControl : MonoBehaviour
 
     }
 
+
+    /// <summary>
+    /// 캐릭터 선택 해제
+    /// </summary>
     private void DeselectCharacter()
     {
         // 리스트에서 제거

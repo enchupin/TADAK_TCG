@@ -18,7 +18,7 @@ public class CharacterSelectionManagerWithEvent : MonoBehaviour
 
     private void OnDisable()
     {
-        // 이벤트 구독 해제 (메모리 누수 방지)
+        // 이벤트 구독 해제
         SelectedButtonControl.OnSelectionChanged -= OnSelectionCountChanged;
     }
 

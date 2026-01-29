@@ -6,7 +6,6 @@ using TMPro;
 /// <summary>
 /// 카드 UI 컴포넌트
 /// 카드 데이터를 받아서 UI에 표시하고 클릭 이벤트 처리
-/// 호버 효과는 UIHoverEffect 컴포넌트가 담당
 /// </summary>
 public class CardUI : MonoBehaviour
 {
