@@ -20,7 +20,9 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     
     [Header("Drag Settings")]
     private readonly float playThresholdYRatio = 0.3f; // 드래그 범위
+
     
+
     [Header("Debug")]
     [SerializeField] private bool showPlayThreshold = true;
     [SerializeField] private Color thresholdColor = new Color(1, 0, 0, 0.5f);
@@ -33,7 +35,7 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     
     // 전역 드래그 상태
     private static bool isAnyCardDragging = false;
-    
+
     // 드래그 관련
     private RectTransform rectTransform;
     private Canvas canvas;
@@ -43,7 +45,9 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     
     private int originalSiblingIndex;
     private GameObject placeholder;
-    
+    public UnityEvent OnCardPlayRequested => onCardPlayRequested; // 카드 사용 이벤트
+
+
     private void Awake()
     {
         // 호버 초기화
@@ -155,12 +159,10 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     
     public void OnDrag(PointerEventData eventData)
     {
-        if (canvas != null)
-        {
+        if (canvas != null) {
             rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
         }
-        else
-        {
+        else {
             rectTransform.position = eventData.position;
         }
     }
@@ -177,7 +179,6 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
         
         // 카드 사용 판정
         if (eventData.position.y > Screen.height * playThresholdYRatio) {
-
             // UnityEvent 발행
             onCardPlayRequested?.Invoke();
         }
@@ -190,17 +191,6 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
         scaleCoroutine = StartCoroutine(ScaleAnimation(originalScale));
     }
     
-    /// <summary>
-    /// 카드 플레이 요청
-    /// </summary>
-    private void TryPlayCard()
-    {
-        // UnityEvent 발행
-        onCardPlayRequested?.Invoke();
-        
-        // 원래 자리로 복귀
-        ReturnToHand();
-    }
     
     private void ReturnToHand()
     {
@@ -275,7 +265,4 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     
     #endregion
     
-    // 외부 접근자
-    public Vector3 OriginalScale => originalScale;
-    public UnityEvent OnCardPlayRequested => onCardPlayRequested;
 }
