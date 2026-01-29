@@ -155,7 +155,7 @@ public static class CharacterManager
     {
         switch (characterId)
         {
-            case 101: return Character.Warrior;
+            case 101: return Character.Chloe;
             case 102: return Character.Mage;
             case 103: return Character.Archer;
             case 104: return Character.Assassin;
@@ -163,7 +163,7 @@ public static class CharacterManager
             case 106: return Character.Knight;
             default:
                 Debug.LogWarning($"[CharacterManager] Unknown characterId: {characterId}, defaulting to Warrior");
-                return Character.Warrior;
+                return Character.Chloe;
         }
     }
 }
