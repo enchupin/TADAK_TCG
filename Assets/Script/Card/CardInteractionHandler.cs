@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using System.Collections;
 
 /// <summary>
@@ -10,12 +11,15 @@ using System.Collections;
 public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     IBeginDragHandler, IDragHandler, IEndDragHandler
 {
+    [Header("Events")]
+    [SerializeField] private UnityEvent onCardPlayRequested; // 카드 사용 이벤트
+    
     [Header("Hover Settings")]
-    [SerializeField] private float hoverScale = 1.4f;
-    [SerializeField] private float hoverDuration = 0.15f;
+    private readonly float hoverScale = 1.4f; // 변환 스케일
+    private readonly float hoverDuration = 0.15f; // 호버링 속도
     
     [Header("Drag Settings")]
-    [SerializeField] private float playThresholdYRatio = 0.3f;
+    private readonly float playThresholdYRatio = 0.3f; // 드래그 범위
     
     [Header("Debug")]
     [SerializeField] private bool showPlayThreshold = true;
@@ -27,12 +31,15 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     private Coroutine scaleCoroutine;
     private bool isDragging = false;
     
+    // 전역 드래그 상태
+    private static bool isAnyCardDragging = false;
+    
     // 드래그 관련
     private RectTransform rectTransform;
     private Canvas canvas;
     private CanvasGroup canvasGroup;
     private LayoutElement layoutElement;
-    private CardController cardController;
+    private CardUI cardUI; // CardController 대신 CardUI 직접 참조
     
     private int originalSiblingIndex;
     private GameObject placeholder;
@@ -47,7 +54,7 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
         canvas = GetComponentInParent<Canvas>();
         canvasGroup = GetComponent<CanvasGroup>();
         layoutElement = GetComponent<LayoutElement>();
-        cardController = GetComponent<CardController>();
+        cardUI = GetComponent<CardUI>();
         
         if (canvasGroup == null) canvasGroup = gameObject.AddComponent<CanvasGroup>();
         if (layoutElement == null) layoutElement = gameObject.AddComponent<LayoutElement>();
@@ -64,27 +71,31 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     #region Hover Effects
     
     /// <summary>
-    /// 허
+    /// 호버링 적용
     /// </summary>
-    /// <param name="eventData"></param>
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (!isDragging)
-        {
+        // 어떤 카드라도 드래그 중이면 호버 효과를 무시
+        if (!isDragging && !isAnyCardDragging) {
             StopCurrentAnimation();
             scaleCoroutine = StartCoroutine(ScaleAnimation(originalScale * hoverScale));
         }
     }
     
+    /// <summary>
+    /// 호버링 해제
+    /// </summary>
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (!isDragging)
-        {
+        if (!isDragging) {
             StopCurrentAnimation();
             scaleCoroutine = StartCoroutine(ScaleAnimation(originalScale));
         }
     }
     
+    /// <summary>
+    /// 호버링 코루틴 중지
+    /// </summary>
     private void StopCurrentAnimation()
     {
         if (scaleCoroutine != null)
@@ -94,6 +105,9 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
         }
     }
     
+    /// <summary>
+    /// 호버링 코루틴
+    /// </summary>
     private IEnumerator ScaleAnimation(Vector3 targetScale)
     {
         Vector3 startScale = transform.localScale;
@@ -113,12 +127,15 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     #endregion
     
     #region Drag & Play
-    
+    /// <summary>
+    /// 드래그 시작
+    /// </summary>
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (cardController == null || cardController.UI == null || !cardController.UI.IsPlayable) return;
+        if (cardUI == null || !cardUI.IsPlayable) return;
         
         isDragging = true;
+        isAnyCardDragging = true; // 전역 드래그 상태 활성화
         originalSiblingIndex = transform.GetSiblingIndex();
         
         // Placeholder 생성 전에 크기 초기화
@@ -151,6 +168,7 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     public void OnEndDrag(PointerEventData eventData)
     {
         isDragging = false;
+        isAnyCardDragging = false; // 전역 드래그 상태 비활성화
         canvasGroup.blocksRaycasts = true;
         layoutElement.ignoreLayout = false;
         
@@ -158,12 +176,12 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
         DestroyPlaceholder();
         
         // 카드 사용 판정
-        if (eventData.position.y > Screen.height * playThresholdYRatio)
-        {
-            TryPlayCard();
+        if (eventData.position.y > Screen.height * playThresholdYRatio) {
+
+            // UnityEvent 발행
+            onCardPlayRequested?.Invoke();
         }
-        else
-        {
+        else {
             ReturnToHand();
         }
         
@@ -172,15 +190,13 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
         scaleCoroutine = StartCoroutine(ScaleAnimation(originalScale));
     }
     
+    /// <summary>
+    /// 카드 플레이 요청
+    /// </summary>
     private void TryPlayCard()
     {
-        if (cardController == null || cardController.Card == null) return;
-        
-        Debug.Log($"[CardInteractionHandler] {cardController.Card.cardName} 드래그 발동 시도");
-        
-        // 이벤트 발행
-        CardClickedEventData cardClickData = new CardClickedEventData(cardController);
-        CardGameEvents.RaiseCardClicked(cardClickData);
+        // UnityEvent 발행
+        onCardPlayRequested?.Invoke();
         
         // 원래 자리로 복귀
         ReturnToHand();
@@ -261,4 +277,5 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     
     // 외부 접근자
     public Vector3 OriginalScale => originalScale;
+    public UnityEvent OnCardPlayRequested => onCardPlayRequested;
 }

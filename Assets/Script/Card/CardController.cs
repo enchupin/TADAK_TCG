@@ -9,37 +9,57 @@ using UnityEngine.EventSystems;
 [RequireComponent(typeof(CardInteractionHandler))]
 public class CardController : MonoBehaviour
 {
-    // 관리하는 컴포넌트들
     [Header("컴포넌트")]
-    [SerializeField] private CardUI cardUI;
-    [SerializeField] private CardInteractionHandler interactionHandler;
-    
+    [SerializeField] public CardUI cardUI;
+    [SerializeField] public CardInteractionHandler interactionHandler;
+
+    public bool isPlayable = false;
+
 
     private Card card;
     public Card Card => card;
     
+    private void Start()
+    {
+        // CardInteractionHandler의 카드 플레이 요청 이벤트 구독
+        if (interactionHandler != null) {
+            interactionHandler.OnCardPlayRequested.AddListener(HandleCardPlayRequest);
+        }
+    }
+    
+    private void OnDestroy()
+    {
+        // 이벤트 구독 해제
+        if (interactionHandler != null) {
+            interactionHandler.OnCardPlayRequested.RemoveListener(HandleCardPlayRequest);
+        }
+    }
+    
     /// <summary>
-    /// 카드 초기화 - cardId를 기반으로 Card 객체를 로드
+    /// 카드 초기화
     /// </summary>
     public void Initialize(int cardId)
     {
         // CardManager에서 Card를 직접 로드
         card = CardManager.GetCardAsCard(cardId);
-        
-        if (card == null)
-        {
+        if (card == null) {
             Debug.LogError($"[CardController] Card with ID {cardId} not found!");
             return;
         }
-        
-        // CardUI에 Card 데이터 전달
         cardUI.UpdateDisplay(card);
-        
-        Debug.Log($"[CardController] Card initialized: {card.cardName} (ID: {cardId})");
     }
     
-    
-    // 각 컴포넌트에 대한 접근자
-    public CardUI UI => cardUI;
-    public CardInteractionHandler InteractionHandler => interactionHandler;
+    /// <summary>
+    /// CardInteractionHandler로부터 카드 플레이 요청을 받았을 때 처리
+    /// </summary>
+    private void HandleCardPlayRequest()
+    {
+        if (card == null) {
+            Debug.LogWarning("[CardController] Card is null, cannot play card");
+            return;
+        }
+        // CardController가 직접 이벤트 발행
+        CardPlayEventData eventData = new CardPlayEventData(this);
+        CardPlayEvents.RaiseCardPlayed(eventData);
+    }
 }
