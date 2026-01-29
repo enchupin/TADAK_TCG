@@ -74,6 +74,22 @@ public static class CardManager
     }
     
     /// <summary>
+    /// 카드 ID로 Card 객체 조회 (CardData를 Card로 변환)
+    /// </summary>
+    public static Card GetCardAsCard(int cardId)
+    {
+        CardData cardData = GetCard(cardId);
+        
+        if (cardData != null)
+        {
+            return cardData.ToCard();
+        }
+        
+        Debug.LogWarning($"[CardManager] Card not found: {cardId}");
+        return null;
+    }
+    
+    /// <summary>
     /// 캐릭터별 카드 목록 조회 (O(1))
     /// </summary>
     public static List<CardData> GetCardsByCharacter(Character character)
