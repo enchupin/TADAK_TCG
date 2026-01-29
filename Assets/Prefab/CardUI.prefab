@@ -287,7 +287,6 @@ GameObject:
   - component: {fileID: 327684643077534472}
   - component: {fileID: 5613198081441664331}
   - component: {fileID: 7631512861755577495}
-  - component: {fileID: 6900387146195455425}
   m_Layer: 5
   m_Name: CardUI
   m_TagString: Untagged
@@ -394,20 +393,6 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!114 &6900387146195455425
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3192966017208014355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f95eb64ac6752b54ca4452133c33990b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UIHoverEffect
-  hoverScale: 1.2
-  animationSpeed: 5
 --- !u!1 &4339342280482892474
 GameObject:
   m_ObjectHideFlags: 0

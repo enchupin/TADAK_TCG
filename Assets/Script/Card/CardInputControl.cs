@@ -5,8 +5,9 @@ using UnityEngine.UI;
 /// <summary>
 /// 카드 입력(드래그, 클릭)을 처리하는 컨트롤러
 /// CardUI에서 로직을 분리하여 드래그 앤 드롭 기능을 구현함
+/// 호버 효과도 함께 처리합니다.
 /// </summary>
-public class CardInputControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
+public class CardInputControl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     private CardUI cardUI;
     private RectTransform rectTransform;
@@ -18,7 +19,14 @@ public class CardInputControl : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     private bool isDragging = false;
 
     // 카드를 발동시킬 Y축 임계값 (화면 높이 비율)
-    private const float PLAY_THRESHOLD_Y_RATIO = 0.3f;
+    private readonly float PLAY_THRESHOLD_Y_RATIO = 0.3f;
+
+
+    [Header("Hover Settings")]
+    private readonly float hoverScale = 1.4f; // 호버링 시 확대 크기
+    private readonly float hoverDuration = 0.15f; // 호버링 애니메이션 시간 (초)
+    private Vector3 originalScale;
+    private Coroutine scaleCoroutine; // 현재 실행 중인 스케일 애니메이션 코루틴
 
     [Header("Debug")]
     [SerializeField] private bool showPlayThreshold = true;
@@ -38,20 +46,46 @@ public class CardInputControl : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         // LayoutGroup의 영향을 받지 않기 위한 LayoutElement
         layoutElement = GetComponent<LayoutElement>();
         if (layoutElement == null) layoutElement = gameObject.AddComponent<LayoutElement>();
+        
+        // 호버 효과 초기화
+        originalScale = transform.localScale;
     }
+
+
 
     private void Start()
     {
+        // 임시 테스트 코드
         if (showPlayThreshold && debugLineObject == null && canvas != null)
         {
             CreateDebugThresholdLine();
         }
     }
 
+    /// <summary>
+    /// 호버링 스케일 애니메이션 코루틴
+    /// </summary>
+    private System.Collections.IEnumerator ScaleAnimation(Vector3 targetScale)
+    {
+        Vector3 startScale = transform.localScale;
+        float elapsed = 0f;
+        
+        while (elapsed < hoverDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / hoverDuration); // 0~1 사이 값
+            transform.localScale = Vector3.Lerp(startScale, targetScale, t);
+            yield return null;
+        }
+        
+        transform.localScale = targetScale; // 정확한 목표값으로 설정
+    }
 
 
 
-    // 테스트 전용 메서드 (카드 발동 임계 포지션 시각화)
+    /// <summary>
+    /// 테스트 전용 메서드 (카드 발동 임계 포지션 시각화)
+    /// </summary>
     private void CreateDebugThresholdLine()
     {
         // 디버그 라인 오브젝트 생성
@@ -77,17 +111,11 @@ public class CardInputControl : MonoBehaviour, IBeginDragHandler, IDragHandler, 
 
 
 
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        // 클릭 시에는 발동하지 않음 (필요 시 확대/상세보기 로직 추가)
-        if (!isDragging && cardUI != null && cardUI.card != null)
-        {
-            Debug.Log($"[CardInputControl] {cardUI.card.cardName} 클릭됨 (발동 안함)");
-        }
-    }
 
 
-
+    /// <summary>
+    /// 드래그 시작
+    /// </summary>
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (cardUI == null || !cardUI.IsPlayable) return;
@@ -105,6 +133,11 @@ public class CardInputControl : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         transform.SetAsLastSibling();
     }
 
+
+
+    /// <summary>
+    /// 드래그 중
+    /// </summary>
     public void OnDrag(PointerEventData eventData)
     {
         if (!isDragging) return;
@@ -120,6 +153,10 @@ public class CardInputControl : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         }
     }
 
+
+    /// <summary>
+    /// 드래그 완료
+    /// </summary>
     public void OnEndDrag(PointerEventData eventData)
     {
         if (!isDragging) return;
@@ -159,4 +196,58 @@ public class CardInputControl : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         // 위치는 LayoutGroup에 의해 다음 프레임에 자동 정렬됨 (anchoredPosition 초기화는 선택사항)
         rectTransform.anchoredPosition = Vector2.zero; // 간단한 리셋
     }
+
+    
+
+
+    /// <summary>
+    /// 카드가 포인터되었을 때
+    /// 호버링 효과
+    /// </summary>
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (!isDragging && cardUI != null) {
+            // 기존 애니메이션이 실행 중이면 중지
+            if (scaleCoroutine != null) {
+                StopCoroutine(scaleCoroutine);
+            }
+            
+            // 새로운 애니메이션 시작
+            scaleCoroutine = StartCoroutine(ScaleAnimation(originalScale * hoverScale));
+        }
+    }
+
+
+    /// <summary>
+    /// 카드가 포인터 아웃되었을 때
+    /// 호버링 효과 해제
+    /// </summary>
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (!isDragging)
+        {
+            // 기존 애니메이션이 실행 중이면 중지
+            if (scaleCoroutine != null)
+            {
+                StopCoroutine(scaleCoroutine);
+            }
+            
+            // 새로운 애니메이션 시작
+            scaleCoroutine = StartCoroutine(ScaleAnimation(originalScale));
+        }
+    }
+
+
+
+
+    /// <summary>
+    /// 클릭 시 발동 (현재는 사용하지 않음)
+    /// </summary>
+    public void OnPointerClick(PointerEventData eventData) {
+        // 클릭 시에는 발동하지 않음 (필요 시 확대/상세보기 로직 추가)
+        if (!isDragging && cardUI != null && cardUI.card != null) {
+            Debug.Log($"[CardInputControl] {cardUI.card.cardName} 클릭됨 (발동 안함)");
+        }
+    }
+
 }
