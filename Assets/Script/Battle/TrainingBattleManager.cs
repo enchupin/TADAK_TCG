@@ -132,21 +132,6 @@ public class TrainingBattleManager : MonoBehaviour {
 
 
 
-    /// <summary>
-    /// 카드 ID로 Card 객체 가져오기
-    /// </summary>
-    public Card GetCardById(int cardId)
-    {
-        CardData cardData = CardManager.GetCard(cardId);
-        if (cardData != null)
-        {
-            return cardData.ToCard();
-        }
-        
-        Debug.LogWarning($"[BattleManager] Card not found: {cardId}");
-        return null;
-    }
-
 
 
     /// <summary>
