@@ -9,30 +9,52 @@ using UnityEngine.EventSystems;
 public class UIHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("호버 설정")]
-    [SerializeField] private float hoverScale = 1.2f;
-    [SerializeField] private float animationDuration = 0.2f;
+    [SerializeField] protected float hoverScale = 1.2f;
+    [SerializeField] protected float animationDuration = 0.2f;
     
-    private Vector3 originalScale;
-    private Coroutine currentAnimation;
+    protected Vector3 originalScale;
+    protected Coroutine currentAnimation;
+    public bool isHoverable;
     
-    void Awake()
+    protected virtual void Awake()
     {
         originalScale = transform.localScale;
+        isHoverable = true;
     }
     
-    public void OnPointerEnter(PointerEventData eventData)
+    public virtual void OnPointerEnter(PointerEventData eventData)
     {
-        if (currentAnimation != null) StopCoroutine(currentAnimation);
+        if (!isHoverable) return;
+        StopAnimation();
         currentAnimation = StartCoroutine(AnimateScale(originalScale * hoverScale));
     }
     
-    public void OnPointerExit(PointerEventData eventData)
+    public virtual void OnPointerExit(PointerEventData eventData)
     {
-        if (currentAnimation != null) StopCoroutine(currentAnimation);
+        StopAnimation();
         currentAnimation = StartCoroutine(AnimateScale(originalScale));
     }
 
-    private IEnumerator AnimateScale(Vector3 target)
+    public void SetHoverScale(float scale)
+    {
+        hoverScale = scale;
+    }
+    
+    public void SetAnimationDuration(float duration)
+    {
+        animationDuration = duration;
+    }
+
+    public void StopAnimation()
+    {
+        if (currentAnimation != null) 
+        {
+            StopCoroutine(currentAnimation);
+            currentAnimation = null;
+        }
+    }
+    
+    protected virtual IEnumerator AnimateScale(Vector3 target)
     {
         Vector3 start = transform.localScale;
         float elapsedTime = 0f;
