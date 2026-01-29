@@ -82,7 +82,7 @@
                         "target": "Hand"
                     }
                 ],
-                "description": ""
+                "description": "금화 한 닢 카드를 2장 제작합니다."
             },
             "addressables": {
                 "artwork": "",
@@ -90,7 +90,15 @@
                 "sound": ""
             },
             "characterColor": "yellow",
-            "startDeck": []
+            "startDeck": [
+                301010,
+                301020,
+                301030,
+                301040,
+                301050,
+                301060,
+                301070
+            ]
         }
     ]
 }

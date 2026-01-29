@@ -46,7 +46,7 @@
             "keywords": [
                 1
             ],
-            "description": "이번 턴 동안 내 카드의 피해량이 20% 증가합니다.",
+            "description": "이번 턴에 내 카드의 피해량이 20% 증가합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -73,7 +73,7 @@
             "keywords": [
                 1
             ],
-            "description": "이번 턴 동안 내 카드의 피해량이 40% 증가합니다.",
+            "description": "이번 턴에 내 카드의 피해량이 40% 증가합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -96,8 +96,57 @@
             "keywords": [
                 5
             ],
-            "description": "이번 턴 동안 내 카드의 피해량이 20% 증가합니다.",
+            "description": "이번 턴에 내 카드의 피해량이 20% 증가합니다.",
             "effects": [
+                {
+                    "type": "Buff",
+                    "buffType": "화력 충전",
+                    "amount": 2,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 201033,
+            "name": "폴리모프 +",
+            "characterId": 201,
+            "cost": 1,
+            "keywords": [
+                6
+            ],
+            "description": "이번 턴에 내 카드의 피해량이 20% 증가합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffType": "화력 충전",
+                    "amount": 2,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 201034,
+            "name": "폴리모프 +",
+            "characterId": 201,
+            "cost": 0,
+            "description": "내 기본 카드 1장을 가져옵니다. 이번 턴에 내 카드의 피해량이 20% 증가합니다.",
+            "effects": [
+                {
+                    "type": "DrawCard",
+                    "cardId": 201030,
+                    "amount": 1,
+                    "target": "Hand"
+                },
                 {
                     "type": "Buff",
                     "buffType": "화력 충전",
@@ -183,45 +232,6 @@
             "characterId": 201,
             "cost": 1,
             "description": "내 기본 카드를 2장 뽑습니다. 이번 턴에 그 카드들의 비용이 1 감소합니다.",
-            "effects": [],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
-        },
-        {
-            "cardId": 201052,
-            "name": "화염 고리 +",
-            "characterId": 201,
-            "cost": 0,
-            "description": "내 기본 카드를 1장 뽑습니다. 이번 턴에 내 카드의 피해량이 20% 증가합니다.",
-            "effects": [],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
-        },
-        {
-            "cardId": 201053,
-            "name": "화염 고리 +",
-            "characterId": 201,
-            "cost": 1,
-            "description": "내 카드를 1장 뽑습니다. 이번 턴에 그 카드의 비용이 0이 됩니다.",
-            "effects": [],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
-        },
-        {
-            "cardId": 201054,
-            "name": "화염 고리 +",
-            "characterId": 201,
-            "cost": 1,
-            "description": "카드를 2장 뽑습니다. 뽑은 카드의 비용이 2라면 이번 턴에 그 카드의 비용이 0이 됩니다.",
             "effects": [],
             "addressables": {
                 "artwork": "",
@@ -316,6 +326,29 @@
             }
         },
         {
+            "cardId": 201063,
+            "name": "지옥불 +",
+            "characterId": 201,
+            "cost": 1,
+            "keywords": [
+                5
+            ],
+            "description": "모든 적에게 화염 낙인을 3 부여합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 203,
+                    "amount": 3,
+                    "target": "AllEnemies"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
             "cardId": 201070,
             "name": "뜨거운 피부",
             "characterId": 201,
@@ -359,6 +392,30 @@
                 {
                     "type": "Buff",
                     "buffId": 114,
+                    "amount": 3,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 201071,
+            "name": "뜨거운 피부 +",
+            "characterId": 201,
+            "cost": 1,
+            "keywords": [
+                4,
+                9
+            ],
+            "description": "공격받을 때마다 공격한 적에게 화염 낙인을 3 부여합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 118,
                     "amount": 3,
                     "target": "Self"
                 }
