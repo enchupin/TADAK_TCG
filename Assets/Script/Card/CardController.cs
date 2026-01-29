@@ -19,17 +19,23 @@ public class CardController : MonoBehaviour
     public Card Card => card;
     
     /// <summary>
-    /// 카드 초기화
+    /// 카드 초기화 - cardId를 기반으로 Card 객체를 로드
     /// </summary>
     public void Initialize(int cardId)
     {
-
-        // 카드 초기화하는 메서드
-        card = new Card();
-
-
+        // CardManager에서 Card를 직접 로드
+        card = CardManager.GetCardAsCard(cardId);
+        
+        if (card == null)
+        {
+            Debug.LogError($"[CardController] Card with ID {cardId} not found!");
+            return;
+        }
+        
         // CardUI에 Card 데이터 전달
         cardUI.UpdateDisplay(card);
+        
+        Debug.Log($"[CardController] Card initialized: {card.cardName} (ID: {cardId})");
     }
     
     
