@@ -43,7 +43,9 @@ public class CardUI : MonoBehaviour
         
         if (descriptionText != null)
             descriptionText.text = GetCardDescription(card);
-        
+
+
+        /*
         // 카드 이미지 (나중에 Addressables로 로드)
         if (cardArtwork != null && card.artwork != null)
             cardArtwork.sprite = card.artwork;
@@ -55,6 +57,7 @@ public class CardUI : MonoBehaviour
             backgroundImage.color = rarityColor;
             normalColor = rarityColor;  // 정상 색상도 업데이트
         }
+        */
     }
     
     /// <summary>
@@ -130,21 +133,5 @@ public class CardUI : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// 사용 가능 여부 설정
-    /// </summary>
-    public void SetPlayable(bool playable)
-    {
-        isPlayable = playable;
-        
-        if (backgroundImage != null)
-            backgroundImage.color = playable ? normalColor : unplayableColor;
-    }
-    
-    // 호버 효과는 UIHoverEffect 컴포넌트가 담당
-    
-    /// <summary>
-    /// 클릭 시 - 이벤트 발행
-    /// </summary>
 
 }
