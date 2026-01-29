@@ -82,7 +82,7 @@
                         "target": "Hand"
                     }
                 ],
-                "description": ""
+                "description": "금화 한 닢 카드를 2장 제작합니다."
             },
             "addressables": {
                 "artwork": "",
