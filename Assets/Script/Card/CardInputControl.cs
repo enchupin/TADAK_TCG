@@ -17,6 +17,7 @@ public class CardInputControl : MonoBehaviour, IBeginDragHandler, IDragHandler, 
 
     private int originalSiblingIndex;
     private bool isDragging = false;
+    private GameObject placeholder; // 드래그 중 레이아웃 유지를 위한 Placeholder
 
     // 카드를 발동시킬 Y축 임계값 (화면 높이 비율)
     private readonly float PLAY_THRESHOLD_Y_RATIO = 0.3f;
@@ -123,6 +124,9 @@ public class CardInputControl : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         isDragging = true;
         originalSiblingIndex = transform.GetSiblingIndex();
 
+        // Placeholder 생성 (다른 카드들의 위치를 유지하기 위해)
+        CreatePlaceholder();
+        
         // 레이아웃 무시 (자유로운 이동)
         layoutElement.ignoreLayout = true;
         
@@ -174,6 +178,9 @@ public class CardInputControl : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         {
             ReturnToHand();
         }
+        
+        // Placeholder 제거
+        DestroyPlaceholder();
     }
 
     private void TryPlayCard()
@@ -195,6 +202,67 @@ public class CardInputControl : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         
         // 위치는 LayoutGroup에 의해 다음 프레임에 자동 정렬됨 (anchoredPosition 초기화는 선택사항)
         rectTransform.anchoredPosition = Vector2.zero; // 간단한 리셋
+    }
+    
+    /// <summary>
+    /// Placeholder 생성 (다른 카드들의 위치 유지)
+    /// </summary>
+    private void CreatePlaceholder()
+    {
+        if (placeholder != null) return; // 이미 존재하면 생성하지 않음
+        
+        // 호버링 스케일 초기화 (원래 크기로)
+        if (scaleCoroutine != null)
+        {
+            StopCoroutine(scaleCoroutine);
+            scaleCoroutine = null;
+        }
+        transform.localScale = originalScale;
+        
+        // 빈 GameObject 생성
+        placeholder = new GameObject("CardPlaceholder");
+        placeholder.transform.SetParent(transform.parent, false);
+        placeholder.transform.SetSiblingIndex(originalSiblingIndex);
+        
+        // RectTransform 추가 및 설정 복사
+        var placeholderRect = placeholder.AddComponent<RectTransform>();
+        placeholderRect.sizeDelta = rectTransform.sizeDelta;
+        
+        // LayoutElement 추가 및 원래 설정 복사
+        var placeholderLayout = placeholder.AddComponent<LayoutElement>();
+        
+        // 원래 카드의 LayoutElement 설정을 그대로 복사
+        if (layoutElement != null)
+        {
+            placeholderLayout.minWidth = layoutElement.minWidth;
+            placeholderLayout.minHeight = layoutElement.minHeight;
+            placeholderLayout.preferredWidth = layoutElement.preferredWidth;
+            placeholderLayout.preferredHeight = layoutElement.preferredHeight;
+            placeholderLayout.flexibleWidth = layoutElement.flexibleWidth;
+            placeholderLayout.flexibleHeight = layoutElement.flexibleHeight;
+            placeholderLayout.layoutPriority = layoutElement.layoutPriority;
+        }
+        else
+        {
+            // LayoutElement가 없는 경우 rect 크기 사용
+            placeholderLayout.preferredWidth = rectTransform.rect.width;
+            placeholderLayout.preferredHeight = rectTransform.rect.height;
+        }
+        
+        Debug.Log($"[CardInputControl] Placeholder 생성: {placeholder.name}, 크기: {placeholderLayout.preferredWidth}x{placeholderLayout.preferredHeight}");
+    }
+    
+    /// <summary>
+    /// Placeholder 제거
+    /// </summary>
+    private void DestroyPlaceholder()
+    {
+        if (placeholder != null)
+        {
+            Debug.Log($"[CardInputControl] Placeholder 제거: {placeholder.name}");
+            Destroy(placeholder);
+            placeholder = null;
+        }
     }
 
     
