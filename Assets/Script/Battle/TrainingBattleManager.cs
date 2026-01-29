@@ -73,10 +73,10 @@ public class TrainingBattleManager : MonoBehaviour {
             
             SelectedButtonControl.selectedCharacterList.Clear();
             
-            // 테스트용: Chloe만 사용 (chloeCards.json에 Chloe 카드만 있음)
+            // 테스트용: Chloe, Ignia, Declan 사용
             SelectedButtonControl.selectedCharacterList.Add(Character.Chloe);
-            SelectedButtonControl.selectedCharacterList.Add(Character.Chloe);
-            SelectedButtonControl.selectedCharacterList.Add(Character.Chloe);
+            SelectedButtonControl.selectedCharacterList.Add(Character.Ignia);
+            SelectedButtonControl.selectedCharacterList.Add(Character.Declan);
             
             Debug.Log($"[BattleManager] 기본 캐릭터 설정 완료: {SelectedButtonControl.selectedCharacterList.Count}명");
         }

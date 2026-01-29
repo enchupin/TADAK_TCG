@@ -25,7 +25,7 @@ MonoBehaviour:
     - type: 0
       amount: 20
       target: 0
-      buffType: "\uACF5\uACA9 \uAC15\uD654"
+      buffType: 
       cardId: 0
   artworkAddress: 
   effectAddress: 

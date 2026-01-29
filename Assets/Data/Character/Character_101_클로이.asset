@@ -25,9 +25,9 @@ MonoBehaviour:
     - type: 0
       amount: 3
       target: 1
-      buffType: "\uBD80\uC2DD"
+      buffType: 
       cardId: 0
-  artworkAddress: Characters/Kloe/Art
+  artworkAddress: Characters/Kloe/Artwork
   effectAddress: Effects/Kloe
   soundAddress: Sounds/Kloe
   startDeckCardIds: 928a01009c8a0100a68a0100b08a0100ba8a0100c48a0100ce8a0100
