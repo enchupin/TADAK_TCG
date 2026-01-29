@@ -27,6 +27,9 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     private Coroutine scaleCoroutine;
     private bool isDragging = false;
     
+    // 전역 드래그 상태 (다른 카드들의 호버를 막기 위해)
+    private static bool isAnyCardDragging = false;
+    
     // 드래그 관련
     private RectTransform rectTransform;
     private Canvas canvas;
@@ -64,12 +67,13 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     #region Hover Effects
     
     /// <summary>
-    /// 허
+    /// 마우스가 카드 위로 올라갔을 때
     /// </summary>
     /// <param name="eventData"></param>
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (!isDragging)
+        // 어떤 카드라도 드래그 중이면 호버 효과를 무시
+        if (!isDragging && !isAnyCardDragging)
         {
             StopCurrentAnimation();
             scaleCoroutine = StartCoroutine(ScaleAnimation(originalScale * hoverScale));
@@ -119,6 +123,7 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
         if (cardController == null || cardController.UI == null || !cardController.UI.IsPlayable) return;
         
         isDragging = true;
+        isAnyCardDragging = true; // 전역 드래그 상태 활성화
         originalSiblingIndex = transform.GetSiblingIndex();
         
         // Placeholder 생성 전에 크기 초기화
@@ -151,6 +156,7 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     public void OnEndDrag(PointerEventData eventData)
     {
         isDragging = false;
+        isAnyCardDragging = false; // 전역 드래그 상태 비활성화
         canvasGroup.blocksRaycasts = true;
         layoutElement.ignoreLayout = false;
         

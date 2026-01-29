@@ -16,6 +16,9 @@ public class CardController : MonoBehaviour
     
 
     private Card card;
+
+
+    private CardData cardData;
     public Card Card => card;
     
     /// <summary>
