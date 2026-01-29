@@ -123,16 +123,11 @@ public class TrainingBattleManager : MonoBehaviour {
     /// UI 초기화
     /// </summary>
     void InitializeUI() {
-
-
-    /*
-    if (battleUI != null) {
-        battleUI.Initialize(this);
-        battleUI.UpdateAllUI(playerData, monster);
-    }
-    */
-
-
+        if (battleUI != null)
+        {
+            battleUI.Initialize();
+            battleUI.UpdateAllUI();
+        }
     }
 
 
