@@ -210,9 +210,16 @@ public class TrainingBattleManager : MonoBehaviour {
     /// 카드 사용
     /// </summary>
     private void PlayCard(CardUI playedCardUI) {
-        Card playedCard = playedCardUI.card;
+        // CardController를 통해 Card 가져오기
+        CardController controller = playedCardUI.GetComponent<CardController>();
+        if (controller == null || controller.Card == null)
+        {
+            Debug.LogWarning("[TrainingBattleManager] CardController 또는 Card를 찾을 수 없습니다!");
+            return;
+        }
+        
+        Card playedCard = controller.Card;
         int playedCardId = playedCard.cardId;
-
         // 에너지 소모
         playerData.energy -= playedCard.cost;
         Debug.Log($"\n[플레이어] {playedCard.cardName} 카드 사용! (에너지: {playerData.energy + playedCard.cost} → {playerData.energy})");
