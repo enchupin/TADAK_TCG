@@ -9,7 +9,6 @@ using UnityEngine.EventSystems;
 [RequireComponent(typeof(CardInteractionHandler))]
 public class CardController : MonoBehaviour
 {
-    // 관리하는 컴포넌트들
     [Header("컴포넌트")]
     [SerializeField] private CardUI cardUI;
     [SerializeField] private CardInteractionHandler interactionHandler;
@@ -28,17 +27,11 @@ public class CardController : MonoBehaviour
     {
         // CardManager에서 Card를 직접 로드
         card = CardManager.GetCardAsCard(cardId);
-        
-        if (card == null)
-        {
+        if (card == null) {
             Debug.LogError($"[CardController] Card with ID {cardId} not found!");
             return;
         }
-        
-        // CardUI에 Card 데이터 전달
         cardUI.UpdateDisplay(card);
-        
-        Debug.Log($"[CardController] Card initialized: {card.cardName} (ID: {cardId})");
     }
     
     

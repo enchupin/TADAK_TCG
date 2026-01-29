@@ -22,6 +22,11 @@ public class TrainingBattleManager : MonoBehaviour {
     public UsableDeckManager usableDeckManager;
     public HandManager handManager;
 
+    // 런 동안 유지되는 영구 덱 (씬이 바뀌어도 유지되도록 static)
+    [Header("덱 시스템")]
+    public static BuildingDeck buildingDeck;
+
+
     public int drawCardCount = 6;
 
 
@@ -81,10 +86,6 @@ public class TrainingBattleManager : MonoBehaviour {
             Debug.Log($"[BattleManager] 기본 캐릭터 설정 완료: {SelectedButtonControl.selectedCharacterList.Count}명");
         }
     }
-
-    [Header("덱 시스템")]
-    // 런 동안 유지되는 영구 덱 (씬이 바뀌어도 유지되도록 static)
-    public static BuildingDeck buildingDeck;
 
     /// <summary>
     /// 전투 초기화
