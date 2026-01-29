@@ -188,24 +188,20 @@ public class TrainingBattleManager : MonoBehaviour {
     /// </summary>
     private void HandleCardClicked(CardPlayEventData eventData)
     {
-        Debug.Log($"[BattleManager] 카드 클릭 이벤트 받음: {eventData.card.cardName}");
-        PlayCard(eventData.cardUI);
+        Debug.Log($"[BattleManager] 카드 클릭 이벤트 받음: {eventData}");
+        PlayCard(eventData.cardController);
     }
 
     /// <summary>
     /// 카드 사용
     /// </summary>
-    private void PlayCard(CardUI playedCardUI) {
-        // CardController를 통해 Card 가져오기
-        CardController controller = playedCardUI.GetComponent<CardController>();
-        if (controller == null || controller.Card == null)
-        {
+    private void PlayCard(CardController controller) {
+        if (controller == null || controller.Card == null) {
             Debug.LogWarning("[TrainingBattleManager] CardController 또는 Card를 찾을 수 없습니다!");
             return;
         }
-        
         Card playedCard = controller.Card;
-        int playedCardId = playedCard.cardId;
+
         // 에너지 소모
         playerData.energy -= playedCard.cost;
         Debug.Log($"\n[플레이어] {playedCard.cardName} 카드 사용! (에너지: {playerData.energy + playedCard.cost} → {playerData.energy})");
@@ -215,7 +211,7 @@ public class TrainingBattleManager : MonoBehaviour {
 
         // 손패에서 제거
         if (handManager != null) {
-            handManager.RemoveCardFromHand(playedCardUI);
+            handManager.RemoveCardFromHand(controller.cardUI);
         }
         
         

@@ -29,29 +29,11 @@ public static class CardPlayEvents
 /// </summary>
 public class CardPlayEventData
 {
-    public CardUI cardUI; // 클릭된 카드 UI (UI 업데이트용)
-    public Card card;
-    public int cardId;
-    
+    public CardController cardController;
+
     // CardController를 받는 생성자
-    public CardPlayEventData(CardController cardController)
-    {
-        this.cardUI = cardController.cardUI;
-        this.card = cardController.Card;
-        this.cardId = cardController.Card.cardId;
+    public CardPlayEventData(CardController cardController) {
+        this.cardController = cardController;
     }
-    
-    // 하위 호환성을 위한 CardUI 생성자 (deprecated)
-    [System.Obsolete("Use CardClickedEventData(CardController) instead")]
-    public CardPlayEventData(CardUI cardUI)
-    {
-        this.cardUI = cardUI;
-        // CardController를 통해 Card 가져오기
-        var controller = cardUI.GetComponent<CardController>();
-        if (controller != null)
-        {
-            this.card = controller.Card;
-            this.cardId = controller.Card.cardId;
-        }
-    }
+
 }

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using System.Collections;
 
 /// <summary>
@@ -10,12 +11,15 @@ using System.Collections;
 public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     IBeginDragHandler, IDragHandler, IEndDragHandler
 {
+    [Header("Events")]
+    [SerializeField] private UnityEvent onCardPlayRequested; // 카드 사용 이벤트
+    
     [Header("Hover Settings")]
-    [SerializeField] private float hoverScale = 1.4f;
-    [SerializeField] private float hoverDuration = 0.15f;
+    private readonly float hoverScale = 1.4f; // 변환 스케일
+    private readonly float hoverDuration = 0.15f; // 호버링 속도
     
     [Header("Drag Settings")]
-    [SerializeField] private float playThresholdYRatio = 0.3f;
+    private readonly float playThresholdYRatio = 0.3f; // 드래그 범위
     
     [Header("Debug")]
     [SerializeField] private bool showPlayThreshold = true;
@@ -27,7 +31,7 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     private Coroutine scaleCoroutine;
     private bool isDragging = false;
     
-    // 전역 드래그 상태 (다른 카드들의 호버를 막기 위해)
+    // 전역 드래그 상태
     private static bool isAnyCardDragging = false;
     
     // 드래그 관련
@@ -35,7 +39,7 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     private Canvas canvas;
     private CanvasGroup canvasGroup;
     private LayoutElement layoutElement;
-    private CardController cardController;
+    private CardUI cardUI; // CardController 대신 CardUI 직접 참조
     
     private int originalSiblingIndex;
     private GameObject placeholder;
@@ -50,7 +54,7 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
         canvas = GetComponentInParent<Canvas>();
         canvasGroup = GetComponent<CanvasGroup>();
         layoutElement = GetComponent<LayoutElement>();
-        cardController = GetComponent<CardController>();
+        cardUI = GetComponent<CardUI>();
         
         if (canvasGroup == null) canvasGroup = gameObject.AddComponent<CanvasGroup>();
         if (layoutElement == null) layoutElement = gameObject.AddComponent<LayoutElement>();
@@ -128,7 +132,7 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     /// </summary>
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (cardController == null || cardController.cardUI == null || !cardController.cardUI.IsPlayable) return;
+        if (cardUI == null || !cardUI.IsPlayable) return;
         
         isDragging = true;
         isAnyCardDragging = true; // 전역 드래그 상태 활성화
@@ -173,10 +177,11 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
         
         // 카드 사용 판정
         if (eventData.position.y > Screen.height * playThresholdYRatio) {
-            TryPlayCard();
+
+            // UnityEvent 발행
+            onCardPlayRequested?.Invoke();
         }
-        else
-        {
+        else {
             ReturnToHand();
         }
         
@@ -185,15 +190,13 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
         scaleCoroutine = StartCoroutine(ScaleAnimation(originalScale));
     }
     
+    /// <summary>
+    /// 카드 플레이 요청
+    /// </summary>
     private void TryPlayCard()
     {
-        if (cardController == null || cardController.Card == null) return;
-        
-        Debug.Log($"[CardInteractionHandler] {cardController.Card.cardName} 드래그 발동 시도");
-        
-        // 이벤트 발행
-        CardPlayEventData cardClickData = new CardPlayEventData(cardController);
-        CardPlayEvents.RaiseCardPlayed(cardClickData);
+        // UnityEvent 발행
+        onCardPlayRequested?.Invoke();
         
         // 원래 자리로 복귀
         ReturnToHand();
@@ -274,4 +277,5 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     
     // 외부 접근자
     public Vector3 OriginalScale => originalScale;
+    public UnityEvent OnCardPlayRequested => onCardPlayRequested;
 }

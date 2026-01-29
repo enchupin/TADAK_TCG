@@ -19,6 +19,22 @@ public class CardController : MonoBehaviour
     private Card card;
     public Card Card => card;
     
+    private void Start()
+    {
+        // CardInteractionHandler의 카드 플레이 요청 이벤트 구독
+        if (interactionHandler != null) {
+            interactionHandler.OnCardPlayRequested.AddListener(HandleCardPlayRequest);
+        }
+    }
+    
+    private void OnDestroy()
+    {
+        // 이벤트 구독 해제
+        if (interactionHandler != null) {
+            interactionHandler.OnCardPlayRequested.RemoveListener(HandleCardPlayRequest);
+        }
+    }
+    
     /// <summary>
     /// 카드 초기화
     /// </summary>
@@ -31,5 +47,19 @@ public class CardController : MonoBehaviour
             return;
         }
         cardUI.UpdateDisplay(card);
+    }
+    
+    /// <summary>
+    /// CardInteractionHandler로부터 카드 플레이 요청을 받았을 때 처리
+    /// </summary>
+    private void HandleCardPlayRequest()
+    {
+        if (card == null) {
+            Debug.LogWarning("[CardController] Card is null, cannot play card");
+            return;
+        }
+        // CardController가 직접 이벤트 발행
+        CardPlayEventData eventData = new CardPlayEventData(this);
+        CardPlayEvents.RaiseCardPlayed(eventData);
     }
 }
