@@ -10,18 +10,17 @@ using UnityEngine.EventSystems;
 public class CardController : MonoBehaviour
 {
     [Header("컴포넌트")]
-    [SerializeField] private CardUI cardUI;
-    [SerializeField] private CardInteractionHandler interactionHandler;
-    
+    [SerializeField] public CardUI cardUI;
+    [SerializeField] public CardInteractionHandler interactionHandler;
+
+    public bool isPlayable = false;
+
 
     private Card card;
-
-
-    private CardData cardData;
     public Card Card => card;
     
     /// <summary>
-    /// 카드 초기화 - cardId를 기반으로 Card 객체를 로드
+    /// 카드 초기화
     /// </summary>
     public void Initialize(int cardId)
     {
@@ -33,9 +32,4 @@ public class CardController : MonoBehaviour
         }
         cardUI.UpdateDisplay(card);
     }
-    
-    
-    // 각 컴포넌트에 대한 접근자
-    public CardUI UI => cardUI;
-    public CardInteractionHandler InteractionHandler => interactionHandler;
 }

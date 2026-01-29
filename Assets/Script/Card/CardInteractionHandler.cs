@@ -67,28 +67,31 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     #region Hover Effects
     
     /// <summary>
-    /// 마우스가 카드 위로 올라갔을 때
+    /// 호버링 적용
     /// </summary>
-    /// <param name="eventData"></param>
     public void OnPointerEnter(PointerEventData eventData)
     {
         // 어떤 카드라도 드래그 중이면 호버 효과를 무시
-        if (!isDragging && !isAnyCardDragging)
-        {
+        if (!isDragging && !isAnyCardDragging) {
             StopCurrentAnimation();
             scaleCoroutine = StartCoroutine(ScaleAnimation(originalScale * hoverScale));
         }
     }
     
+    /// <summary>
+    /// 호버링 해제
+    /// </summary>
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (!isDragging)
-        {
+        if (!isDragging) {
             StopCurrentAnimation();
             scaleCoroutine = StartCoroutine(ScaleAnimation(originalScale));
         }
     }
     
+    /// <summary>
+    /// 호버링 코루틴 중지
+    /// </summary>
     private void StopCurrentAnimation()
     {
         if (scaleCoroutine != null)
@@ -98,6 +101,9 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
         }
     }
     
+    /// <summary>
+    /// 호버링 코루틴
+    /// </summary>
     private IEnumerator ScaleAnimation(Vector3 targetScale)
     {
         Vector3 startScale = transform.localScale;
@@ -117,10 +123,12 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     #endregion
     
     #region Drag & Play
-    
+    /// <summary>
+    /// 드래그 시작
+    /// </summary>
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (cardController == null || cardController.UI == null || !cardController.UI.IsPlayable) return;
+        if (cardController == null || cardController.cardUI == null || !cardController.cardUI.IsPlayable) return;
         
         isDragging = true;
         isAnyCardDragging = true; // 전역 드래그 상태 활성화
@@ -164,8 +172,7 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
         DestroyPlaceholder();
         
         // 카드 사용 판정
-        if (eventData.position.y > Screen.height * playThresholdYRatio)
-        {
+        if (eventData.position.y > Screen.height * playThresholdYRatio) {
             TryPlayCard();
         }
         else
@@ -185,8 +192,8 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
         Debug.Log($"[CardInteractionHandler] {cardController.Card.cardName} 드래그 발동 시도");
         
         // 이벤트 발행
-        CardClickedEventData cardClickData = new CardClickedEventData(cardController);
-        CardGameEvents.RaiseCardClicked(cardClickData);
+        CardPlayEventData cardClickData = new CardPlayEventData(cardController);
+        CardPlayEvents.RaiseCardPlayed(cardClickData);
         
         // 원래 자리로 복귀
         ReturnToHand();

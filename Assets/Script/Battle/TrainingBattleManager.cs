@@ -43,7 +43,7 @@ public class TrainingBattleManager : MonoBehaviour {
 
     void Start() {
         // 이벤트 구독
-        CardGameEvents.OnCardClicked += HandleCardClicked;
+        CardPlayEvents.OnCardPlayed += HandleCardClicked;
         
         // 캐릭터 선택 초기화
         InitializeCharacterSelection();
@@ -57,7 +57,7 @@ public class TrainingBattleManager : MonoBehaviour {
 
     void OnDestroy() {
         // 이벤트 구독 해제
-        CardGameEvents.OnCardClicked -= HandleCardClicked;
+        CardPlayEvents.OnCardPlayed -= HandleCardClicked;
     }
     
     /// <summary>
@@ -186,7 +186,7 @@ public class TrainingBattleManager : MonoBehaviour {
     /// <summary>
     /// 카드 클릭 이벤트 핸들러
     /// </summary>
-    private void HandleCardClicked(CardClickedEventData eventData)
+    private void HandleCardClicked(CardPlayEventData eventData)
     {
         Debug.Log($"[BattleManager] 카드 클릭 이벤트 받음: {eventData.card.cardName}");
         PlayCard(eventData.cardUI);
