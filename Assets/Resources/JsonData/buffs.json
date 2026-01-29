@@ -311,6 +311,58 @@
                 "target": "Self"
             },
             "description": "턴 종료 시 화염 낙인 수치만큼 피해를 받습니다."
+        },
+        {
+            "buffId": 115,
+            "name": "방어도 유지",
+            "buffType": 1,
+            "effects": {
+                "timing": "turnStart",
+                "type": "PreventDefenseLoss",
+                "target": "Self"
+            },
+            "decrease": {
+                "timing": "turnStart",
+                "amount": 1
+            },
+            "description": "다음 턴 시작 시 방어도를 잃지 않습니다."
+        },
+        {
+            "buffId": 116,
+            "name": "재고 충당",
+            "buffType": 1,
+            "effects": {
+                "timing": "turnStart",
+                "type": "PreventDefenseLoss",
+                "target": "Self"
+            },
+            "description": "턴 시작 시 방어도를 잃지 않습니다."
+        },
+        {
+            "buffId": 117,
+            "name": "돈 주머니",
+            "buffType": 1,
+            "effects": {
+                "timing": "turnStart",
+                "type": "GenerateCard",
+                "cardId": 301080,
+                "amount": 1,
+                "target": "Hand"
+            },
+            "description": "매 턴 시작 시 금화 한 닢 카드를 1장 생성합니다."
+        },
+        {
+            "buffId": 118,
+            "name": "용암 피부",
+            "buffType": 1,
+            "effects": {
+                "timing": "damaged",
+                "type": "Buff",
+                "buffId": 203,
+                "amount": "value",
+                "target": "Attacker"
+            },
+            "description": "공격받을 때마다 공격한 적에게 화염 낙인을 {value} 부여합니다."
         }
     ]
 }

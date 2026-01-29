@@ -2,7 +2,7 @@
     "cards": [
         {
             "cardId": 301010,
-            "name": "무게 증가",
+            "name": "타",
             "characterId": 301,
             "cost": 1,
             "description": "피해를 6 줍니다.",
@@ -11,6 +11,226 @@
                     "type": "Damage",
                     "amount": 6,
                     "target": "SingleEnemy"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 301020,
+            "name": "륜",
+            "characterId": 301,
+            "cost": 1,
+            "description": "보호막을 6 얻습니다.",
+            "effects": [
+                {
+                    "type": "Defense",
+                    "amount": 6,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 301030,
+            "name": "란",
+            "characterId": 301,
+            "cost": 1,
+            "description": "보호막을 8 얻습니다. 내 손에 '나' 카드가 있다면 비용 없이 사용합니다.",
+            "effects": [
+                {
+                    "type": "Defense",
+                    "amount": 8,
+                    "target": "Self"
+                },
+                {
+                    "condition": "hasCardId",
+                    "cardId": [
+                        301030,
+                        301031,
+                        301032,
+                        301033,
+                        301034,
+                        301035
+                    ],
+                    "type": "UseCard",
+                    "amount": 1
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 301040,
+            "name": "나",
+            "characterId": 301,
+            "cost": 1,
+            "description": "카드를 1장 뽑습니다. 보호막을 6 얻습니다. 내 손에 '찰' 카드가 있다면 비용 없이 사용합니다.",
+            "effects": [
+                {
+                    "type": "Draw",
+                    "amount": 1
+                },
+                {
+                    "type": "Defense",
+                    "amount": 6,
+                    "target": "Self"
+                },
+                {
+                    "condition": "hasCardId",
+                    "cardId": [
+                        301040,
+                        301041,
+                        301042,
+                        301043,
+                        301044,
+                        301045
+                    ],
+                    "type": "UseCard",
+                    "amount": 1
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 301050,
+            "name": "찰",
+            "characterId": 301,
+            "cost": 1,
+            "description": "현재 방어도만큼 피해를 입힙니다.",
+            "effects": [
+                {
+                    "type": "Damage",
+                    "amount": "currentDefense",
+                    "target": "SingleEnemy"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 301060,
+            "name": "돈 주머니",
+            "characterId": 301,
+            "cost": 1,
+            "description": "금화 한 닢 카드를 2장 생성합니다.",
+            "effects": [
+                {
+                    "type": "GenerateCard",
+                    "cardId": 301080,
+                    "amount": 2,
+                    "target": "Hand"
+                }
+            ],
+            "enforce": [
+                301061
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 301061,
+            "name": "돈 주머니 +",
+            "characterId": 301,
+            "cost": 1,
+            "keywords": [
+                4
+            ],
+            "description": "매 턴 시작 시 금화 한 닢 카드를 1장 생성합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 117,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 301070,
+            "name": "재고 충당",
+            "characterId": 301,
+            "cost": 1,
+            "description": "다음 턴 시작 시 방어도를 잃지 않습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 115,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ],
+            "enforce": [
+                301071
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 301071,
+            "name": "재고 충당 +",
+            "characterId": 301,
+            "cost": 3,
+            "keywords": [
+                4,
+                9
+            ],
+            "description": "턴 시작 시 방어도를 잃지 않습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 116,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 301080,
+            "name": "금화 한 닢",
+            "characterId": 301,
+            "cost": 0,
+            "keywords": [
+                3
+            ],
+            "description": "카드를 1장 뽑습니다.",
+            "effects": [
+                {
+                    "type": "Draw",
+                    "amount": 1
                 }
             ],
             "addressables": {
