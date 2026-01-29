@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -9,30 +10,41 @@ public class UIHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 {
     [Header("호버 설정")]
     [SerializeField] private float hoverScale = 1.2f;
-    [SerializeField] private float animationSpeed = 5f;
+    [SerializeField] private float animationDuration = 0.2f;
     
     private Vector3 originalScale;
-    private Vector3 targetScale;
+    private Coroutine currentAnimation;
     
     void Awake()
     {
         originalScale = transform.localScale;
-        targetScale = originalScale;
-    }
-    
-    void Update()
-    {
-        // 부드러운 애니메이션
-        transform.localScale = Vector3.Lerp(transform.localScale, targetScale, Time.deltaTime * animationSpeed);
     }
     
     public void OnPointerEnter(PointerEventData eventData)
     {
-        targetScale = originalScale * hoverScale;
+        if (currentAnimation != null) StopCoroutine(currentAnimation);
+        currentAnimation = StartCoroutine(AnimateScale(originalScale * hoverScale));
     }
     
     public void OnPointerExit(PointerEventData eventData)
     {
-        targetScale = originalScale;
+        if (currentAnimation != null) StopCoroutine(currentAnimation);
+        currentAnimation = StartCoroutine(AnimateScale(originalScale));
+    }
+
+    private IEnumerator AnimateScale(Vector3 target)
+    {
+        Vector3 start = transform.localScale;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < animationDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            transform.localScale = Vector3.Lerp(start, target, elapsedTime / animationDuration);
+            yield return null;
+        }
+
+        transform.localScale = target;
+        currentAnimation = null;
     }
 }
