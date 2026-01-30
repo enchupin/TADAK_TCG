@@ -73,7 +73,7 @@ public static class CharacterManager
     }
     
     /// <summary>
-    /// 캐릭터 ID로 CharacterData 조회 (O(1))
+    /// 캐릭터 ID로 CharacterData 조회
     /// </summary>
     public static CharacterData GetCharacter(int characterId)
     {
@@ -89,7 +89,7 @@ public static class CharacterManager
     }
     
     /// <summary>
-    /// 캐릭터 이름으로 CharacterData 조회 (O(1))
+    /// 캐릭터 이름으로 CharacterData 조회
     /// </summary>
     public static CharacterData GetCharacterByName(string name)
     {
@@ -118,7 +118,23 @@ public static class CharacterManager
         
         return new List<int>();
     }
-    
+
+    /// <summary>
+    /// 캐릭터의 시작 덱 카드 ID 리스트 반환
+    /// </summary>
+    public static List<int> GetStartDeck(Character character) {
+
+        int characterId = GetIdByCharacterEnum(character);
+        CharacterData characterData = GetCharacter(characterId);
+
+        if (characterData != null && characterData.startDeckCardIds != null) {
+            return new List<int>(characterData.startDeckCardIds);
+        }
+        return new List<int>();
+    }
+
+
+
     /// <summary>
     /// 모든 캐릭터 조회
     /// </summary>
@@ -161,6 +177,21 @@ public static class CharacterManager
             default:
                 Debug.LogWarning($"[CharacterManager] Unknown characterId: {characterId}, defaulting to Chloe");
                 return Character.Chloe;
+        }
+    }
+
+    /// <summary>
+    /// characterId를 Character enum으로 변환
+    /// 새로운 캐릭터 추가 시 이 메서드를 업데이트하세요.
+    /// </summary>
+    public static int GetIdByCharacterEnum(Character character) {
+        switch (character) {
+            case Character.Chloe: return 101;
+            case Character.Ignia: return 201;
+            case Character.Declan: return 301;
+            default:
+                Debug.LogWarning($"[CharacterManager] Unknown characterId: {character}, defaulting to Chloe");
+                return 101;
         }
     }
 
