@@ -1320,17 +1320,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7126515853444721151, guid: e3ef6995bf6c9c54392bfb9a720c2552, type: 3}
   m_PrefabInstance: {fileID: 162478607}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1638991393 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2051987828932423209, guid: 2f883bfbc9e52bd4a8710b583a3dcb6f, type: 3}
-  m_PrefabInstance: {fileID: 726645241261724503}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2aaf4f1064527b2488143c85c7994af0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SceneChanger
 --- !u!1 &1668970179
 GameObject:
   m_ObjectHideFlags: 0
@@ -1512,7 +1501,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1638991393}
+      - m_Target: {fileID: 2094119972}
         m_TargetAssemblyTypeName: SceneChanger, Assembly-CSharp
         m_MethodName: ChangeScene
         m_Mode: 5
@@ -1521,7 +1510,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: CardTest
+          m_StringArgument: TrainingScene
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &2094119974
@@ -1562,63 +1551,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2094119970}
   m_CullTransparentMesh: 1
---- !u!1001 &726645241261724503
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1812464300555774581, guid: 2f883bfbc9e52bd4a8710b583a3dcb6f, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 705.11084
-      objectReference: {fileID: 0}
-    - target: {fileID: 1812464300555774581, guid: 2f883bfbc9e52bd4a8710b583a3dcb6f, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 346.76157
-      objectReference: {fileID: 0}
-    - target: {fileID: 1812464300555774581, guid: 2f883bfbc9e52bd4a8710b583a3dcb6f, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1812464300555774581, guid: 2f883bfbc9e52bd4a8710b583a3dcb6f, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1812464300555774581, guid: 2f883bfbc9e52bd4a8710b583a3dcb6f, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1812464300555774581, guid: 2f883bfbc9e52bd4a8710b583a3dcb6f, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1812464300555774581, guid: 2f883bfbc9e52bd4a8710b583a3dcb6f, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1812464300555774581, guid: 2f883bfbc9e52bd4a8710b583a3dcb6f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1812464300555774581, guid: 2f883bfbc9e52bd4a8710b583a3dcb6f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1812464300555774581, guid: 2f883bfbc9e52bd4a8710b583a3dcb6f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4162157637584756936, guid: 2f883bfbc9e52bd4a8710b583a3dcb6f, type: 3}
-      propertyPath: m_Name
-      value: SceneManager
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 2f883bfbc9e52bd4a8710b583a3dcb6f, type: 3}
 --- !u!1001 &1042378435195139709
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1785,6 +1717,5 @@ SceneRoots:
   - {fileID: 619394802}
   - {fileID: 1348960900}
   - {fileID: 287974998}
-  - {fileID: 726645241261724503}
   - {fileID: 1238710756}
   - {fileID: 1042378435195139709}

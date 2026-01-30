@@ -6,7 +6,6 @@ using UnityEngine.EventSystems;
 /// CardUI, CardInteractionHandler를 조율하고 Card 데이터를 관리
 /// </summary>
 [RequireComponent(typeof(CardUI))]
-[RequireComponent(typeof(CardInteractionHandler))]
 public class CardController : MonoBehaviour
 {
     [Header("컴포넌트")]
@@ -14,6 +13,7 @@ public class CardController : MonoBehaviour
     [SerializeField] public CardInteractionHandler interactionHandler;
 
     public bool isPlayable = false;
+    public bool useInteractionHandler = true;
 
 
     private Card card;
@@ -21,9 +21,15 @@ public class CardController : MonoBehaviour
     
     private void Start()
     {
-        // CardInteractionHandler의 카드 플레이 요청 이벤트 구독
-        if (interactionHandler != null) {
-            interactionHandler.OnCardPlayRequested.AddListener(HandleCardPlayRequest);
+        // InteractionHandler 설정
+        if (interactionHandler != null)
+        {
+            interactionHandler.showPlayThreshold = useInteractionHandler;
+            interactionHandler.enabled = useInteractionHandler;
+            if (useInteractionHandler) {
+                // CardInteractionHandler의 카드 플레이 요청 이벤트 구독
+                interactionHandler.OnCardPlayRequested.AddListener(HandleCardPlayRequest);
+            }
         }
     }
     

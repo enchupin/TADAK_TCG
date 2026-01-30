@@ -8,35 +8,27 @@ using System.Collections;
 /// 카드의 모든 상호작용을 담당하는 통합 핸들러
 /// 호버 효과, 드래그, 플레이스홀더, 카드 사용 판정
 /// </summary>
-public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
+public class CardInteractionHandler : UIHoverEffect,
     IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [Header("Events")]
     [SerializeField] private UnityEvent onCardPlayRequested; // 카드 사용 이벤트
     
-    [Header("Hover Settings")]
-    private readonly float hoverScale = 1.4f; // 변환 스케일
-    private readonly float hoverDuration = 0.15f; // 호버링 속도
-    
     [Header("Drag Settings")]
     private readonly float playThresholdYRatio = 0.3f; // 드래그 범위
-
-    
+    private static bool isAnyCardDragging = false;
+    private bool isDragging = false;
 
     [Header("Debug")]
-    [SerializeField] private bool showPlayThreshold = true;
-    [SerializeField] private Color thresholdColor = new Color(1, 0, 0, 0.5f);
+    public bool showPlayThreshold = true;
+    private Color thresholdColor = new Color(1, 0, 0, 0.5f);
     private static GameObject debugLineObject;
-    
-    // 호버 관련
-    private Vector3 originalScale;
-    private Coroutine scaleCoroutine;
-    private bool isDragging = false;
-    
-    // 전역 드래그 상태
-    private static bool isAnyCardDragging = false;
 
-    // 드래그 관련
+    [Header("Hover Settings")]
+    private readonly float cardHoverScale = 1.4f;
+    private readonly float cardHoverDuration = 0.15f;
+
+    [Header("Drag Component")]
     private RectTransform rectTransform;
     private Canvas canvas;
     private CanvasGroup canvasGroup;
@@ -48,23 +40,33 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     public UnityEvent OnCardPlayRequested => onCardPlayRequested; // 카드 사용 이벤트
 
 
-    private void Awake()
+    protected override void Awake()
     {
-        // 호버 초기화
-        originalScale = transform.localScale;
+        base.Awake(); // UIHoverEffect initialization
+        
+        // 호버링 설정
+        SetHoverScale(cardHoverScale);
+        SetAnimationDuration(cardHoverDuration);
         
         // 드래그 초기화
         rectTransform = GetComponent<RectTransform>();
         canvas = GetComponentInParent<Canvas>();
         canvasGroup = GetComponent<CanvasGroup>();
         layoutElement = GetComponent<LayoutElement>();
-        cardUI = GetComponent<CardUI>();
+        cardUI = GetComponent<CardUI>(); // 추후 CardUI를 직접 참조하지 않는 방식으로 변경 예정
         
         if (canvasGroup == null) canvasGroup = gameObject.AddComponent<CanvasGroup>();
         if (layoutElement == null) layoutElement = gameObject.AddComponent<LayoutElement>();
     }
     
+    
     private void Start()
+    {
+        // 모든 컴포넌트의 Start()가 완료된 후에 체크하도록 지연
+        Invoke(nameof(CheckAndCreateThresholdLine), 0.01f);
+    }
+
+    private void CheckAndCreateThresholdLine()
     {
         if (showPlayThreshold && debugLineObject == null && canvas != null)
         {
@@ -77,55 +79,20 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
     /// <summary>
     /// 호버링 적용
     /// </summary>
-    public void OnPointerEnter(PointerEventData eventData)
+    public override void OnPointerEnter(PointerEventData eventData)
     {
         // 어떤 카드라도 드래그 중이면 호버 효과를 무시
         if (!isDragging && !isAnyCardDragging) {
-            StopCurrentAnimation();
-            scaleCoroutine = StartCoroutine(ScaleAnimation(originalScale * hoverScale));
+            base.OnPointerEnter(eventData);
         }
     }
     
     /// <summary>
     /// 호버링 해제
     /// </summary>
-    public void OnPointerExit(PointerEventData eventData)
+    public override void OnPointerExit(PointerEventData eventData)
     {
-        if (!isDragging) {
-            StopCurrentAnimation();
-            scaleCoroutine = StartCoroutine(ScaleAnimation(originalScale));
-        }
-    }
-    
-    /// <summary>
-    /// 호버링 코루틴 중지
-    /// </summary>
-    private void StopCurrentAnimation()
-    {
-        if (scaleCoroutine != null)
-        {
-            StopCoroutine(scaleCoroutine);
-            scaleCoroutine = null;
-        }
-    }
-    
-    /// <summary>
-    /// 호버링 코루틴
-    /// </summary>
-    private IEnumerator ScaleAnimation(Vector3 targetScale)
-    {
-        Vector3 startScale = transform.localScale;
-        float elapsed = 0f;
-        
-        while (elapsed < hoverDuration)
-        {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / hoverDuration);
-            transform.localScale = Vector3.Lerp(startScale, targetScale, t);
-            yield return null;
-        }
-        
-        transform.localScale = targetScale;
+        base.OnPointerExit(eventData);
     }
     
     #endregion
@@ -143,7 +110,7 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
         originalSiblingIndex = transform.GetSiblingIndex();
         
         // Placeholder 생성 전에 크기 초기화
-        StopCurrentAnimation();
+        StopAnimation();
         transform.localScale = originalScale;
         
         // Placeholder 생성
@@ -187,8 +154,8 @@ public class CardInteractionHandler : MonoBehaviour, IPointerEnterHandler, IPoin
         }
         
         // 원래 크기로 복원
-        StopCurrentAnimation();
-        scaleCoroutine = StartCoroutine(ScaleAnimation(originalScale));
+        StopAnimation();
+        StartCoroutine(AnimateScale(originalScale));
     }
     
     

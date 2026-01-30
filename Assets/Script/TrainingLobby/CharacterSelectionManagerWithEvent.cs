@@ -7,7 +7,6 @@ using UnityEngine.UI;
 /// </summary>
 public class CharacterSelectionManagerWithEvent : MonoBehaviour
 {
-    [SerializeField] private string gameSceneName = "CardTest"; // 이동할 씬 이름
     [SerializeField] private Button startButton; // 스타트 버튼 필드 복구
     private const int REQUIRED_SELECTION = 3;
 
@@ -27,35 +26,6 @@ public class CharacterSelectionManagerWithEvent : MonoBehaviour
     {
         // 초기 상태 설정
         UpdateStartButtonState(SelectedButtonControl.selectedCharacterList.Count);
-        
-        // 버튼 리스너 연결
-        if (startButton != null)
-        {
-            startButton.onClick.AddListener(OnStartButtonClicked);
-        }
-    }
-
-    /// <summary>
-    /// 게임 시작 버튼 클릭 핸들러
-    /// </summary>
-    private void OnStartButtonClicked()
-    {
-        // 선택 개수 검증 (한 번 더 체크)
-        if (SelectedButtonControl.selectedCharacterList.Count != REQUIRED_SELECTION)
-        {
-            Debug.LogWarning($"캐릭터 3명을 선택해야 합니다. (현재: {SelectedButtonControl.selectedCharacterList.Count})");
-            return;
-        }
-
-        // 씬 전환
-        if (!string.IsNullOrEmpty(gameSceneName))
-        {
-            UnityEngine.SceneManagement.SceneManager.LoadScene(gameSceneName);
-        }
-        else
-        {
-            Debug.LogError("이동할 씬 이름이 설정되지 않았습니다!");
-        }
     }
 
     /// <summary>

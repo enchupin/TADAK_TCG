@@ -50,28 +50,57 @@ public class HandManager : MonoBehaviour
             handCardIdList.Add(cardId);
             InstantiateCardUI(cardId);
         }
-        
     }
+
 
 
     /// <summary>
     /// 카드 UI 생성
     /// </summary>
-    public void InstantiateCardUI(int cardId) {
+    private void InstantiateCardUI(int cardId) {
         GameObject cardObj = Instantiate(cardUIPrefab, handContainer);
-        
+
         // CardController를 통해 초기화
         CardController controller = cardObj.GetComponent<CardController>();
-        if (controller != null)
-        {
+        if (controller != null) {
             controller.Initialize(cardId);
-        }
-        else
-        {
+        } else {
             Debug.LogWarning($"[HandManager] CardController를 찾을 수 없습니다!");
         }
     }
 
+
+    /// <summary>
+    /// CadrInteractionHandler를 제외한 카드 추가
+    /// </summary>
+    public void AddCardByIdWithoutInputController(List<int> cardIds) {
+        if (cardUIPrefab == null || handContainer == null) { // 예외 처리
+            Debug.LogError("CardUI 프리팹 또는 Hand Container가 설정되지 않았습니다!");
+            return;
+        }
+
+        // 카드 추가
+        foreach (int cardId in cardIds) {
+            handCardIdList.Add(cardId);
+            InstantiateCardUIWithoutInputController(cardId);
+        }
+    }
+
+    /// <summary>
+    /// CadrInteractionHandler를 제외한 카드 UI 생성
+    /// </summary>
+    private void InstantiateCardUIWithoutInputController(int cardId) {
+        GameObject cardObj = Instantiate(cardUIPrefab, handContainer);
+
+        // CardController를 통해 초기화
+        CardController controller = cardObj.GetComponent<CardController>();
+        if (controller != null) {
+            controller.Initialize(cardId);
+            controller.useInteractionHandler = false;
+        } else {
+            Debug.LogWarning($"[HandManager] CardController를 찾을 수 없습니다!");
+        }
+    }
 
     /// <summary>
     /// 손패에서 특정 카드 제거 (카드 사용 시)
