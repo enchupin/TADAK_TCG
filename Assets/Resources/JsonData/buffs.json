@@ -11,7 +11,7 @@
                 "target": "Self"
             },
             "decrease": {
-                "timing": "turnEnd",
+                "timing": "effect",
                 "amount": 1
             },
             "description": "턴 종료 시 수치만큼 회복합니다."
@@ -27,10 +27,10 @@
                 "target": "Card"
             },
             "decrease": {
-                "timing": "damage",
+                "timing": "effect",
                 "amount": 1
             },
-            "description": "다음 피해를 입힐 때 피해량이 2배로 증가합니다."
+            "description": "다음 피해를 입힐 때 피해량이 배로 증가합니다."
         },
         {
             "buffId": 103,
@@ -112,7 +112,7 @@
         },
         {
             "buffId": 106,
-            "name": "광역: 잔혹함",
+            "name": "잔악무도",
             "buffType": 1,
             "effects": {
                 "timing": "Buff",
@@ -329,30 +329,6 @@
         },
         {
             "buffId": 116,
-            "name": "재고 충당",
-            "buffType": 1,
-            "effects": {
-                "timing": "turnStart",
-                "type": "PreventDefenseLoss",
-                "target": "Self"
-            },
-            "description": "턴 시작 시 방어도를 잃지 않습니다."
-        },
-        {
-            "buffId": 117,
-            "name": "돈 주머니",
-            "buffType": 1,
-            "effects": {
-                "timing": "turnStart",
-                "type": "GenerateCard",
-                "cardId": 301080,
-                "amount": 1,
-                "target": "Hand"
-            },
-            "description": "매 턴 시작 시 금화 한 닢 카드를 1장 생성합니다."
-        },
-        {
-            "buffId": 118,
             "name": "용암 피부",
             "buffType": 1,
             "effects": {
@@ -363,6 +339,75 @@
                 "target": "Attacker"
             },
             "description": "공격받을 때마다 공격한 적에게 화염 낙인을 {value} 부여합니다."
+        },
+        {
+            "buffId": 204,
+            "name": "빙결",
+            "buffType": 2,
+            "effects": {
+                "timing": "stack",
+                "amount": "10",
+                "type": "Stun",
+                "target": "Self"
+            },
+            "decrease": {
+                "timing": "effect",
+                "amount": "all"
+            },
+            "description": "10중첩이 되면 중첩을 잃고 행동불가 상태가 됩니다."
+        },
+        {
+            "buffId": 118,
+            "name": "빙하 결속",
+            "buffType": 1,
+            "effects": {
+                "timing": "defense",
+                "type": "Defense",
+                "amount": "value",
+                "target": "Self"
+            },
+            "description": "보호막을 획득할 때마다 {value}만큼 더 얻습니다."
+        },
+        {
+            "buffId": 119,
+            "name": "절대영도",
+            "buffType": 3,
+            "effects": {
+                "timing": "turnStart",
+                "type": "Buff",
+                "buffId": 204,
+                "amount": 1,
+                "target": "AllEnemies"
+            },
+            "description": "턴 시작 시 모든 적에게 빙결을 1 부여합니다."
+        },
+        {
+            "buffId": 120,
+            "name": "빙하 조형 생성",
+            "buffType": 1,
+            "effects": {
+                "timing": "damaged",
+                "type": "GenerateCard",
+                "cardId": 401080,
+                "amount": 1,
+                "target": "Hand"
+            },
+            "description": "공격받을 때마다 손에 빙하 조형 카드를 1장 생성합니다."
+        },
+        {
+            "buffId": 117,
+            "name": "보호막 유지",
+            "buffType": 1,
+            "effects": {
+                "timing": "turnStart",
+                "type": "PreventDefenseLoss",
+                "target": "Self"
+            },
+            "decrease": {
+                "timing": "turnStart",
+                "amount": 1
+            },
+            "description": "턴 시작 시 보호막이 사라지지 않습니다."
         }
     ]
 }
