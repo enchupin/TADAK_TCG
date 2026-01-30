@@ -6,8 +6,8 @@ using UnityEngine;
 /// </summary>
 public class BuildingDeck
 {
-    // 현재 보유한 모든 카드 ID 리스트
-    private List<int> deckList = new List<int>();
+    // 현재 보유한 모든 카드 리스트 (객체로 관리)
+    private List<Card> deckList = new List<Card>();
 
     /// <summary>
     /// 캐릭터들의 기본 덱으로 초기화 (최초 1회)
@@ -20,7 +20,15 @@ public class BuildingDeck
             CharacterData data = CharacterManager.GetCharacterByEnum(character);
             if (data != null && data.startDeckCardIds != null)
             {
-                deckList.AddRange(data.startDeckCardIds);
+                foreach (int cardId in data.startDeckCardIds)
+                {
+                    // ID로 새 Card 객체 생성하여 저장
+                    Card newCard = CardManager.GetCardAsCard(cardId);
+                    if (newCard != null)
+                    {
+                        deckList.Add(newCard);
+                    }
+                }
             }
         }
         Debug.Log($"[BuildingDeck] 초기화 완료: 총 {deckList.Count}장 (캐릭터 {characters.Count}명)");
@@ -31,31 +39,36 @@ public class BuildingDeck
     /// </summary>
     public void AddCard(int cardId)
     {
-        deckList.Add(cardId);
-        Debug.Log($"[BuildingDeck] 카드 추가됨: {cardId} (총 {deckList.Count}장)");
+        // ID로 새 객체 생성
+        Card newCard = CardManager.GetCardAsCard(cardId);
+        if (newCard != null)
+        {
+            deckList.Add(newCard);
+            Debug.Log($"[BuildingDeck] 카드 추가됨: {newCard.cardName} (총 {deckList.Count}장)");
+        }
     }
 
     /// <summary>
     /// 카드 제거 (상점 등)
     /// </summary>
-    public void RemoveCard(int cardId)
+    public void RemoveCard(Card card)
     {
-        if (deckList.Contains(cardId))
+        if (deckList.Contains(card))
         {
-            deckList.Remove(cardId);
-            Debug.Log($"[BuildingDeck] 카드 제거됨: {cardId} (총 {deckList.Count}장)");
+            deckList.Remove(card);
+            Debug.Log($"[BuildingDeck] 카드 제거됨: {card.cardName} (총 {deckList.Count}장)");
         }
         else
         {
-            Debug.LogWarning($"[BuildingDeck] 제거할 카드가 덱에 없음: {cardId}");
+            Debug.LogWarning($"[BuildingDeck] 제거할 카드가 덱에 없음: {card.cardName}");
         }
     }
 
     /// <summary>
     /// 전투용 덱 복사본 반환 (UsableDeck 생성용)
     /// </summary>
-    public List<int> CopyDeck()
+    public List<Card> CopyDeck()
     {
-        return new List<int>(deckList);
+        return new List<Card>(deckList);
     }
 }

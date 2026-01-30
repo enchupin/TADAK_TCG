@@ -44,14 +44,17 @@ public class CardController : MonoBehaviour
     /// <summary>
     /// 카드 초기화
     /// </summary>
-    public void Initialize(int cardId)
+    /// <summary>
+    /// 카드 초기화
+    /// </summary>
+    public void Initialize(Card card)
     {
-        // CardManager에서 Card를 직접 로드
-        card = CardManager.GetCardAsCard(cardId);
         if (card == null) {
-            Debug.LogError($"[CardController] Card with ID {cardId} not found!");
+            Debug.LogError($"[CardController] Card is null!");
             return;
         }
+        
+        this.card = card;
         cardUI.UpdateDisplay(card);
     }
     

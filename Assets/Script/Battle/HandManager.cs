@@ -14,7 +14,7 @@ public class HandManager : MonoBehaviour
     [SerializeField] private Transform handContainer;
 
     [Header("손패")]
-    private List<int> handCardIdList = new List<int>(); // 손패를 카드 ID로 관리
+    private List<Card> handCardList = new List<Card>(); // 손패를 Card 객체로 관리
 
     // never using
     // [SerializeField] private float cardSpacing = 150f;
@@ -24,13 +24,13 @@ public class HandManager : MonoBehaviour
     /// 손패에 카드 한 장 추가
     /// </summary>
 
-    public void AddCardById(int cardId) {
+    public void AddCard(Card card) {
         if (cardUIPrefab == null || handContainer == null) {
             Debug.LogError("CardUI 프리팹 또는 Hand Container가 설정되지 않았습니다!");
             return;
         }
-        handCardIdList.Add(cardId);
-        InstantiateCardUI(cardId);
+        handCardList.Add(card);
+        InstantiateCardUI(card);
     }
 
 
@@ -38,7 +38,7 @@ public class HandManager : MonoBehaviour
     /// 손패에 카드 추가
     /// </summary>
 
-    public void AddCardById(List<int> cardIds)
+    public void AddCard(List<Card> cards)
     {
         if (cardUIPrefab == null || handContainer == null) { // 예외 처리
             Debug.LogError("CardUI 프리팹 또는 Hand Container가 설정되지 않았습니다!");
@@ -46,9 +46,9 @@ public class HandManager : MonoBehaviour
         }
 
         // 카드 추가
-        foreach (int cardId in cardIds) { 
-            handCardIdList.Add(cardId);
-            InstantiateCardUI(cardId);
+        foreach (Card card in cards) { 
+            handCardList.Add(card);
+            InstantiateCardUI(card);
         }
     }
 
@@ -57,13 +57,13 @@ public class HandManager : MonoBehaviour
     /// <summary>
     /// 카드 UI 생성
     /// </summary>
-    private void InstantiateCardUI(int cardId) {
+    private void InstantiateCardUI(Card card) {
         GameObject cardObj = Instantiate(cardUIPrefab, handContainer);
 
         // CardController를 통해 초기화
         CardController controller = cardObj.GetComponent<CardController>();
         if (controller != null) {
-            controller.Initialize(cardId);
+            controller.Initialize(card);
         } else {
             Debug.LogWarning($"[HandManager] CardController를 찾을 수 없습니다!");
         }
@@ -73,29 +73,29 @@ public class HandManager : MonoBehaviour
     /// <summary>
     /// CadrInteractionHandler를 제외한 카드 추가
     /// </summary>
-    public void AddCardByIdWithoutInputController(List<int> cardIds) {
+    public void AddCardWithoutInputController(List<Card> cards) {
         if (cardUIPrefab == null || handContainer == null) { // 예외 처리
             Debug.LogError("CardUI 프리팹 또는 Hand Container가 설정되지 않았습니다!");
             return;
         }
 
         // 카드 추가
-        foreach (int cardId in cardIds) {
-            handCardIdList.Add(cardId);
-            InstantiateCardUIWithoutInputController(cardId);
+        foreach (Card card in cards) {
+            handCardList.Add(card);
+            InstantiateCardUIWithoutInputController(card);
         }
     }
 
     /// <summary>
     /// CadrInteractionHandler를 제외한 카드 UI 생성
     /// </summary>
-    private void InstantiateCardUIWithoutInputController(int cardId) {
+    private void InstantiateCardUIWithoutInputController(Card card) {
         GameObject cardObj = Instantiate(cardUIPrefab, handContainer);
 
         // CardController를 통해 초기화
         CardController controller = cardObj.GetComponent<CardController>();
         if (controller != null) {
-            controller.Initialize(cardId);
+            controller.Initialize(card);
             controller.useInteractionHandler = false;
         } else {
             Debug.LogWarning($"[HandManager] CardController를 찾을 수 없습니다!");
@@ -122,13 +122,13 @@ public class HandManager : MonoBehaviour
             return;
         }
         
-        int cardId = controller.Card.cardId;
+        Card card = controller.Card;
         
         // 손패 리스트에서 제거
-        if (handCardIdList.Contains(cardId))
+        if (handCardList.Contains(card))
         {
-            handCardIdList.Remove(cardId);
-            Debug.Log($"[HandManager] 손패에서 카드 ID {cardId} 제거");
+            handCardList.Remove(card);
+            Debug.Log($"[HandManager] 손패에서 카드 {card.cardName} 제거");
         }
 
         // UI 오브젝트 파괴
@@ -137,15 +137,14 @@ public class HandManager : MonoBehaviour
 
     
 
-
     
     /// <summary>
     /// 손패 비우기 (턴 종료 시)
     /// </summary>
-    public List<int> ClearHand()
+    public List<Card> ClearHand()
     {
-        List<int> discardedCards = new List<int>(handCardIdList);
-        handCardIdList.Clear();
+        List<Card> discardedCards = new List<Card>(handCardList);
+        handCardList.Clear();
 
         // 손패 UI 모두 파괴
         foreach (Transform child in handContainer)
@@ -163,15 +162,15 @@ public class HandManager : MonoBehaviour
     /// </summary>
     public int GetCardCount()
     {
-        return handCardIdList.Count;
+        return handCardList.Count;
     }
     
     /// <summary>
-    /// 손패의 카드 ID 목록 반환
+    /// 손패의 카드 목록 반환
     /// </summary>
-    public List<int> GetHandCardIds()
+    public List<Card> GetHandCards()
     {
-        return new List<int>(handCardIdList);
+        return new List<Card>(handCardList);
     }
 
 
