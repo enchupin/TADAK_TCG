@@ -81,7 +81,7 @@ public class TrainingBattleManager : MonoBehaviour {
             // 테스트용: Chloe, Ignia, Declan 사용
             SelectedButtonControl.selectedCharacterList.Add(Character.Chloe);
             SelectedButtonControl.selectedCharacterList.Add(Character.Ignia);
-            SelectedButtonControl.selectedCharacterList.Add(Character.Declan);
+            SelectedButtonControl.selectedCharacterList.Add(Character.Polar);
             
             Debug.Log($"[BattleManager] 기본 캐릭터 설정 완료: {SelectedButtonControl.selectedCharacterList.Count}명");
         }

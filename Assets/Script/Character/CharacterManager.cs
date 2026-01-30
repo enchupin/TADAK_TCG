@@ -173,7 +173,7 @@ public static class CharacterManager
         {
             case 101: return Character.Chloe;
             case 201: return Character.Ignia;
-            case 301: return Character.Declan;
+            case 301: return Character.Polar;
             default:
                 Debug.LogWarning($"[CharacterManager] Unknown characterId: {characterId}, defaulting to Chloe");
                 return Character.Chloe;
@@ -188,7 +188,7 @@ public static class CharacterManager
         switch (character) {
             case Character.Chloe: return 101;
             case Character.Ignia: return 201;
-            case Character.Declan: return 301;
+            case Character.Polar: return 301;
             default:
                 Debug.LogWarning($"[CharacterManager] Unknown characterId: {character}, defaulting to Chloe");
                 return 101;
@@ -204,7 +204,7 @@ public static class CharacterManager
         {
             case Character.Chloe: return 101;
             case Character.Ignia: return 201;
-            case Character.Declan: return 301;
+            case Character.Polar: return 301;
             default: return 101;
         }
     }
