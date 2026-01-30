@@ -1003,9 +1003,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3347725797921719501, guid: e3ef6995bf6c9c54392bfb9a720c2552, type: 3}
       propertyPath: m_text
-      value: 'Declan
-
-'
+      value: Polar
       objectReference: {fileID: 0}
     - target: {fileID: 7126515853444721151, guid: e3ef6995bf6c9c54392bfb9a720c2552, type: 3}
       propertyPath: m_Pivot.x
@@ -1195,7 +1193,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51e85a900c910c6429f5c8d519ca1bd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterSelectionManagerWithEvent
-  gameSceneName: CardTest
   startButton: {fileID: 2094119973}
 --- !u!4 &1238710756
 Transform:
