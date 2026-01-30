@@ -114,7 +114,7 @@ public class TrainingBattleManager : MonoBehaviour {
         }
 
         // 2. 전투용 덱(UsableDeck) 설정 - 영구 덱에서 복사
-        List<int> battleDeck = buildingDeck.CopyDeck();
+        List<Card> battleDeck = buildingDeck.CopyDeck();
         usableDeckManager.SetDeck(battleDeck);
 
         UpdateAllUI();
@@ -178,8 +178,8 @@ public class TrainingBattleManager : MonoBehaviour {
     /// UsableDeckManager에서 카드를 드로우하여 손패에 추가
     /// </summary>
     public void DrawCards(int count) {
-        List<int> drawnCardIds = usableDeckManager.DrawCard(count);
-        handManager.AddCardById(drawnCardIds);
+        List<Card> drawnCards = usableDeckManager.DrawCard(count);
+        handManager.AddCard(drawnCards);
     }
 
 
@@ -214,6 +214,12 @@ public class TrainingBattleManager : MonoBehaviour {
             handManager.RemoveCardFromHand(controller.cardUI);
         }
         
+        // 사용한 카드는 버리기 더미로 이동 (일회용 카드가 아니라면)
+        // TODO: 소멸(Exhaust) 키워드 구현 시 수정 필요
+        if (usableDeckManager != null)
+        {
+            usableDeckManager.AddToDiscard(playedCard);
+        }
         
         UpdateAllUI();
 
@@ -232,7 +238,7 @@ public class TrainingBattleManager : MonoBehaviour {
         if (handManager != null && usableDeckManager != null)
         {
              // 현재 손패에 있는 모든 카드를 버리기 더미로 이동
-             List<int> remainingCards = handManager.GetHandCardIds();
+             List<Card> remainingCards = handManager.GetHandCards();
              usableDeckManager.AddToDiscard(remainingCards);
              
              // 손패 비우기

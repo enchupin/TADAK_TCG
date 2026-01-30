@@ -5,6 +5,7 @@ using UnityEngine;
 /// 카드 클래스 (순수 C# 객체, MonoBehaviour 아님)
 /// 모든 카드가 이 클래스를 공유합니다.
 /// </summary>
+[System.Serializable]
 public class Card
 {
     // 기본 정보

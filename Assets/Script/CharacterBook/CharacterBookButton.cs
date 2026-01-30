@@ -16,8 +16,15 @@ public class CharacterBookButton : MonoBehaviour
     {
         if (handManager != null) {
             List<int> startdeck = CharacterManager.GetStartDeck(character);
+            List<Card> cardObjects = new List<Card>();
+             foreach (int id in startdeck) {
+                Card card = CardManager.GetCardAsCard(id);
+                if (card != null) {
+                    cardObjects.Add(card);
+                }
+            }
             handManager.ClearHand();
-            handManager.AddCardByIdWithoutInputController(startdeck);
+            handManager.AddCardWithoutInputController(cardObjects);
         }
         else {
             Debug.LogError("[CharacterBookButton] HandManager reference is missing!");
