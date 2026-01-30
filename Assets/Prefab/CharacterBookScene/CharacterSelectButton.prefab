@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 7251049503254934354}
   - component: {fileID: 3080237345409831448}
   - component: {fileID: 6804977095197006050}
-  - component: {fileID: 1509838048812940249}
+  - component: {fileID: 189580529525327452}
   m_Layer: 5
   m_Name: CharacterSelectButton
   m_TagString: Untagged
@@ -174,8 +174,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -400.17535, y: 118.15918}
-  m_SizeDelta: {x: 294.2626, y: 52.8246}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7251049503254934354
 CanvasRenderer:
@@ -259,7 +259,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1509838048812940249}
+      - m_Target: {fileID: 189580529525327452}
         m_TargetAssemblyTypeName: CharacterBookButton, Assembly-CSharp
         m_MethodName: OnButtonClick
         m_Mode: 1
@@ -271,7 +271,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &1509838048812940249
+--- !u!114 &189580529525327452
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

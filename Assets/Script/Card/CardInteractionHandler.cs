@@ -14,27 +14,21 @@ public class CardInteractionHandler : UIHoverEffect,
     [Header("Events")]
     [SerializeField] private UnityEvent onCardPlayRequested; // 카드 사용 이벤트
     
-    
-    
     [Header("Drag Settings")]
     private readonly float playThresholdYRatio = 0.3f; // 드래그 범위
+    private static bool isAnyCardDragging = false;
+    private bool isDragging = false;
 
     [Header("Debug")]
-    [SerializeField] private bool showPlayThreshold = true;
-    [SerializeField] private Color thresholdColor = new Color(1, 0, 0, 0.5f);
+    public bool showPlayThreshold = true;
+    private Color thresholdColor = new Color(1, 0, 0, 0.5f);
     private static GameObject debugLineObject;
 
-
-    // 호버링 관련
     [Header("Hover Settings")]
     private readonly float cardHoverScale = 1.4f;
     private readonly float cardHoverDuration = 0.15f;
-    private bool isDragging = false;
-    
-    // 전역 드래그 상태
-    private static bool isAnyCardDragging = false;
 
-    // 드래그 관련
+    [Header("Drag Component")]
     private RectTransform rectTransform;
     private Canvas canvas;
     private CanvasGroup canvasGroup;
@@ -59,13 +53,20 @@ public class CardInteractionHandler : UIHoverEffect,
         canvas = GetComponentInParent<Canvas>();
         canvasGroup = GetComponent<CanvasGroup>();
         layoutElement = GetComponent<LayoutElement>();
-        cardUI = GetComponent<CardUI>();
+        cardUI = GetComponent<CardUI>(); // 추후 CardUI를 직접 참조하지 않는 방식으로 변경 예정
         
         if (canvasGroup == null) canvasGroup = gameObject.AddComponent<CanvasGroup>();
         if (layoutElement == null) layoutElement = gameObject.AddComponent<LayoutElement>();
     }
     
+    
     private void Start()
+    {
+        // 모든 컴포넌트의 Start()가 완료된 후에 체크하도록 지연
+        Invoke(nameof(CheckAndCreateThresholdLine), 0.01f);
+    }
+
+    private void CheckAndCreateThresholdLine()
     {
         if (showPlayThreshold && debugLineObject == null && canvas != null)
         {
