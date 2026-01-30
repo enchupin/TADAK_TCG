@@ -69,20 +69,25 @@
         },
         {
             "characterId": 301,
-            "name": "데클란",
+            "name": "폴라",
             "maxHp": 80,
             "cost": 0,
             "identity": {
-                "cost": 3,
+                "cost": 5,
                 "effects": [
                     {
-                        "type": "GenerateCard",
-                        "cardId": 301080,
+                        "type": "Defense",
+                        "amount": 10,
+                        "target": "Self"
+                    },
+                    {
+                        "type": "Buff",
+                        "buffId": 204,
                         "amount": 2,
-                        "target": "Hand"
+                        "target": "AllEnemies"
                     }
                 ],
-                "description": "금화 한 닢 카드를 2장 제작합니다."
+                "description": "방어도를 10 얻습니다. 모든 적에게 빙결을 2 부여합니다."
             },
             "addressables": {
                 "artwork": "",

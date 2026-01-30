@@ -1,9 +1,9 @@
 {
     "cards": [
         {
-            "cardId": 401010,
+            "cardId": 301010,
             "name": "방패 강타",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 1,
             "description": "피해를 6 입힙니다.",
             "effects": [
@@ -20,9 +20,9 @@
             }
         },
         {
-            "cardId": 401020,
+            "cardId": 301020,
             "name": "얼음 보호막",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 1,
             "description": "보호막을 6 얻습니다.",
             "effects": [
@@ -39,9 +39,9 @@
             }
         },
         {
-            "cardId": 401030,
+            "cardId": 301030,
             "name": "절대영도",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 1,
             "description": "모든 적에게 빙결을 1 부여합니다.",
             "effects": [
@@ -53,11 +53,11 @@
                 }
             ],
             "enforce": [
-                401031,
-                401032,
-                401033,
-                401034,
-                401035
+                301031,
+                301032,
+                301033,
+                301034,
+                301035
             ],
             "addressables": {
                 "artwork": "",
@@ -66,9 +66,9 @@
             }
         },
         {
-            "cardId": 401031,
+            "cardId": 301031,
             "name": "절대영도 +",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 1,
             "keywords": [
                 5
@@ -89,9 +89,9 @@
             }
         },
         {
-            "cardId": 401032,
+            "cardId": 301032,
             "name": "절대영도 +",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 0,
             "description": "모든 적에게 빙결을 1 부여합니다.",
             "effects": [
@@ -109,9 +109,9 @@
             }
         },
         {
-            "cardId": 401033,
+            "cardId": 301033,
             "name": "절대영도 +",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 1,
             "keywords": [
                 6
@@ -132,9 +132,9 @@
             }
         },
         {
-            "cardId": 401034,
+            "cardId": 301034,
             "name": "절대영도 +",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 2,
             "keywords": [
                 4
@@ -155,9 +155,9 @@
             }
         },
         {
-            "cardId": 401035,
+            "cardId": 301035,
             "name": "절대영도 +",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 1,
             "keywords": [
                 4
@@ -178,9 +178,9 @@
             }
         },
         {
-            "cardId": 401040,
+            "cardId": 301040,
             "name": "빙하 장막",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 2,
             "description": "보호막을 14 얻습니다.",
             "effects": [
@@ -191,9 +191,9 @@
                 }
             ],
             "enforce": [
-                401041,
-                401042,
-                401043
+                301041,
+                301042,
+                301043
             ],
             "addressables": {
                 "artwork": "",
@@ -202,9 +202,9 @@
             }
         },
         {
-            "cardId": 401041,
+            "cardId": 301041,
             "name": "빙하 장막 +",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 2,
             "description": "보호막을 20 얻습니다.",
             "effects": [
@@ -221,9 +221,9 @@
             }
         },
         {
-            "cardId": 401042,
+            "cardId": 301042,
             "name": "빙하 장막 +",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 2,
             "description": "피해를 12 입힙니다. 최종 피해량만큼 보호막을 얻습니다.",
             "effects": [
@@ -245,9 +245,9 @@
             }
         },
         {
-            "cardId": 401043,
+            "cardId": 301043,
             "name": "빙하 장막 +",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 1,
             "description": "빙하 조형 카드를 3장 생성합니다.",
             "effects": [
@@ -265,9 +265,9 @@
             }
         },
         {
-            "cardId": 401050,
+            "cardId": 301050,
             "name": "혹한의 손길",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 1,
             "description": "피해를 4 입힙니다. 빙결을 2 부여합니다.",
             "effects": [
@@ -284,8 +284,8 @@
                 }
             ],
             "enforce": [
-                401051,
-                401052
+                301051,
+                301052
             ],
             "addressables": {
                 "artwork": "",
@@ -294,9 +294,9 @@
             }
         },
         {
-            "cardId": 401051,
+            "cardId": 301051,
             "name": "혹한의 손길 +",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 1,
             "description": "피해를 6 입힙니다. 빙결을 3 부여합니다.",
             "effects": [
@@ -319,9 +319,9 @@
             }
         },
         {
-            "cardId": 401052,
+            "cardId": 301052,
             "name": "혹한의 손길 +",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 1,
             "description": "카드를 1장 뽑습니다. 보호막을 6 얻습니다.",
             "effects": [
@@ -342,9 +342,9 @@
             }
         },
         {
-            "cardId": 401060,
+            "cardId": 301060,
             "name": "마력 치환",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 0,
             "keywords": [
                 3
@@ -363,9 +363,9 @@
                 }
             ],
             "enforce": [
-                401061,
-                401062,
-                401063
+                301061,
+                301062,
+                301063
             ],
             "addressables": {
                 "artwork": "",
@@ -374,9 +374,9 @@
             }
         },
         {
-            "cardId": 401061,
+            "cardId": 301061,
             "name": "마력 치환 +",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 10,
             "description": "이 카드는 내 보호막을 비용으로 사용합니다. 피해 증폭을 1 얻습니다.",
             "effects": [
@@ -394,9 +394,9 @@
             }
         },
         {
-            "cardId": 401062,
+            "cardId": 301062,
             "name": "마력 치환 +",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 10,
             "description": "이 카드는 내 보호막을 비용으로 사용합니다. 빙하 결속을 1 얻습니다.",
             "effects": [
@@ -414,9 +414,9 @@
             }
         },
         {
-            "cardId": 401063,
+            "cardId": 301063,
             "name": "마력 치환 +",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 1,
             "keywords": [
                 3
@@ -440,9 +440,9 @@
             }
         },
         {
-            "cardId": 401070,
+            "cardId": 301070,
             "name": "보호 동결",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 1,
             "description": "다음 턴 시작 시 보호막이 사라지지 않습니다.",
             "effects": [
@@ -454,9 +454,9 @@
                 }
             ],
             "enforce": [
-                401071,
-                401072,
-                401073
+                301071,
+                301072,
+                301073
             ],
             "addressables": {
                 "artwork": "",
@@ -465,9 +465,9 @@
             }
         },
         {
-            "cardId": 401071,
+            "cardId": 301071,
             "name": "보호 동결 +",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 2,
             "keywords": [
                 4
@@ -488,9 +488,9 @@
             }
         },
         {
-            "cardId": 401072,
+            "cardId": 301072,
             "name": "보호 동결 +",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 1,
             "keywords": [
                 1
@@ -511,9 +511,9 @@
             }
         },
         {
-            "cardId": 401073,
+            "cardId": 301073,
             "name": "보호 동결 +",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 1,
             "description": "다음 2턴 시작 시 보호막이 사라지지 않습니다.",
             "effects": [
@@ -531,9 +531,9 @@
             }
         },
         {
-            "cardId": 401080,
+            "cardId": 301080,
             "name": "빙하 조형",
-            "characterId": 401,
+            "characterId": 301,
             "cost": 0,
             "keywords": [
                 8
