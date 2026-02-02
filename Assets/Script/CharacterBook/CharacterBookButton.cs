@@ -9,12 +9,12 @@ using UnityEngine.UI;
 public class CharacterBookButton : MonoBehaviour
 {
     [SerializeField] private Character character; // 이 버튼이 담당하는 캐릭터
-    [SerializeField] private HandManager handManager; // 매니저 참조
+    [SerializeField] private CardContainerManager cardManager; // 매니저 참조
 
 
     public void OnButtonClick()
     {
-        if (handManager != null) {
+        if (cardManager != null) {
             List<int> startdeck = CharacterManager.GetStartDeck(character);
             List<Card> cardObjects = new List<Card>();
              foreach (int id in startdeck) {
@@ -23,8 +23,8 @@ public class CharacterBookButton : MonoBehaviour
                     cardObjects.Add(card);
                 }
             }
-            handManager.ClearHand();
-            handManager.AddCardWithoutInputController(cardObjects);
+            cardManager.ClearHand();
+            cardManager.AddCardWithoutInputController(cardObjects);
         }
         else {
             Debug.LogError("[CharacterBookButton] HandManager reference is missing!");
