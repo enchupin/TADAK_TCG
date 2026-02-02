@@ -10,7 +10,7 @@
                 "effects": [
                     {
                         "type": "Buff",
-                        "buffId": 201,
+                        "buffId": 3001,
                         "amount": 3,
                         "target": "AllEnemies"
                     }
@@ -44,7 +44,7 @@
                 "effects": [
                     {
                         "type": "Buff",
-                        "buffId": 112,
+                        "buffId": 2009,
                         "amount": 20,
                         "target": "Self"
                     }
@@ -82,7 +82,7 @@
                     },
                     {
                         "type": "Buff",
-                        "buffId": 204,
+                        "buffId": 3004,
                         "amount": 2,
                         "target": "AllEnemies"
                     }
@@ -94,7 +94,7 @@
                 "effect": "",
                 "sound": ""
             },
-            "characterColor": "yellow",
+            "characterColor": "white",
             "startDeck": [
                 301010,
                 301020,
