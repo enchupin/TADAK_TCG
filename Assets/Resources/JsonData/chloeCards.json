@@ -8,7 +8,7 @@
             "description": "피해를 6 입힙니다.",
             "effects": [
                 {
-                    "type": "Damage",
+                    "type": "Attack",
                     "amount": 6,
                     "target": "SingleEnemy"
                 }
@@ -169,7 +169,7 @@
                     ],
                     "effect": {
                         "type": "Buff",
-                        "buffId": 201,
+                        "buffId": 3001,
                         "amount": 2,
                         "target": "AllEnemies"
                     }
@@ -423,7 +423,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 108,
+                    "buffId": 1001,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -442,7 +442,7 @@
             "description": "이번 전투에 사용한 포션의 개수 X 3 만큼 피해를 입힙니다.",
             "effects": [
                 {
-                    "type": "Damage",
+                    "type": "Attack",
                     "amount": "UseCardInCombat * 3",
                     "cardId": [
                         101080,
@@ -481,7 +481,7 @@
             "description": "이번 전투에 사용한 포션의 개수 X 3 만큼 피해를 입힙니다. 보존: 비용이 1 감소합니다.",
             "effects": [
                 {
-                    "type": "Damage",
+                    "type": "Attack",
                     "amount": "UseCardInCombat * 3",
                     "cardId": [
                         101080,
@@ -546,7 +546,7 @@
             "description": "모든 적에게 이번 전투에 사용한 포션의 개수 X 3 만큼 피해를 입힙니다.",
             "effects": [
                 {
-                    "type": "Damage",
+                    "type": "Attack",
                     "amount": "UseCardInCombat * 3",
                     "cardId": [
                         101080,
@@ -579,7 +579,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 110,
+                    "buffId": 1002,
                     "target": "Self"
                 }
             ],
@@ -601,7 +601,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 111,
+                    "buffId": 2003,
                     "target": "Self"
                 }
             ],
@@ -623,7 +623,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 201,
+                    "buffId": 3001,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -657,7 +657,7 @@
                 },
                 {
                     "type": "Buff",
-                    "buffId": 201,
+                    "buffId": 3001,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -680,7 +680,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 201,
+                    "buffId": 3001,
                     "amount": 2,
                     "target": "Enemy"
                 },
@@ -717,7 +717,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 104,
+                    "buffId": 2004,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -740,7 +740,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 201,
+                    "buffId": 3001,
                     "amount": 2,
                     "target": "Enemy"
                 }
@@ -760,13 +760,13 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 201,
+                    "buffId": 3001,
                     "amount": 2,
                     "target": "Enemy"
                 },
                 {
                     "type": "Buff",
-                    "buffId": 102,
+                    "buffId": 2002,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -789,7 +789,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 105,
+                    "buffId": 2005,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -813,7 +813,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 105,
+                    "buffId": 2005,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -836,7 +836,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 105,
+                    "buffId": 2005,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -859,7 +859,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 105,
+                    "buffId": 2005,
                     "amount": 4,
                     "target": "Self"
                 }
@@ -882,7 +882,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 106,
+                    "buffId": 2006,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -906,7 +906,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 105,
+                    "buffId": 2005,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -1068,7 +1068,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 201,
+                    "buffId": 3001,
                     "amount": 1,
                     "target": "Enemy"
                 }
@@ -1094,7 +1094,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 201,
+                    "buffId": 3001,
                     "amount": 2,
                     "target": "Enemy"
                 }

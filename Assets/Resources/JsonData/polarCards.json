@@ -8,7 +8,7 @@
             "description": "피해를 6 입힙니다.",
             "effects": [
                 {
-                    "type": "Damage",
+                    "type": "Attack",
                     "amount": 6,
                     "target": "SingleEnemy"
                 }
@@ -47,7 +47,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 204,
+                    "buffId": 3004,
                     "amount": 1,
                     "target": "AllEnemies"
                 }
@@ -77,7 +77,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 204,
+                    "buffId": 3004,
                     "amount": 2,
                     "target": "AllEnemies"
                 }
@@ -97,7 +97,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 204,
+                    "buffId": 3004,
                     "amount": 1,
                     "target": "AllEnemies"
                 }
@@ -120,7 +120,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 204,
+                    "buffId": 3004,
                     "amount": 1,
                     "target": "AllEnemies"
                 }
@@ -143,7 +143,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 119,
+                    "buffId": 2016,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -166,7 +166,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 120,
+                    "buffId": 2017,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -181,19 +181,21 @@
             "cardId": 301040,
             "name": "빙하 장막",
             "characterId": 301,
-            "cost": 2,
-            "description": "보호막을 14 얻습니다.",
+            "cost": 1,
+            "description": "보호막을 10 얻습니다.",
             "effects": [
                 {
                     "type": "Defense",
-                    "amount": 14,
+                    "amount": 10,
                     "target": "Self"
                 }
             ],
             "enforce": [
                 301041,
                 301042,
-                301043
+                301043,
+                301044,
+                301045
             ],
             "addressables": {
                 "artwork": "",
@@ -205,12 +207,12 @@
             "cardId": 301041,
             "name": "빙하 장막 +",
             "characterId": 301,
-            "cost": 2,
-            "description": "보호막을 20 얻습니다.",
+            "cost": 1,
+            "description": "보호막을 16 얻습니다.",
             "effects": [
                 {
                     "type": "Defense",
-                    "amount": 20,
+                    "amount": 16,
                     "target": "Self"
                 }
             ],
@@ -224,11 +226,35 @@
             "cardId": 301042,
             "name": "빙하 장막 +",
             "characterId": 301,
-            "cost": 2,
-            "description": "피해를 12 입힙니다. 최종 피해량만큼 보호막을 얻습니다.",
+            "cost": 1,
+            "description": "보호막을 5만큼 2번 얻습니다.",
             "effects": [
                 {
-                    "type": "Damage",
+                    "type": "Defense",
+                    "amount": 5,
+                    "target": "Self"
+                },
+                {
+                    "type": "Defense",
+                    "amount": 5,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 301043,
+            "name": "빙하 장막 +",
+            "characterId": 301,
+            "cost": 2,
+            "description": "피해를 12 입힙니다. 입힌 피해량만큼 보호막을 얻습니다.",
+            "effects": [
+                {
+                    "type": "Attack",
                     "amount": 12,
                     "target": "SingleEnemy",
                     "effect": {
@@ -245,7 +271,7 @@
             }
         },
         {
-            "cardId": 301043,
+            "cardId": 301044,
             "name": "빙하 장막 +",
             "characterId": 301,
             "cost": 1,
@@ -253,7 +279,7 @@
             "effects": [
                 {
                     "type": "GenerateCard",
-                    "cardId": 401080,
+                    "cardId": 301080,
                     "amount": 3,
                     "target": "Hand"
                 }
@@ -265,27 +291,53 @@
             }
         },
         {
+            "cardId": 301045,
+            "name": "빙하 장막 +",
+            "characterId": 301,
+            "cost": 1,
+            "description": "카드를 2장 뽑습니다. 보호막을 10 얻습니다.",
+            "effects": [
+                {
+                    "type": "Draw",
+                    "amount": 2
+                },
+                {
+                    "type": "Defense",
+                    "amount": 10,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
             "cardId": 301050,
-            "name": "혹한의 손길",
+            "name": "냉기",
             "characterId": 301,
             "cost": 1,
             "description": "피해를 4 입힙니다. 빙결을 2 부여합니다.",
             "effects": [
                 {
-                    "type": "Damage",
+                    "type": "Attack",
                     "amount": 4,
                     "target": "SingleEnemy"
                 },
                 {
                     "type": "Buff",
-                    "buffId": 204,
+                    "buffId": 3004,
                     "amount": 2,
                     "target": "SingleEnemy"
                 }
             ],
             "enforce": [
                 301051,
-                301052
+                301052,
+                301053,
+                301054,
+                301055
             ],
             "addressables": {
                 "artwork": "",
@@ -295,19 +347,19 @@
         },
         {
             "cardId": 301051,
-            "name": "혹한의 손길 +",
+            "name": "냉기 +",
             "characterId": 301,
             "cost": 1,
             "description": "피해를 6 입힙니다. 빙결을 3 부여합니다.",
             "effects": [
                 {
-                    "type": "Damage",
+                    "type": "Attack",
                     "amount": 6,
                     "target": "SingleEnemy"
                 },
                 {
                     "type": "Buff",
-                    "buffId": 204,
+                    "buffId": 3004,
                     "amount": 3,
                     "target": "SingleEnemy"
                 }
@@ -320,7 +372,7 @@
         },
         {
             "cardId": 301052,
-            "name": "혹한의 손길 +",
+            "name": "냉기 +",
             "characterId": 301,
             "cost": 1,
             "description": "카드를 1장 뽑습니다. 보호막을 6 얻습니다.",
@@ -342,6 +394,75 @@
             }
         },
         {
+            "cardId": 301053,
+            "name": "냉기 +",
+            "characterId": 301,
+            "cost": 1,
+            "keywords": [
+                4
+            ],
+            "description": "이번 게임 동안 빙하 조형 카드가 강화됩니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 1004,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 301054,
+            "name": "냉기 +",
+            "characterId": 301,
+            "cost": 1,
+            "keywords": [
+                4
+            ],
+            "description": "빙하 결속을 2 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 2015,
+                    "amount": 2,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 301055,
+            "name": "냉기 +",
+            "characterId": 301,
+            "cost": 1,
+            "keywords": [
+                4
+            ],
+            "description": "내 보호막이 감소할 때마다 모든 적에게 빙결을 1 부여합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 2018,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
             "cardId": 301060,
             "name": "마력 치환",
             "characterId": 301,
@@ -349,23 +470,25 @@
             "keywords": [
                 3
             ],
-            "description": "내 보호막을 모두 잃습니다. 잃은 보호막 10마다 피해 증폭을 1씩 얻습니다.",
+            "description": "내 보호막을 모두 잃습니다. 잃은 보호막 10마다 빙하 조형 카드를 1장 생성합니다.",
             "effects": [
                 {
                     "type": "ConsumeDefense",
                     "amount": "all",
                     "effect": {
-                        "type": "Buff",
-                        "buffId": 102,
+                        "type": "GenerateCard",
+                        "cardId": 301080,
                         "amount": "consumed / 10",
-                        "target": "Self"
+                        "target": "Hand"
                     }
                 }
             ],
             "enforce": [
                 301061,
                 301062,
-                301063
+                301063,
+                301064,
+                301065
             ],
             "addressables": {
                 "artwork": "",
@@ -375,46 +498,6 @@
         },
         {
             "cardId": 301061,
-            "name": "마력 치환 +",
-            "characterId": 301,
-            "cost": 10,
-            "description": "이 카드는 내 보호막을 비용으로 사용합니다. 피해 증폭을 1 얻습니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffId": 102,
-                    "amount": 1,
-                    "target": "Self"
-                }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
-        },
-        {
-            "cardId": 301062,
-            "name": "마력 치환 +",
-            "characterId": 301,
-            "cost": 10,
-            "description": "이 카드는 내 보호막을 비용으로 사용합니다. 빙하 결속을 1 얻습니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffId": 118,
-                    "amount": 1,
-                    "target": "Self"
-                }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
-        },
-        {
-            "cardId": 301063,
             "name": "마력 치환 +",
             "characterId": 301,
             "cost": 1,
@@ -440,23 +523,120 @@
             }
         },
         {
+            "cardId": 301062,
+            "name": "마력 치환 +",
+            "characterId": 301,
+            "cost": 2,
+            "keywords": [
+                3
+            ],
+            "description": "내 보호막을 모두 잃습니다. 모든 적에게 잃은 보호막만큼 피해를 입힙니다.",
+            "effects": [
+                {
+                    "type": "ConsumeDefense",
+                    "amount": "all",
+                    "effect": {
+                        "type": "Damage",
+                        "amount": "consumed",
+                        "target": "AllEnemies"
+                    }
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 301063,
+            "name": "마력 치환 +",
+            "characterId": 301,
+            "cost": 10,
+            "description": "이 카드는 내 보호막을 비용으로 사용합니다. 빙하 조형 카드를 2장 생성합니다.",
+            "effects": [
+                {
+                    "type": "GenerateCard",
+                    "cardId": 301080,
+                    "amount": 2,
+                    "target": "Hand"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 301064,
+            "name": "마력 치환 +",
+            "characterId": 301,
+            "cost": 10,
+            "description": "이 카드는 내 보호막을 비용으로 사용합니다. 빙하 결속을 1 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 2015,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 301065,
+            "name": "마력 치환 +",
+            "characterId": 301,
+            "cost": 10,
+            "keywords": [
+                6,
+                3
+            ],
+            "description": "이 카드는 내 보호막을 비용으로 사용합니다. 재생을 1 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 101,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
             "cardId": 301070,
             "name": "보호 동결",
             "characterId": 301,
             "cost": 1,
-            "description": "다음 턴 시작 시 보호막이 사라지지 않습니다.",
+            "description": "다음 턴 시작 시 보호막이 사라지지 않습니다. 보호막을 5 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 115,
+                    "buffId": 2012,
                     "amount": 1,
+                    "target": "Self"
+                },
+                {
+                    "type": "Defense",
+                    "amount": 5,
                     "target": "Self"
                 }
             ],
             "enforce": [
                 301071,
                 301072,
-                301073
+                301073,
+                301074,
+                301075
             ],
             "addressables": {
                 "artwork": "",
@@ -468,15 +648,15 @@
             "cardId": 301071,
             "name": "보호 동결 +",
             "characterId": 301,
-            "cost": 2,
+            "cost": 1,
             "keywords": [
-                4
+                1
             ],
-            "description": "턴 시작 시 보호막이 사라지지 않습니다.",
+            "description": "다음 턴 시작 시 보호막이 사라지지 않습니다. 보존: 보호막을 5 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 116,
+                    "buffId": 2012,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -492,15 +672,17 @@
             "name": "보호 동결 +",
             "characterId": 301,
             "cost": 1,
-            "keywords": [
-                1
-            ],
-            "description": "다음 턴 시작 시 보호막이 사라지지 않습니다. 보존: 다음 턴에 카드를 1장 더 뽑습니다.",
+            "description": "다음 2턴 시작 시 보호막이 사라지지 않습니다. 보호막을 7 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 115,
-                    "amount": 1,
+                    "buffId": 2014,
+                    "amount": 2,
+                    "target": "Self"
+                },
+                {
+                    "type": "Defense",
+                    "amount": 7,
                     "target": "Self"
                 }
             ],
@@ -515,11 +697,59 @@
             "name": "보호 동결 +",
             "characterId": 301,
             "cost": 1,
-            "description": "다음 2턴 시작 시 보호막이 사라지지 않습니다.",
+            "keywords": [
+                3,
+                7
+            ],
+            "description": "보호막을 20 얻습니다.",
+            "effects": [
+                {
+                    "type": "Defense",
+                    "amount": 20,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 301074,
+            "name": "보호 동결 +",
+            "characterId": 301,
+            "cost": 3,
+            "keywords": [
+                4
+            ],
+            "description": "턴 시작 시 보호막이 사라지지 않습니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 121,
+                    "buffId": 2014,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 301075,
+            "name": "보호 동결 +",
+            "characterId": 301,
+            "cost": 1,
+            "keywords": [
+                3
+            ],
+            "description": "보호막을 2배로 만듭니다.",
+            "effects": [
+                {
+                    "type": "MultiplyDefense",
                     "amount": 2,
                     "target": "Self"
                 }
@@ -542,8 +772,31 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 204,
+                    "buffId": 3004,
                     "amount": 1,
+                    "target": "SingleEnemy"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 301081,
+            "name": "빙하 조형 +",
+            "characterId": 301,
+            "cost": 0,
+            "keywords": [
+                8
+            ],
+            "description": "빙결을 2 부여합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3004,
+                    "amount": 2,
                     "target": "SingleEnemy"
                 }
             ],
