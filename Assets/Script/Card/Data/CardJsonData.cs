@@ -18,7 +18,6 @@ public class CardJsonData
     public string name;
     public int characterId;
     public int cost;
-    public string rarity; // Optional, might not be in choleCards
     public string description;
     public List<string> keywords;
     public List<int> enforce;
@@ -56,6 +55,9 @@ public class EffectJsonData
     public string stat; // Legacy?
     public string buffType; // New field in choleCards
     public int duration;
+    
+    // KeywordEffect
+    public string keyword;  // "보존", "휘발" 등
     
     // Generator Effects
     public List<RandomCardData> RandomCard;

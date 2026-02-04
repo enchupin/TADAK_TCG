@@ -16,6 +16,7 @@ public class TrainingBattleManager : MonoBehaviour {
     [Header("전투 데이터")]
     public PlayerData playerData;
     public Monster monster;
+    public BattleContext battleContext;  // 수식 평가용 컨텍스트
 
 
     [Header("카드 데이터")]
@@ -94,6 +95,7 @@ public class TrainingBattleManager : MonoBehaviour {
 
         playerData = new PlayerData();
         monster = new Monster();
+        battleContext = new BattleContext();  // 컨텍스트 초기화
 
         if (!CardManager.IsInitialized())
         {
@@ -135,10 +137,9 @@ public class TrainingBattleManager : MonoBehaviour {
 
 
 
-    /// <summary>
-    /// 게임 시작 (UI 모드)
-    /// </summary>
     void StartGame() {
+        // 전투 시작
+        battleContext.OnCombatStart();
         if (!CardManager.IsInitialized()) {
             Debug.LogError("[BattleManager] CardManager가 초기화되지 않았습니다!");
             return;
@@ -206,6 +207,9 @@ public class TrainingBattleManager : MonoBehaviour {
         playerData.energy -= playedCard.cost;
         Debug.Log($"\n[플레이어] {playedCard.cardName} 카드 사용! (에너지: {playerData.energy + playedCard.cost} → {playerData.energy})");
 
+        // 컨텍스트 업데이트
+        battleContext.OnCardPlayed(playedCard);
+
         // 카드 효과 실행
         playedCard.Play(this);
 
@@ -246,8 +250,7 @@ public class TrainingBattleManager : MonoBehaviour {
         }
 
         // 턴 카운터 초기화
-        // battleContext.cardsPlayedThisTurn = 0;
-        // battleContext.cardsPlayedThisTurnList.Clear();
+        battleContext.OnTurnStart();
 
         // 플레이어 턴 종료 처리 (방어력 리셋, 에너지 회복)
         playerData.OnTurnEnd();
@@ -281,7 +284,7 @@ public class TrainingBattleManager : MonoBehaviour {
     /// <summary>
     /// 모든 UI 업데이트
     /// </summary>
-    void UpdateAllUI() {
+    public void UpdateAllUI() {
         if (battleUI != null) battleUI.UpdateAllUI();
     }
 

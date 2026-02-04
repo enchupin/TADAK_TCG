@@ -16,8 +16,35 @@ MonoBehaviour:
   cardName: "\uBCF4\uAE00\uBCF4\uAE00 +"
   character: 0
   cost: 0
-  rarity: 
+  description: "\uC190\uC5D0 \uB4E0 \uCE74\uB4DC \uD55C \uC7A5\uC744 \uC120\uD0DD\uD574
+    \uBC84\uB9BD\uB2C8\uB2E4. \uBB34\uC791\uC704 \uAC15\uD654\uB41C \uD3EC\uC158
+    \uCE74\uB4DC\uB97C 2\uC7A5 \uC81C\uC791\uD569\uB2C8\uB2E4."
+  enforceCardIds: 
   artworkAddress: 
   effectAddress: 
   soundAddress: 
-  effects: []
+  effects:
+  - type: 12
+    amount: 1
+    amountFormula: 
+    target: 0
+    stat: 
+    duration: 0
+    baseDamage: 0
+    bonusPerCard: 0
+    hpThreshold: 0
+    multiplier: 0
+    keyword: 
+    RandomCard: []
+  - type: 0
+    amount: 1
+    amountFormula: 
+    target: 0
+    stat: 
+    duration: 0
+    baseDamage: 0
+    bonusPerCard: 0
+    hpThreshold: 0
+    multiplier: 0
+    keyword: 
+    RandomCard: []
