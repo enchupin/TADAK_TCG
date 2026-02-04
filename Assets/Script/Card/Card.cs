@@ -13,7 +13,10 @@ public class Card
     public string cardName;
     public Character character;
     public int cost;
-    public string rarity;
+    public string description;  // 카드 설명
+    
+    // 강화 가능한 카드 ID 목록
+    public List<int> enforceCardIds = new List<int>();
     
     // 효과 리스트
     public List<ICardEffect> effects = new List<ICardEffect>();

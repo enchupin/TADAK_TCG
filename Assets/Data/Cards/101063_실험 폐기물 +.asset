@@ -16,17 +16,22 @@ MonoBehaviour:
   cardName: "\uC2E4\uD5D8 \uD3D0\uAE30\uBB3C +"
   character: 0
   cost: 1
-  rarity: 
+  description: "\uD3EC\uC158\uC744 \uC0AC\uC6A9\uD560 \uB54C\uB9C8\uB2E4 \uBB34\uC791\uC704
+    \uC801\uC5D0\uAC8C \uBD80\uC2DD\uC744 1 \uBD80\uC5EC\uD569\uB2C8\uB2E4."
+  enforceCardIds: 
   artworkAddress: 
   effectAddress: 
   soundAddress: 
   effects:
   - type: 3
     amount: 1
-    target: 0
+    amountFormula: 
+    target: 2
     stat: 
     duration: 0
     baseDamage: 0
     bonusPerCard: 0
     hpThreshold: 0
     multiplier: 0
+    keyword: 
+    RandomCard: []

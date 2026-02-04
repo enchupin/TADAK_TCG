@@ -36,7 +36,8 @@ public class Monster
     /// <summary>
     /// 데미지를 받습니다. (방어력 적용)
     /// </summary>
-    public void TakeDamage(int amount, int playerStrength = 0)
+    /// <returns>실제로 입힌 데미지</returns>
+    public int TakeDamage(int amount, int playerStrength = 0)
     {
         int finalDamage = amount + playerStrength; // 플레이어 힘 버프 적용
         int damageAfterDefense = Mathf.Max(0, finalDamage - defense);
@@ -45,6 +46,8 @@ public class Monster
         defense = Mathf.Max(0, defense - finalDamage);
 
         Debug.Log($"{name}이(가) {damageAfterDefense} 데미지를 받았습니다! (HP: {hp}/{maxHP})");
+        
+        return damageAfterDefense;  // 실제 입힌 데미지 반환
     }
 
     /// <summary>

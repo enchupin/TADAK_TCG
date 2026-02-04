@@ -9,7 +9,7 @@ using System.Collections.Generic;
 /// </summary>
 public class CardJSONConverter : EditorWindow
 {
-    private string jsonFolderPath = "Assets/Resources/JsonData"; // 기본값: 폴더 경로
+    private string jsonFolderPath = "Assets/Resources/JsonData";
     private string outputPath = "Assets/Data/Cards";
     
     [MenuItem("Tools/TCG/Card JSON Converter")]
@@ -37,13 +37,14 @@ public class CardJSONConverter : EditorWindow
         EditorGUILayout.HelpBox(
             "지정된 폴더 내의 모든 '*Cards.json' 파일을 변환합니다.\n" +
             "(예: chloeCards.json, igniaCards.json 등)\n\n" +
-            "CardCollection은 자동으로 생성/업데이트됩니다.", 
+            "CardCollection은 자동으로 생성/업데이트됩니다.\n\n" +
+            "수식 문자열 지원 (amount 필드)", 
             MessageType.Info);
     }
     
     void ConvertJSONToScriptableObjects()
     {
-        // 1. 단일 파일 처리 지원 (입력된 경로가 .json으로 끝나는 경우)
+        // 단일 파일 처리
         if (!string.IsNullOrEmpty(jsonFolderPath) && jsonFolderPath.EndsWith(".json") && File.Exists(jsonFolderPath))
         {
             Debug.Log($"[Converter] 단일 파일 변환 모드: {jsonFolderPath}");
@@ -51,7 +52,7 @@ public class CardJSONConverter : EditorWindow
             return;
         }
 
-        // 2. 폴더 내 일괄 처리
+        // 폴더 내 일괄 처리
         if (!Directory.Exists(jsonFolderPath))
         {
             Debug.LogError($"[Converter] 폴더를 찾을 수 없습니다: {jsonFolderPath}");
@@ -68,9 +69,6 @@ public class CardJSONConverter : EditorWindow
 
         Debug.Log($"[Converter] 일괄 변환 시작. 총 {jsonFiles.Length}개의 파일 발견.");
         
-        // 기존 데이터 삭제 (Clean Build) - 필요 시 주석 해제하여 사용
-        // ClearOutputFolder(); 
-
         int totalSuccessCount = 0;
         CardCollection collection = GetOrCreateCardCollection();
 
@@ -89,9 +87,6 @@ public class CardJSONConverter : EditorWindow
             $"Batch Conversion Complete!\nFiles: {jsonFiles.Length}\nTotal Cards: {collection.allCards.Count}", "OK");
     }
 
-    /// <summary>
-    /// 단일 파일 변환 (외부 호출 또는 버튼 클릭)
-    /// </summary>
     void ConvertSingleFileFromPath(string path)
     {
         CardCollection collection = GetOrCreateCardCollection();
@@ -106,9 +101,6 @@ public class CardJSONConverter : EditorWindow
         }
     }
 
-    /// <summary>
-    /// 내부 변환 로직 (파일 1개 -> SO 변환 -> Collection 추가)
-    /// </summary>
     int ConvertFileInternal(string path, CardCollection collection)
     {
         TextAsset jsonFile = AssetDatabase.LoadAssetAtPath<TextAsset>(path.Replace("\\", "/"));
@@ -135,21 +127,20 @@ public class CardJSONConverter : EditorWindow
                 isNew = true;
             }
 
-            UpdateCardData(cardData, cardJson);
+            UpdateCardData(cardData, cardJson, jsonFile.text);
 
             if (isNew) AssetDatabase.CreateAsset(cardData, assetPath);
             else EditorUtility.SetDirty(cardData);
 
-            // Collection에 추가 (중복 방지: 동일 ID의 기존 카드가 있으면 제거하고 새 것으로 교체)
-            // 주의: List.Contains는 참조 비교이므로, ID 기반으로 찾아야 함
+            // Collection에 추가
             int existingIndex = collection.allCards.FindIndex(c => c != null && c.cardId == cardData.cardId);
             if (existingIndex >= 0)
             {
-                collection.allCards[existingIndex] = cardData; // 갱신
+                collection.allCards[existingIndex] = cardData;
             }
             else
             {
-                collection.allCards.Add(cardData); // 신규 추가
+                collection.allCards.Add(cardData);
             }
             
             count++;
@@ -175,30 +166,38 @@ public class CardJSONConverter : EditorWindow
         return collection;
     }
     
-    void UpdateCardData(CardData cardData, CardJsonData jsonData)
+    void UpdateCardData(CardData cardData, CardJsonData jsonData, string rawJson)
     {
         // 기본 정보
         cardData.cardId = jsonData.cardId;
         cardData.cardName = jsonData.name;
         cardData.character = CharacterManager.GetCharacterEnumById(jsonData.characterId);
         cardData.cost = jsonData.cost;
-        cardData.rarity = jsonData.rarity;
+        cardData.description = jsonData.description ?? "";
+        
+        // enforce 필드 (강화 카드 ID 목록)
+        cardData.enforceCardIds.Clear();
+        if (jsonData.enforce != null)
+        {
+            cardData.enforceCardIds.AddRange(jsonData.enforce);
+        }
         
         // Addressables 주소
         if (jsonData.addressables != null)
         {
-            cardData.artworkAddress = jsonData.addressables.artwork;
-            cardData.effectAddress = jsonData.addressables.effect;
-            cardData.soundAddress = jsonData.addressables.sound;
+            cardData.artworkAddress = jsonData.addressables.artwork ?? "";
+            cardData.effectAddress = jsonData.addressables.effect ?? "";
+            cardData.soundAddress = jsonData.addressables.sound ?? "";
         }
         
-        // 효과 변환
-        cardData.effects.Clear(); // 줄 바뀐 효과나 삭제된 효과 반영을 위해 초기화
+        // 효과 변환 (수동 파싱으로 amount 처리)
+        cardData.effects.Clear();
         if (jsonData.effects != null)
         {
-            foreach (var effectJson in jsonData.effects)
+            for (int i = 0; i < jsonData.effects.Count; i++)
             {
-                CardEffectData effectData = CreateEffectData(effectJson);
+                EffectJsonData effectJson = jsonData.effects[i];
+                CardEffectData effectData = CreateEffectData(effectJson, rawJson, jsonData.cardId, i);
                 if (effectData != null)
                 {
                     cardData.effects.Add(effectData);
@@ -206,42 +205,52 @@ public class CardJSONConverter : EditorWindow
             }
         }
     }
-
     
-    CardEffectData CreateEffectData(EffectJsonData jsonData)
+    CardEffectData CreateEffectData(EffectJsonData jsonData, string rawJson, int cardId, int effectIndex)
     {
         CardEffectData effectData = new CardEffectData();
         
-        // 효과 타입 변환
-        switch (jsonData.type)
+        string effectType = jsonData.type;
+        
+        // amount 필드 수동 파싱 (rawJson에서 직접 추출)
+        ParseAmountField(effectData, rawJson, cardId, effectIndex);
+        
+        // target 필드
+        if (!string.IsNullOrEmpty(jsonData.target))
         {
+            effectData.target = jsonData.target switch
+            {
+                "AllEnemies" => TargetType.AllEnemies,
+                "SingleEnemy" => TargetType.SingleEnemy,
+                "Self" => TargetType.Self,
+                _ => TargetType.SingleEnemy
+            };
+        }
+        
+        // 효과 타입별 처리
+        switch (effectType)
+        {
+            case "Attack":
             case "Damage":
                 effectData.type = EffectType.Damage;
-                effectData.amount = jsonData.amount;
-                effectData.target = jsonData.target == "AllEnemies" ? 
-                    TargetType.AllEnemies : TargetType.SingleEnemy;
                 break;
                 
             case "Defense":
                 effectData.type = EffectType.Defense;
-                effectData.amount = jsonData.amount;
                 break;
                 
             case "Draw":
                 effectData.type = EffectType.Draw;
-                effectData.amount = jsonData.amount;
                 break;
                 
             case "Buff":
                 effectData.type = EffectType.Buff;
-                effectData.stat = jsonData.stat;
-                effectData.amount = jsonData.amount;
+                effectData.stat = jsonData.stat ?? "";
                 effectData.duration = jsonData.duration;
                 break;
                 
             case "Energy":
                 effectData.type = EffectType.Energy;
-                effectData.amount = jsonData.amount;
                 break;
                 
             case "DamagePerCardPlayed":
@@ -250,6 +259,7 @@ public class CardJSONConverter : EditorWindow
                 effectData.bonusPerCard = jsonData.bonusPerCard;
                 break;
                 
+            case "Execute":
             case "ExecuteDamage":
                 effectData.type = EffectType.Execute;
                 effectData.baseDamage = jsonData.baseDamage;
@@ -257,11 +267,123 @@ public class CardJSONConverter : EditorWindow
                 effectData.multiplier = jsonData.multiplier;
                 break;
                 
+            case "Heal":
+                effectData.type = EffectType.Heal;
+                break;
+                
+            case "MultiplyDefense":
+                effectData.type = EffectType.MultiplyDefense;
+                break;
+                
+            case "ConsumeDefense":
+                effectData.type = EffectType.ConsumeDefense;
+                // TODO: 중첩 효과 파싱 (나중에 구현)
+                break;
+                
+            case "GenerateCard":
+                effectData.type = EffectType.GenerateCard;
+                effectData.RandomCard = jsonData.RandomCard;
+                break;
+                
+            case "Keyword":
+                effectData.type = EffectType.Keyword;
+                effectData.keyword = jsonData.keyword ?? "";
+                break;
+                
+            case "ChoiceHand":
+                effectData.type = EffectType.ChoiceHand;
+                // TODO: 구현 예정
+                break;
+                
+            case "ChoiceDiscard":
+                effectData.type = EffectType.ChoiceDiscard;
+                // TODO: 구현 예정
+                break;
+                
+            case "Conditional":
+                effectData.type = EffectType.Conditional;
+                // TODO: 구현 예정
+                break;
+                
+            case "RandomGenerate":
+                effectData.type = EffectType.RandomGenerate;
+                // TODO: 구현 예정
+                break;
+                
             default:
-                Debug.LogWarning($"Unknown effect type: {jsonData.type}");
-                return null;
+                Debug.LogWarning($"[Converter] Unknown effect type: {effectType} - 기본 Damage로 처리");
+                effectData.type = EffectType.Damage;
+                break;
         }
         
         return effectData;
+    }
+    
+    /// <summary>
+    /// rawJson에서 amount 필드를 수동으로 파싱 (숫자 또는 문자열)
+    /// </summary>
+    void ParseAmountField(CardEffectData effectData, string rawJson, int cardId, int effectIndex)
+    {
+        // 카드 ID로 해당 카드 JSON 블록 찾기
+        string searchPattern = $"\"cardId\": {cardId}";
+        int cardStart = rawJson.IndexOf(searchPattern);
+        if (cardStart == -1) return;
+        
+        // effects 배열 찾기
+        int effectsStart = rawJson.IndexOf("\"effects\":", cardStart);
+        if (effectsStart == -1) return;
+        
+        // 해당 인덱스의 effect 찾기
+        int currentEffectIndex = 0;
+        int searchPos = effectsStart;
+        
+        while (currentEffectIndex <= effectIndex)
+        {
+            searchPos = rawJson.IndexOf("\"amount\":", searchPos + 1);
+            if (searchPos == -1) return;
+            
+            if (currentEffectIndex == effectIndex)
+            {
+                // amount 값 추출
+                int colonPos = searchPos + 9; // "amount":
+                int valueStart = colonPos;
+                
+                // 공백 건너뛰기
+                while (valueStart < rawJson.Length && char.IsWhiteSpace(rawJson[valueStart]))
+                    valueStart++;
+                
+                if (valueStart >= rawJson.Length) return;
+                
+                // 따옴표로 시작하면 문자열
+                if (rawJson[valueStart] == '"')
+                {
+                    int stringStart = valueStart + 1;
+                    int stringEnd = rawJson.IndexOf('"', stringStart);
+                    if (stringEnd != -1)
+                    {
+                        effectData.amountFormula = rawJson.Substring(stringStart, stringEnd - stringStart);
+                        effectData.amount = 0;
+                    }
+                }
+                else
+                {
+                    // 숫자
+                    int numberEnd = valueStart;
+                    while (numberEnd < rawJson.Length && 
+                           (char.IsDigit(rawJson[numberEnd]) || rawJson[numberEnd] == '.' || rawJson[numberEnd] == '-'))
+                        numberEnd++;
+                    
+                    string numberStr = rawJson.Substring(valueStart, numberEnd - valueStart);
+                    if (int.TryParse(numberStr, out int value))
+                    {
+                        effectData.amount = value;
+                        effectData.amountFormula = "";
+                    }
+                }
+                return;
+            }
+            
+            currentEffectIndex++;
+        }
     }
 }
