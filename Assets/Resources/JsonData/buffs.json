@@ -90,6 +90,38 @@
             "description": "이번 게임 동안 빙하 조형 카드가 강화됩니다."
         },
         {
+            "buffId": 1005,
+            "name": "화염 전이",
+            "buffType": 1,
+            "effects": {
+                "timing": "Dead",
+                "type": "Conditional",
+                "condition": "HasBuff",
+                "conditionValue": 3003,
+                "effect": {
+                    "type": "Buff",
+                    "buffId": 3003,
+                    "amount": "TargetBuffAmount(3003)",
+                    "target": "AllEnemies"
+                }
+            },
+            "description": "사망 시 가지고 있던 화염 낙인 수치만큼 모든 적에게 화염 낙인을 부여합니다."
+        },
+        {
+            "buffId": 1006,
+            "name": "금기 해제",
+            "buffType": 1,
+            "effects": {
+                "timing": "Turn",
+                "type": "CanUseCard",
+                "condition": "Unplayable",
+                "effect": {
+                    "type": "Exhaust"
+                }
+            },
+            "description": "사용불가 카드를 사용할 수 있습니다. 사용한 사용불가 카드는 소멸됩니다."
+        },
+        {
             "buffId": 2001,
             "name": "재생",
             "buffType": 2,
@@ -342,6 +374,118 @@
             "description": "내 보호막이 감소할 때마다 모든 적에게 빙결을 1 부여합니다."
         },
         {
+            "buffId": 2019,
+            "name": "회피",
+            "buffType": 2,
+            "effects": {
+                "timing": "damaged",
+                "type": "Evade",
+                "target": "Self"
+            },
+            "decrease": {
+                "timing": "effect",
+                "amount": 1
+            },
+            "description": "다음 공격을 회피합니다."
+        },
+        {
+            "buffId": 2020,
+            "name": "과열",
+            "buffType": 2,
+            "effects": {
+                "timing": "damage",
+                "type": "multiplyDamage",
+                "amount": "1 + (value * 0.2)",
+                "target": "Card"
+            },
+            "description": "피해량이 {value * 20}% 증가합니다. (곱연산)"
+        },
+        {
+            "buffId": 2021,
+            "name": "과열 축적",
+            "buffType": 2,
+            "effects": {
+                "timing": "turnStart",
+                "type": "Buff",
+                "buffId": 2020,
+                "amount": 1,
+                "target": "Self"
+            },
+            "description": "매 턴 내 카드의 피해량이 20%씩 증가합니다."
+        },
+        {
+            "buffId": 2022,
+            "name": "화염 전도",
+            "buffType": 2,
+            "effects": {
+                "timing": "damage",
+                "type": "Buff",
+                "buffId": 3003,
+                "amount": 1,
+                "target": "Defender"
+            },
+            "description": "공격할 때마다 적에게 화염 낙인을 1 부여합니다."
+        },
+        {
+            "buffId": 2024,
+            "name": "기력 소진",
+            "buffType": 2,
+            "effects": {
+                "timing": "turnEnd",
+                "type": "RemoveBuff",
+                "buffId": 2002,
+                "amount": "value",
+                "target": "Self"
+            },
+            "decrease": {
+                "timing": "turnEnd",
+                "amount": "value"
+            },
+            "description": "턴 종료 시 피해 증폭 효과가 {value}만큼 감소합니다."
+        },
+        {
+            "buffId": 2025,
+            "name": "화력 소진",
+            "buffType": 2,
+            "effects": {
+                "timing": "turnEnd",
+                "type": "RemoveBuff",
+                "buffId": 2020,
+                "amount": "value",
+                "target": "Self"
+            },
+            "decrease": {
+                "timing": "turnEnd",
+                "amount": "value"
+            },
+            "description": "턴 종료 시 과열 수치가 {value}만큼 감소합니다."
+        },
+        {
+            "buffId": 2026,
+            "name": "용암 피부",
+            "buffType": 2,
+            "effects": {
+                "timing": "damaged",
+                "type": "Buff",
+                "buffId": 3003,
+                "amount": "value",
+                "target": "Attacker"
+            },
+            "description": "공격받을 때마다 공격한 적에게 화염 낙인을 {value} 부여합니다."
+        },
+        {
+            "buffId": 2027,
+            "name": "반격",
+            "buffType": 2,
+            "effects": {
+                "timing": "damaged",
+                "type": "Attack",
+                "amount": "value",
+                "target": "Attacker"
+            },
+            "description": "공격받은 뒤 공격한 적에게 {value}의 피해를 입힙니다."
+        },
+        {
             "buffId": 3001,
             "name": "부식",
             "buffType": 3,
@@ -412,121 +556,17 @@
             "description": "7중첩이 되면 중첩을 잃고 행동불가 상태가 됩니다. 보스는 대신 피해를 20 받습니다."
         },
         {
-            "buffId": 2020,
-            "name": "과열",
-            "buffType": 2,
-            "effects": {
-                "timing": "damage",
-                "type": "multiplyDamage",
-                "amount": "1 + (value * 0.2)",
-                "target": "Card"
-            },
-            "description": "피해량이 {value * 20}% 증가합니다. (곱연산)"
-        },
-        {
-            "buffId": 2024,
-            "name": "기력 소진",
-            "buffType": 2,
+            "buffId": 3005,
+            "name": "재정비",
+            "buffType": 3,
             "effects": {
                 "timing": "turnEnd",
                 "type": "RemoveBuff",
-                "buffId": 2002,
+                "buffId": 2027,
                 "amount": "value",
                 "target": "Self"
             },
-            "decrease": {
-                "timing": "turnEnd",
-                "amount": "value"
-            },
-            "description": "턴 종료 시 피해 증폭 효과가 {value}만큼 감소합니다."
-        },
-        {
-            "buffId": 2025,
-            "name": "화력 소진",
-            "buffType": 2,
-            "effects": {
-                "timing": "turnEnd",
-                "type": "RemoveBuff",
-                "buffId": 2020,
-                "amount": "value",
-                "target": "Self"
-            },
-            "decrease": {
-                "timing": "turnEnd",
-                "amount": "value"
-            },
-            "description": "턴 종료 시 과열 수치가 {value}만큼 감소합니다."
-        },
-        {
-            "buffId": 2021,
-            "name": "과열 축적",
-            "buffType": 2,
-            "effects": {
-                "timing": "turnStart",
-                "type": "Buff",
-                "buffId": 2020,
-                "amount": 1,
-                "target": "Self"
-            },
-            "description": "매 턴 내 카드의 피해량이 20%씩 증가합니다."
-        },
-        {
-            "buffId": 2022,
-            "name": "화염 전도",
-            "buffType": 2,
-            "effects": {
-                "timing": "damage",
-                "type": "Buff",
-                "buffId": 3003,
-                "amount": 1,
-                "target": "Defender"
-            },
-            "description": "공격할 때마다 적에게 화염 낙인을 1 부여합니다."
-        },
-        {
-            "buffId": 1006,
-            "name": "금기 해제",
-            "buffType": 1,
-            "effects": {
-                "timing": "Turn",
-                "type": "CanUseCard",
-                "condition": "Unplayable",
-                "effect": {
-                    "type": "Exhaust"
-                }
-            },
-            "description": "사용불가 카드를 사용할 수 있습니다. 사용한 사용불가 카드는 소멸됩니다."
-        },
-        {
-            "buffId": 1005,
-            "name": "화염 전이",
-            "buffType": 1,
-            "effects": {
-                "timing": "Dead",
-                "type": "Conditional",
-                "condition": "HasBuff",
-                "conditionValue": 3003,
-                "effect": {
-                    "type": "Buff",
-                    "buffId": 3003,
-                    "amount": "TargetBuffAmount(3003)",
-                    "target": "AllEnemies"
-                }
-            },
-            "description": "사망 시 가지고 있던 화염 낙인 수치만큼 모든 적에게 화염 낙인을 부여합니다."
-        },
-        {
-            "buffId": 2026,
-            "name": "용암 피부",
-            "buffType": 2,
-            "effects": {
-                "timing": "damaged",
-                "type": "Buff",
-                "buffId": 3003,
-                "amount": "value",
-                "target": "Attacker"
-            },
-            "description": "공격받을 때마다 공격한 적에게 화염 낙인을 {value} 부여합니다."
+            "description": "턴 종료 시 반격이 {value}만큼 감소합니다."
         }
     ]
 }

@@ -1,0 +1,556 @@
+{
+    "cards": [
+        {
+            "cardId": 202010,
+            "name": "아따끄",
+            "characterId": 202,
+            "cost": 0,
+            "description": "피해를 4 입힙니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amount": 4,
+                    "target": "SingleEnemy"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 202020,
+            "name": "빠라드",
+            "characterId": 202,
+            "cost": 1,
+            "description": "보호막을 6 얻습니다.",
+            "effects": [
+                {
+                    "type": "Defense",
+                    "amount": 6,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 202030,
+            "name": "팡트",
+            "characterId": 202,
+            "cost": 1,
+            "description": "피해를 6 입힙니다. 부식을 1 부여합니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amount": 6,
+                    "target": "SingleEnemy"
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3001,
+                    "amount": 1,
+                    "target": "SingleEnemy"
+                }
+            ],
+            "enforce": [
+                202031,
+                202032,
+                202033
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 202031,
+            "name": "팡트 +",
+            "characterId": 202,
+            "cost": 0,
+            "keywords": [
+                5
+            ],
+            "description": "피해를 4 입힙니다. 부식을 2 부여합니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amount": 4,
+                    "target": "SingleEnemy"
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3001,
+                    "amount": 2,
+                    "target": "SingleEnemy"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 202032,
+            "name": "팡트 +",
+            "characterId": 202,
+            "cost": 0,
+            "description": "모든 적에게 피해를 4 입힙니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amount": 4,
+                    "target": "AllEnemies"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 202040,
+            "name": "갸르드",
+            "characterId": 202,
+            "cost": 0,
+            "description": "다음 뽑을 카드 2장을 봅니다. 그 중 하나를 선택해 뽑습니다.",
+            "effects": [
+                {
+                    "type": "Scry",
+                    "amount": 2,
+                    "effect": {
+                        "type": "SelectCard",
+                        "amount": 1,
+                        "effect": {
+                            "type": "Draw",
+                            "target": "Selected"
+                        }
+                    }
+                }
+            ],
+            "enforce": [
+                202041,
+                202042,
+                202043,
+                202044
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 202041,
+            "name": "갸르드 +",
+            "characterId": 202,
+            "cost": 1,
+            "description": "카드를 4장 뽑습니다. 그 중 비용이 0이 아닌 카드를 버립니다.",
+            "effects": [
+                {
+                    "type": "Repeat",
+                    "amount": 4,
+                    "effect": {
+                        "type": "Conditional",
+                        "condition": "NextDrawCardCost",
+                        "conditionValue": 0,
+                        "effect": {
+                            "type": "Draw",
+                            "amount": 1
+                        },
+                        "elseEffect": {
+                            "type": "Discard",
+                            "amount": 1,
+                            "target": "Drawed"
+                        }
+                    }
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 202042,
+            "name": "갸르드 +",
+            "characterId": 202,
+            "cost": 1,
+            "description": "손에서 카드를 2장 선택해 버리고 카드를 2장 뽑습니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "source": "Hand",
+                    "amount": 2,
+                    "effect": {
+                        "type": "Discard",
+                        "target": "Selected"
+                    }
+                },
+                {
+                    "type": "Draw",
+                    "amount": 2
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 202043,
+            "name": "갸르드 +",
+            "characterId": 202,
+            "cost": 1,
+            "keywords": [
+                3
+            ],
+            "description": "카드를 3장 뽑습니다. 그 중 내 카드의 수 만큼 피해 증폭을 얻습니다.",
+            "effects": [
+                {
+                    "type": "Draw",
+                    "amount": 3,
+                    "effect": {
+                        "type": "Buff",
+                        "buffId": 2002,
+                        "amount": "MyCardCount",
+                        "target": "Self"
+                    }
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 202044,
+            "name": "갸르드 +",
+            "characterId": 202,
+            "cost": 0,
+            "description": "피해 증폭을 2 얻습니다. 턴 종료 시 사라집니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 2002,
+                    "amount": 2,
+                    "target": "Self"
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 2024,
+                    "amount": 2,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 202050,
+            "name": "리포스트",
+            "characterId": 202,
+            "cost": 1,
+            "description": "1턴 간 반격을 5 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 2027,
+                    "amount": 5,
+                    "target": "Self"
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3005,
+                    "amount": 5,
+                    "target": "Self"
+                }
+            ],
+            "enforce": [
+                202051,
+                202052,
+                202053
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 202051,
+            "name": "리포스트 +",
+            "characterId": 202,
+            "cost": 1,
+            "description": "2턴 간 반격을 5 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 2027,
+                    "amount": 5,
+                    "target": "Self"
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3005,
+                    "amount": 3,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 202052,
+            "name": "리포스트 +",
+            "characterId": 202,
+            "cost": 1,
+            "keywords": [
+                4
+            ],
+            "description": "반격을 3 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 2027,
+                    "amount": 3,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 202053,
+            "name": "리포스트 +",
+            "characterId": 202,
+            "cost": 2,
+            "description": "회피를 1 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 1007,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 202060,
+            "name": "르미즈",
+            "characterId": 202,
+            "cost": 2,
+            "description": "피해를 4씩 5번 입힙니다.",
+            "effects": [
+                {
+                    "type": "Repeat",
+                    "count": 5,
+                    "effect": {
+                        "type": "Attack",
+                        "amount": 4,
+                        "target": "SingleEnemy"
+                    }
+                }
+            ],
+            "enforce": [
+                202061,
+                202062,
+                202063
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 202061,
+            "name": "르미즈 +",
+            "characterId": 202,
+            "cost": 0,
+            "description": "피해를 1씩 5번 입힙니다.",
+            "effects": [
+                {
+                    "type": "Repeat",
+                    "count": 5,
+                    "effect": {
+                        "type": "Attack",
+                        "amount": 1,
+                        "target": "SingleEnemy"
+                    }
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 202062,
+            "name": "르미즈 +",
+            "characterId": 202,
+            "cost": 1,
+            "keywords": [
+                6
+            ],
+            "description": "피해를 5씩 2번 입힙니다.",
+            "effects": [
+                {
+                    "type": "Repeat",
+                    "count": 2,
+                    "effect": {
+                        "type": "Attack",
+                        "amount": 5,
+                        "target": "SingleEnemy"
+                    }
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 202063,
+            "name": "르미즈 +",
+            "characterId": 202,
+            "cost": 0,
+            "keywords": [
+                3
+            ],
+            "description": "피해를 4 입힙니다. 이 카드를 1장 복사해 뽑을 카드 더미에 섞어 넣습니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amount": 4,
+                    "target": "SingleEnemy"
+                },
+                {
+                    "type": "GenerateCard",
+                    "cardId": 202063,
+                    "amount": 1,
+                    "target": "DrawPile"
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 202070,
+            "name": "뚜셰",
+            "characterId": 202,
+            "cost": 1,
+            "keywords": [
+                9
+            ],
+            "description": "피해를 1 입힙니다. 보호막에 막히지 않은 피해만큼 피해 증폭을 얻습니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amount": 1,
+                    "target": "SingleEnemy",
+                    "effect": {
+                        "type": "Buff",
+                        "buffId": 2002,
+                        "amount": "UnblockedDamage",
+                        "target": "Self"
+                    }
+                }
+            ],
+            "enforce": [
+                202071,
+                202072
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 202071,
+            "name": "뚜셰 +",
+            "characterId": 202,
+            "cost": 0,
+            "keywords": [
+                9
+            ],
+            "description": "피해를 1 입힙니다. 보호막에 막히지 않은 피해만큼 피해 증폭을 얻습니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amount": 1,
+                    "target": "SingleEnemy",
+                    "effect": {
+                        "type": "Buff",
+                        "buffId": 2002,
+                        "amount": "UnblockedDamage",
+                        "target": "Self"
+                    }
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        },
+        {
+            "cardId": 202072,
+            "name": "뚜셰 +",
+            "characterId": 202,
+            "cost": 1,
+            "keywords": [
+                9
+            ],
+            "description": "피해를 2 입힙니다. 보호막에 막히지 않은 피해만큼 피해 증폭을 얻습니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amount": 2,
+                    "target": "SingleEnemy",
+                    "effect": {
+                        "type": "Buff",
+                        "buffId": 2002,
+                        "amount": "UnblockedDamage",
+                        "target": "Self"
+                    }
+                }
+            ],
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            }
+        }
+    ]
+}
