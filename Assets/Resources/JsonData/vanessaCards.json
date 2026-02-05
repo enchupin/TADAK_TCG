@@ -159,16 +159,20 @@
                     "amount": 4,
                     "effect": {
                         "type": "Conditional",
-                        "condition": "NextDrawCardCost",
-                        "conditionValue": 0,
-                        "effect": {
-                            "type": "Draw",
-                            "amount": 1
-                        },
-                        "elseEffect": {
-                            "type": "Discard",
-                            "amount": 1,
-                            "target": "Drawed"
+                        "condition": {
+                            "type": "NextCardCost",
+                            "value": 0,
+                            "effect": {
+                                "type": "Draw"
+                            },
+                            "elseEffect": [
+                                {
+                                    "type": "Draw"
+                                },
+                                {
+                                    "type": "Discard"
+                                }
+                            ]
                         }
                     }
                 }
@@ -217,13 +221,28 @@
             "description": "카드를 3장 뽑습니다. 그 중 내 카드의 수 만큼 피해 증폭을 얻습니다.",
             "effects": [
                 {
-                    "type": "Draw",
+                    "type": "Repeat",
                     "amount": 3,
                     "effect": {
-                        "type": "Buff",
-                        "buffId": 2002,
-                        "amount": "MyCardCount",
-                        "target": "Self"
+                        "type": "Conditional",
+                        "condition": {
+                            "type": "NextCardId",
+                            "value": ">202000, <203000",
+                            "effect": [
+                                {
+                                    "type": "Draw"
+                                },
+                                {
+                                    "type": "Buff",
+                                    "buffId": 2002,
+                                    "amount": 1,
+                                    "target": "Self"
+                                }
+                            ],
+                            "elseEffect": {
+                                "type": "Draw"
+                            }
+                        }
                     }
                 }
             ],
@@ -248,7 +267,7 @@
                 },
                 {
                     "type": "Buff",
-                    "buffId": 2024,
+                    "buffId": 3006,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -268,7 +287,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2027,
+                    "buffId": 2021,
                     "amount": 5,
                     "target": "Self"
                 },
@@ -299,7 +318,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2027,
+                    "buffId": 2021,
                     "amount": 5,
                     "target": "Self"
                 },
@@ -328,7 +347,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2027,
+                    "buffId": 2021,
                     "amount": 3,
                     "target": "Self"
                 }
@@ -481,7 +500,7 @@
                     "effect": {
                         "type": "Buff",
                         "buffId": 2002,
-                        "amount": "UnblockedDamage",
+                        "amountFormula": "UnblockedDamage",
                         "target": "Self"
                     }
                 }
@@ -513,7 +532,7 @@
                     "effect": {
                         "type": "Buff",
                         "buffId": 2002,
-                        "amount": "UnblockedDamage",
+                        "amountFormula": "UnblockedDamage",
                         "target": "Self"
                     }
                 }
@@ -541,7 +560,7 @@
                     "effect": {
                         "type": "Buff",
                         "buffId": 2002,
-                        "amount": "UnblockedDamage",
+                        "amountFormula": "UnblockedDamage",
                         "target": "Self"
                     }
                 }

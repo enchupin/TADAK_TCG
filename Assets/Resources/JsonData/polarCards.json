@@ -143,7 +143,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2016,
+                    "buffId": 2013,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -166,7 +166,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2017,
+                    "buffId": 2014,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -259,7 +259,7 @@
                     "target": "SingleEnemy",
                     "effect": {
                         "type": "Defense",
-                        "amount": "finalDamage",
+                        "amountFormula": "finalDamage",
                         "target": "Self"
                     }
                 }
@@ -428,7 +428,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2015,
+                    "buffId": 2012,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -451,7 +451,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2018,
+                    "buffId": 2015,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -474,11 +474,11 @@
             "effects": [
                 {
                     "type": "ConsumeDefense",
-                    "amount": "all",
+                    "amountFormula": "all",
                     "effect": {
                         "type": "GenerateCard",
                         "cardId": 301080,
-                        "amount": "consumed / 10",
+                        "amountFormula": "consumed / 10",
                         "target": "Hand"
                     }
                 }
@@ -508,10 +508,10 @@
             "effects": [
                 {
                     "type": "ConsumeDefense",
-                    "amount": "all",
+                    "amountFormula": "all",
                     "effect": {
                         "type": "Heal",
-                        "amount": "consumed",
+                        "amountFormula": "consumed",
                         "target": "Self"
                     }
                 }
@@ -534,10 +534,10 @@
             "effects": [
                 {
                     "type": "ConsumeDefense",
-                    "amount": "all",
+                    "amountFormula": "all",
                     "effect": {
                         "type": "Damage",
-                        "amount": "consumed",
+                        "amountFormula": "consumed",
                         "target": "AllEnemies"
                     }
                 }
@@ -577,7 +577,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2015,
+                    "buffId": 2012,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -676,7 +676,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2014,
+                    "buffId": 2011,
                     "amount": 2,
                     "target": "Self"
                 },
@@ -727,7 +727,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2014,
+                    "buffId": 2011,
                     "amount": 1,
                     "target": "Self"
                 }

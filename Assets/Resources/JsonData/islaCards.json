@@ -443,7 +443,7 @@
             "effects": [
                 {
                     "type": "Attack",
-                    "amount": "UseCardInCombat * 3",
+                    "amountFormula": "UseCardInCombat * 3",
                     "cardId": [
                         101080,
                         101081,
@@ -482,7 +482,7 @@
             "effects": [
                 {
                     "type": "Attack",
-                    "amount": "UseCardInCombat * 3",
+                    "amountFormula": "UseCardInCombat * 3",
                     "cardId": [
                         101080,
                         101081,
@@ -518,7 +518,7 @@
             "effects": [
                 {
                     "type": "Heal",
-                    "amount": "UseCardInCombat",
+                    "amountFormula": "UseCardInCombat",
                     "cardId": [
                         101080,
                         101081,
@@ -547,7 +547,7 @@
             "effects": [
                 {
                     "type": "Attack",
-                    "amount": "UseCardInCombat * 3",
+                    "amountFormula": "UseCardInCombat * 3",
                     "cardId": [
                         101080,
                         101081,
