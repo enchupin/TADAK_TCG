@@ -50,13 +50,13 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2020,
+                    "buffId": 2017,
                     "amount": 2,
                     "target": "Self"
                 },
                 {
                     "type": "Buff",
-                    "buffId": 2025,
+                    "buffId": 3007,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -86,7 +86,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2020,
+                    "buffId": 2017,
                     "amount": 4,
                     "target": "Self"
                 },
@@ -115,7 +115,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2020,
+                    "buffId": 2017,
                     "amount": 2,
                     "target": "Self"
                 },
@@ -147,7 +147,7 @@
                 },
                 {
                     "type": "Buff",
-                    "buffId": 2024,
+                    "buffId": 3006,
                     "amount": 3,
                     "target": "Self"
                 }
@@ -193,7 +193,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2021,
+                    "buffId": 2018,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -264,10 +264,10 @@
             "effects": [
                 {
                     "type": "DiscardHand",
-                    "amount": "all",
+                    "amountFormula": "all",
                     "effect": {
                         "type": "Damage",
-                        "amount": "discarded * 8",
+                        "amountFormula": "discarded * 8",
                         "target": "SingleEnemy"
                     }
                 }
@@ -287,10 +287,10 @@
             "effects": [
                 {
                     "type": "ExhaustHand",
-                    "amount": "all",
+                    "amountFormula": "all",
                     "effect": {
                         "type": "Damage",
-                        "amount": "exhausted * 12",
+                        "amountFormula": "exhausted * 12",
                         "target": "SingleEnemy"
                     }
                 }
@@ -314,10 +314,10 @@
             "effects": [
                 {
                     "type": "DiscardHand",
-                    "amount": "all",
+                    "amountFormula": "all",
                     "effect": {
                         "type": "Draw",
-                        "amount": "discarded"
+                        "amountFormula": "discarded"
                     }
                 }
             ],
@@ -620,7 +620,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2022,
+                    "buffId": 2019,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -667,7 +667,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2011,
+                    "buffId": 2010,
                     "amount": 3,
                     "target": "Self"
                 }
@@ -702,7 +702,7 @@
                 },
                 {
                     "type": "Buff",
-                    "buffId": 2011,
+                    "buffId": 2010,
                     "amount": 3,
                     "target": "Self"
                 }
@@ -726,7 +726,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2026,
+                    "buffId": 2020,
                     "amount": 3,
                     "target": "Self"
                 }

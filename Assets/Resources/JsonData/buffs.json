@@ -4,384 +4,416 @@
             "buffId": 1001,
             "name": "강화: 부식",
             "buffType": 1,
-            "effects": {
-                "timing": "Buff",
-                "type": "Conditional",
-                "condition": "buffId",
-                "conditionValue": 3001,
-                "effect": {
-                    "type": "Buff",
-                    "buffId": 3002,
-                    "amount": "value",
-                    "target": "SingleEnemy"
+            "effects": [
+                {
+                    "timing": "Buff",
+                    "type": "Conditional",
+                    "condition": {
+                        "type": "buffId",
+                        "value": 3001,
+                        "effect": {
+                            "type": "Buff",
+                            "buffId": 3002,
+                            "target": "SingleEnemy"
+                        }
+                    }
                 }
-            },
+            ],
             "description": "부식을 부여할 때 대신 강화된 부식을 부여합니다."
         },
         {
             "buffId": 1002,
             "name": "포션 강화",
             "buffType": 1,
-            "effects": {
-                "timing": "GenerateCard",
-                "type": "Conditional",
-                "condition": "cardId",
-                "conditionValue": [
-                    101050,
-                    101052,
-                    101054,
-                    101056
-                ],
-                "effect": {
-                    "type": "ChangeCard",
-                    "cardId": "value + 1",
-                    "target": "Hand"
+            "effects": [
+                {
+                    "timing": "GenerateCard",
+                    "type": "Conditional",
+                    "condition": {
+                        "type": "cardId",
+                        "value": [
+                            101050,
+                            101052,
+                            101054,
+                            101056
+                        ],
+                        "effect": {
+                            "type": "ChangeCard",
+                            "cardId": "value + 1",
+                            "target": "Hand"
+                        }
+                    }
                 }
-            },
+            ],
             "description": "앞으로 획득하는 모든 포션 카드가 강화됩니다."
         },
         {
             "buffId": 1003,
             "name": "포션 순환",
             "buffType": 1,
-            "effects": {
-                "timing": "GetCard",
-                "type": "Conditional",
-                "condition": "cardId",
-                "conditionValue": [
-                    101050,
-                    101051,
-                    101052,
-                    101053,
-                    101054,
-                    101055,
-                    101056,
-                    101057
-                ],
-                "effect": [
-                    {
-                        "type": "RemoveKeyword",
-                        "keywordId": 3,
-                        "target": "Self"
-                    },
-                    {
-                        "type": "Draw",
-                        "amount": 1
+            "effects": [
+                {
+                    "timing": "GetCard",
+                    "type": "Conditional",
+                    "condition": {
+                        "type": "cardId",
+                        "value": [
+                            101050,
+                            101051,
+                            101052,
+                            101053,
+                            101054,
+                            101055,
+                            101056,
+                            101057
+                        ],
+                        "effect": [
+                            {
+                                "type": "RemoveKeyword",
+                                "keywordId": 3,
+                                "target": "Self"
+                            },
+                            {
+                                "type": "Draw",
+                                "amount": 1
+                            }
+                        ]
                     }
-                ]
-            },
+                }
+            ],
             "description": "내 포션 카드가 소멸되지 않습니다. 포션 카드를 사용할 때마다 카드를 1장 뽑습니다."
         },
         {
             "buffId": 1004,
             "name": "냉기 강화",
             "buffType": 1,
-            "effects": {
-                "timing": "GenerateCard",
-                "type": "Conditional",
-                "condition": "cardId",
-                "conditionValue": 401080,
-                "effect": {
-                    "type": "ChangeCard",
-                    "cardId": 401081,
-                    "target": "Hand"
+            "effects": [
+                {
+                    "timing": "GenerateCard",
+                    "type": "Conditional",
+                    "condition": {
+                        "type": "cardId",
+                        "value": 401080,
+                        "effect": {
+                            "type": "ChangeCard",
+                            "cardId": 401081,
+                            "target": "Hand"
+                        }
+                    }
                 }
-            },
+            ],
             "description": "이번 게임 동안 빙하 조형 카드가 강화됩니다."
         },
         {
             "buffId": 1005,
             "name": "화염 전이",
             "buffType": 1,
-            "effects": {
-                "timing": "Dead",
-                "type": "Conditional",
-                "condition": "HasBuff",
-                "conditionValue": 3003,
-                "effect": {
-                    "type": "Buff",
-                    "buffId": 3003,
-                    "amount": "TargetBuffAmount(3003)",
-                    "target": "AllEnemies"
+            "effects": [
+                {
+                    "timing": "Dead",
+                    "type": "Conditional",
+                    "condition": {
+                        "type": "HasBuff",
+                        "value": 3003,
+                        "effect": {
+                            "type": "Buff",
+                            "buffId": 3003,
+                            "amountFormula": "TargetBuffAmount(3003)",
+                            "target": "AllEnemies"
+                        }
+                    }
                 }
-            },
+            ],
             "description": "사망 시 가지고 있던 화염 낙인 수치만큼 모든 적에게 화염 낙인을 부여합니다."
         },
         {
             "buffId": 1006,
             "name": "금기 해제",
             "buffType": 1,
-            "effects": {
-                "timing": "Turn",
-                "type": "CanUseCard",
-                "condition": "Unplayable",
-                "effect": {
-                    "type": "Exhaust"
+            "effects": [
+                {
+                    "timing": "Turn",
+                    "type": "CanUseCard",
+                    "condition": {
+                        "type": "Unplayable",
+                        "effect": {
+                            "type": "Exhaust"
+                        }
+                    }
                 }
-            },
+            ],
             "description": "사용불가 카드를 사용할 수 있습니다. 사용한 사용불가 카드는 소멸됩니다."
         },
         {
             "buffId": 2001,
             "name": "재생",
             "buffType": 2,
-            "effects": {
-                "timing": "turnEnd",
-                "type": "Heal",
-                "amount": "value",
-                "target": "Self"
-            },
+            "effects": [
+                {
+                    "timing": "turnEnd",
+                    "type": "Heal",
+                    "target": "Self"
+                }
+            ],
             "decrease": {
                 "timing": "effect",
                 "amount": 1
             },
-            "description": "턴 종료 시 수치만큼 회복합니다."
+            "description": "턴 종료 시 {stack}만큼 회복합니다."
         },
         {
             "buffId": 2002,
             "name": "피해 증폭",
             "buffType": 2,
-            "effects": {
-                "timing": "Attack",
-                "type": "addDamage",
-                "amount": "value",
-                "target": "Card"
-            },
-            "description": "피해를 입힐 때 피해량이 {value}만큼 증가합니다."
+            "effects": [
+                {
+                    "timing": "Attack",
+                    "type": "Increase",
+                    "target": "Damage"
+                }
+            ],
+            "description": "피해를 입힐 때 피해량이 {stack}만큼 증가합니다."
         },
         {
             "buffId": 2003,
             "name": "포션 제조",
             "buffType": 2,
-            "effects": {
-                "timing": "turnStart",
-                "type": "RandGenerate",
-                "amount": "value",
-                "RandomCard": [
-                    {
-                        "cardId": 101050,
-                        "weight": 1
-                    },
-                    {
-                        "cardId": 101052,
-                        "weight": 1
-                    },
-                    {
-                        "cardId": 101054,
-                        "weight": 1
-                    },
-                    {
-                        "cardId": 101056,
-                        "weight": 1
-                    }
-                ],
-                "target": "Hand"
-            },
+            "effects": [
+                {
+                    "timing": "turnStart",
+                    "type": "RandGenerate",
+                    "RandomCard": [
+                        {
+                            "cardId": 101050,
+                            "weight": 1
+                        },
+                        {
+                            "cardId": 101052,
+                            "weight": 1
+                        },
+                        {
+                            "cardId": 101054,
+                            "weight": 1
+                        },
+                        {
+                            "cardId": 101056,
+                            "weight": 1
+                        }
+                    ],
+                    "target": "Hand"
+                }
+            ],
             "decrease": {
                 "timing": "turnStart",
-                "amount": "value"
+                "amountFormula": "stack"
             },
-            "description": "턴 시작 시 무작위 포션 카드 {value}장을 제작합니다."
+            "description": "턴 시작 시 무작위 포션 카드 {stack}장을 제작합니다."
         },
         {
             "buffId": 2004,
             "name": "실험 폐기물",
             "buffType": 2,
-            "effects": {
-                "timing": "UseCard",
-                "type": "Conditional",
-                "condition": "cardId",
-                "conditionValue": [
-                    101080,
-                    101081,
-                    101082,
-                    101083,
-                    101084,
-                    101085,
-                    101086,
-                    101087
-                ],
-                "effect": {
-                    "type": "Buff",
-                    "buffId": 3001,
-                    "amount": "value",
-                    "target": "RandEnemy"
+            "effects": [
+                {
+                    "timing": "UseCard",
+                    "type": "Conditional",
+                    "condition": {
+                        "type": "cardId",
+                        "value": [
+                            101080,
+                            101081,
+                            101082,
+                            101083,
+                            101084,
+                            101085,
+                            101086,
+                            101087
+                        ],
+                        "effect": {
+                            "type": "Buff",
+                            "buffId": 3001,
+                            "target": "RandEnemy"
+                        }
+                    }
                 }
-            },
-            "description": "포션을 사용할 때마다 무작위 적에게 부식을 {value} 부여합니다."
+            ],
+            "description": "포션을 사용할 때마다 무작위 적에게 부식을 {stack} 부여합니다."
         },
         {
             "buffId": 2005,
             "name": "잔혹함",
             "buffType": 2,
-            "effects": {
-                "timing": "Buff",
-                "type": "Conditional",
-                "condition": "buffType",
-                "conditionValue": 3,
-                "effect": {
-                    "type": "Damage",
-                    "amount": "value",
-                    "target": "SingleEnemy"
+            "effects": [
+                {
+                    "timing": "Buff",
+                    "type": "Conditional",
+                    "condition": {
+                        "type": "buffType",
+                        "value": 3,
+                        "effect": {
+                            "type": "Damage",
+                            "target": "SingleEnemy"
+                        }
+                    }
                 }
-            },
-            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 {value} 줍니다."
+            ],
+            "description": "적에게 부정적인 효과를 부여할 때마다 피해를 {stack} 줍니다."
         },
         {
             "buffId": 2006,
             "name": "잔악무도",
             "buffType": 2,
-            "effects": {
-                "timing": "Buff",
-                "type": "Conditional",
-                "condition": "buffType",
-                "conditionValue": 3,
-                "effect": {
-                    "type": "Damage",
-                    "amount": "value",
-                    "target": "AllEnemies"
+            "effects": [
+                {
+                    "timing": "Buff",
+                    "type": "Conditional",
+                    "condition": {
+                        "type": "buffType",
+                        "value": 3,
+                        "effect": {
+                            "type": "Damage",
+                            "target": "AllEnemies"
+                        }
+                    }
                 }
-            },
-            "description": "적에게 부정적인 효과를 입힐 때마다 모든 적에게 피해를 {value} 줍니다."
+            ],
+            "description": "적에게 부정적인 효과를 입힐 때마다 모든 적에게 피해를 {stack} 줍니다."
         },
         {
             "buffId": 2007,
             "name": "포션 제조실",
             "buffType": 2,
-            "effects": {
-                "timing": "turnEnd",
-                "type": "Buff",
-                "buffId": 2003,
-                "amount": "value",
-                "target": "Self"
-            },
-            "description": "매 턴 종료 시 포션 제조를 {value} 얻습니다."
+            "effects": [
+                {
+                    "timing": "turnEnd",
+                    "type": "Buff",
+                    "buffId": 2003,
+                    "target": "Self"
+                }
+            ],
+            "description": "매 턴 포션을 {stack}개 제조합니다."
         },
         {
             "buffId": 2008,
             "name": "드로우 강화",
             "buffType": 2,
-            "effects": {
-                "timing": "turnStart",
-                "type": "Draw",
-                "amount": "value"
-            },
-            "description": "매 턴 시작 시 카드를 {value}장 더 뽑습니다."
+            "effects": [
+                {
+                    "timing": "turnStart",
+                    "type": "Draw"
+                }
+            ],
+            "description": "매 턴 시작 시 카드를 {stack}장 더 뽑습니다."
         },
         {
             "buffId": 2009,
             "name": "공격 강화",
             "buffType": 2,
-            "effects": {
-                "timing": "Attack",
-                "type": "Damage",
-                "amount": "value",
-                "target": "SingleEnemy"
-            },
-            "description": "다음 공격이 {value}만큼 추가 피해를 입힙니다."
+            "effects": [
+                {
+                    "timing": "Attack",
+                    "type": "Damage",
+                    "target": "SingleEnemy"
+                }
+            ],
+            "description": "다음 공격이 {stack}만큼 추가 피해를 입힙니다."
+        },
+        {
+            "buffId": 2010,
+            "name": "가시",
+            "buffType": 2,
+            "effects": [
+                {
+                    "timing": "attacked",
+                    "type": "Damage",
+                    "target": "Attacker"
+                }
+            ],
+            "description": "공격받을 때마다 공격한 적에게 {stack}의 피해를 줍니다."
         },
         {
             "buffId": 2011,
-            "name": "가시",
+            "name": "보호막 유지",
             "buffType": 2,
-            "effects": {
-                "timing": "damaged",
-                "type": "Damage",
-                "amount": "value",
-                "target": "Attacker"
+            "effects": [
+                {
+                    "timing": "turnStart",
+                    "type": "PreventDefenseLoss",
+                    "target": "Self"
+                }
+            ],
+            "decrease": {
+                "timing": "turnStart",
+                "amount": 1
             },
-            "description": "공격받을 때마다 공격한 적에게 {value}의 피해를 줍니다."
+            "description": "턴 시작 시 보호막이 사라지지 않습니다."
         },
         {
             "buffId": 2012,
-            "name": "방어도 유지",
+            "name": "빙하 결속",
             "buffType": 2,
-            "effects": {
-                "timing": "turnStart",
-                "type": "PreventDefenseLoss",
-                "target": "Self"
-            },
-            "decrease": {
-                "timing": "turnStart",
-                "amount": 1
-            },
-            "description": "다음 턴 시작 시 방어도를 잃지 않습니다."
+            "effects": [
+                {
+                    "timing": "defense",
+                    "type": "Increase",
+                    "target": "Defense"
+                }
+            ],
+            "description": "보호막을 획득할 때마다 {stack} 더 얻습니다."
+        },
+        {
+            "buffId": 2013,
+            "name": "절대영도",
+            "buffType": 2,
+            "effects": [
+                {
+                    "timing": "turnStart",
+                    "type": "Buff",
+                    "buffId": 3004,
+                    "target": "AllEnemies"
+                }
+            ],
+            "description": "턴 시작 시 모든 적에게 빙결을 {stack} 부여합니다."
         },
         {
             "buffId": 2014,
-            "name": "보호막 유지",
+            "name": "얼음 방패 조각",
             "buffType": 2,
-            "effects": {
-                "timing": "turnStart",
-                "type": "PreventDefenseLoss",
-                "target": "Self"
-            },
-            "decrease": {
-                "timing": "turnStart",
-                "amount": 1
-            },
-            "description": "다음 {value}턴 동안 턴 시작 시 보호막이 사라지지 않습니다."
+            "effects": [
+                {
+                    "timing": "attacked",
+                    "type": "GenerateCard",
+                    "cardId": 301080,
+                    "target": "Hand"
+                }
+            ],
+            "description": "공격받을 때마다 손에 빙하 조형 카드를 {stack}장 생성합니다."
         },
         {
             "buffId": 2015,
-            "name": "빙하 결속",
+            "name": "차가운 냉기",
             "buffType": 2,
-            "effects": {
-                "timing": "defense",
-                "type": "Defense",
-                "amount": "value",
-                "target": "Self"
-            },
-            "description": "보호막을 획득할 때마다 {value}만큼 더 얻습니다."
+            "effects": [
+                {
+                    "timing": "DefenseDecrease",
+                    "type": "Buff",
+                    "buffId": 3004,
+                    "target": "AllEnemies"
+                }
+            ],
+            "description": "내 보호막이 감소할 때마다 모든 적에게 빙결을 {stack} 부여합니다."
         },
         {
             "buffId": 2016,
-            "name": "절대영도",
-            "buffType": 2,
-            "effects": {
-                "timing": "turnStart",
-                "type": "Buff",
-                "buffId": 3004,
-                "amount": 1,
-                "target": "AllEnemies"
-            },
-            "description": "턴 시작 시 모든 적에게 빙결을 1 부여합니다."
-        },
-        {
-            "buffId": 2017,
-            "name": "얼음 방패 조각",
-            "buffType": 2,
-            "effects": {
-                "timing": "damaged",
-                "type": "GenerateCard",
-                "cardId": 301080,
-                "amount": 1,
-                "target": "Hand"
-            },
-            "description": "공격받을 때마다 손에 빙하 조형 카드를 1장 생성합니다."
-        },
-        {
-            "buffId": 2018,
-            "name": "차가운 냉기",
-            "buffType": 2,
-            "effects": {
-                "timing": "DefenseDecrease",
-                "type": "Buff",
-                "buffId": 3004,
-                "amount": 1,
-                "target": "AllEnemies"
-            },
-            "description": "내 보호막이 감소할 때마다 모든 적에게 빙결을 1 부여합니다."
-        },
-        {
-            "buffId": 2019,
             "name": "회피",
             "buffType": 2,
-            "effects": {
-                "timing": "damaged",
-                "type": "Evade",
-                "target": "Self"
-            },
+            "effects": [
+                {
+                    "timing": "attacked",
+                    "type": "Evade",
+                    "target": "Self"
+                }
+            ],
             "decrease": {
                 "timing": "effect",
                 "amount": 1
@@ -389,112 +421,86 @@
             "description": "다음 공격을 회피합니다."
         },
         {
-            "buffId": 2020,
+            "buffId": 2017,
             "name": "과열",
             "buffType": 2,
-            "effects": {
-                "timing": "damage",
-                "type": "multiplyDamage",
-                "amount": "1 + (value * 0.2)",
-                "target": "Card"
-            },
-            "description": "피해량이 {value * 20}% 증가합니다. (곱연산)"
+            "effects": [
+                {
+                    "timing": "attack",
+                    "type": "Multiply",
+                    "amountFormula": "1 + (stack * 0.2)",
+                    "target": "Damage"
+                }
+            ],
+            "description": "피해량이 {stack * 20}% 증가합니다."
+        },
+        {
+            "buffId": 2018,
+            "name": "과열 축적",
+            "buffType": 2,
+            "effects": [
+                {
+                    "timing": "turnStart",
+                    "type": "Buff",
+                    "buffId": 2017,
+                    "target": "Self"
+                }
+            ],
+            "description": "매 턴 과열을 {stack} 얻습니다."
+        },
+        {
+            "buffId": 2019,
+            "name": "화염 전도",
+            "buffType": 2,
+            "effects": [
+                {
+                    "timing": "damage",
+                    "type": "Buff",
+                    "buffId": 3003,
+                    "target": "Defender"
+                }
+            ],
+            "description": "공격할 때마다 적에게 화염 낙인을 {stack} 부여합니다."
+        },
+        {
+            "buffId": 2020,
+            "name": "용암 피부",
+            "buffType": 2,
+            "effects": [
+                {
+                    "timing": "attacked",
+                    "type": "Buff",
+                    "buffId": 3003,
+                    "target": "Attacker"
+                }
+            ],
+            "description": "공격받을 때마다 공격한 적에게 화염 낙인을 {stack} 부여합니다."
         },
         {
             "buffId": 2021,
-            "name": "과열 축적",
-            "buffType": 2,
-            "effects": {
-                "timing": "turnStart",
-                "type": "Buff",
-                "buffId": 2020,
-                "amount": 1,
-                "target": "Self"
-            },
-            "description": "매 턴 내 카드의 피해량이 20%씩 증가합니다."
-        },
-        {
-            "buffId": 2022,
-            "name": "화염 전도",
-            "buffType": 2,
-            "effects": {
-                "timing": "damage",
-                "type": "Buff",
-                "buffId": 3003,
-                "amount": 1,
-                "target": "Defender"
-            },
-            "description": "공격할 때마다 적에게 화염 낙인을 1 부여합니다."
-        },
-        {
-            "buffId": 2024,
-            "name": "기력 소진",
-            "buffType": 2,
-            "effects": {
-                "timing": "turnEnd",
-                "type": "RemoveBuff",
-                "buffId": 2002,
-                "amount": "value",
-                "target": "Self"
-            },
-            "decrease": {
-                "timing": "turnEnd",
-                "amount": "value"
-            },
-            "description": "턴 종료 시 피해 증폭 효과가 {value}만큼 감소합니다."
-        },
-        {
-            "buffId": 2025,
-            "name": "화력 소진",
-            "buffType": 2,
-            "effects": {
-                "timing": "turnEnd",
-                "type": "RemoveBuff",
-                "buffId": 2020,
-                "amount": "value",
-                "target": "Self"
-            },
-            "decrease": {
-                "timing": "turnEnd",
-                "amount": "value"
-            },
-            "description": "턴 종료 시 과열 수치가 {value}만큼 감소합니다."
-        },
-        {
-            "buffId": 2026,
-            "name": "용암 피부",
-            "buffType": 2,
-            "effects": {
-                "timing": "damaged",
-                "type": "Buff",
-                "buffId": 3003,
-                "amount": "value",
-                "target": "Attacker"
-            },
-            "description": "공격받을 때마다 공격한 적에게 화염 낙인을 {value} 부여합니다."
-        },
-        {
-            "buffId": 2027,
             "name": "반격",
             "buffType": 2,
-            "effects": {
-                "timing": "damaged",
-                "type": "Attack",
-                "amount": "value",
-                "target": "Attacker"
-            },
-            "description": "공격받은 뒤 공격한 적에게 {value}의 피해를 입힙니다."
+            "effects": [
+                {
+                    "timing": "attacked",
+                    "type": "Attack",
+                    "target": "Attacker"
+                }
+            ],
+            "description": "공격받은 뒤 공격한 적에게 {stack}의 피해를 입힙니다."
         },
         {
             "buffId": 3001,
             "name": "부식",
             "buffType": 3,
-            "effects": {
-                "timing": "damaged",
-                "type": "Damage",
-                "amount": "0.25 * damageValue",
-                "target": "Self"
-            },
+            "effects": [
+                {
+                    "timing": "attacked",
+                    "type": "Multiply",
+                    "amountFormula": "1.25",
+                    "target": "Damage"
+                }
+            ],
             "decrease": {
                 "timing": "turnEnd",
                 "amount": 1
@@ -505,12 +511,14 @@
             "buffId": 3002,
             "name": "강화된 부식",
             "buffType": 3,
-            "effects": {
-                "timing": "damaged",
-                "type": "Damage",
-                "amount": "0.5 * damageValue",
-                "target": "Self"
-            },
+            "effects": [
+                {
+                    "timing": "attacked",
+                    "type": "Multiply",
+                    "amountFormula": "1.5",
+                    "target": "Damage"
+                }
+            ],
             "decrease": {
                 "timing": "turnEnd",
                 "amount": 1
@@ -521,37 +529,42 @@
             "buffId": 3003,
             "name": "화염 낙인",
             "buffType": 3,
-            "effects": {
-                "timing": "turnEnd",
-                "type": "Damage",
-                "amount": "value",
-                "target": "Self"
-            },
-            "description": "턴 종료 시 화염 낙인 수치만큼 피해를 받습니다."
+            "effects": [
+                {
+                    "timing": "turnEnd",
+                    "type": "Damage",
+                    "target": "Self"
+                }
+            ],
+            "description": "턴 종료 시 {stack}만큼 피해를 받습니다."
         },
         {
             "buffId": 3004,
             "name": "빙결",
             "buffType": 3,
-            "effects": {
-                "timing": "stack",
-                "amount": 7,
-                "type": "Conditional",
-                "condition": "EnemyType",
-                "conditionValue": "Boss",
-                "effect": {
-                    "type": "Damage",
-                    "amount": 20,
-                    "target": "Self"
-                },
-                "elseEffect": {
-                    "type": "Stun",
-                    "target": "Self"
+            "effects": [
+                {
+                    "timing": "stack",
+                    "stack": 7,
+                    "type": "Conditional",
+                    "condition": {
+                        "type": "EnemyType",
+                        "value": "Boss",
+                        "effect": {
+                            "type": "Damage",
+                            "amount": 20,
+                            "target": "Self"
+                        },
+                        "elseEffect": {
+                            "type": "Stun",
+                            "target": "Self"
+                        }
+                    }
                 }
-            },
+            ],
             "decrease": {
                 "timing": "effect",
-                "amount": "all"
+                "amountFormula": "all"
             },
             "description": "7중첩이 되면 중첩을 잃고 행동불가 상태가 됩니다. 보스는 대신 피해를 20 받습니다."
         },
@@ -559,14 +572,49 @@
             "buffId": 3005,
             "name": "재정비",
             "buffType": 3,
-            "effects": {
+            "effects": [
+                {
+                    "timing": "turnEnd",
+                    "type": "RemoveBuff",
+                    "buffId": 2021,
+                    "target": "Self"
+                }
+            ],
+            "description": "턴 종료 시 반격이 {stack}만큼 감소합니다."
+        },
+        {
+            "buffId": 3006,
+            "name": "기력 소진",
+            "buffType": 3,
+            "effects": [
+                {
+                    "timing": "turnEnd",
+                    "type": "RemoveBuff",
+                    "buffId": 2002
+                }
+            ],
+            "decrease": {
                 "timing": "turnEnd",
-                "type": "RemoveBuff",
-                "buffId": 2027,
-                "amount": "value",
-                "target": "Self"
+                "amountFormula": "stack"
             },
-            "description": "턴 종료 시 반격이 {value}만큼 감소합니다."
+            "description": "턴 종료 시 피해 증폭 효과가 {stack}만큼 감소합니다."
+        },
+        {
+            "buffId": 3007,
+            "name": "화력 소진",
+            "buffType": 3,
+            "effects": [
+                {
+                    "timing": "turnEnd",
+                    "type": "RemoveBuff",
+                    "buffId": 2017
+                }
+            ],
+            "decrease": {
+                "timing": "turnEnd",
+                "amountFormula": "stack"
+            },
+            "description": "턴 종료 시 과열 수치가 {stack}만큼 감소합니다."
         }
     ]
 }

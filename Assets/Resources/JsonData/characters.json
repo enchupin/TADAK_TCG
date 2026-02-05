@@ -18,10 +18,10 @@
                 "description": "카드를 2장 뽑습니다. 모든 적에게 부식을 3 부여합니다."
             },
             "addressables": {
-                "artwork": "Characters/Kloe/Artwork",
-                "standing": "Characters/Kloe/Standing",
-                "effect": "Effects/Kloe",
-                "sound": "Sounds/Kloe"
+                "artwork": "Characters/Isla/Artwork",
+                "standing": "Characters/Isla/Standing",
+                "effect": "Effects/Isla",
+                "sound": "Sounds/Isla"
             },
             "characterColor": "green",
             "startDeck": [
@@ -52,9 +52,10 @@
                 "description": "다음 공격이 20의 추가 피해를 입힙니다."
             },
             "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
+                "artwork": "Characters/Ignia/Artwork",
+                "standing": "Characters/Ignia/Standing",
+                "effect": "Effects/Ignia",
+                "sound": "Sounds/Ignia"
             },
             "characterColor": "red",
             "startDeck": [
@@ -85,9 +86,10 @@
                 "description": "피해 증폭을 2 얻습니다."
             },
             "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
+                "artwork": "Characters/Vanessa/Artwork",
+                "standing": "Characters/Vanessa/Standing",
+                "effect": "Effects/Vanessa",
+                "sound": "Sounds/Vanessa"
             },
             "characterColor": "red",
             "startDeck": [
@@ -123,9 +125,10 @@
                 "description": "방어도를 10 얻습니다. 모든 적에게 빙결을 2 부여합니다."
             },
             "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
+                "artwork": "Characters/Pola/Artwork",
+                "standing": "Characters/Pola/Standing",
+                "effect": "Effects/Pola",
+                "sound": "Sounds/Pola"
             },
             "characterColor": "white",
             "startDeck": [
