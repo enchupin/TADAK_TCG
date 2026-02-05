@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b4bd1118fb042d4bbad8fdee171a572, type: 3}
+  m_Name: "101080_\uACE0\uD1B5 \uD3EC\uC158"
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  cardId: 101080
+  cardName: "\uACE0\uD1B5 \uD3EC\uC158"
+  character: 0
+  cost: 0
+  description: "\uD53C\uD574\uB97C 3 \uC785\uD799\uB2C8\uB2E4."
+  enforceCardIds: d98a0100
+  artworkAddress: 
+  effectAddress: 
+  soundAddress: 
+  effects:
+  - type: 0
+    amount: 3
+    amountFormula: 
+    target: 0
+    stat: 
+    duration: 0
+    baseDamage: 0
+    bonusPerCard: 0
+    hpThreshold: 0
+    multiplier: 0
+    keyword: 
+    RandomCard: []

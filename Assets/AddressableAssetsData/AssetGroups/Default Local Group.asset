@@ -19,383 +19,393 @@ MonoBehaviour:
     m_Address: Cards/CARD_101075
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 061d996b12861074ebafed6dc65b5a99
-    m_Address: CardCollection
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0952842f30b4671478e8cb5c3d4a57c4
-    m_Address: Cards/CARD_101035
+  - m_GUID: 0713a2f6c0d60b14991e9d29ae70a0d0
+    m_Address: Cards/CARD_201030
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0a7b08ecbbb09fa46af15c1e1e64c58c
-    m_Address: Cards/CARD_101052
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0b4a5189e27a300458d0582491aaf33d
-    m_Address: Cards/CARD_101030
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Warrior
+    - Ignia
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0d81438212d2f0f4f80bc1671bb116fd
     m_Address: Cards/CARD_101053
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0dde9b6c20d136543ad91559f565b156
+    m_Address: Cards/CARD_201050
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Ignia
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 111fcef43f43efa44bd1653f5da9b5e4
     m_Address: Cards/CARD_101042
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 1230ba68c76f93c49a781a9c51b3bf56
-    m_Address: Cards/CARD_101020
+  - m_GUID: 1272cb09aa7fe5e46a2d2a2cd2094c77
+    m_Address: Cards/CARD_201062
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Ignia
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 13a7fadf78b58244e9c33d4e74e7e1ba
+    m_Address: Cards/CARD_201031
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Ignia
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 14df202bb644abf428ed70137fc187c4
+    m_Address: Cards/CARD_101032
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 183156bba37894a4c8ab937e43bb8602
-    m_Address: Cards/CARD_101010
+  - m_GUID: 1864ea45eb1f10343a4c5fdfb201d67d
+    m_Address: Cards/CARD_101061
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 27f96b2921936aa41873962975e8422f
     m_Address: Cards/CARD_101054
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2e4fa2a6cf57c414588dfde463d08f90
-    m_Address: Cards/CARD_101081
+  - m_GUID: 29617f5b25933e04190e3a3bc8c3785b
+    m_Address: Cards/CARD_101083
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2e774996751f247449279e8e8f16c433
     m_Address: Cards/CARD_101074
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 341dade9a4680e549bbfe39708cf9f4e
+  - m_GUID: 2eccc8ec9a0f28c43b8e1dd1bbc238a8
     m_Address: Cards/CARD_101082
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3b157714a8f783c47a8fb859ed70e870
-    m_Address: Cards/CARD_101052
+  - m_GUID: 3aac96f69b463b64ea76a1d6dafb8c1d
+    m_Address: Cards/CARD_101030
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 41dced6da62bbf744bbf96c28ff4211d
     m_Address: Cards/CARD_101052
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 4237e5fbfbd1677449e2053c8950d96a
-    m_Address: Cards/CARD_101032
+  - m_GUID: 4c49f0c63afb3214c951f98f0e1ce9d1
+    m_Address: CardCollection
     m_ReadOnly: 0
-    m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 46e4c4d975221304f85d499218650702
-    m_Address: Cards/CARD_101054
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 49d0edc00b71a31478e321e020ae03ce
-    m_Address: Cards/CARD_101042
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 4d8546168f8fa714280b8419f2331317
-    m_Address: Cards/CARD_101051
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Warrior
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4dabdf6b46732684bad1b3cb951bee6a
     m_Address: Cards/CARD_101044
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 4dc7ce0bd90824e49b12978b29b8c104
-    m_Address: Cards/CARD_101061
+  - m_GUID: 53fc4c9d5913a9041b52ef235e7d183e
+    m_Address: Cards/CARD_101035
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 560102f7c596e854e8c9296cfa3f4138
     m_Address: Cards/CARD_101043
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5cca719670f1a88499f2e872af240492
+    m_Address: Cards/CARD_201053
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Ignia
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5dcfa417f707c4c4596dfa6fa4facf10
+    m_Address: Cards/CARD_201010
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Ignia
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5e4ec5571e014014b90446fce772bf69
     m_Address: Cards/CARD_101041
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5e8435766e8538c48826ab274962d3e4
-    m_Address: Cards/CARD_101063
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5fd37ee8b9576e3478975e450b6afbe8
-    m_Address: Cards/CARD_101041
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6540ce43995be5b4493ba1e6be011cb2
-    m_Address: Cards/CARD_101053
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 66e4424ab2e959841b5eb7d8bc802d12
-    m_Address: Cards/CARD_101031
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 683ad8e4e0c565e48a01285168f81fd2
-    m_Address: Cards/CARD_101030
-    m_ReadOnly: 0
-    m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6850eef3d25cd7342bb47f9da901ea28
     m_Address: Cards/CARD_101051
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 686f41a05c27e694ea36feecd7723a81
+    m_Address: Cards/CARD_201060
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Ignia
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6c0f0d4168c8d6e468d60317af0a20f4
+    m_Address: Cards/CARD_201041
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Ignia
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6c4466144d0dd8e4ab505da8074055cb
     m_Address: Cards/CARD_101086
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6c9e6586dde9d8948a0683f56804a538
-    m_Address: Cards/CARD_101033
+  - m_GUID: 6de20cb0b3de5ae4b8d823be677933cc
+    m_Address: Cards/CARD_201070
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Warrior
+    - Ignia
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6f7ea0ee082285f4696131ee1b54df0a
     m_Address: Cards/CARD_101070
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 744d47badd0698d498a52ae834196d23
+    m_Address: Cards/CARD_201040
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Ignia
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 74e4538b50604954582254fc352c8432
+    m_Address: Cards/CARD_101033
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Chloe
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 75fb652ae8b32494ea06084336d16a07
+    m_Address: Cards/CARD_101081
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Chloe
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 75fd1f9c89c8ff44686bb2bfaa9080ea
+    m_Address: Cards/CARD_301010
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Declan
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 764ecec99fd0d4e46953301f314c1e04
     m_Address: Cards/CARD_101084
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7d6b5ad9ad2529b479de10736d403300
-    m_Address: Cards/CARD_101051
+  - m_GUID: 7a0c43d0ba470974895fb32776db720c
+    m_Address: Cards/CARD_201071
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 81fd71dd3c4a81e4f951ded8699f14b3
-    m_Address: Cards/CARD_101031
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Warrior
+    - Ignia
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 824a52685ad442b4fac4d12f4a4e6cf4
     m_Address: Cards/CARD_101085
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 854640599627876428cebabed80637f8
-    m_Address: Cards/CARD_101043
+  - m_GUID: 860d97ac7a4c8b343b29cac9316d1e7c
+    m_Address: Cards/CARD_201052
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8583909d4f6bd704fa20332a2a1eed76
-    m_Address: Cards/CARD_101083
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8675f44d84e5c5146830ca78278cb5e0
-    m_Address: Cards/CARD_101033
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Warrior
+    - Ignia
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 86e2c9e9108985d4d94ce05c28b93abe
     m_Address: Cards/CARD_101045
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 87d973d062d8b484282fdb69b49ad837
+    m_Address: Cards/CARD_201020
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Ignia
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8a20dbdb3cf297241bb13841aaaf8fd2
     m_Address: Cards/CARD_101072
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8dcb99aeecd1488439f6ec2c5c5ef748
-    m_Address: Cards/CARD_101065
+  - m_GUID: 8f9e2e72dd9054e4e92c9c20a6d67b11
+    m_Address: Cards/CARD_201051
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Warrior
+    - Ignia
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 92e574612d1e3ae4d975421e9934c4c2
     m_Address: Cards/CARD_101050
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 9c7132c809eec144fa7a5313536de5bf
-    m_Address: Cards/CARD_101064
+  - m_GUID: 937fef983a938bf42a3e02ab9d51a8f0
+    m_Address: Cards/CARD_201054
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Ignia
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 962da8a83979d724b8b8a5bfa331f548
+    m_Address: Cards/CARD_201061
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Ignia
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 970df2dd7b98c4846a372a7150f332f7
+    m_Address: Cards/CARD_101034
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Chloe
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 97e7832bc9e698b4f8f6a762359fbe1c
+    m_Address: Cards/CARD_101065
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Chloe
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9c9778cbb19561c4bb6427ae4e8c3ac4
+    m_Address: Cards/CARD_101060
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9d68431ce0a35e24f9f47b94286975e3
     m_Address: Cards/CARD_101010
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 9e425711ec30a594a8920564025480e6
-    m_Address: Cards/CARD_101050
-    m_ReadOnly: 0
-    m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9e6aa999b79133848a914a7178f4f1cc
     m_Address: Cards/CARD_101087
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a3125f9db173fd348bb25170fc66acf8
-    m_Address: Cards/CARD_101044
+  - m_GUID: ae8d53923e0be5d42ba64b83245eccd9
+    m_Address: Cards/CARD_101063
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a64dbcabf3edb8847b27311782a63968
-    m_Address: Cards/CARD_101040
+  - m_GUID: b859917050d2208439a7e62872136272
+    m_Address: Cards/CARD_201032
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b63ba1a4e7d97954f84a0556edc33f42
-    m_Address: Cards/CARD_101034
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b8d01016cd8eac745a1b9d4ee8602a51
-    m_Address: Cards/CARD_101032
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Warrior
+    - Ignia
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c04be033b40514c4890ae3f77d00f3e7
     m_Address: Cards/CARD_101020
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c6bab79ddebc5c549ad394bd4bfa4576
+  - m_GUID: c11ac4e1687e267428e556bc38dc8a14
+    m_Address: Cards/CARD_101080
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Chloe
+    - Warrior
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c9d7926390804f64497e407ab90eeec7
     m_Address: Cards/CARD_101062
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c902e75a67e3f624491831d4ff7c44c6
-    m_Address: Cards/CARD_101031
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: cb3016995c839914099990e869879d01
-    m_Address: Cards/CARD_101033
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: cdac68fab11fb974ca0d6f0e9f1e3a85
-    m_Address: Cards/CARD_101045
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d13ef63f6ada2e540919fdbffe2d5ad2
-    m_Address: Cards/CARD_101060
-    m_ReadOnly: 0
-    m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d25273dfd3ee5e7408f009da85121c51
     m_Address: Cards/CARD_101040
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Warrior
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d411795ea3296ff449c9e73895211967
-    m_Address: Cards/CARD_101080
-    m_ReadOnly: 0
-    m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d5888aeb9e2b88b4da4990a7fc1e6409
     m_Address: Cards/CARD_101073
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ec8ec3171d36deb46a828b11f675fc96
-    m_Address: Cards/CARD_101056
+  - m_GUID: e6465d12fb629a642b747cefe1ddbec6
+    m_Address: Cards/CARD_101031
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ee6318214593c60429f8276162cf1a9b
     m_Address: Cards/CARD_101055
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f44e70ff7ab2b3e439d1a530b0e55a79
     m_Address: Cards/CARD_101071
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: fe357a25b988d5645af44dc4973989a7
-    m_Address: Cards/CARD_101050
+  - m_GUID: f84e2b890812ea548b55d75c2c4801da
+    m_Address: Cards/CARD_101064
     m_ReadOnly: 0
     m_SerializedLabels:
+    - Chloe
     - Warrior
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0

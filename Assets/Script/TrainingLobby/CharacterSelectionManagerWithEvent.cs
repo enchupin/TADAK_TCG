@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// </summary>
 public class CharacterSelectionManagerWithEvent : MonoBehaviour
 {
-    [SerializeField] private Button startButton;
+    [SerializeField] private Button startButton; // 스타트 버튼 필드 복구
     private const int REQUIRED_SELECTION = 3;
 
     private void OnEnable()
@@ -18,7 +18,7 @@ public class CharacterSelectionManagerWithEvent : MonoBehaviour
 
     private void OnDisable()
     {
-        // 이벤트 구독 해제 (메모리 누수 방지)
+        // 이벤트 구독 해제
         SelectedButtonControl.OnSelectionChanged -= OnSelectionCountChanged;
     }
 
@@ -43,7 +43,6 @@ public class CharacterSelectionManagerWithEvent : MonoBehaviour
     {
         if (startButton == null)
         {
-            Debug.LogError("Start Button이 할당되지 않았습니다!");
             return;
         }
 

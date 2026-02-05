@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30ceac27afe41c54eac3f4b122eda671, type: 3}
+  m_Name: "Character_201_\uC774\uADF8\uB2C8\uC544"
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  characterId: 201
+  characterName: "\uC774\uADF8\uB2C8\uC544"
+  maxHp: 40
+  cost: 0
+  characterColor: red
+  identity:
+    cost: 5
+    description: "\uB2E4\uC74C \uACF5\uACA9\uC774 20\uC758 \uCD94\uAC00 \uD53C\uD574\uB97C
+      \uC785\uD799\uB2C8\uB2E4."
+    effects:
+    - type: 0
+      amount: 20
+      target: 0
+      buffType: 
+      cardId: 0
+  artworkAddress: 
+  effectAddress: 
+  soundAddress: 
+  startDeckCardIds: 321103003c11030046110300501103005a110300641103006e110300

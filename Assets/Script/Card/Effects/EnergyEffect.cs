@@ -2,14 +2,27 @@ using UnityEngine;
 
 /// <summary>
 /// 에너지 효과
-/// 플레이어의 에너지를 회복합니다.
+/// 에너지를 추가합니다.
 /// </summary>
+[System.Serializable]
 public class EnergyEffect : ICardEffect
 {
     public int amount;
+    public string amountFormula;
     
-    public void Execute(BattleManager battleManager)
+    public void Execute(TrainingBattleManager battleManager)
     {
-        battleManager.playerData.AddEnergy(amount);
+        int finalAmount = GetAmount(battleManager.battleContext, battleManager.playerData);
+        battleManager.playerData.AddEnergy(finalAmount);
+        battleManager.UpdateAllUI();
+    }
+    
+    public int GetAmount(BattleContext context, PlayerData player = null)
+    {
+        if (!string.IsNullOrEmpty(amountFormula))
+        {
+            return FormulaEvaluator.Evaluate(amountFormula, context, player);
+        }
+        return amount;
     }
 }

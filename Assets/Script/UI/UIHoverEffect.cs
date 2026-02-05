@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -8,31 +9,64 @@ using UnityEngine.EventSystems;
 public class UIHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("호버 설정")]
-    [SerializeField] private float hoverScale = 1.2f;
-    [SerializeField] private float animationSpeed = 5f;
+    [SerializeField] protected float hoverScale = 1.2f;
+    [SerializeField] protected float animationDuration = 0.2f;
     
-    private Vector3 originalScale;
-    private Vector3 targetScale;
+    protected Vector3 originalScale;
+    protected Coroutine currentAnimation;
+    public bool isHoverable;
     
-    void Awake()
+    protected virtual void Awake()
     {
         originalScale = transform.localScale;
-        targetScale = originalScale;
+        isHoverable = true;
     }
     
-    void Update()
+    public virtual void OnPointerEnter(PointerEventData eventData)
     {
-        // 부드러운 애니메이션
-        transform.localScale = Vector3.Lerp(transform.localScale, targetScale, Time.deltaTime * animationSpeed);
+        if (!isHoverable) return;
+        StopAnimation();
+        currentAnimation = StartCoroutine(AnimateScale(originalScale * hoverScale));
     }
     
-    public void OnPointerEnter(PointerEventData eventData)
+    public virtual void OnPointerExit(PointerEventData eventData)
     {
-        targetScale = originalScale * hoverScale;
+        StopAnimation();
+        currentAnimation = StartCoroutine(AnimateScale(originalScale));
+    }
+
+    public void SetHoverScale(float scale)
+    {
+        hoverScale = scale;
     }
     
-    public void OnPointerExit(PointerEventData eventData)
+    public void SetAnimationDuration(float duration)
     {
-        targetScale = originalScale;
+        animationDuration = duration;
+    }
+
+    public void StopAnimation()
+    {
+        if (currentAnimation != null) 
+        {
+            StopCoroutine(currentAnimation);
+            currentAnimation = null;
+        }
+    }
+    
+    protected virtual IEnumerator AnimateScale(Vector3 target)
+    {
+        Vector3 start = transform.localScale;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < animationDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            transform.localScale = Vector3.Lerp(start, target, elapsedTime / animationDuration);
+            yield return null;
+        }
+
+        transform.localScale = target;
+        currentAnimation = null;
     }
 }

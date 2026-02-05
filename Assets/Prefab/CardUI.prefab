@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: 0, y: -80}
+  m_SizeDelta: {x: 180, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2289067563938032288
 CanvasRenderer:
@@ -92,15 +92,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 16
-  m_fontSizeBase: 16
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMax: 24
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
@@ -116,7 +116,7 @@ MonoBehaviour:
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
   m_ActiveFontFeatures: 6e72656b
-  m_enableExtraPadding: 0
+  m_enableExtraPadding: 1
   checkPaddingRequired: 0
   m_isRichText: 1
   m_EmojiFallbackSupport: 1
@@ -285,9 +285,10 @@ GameObject:
   - component: {fileID: 2514760409029703883}
   - component: {fileID: 8862379123343035609}
   - component: {fileID: 327684643077534472}
-  - component: {fileID: 5613198081441664331}
   - component: {fileID: 7631512861755577495}
-  - component: {fileID: 6900387146195455425}
+  - component: {fileID: 3894038196007526712}
+  - component: {fileID: 8692048824840444247}
+  - component: {fileID: 7755415359058617408}
   m_Layer: 5
   m_Name: CardUI
   m_TagString: Untagged
@@ -355,25 +356,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &5613198081441664331
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3192966017208014355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb2f977149beb8144b67269e986ebf49, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CardUI
-  cardNameText: {fileID: 5194070512402103804}
-  costText: {fileID: 6973884561520195343}
-  descriptionText: {fileID: 5575262321193615248}
-  backgroundImage: {fileID: 0}
-  cardArtwork: {fileID: 0}
-  normalColor: {r: 1, g: 1, b: 1, a: 1}
-  unplayableColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!114 &7631512861755577495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -394,7 +376,7 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!114 &6900387146195455425
+--- !u!114 &3894038196007526712
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -403,11 +385,51 @@ MonoBehaviour:
   m_GameObject: {fileID: 3192966017208014355}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f95eb64ac6752b54ca4452133c33990b, type: 3}
+  m_Script: {fileID: 11500000, guid: fb2f977149beb8144b67269e986ebf49, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UIHoverEffect
-  hoverScale: 1.2
-  animationSpeed: 5
+  m_EditorClassIdentifier: Assembly-CSharp::CardUI
+  cardNameText: {fileID: 5194070512402103804}
+  costText: {fileID: 6973884561520195343}
+  descriptionText: {fileID: 5575262321193615248}
+  backgroundImage: {fileID: 0}
+  cardArtwork: {fileID: 0}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  unplayableColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+--- !u!114 &8692048824840444247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3192966017208014355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5ecb3a21209d674f8322948b6163af9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CardInteractionHandler
+  hoverScale: 1.4
+  animationDuration: 0.2
+  isHoverable: 0
+  onCardPlayRequested:
+    m_PersistentCalls:
+      m_Calls: []
+  showPlayThreshold: 1
+--- !u!114 &7755415359058617408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3192966017208014355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30f2f06fb9131424086288b12912b009, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CardController
+  cardUI: {fileID: 3894038196007526712}
+  interactionHandler: {fileID: 8692048824840444247}
+  isPlayable: 0
+  useInteractionHandler: 1
 --- !u!1 &4339342280482892474
 GameObject:
   m_ObjectHideFlags: 0

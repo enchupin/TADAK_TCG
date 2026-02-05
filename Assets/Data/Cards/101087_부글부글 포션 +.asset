@@ -16,13 +16,15 @@ MonoBehaviour:
   cardName: "\uBD80\uAE00\uBD80\uAE00 \uD3EC\uC158 +"
   character: 0
   cost: 0
-  rarity: 
+  description: "\uBD80\uC2DD\uC744 2 \uBD80\uC5EC\uD569\uB2C8\uB2E4."
+  enforceCardIds: 
   artworkAddress: 
   effectAddress: 
   soundAddress: 
   effects:
   - type: 3
-    amount: 4
+    amount: 2
+    amountFormula: 
     target: 0
     stat: 
     duration: 0
@@ -30,3 +32,5 @@ MonoBehaviour:
     bonusPerCard: 0
     hpThreshold: 0
     multiplier: 0
+    keyword: 
+    RandomCard: []

@@ -18,29 +18,13 @@ public class CardJsonData
     public string name;
     public int characterId;
     public int cost;
-    public string rarity; // Optional, might not be in choleCards
     public string description;
     public List<string> keywords;
     public List<int> enforce;
     public AddressablesData addressables;
     public List<EffectJsonData> effects;
-    
-    /// <summary>
-    /// characterId를 Character enum으로 변환
-    /// </summary>
-    public static Character GetCharacterFromId(int characterId)
-    {
-        switch (characterId)
-        {
-            case 101: return Character.Warrior;
-            case 102: return Character.Archer;
-            case 103: return Character.Knight;
-            default:
-                UnityEngine.Debug.LogWarning($"Unknown characterId: {characterId}, defaulting to Warrior");
-                return Character.Warrior;
-        }
-    }
 }
+
 
 [Serializable]
 public class AddressablesData
@@ -71,6 +55,9 @@ public class EffectJsonData
     public string stat; // Legacy?
     public string buffType; // New field in choleCards
     public int duration;
+    
+    // KeywordEffect
+    public string keyword;  // "보존", "휘발" 등
     
     // Generator Effects
     public List<RandomCardData> RandomCard;

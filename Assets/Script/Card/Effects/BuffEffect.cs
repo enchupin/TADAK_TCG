@@ -2,33 +2,41 @@ using UnityEngine;
 
 /// <summary>
 /// 버프 효과
-/// 플레이어의 스탯을 증가시킵니다.
+/// 플레이어에게 버프를 부여합니다.
 /// </summary>
+[System.Serializable]
 public class BuffEffect : ICardEffect
 {
-    public string stat; // "Strength", "Dexterity" 등
+    public string stat;
     public int amount;
-    public int duration; // 나중에 턴 기반 버프 구현 시 사용
-    /*
-    public void Execute(PlayerData player, Monster target)
+    public string amountFormula;
+    public int duration;
+    
+    public void Execute(TrainingBattleManager battleManager)
     {
-        switch (stat.ToLower())
+        int finalAmount = GetAmount(battleManager.battleContext, battleManager.playerData);
+        
+        // stat에 따라 버프 적용
+        switch (stat?.ToLower())
         {
             case "strength":
             case "힘":
-                player.AddStrength(amount);
+                battleManager.playerData.AddStrength(finalAmount);
                 break;
-            // 나중에 다른 스탯 추가 가능
             default:
-                Debug.LogWarning($"알 수 없는 버프 스탯: {stat}");
+                Debug.LogWarning($"[BuffEffect] Unknown stat: {stat}");
                 break;
         }
+        
+        battleManager.UpdateAllUI();
     }
-    */
-
-
-
-    public void Execute(BattleManager battleManager) {
+    
+    public int GetAmount(BattleContext context, PlayerData player = null)
+    {
+        if (!string.IsNullOrEmpty(amountFormula))
+        {
+            return FormulaEvaluator.Evaluate(amountFormula, context, player);
+        }
+        return amount;
     }
-
 }

@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System;
+using UnityEngine.AddressableAssets;
+using System.Threading.Tasks;
 
 public class SelectedButtonControl : MonoBehaviour
 {
@@ -15,14 +17,11 @@ public class SelectedButtonControl : MonoBehaviour
 
     [SerializeField]
     private Character characterType;
-    private bool isSelected = false;
 
-
-
-
-    // Addressables
-    public string soundAddress; // Addressables 주소
+    [SerializeField]
     private AudioClip buttonClickSound; // 로드된 버튼 클릭음
+
+    private bool isSelected = false;
 
 
 
@@ -48,17 +47,11 @@ public class SelectedButtonControl : MonoBehaviour
 
 
         ClearSelection();
-        LoadAssetsAsync();
     }
 
 
     public void OnCharacterSelectButtonClicked()
     {
-        // 버튼 클릭 효과음 재생
-        if (SFXControl.Instance != null)
-        {
-            SFXControl.Instance.PlaySFX(buttonClickSound);
-        }
 
         if (isSelected)
         {
@@ -72,12 +65,21 @@ public class SelectedButtonControl : MonoBehaviour
         }
     }
 
+
+    /// <summary>
+    /// 캐릭터 선택
+    /// </summary>
     private void SelectCharacter()
     {
         // 최대 선택 개수 체크
         if (selectedCharacterList.Count >= MAX_SELECTION)
         {
             return;
+        }
+
+        // 버튼 클릭 효과음 재생
+        if (SFXControl.Instance != null) {
+            SFXControl.Instance.PlaySFX(buttonClickSound);
         }
 
         // 리스트에 추가
@@ -97,6 +99,10 @@ public class SelectedButtonControl : MonoBehaviour
 
     }
 
+
+    /// <summary>
+    /// 캐릭터 선택 해제
+    /// </summary>
     private void DeselectCharacter()
     {
         // 리스트에서 제거
@@ -121,19 +127,4 @@ public class SelectedButtonControl : MonoBehaviour
         selectedCharacterList.Clear();
     }
 
-    private void LoadAssetsAsync() {
-        // Addressables 패키지 설치 후 구현 예정
-        Debug.Log("버튼 관련 에셋 로딩은 Addressables 설치 후 구현됩니다.");
-
-
-        /*
-        // 사운드 클립 로드
-        if (!string.IsNullOrEmpty(soundAddress))
-        {
-            var soundHandle = Addressables.LoadAssetAsync<AudioClip>(soundAddress);
-            soundClip = await soundHandle.Task;
-        }
-        */
-
-    }
 }

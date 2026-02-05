@@ -29,7 +29,7 @@ public class DamagePerCardPlayedEffect : ICardEffect
     */
 
 
-    public void Execute(BattleManager battleManager) {
+    public void Execute(TrainingBattleManager battleManager) {
     }
 
 }
