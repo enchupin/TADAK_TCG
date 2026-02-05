@@ -2,7 +2,7 @@
     "characters": [
         {
             "characterId": 101,
-            "name": "클로이",
+            "name": "아일라",
             "maxHp": 30,
             "cost": 0,
             "identity": {
@@ -65,6 +65,39 @@
                 201050,
                 201060,
                 201070
+            ]
+        },
+        {
+            "characterId": 202,
+            "name": "바네사",
+            "maxHp": 40,
+            "cost": 0,
+            "identity": {
+                "cost": 6,
+                "effects": [
+                    {
+                        "type": "Buff",
+                        "buffId": 2002,
+                        "amount": 2,
+                        "target": "Self"
+                    }
+                ],
+                "description": "피해 증폭을 2 얻습니다."
+            },
+            "addressables": {
+                "artwork": "",
+                "effect": "",
+                "sound": ""
+            },
+            "characterColor": "red",
+            "startDeck": [
+                202010,
+                202020,
+                202030,
+                202040,
+                202050,
+                202060,
+                202070
             ]
         },
         {
