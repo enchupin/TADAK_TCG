@@ -163,14 +163,14 @@
             "effects": [
                 {
                     "timing": "Turn",
-                    "type": "CanUseCard",
+                    "type": "Conditional",
                     "condition": {
                         "checks": [
                             {
                                 "subject": "EventValue",
-                                "property": "Playable",
-                                "operator": "Eq",
-                                "value": false
+                                "property": "Keywords",
+                                "operator": "Has",
+                                "value": 3
                             }
                         ],
                         "successEffect": {
@@ -204,7 +204,7 @@
             "buffType": 2,
             "effects": [
                 {
-                    "timing": "Attack",
+                    "timing": "attack",
                     "type": "Increase",
                     "target": "Damage"
                 }
@@ -383,7 +383,7 @@
             "buffType": 2,
             "effects": [
                 {
-                    "timing": "Attack",
+                    "timing": "attack",
                     "type": "Damage",
                     "target": "SingleEnemy"
                 }
@@ -562,6 +562,64 @@
             "description": "공격받은 뒤 공격한 적에게 {stack}의 피해를 입힙니다."
         },
         {
+            "buffId": 2022,
+            "name": "위압",
+            "buffType": 2,
+            "effects": [
+                {
+                    "timing": "attack",
+                    "type": "Conditional",
+                    "condition": {
+                        "mode": "and",
+                        "check": [
+                            {
+                                "subject": "Defender",
+                                "property": "Shield",
+                                "operator": "Lte",
+                                "value": "damage"
+                            },
+                            {
+                                "subject": "Defender",
+                                "property": "Shield",
+                                "operator": "Gt",
+                                "value": 0
+                            }
+                        ],
+                        "successEffect": {
+                            "type": "Buff",
+                            "buffId": 2002,
+                            "amount": 1,
+                            "target": "Self"
+                        }
+                    }
+                }
+            ],
+            "decrease": {
+                "timing": "turnEnd",
+                "amount": 5
+            },
+            "description": "적의 보호막을 공격해서 제거하면 피해 증폭을 1 얻습니다."
+        },
+        {
+            "buffId": 2023,
+            "name": "재사용",
+            "buffType": 2,
+            "effects": [
+                {
+                    "timing": "UseCard",
+                    "type": "UseCard",
+                    "cardId": "EventValue",
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ],
+            "decrease": {
+                "timing": "effect",
+                "amount": 1
+            },
+            "description": "다음에 사용하는 카드의 효과를 1번 더 발동시킵니다."
+        },
+        {
             "buffId": 3001,
             "name": "부식",
             "buffType": 3,
@@ -693,6 +751,40 @@
                 "amountFormula": "stack"
             },
             "description": "턴 종료 시 과열 수치가 {stack}만큼 감소합니다."
+        },
+        {
+            "buffId": 3008,
+            "name": "드로우 불가",
+            "buffType": 3,
+            "effects": [
+                {
+                    "timing": "draw",
+                    "type": "Cancel"
+                }
+            ],
+            "decrease": {
+                "timing": "turnEnd",
+                "amount": 1
+            },
+            "description": "이번 턴에 카드를 뽑을 수 없습니다."
+        },
+        {
+            "buffId": 2024,
+            "name": "연속 공격",
+            "buffType": 2,
+            "effects": [
+                {
+                    "timing": "UseCard",
+                    "type": "Damage",
+                    "amount": 1,
+                    "target": "AllEnemies"
+                }
+            ],
+            "decrease": {
+                "timing": "turnEnd",
+                "amount": 1
+            },
+            "description": "이번 턴에 카드를 사용할 때마다 모든 적에게 피해를 1 입힙니다."
         }
     ]
 }
