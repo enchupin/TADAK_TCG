@@ -391,7 +391,10 @@
             "effects": [
                 {
                     "type": "DrawSpecific",
-                    "cardType": "Basic",
+                    "specific": {
+                        "cardType": "Basic",
+                        "characterId": 201
+                    },
                     "amount": 2,
                     "effect": {
                         "type": "ReduceCost",
@@ -436,13 +439,14 @@
             "name": "화염 고리 +",
             "characterId": 201,
             "cost": 1,
-            "description": "내 기본 카드를 2장 가져옵니다. 이번 턴에 그 카드들의 비용이 1 감소합니다.",
+            "description": "내 카드를 1장 뽑습니다. 이번 턴에 그 카드의 비용이 1 감소합니다.",
             "effects": [
                 {
-                    "type": "GenerateSpecific",
-                    "cardType": "Basic",
-                    "amount": 2,
-                    "target": "Hand",
+                    "type": "DrawSpecific",
+                    "specific": {
+                        "characterId": 201
+                    },
+                    "amount": 1,
                     "effect": {
                         "type": "ReduceCost",
                         "amount": 1,
@@ -466,9 +470,17 @@
                 {
                     "type": "Draw",
                     "amount": 1,
-                    "effect": {
-                        "type": "Conditional",
-                        "condition": "IsMyCard",
+                    "onAction": {
+                        "condition": {
+                            "checks": [
+                                {
+                                    "subject": "EventValue",
+                                    "property": "CharacterId",
+                                    "operator": "Eq",
+                                    "value": 201
+                                }
+                            ]
+                        },
                         "effect": {
                             "type": "Buff",
                             "buffId": 3003,

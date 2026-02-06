@@ -9,12 +9,18 @@
                     "timing": "Buff",
                     "type": "Conditional",
                     "condition": {
-                        "type": "buffId",
-                        "value": 3001,
-                        "effect": {
+                        "checks": [
+                            {
+                                "subject": "EventValue",
+                                "property": "BuffId",
+                                "operator": "Eq",
+                                "value": 3001
+                            }
+                        ],
+                        "successEffect": {
                             "type": "Buff",
                             "buffId": 3002,
-                            "target": "SingleEnemy"
+                            "target": "Target"
                         }
                     }
                 }
@@ -30,14 +36,20 @@
                     "timing": "GenerateCard",
                     "type": "Conditional",
                     "condition": {
-                        "type": "cardId",
-                        "value": [
-                            101050,
-                            101052,
-                            101054,
-                            101056
+                        "checks": [
+                            {
+                                "subject": "EventValue",
+                                "property": "CardId",
+                                "operator": "In",
+                                "value": [
+                                    101050,
+                                    101052,
+                                    101054,
+                                    101056
+                                ]
+                            }
                         ],
-                        "effect": {
+                        "successEffect": {
                             "type": "ChangeCard",
                             "cardId": "value + 1",
                             "target": "Hand"
@@ -56,22 +68,27 @@
                     "timing": "GetCard",
                     "type": "Conditional",
                     "condition": {
-                        "type": "cardId",
-                        "value": [
-                            101050,
-                            101051,
-                            101052,
-                            101053,
-                            101054,
-                            101055,
-                            101056,
-                            101057
+                        "checks": [
+                            {
+                                "subject": "EventValue",
+                                "property": "CardId",
+                                "operator": "In",
+                                "value": [
+                                    101050,
+                                    101051,
+                                    101052,
+                                    101053,
+                                    101054,
+                                    101055,
+                                    101056,
+                                    101057
+                                ]
+                            }
                         ],
-                        "effect": [
+                        "successEffect": [
                             {
                                 "type": "RemoveKeyword",
-                                "keywordId": 3,
-                                "target": "Self"
+                                "keywordId": 3
                             },
                             {
                                 "type": "Draw",
@@ -92,9 +109,15 @@
                     "timing": "GenerateCard",
                     "type": "Conditional",
                     "condition": {
-                        "type": "cardId",
-                        "value": 401080,
-                        "effect": {
+                        "checks": [
+                            {
+                                "subject": "EventValue",
+                                "property": "CardId",
+                                "operator": "Eq",
+                                "value": 401080
+                            }
+                        ],
+                        "successEffect": {
                             "type": "ChangeCard",
                             "cardId": 401081,
                             "target": "Hand"
@@ -113,12 +136,19 @@
                     "timing": "Dead",
                     "type": "Conditional",
                     "condition": {
-                        "type": "HasBuff",
-                        "value": 3003,
-                        "effect": {
+                        "checks": [
+                            {
+                                "subject": "Source",
+                                "property": "HasBuff",
+                                "param": 3003,
+                                "operator": "Eq",
+                                "value": true
+                            }
+                        ],
+                        "successEffect": {
                             "type": "Buff",
                             "buffId": 3003,
-                            "amountFormula": "TargetBuffAmount(3003)",
+                            "amountFormula": "GetBuffStack(3003)",
                             "target": "AllEnemies"
                         }
                     }
@@ -135,8 +165,15 @@
                     "timing": "Turn",
                     "type": "CanUseCard",
                     "condition": {
-                        "type": "Unplayable",
-                        "effect": {
+                        "checks": [
+                            {
+                                "subject": "EventValue",
+                                "property": "Playable",
+                                "operator": "Eq",
+                                "value": false
+                            }
+                        ],
+                        "successEffect": {
                             "type": "Exhaust"
                         }
                     }
@@ -159,7 +196,7 @@
                 "timing": "effect",
                 "amount": 1
             },
-            "description": "턴 종료 시 {stack}만큼 회복합니다."
+            "description": "턴 종료 시 {stack}만큼 회복합니다. 1씩 감소합니다."
         },
         {
             "buffId": 2002,
@@ -207,7 +244,7 @@
                 "timing": "turnStart",
                 "amountFormula": "stack"
             },
-            "description": "턴 시작 시 무작위 포션 카드 {stack}장을 제작합니다."
+            "description": "다음 턴 시작 시 무작위 포션 카드 {stack}장을 제작합니다."
         },
         {
             "buffId": 2004,
@@ -218,18 +255,24 @@
                     "timing": "UseCard",
                     "type": "Conditional",
                     "condition": {
-                        "type": "cardId",
-                        "value": [
-                            101080,
-                            101081,
-                            101082,
-                            101083,
-                            101084,
-                            101085,
-                            101086,
-                            101087
+                        "checks": [
+                            {
+                                "subject": "EventValue",
+                                "property": "CardId",
+                                "operator": "In",
+                                "value": [
+                                    101080,
+                                    101081,
+                                    101082,
+                                    101083,
+                                    101084,
+                                    101085,
+                                    101086,
+                                    101087
+                                ]
+                            }
                         ],
-                        "effect": {
+                        "successEffect": {
                             "type": "Buff",
                             "buffId": 3001,
                             "target": "RandEnemy"
@@ -248,9 +291,15 @@
                     "timing": "Buff",
                     "type": "Conditional",
                     "condition": {
-                        "type": "buffType",
-                        "value": 3,
-                        "effect": {
+                        "checks": [
+                            {
+                                "subject": "EventValue",
+                                "property": "BuffType",
+                                "operator": "Eq",
+                                "value": 3
+                            }
+                        ],
+                        "successEffect": {
                             "type": "Damage",
                             "target": "SingleEnemy"
                         }
@@ -268,16 +317,22 @@
                     "timing": "Buff",
                     "type": "Conditional",
                     "condition": {
-                        "type": "buffType",
-                        "value": 3,
-                        "effect": {
+                        "checks": [
+                            {
+                                "subject": "EventValue",
+                                "property": "BuffType",
+                                "operator": "Eq",
+                                "value": 3
+                            }
+                        ],
+                        "successEffect": {
                             "type": "Damage",
                             "target": "AllEnemies"
                         }
                     }
                 }
             ],
-            "description": "적에게 부정적인 효과를 입힐 때마다 모든 적에게 피해를 {stack} 줍니다."
+            "description": "아무 적에게나 부정적인 효과를 부여할 때마다 모든 적에게 피해를 {stack} 줍니다."
         },
         {
             "buffId": 2007,
@@ -285,10 +340,27 @@
             "buffType": 2,
             "effects": [
                 {
-                    "timing": "turnEnd",
-                    "type": "Buff",
-                    "buffId": 2003,
-                    "target": "Self"
+                    "timing": "turnStart",
+                    "type": "RandGenerate",
+                    "RandomCard": [
+                        {
+                            "cardId": 101050,
+                            "weight": 1
+                        },
+                        {
+                            "cardId": 101052,
+                            "weight": 1
+                        },
+                        {
+                            "cardId": 101054,
+                            "weight": 1
+                        },
+                        {
+                            "cardId": 101056,
+                            "weight": 1
+                        }
+                    ],
+                    "target": "Hand"
                 }
             ],
             "description": "매 턴 포션을 {stack}개 제조합니다."
@@ -548,14 +620,20 @@
                     "stack": 7,
                     "type": "Conditional",
                     "condition": {
-                        "type": "EnemyType",
-                        "value": "Boss",
-                        "effect": {
+                        "checks": [
+                            {
+                                "subject": "Source",
+                                "property": "EnemyType",
+                                "operator": "Eq",
+                                "value": "Boss"
+                            }
+                        ],
+                        "successEffect": {
                             "type": "Damage",
                             "amount": 20,
                             "target": "Self"
                         },
-                        "elseEffect": {
+                        "failEffect": {
                             "type": "Stun",
                             "target": "Self"
                         }

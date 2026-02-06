@@ -158,21 +158,23 @@
                     "type": "Repeat",
                     "amount": 4,
                     "effect": {
-                        "type": "Conditional",
-                        "condition": {
-                            "type": "NextCardCost",
-                            "value": 0,
-                            "effect": {
-                                "type": "Draw"
+                        "type": "Draw",
+                        "amount": 1,
+                        "onAction": {
+                            "condition": {
+                                "checks": [
+                                    {
+                                        "subject": "EventValue",
+                                        "property": "Cost",
+                                        "operator": "Neq",
+                                        "value": 0
+                                    }
+                                ]
                             },
-                            "elseEffect": [
-                                {
-                                    "type": "Draw"
-                                },
-                                {
-                                    "type": "Discard"
-                                }
-                            ]
+                            "effect": {
+                                "type": "Discard",
+                                "target": "EventValue"
+                            }
                         }
                     }
                 }
@@ -224,23 +226,27 @@
                     "type": "Repeat",
                     "amount": 3,
                     "effect": {
-                        "type": "Conditional",
-                        "condition": {
-                            "type": "NextCardId",
-                            "value": ">202000, <203000",
-                            "effect": [
-                                {
-                                    "type": "Draw"
-                                },
-                                {
-                                    "type": "Buff",
-                                    "buffId": 2002,
-                                    "amount": 1,
-                                    "target": "Self"
-                                }
-                            ],
-                            "elseEffect": {
-                                "type": "Draw"
+                        "type": "Draw",
+                        "amount": 1,
+                        "onAction": {
+                            "condition": {
+                                "checks": [
+                                    {
+                                        "subject": "EventValue",
+                                        "property": "CardId",
+                                        "operator": "InRange",
+                                        "value": {
+                                            "min": 202000,
+                                            "max": 203000
+                                        }
+                                    }
+                                ]
+                            },
+                            "effect": {
+                                "type": "Buff",
+                                "buffId": 2002,
+                                "amount": 1,
+                                "target": "Source"
                             }
                         }
                     }
