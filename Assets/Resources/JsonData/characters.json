@@ -78,12 +78,12 @@
                 "effects": [
                     {
                         "type": "Buff",
-                        "buffId": 2002,
-                        "amount": 2,
+                        "buffId": 2021,
+                        "amount": 3,
                         "target": "Self"
                     }
                 ],
-                "description": "피해 증폭을 2 얻습니다."
+                "description": "반격을 3 얻습니다."
             },
             "addressables": {
                 "artwork": "Characters/Vanessa/Artwork",
@@ -91,7 +91,7 @@
                 "effect": "Effects/Vanessa",
                 "sound": "Sounds/Vanessa"
             },
-            "characterColor": "red",
+            "characterColor": "bee",
             "startDeck": [
                 202010,
                 202020,

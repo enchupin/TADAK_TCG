@@ -5,7 +5,7 @@
             "name": "폭발 실험",
             "characterId": 101,
             "cost": 1,
-            "description": "피해를 6 입힙니다.",
+            "description": "피해를 {amount} 입힙니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -24,7 +24,7 @@
             "name": "몸에 좋은 약",
             "characterId": 101,
             "cost": 1,
-            "description": "체력을 4 회복합니다.",
+            "description": "체력을 {amount} 회복합니다.",
             "effects": [
                 {
                     "type": "Heal",
@@ -43,20 +43,11 @@
             "name": "실험 재료 준비",
             "characterId": 101,
             "cost": 1,
-            "description": "카드를 1장 뽑고, 손의 카드 1장을 선택해 보존을 1 부여합니다.",
+            "description": "카드를 2장 뽑습니다.",
             "effects": [
                 {
                     "type": "Draw",
-                    "amount": 1
-                },
-                {
-                    "type": "ChoiceHand",
-                    "amount": 1,
-                    "effect": {
-                        "type": "Keyword",
-                        "keyword": "보존",
-                        "amount": 1
-                    }
+                    "amount": 2
                 }
             ],
             "enforce": [
@@ -95,19 +86,27 @@
             "name": "실험 재료 준비 +",
             "characterId": 101,
             "cost": 1,
-            "description": "카드를 2장 뽑고, 손의 카드 1장을 선택해 보존을 2 부여합니다.",
+            "description": "카드를 2장 뽑고, 내 손패가 4장 이하라면 1장 더 뽑습니다.",
             "effects": [
                 {
                     "type": "Draw",
                     "amount": 2
                 },
                 {
-                    "type": "ChoiceHand",
-                    "amount": 1,
-                    "effect": {
-                        "type": "Keyword",
-                        "keyword": "보존",
-                        "amount": 2
+                    "type": "Conditional",
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "Hand",
+                                "property": "Count",
+                                "operator": "Lte",
+                                "value": 4
+                            }
+                        ]
+                    },
+                    "successEffect": {
+                        "type": "Draw",
+                        "amount": 1
                     }
                 }
             ],
@@ -143,35 +142,42 @@
             "name": "실험 재료 준비 +",
             "characterId": 101,
             "cost": 1,
-            "description": "손에 든 카드 1장을 선택해 보존을 1 부여합니다. 그 카드가 포션일 경우, 모든 적에게 부식을 2 부여합니다.",
+            "description": "손에 든 카드 1장을 선택해 복제합니다. 그 카드가 포션일 경우, 모든 적에게 부식을 2 부여합니다.",
             "effects": [
                 {
                     "type": "ChoiceHand",
                     "amount": 1,
                     "effect": {
-                        "type": "Keyword",
-                        "keyword": "보존",
-                        "amount": 1
-                    }
-                },
-                {
-                    "type": "Conditional",
-                    "condition": "IsCardId",
-                    "cardId": [
-                        101050,
-                        101051,
-                        101052,
-                        101053,
-                        101054,
-                        101055,
-                        101056,
-                        101057
-                    ],
-                    "effect": {
-                        "type": "Buff",
-                        "buffId": 3001,
-                        "amount": 2,
-                        "target": "AllEnemies"
+                        "type": "Copy",
+                        "amount": 1,
+                        "target": "Hand"
+                    },
+                    "onAction": {
+                        "condition": {
+                            "checks": [
+                                {
+                                    "subject": "EventValue",
+                                    "property": "CardId",
+                                    "operator": "In",
+                                    "value": [
+                                        101050,
+                                        101051,
+                                        101052,
+                                        101053,
+                                        101054,
+                                        101055,
+                                        101056,
+                                        101057
+                                    ]
+                                }
+                            ]
+                        },
+                        "effect": {
+                            "type": "Buff",
+                            "buffId": 3001,
+                            "amount": 2,
+                            "target": "AllEnemies"
+                        }
                     }
                 }
             ],
@@ -186,34 +192,41 @@
             "name": "실험 재료 준비 +",
             "characterId": 101,
             "cost": 1,
-            "description": "손의 카드 1장을 선택해 보존을 1 부여합니다. 그 카드가 포션일 경우, 복제합니다.",
+            "description": "손의 카드 1장을 선택해 복제합니다. 그 카드가 포션일 경우, 1장 더 복제합니다.",
             "effects": [
                 {
                     "type": "ChoiceHand",
                     "amount": 1,
                     "effect": {
-                        "type": "Keyword",
-                        "keyword": "보존",
-                        "amount": 1
-                    }
-                },
-                {
-                    "type": "Conditional",
-                    "condition": "IsCardId",
-                    "cardId": [
-                        101050,
-                        101051,
-                        101052,
-                        101053,
-                        101054,
-                        101055,
-                        101056,
-                        101057
-                    ],
-                    "effect": {
                         "type": "Copy",
                         "amount": 1,
                         "target": "Hand"
+                    },
+                    "onAction": {
+                        "condition": {
+                            "checks": [
+                                {
+                                    "subject": "EventValue",
+                                    "property": "CardId",
+                                    "operator": "In",
+                                    "value": [
+                                        101050,
+                                        101051,
+                                        101052,
+                                        101053,
+                                        101054,
+                                        101055,
+                                        101056,
+                                        101057
+                                    ]
+                                }
+                            ]
+                        },
+                        "effect": {
+                            "type": "Copy",
+                            "amount": 1,
+                            "target": "Hand"
+                        }
                     }
                 }
             ],
@@ -679,16 +692,19 @@
             "description": "부식을 2 부여합니다. 대상이 이미 부식 상태라면, 무작위 포션 카드를 1장 제작합니다.",
             "effects": [
                 {
-                    "type": "Buff",
-                    "buffId": 3001,
-                    "amount": 2,
-                    "target": "Enemy"
-                },
-                {
                     "type": "Conditional",
-                    "condition": "hasBuff",
-                    "conditionValue": "부식",
-                    "effect": {
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "Target",
+                                "property": "HasBuff",
+                                "param": 3001,
+                                "operator": "Eq",
+                                "value": true
+                            }
+                        ]
+                    },
+                    "successEffect": {
                         "type": "CreateCard",
                         "cardId": [
                             101080,
@@ -697,6 +713,12 @@
                             101086
                         ]
                     }
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3001,
+                    "amount": 2,
+                    "target": "Enemy"
                 }
             ],
             "addressables": {
