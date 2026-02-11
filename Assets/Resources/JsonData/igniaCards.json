@@ -27,7 +27,7 @@
             "description": "방어도를 6 얻습니다.",
             "effects": [
                 {
-                    "type": "Defense",
+                    "type": "Barrier",
                     "amount": 6,
                     "target": "Self"
                 }
@@ -708,7 +708,7 @@
             "description": "방어도를 6 얻습니다. 공격받을 때마다 공격한 적에게 피해를 3 줍니다.",
             "effects": [
                 {
-                    "type": "Defense",
+                    "type": "Barrier",
                     "amount": 6,
                     "target": "Self"
                 },
@@ -757,7 +757,7 @@
             "description": "방어도를 16 얻습니다.",
             "effects": [
                 {
-                    "type": "Defense",
+                    "type": "Barrier",
                     "amount": 16,
                     "target": "Self"
                 }

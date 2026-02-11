@@ -27,7 +27,7 @@
             "description": "보호막을 6 얻습니다.",
             "effects": [
                 {
-                    "type": "Defense",
+                    "type": "Barrier",
                     "amount": 6,
                     "target": "Self"
                 }
@@ -185,7 +185,7 @@
             "description": "보호막을 10 얻습니다.",
             "effects": [
                 {
-                    "type": "Defense",
+                    "type": "Barrier",
                     "amount": 10,
                     "target": "Self"
                 }
@@ -211,7 +211,7 @@
             "description": "보호막을 16 얻습니다.",
             "effects": [
                 {
-                    "type": "Defense",
+                    "type": "Barrier",
                     "amount": 16,
                     "target": "Self"
                 }
@@ -230,12 +230,12 @@
             "description": "보호막을 5만큼 2번 얻습니다.",
             "effects": [
                 {
-                    "type": "Defense",
+                    "type": "Barrier",
                     "amount": 5,
                     "target": "Self"
                 },
                 {
-                    "type": "Defense",
+                    "type": "Barrier",
                     "amount": 5,
                     "target": "Self"
                 }
@@ -258,7 +258,7 @@
                     "amount": 12,
                     "target": "SingleEnemy",
                     "effect": {
-                        "type": "Defense",
+                        "type": "Barrier",
                         "amountFormula": "finalDamage",
                         "target": "Self"
                     }
@@ -302,7 +302,7 @@
                     "amount": 2
                 },
                 {
-                    "type": "Defense",
+                    "type": "Barrier",
                     "amount": 10,
                     "target": "Self"
                 }
@@ -382,7 +382,7 @@
                     "amount": 1
                 },
                 {
-                    "type": "Defense",
+                    "type": "Barrier",
                     "amount": 6,
                     "target": "Self"
                 }
@@ -473,7 +473,7 @@
             "description": "내 보호막을 모두 잃습니다. 잃은 보호막 10마다 빙하 조형 카드를 1장 생성합니다.",
             "effects": [
                 {
-                    "type": "ConsumeDefense",
+                    "type": "ConsumeBarrier",
                     "amountFormula": "all",
                     "effect": {
                         "type": "GenerateCard",
@@ -507,7 +507,7 @@
             "description": "내 보호막을 모두 잃습니다. 잃은 보호막만큼 체력을 회복합니다.",
             "effects": [
                 {
-                    "type": "ConsumeDefense",
+                    "type": "ConsumeBarrier",
                     "amountFormula": "all",
                     "effect": {
                         "type": "Heal",
@@ -533,7 +533,7 @@
             "description": "내 보호막을 모두 잃습니다. 모든 적에게 잃은 보호막만큼 피해를 입힙니다.",
             "effects": [
                 {
-                    "type": "ConsumeDefense",
+                    "type": "ConsumeBarrier",
                     "amountFormula": "all",
                     "effect": {
                         "type": "Damage",
@@ -626,7 +626,7 @@
                     "target": "Self"
                 },
                 {
-                    "type": "Defense",
+                    "type": "Barrier",
                     "amount": 5,
                     "target": "Self"
                 }
@@ -681,7 +681,7 @@
                     "target": "Self"
                 },
                 {
-                    "type": "Defense",
+                    "type": "Barrier",
                     "amount": 7,
                     "target": "Self"
                 }
@@ -704,7 +704,7 @@
             "description": "보호막을 20 얻습니다.",
             "effects": [
                 {
-                    "type": "Defense",
+                    "type": "Barrier",
                     "amount": 20,
                     "target": "Self"
                 }
@@ -749,7 +749,7 @@
             "description": "보호막을 2배로 만듭니다.",
             "effects": [
                 {
-                    "type": "MultiplyDefense",
+                    "type": "MultiplyBarrier",
                     "amount": 2,
                     "target": "Self"
                 }
