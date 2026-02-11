@@ -206,7 +206,7 @@
                 }
             ],
             "decrease": {
-                "timing": "OnTurnEnd",
+                "timing": "OffTrigger",
                 "amount": 1
             },
             "description": "턴 종료 시 {stack}만큼 회복합니다. 1씩 감소합니다."
@@ -260,7 +260,7 @@
                 }
             ],
             "remove": {
-                "timing": "OnTurnStart"
+                "timing": "OffTrigger"
             },
             "description": "다음 턴 시작 시 무작위 포션 카드 {stack}장을 제작합니다."
         },
@@ -453,7 +453,7 @@
                 }
             ],
             "decrease": {
-                "timing": "OnTrigger",
+                "timing": "OffTrigger",
                 "amount": 1
             },
             "description": "{stack} 턴 동안 턴 시작 시 보호막이 사라지지 않습니다."
@@ -538,7 +538,7 @@
                 }
             ],
             "decrease": {
-                "timing": "OnTrigger",
+                "timing": "OffTrigger",
                 "amount": 1
             },
             "description": "다음 공격을 회피합니다."
@@ -670,7 +670,7 @@
                 }
             ],
             "decrease": {
-                "timing": "OnTrigger",
+                "timing": "OffTrigger",
                 "amount": 1
             },
             "description": "다음에 사용하는 카드의 효과를 1번 더 발동시킵니다."
@@ -730,7 +730,7 @@
                 }
             ],
             "decrease": {
-                "timing": "OnTurnEnd",
+                "timing": "OffTrigger",
                 "amount": 1
             },
             "description": "받는 피해가 25% 증가합니다."
@@ -750,7 +750,7 @@
                 }
             ],
             "decrease": {
-                "timing": "OnTurnEnd",
+                "timing": "OffTrigger",
                 "amount": 1
             },
             "description": "받는 피해가 50% 증가합니다."
@@ -786,31 +786,38 @@
                         "property": "Stack",
                         "operator": "Gte",
                         "value": 7
-                    },
-                    {
-                        "subject": "Self",
-                        "property": "EnemyType",
-                        "operator": "Eq",
-                        "value": "Boss"
                     }
                 ],
                 "effects": [
                     {
-                        "type": "Damage",
-                        "amount": 20,
-                        "target": "Self"
+                        "condition": {
+                            "checks": [
+                                {
+                                    "subject": "Self",
+                                    "property": "EnemyType",
+                                    "operator": "Eq",
+                                    "value": "Boss"
+                                }
+                            ],
+                            "effects": [
+                                {
+                                    "type": "Damage",
+                                    "amount": 20,
+                                    "target": "Self"
+                                }
+                            ],
+                            "elseEffects": [
+                                {
+                                    "type": "Stun",
+                                    "target": "Self"
+                                }
+                            ]
+                        }
                     }
                 ],
-                "elseEffects": [
-                    {
-                        "type": "Stun",
-                        "target": "Self"
-                    }
-                ]
-            },
-            "decrease": {
-                "timing": "OnTrigger",
-                "amountFormula": "7"
+                "decrease": {
+                    "amount": 7
+                }
             },
             "description": "7중첩이 되면 중첩을 잃고 행동불가 상태가 됩니다. 보스는 대신 피해를 20 입습니다."
         },
@@ -830,7 +837,7 @@
                 }
             ],
             "remove": {
-                "timing": "OnTurnEnd"
+                "timing": "OffTrigger"
             },
             "description": "턴 종료 시 반격이 {stack}만큼 감소합니다."
         },
@@ -850,7 +857,7 @@
                 }
             ],
             "remove": {
-                "timing": "OnTrigger"
+                "timing": "OffTrigger"
             },
             "description": "턴 종료 시 피해 증폭 효과가 {stack}만큼 감소합니다."
         },
@@ -870,7 +877,7 @@
                 }
             ],
             "remove": {
-                "timing": "OnTrigger"
+                "timing": "OffTrigger"
             },
             "description": "턴 종료 시 과열 수치가 {stack}만큼 감소합니다."
         }
