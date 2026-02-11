@@ -27,7 +27,7 @@
             "description": "보호막을 6 얻습니다.",
             "effects": [
                 {
-                    "type": "Defense",
+                    "type": "Barrier",
                     "amount": 6,
                     "target": "Self"
                 }

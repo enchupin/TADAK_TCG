@@ -111,7 +111,7 @@
                 "cost": 5,
                 "effects": [
                     {
-                        "type": "Defense",
+                        "type": "Barrier",
                         "amount": 10,
                         "target": "Self"
                     },

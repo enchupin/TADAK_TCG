@@ -807,7 +807,7 @@
             "keywords": [
                 "파워"
             ],
-            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 2 줍니다.",
+            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 2 입힙니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -831,7 +831,7 @@
                 4,
                 5
             ],
-            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 2 줍니다.",
+            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 2 입힙니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -854,7 +854,7 @@
             "keywords": [
                 "파워"
             ],
-            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 2 줍니다.",
+            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 2 입힙니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -877,7 +877,7 @@
             "keywords": [
                 "파워"
             ],
-            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 4 줍니다.",
+            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 4 입힙니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -900,7 +900,7 @@
             "keywords": [
                 "파워"
             ],
-            "description": "적에게 부정적인 효과를 입힐 때마다 모든 적에게 피해를 2 줍니다.",
+            "description": "적에게 부정적인 효과를 입힐 때마다 모든 적에게 피해를 2 입힙니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -924,7 +924,7 @@
                 4,
                 6
             ],
-            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 1 줍니다.",
+            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 1 입힙니다.",
             "effects": [
                 {
                     "type": "Buff",
