@@ -167,16 +167,21 @@ public static class CharacterManager
     /// characterId를 Character enum으로 변환
     /// 새로운 캐릭터 추가 시 이 메서드를 업데이트하세요.
     /// </summary>
+    /// <summary>
+    /// characterId를 Character enum으로 변환
+    /// 새로운 캐릭터 추가 시 이 메서드를 업데이트하세요.
+    /// </summary>
     public static Character GetCharacterEnumById(int characterId)
     {
         switch (characterId)
         {
-            case 101: return Character.Chloe;
+            case 101: return Character.Isla;
             case 201: return Character.Ignia;
+            case 202: return Character.Vanessa;
             case 301: return Character.Polar;
             default:
-                Debug.LogWarning($"[CharacterManager] Unknown characterId: {characterId}, defaulting to Chloe");
-                return Character.Chloe;
+                Debug.LogWarning($"[CharacterManager] Unknown characterId: {characterId}, defaulting to Isla");
+                return Character.Isla;
         }
     }
 
@@ -186,11 +191,12 @@ public static class CharacterManager
     /// </summary>
     public static int GetIdByCharacterEnum(Character character) {
         switch (character) {
-            case Character.Chloe: return 101;
+            case Character.Isla: return 101;
             case Character.Ignia: return 201;
+            case Character.Vanessa: return 202;
             case Character.Polar: return 301;
             default:
-                Debug.LogWarning($"[CharacterManager] Unknown characterId: {character}, defaulting to Chloe");
+                Debug.LogWarning($"[CharacterManager] Unknown characterId: {character}, defaulting to Isla");
                 return 101;
         }
     }
@@ -200,13 +206,7 @@ public static class CharacterManager
     /// </summary>
     public static int GetCharacterIdFromEnum(Character character)
     {
-        switch (character)
-        {
-            case Character.Chloe: return 101;
-            case Character.Ignia: return 201;
-            case Character.Polar: return 301;
-            default: return 101;
-        }
+        return GetIdByCharacterEnum(character);
     }
 
     /// <summary>

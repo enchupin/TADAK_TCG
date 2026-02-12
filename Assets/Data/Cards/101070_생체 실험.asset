@@ -17,21 +17,46 @@ MonoBehaviour:
   character: 0
   cost: 2
   description: "\uC801\uC5D0\uAC8C \uBD80\uC815\uC801\uC778 \uD6A8\uACFC\uB97C \uC785\uD790
-    \uB54C\uB9C8\uB2E4 \uD53C\uD574\uB97C 2 \uC90D\uB2C8\uB2E4."
+    \uB54C\uB9C8\uB2E4 \uD53C\uD574\uB97C 2 \uC785\uD799\uB2C8\uB2E4."
   enforceCardIds: 
   artworkAddress: 
   effectAddress: 
   soundAddress: 
   effects:
   - type: 3
-    amount: 2
+    amount: 0
     amountFormula: 
     target: 2
     stat: 
+    buffId: 2005
     duration: 0
     baseDamage: 0
     bonusPerCard: 0
     hpThreshold: 0
     multiplier: 0
+    nestedEffect:
+      rid: -2
+    subEffects: []
+    failEffect:
+      rid: -2
+    conditionData:
+      mode: And
+      checks: []
+      successEffect:
+        rid: -2
+      failEffect:
+        rid: -2
+    condition: 
+    conditionValue: 
+    onAction:
+      rid: -2
+    cardIdList: 
+    count: 0
     keyword: 
+    keywordId: 0
     RandomCard: []
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }

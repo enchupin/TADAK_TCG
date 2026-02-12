@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardId: 301072
   cardName: "\uBCF4\uD638 \uB3D9\uACB0 +"
-  character: 2
+  character: 3
   cost: 1
   description: "\uB2E4\uC74C 2\uD134 \uC2DC\uC791 \uC2DC \uBCF4\uD638\uB9C9\uC774
     \uC0AC\uB77C\uC9C0\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4. \uBCF4\uD638\uB9C9\uC744 7
@@ -25,26 +25,71 @@ MonoBehaviour:
   soundAddress: 
   effects:
   - type: 3
-    amount: 2
+    amount: 0
     amountFormula: 
     target: 2
     stat: 
+    buffId: 2011
     duration: 0
     baseDamage: 0
     bonusPerCard: 0
     hpThreshold: 0
     multiplier: 0
+    nestedEffect:
+      rid: -2
+    subEffects: []
+    failEffect:
+      rid: -2
+    conditionData:
+      mode: And
+      checks: []
+      successEffect:
+        rid: -2
+      failEffect:
+        rid: -2
+    condition: 
+    conditionValue: 
+    onAction:
+      rid: -2
+    cardIdList: 
+    count: 0
     keyword: 
+    keywordId: 0
     RandomCard: []
-  - type: 1
-    amount: 7
+  - type: 13
+    amount: 0
     amountFormula: 
     target: 2
     stat: 
+    buffId: 0
     duration: 0
     baseDamage: 0
     bonusPerCard: 0
     hpThreshold: 0
     multiplier: 0
+    nestedEffect:
+      rid: -2
+    subEffects: []
+    failEffect:
+      rid: -2
+    conditionData:
+      mode: And
+      checks: []
+      successEffect:
+        rid: -2
+      failEffect:
+        rid: -2
+    condition: 
+    conditionValue: 
+    onAction:
+      rid: -2
+    cardIdList: 
+    count: 0
     keyword: 
+    keywordId: 0
     RandomCard: []
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }

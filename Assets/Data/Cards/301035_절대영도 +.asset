@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardId: 301035
   cardName: "\uC808\uB300\uC601\uB3C4 +"
-  character: 2
+  character: 3
   cost: 1
   description: "\uACF5\uACA9\uBC1B\uC744 \uB54C\uB9C8\uB2E4 \uC190\uC5D0 \uBE59\uD558
     \uC870\uD615 \uCE74\uB4DC\uB97C 1\uC7A5 \uC0DD\uC131\uD569\uB2C8\uB2E4."
@@ -24,14 +24,39 @@ MonoBehaviour:
   soundAddress: 
   effects:
   - type: 3
-    amount: 1
+    amount: 0
     amountFormula: 
     target: 2
     stat: 
+    buffId: 2014
     duration: 0
     baseDamage: 0
     bonusPerCard: 0
     hpThreshold: 0
     multiplier: 0
+    nestedEffect:
+      rid: -2
+    subEffects: []
+    failEffect:
+      rid: -2
+    conditionData:
+      mode: And
+      checks: []
+      successEffect:
+        rid: -2
+      failEffect:
+        rid: -2
+    condition: 
+    conditionValue: 
+    onAction:
+      rid: -2
+    cardIdList: 
+    count: 0
     keyword: 
+    keywordId: 0
     RandomCard: []
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }

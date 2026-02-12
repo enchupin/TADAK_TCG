@@ -999,7 +999,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 949242994117032938, guid: e3ef6995bf6c9c54392bfb9a720c2552, type: 3}
       propertyPath: characterType
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3347725797921719501, guid: e3ef6995bf6c9c54392bfb9a720c2552, type: 3}
       propertyPath: m_text
@@ -1616,10 +1616,6 @@ PrefabInstance:
     - target: {fileID: 190741038153893105, guid: e3ef6995bf6c9c54392bfb9a720c2552, type: 3}
       propertyPath: m_Name
       value: Button
-      objectReference: {fileID: 0}
-    - target: {fileID: 3347725797921719501, guid: e3ef6995bf6c9c54392bfb9a720c2552, type: 3}
-      propertyPath: m_text
-      value: Chloe
       objectReference: {fileID: 0}
     - target: {fileID: 7126515853444721151, guid: e3ef6995bf6c9c54392bfb9a720c2552, type: 3}
       propertyPath: m_Pivot.x

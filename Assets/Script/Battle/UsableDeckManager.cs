@@ -26,8 +26,24 @@ public class UsableDeckManager : MonoBehaviour
         discardPile.AddRange(cards);
     }
 
+    /// <summary>
+    /// 버린 카드 더미 리스트 반환 (복사본)
+    /// </summary>
+    public List<Card> GetDiscardPile()
+    {
+        return new List<Card>(discardPile);
+    }
 
-
+    /// <summary>
+    /// 버린 카드 더미에서 특정 카드 제거
+    /// </summary>
+    public void RemoveFromDiscard(Card card)
+    {
+        if (discardPile.Contains(card))
+        {
+            discardPile.Remove(card);
+        }
+    }
 
 
 
@@ -132,4 +148,11 @@ public class UsableDeckManager : MonoBehaviour
         Debug.Log($"[UsableDeckManager] 덱 설정 완료: 총 {usableDeck.Count}장");
     }
 
+    /// <summary>
+    /// 현재 덱(드로우 파일)의 카드 리스트 반환 (복사본)
+    /// </summary>
+    public List<Card> GetDrawPile()
+    {
+        return new List<Card>(usableDeck);
+    }
 }

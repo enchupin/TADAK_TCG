@@ -27,7 +27,7 @@ MonoBehaviour:
       target: 0
       buffType: 
       cardId: 0
-  artworkAddress: 
-  effectAddress: 
-  soundAddress: 
+  artworkAddress: Characters/Ignia/Artwork
+  effectAddress: Effects/Ignia
+  soundAddress: Sounds/Ignia
   startDeckCardIds: 321103003c11030046110300501103005a110300641103006e110300

@@ -21,6 +21,8 @@ public class Monster
 
 
 
+    public System.Collections.Generic.List<Buff> currentBuffs = new System.Collections.Generic.List<Buff>();
+
     /// <summary>
     /// 플레이어를 공격합니다.
     /// </summary>
@@ -57,6 +59,28 @@ public class Monster
     {
         defense += amount;
         Debug.Log($"{name}의 방어력 +{amount} (현재: {defense})");
+    }
+    
+    /// <summary>
+    /// 버프를 추가합니다.
+    /// </summary>
+    public void AddBuff(int buffId, int amount)
+    {
+        BuffData data = BuffManager.Instance.GetBuffData(buffId);
+        if (data == null) return;
+
+        Buff existingBuff = currentBuffs.Find(b => b.data.buffId == buffId);
+        if (existingBuff != null)
+        {
+            existingBuff.stack += amount;
+            Debug.Log($"[적] 버프 중첩: {data.name} (+{amount}) -> {existingBuff.stack}");
+        }
+        else
+        {
+            Buff newBuff = new Buff(data, amount, 0); 
+            currentBuffs.Add(newBuff);
+            Debug.Log($"[적] 버프 획득: {data.name} ({amount})");
+        }
     }
 
     /// <summary>
