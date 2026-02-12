@@ -321,7 +321,7 @@
                 "effects": [
                     {
                         "type": "Damage",
-                        "target": "SingleEnemy"
+                        "target": "Enemy"
                     }
                 ]
             },
@@ -880,6 +880,222 @@
                 "timing": "OffTrigger"
             },
             "description": "턴 종료 시 과열 수치가 {stack}만큼 감소합니다."
+        },
+        {
+            "buffId": 2025,
+            "name": "아슬아슬",
+            "buffType": 2,
+            "trigger": {
+                "event": "OnDamaged"
+            },
+            "effects": [
+                {
+                    "type": "ModifyDamage",
+                    "operation": "Set",
+                    "amount": 1
+                }
+            ],
+            "decrease": {
+                "timing": "OnTurnEnd",
+                "amount": 1
+            },
+            "description": "이번 턴에 받는 피해가 1로 고정됩니다."
+        },
+        {
+            "buffId": 2026,
+            "name": "블랙잭",
+            "buffType": 2,
+            "trigger": {
+                "event": "OnCardUse",
+                "count": 2
+            },
+            "effects": [
+                {
+                    "type": "Heal",
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ],
+            "description": "카드를 2장 낼 때마다 체력을 1 회복합니다."
+        },
+        {
+            "buffId": 2028,
+            "name": "복제 생성",
+            "buffType": 2,
+            "trigger": {
+                "event": "OnCardGenerate",
+                "source": "Self"
+            },
+            "effects": [
+                {
+                    "type": "GenerateCard",
+                    "cardId": "EventValue",
+                    "amount": 1,
+                    "target": "Hand"
+                }
+            ],
+            "description": "카드를 생성할 때마다 그 카드를 복제합니다."
+        },
+        {
+            "buffId": 2029,
+            "name": "예고",
+            "buffType": 2,
+            "trigger": {
+                "event": "OnCardUse",
+                "source": "Self"
+            },
+            "effects": [
+                {
+                    "type": "ModifyCard",
+                    "param": "Cost",
+                    "amount": 0,
+                    "operation": "Set",
+                    "source": "Hand"
+                }
+            ],
+            "decrease": {
+                "timing": "OffTrigger",
+                "amount": 1
+            },
+            "description": "이 다음 카드의 비용이 0이 됩니다."
+        },
+        {
+            "buffId": 2030,
+            "name": "버리기 방지",
+            "buffType": 2,
+            "trigger": {
+                "event": "OnTurnEnd",
+                "source": "Self"
+            },
+            "effects": [
+                {
+                    "type": "ChoiceHand",
+                    "effects": [
+                        {
+                            "type": "Move",
+                            "subject": "Selected",
+                            "from": "Hand",
+                            "to": "Hand"
+                        }
+                    ]
+                }
+            ],
+            "description": "매 턴 종료 시 손에서 카드를 {stack}장 선택하여 버리지 않습니다."
+        },
+        {
+            "buffId": 2031,
+            "name": "광대",
+            "buffType": 2,
+            "trigger": {
+                "event": "OnTurnStart",
+                "source": "Self"
+            },
+            "effects": [
+                {
+                    "type": "RandGenerate",
+                    "RandomCard": [
+                        {
+                            "cardId": 102041,
+                            "weight": 1
+                        },
+                        {
+                            "cardId": 102042,
+                            "weight": 1
+                        },
+                        {
+                            "cardId": 102043,
+                            "weight": 1
+                        },
+                        {
+                            "cardId": 102044,
+                            "weight": 1
+                        },
+                        {
+                            "cardId": 102045,
+                            "weight": 1
+                        }
+                    ],
+                    "target": "Hand"
+                }
+            ],
+            "description": "매 턴 시작 시 무작위 고유 카드 강화본을 1장 획듍합니다."
+        },
+        {
+            "buffId": 2032,
+            "name": "생명 연결",
+            "buffType": 2,
+            "trigger": {
+                "event": "OnDamaged",
+                "source": "Target"
+            },
+            "effects": [
+                {
+                    "type": "Heal",
+                    "amountFormula": "EventValue",
+                    "target": "Owner"
+                }
+            ],
+            "decrease": {
+                "timing": "OnTurnEnd",
+                "amount": 1
+            },
+            "description": "이번 턴 동안 적이 체력을 잃는 만큼 내 체력이 회복됩니다."
+        },
+        {
+            "buffId": 2034,
+            "name": "에너지 증폭",
+            "buffType": 2,
+            "trigger": {
+                "event": "OnCardUse",
+                "source": "Self"
+            },
+            "condition": {
+                "checks": [
+                    {
+                        "subject": "EventValue",
+                        "property": "Cost",
+                        "operator": "Gte",
+                        "value": 2
+                    }
+                ],
+                "effects": [
+                    {
+                        "type": "UseCard",
+                        "cardId": "EventValue",
+                        "amount": 1
+                    }
+                ]
+            },
+            "description": "매 턴 처음으로 쓰는 비용이 2 이상인 카드를 1번 더 발동합니다.",
+            "decrease": {
+                "timing": "OnTurnEnd",
+                "amount": 1
+            }
+        },
+        {
+            "buffId": 2035,
+            "name": "추가 드로우",
+            "buffType": 2,
+            "trigger": {
+                "event": "OnTurnStart",
+                "source": "Self"
+            },
+            "effects": [
+                {
+                    "type": "Draw",
+                    "amount": 2
+                },
+                {
+                    "type": "SelectCard",
+                    "source": "Hand",
+                    "amount": 1,
+                    "onAction": {
+                        "type": "Discard",
+                        "target": "Selected"
+                    }
+                }
+            ],
+            "description": "매 턴 시작 시 카드를 2장 더 뽑고 1장 버립니다."
         }
     ]
 }

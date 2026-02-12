@@ -9,6 +9,10 @@
                 "cost": 8,
                 "effects": [
                     {
+                        "type": "Draw",
+                        "amount": 2
+                    },
+                    {
                         "type": "Buff",
                         "buffId": 3001,
                         "amount": 3,
@@ -32,6 +36,60 @@
                 101050,
                 101060,
                 101070
+            ]
+        },
+        {
+            "characterId": 102,
+            "name": "잭",
+            "maxHp": 30,
+            "cost": 0,
+            "identity": {
+                "cost": 8,
+                "effects": [
+                    {
+                        "type": "RandGenerate",
+                        "RandomCard": [
+                            {
+                                "cardId": 102041,
+                                "weight": 1
+                            },
+                            {
+                                "cardId": 102042,
+                                "weight": 1
+                            },
+                            {
+                                "cardId": 102043,
+                                "weight": 1
+                            },
+                            {
+                                "cardId": 102044,
+                                "weight": 1
+                            },
+                            {
+                                "cardId": 102045,
+                                "weight": 1
+                            }
+                        ],
+                        "target": "Self"
+                    }
+                ],
+                "description": "무작위 강화된 조커 카드를 1장 생성합니다."
+            },
+            "addressables": {
+                "artwork": "Characters/Jack/Artwork",
+                "standing": "Characters/Jack/Standing",
+                "effect": "Effects/Jack",
+                "sound": "Sounds/Jack"
+            },
+            "characterColor": "trump",
+            "startDeck": [
+                102010,
+                102020,
+                102030,
+                102040,
+                102050,
+                102060,
+                102070
             ]
         },
         {
