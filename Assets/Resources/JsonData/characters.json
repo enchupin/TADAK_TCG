@@ -46,7 +46,32 @@
             "identity": {
                 "cost": 8,
                 "effects": [
-                    {}
+                    {
+                        "type": "RandGenerate",
+                        "RandomCard": [
+                            {
+                                "cardId": 102041,
+                                "weight": 1
+                            },
+                            {
+                                "cardId": 102042,
+                                "weight": 1
+                            },
+                            {
+                                "cardId": 102043,
+                                "weight": 1
+                            },
+                            {
+                                "cardId": 102044,
+                                "weight": 1
+                            },
+                            {
+                                "cardId": 102045,
+                                "weight": 1
+                            }
+                        ],
+                        "target": "Self"
+                    }
                 ],
                 "description": "무작위 강화된 조커 카드를 1장 생성합니다."
             },

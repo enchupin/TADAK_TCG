@@ -351,7 +351,6 @@
             "effects": [
                 {
                     "type": "RandGenerate",
-                    "amount": 1,
                     "RandomCard": [
                         {
                             "cardId": 101051,

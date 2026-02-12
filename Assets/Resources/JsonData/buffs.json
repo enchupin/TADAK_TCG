@@ -964,25 +964,23 @@
             "name": "버리기 방지",
             "buffType": 2,
             "trigger": {
-                "event": "OnDiscard",
+                "event": "OnTurnEnd",
                 "source": "Self"
             },
             "effects": [
                 {
-                    "type": "Cancel"
-                },
-                {
-                    "type": "Move",
-                    "subject": "EventContext",
-                    "from": "DiscardPile",
-                    "to": "Hand"
+                    "type": "ChoiceHand",
+                    "effects": [
+                        {
+                            "type": "Move",
+                            "subject": "Selected",
+                            "from": "Hand",
+                            "to": "Hand"
+                        }
+                    ]
                 }
             ],
-            "limit": {
-                "timing": "OnTurnEnd",
-                "count": 1
-            },
-            "description": "매 턴 종료 시 손에서 카드를 1장 선택하여 버리지 않습니다."
+            "description": "매 턴 종료 시 손에서 카드를 {stack}장 선택하여 버리지 않습니다."
         },
         {
             "buffId": 2031,
