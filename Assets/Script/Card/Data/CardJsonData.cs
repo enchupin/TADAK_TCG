@@ -40,7 +40,7 @@ public class EffectJsonData
     public string type;
     
     // Common
-    public int amount;
+    public int amount; // or string based formula, handled by custom parser
     public string target; // "SingleEnemy", "AllEnemies", "Self", etc.
     
     // DamagePerCardPlayedEffect
@@ -53,7 +53,8 @@ public class EffectJsonData
     
     // BuffEffect
     public string stat; // Legacy?
-    public string buffType; // New field in choleCards
+    public int buffId;  // New
+    public string buffType; 
     public int duration;
     
     // KeywordEffect
@@ -61,7 +62,41 @@ public class EffectJsonData
     
     // Generator Effects
     public List<RandomCardData> RandomCard;
-    public List<int> cardId; // For ChoiceGenerate
+    public List<int> cardId; // For ChoiceGenerate or specific card lists
+    
+    // New Fields for Complex Effects
+    public int count; // For Repeat, DiscardHand, ExhaustHand
+    
+    // Nested Effects (Recursive)
+    public EffectJsonData effect; // Single nested effect (e.g. for ConsumeDefense?)
+    public List<EffectJsonData> effects; // List of nested effects (e.g. for Repeat)
+    
+    // Conditional & Reactive
+    public ConditionJsonData condition;
+    public EffectJsonData onAction; // 반응형 효과
+    
+    // Legacy support fields (if needed)
+    public EffectJsonData successEffect;
+    public EffectJsonData failEffect;
+}
+
+[Serializable]
+public class ConditionJsonData
+{
+    public string mode; // "And", "Or"
+    public List<CheckJsonData> checks;
+    public EffectJsonData successEffect;
+    public EffectJsonData failEffect;
+}
+
+[Serializable]
+public class CheckJsonData
+{
+    public string subject;   // "Source", "Target", "EventValue"
+    public string property;  // "Hp", "Cost", "BuffId"...
+    public string param;     // Optional param (BuffId etc)
+    public string @operator; // "Eq", "Gt", "In"...
+    public string value;     // Value to compare
 }
 
 [Serializable]

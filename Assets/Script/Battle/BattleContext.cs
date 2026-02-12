@@ -24,6 +24,23 @@ public class BattleContext {
     public int cardsExhaustedThisTurn = 0;
     public int cardsDrawnThisTurn = 0;
     
+    // 선택된 카드 (Choice -> Effect 연계용)
+    private List<Card> selectedCards = new List<Card>();
+    
+    public void SetSelectedCards(List<Card> cards)
+    {
+        selectedCards = new List<Card>(cards);
+    }
+    
+    public List<Card> GetSelectedCards()
+    {
+        return new List<Card>(selectedCards);
+    }
+    
+    public void ClearSelectedCards()
+    {
+        selectedCards.Clear();
+    }
     /// <summary>
     /// 턴 시작 시 호출
     /// </summary>
@@ -35,6 +52,7 @@ public class BattleContext {
         cardsExhaustedThisTurn = 0;
         cardsDrawnThisTurn = 0;
         defenseConsumed = 0;
+        ClearSelectedCards();
     }
     
     /// <summary>

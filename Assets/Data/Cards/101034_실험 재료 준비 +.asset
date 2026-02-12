@@ -17,35 +17,47 @@ MonoBehaviour:
   character: 0
   cost: 1
   description: "\uC190\uC5D0 \uB4E0 \uCE74\uB4DC 1\uC7A5\uC744 \uC120\uD0DD\uD574
-    \uBCF4\uC874\uC744 1 \uBD80\uC5EC\uD569\uB2C8\uB2E4. \uADF8 \uCE74\uB4DC\uAC00
-    \uD3EC\uC158\uC77C \uACBD\uC6B0, \uBAA8\uB4E0 \uC801\uC5D0\uAC8C \uBD80\uC2DD\uC744
-    2 \uBD80\uC5EC\uD569\uB2C8\uB2E4."
+    \uBCF5\uC81C\uD569\uB2C8\uB2E4. \uADF8 \uCE74\uB4DC\uAC00 \uD3EC\uC158\uC77C
+    \uACBD\uC6B0, \uBAA8\uB4E0 \uC801\uC5D0\uAC8C \uBD80\uC2DD\uC744 2 \uBD80\uC5EC\uD569\uB2C8\uB2E4."
   enforceCardIds: 
   artworkAddress: 
   effectAddress: 
   soundAddress: 
   effects:
-  - type: 12
-    amount: 1
+  - type: 0
+    amount: 0
     amountFormula: 
     target: 0
     stat: 
+    buffId: 0
     duration: 0
     baseDamage: 0
     bonusPerCard: 0
     hpThreshold: 0
     multiplier: 0
+    nestedEffect:
+      rid: -2
+    subEffects: []
+    failEffect:
+      rid: -2
+    conditionData:
+      mode: And
+      checks: []
+      successEffect:
+        rid: -2
+      failEffect:
+        rid: -2
+    condition: 
+    conditionValue: 
+    onAction:
+      rid: -2
+    cardIdList: 
+    count: 0
     keyword: 
+    keywordId: 0
     RandomCard: []
-  - type: 14
-    amount: 1
-    amountFormula: 
-    target: 0
-    stat: 
-    duration: 0
-    baseDamage: 0
-    bonusPerCard: 0
-    hpThreshold: 0
-    multiplier: 0
-    keyword: 
-    RandomCard: []
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }

@@ -79,8 +79,8 @@ public class TrainingBattleManager : MonoBehaviour {
             
             SelectedButtonControl.selectedCharacterList.Clear();
             
-            // 테스트용: Chloe, Ignia, Declan 사용
-            SelectedButtonControl.selectedCharacterList.Add(Character.Chloe);
+            // 테스트용: Isla, Ignia, Declan 사용
+            SelectedButtonControl.selectedCharacterList.Add(Character.Isla);
             SelectedButtonControl.selectedCharacterList.Add(Character.Ignia);
             SelectedButtonControl.selectedCharacterList.Add(Character.Polar);
             
@@ -101,6 +101,14 @@ public class TrainingBattleManager : MonoBehaviour {
         {
             Debug.LogError("[BattleManager] CardManager가 초기화되지 않았습니다!");
             return;
+        }
+
+        // BuffManager 초기화 확인
+        if (BuffManager.Instance == null)
+        {
+            Debug.Log("[BattleManager] BuffManager가 없어 새로 생성합니다.");
+            GameObject go = new GameObject("BuffManager");
+            go.AddComponent<BuffManager>();
         }
 
         // 1. BuildingDeck 초기화 (게임 최초 실행 시 한 번만)

@@ -7,28 +7,59 @@ using UnityEngine;
 [System.Serializable]
 public class BuffEffect : ICardEffect
 {
-    public string stat;
+    public string stat; // Deprecated but kept for legacy
+    public int buffId;
     public int amount;
     public string amountFormula;
     public int duration;
+    public TargetType target;
     
     public void Execute(TrainingBattleManager battleManager)
     {
         int finalAmount = GetAmount(battleManager.battleContext, battleManager.playerData);
         
-        // stat에 따라 버프 적용
+        if (buffId > 0)
+        {
+            // Apply by BuffID using BuffManager
+            ApplyBuff(battleManager, finalAmount);
+        }
+        else
+        {
+            // Fallback to legacy string-based stat
+            ApplyLegacyBuff(battleManager, finalAmount);
+        }
+        
+        battleManager.UpdateAllUI();
+    }
+    
+    private void ApplyBuff(TrainingBattleManager manager, int finalAmount)
+    {
+        if (target == TargetType.Self)
+        {
+            manager.playerData.AddBuff(buffId, finalAmount);
+        }
+        else if (target == TargetType.SingleEnemy || target == TargetType.AllEnemies)
+        {
+            // Currently only 1 monster support
+            if (manager.monster != null)
+            {
+                manager.monster.AddBuff(buffId, finalAmount);
+            }
+        }
+    }
+    
+    private void ApplyLegacyBuff(TrainingBattleManager manager, int finalAmount)
+    {
         switch (stat?.ToLower())
         {
             case "strength":
             case "힘":
-                battleManager.playerData.AddStrength(finalAmount);
+                manager.playerData.AddStrength(finalAmount);
                 break;
             default:
                 Debug.LogWarning($"[BuffEffect] Unknown stat: {stat}");
                 break;
         }
-        
-        battleManager.UpdateAllUI();
     }
     
     public int GetAmount(BattleContext context, PlayerData player = null)

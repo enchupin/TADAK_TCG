@@ -35,9 +35,21 @@ public class SelectedButtonControl : MonoBehaviour
 
 
 
+    private void Start()
+    {
+        // 초기 선택 상태 동기화
+        if (selectedCharacterList.Contains(characterType))
+        {
+            isSelected = true;
+            if (characterImage != null)
+            {
+                characterImage.color = selectedColor;
+            }
+        }
+    }
+
     private void Awake()
     {
-
         // 임시코드
         characterImage = GetComponent<Image>();
         if (characterImage == null)
@@ -45,8 +57,10 @@ public class SelectedButtonControl : MonoBehaviour
             Debug.LogError("Button에 Image 컴포넌트가 없습니다!");
         }
 
-
-        ClearSelection();
+        // 주의: Awake에서 Clear하면 다른 버튼들도 초기화될 수 있음.
+        // 정적 리스트이므로 한 번만 초기화하거나, 매니저에서 관리하는 게 안전함.
+        // 여기서는 제거 (Manager가 관리하거나, 최초 진입 시 초기화 필요)
+        // ClearSelection(); 
     }
 
 

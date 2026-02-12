@@ -16,7 +16,7 @@ MonoBehaviour:
   characterName: "\uD3F4\uB77C"
   maxHp: 80
   cost: 0
-  characterColor: yellow
+  characterColor: white
   identity:
     cost: 5
     description: "\uBC29\uC5B4\uB3C4\uB97C 10 \uC5BB\uC2B5\uB2C8\uB2E4. \uBAA8\uB4E0
@@ -32,7 +32,7 @@ MonoBehaviour:
       target: 1
       buffType: 
       cardId: 0
-  artworkAddress: 
-  effectAddress: 
-  soundAddress: 
+  artworkAddress: Characters/Pola/Artwork
+  effectAddress: Effects/Pola
+  soundAddress: Sounds/Pola
   startDeckCardIds: d2970400dc970400e6970400f0970400fa970400049804000e980400

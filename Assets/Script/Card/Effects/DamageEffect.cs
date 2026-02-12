@@ -55,5 +55,9 @@ public enum TargetType
     SingleEnemy,
     AllEnemies,
     Self,
-    AllAllies
+    AllAllies,
+    Hand,
+    Discard,
+    Deck,
+    None
 }

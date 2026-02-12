@@ -17,8 +17,8 @@ public class PlayerData
     public int maxEnergy;
 
     // 버프/디버프
-    public int strength; // 힘 버프
-
+    public int strength; // 힘 버프 (Legacy support for now)
+    public System.Collections.Generic.List<Buff> currentBuffs = new System.Collections.Generic.List<Buff>();
 
     /// <summary>
     /// 방어력을 추가합니다.
@@ -36,6 +36,28 @@ public class PlayerData
     {
         strength += amount;
         Debug.Log($"힘 +{amount} (현재: {strength})");
+    }
+
+    /// <summary>
+    /// 버프를 추가합니다.
+    /// </summary>
+    public void AddBuff(int buffId, int amount)
+    {
+        BuffData data = BuffManager.Instance.GetBuffData(buffId);
+        if (data == null) return;
+
+        Buff existingBuff = currentBuffs.Find(b => b.data.buffId == buffId);
+        if (existingBuff != null)
+        {
+            existingBuff.stack += amount;
+            Debug.Log($"버프 중첩: {data.name} (+{amount}) -> {existingBuff.stack}");
+        }
+        else
+        {
+            Buff newBuff = new Buff(data, amount, 0); // Duration logic TBD
+            currentBuffs.Add(newBuff);
+            Debug.Log($"버프 획득: {data.name} ({amount})");
+        }
     }
 
     /// <summary>
@@ -91,6 +113,8 @@ public class PlayerData
         defense = 0; // 방어력 리셋
         energy = maxEnergy; // 에너지 회복
         Debug.Log("턴 시작: 방어력 리셋, 에너지 회복");
+        
+        // Buff trigger processing would go here
     }
 
     /// <summary>

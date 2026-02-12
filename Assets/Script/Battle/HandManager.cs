@@ -16,9 +16,6 @@ public class HandManager : MonoBehaviour
     [Header("손패")]
     private List<Card> handCardList = new List<Card>(); // 손패를 Card 객체로 관리
 
-    // never using
-    // [SerializeField] private float cardSpacing = 150f;
-
 
     /// <summary>
     /// 손패에 카드 한 장 추가
@@ -176,4 +173,27 @@ public class HandManager : MonoBehaviour
 
 
 
+    /// <summary>
+    /// 손패 카드 수 반환 (GetCardCount 별칭)
+    /// </summary>
+    public int GetHandCount()
+    {
+        return GetCardCount();
+    }
+
+    /// <summary>
+    /// 특정 카드의 UI 컨트롤러 반환
+    /// </summary>
+    public CardUI GetCardUI(Card card)
+    {
+        foreach (Transform child in handContainer)
+        {
+            CardController controller = child.GetComponent<CardController>();
+            if (controller != null && controller.Card == card)
+            {
+                return controller.cardUI;
+            }
+        }
+        return null; // 찾지 못함
+    }
 }

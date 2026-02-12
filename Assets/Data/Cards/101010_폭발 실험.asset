@@ -16,21 +16,46 @@ MonoBehaviour:
   cardName: "\uD3ED\uBC1C \uC2E4\uD5D8"
   character: 0
   cost: 1
-  description: "\uD53C\uD574\uB97C 6 \uC785\uD799\uB2C8\uB2E4."
+  description: "\uD53C\uD574\uB97C {amount} \uC785\uD799\uB2C8\uB2E4."
   enforceCardIds: 
   artworkAddress: 
   effectAddress: 
   soundAddress: 
   effects:
-  - type: 0
-    amount: 6
+  - type: 12
+    amount: 0
     amountFormula: 
     target: 0
     stat: 
+    buffId: 0
     duration: 0
     baseDamage: 0
     bonusPerCard: 0
     hpThreshold: 0
     multiplier: 0
+    nestedEffect:
+      rid: -2
+    subEffects: []
+    failEffect:
+      rid: -2
+    conditionData:
+      mode: And
+      checks: []
+      successEffect:
+        rid: -2
+      failEffect:
+        rid: -2
+    condition: 
+    conditionValue: 
+    onAction:
+      rid: -2
+    cardIdList: 
+    count: 0
     keyword: 
+    keywordId: 0
     RandomCard: []
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
