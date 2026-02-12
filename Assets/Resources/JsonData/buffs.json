@@ -321,7 +321,7 @@
                 "effects": [
                     {
                         "type": "Damage",
-                        "target": "SingleEnemy"
+                        "target": "Enemy"
                     }
                 ]
             },
@@ -1066,11 +1066,11 @@
                     }
                 ]
             },
-            "limit": {
+            "description": "매 턴 처음으로 쓰는 비용이 2 이상인 카드를 1번 더 발동합니다.",
+            "decrease": {
                 "timing": "OnTurnEnd",
-                "count": 1
-            },
-            "description": "매 턴 처음으로 쓰는 비용이 2 이상인 카드를 1번 더 발동합니다."
+                "amount": 1
+            }
         },
         {
             "buffId": 2035,
@@ -1089,7 +1089,7 @@
                     "type": "SelectCard",
                     "source": "Hand",
                     "amount": 1,
-                    "effect": {
+                    "onAction": {
                         "type": "Discard",
                         "target": "Selected"
                     }

@@ -10,7 +10,7 @@
                 {
                     "type": "Attack",
                     "amount": 6,
-                    "target": "SingleEnemy"
+                    "target": "Enemy"
                 }
             ],
             "addressables": {
@@ -217,7 +217,7 @@
                 {
                     "type": "Attack",
                     "amount": 24,
-                    "target": "SingleEnemy"
+                    "target": "Enemy"
                 }
             ],
             "enforce": [
@@ -246,7 +246,7 @@
                 {
                     "type": "Attack",
                     "amount": 32,
-                    "target": "SingleEnemy"
+                    "target": "Enemy"
                 }
             ],
             "addressables": {
@@ -268,7 +268,7 @@
                     "effect": {
                         "type": "Damage",
                         "amountFormula": "discarded * 8",
-                        "target": "SingleEnemy"
+                        "target": "Enemy"
                     }
                 }
             ],
@@ -291,7 +291,7 @@
                     "effect": {
                         "type": "Damage",
                         "amountFormula": "exhausted * 12",
-                        "target": "SingleEnemy"
+                        "target": "Enemy"
                     }
                 }
             ],
@@ -336,12 +336,20 @@
             "effects": [
                 {
                     "type": "Conditional",
-                    "condition": "CostLessEqual",
-                    "conditionValue": 2,
-                    "effect": {
-                        "type": "Damage",
-                        "amount": 40,
-                        "target": "SingleEnemy"
+                    "condition": {
+                        "checks": [
+                            {
+                                "type": "CostLessEqual",
+                                "value": 2
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "Damage",
+                                "amount": 40,
+                                "target": "Enemy"
+                            }
+                        ]
                     }
                 }
             ],
@@ -421,7 +429,7 @@
                     "cardId": 201010,
                     "amount": 1,
                     "target": "Hand",
-                    "effect": {
+                    "onAction": {
                         "type": "ReduceCost",
                         "amount": 1,
                         "duration": "Turn"
@@ -533,7 +541,7 @@
                     "target": "AllEnemies",
                     "condition": "EnemyCount",
                     "conditionValue": 1,
-                    "effect": {
+                    "onAction": {
                         "type": "MultiplyDamage",
                         "amount": 3
                     }
@@ -565,7 +573,7 @@
                     "target": "AllEnemies",
                     "condition": "EnemyCount",
                     "conditionValue": 1,
-                    "effect": {
+                    "onAction": {
                         "type": "MultiplyDamage",
                         "amount": 5
                     }

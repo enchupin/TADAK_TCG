@@ -10,7 +10,7 @@
                 {
                     "type": "Attack",
                     "amount": 4,
-                    "target": "SingleEnemy"
+                    "target": "Enemy"
                 }
             ],
             "addressables": {
@@ -49,7 +49,7 @@
                     "type": "SelectCard",
                     "source": "Hand",
                     "amount": 1,
-                    "effect": {
+                    "onAction": {
                         "type": "Move",
                         "subject": "Selected",
                         "from": "Hand",
@@ -142,7 +142,7 @@
                     "type": "SelectCard",
                     "source": "AllCards",
                     "amount": 1,
-                    "effect": {
+                    "onAction": {
                         "type": "Move",
                         "subject": "Selected",
                         "from": "Source",
@@ -220,7 +220,7 @@
                         102045
                     ],
                     "amount": 1,
-                    "effect": {
+                    "onAction": {
                         "type": "GenerateCard",
                         "cardId": "Selected",
                         "amount": 1,
@@ -263,7 +263,7 @@
                         102045
                     ],
                     "amount": 1,
-                    "effect": {
+                    "onAction": {
                         "type": "GenerateCard",
                         "cardId": "Random(Selected.enforce)",
                         "amount": 1,
@@ -291,7 +291,7 @@
                     "type": "SelectCard",
                     "source": "AllCards",
                     "amount": 1,
-                    "effect": {
+                    "onAction": {
                         "type": "GenerateCard",
                         "cardId": "Selected",
                         "amount": 1,
@@ -319,7 +319,7 @@
                     "type": "SelectCard",
                     "source": "Hand",
                     "amount": 1,
-                    "effect": {
+                    "onAction": {
                         "type": "GenerateCard",
                         "cardId": "Selected",
                         "amount": 3,
@@ -387,7 +387,7 @@
                 {
                     "type": "Buff",
                     "buffId": 2032,
-                    "target": "SingleEnemy"
+                    "target": "Enemy"
                 }
             ],
             "enforce": [
@@ -430,7 +430,7 @@
             "effects": [
                 {
                     "type": "MixBuff",
-                    "target": "SingleEnemy"
+                    "target": "Enemy"
                 }
             ],
             "addressables": {
@@ -450,7 +450,7 @@
                     "type": "SelectCard",
                     "source": "Hand",
                     "amount": 2,
-                    "effect": {
+                    "onAction": {
                         "type": "Discard",
                         "target": "Selected"
                     }
@@ -509,7 +509,7 @@
                 },
                 {
                     "type": "Kill",
-                    "target": "SingleEnemy",
+                    "target": "Enemy",
                     "silent": false
                 }
             ],
@@ -528,7 +528,7 @@
             "effects": [
                 {
                     "type": "RemoveShield",
-                    "target": "SingleEnemy"
+                    "target": "Enemy"
                 }
             ],
             "enforce": [
@@ -556,7 +556,7 @@
             "effects": [
                 {
                     "type": "RemoveBuff",
-                    "target": "SingleEnemy",
+                    "target": "Enemy",
                     "buffType": 2,
                     "amount": 1,
                     "random": true
