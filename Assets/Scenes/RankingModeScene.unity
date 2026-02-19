@@ -514,6 +514,10 @@ PrefabInstance:
       propertyPath: character
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3347725797921719501, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
+      propertyPath: m_text
+      value: Ignia
+      objectReference: {fileID: 0}
     - target: {fileID: 7126515853444721151, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
