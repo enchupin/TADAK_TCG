@@ -52,7 +52,7 @@
                 },
                 {
                     "type": "Buff",
-                    "buffId": 3001,
+                    "buffId": 4001,
                     "amount": 1,
                     "target": "Enemy"
                 }
@@ -87,7 +87,7 @@
                 },
                 {
                     "type": "Buff",
-                    "buffId": 3001,
+                    "buffId": 4001,
                     "amount": 2,
                     "target": "Enemy"
                 }
@@ -151,7 +151,7 @@
                 },
                 {
                     "type": "RemoveBuff",
-                    "buffId": 2002,
+                    "buffId": 3002,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -313,7 +313,7 @@
                             },
                             "effect": {
                                 "type": "Buff",
-                                "buffId": 2002,
+                                "buffId": 3002,
                                 "amount": 1,
                                 "target": "Self"
                             }
@@ -336,13 +336,13 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2002,
+                    "buffId": 3002,
                     "amount": 2,
                     "target": "Self"
                 },
                 {
                     "type": "Buff",
-                    "buffId": 3006,
+                    "buffId": 4006,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -366,7 +366,7 @@
                 },
                 {
                     "type": "Buff",
-                    "buffId": 1007,
+                    "buffId": 2001,
                     "target": "Self"
                 }
             ],
@@ -385,13 +385,13 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2021,
+                    "buffId": 3021,
                     "amount": 5,
                     "target": "Self"
                 },
                 {
                     "type": "Buff",
-                    "buffId": 3005,
+                    "buffId": 4005,
                     "amount": 5,
                     "target": "Self"
                 }
@@ -421,7 +421,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2021,
+                    "buffId": 3021,
                     "amount": 3,
                     "target": "Self"
                 }
@@ -441,7 +441,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2016,
+                    "buffId": 3016,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -466,7 +466,7 @@
                 },
                 {
                     "type": "Buff",
-                    "buffId": 2002,
+                    "buffId": 3002,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -674,7 +674,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2023,
+                    "buffId": 3023,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -694,7 +694,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2024,
+                    "buffId": 3024,
                     "target": "Self"
                 }
             ],
@@ -720,7 +720,7 @@
                     "target": "Enemy",
                     "onAction": {
                         "type": "Buff",
-                        "buffId": 2002,
+                        "buffId": 3002,
                         "amountFormula": "UnblockedDamage",
                         "target": "Self"
                     }
@@ -755,7 +755,7 @@
                     "target": "Enemy",
                     "onAction": {
                         "type": "Buff",
-                        "buffId": 2002,
+                        "buffId": 3002,
                         "amountFormula": "UnblockedDamage",
                         "target": "Self"
                     }
@@ -783,7 +783,7 @@
                     "target": "Enemy",
                     "onAction": {
                         "type": "Buff",
-                        "buffId": 2002,
+                        "buffId": 3002,
                         "amountFormula": "UnblockedDamage",
                         "target": "Self"
                     }
@@ -807,7 +807,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2022,
+                    "buffId": 3022,
                     "target": "Self"
                 }
             ],
@@ -861,7 +861,7 @@
                     "target": "Enemy",
                     "onAction": {
                         "type": "Buff",
-                        "buffId": 2021,
+                        "buffId": 3021,
                         "amountFormula": "UnblockedDamage",
                         "target": "Self"
                     }

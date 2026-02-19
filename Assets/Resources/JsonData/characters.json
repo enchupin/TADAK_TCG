@@ -14,7 +14,7 @@
                     },
                     {
                         "type": "Buff",
-                        "buffId": 3001,
+                        "buffId": 4001,
                         "amount": 3,
                         "target": "AllEnemies"
                     }
@@ -44,7 +44,7 @@
             "maxHp": 30,
             "cost": 0,
             "identity": {
-                "cost": 8,
+                "cost": 6,
                 "effects": [
                     {
                         "type": "RandGenerate",
@@ -102,7 +102,7 @@
                 "effects": [
                     {
                         "type": "Buff",
-                        "buffId": 2009,
+                        "buffId": 3009,
                         "amount": 20,
                         "target": "Self"
                     }
@@ -136,7 +136,7 @@
                 "effects": [
                     {
                         "type": "Buff",
-                        "buffId": 2021,
+                        "buffId": 3021,
                         "amount": 3,
                         "target": "Self"
                     }
@@ -175,7 +175,7 @@
                     },
                     {
                         "type": "Buff",
-                        "buffId": 3004,
+                        "buffId": 4004,
                         "amount": 2,
                         "target": "AllEnemies"
                     }
@@ -197,6 +197,44 @@
                 301050,
                 301060,
                 301070
+            ]
+        },
+        {
+            "characterId": 302,
+            "name": "룬",
+            "maxHp": 80,
+            "cost": 0,
+            "identity": {
+                "cost": 5,
+                "effects": [
+                    {
+                        "type": "Buff",
+                        "buffId": 3031,
+                        "amount": 5,
+                        "target": "Self"
+                    },
+                    {
+                        "type": "Trigger",
+                        "timing": "OnTurnEnd"
+                    }
+                ],
+                "description": "룬을 5 얻습니다. 내 턴 종료 시 효과를 모두 1회 발동합니다."
+            },
+            "addressables": {
+                "artwork": "Characters/Rune/Artwork",
+                "standing": "Characters/Rune/Standing",
+                "effect": "Effects/Rune",
+                "sound": "Sounds/Rune"
+            },
+            "characterColor": "brown",
+            "startDeck": [
+                302010,
+                302020,
+                302030,
+                302040,
+                302050,
+                302060,
+                302070
             ]
         }
     ]

@@ -50,13 +50,13 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2017,
+                    "buffId": 3017,
                     "amount": 2,
                     "target": "Self"
                 },
                 {
                     "type": "Buff",
-                    "buffId": 3007,
+                    "buffId": 4007,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -86,13 +86,13 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2017,
+                    "buffId": 3017,
                     "amount": 4,
                     "target": "Self"
                 },
                 {
                     "type": "Buff",
-                    "buffId": 2025,
+                    "buffId": 3025,
                     "amount": 4,
                     "target": "Self"
                 }
@@ -115,13 +115,13 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2017,
+                    "buffId": 3017,
                     "amount": 2,
                     "target": "Self"
                 },
                 {
                     "type": "Buff",
-                    "buffId": 2025,
+                    "buffId": 3025,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -141,13 +141,13 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2002,
+                    "buffId": 3002,
                     "amount": 3,
                     "target": "Self"
                 },
                 {
                     "type": "Buff",
-                    "buffId": 3006,
+                    "buffId": 4006,
                     "amount": 3,
                     "target": "Self"
                 }
@@ -170,7 +170,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2002,
+                    "buffId": 3002,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -193,7 +193,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2018,
+                    "buffId": 3018,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -491,7 +491,7 @@
                         },
                         "effect": {
                             "type": "Buff",
-                            "buffId": 3003,
+                            "buffId": 4003,
                             "amount": 3,
                             "target": "RandEnemy"
                         }
@@ -594,7 +594,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3003,
+                    "buffId": 4003,
                     "amount": 4,
                     "target": "AllEnemies"
                 }
@@ -617,7 +617,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3003,
+                    "buffId": 4003,
                     "amount": 3,
                     "target": "AllEnemies"
                 }
@@ -640,7 +640,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2019,
+                    "buffId": 3019,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -687,7 +687,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2010,
+                    "buffId": 3010,
                     "amount": 3,
                     "target": "Self"
                 }
@@ -722,7 +722,7 @@
                 },
                 {
                     "type": "Buff",
-                    "buffId": 2010,
+                    "buffId": 3010,
                     "amount": 3,
                     "target": "Self"
                 }
@@ -746,7 +746,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2020,
+                    "buffId": 3020,
                     "amount": 3,
                     "target": "Self"
                 }

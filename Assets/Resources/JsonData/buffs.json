@@ -47,7 +47,7 @@
             "condition": {
                 "checks": [
                     {
-                        "subject": "EventContext",
+                        "subject": "EventValue",
                         "property": "CardId",
                         "operator": "In",
                         "value": [
@@ -75,13 +75,13 @@
             "name": "포션 순환",
             "buffType": 1,
             "trigger": {
-                "event": "OnCardGenerate",
+                "event": "OnCardUse",
                 "source": "Self"
             },
             "condition": {
                 "checks": [
                     {
-                        "subject": "EventContext",
+                        "subject": "EventValue",
                         "property": "CardId",
                         "operator": "In",
                         "value": [
@@ -97,10 +97,6 @@
                     }
                 ],
                 "effects": [
-                    {
-                        "type": "RemoveKeyword",
-                        "keywordId": 3
-                    },
                     {
                         "type": "Draw",
                         "amount": 1
@@ -120,7 +116,7 @@
             "condition": {
                 "checks": [
                     {
-                        "subject": "EventContext",
+                        "subject": "EventValue",
                         "property": "CardId",
                         "operator": "Eq",
                         "value": 401080
@@ -132,11 +128,11 @@
                         "stat": "CardId",
                         "change": "Increase",
                         "amount": 1,
-                        "target": "EventContext"
+                        "target": "EventValue"
                     }
                 ]
             },
-            "description": "이번 게임 동안 빙하 조형 카드가 강화됩니다."
+            "description": "지금부터 생성하는 빙하 조형 카드가 강화됩니다."
         },
         {
             "buffId": 1005,
@@ -151,7 +147,7 @@
                     {
                         "subject": "Source",
                         "property": "HasBuff",
-                        "param": 3003,
+                        "param": 4003,
                         "operator": "Eq",
                         "value": true
                     }
@@ -161,7 +157,7 @@
                         "type": "ChangeStat",
                         "stat": "Buff",
                         "change": "Increase",
-                        "amountFormula": "GetBuffStack(3003)",
+                        "amountFormula": "GetBuffStack(4003)",
                         "target": "AllEnemies"
                     }
                 ]
@@ -176,8 +172,182 @@
         },
         {
             "buffId": 1007,
-            "name": "드로우 불가",
+            "name": "J 더블",
             "buffType": 1,
+            "trigger": {
+                "event": "OnCardUse"
+            },
+            "effects": [
+                {
+                    "type": "ChangeStat",
+                    "stat": "Buff",
+                    "buffId": 1007,
+                    "change": "Increase",
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ],
+            "description": "카드를 2장 낼 때마다 체력을 1 회복합니다.",
+            "condition": {
+                "checks": [
+                    {
+                        "subject": "Self",
+                        "property": "BuffStack",
+                        "param": 1007,
+                        "operator": "Gte",
+                        "value": 2
+                    }
+                ],
+                "effects": [
+                    {
+                        "type": "Heal",
+                        "amount": 1,
+                        "target": "Self"
+                    },
+                    {
+                        "type": "ChangeStat",
+                        "stat": "Buff",
+                        "buffId": 1007,
+                        "change": "Decrease",
+                        "amount": 2,
+                        "target": "Self"
+                    }
+                ]
+            }
+        },
+        {
+            "buffId": 1008,
+            "name": "복제 생성",
+            "buffType": 1,
+            "trigger": {
+                "event": "OnCardGenerate",
+                "source": "Self"
+            },
+            "effects": [
+                {
+                    "type": "GenerateCard",
+                    "cardId": "EventValue",
+                    "amount": 1,
+                    "target": "Hand"
+                }
+            ],
+            "description": "카드를 생성할 때마다 그 카드를 복제합니다."
+        },
+        {
+            "buffId": 1009,
+            "name": "2-J 풀하우스",
+            "buffType": 1,
+            "trigger": {
+                "event": "OnCardUse",
+                "source": "Self"
+            },
+            "condition": {
+                "checks": [
+                    {
+                        "subject": "EventValue",
+                        "property": "Cost",
+                        "operator": "Gte",
+                        "value": 2
+                    },
+                    {
+                        "subject": "Self",
+                        "property": "BuffStack",
+                        "param": 1009,
+                        "operator": "Gte",
+                        "value": 1
+                    }
+                ],
+                "effects": [
+                    {
+                        "type": "UseCard",
+                        "cardId": "EventValue",
+                        "amount": 1
+                    },
+                    {
+                        "type": "ChangeStat",
+                        "stat": "Buff",
+                        "buffId": 1009,
+                        "change": "Decrease",
+                        "amount": 1,
+                        "target": "Self"
+                    }
+                ]
+            },
+            "description": "매 턴 처음으로 쓰는 비용이 2 이상인 카드를 1번 더 발동합니다.",
+            "increase": {
+                "timing": "OnTurnStart",
+                "amount": 1
+            }
+        },
+        {
+            "buffId": 1010,
+            "name": "J 스트레이트",
+            "buffType": 1,
+            "trigger": {
+                "event": "OnTurnStart",
+                "source": "Self"
+            },
+            "effects": [
+                {
+                    "type": "Draw",
+                    "amount": 2
+                },
+                {
+                    "type": "SelectCard",
+                    "source": "Hand",
+                    "amount": 1,
+                    "onAction": {
+                        "type": "Discard",
+                        "target": "Selected"
+                    }
+                }
+            ],
+            "description": "매 턴 시작 시 카드를 2장 더 뽑고 1장 버립니다."
+        },
+        {
+            "buffId": 1011,
+            "name": "룬 방어",
+            "buffType": 1,
+            "trigger": {
+                "event": "OnTurnEnd"
+            },
+            "effects": [
+                {
+                    "type": "Barrier",
+                    "amountFormula": "GetBuffStack(3031)",
+                    "target": "Self"
+                }
+            ],
+            "description": "매 턴 종료 시 룬 중첩만큼 보호막을 얻습니다."
+        },
+        {
+            "buffId": 1012,
+            "name": "효율적인 보호막",
+            "buffType": 1,
+            "trigger": {
+                "event": "OnTurnStart"
+            },
+            "effects": [
+                {
+                    "type": "Cancel",
+                    "cancel": "ChangeStat",
+                    "stat": "Barrier",
+                    "change": "Decrease"
+                },
+                {
+                    "type": "ChangeStat",
+                    "stat": "Barrier",
+                    "change": "Decrease",
+                    "amount": 15,
+                    "target": "Self"
+                }
+            ],
+            "description": "매 턴 시작 시 보호막을 모두 잃는 대신 15만 잃습니다."
+        },
+        {
+            "buffId": 2001,
+            "name": "드로우 불가",
+            "buffType": 2,
             "trigger": {
                 "event": "OnDraw"
             },
@@ -193,9 +363,9 @@
             "description": "이번 턴에 더 이상 카드를 뽑을 수 없습니다."
         },
         {
-            "buffId": 2001,
+            "buffId": 3001,
             "name": "재생",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnTurnEnd"
             },
@@ -212,9 +382,9 @@
             "description": "턴 종료 시 {stack}만큼 회복합니다. 1씩 감소합니다."
         },
         {
-            "buffId": 2002,
+            "buffId": 3002,
             "name": "피해 증폭",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnAttack",
                 "source": "Self"
@@ -228,9 +398,9 @@
             "description": "피해를 입힐 때 피해량이 {stack}만큼 증가합니다."
         },
         {
-            "buffId": 2003,
+            "buffId": 3003,
             "name": "포션 제조",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnTurnStart",
                 "source": "Self"
@@ -265,9 +435,9 @@
             "description": "다음 턴 시작 시 무작위 포션 카드 {stack}장을 제작합니다."
         },
         {
-            "buffId": 2004,
+            "buffId": 3004,
             "name": "실험 폐기물",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnCardUse"
             },
@@ -301,9 +471,9 @@
             "description": "포션을 사용할 때마다 무작위 적에게 부식을 {stack} 부여합니다."
         },
         {
-            "buffId": 2005,
+            "buffId": 3005,
             "name": "잔혹함",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnStatChange",
                 "stat": "Buff",
@@ -315,7 +485,7 @@
                         "subject": "EventContext",
                         "property": "BuffType",
                         "operator": "Eq",
-                        "value": 3
+                        "value": 4
                     }
                 ],
                 "effects": [
@@ -328,9 +498,9 @@
             "description": "적에게 부정적인 효과를 부여할 때마다 피해를 {stack} 줍니다."
         },
         {
-            "buffId": 2006,
+            "buffId": 3006,
             "name": "잔악무도",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnStatChange",
                 "stat": "Buff",
@@ -342,7 +512,7 @@
                         "subject": "EventContext",
                         "property": "BuffType",
                         "operator": "Eq",
-                        "value": 3
+                        "value": 4
                     }
                 ],
                 "effects": [
@@ -355,9 +525,9 @@
             "description": "아무 적에게나 부정적인 효과를 부여할 때마다 모든 적에게 피해를 {stack} 줍니다."
         },
         {
-            "buffId": 2007,
+            "buffId": 3007,
             "name": "포션 제조실",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnTurnStart"
             },
@@ -394,9 +564,9 @@
             "description": "매 턴 무작위 포션을 {stack}개 제조합니다."
         },
         {
-            "buffId": 2008,
+            "buffId": 3008,
             "name": "드로우 강화",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnTurnStart"
             },
@@ -408,9 +578,9 @@
             "description": "매 턴 시작 시 카드를 {stack}장 더 뽑습니다."
         },
         {
-            "buffId": 2009,
+            "buffId": 3009,
             "name": "공격 강화",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnAttack"
             },
@@ -423,9 +593,9 @@
             "description": "다음 공격이 {stack}만큼 추가 피해를 입힙니다."
         },
         {
-            "buffId": 2010,
+            "buffId": 3010,
             "name": "가시",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnHit"
             },
@@ -438,9 +608,9 @@
             "description": "공격받을 때마다 공격한 적에게 {stack}의 피해를 줍니다."
         },
         {
-            "buffId": 2011,
+            "buffId": 3011,
             "name": "보호막 유지",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnTurnStart"
             },
@@ -459,9 +629,9 @@
             "description": "{stack} 턴 동안 턴 시작 시 보호막이 사라지지 않습니다."
         },
         {
-            "buffId": 2012,
+            "buffId": 3012,
             "name": "빙하 결속",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnStatChange",
                 "stat": "Barrier",
@@ -476,25 +646,25 @@
             "description": "보호막을 획득할 때마다 {stack} 더 얻습니다."
         },
         {
-            "buffId": 2013,
+            "buffId": 3013,
             "name": "절대영도",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnTurnStart"
             },
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3004,
+                    "buffId": 4004,
                     "target": "AllEnemies"
                 }
             ],
             "description": "턴 시작 시 모든 적에게 빙결을 {stack} 부여합니다."
         },
         {
-            "buffId": 2014,
+            "buffId": 3014,
             "name": "얼음 방패 조각",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnHit"
             },
@@ -508,9 +678,9 @@
             "description": "공격받을 때마다 손에 빙하 조형 카드를 {stack}장 생성합니다."
         },
         {
-            "buffId": 2015,
+            "buffId": 3015,
             "name": "차가운 냉기",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnStatChange",
                 "stat": "Barrier",
@@ -519,16 +689,16 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3004,
+                    "buffId": 4004,
                     "target": "AllEnemies"
                 }
             ],
             "description": "내 보호막이 감소할 때마다 모든 적에게 빙결을 {stack} 부여합니다."
         },
         {
-            "buffId": 2016,
+            "buffId": 3016,
             "name": "회피",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnHit"
             },
@@ -544,9 +714,9 @@
             "description": "다음 공격을 회피합니다."
         },
         {
-            "buffId": 2017,
+            "buffId": 3017,
             "name": "과열",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnAttack"
             },
@@ -560,57 +730,57 @@
             "description": "피해량이 {stack * 20}% 증가합니다."
         },
         {
-            "buffId": 2018,
+            "buffId": 3018,
             "name": "과열 축적",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnTurnStart"
             },
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2017,
+                    "buffId": 3017,
                     "target": "Self"
                 }
             ],
             "description": "매 턴 과열을 {stack} 얻습니다."
         },
         {
-            "buffId": 2019,
+            "buffId": 3019,
             "name": "화염 전도",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnAttack"
             },
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3003,
+                    "buffId": 4003,
                     "target": "Defender"
                 }
             ],
             "description": "공격할 때마다 적에게 화염 낙인을 {stack} 부여합니다."
         },
         {
-            "buffId": 2020,
+            "buffId": 3020,
             "name": "용암 피부",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnHit"
             },
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3003,
+                    "buffId": 4003,
                     "target": "EventSource"
                 }
             ],
             "description": "공격받을 때마다 공격한 적에게 화염 낙인을 {stack} 부여합니다."
         },
         {
-            "buffId": 2021,
+            "buffId": 3021,
             "name": "반격",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnHit"
             },
@@ -623,9 +793,9 @@
             "description": "공격받은 뒤 공격한 적에게 {stack}의 피해를 입힙니다."
         },
         {
-            "buffId": 2022,
+            "buffId": 3022,
             "name": "위압",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnAttack"
             },
@@ -647,7 +817,7 @@
                 "effects": [
                     {
                         "type": "Buff",
-                        "buffId": 2002,
+                        "buffId": 3002,
                         "target": "Self"
                     }
                 ]
@@ -655,9 +825,9 @@
             "description": "적을 공격해서 보호막을 제거하면 피해 증폭을 {stack} 얻습니다."
         },
         {
-            "buffId": 2023,
+            "buffId": 3023,
             "name": "재사용",
-            "buffType": 2,
+            "buffType": 3,
             "trigger": {
                 "event": "OnCardUse"
             },
@@ -676,49 +846,196 @@
             "description": "다음에 사용하는 카드의 효과를 1번 더 발동시킵니다."
         },
         {
-            "buffId": 2024,
+            "buffId": 3024,
             "name": "연속 공격",
-            "buffType": 2,
-            "trigger": {
-                "event": "OnCardUse"
-            },
-            "effects": [
-                {
-                    "type": "Damage",
-                    "amount": 1,
-                    "target": "AllEnemies"
-                }
-            ],
-            "decrease": {
-                "timing": "OnTurnEnd",
-                "amount": 1
-            },
-            "description": "이번 턴에 카드를 사용할 때마다 모든 적에게 피해를 1 입힙니다."
-        },
-        {
-            "buffId": 2025,
-            "name": "21:축복",
-            "buffType": 2,
-            "trigger": {
-                "event": "OnCardUse"
-            },
-            "effects": [
-                {
-                    "type": "Damage",
-                    "amount": 1,
-                    "target": "AllEnemies"
-                }
-            ],
-            "decrease": {
-                "timing": "OnTurnEnd",
-                "amount": 1
-            },
-            "description": "이번 턴에 카드를 사용할 때마다 모든 적에게 피해를 1 입힙니다."
-        },
-        {
-            "buffId": 3001,
-            "name": "부식",
             "buffType": 3,
+            "trigger": {
+                "event": "OnCardUse"
+            },
+            "effects": [
+                {
+                    "type": "Damage",
+                    "amount": 1,
+                    "target": "AllEnemies"
+                }
+            ],
+            "decrease": {
+                "timing": "OnTurnEnd",
+                "amount": 1
+            },
+            "description": "이번 턴에 카드를 사용할 때마다 모든 적에게 피해를 1 입힙니다."
+        },
+        {
+            "buffId": 3025,
+            "name": "21:축복",
+            "buffType": 3,
+            "trigger": {
+                "event": "OnCardUse"
+            },
+            "effects": [
+                {
+                    "type": "Damage",
+                    "amount": 1,
+                    "target": "AllEnemies"
+                }
+            ],
+            "decrease": {
+                "timing": "OnTurnEnd",
+                "amount": 1
+            },
+            "description": "이번 턴에 카드를 사용할 때마다 모든 적에게 피해를 1 입힙니다."
+        },
+        {
+            "buffId": 3026,
+            "name": "아슬아슬",
+            "buffType": 3,
+            "trigger": {
+                "event": "OnDamaged"
+            },
+            "effects": [
+                {
+                    "type": "ModifyDamage",
+                    "operation": "Set",
+                    "amount": 1
+                }
+            ],
+            "decrease": {
+                "timing": "OnTurnEnd",
+                "amount": 1
+            },
+            "description": "이번 턴에 받는 피해가 1로 고정됩니다."
+        },
+        {
+            "buffId": 3027,
+            "name": "예고",
+            "buffType": 3,
+            "trigger": {
+                "event": "OnCardUse",
+                "source": "Self"
+            },
+            "effects": [
+                {
+                    "type": "ModifyCard",
+                    "param": "Cost",
+                    "amount": 0,
+                    "operation": "Set",
+                    "source": "Hand"
+                }
+            ],
+            "decrease": {
+                "timing": "OffTrigger",
+                "amount": 1
+            },
+            "description": "이 다음 카드의 비용이 0이 됩니다."
+        },
+        {
+            "buffId": 3028,
+            "name": "버리기 방지",
+            "buffType": 3,
+            "trigger": {
+                "event": "OnTurnEnd",
+                "source": "Self"
+            },
+            "effects": [
+                {
+                    "type": "ChoiceHand",
+                    "effects": [
+                        {
+                            "type": "Move",
+                            "subject": "Selected",
+                            "from": "Hand",
+                            "to": "Hand"
+                        }
+                    ]
+                }
+            ],
+            "description": "매 턴 종료 시 손에서 카드를 {stack}장 선택하여 버리지 않습니다."
+        },
+        {
+            "buffId": 3029,
+            "name": "광대",
+            "buffType": 3,
+            "trigger": {
+                "event": "OnTurnStart",
+                "source": "Self"
+            },
+            "effects": [
+                {
+                    "type": "RandGenerate",
+                    "RandomCard": [
+                        {
+                            "cardId": 102041,
+                            "weight": 1
+                        },
+                        {
+                            "cardId": 102042,
+                            "weight": 1
+                        },
+                        {
+                            "cardId": 102043,
+                            "weight": 1
+                        },
+                        {
+                            "cardId": 102044,
+                            "weight": 1
+                        },
+                        {
+                            "cardId": 102045,
+                            "weight": 1
+                        }
+                    ],
+                    "target": "Hand"
+                }
+            ],
+            "description": "매 턴 시작 시 무작위 고유 카드 강화본을 {stack}장 획득합니다."
+        },
+        {
+            "buffId": 3030,
+            "name": "생명 연결",
+            "buffType": 3,
+            "trigger": {
+                "event": "OnDamaged",
+                "source": "Target"
+            },
+            "effects": [
+                {
+                    "type": "Heal",
+                    "amountFormula": "EventValue",
+                    "target": "Owner"
+                }
+            ],
+            "decrease": {
+                "timing": "OnTurnEnd",
+                "amount": 1
+            },
+            "description": "이번 턴 동안 적이 체력을 잃는 만큼 내 체력이 회복됩니다."
+        },
+        {
+            "buffId": 3031,
+            "name": "룬",
+            "buffType": 3,
+            "description": "룬이 {stack} 중첩되어 있습니다."
+        },
+        {
+            "buffId": 3032,
+            "name": "룬 생성",
+            "buffType": 3,
+            "trigger": {
+                "event": "OnTurnEnd"
+            },
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3031,
+                    "target": "Self"
+                }
+            ],
+            "description": "매 턴 종료 시 룬을 {stack} 얻습니다."
+        },
+        {
+            "buffId": 4001,
+            "name": "부식",
+            "buffType": 4,
             "trigger": {
                 "event": "OnHit"
             },
@@ -736,9 +1053,9 @@
             "description": "받는 피해가 25% 증가합니다."
         },
         {
-            "buffId": 3002,
+            "buffId": 4002,
             "name": "강화된 부식",
-            "buffType": 3,
+            "buffType": 4,
             "trigger": {
                 "event": "OnHit"
             },
@@ -756,9 +1073,9 @@
             "description": "받는 피해가 50% 증가합니다."
         },
         {
-            "buffId": 3003,
+            "buffId": 4003,
             "name": "화염 낙인",
-            "buffType": 3,
+            "buffType": 4,
             "trigger": {
                 "event": "OnTurnEnd"
             },
@@ -771,9 +1088,9 @@
             "description": "턴 종료 시 {stack}만큼 피해를 입습니다."
         },
         {
-            "buffId": 3004,
+            "buffId": 4004,
             "name": "빙결",
-            "buffType": 3,
+            "buffType": 4,
             "trigger": {
                 "event": "OnStatChange",
                 "stat": "Buff",
@@ -822,9 +1139,9 @@
             "description": "7중첩이 되면 중첩을 잃고 행동불가 상태가 됩니다. 보스는 대신 피해를 20 입습니다."
         },
         {
-            "buffId": 3005,
+            "buffId": 4005,
             "name": "재정비",
-            "buffType": 3,
+            "buffType": 4,
             "trigger": {
                 "event": "OnTurnEnd"
             },
@@ -842,9 +1159,9 @@
             "description": "턴 종료 시 반격이 {stack}만큼 감소합니다."
         },
         {
-            "buffId": 3006,
+            "buffId": 4006,
             "name": "기력 소진",
-            "buffType": 3,
+            "buffType": 4,
             "trigger": {
                 "event": "OnTurnEnd"
             },
@@ -862,9 +1179,9 @@
             "description": "턴 종료 시 피해 증폭 효과가 {stack}만큼 감소합니다."
         },
         {
-            "buffId": 3007,
+            "buffId": 4007,
             "name": "화력 소진",
-            "buffType": 3,
+            "buffType": 4,
             "trigger": {
                 "event": "OnTurnEnd"
             },
@@ -880,222 +1197,6 @@
                 "timing": "OffTrigger"
             },
             "description": "턴 종료 시 과열 수치가 {stack}만큼 감소합니다."
-        },
-        {
-            "buffId": 2025,
-            "name": "아슬아슬",
-            "buffType": 2,
-            "trigger": {
-                "event": "OnDamaged"
-            },
-            "effects": [
-                {
-                    "type": "ModifyDamage",
-                    "operation": "Set",
-                    "amount": 1
-                }
-            ],
-            "decrease": {
-                "timing": "OnTurnEnd",
-                "amount": 1
-            },
-            "description": "이번 턴에 받는 피해가 1로 고정됩니다."
-        },
-        {
-            "buffId": 2026,
-            "name": "블랙잭",
-            "buffType": 2,
-            "trigger": {
-                "event": "OnCardUse",
-                "count": 2
-            },
-            "effects": [
-                {
-                    "type": "Heal",
-                    "amount": 1,
-                    "target": "Self"
-                }
-            ],
-            "description": "카드를 2장 낼 때마다 체력을 1 회복합니다."
-        },
-        {
-            "buffId": 2028,
-            "name": "복제 생성",
-            "buffType": 2,
-            "trigger": {
-                "event": "OnCardGenerate",
-                "source": "Self"
-            },
-            "effects": [
-                {
-                    "type": "GenerateCard",
-                    "cardId": "EventValue",
-                    "amount": 1,
-                    "target": "Hand"
-                }
-            ],
-            "description": "카드를 생성할 때마다 그 카드를 복제합니다."
-        },
-        {
-            "buffId": 2029,
-            "name": "예고",
-            "buffType": 2,
-            "trigger": {
-                "event": "OnCardUse",
-                "source": "Self"
-            },
-            "effects": [
-                {
-                    "type": "ModifyCard",
-                    "param": "Cost",
-                    "amount": 0,
-                    "operation": "Set",
-                    "source": "Hand"
-                }
-            ],
-            "decrease": {
-                "timing": "OffTrigger",
-                "amount": 1
-            },
-            "description": "이 다음 카드의 비용이 0이 됩니다."
-        },
-        {
-            "buffId": 2030,
-            "name": "버리기 방지",
-            "buffType": 2,
-            "trigger": {
-                "event": "OnTurnEnd",
-                "source": "Self"
-            },
-            "effects": [
-                {
-                    "type": "ChoiceHand",
-                    "effects": [
-                        {
-                            "type": "Move",
-                            "subject": "Selected",
-                            "from": "Hand",
-                            "to": "Hand"
-                        }
-                    ]
-                }
-            ],
-            "description": "매 턴 종료 시 손에서 카드를 {stack}장 선택하여 버리지 않습니다."
-        },
-        {
-            "buffId": 2031,
-            "name": "광대",
-            "buffType": 2,
-            "trigger": {
-                "event": "OnTurnStart",
-                "source": "Self"
-            },
-            "effects": [
-                {
-                    "type": "RandGenerate",
-                    "RandomCard": [
-                        {
-                            "cardId": 102041,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 102042,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 102043,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 102044,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 102045,
-                            "weight": 1
-                        }
-                    ],
-                    "target": "Hand"
-                }
-            ],
-            "description": "매 턴 시작 시 무작위 고유 카드 강화본을 1장 획듍합니다."
-        },
-        {
-            "buffId": 2032,
-            "name": "생명 연결",
-            "buffType": 2,
-            "trigger": {
-                "event": "OnDamaged",
-                "source": "Target"
-            },
-            "effects": [
-                {
-                    "type": "Heal",
-                    "amountFormula": "EventValue",
-                    "target": "Owner"
-                }
-            ],
-            "decrease": {
-                "timing": "OnTurnEnd",
-                "amount": 1
-            },
-            "description": "이번 턴 동안 적이 체력을 잃는 만큼 내 체력이 회복됩니다."
-        },
-        {
-            "buffId": 2034,
-            "name": "에너지 증폭",
-            "buffType": 2,
-            "trigger": {
-                "event": "OnCardUse",
-                "source": "Self"
-            },
-            "condition": {
-                "checks": [
-                    {
-                        "subject": "EventValue",
-                        "property": "Cost",
-                        "operator": "Gte",
-                        "value": 2
-                    }
-                ],
-                "effects": [
-                    {
-                        "type": "UseCard",
-                        "cardId": "EventValue",
-                        "amount": 1
-                    }
-                ]
-            },
-            "description": "매 턴 처음으로 쓰는 비용이 2 이상인 카드를 1번 더 발동합니다.",
-            "decrease": {
-                "timing": "OnTurnEnd",
-                "amount": 1
-            }
-        },
-        {
-            "buffId": 2035,
-            "name": "추가 드로우",
-            "buffType": 2,
-            "trigger": {
-                "event": "OnTurnStart",
-                "source": "Self"
-            },
-            "effects": [
-                {
-                    "type": "Draw",
-                    "amount": 2
-                },
-                {
-                    "type": "SelectCard",
-                    "source": "Hand",
-                    "amount": 1,
-                    "onAction": {
-                        "type": "Discard",
-                        "target": "Selected"
-                    }
-                }
-            ],
-            "description": "매 턴 시작 시 카드를 2장 더 뽑고 1장 버립니다."
         }
     ]
 }

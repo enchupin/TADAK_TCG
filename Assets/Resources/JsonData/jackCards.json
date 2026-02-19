@@ -51,8 +51,8 @@
                     "amount": 1,
                     "onAction": {
                         "type": "Move",
-                        "subject": "Selected",
                         "from": "Hand",
+                        "subject": "Selected",
                         "to": "DrawPile",
                         "position": "Top"
                     }
@@ -83,15 +83,15 @@
             "effects": [
                 {
                     "type": "Move",
-                    "subject": "Hand",
+                    "subject": "All",
                     "from": "Hand",
                     "to": "DrawPile",
                     "position": "Random"
                 },
                 {
                     "type": "Move",
-                    "subject": "DiscardPile",
                     "from": "DiscardPile",
+                    "subject": "All",
                     "to": "DrawPile",
                     "position": "Random"
                 },
@@ -115,8 +115,8 @@
             "effects": [
                 {
                     "type": "Move",
-                    "subject": "DiscardPile",
                     "from": "DiscardPile",
+                    "subject": "All",
                     "to": "DrawPile",
                     "position": "Random"
                 },
@@ -144,8 +144,8 @@
                     "amount": 1,
                     "onAction": {
                         "type": "Move",
-                        "subject": "Selected",
                         "from": "Source",
+                        "subject": "Selected",
                         "to": "DrawPile",
                         "position": "Top"
                     }
@@ -187,7 +187,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2008,
+                    "buffId": 3008,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -206,18 +206,17 @@
             "keywords": [
                 3
             ],
-            "description": "다른 고유 카드를 1장 선택해서 획득합니다.",
+            "description": "잭의 고유 카드를 1장 선택해서 획득합니다.",
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "UniqueCards",
-                    "exclude": [
+                    "source": "CardId",
+                    "cardIds": [
+                        102030,
                         102040,
-                        102041,
-                        102042,
-                        102043,
-                        102044,
-                        102045
+                        102050,
+                        102060,
+                        102070
                     ],
                     "amount": 1,
                     "onAction": {
@@ -249,25 +248,22 @@
             "keywords": [
                 3
             ],
-            "description": "다른 고유 카드를 1장 선택합니다. 그 카드의 무작위 강화본을 1장 획득합니다.",
+            "description": "잭의 고유 카드를 1장 선택합니다. 그 카드의 무작위 강화본을 1장 획득합니다.",
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "UniqueCards",
-                    "exclude": [
-                        102040,
-                        102041,
-                        102042,
-                        102043,
-                        102044,
-                        102045
+                    "source": "CardId",
+                    "cardIds": [
+                        102030,
+                        102050,
+                        102060,
+                        102070
                     ],
                     "amount": 1,
                     "onAction": {
-                        "type": "GenerateCard",
-                        "cardId": "Random(Selected.enforce)",
-                        "amount": 1,
-                        "target": "Hand"
+                        "type": "Upgrade",
+                        "upgrade": "Random",
+                        "target": "Selected"
                     }
                 }
             ],
@@ -345,7 +341,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2031,
+                    "buffId": 3029,
                     "target": "Self"
                 }
             ],
@@ -367,7 +363,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2025,
+                    "buffId": 3026,
                     "target": "Self"
                 }
             ],
@@ -386,7 +382,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2032,
+                    "buffId": 3030,
                     "target": "Enemy"
                 }
             ],
@@ -475,7 +471,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 1007,
+                    "buffId": 2001,
                     "target": "Self"
                 },
                 {
@@ -527,7 +523,9 @@
             "description": "적의 보호막을 제거합니다.",
             "effects": [
                 {
-                    "type": "RemoveShield",
+                    "type": "ChangeStat",
+                    "stat": "Shield",
+                    "change": "Remove",
                     "target": "Enemy"
                 }
             ],
@@ -555,9 +553,14 @@
             "description": "적의 이로운 효과 중 하나를 제거합니다.",
             "effects": [
                 {
-                    "type": "RemoveBuff",
+                    "type": "ChangeStat",
+                    "stat": "Buff",
+                    "change": "Remove",
                     "target": "Enemy",
-                    "buffType": 2,
+                    "buffType": [
+                        1,
+                        3
+                    ],
                     "amount": 1,
                     "random": true
                 }
@@ -580,7 +583,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2030,
+                    "buffId": 3028,
                     "target": "Self"
                 }
             ],
@@ -622,7 +625,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2029,
+                    "buffId": 3027,
                     "target": "Self"
                 }
             ],
@@ -644,7 +647,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2028,
+                    "buffId": 1008,
                     "target": "Self"
                 }
             ],
@@ -660,13 +663,14 @@
             "characterId": 102,
             "cost": 1,
             "keywords": [
-                4
+                4,
+                9
             ],
             "description": "카드를 2장 낼 때마다 체력을 1 회복합니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2026,
+                    "buffId": 1007,
                     "target": "Self"
                 }
             ],
@@ -687,16 +691,16 @@
             "cardId": 102071,
             "name": "블랙 잭 +",
             "characterId": 102,
-            "cost": 1,
+            "cost": 0,
             "keywords": [
                 4,
-                5
+                9
             ],
             "description": "카드를 2장 낼 때마다 체력을 1 회복합니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2026,
+                    "buffId": 1007,
                     "target": "Self"
                 }
             ],
@@ -719,7 +723,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2034,
+                    "buffId": 1009,
                     "target": "Self"
                 }
             ],
@@ -741,7 +745,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2035,
+                    "buffId": 1010,
                     "target": "Self"
                 }
             ],
