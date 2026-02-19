@@ -10,25 +10,22 @@ public class TrainingBattleManager : MonoBehaviour {
     // 싱글톤 인스턴스
     public static TrainingBattleManager Instance { get; private set; }
 
-    [Header("UI 시스템")]
-    public BattleUI battleUI;
-
     [Header("전투 데이터")]
     public PlayerData playerData;
     public Monster monster;
     public BattleContext battleContext;  // 수식 평가용 컨텍스트
 
-
-    [Header("카드 데이터")]
+    [Header("매니저 연결")]
     public UsableDeckManager usableDeckManager;
     public HandManager handManager;
+    public BattleUI battleUI;
+
+    [Header("드로우 수")]
+    public int drawCardCount = 6;
 
     // 런 동안 유지되는 영구 덱 (씬이 바뀌어도 유지되도록 static)
     [Header("덱 시스템")]
     public static BuildingDeck buildingDeck;
-
-
-    public int drawCardCount = 6;
 
 
 
@@ -51,7 +48,8 @@ public class TrainingBattleManager : MonoBehaviour {
         
         // CardManager는 자동으로 초기화됨 (RuntimeInitializeOnLoadMethod)
         
-        InitializeBattle();
+        InitializeBattle();           // PlayerData.Create() → Instance 등록
+        battleUI?.UpdateAllUI();      // 데이터 준비 후 UI 갱신
         StartGame();
     }
 
@@ -92,7 +90,22 @@ public class TrainingBattleManager : MonoBehaviour {
     /// </summary>
     void InitializeBattle() {
 
-        playerData = new PlayerData();
+        playerData = PlayerData.Create();
+
+        // 선택된 캐릭터 3명의 maxHp 합산으로 초기 HP 설정
+        int totalMaxHp = 0;
+        foreach (Character character in SelectedButtonControl.selectedCharacterList)
+        {
+            CharacterData data = CharacterManager.GetCharacterByEnum(character);
+            if (data != null)
+                totalMaxHp += data.maxHp;
+            else
+                Debug.LogWarning($"[BattleManager] {character}의 CharacterData를 찾을 수 없습니다.");
+        }
+        playerData.maxHP = totalMaxHp > 0 ? totalMaxHp : 100; // 기본값 100
+        playerData.hp = playerData.maxHP;
+        Debug.Log($"[BattleManager] 초기 플레이어 HP 설정: {playerData.hp} (캐릭터 HP 합산)");
+
         monster = new Monster();
         battleContext = new BattleContext();  // 컨텍스트 초기화
 
