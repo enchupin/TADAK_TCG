@@ -562,7 +562,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2003,
+                    "buffId": 3003,
                     "target": "Self"
                 }
             ],
@@ -584,7 +584,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3001,
+                    "buffId": 4001,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -618,7 +618,7 @@
                 },
                 {
                     "type": "Buff",
-                    "buffId": 3001,
+                    "buffId": 4001,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -646,7 +646,7 @@
                             {
                                 "subject": "Target",
                                 "property": "HasBuff",
-                                "param": 3001,
+                                "param": 4001,
                                 "operator": "Eq",
                                 "value": true
                             }
@@ -666,7 +666,7 @@
                 },
                 {
                     "type": "Buff",
-                    "buffId": 3001,
+                    "buffId": 4001,
                     "amount": 2,
                     "target": "Enemy"
                 }
@@ -689,7 +689,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2004,
+                    "buffId": 3004,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -712,7 +712,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3001,
+                    "buffId": 4001,
                     "amount": 2,
                     "target": "Enemy"
                 }
@@ -732,13 +732,13 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3001,
+                    "buffId": 4001,
                     "amount": 2,
                     "target": "Enemy"
                 },
                 {
                     "type": "Buff",
-                    "buffId": 2002,
+                    "buffId": 3002,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -761,7 +761,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2005,
+                    "buffId": 3005,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -785,7 +785,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2005,
+                    "buffId": 3005,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -808,7 +808,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2005,
+                    "buffId": 3005,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -831,7 +831,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2005,
+                    "buffId": 3005,
                     "amount": 4,
                     "target": "Self"
                 }
@@ -854,7 +854,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2006,
+                    "buffId": 3006,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -878,7 +878,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 2005,
+                    "buffId": 3005,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -1040,7 +1040,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3001,
+                    "buffId": 4001,
                     "amount": 1,
                     "target": "Enemy"
                 }
@@ -1066,7 +1066,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3001,
+                    "buffId": 4001,
                     "amount": 2,
                     "target": "Enemy"
                 }
