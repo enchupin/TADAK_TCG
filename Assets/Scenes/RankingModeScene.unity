@@ -198,6 +198,56 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &86342008
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 86342010}
+  - component: {fileID: 86342009}
+  m_Layer: 0
+  m_Name: RankingSceneButtonManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &86342009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 86342008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f725abf0ceee754791b5a6895ad9767, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RankingSceneButtonManager
+  characterButtons:
+  - {fileID: 8671365174254741716}
+  - {fileID: 1978274196}
+  startXPosition: 0
+  spawnSpacing: 20
+  expandShiftAmount: 160
+--- !u!4 &86342010
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 86342008}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 680.2793, y: 378.24802, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &92150808
 GameObject:
   m_ObjectHideFlags: 0
@@ -456,6 +506,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: CharacterSelectButton_RankingScene
       objectReference: {fileID: 0}
+    - target: {fileID: 3024651634524755685, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
+      propertyPath: manager
+      value: 
+      objectReference: {fileID: 86342009}
+    - target: {fileID: 3024651634524755685, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
+      propertyPath: character
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3347725797921719501, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
+      propertyPath: m_text
+      value: Ignia
+      objectReference: {fileID: 0}
     - target: {fileID: 7126515853444721151, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -535,6 +597,18 @@ PrefabInstance:
     - target: {fileID: 7126515853444721151, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8947926882913876343, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8947926882913876343, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8947926882913876343, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -837,99 +911,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1427524096}
   m_CullTransparentMesh: 1
---- !u!1 &1430128479
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1430128481}
-  - component: {fileID: 1430128480}
-  m_Layer: 0
-  m_Name: DeckListController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1430128480
+--- !u!114 &1978274196 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 8947926882913876343, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
+  m_PrefabInstance: {fileID: 1074163264}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1430128479}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec73958b1889f854abce3426da9a9440, type: 3}
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DeckListController
-  deckButtonContainer: {fileID: 2071293140}
-  deckListPrefab: {fileID: 0}
---- !u!4 &1430128481
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1430128479}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 553.5302, y: 309.12808, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1528658035
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1528658037}
-  - component: {fileID: 1528658036}
-  m_Layer: 0
-  m_Name: CharacterSelectButton_RankingScene
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1528658036
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1528658035}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5f73dd0f206889458fbd9c2d79338a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterSelectButton_RankingScene
-  character: 0
-  deckSelectButtonPrefab: {fileID: 2404577217928703557, guid: 2676329a26cfa964bb1443ed2b68b8a0, type: 3}
-  scrollViewContent: {fileID: 2071293140}
---- !u!4 &1528658037
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1528658035}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 637.32794, y: 312.00363, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1 &2068216816
 GameObject:
   m_ObjectHideFlags: 0
@@ -1116,18 +1108,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CharacterSelectButton_RankingScene
       objectReference: {fileID: 0}
-    - target: {fileID: 6708102045999084700, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6708102045999084700, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6708102045999084700, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 170
-      objectReference: {fileID: 0}
+    - target: {fileID: 3024651634524755685, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
+      propertyPath: manager
+      value: 
+      objectReference: {fileID: 86342009}
     - target: {fileID: 7126515853444721151, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1208,34 +1192,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8947926882913876343, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8947926882913876343, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8947926882913876343, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1528658036}
-    - target: {fileID: 8947926882913876343, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8947926882913876343, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnButtonClick
-      objectReference: {fileID: 0}
-    - target: {fileID: 8947926882913876343, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: CharacterSelectButton_RankingScene, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 8947926882913876343, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1246,6 +1202,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7126515853444721151, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
   m_PrefabInstance: {fileID: 8671365174254741714}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8671365174254741716 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8947926882913876343, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
+  m_PrefabInstance: {fileID: 8671365174254741714}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1253,5 +1220,4 @@ SceneRoots:
   - {fileID: 2068216819}
   - {fileID: 255490243}
   - {fileID: 38977311}
-  - {fileID: 1430128481}
-  - {fileID: 1528658037}
+  - {fileID: 86342010}
