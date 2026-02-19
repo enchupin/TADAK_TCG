@@ -11,11 +11,15 @@ namespace Lobby
         [SerializeField] private GameObject characterBookPanel;
         [SerializeField] private GameObject settingsPanel;
 
+
+
         private void Start()
         {
-            // 시작 시 메인 패널만 열고 나머지는 닫기
             ShowMainPanel();
         }
+
+
+
 
         // ─── 열기 ────────────────────────────────
 
