@@ -5,6 +5,18 @@ using UnityEngine;
 /// </summary>
 public class PlayerData
 {
+    /// <summary>싱글톤 인스턴스 (TrainingBattleManager.InitializeBattle()에서 생성)</summary>
+    public static PlayerData Instance { get; private set; }
+    /// <summary>새 인스턴스를 생성하고 싱글톤으로 등록</summary>
+    public static PlayerData Create() {
+        Instance = new PlayerData();
+        return Instance;
+    }
+    /// <summary>씬 종료 시 인스턴스 해제</summary>
+    public static void Reset() => Instance = null;
+    
+
+
     // 체력 관련
     public int hp;
     public int maxHP;
