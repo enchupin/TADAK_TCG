@@ -52,7 +52,6 @@ public class TrainingBattleManager : MonoBehaviour {
         // CardManager는 자동으로 초기화됨 (RuntimeInitializeOnLoadMethod)
         
         InitializeBattle();
-        InitializeUI();
         StartGame();
     }
 
@@ -128,17 +127,6 @@ public class TrainingBattleManager : MonoBehaviour {
         usableDeckManager.SetDeck(battleDeck);
 
         UpdateAllUI();
-    }
-
-    /// <summary>
-    /// UI 초기화
-    /// </summary>
-    void InitializeUI() {
-        if (battleUI != null)
-        {
-            battleUI.Initialize();
-            battleUI.UpdateAllUI();
-        }
     }
 
 
