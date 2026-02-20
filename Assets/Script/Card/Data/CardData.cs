@@ -108,11 +108,8 @@ public class CardEffectData
     public int keywordId;   // 키워드 ID
     
     [Header("GenerateCard")]
-    public System.Collections.Generic.List<RandomCardData> RandomCard;  // 랜덤 카드 생성
+    public List<RandomCardData> RandomCard;  // 랜덤 카드 생성
     
-    /// <summary>
-    /// CardEffectData → ICardEffect 변환
-    /// </summary>
     /// <summary>
     /// CardEffectData → ICardEffect 변환
     /// </summary>
