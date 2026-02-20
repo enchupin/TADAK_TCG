@@ -115,7 +115,9 @@ public class CardJSONConverter : EditorWindow
         int count = 0;
         foreach (var cardJson in cardDataList.cards)
         {
-            string fileName = $"{cardJson.cardId}_{cardJson.name}.asset";
+            string rawFileName = $"{cardJson.cardId}_{cardJson.name}.asset";
+            // 파일 이름에 사용할 수 없는 특수 문자 제거 (예: 콜론)
+            string fileName = string.Join("_", rawFileName.Split(Path.GetInvalidFileNameChars()));
             string assetPath = Path.Combine(outputPath, fileName).Replace("\\", "/");
 
             CardData cardData = AssetDatabase.LoadAssetAtPath<CardData>(assetPath);

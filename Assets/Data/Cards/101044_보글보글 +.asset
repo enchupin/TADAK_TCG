@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardId: 101044
   cardName: "\uBCF4\uAE00\uBCF4\uAE00 +"
-  character: 0
+  character: 101
   cost: 0
   description: "\uC190\uC5D0 \uB4E0 \uCE74\uB4DC \uD55C \uC7A5\uC744 \uC120\uD0DD\uD574
     \uBC84\uB9BD\uB2C8\uB2E4. \uBB34\uC791\uC704 \uAC15\uD654\uB41C \uD3EC\uC158

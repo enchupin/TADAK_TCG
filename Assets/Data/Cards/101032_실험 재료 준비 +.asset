@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardId: 101032
   cardName: "\uC2E4\uD5D8 \uC7AC\uB8CC \uC900\uBE44 +"
-  character: 0
+  character: 101
   cost: 1
   description: "\uCE74\uB4DC\uB97C 2\uC7A5 \uBF51\uACE0, \uB0B4 \uC190\uD328\uAC00
     4\uC7A5 \uC774\uD558\uB77C\uBA74 1\uC7A5 \uB354 \uBF51\uC2B5\uB2C8\uB2E4."
@@ -80,9 +80,9 @@ MonoBehaviour:
         operator: Lte
         value: 4
       successEffect:
-        rid: 589631157118435403
+        rid: 589631158974152777
       failEffect:
-        rid: 589631157118435404
+        rid: 589631158974152778
     condition: 
     conditionValue: 
     onAction:
@@ -97,7 +97,7 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 589631157118435403
+    - rid: 589631158974152777
       type: {class: CardEffectData, ns: , asm: Assembly-CSharp}
       data:
         type: 0
@@ -132,7 +132,7 @@ MonoBehaviour:
         keyword: 
         keywordId: 0
         RandomCard: []
-    - rid: 589631157118435404
+    - rid: 589631158974152778
       type: {class: CardEffectData, ns: , asm: Assembly-CSharp}
       data:
         type: 0

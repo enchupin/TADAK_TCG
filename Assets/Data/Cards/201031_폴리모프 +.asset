@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardId: 201031
   cardName: "\uD3F4\uB9AC\uBAA8\uD504 +"
-  character: 1
+  character: 201
   cost: 1
   description: "\uC774\uBC88 \uD134\uC5D0 \uB0B4 \uCE74\uB4DC\uC758 \uD53C\uD574\uB7C9\uC774
     40% \uC99D\uAC00\uD569\uB2C8\uB2E4."
@@ -28,7 +28,7 @@ MonoBehaviour:
     amountFormula: 
     target: 2
     stat: 
-    buffId: 2017
+    buffId: 3017
     duration: 0
     baseDamage: 0
     bonusPerCard: 0
@@ -60,7 +60,7 @@ MonoBehaviour:
     amountFormula: 
     target: 2
     stat: 
-    buffId: 2025
+    buffId: 3025
     duration: 0
     baseDamage: 0
     bonusPerCard: 0
