@@ -120,42 +120,38 @@ public class CardEffectData
     {
         switch (type)
         {
+            // onAction 처리 로직은 ICardEffect 구현체에서 처리해야 함
+            // 현재 구조에서는 데이터만 전달하거나, ICardEffect가 데이터를 가지도록 변경 필요
+            // 일단은 기본 값들만 매핑
             case EffectType.Attack:
-                return new AttackEffect {
-                    amount = amount,
-                    amountFormula = amountFormula,
-                    target = target,
-                    // onAction 처리 로직은 ICardEffect 구현체에서 처리해야 함
-                    // 현재 구조에서는 데이터만 전달하거나, ICardEffect가 데이터를 가지도록 변경 필요
-                    // 일단은 기본 값들만 매핑
-                };
+                return new AttackEffect { amount = amount,  amountFormula = amountFormula, target = target };
             case EffectType.Barrier:
-                return new BarrierEffect {
-                    amount = amount,
-                    amountFormula = amountFormula,
-                    target = target
-                };
+                return new BarrierEffect { amount = amount, amountFormula = amountFormula, target = target };
+
+
+
+
+
+
+
+
+            // 중첩 효과 파싱
             case EffectType.Repeat:
-                // 중첩 효과 파싱
                 List<ICardEffect> repeatedEffects = new List<ICardEffect>();
-                if (subEffects != null)
-                {
-                    foreach(var sub in subEffects)
-                    {
+                if (subEffects != null) {
+                    foreach(var sub in subEffects) {
                         var eff = sub.CreateEffect();
                         if(eff != null) repeatedEffects.Add(eff);
                     }
                 }
-                return new RepeatEffect {
-                    count = count,
-                    countFormula = amountFormula, 
-                    effectsToRepeat = repeatedEffects
-                };
+                return new RepeatEffect { count = count, countFormula = amountFormula, effectsToRepeat = repeatedEffects };
+
+
+
             case EffectType.Conditional:
                 // 조건부 효과 생성
                 // 기존 문자열 조건(condition)과 새로운 구조체 조건(conditionData) 모두 지원해야 할 수 있음
                 // 여기서는 새로운 ConditionEvaluator를 사용하는 ConditionalEffect로 연결
-                
                 List<ICardEffect> success = new List<ICardEffect>();
                 if (conditionData.successEffect != null) { // 신규 구조
                      // 단일 효과지만 리스트로 처리 (편의상)
@@ -178,12 +174,8 @@ public class CardEffectData
                     if (eff != null) fail.Add(eff);
                 }
 
-                return new ConditionalEffect {
-                    // ConditionData 전달
-                    conditionData = this.conditionData,
-                    successEffects = success,
-                    failEffects = fail
-                };
+                // ConditionData 전달
+                return new ConditionalEffect { conditionData = this.conditionData, successEffects = success, failEffects = fail };
 
             // ... 나머지 케이스들은 생략하지 않고 모두 포함해야 함 ...
             // 지면 관계상 핵심 변경점 위주로 작성하되, 실제 파일에는 모든 케이스가 있어야 함.
@@ -201,19 +193,10 @@ public class CardEffectData
                  return new SelectCardEffect { count = count, target = target };
             case EffectType.Damage:
                 return new DamageEffect { amount = amount, amountFormula = amountFormula, target = target };
-            case EffectType.Defense:
-                return new DefenseEffect { amount = amount, amountFormula = amountFormula };
             case EffectType.Draw:
                 return new DrawEffect { amount = amount, amountFormula = amountFormula };
             case EffectType.Buff:
-                return new BuffEffect { 
-                    stat = stat, 
-                    buffId = buffId,
-                    amount = amount,
-                    amountFormula = amountFormula,
-                    duration = duration,
-                    target = target
-                };
+                return new BuffEffect { stat = stat, buffId = buffId, amount = amount, amountFormula = amountFormula, duration = duration, target = target };
             case EffectType.Energy:
                 return new EnergyEffect { amount = amount, amountFormula = amountFormula };
             case EffectType.DamagePerCardPlayed:
@@ -281,7 +264,6 @@ public class CheckData
 public enum EffectType
 {
     Damage,
-    Defense,
     Draw,
     Buff,
     Energy,
