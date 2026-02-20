@@ -18,6 +18,7 @@ public class TrainingBattleManager : MonoBehaviour {
     public UsableDeckManager usableDeckManager;
     public HandManager handManager;
     public BattleUI battleUI;
+    public MonsterSpawner monsterSpawner;
 
     [Header("드로우 수")]
     public int drawCardCount = 6;
@@ -110,6 +111,15 @@ public class TrainingBattleManager : MonoBehaviour {
 
         // PlayerData 초기화 메서드 호출
         playerData.Initialize(totalMaxHp, totalDefense, totalMaxEnergy);
+
+        // 몬스터 스폰
+        if (monsterSpawner != null) {
+            monsterSpawner.SpawnMonster();
+            // 스폰된 몬스터는 스스로 Start()에서 RegisterMonster()를 호출하여 매니저에 등록될 것입니다.
+        }
+        else {
+            Debug.LogWarning("[BattleManager] MonsterSpawner가 할당되지 않아 몬스터를 스폰할 수 없습니다.");
+        }
 
         battleContext = new BattleContext();  // 컨텍스트 초기화
 
