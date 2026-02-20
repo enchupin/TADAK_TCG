@@ -23,9 +23,9 @@ MonoBehaviour:
   effectAddress: 
   soundAddress: 
   effects:
-  - type: 2
+  - type: 1
     amount: 0
-    amountFormula: 
+    amountFormula: ShuffleCount + 2
     target: 0
     stat: 
     buffId: 0

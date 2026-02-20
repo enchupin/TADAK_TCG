@@ -22,8 +22,8 @@ MonoBehaviour:
   effectAddress: 
   soundAddress: 
   effects:
-  - type: 13
-    amount: 0
+  - type: 12
+    amount: 5
     amountFormula: 
     target: 2
     stat: 
@@ -54,8 +54,8 @@ MonoBehaviour:
     keyword: 
     keywordId: 0
     RandomCard: []
-  - type: 13
-    amount: 0
+  - type: 12
+    amount: 5
     amountFormula: 
     target: 2
     stat: 

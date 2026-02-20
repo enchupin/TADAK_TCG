@@ -87,8 +87,8 @@ MonoBehaviour:
     keyword: 
     keywordId: 0
     RandomCard: []
-  - type: 2
-    amount: 0
+  - type: 1
+    amount: 5
     amountFormula: 
     target: 0
     stat: 

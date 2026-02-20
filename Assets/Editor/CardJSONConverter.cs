@@ -254,8 +254,6 @@ public class CardJSONConverter : EditorWindow
                 effectData.type = EffectType.Damage;
                 break;
             case "Defense":
-                effectData.type = EffectType.Defense;
-                break;
             case "Barrier":
                 effectData.type = EffectType.Barrier;
                 break;

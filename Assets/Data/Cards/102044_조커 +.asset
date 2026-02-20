@@ -23,7 +23,7 @@ MonoBehaviour:
   effectAddress: 
   soundAddress: 
   effects:
-  - type: 3
+  - type: 2
     amount: 0
     amountFormula: 
     target: 2

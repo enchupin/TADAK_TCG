@@ -25,7 +25,7 @@ MonoBehaviour:
   effects:
   - type: 0
     amount: 0
-    amountFormula: 
+    amountFormula: all
     target: 0
     stat: 
     buffId: 0

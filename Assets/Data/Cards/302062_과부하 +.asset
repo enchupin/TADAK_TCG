@@ -23,9 +23,9 @@ MonoBehaviour:
   effectAddress: 
   soundAddress: 
   effects:
-  - type: 13
+  - type: 12
     amount: 0
-    amountFormula: 
+    amountFormula: GetBuffStack(3031) * 4
     target: 2
     stat: 
     buffId: 0

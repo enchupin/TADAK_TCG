@@ -16,10 +16,10 @@ public class Card
     public string description;  // 카드 설명
     
     // 강화 가능한 카드 ID 목록
-    public List<int> enforceCardIds = new List<int>();
+    public List<int> enforceCardIds = new();
     
     // 효과 리스트
-    public List<ICardEffect> effects = new List<ICardEffect>();
+    public List<ICardEffect> effects = new();
     
     // Addressables 주소
     public string artworkAddress;
@@ -32,7 +32,7 @@ public class Card
     public AudioClip soundClip;
     
     /// <summary>
-    /// 카드를 사용합니다.
+    /// 카드를 사용
     /// </summary>
     public void Play(TrainingBattleManager battlemanager)
     {

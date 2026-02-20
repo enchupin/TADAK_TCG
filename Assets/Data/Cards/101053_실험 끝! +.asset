@@ -23,9 +23,9 @@ MonoBehaviour:
   effectAddress: 
   soundAddress: 
   effects:
-  - type: 12
+  - type: 11
     amount: 0
-    amountFormula: 
+    amountFormula: UseCardInCombat * 3
     target: 1
     stat: 
     buffId: 0

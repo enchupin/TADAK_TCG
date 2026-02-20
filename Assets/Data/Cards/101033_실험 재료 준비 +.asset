@@ -23,8 +23,8 @@ MonoBehaviour:
   effectAddress: 
   soundAddress: 
   effects:
-  - type: 15
-    amount: 0
+  - type: 14
+    amount: 1
     amountFormula: 
     target: 0
     stat: 
