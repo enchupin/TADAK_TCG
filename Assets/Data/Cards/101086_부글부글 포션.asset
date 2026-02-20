@@ -17,7 +17,7 @@ MonoBehaviour:
   character: 0
   cost: 0
   description: "\uBD80\uC2DD\uC744 1 \uBD80\uC5EC\uD569\uB2C8\uB2E4."
-  enforceCardIds: de8a0100
+  enforceCardIds: df8a0100
   artworkAddress: 
   effectAddress: 
   soundAddress: 

@@ -80,9 +80,9 @@ MonoBehaviour:
         operator: Lte
         value: 4
       successEffect:
-        rid: 8131074583654826079
+        rid: 589631157118435403
       failEffect:
-        rid: 8131074583654826080
+        rid: 589631157118435404
     condition: 
     conditionValue: 
     onAction:
@@ -97,7 +97,7 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 8131074583654826079
+    - rid: 589631157118435403
       type: {class: CardEffectData, ns: , asm: Assembly-CSharp}
       data:
         type: 0
@@ -132,7 +132,7 @@ MonoBehaviour:
         keyword: 
         keywordId: 0
         RandomCard: []
-    - rid: 8131074583654826080
+    - rid: 589631157118435404
       type: {class: CardEffectData, ns: , asm: Assembly-CSharp}
       data:
         type: 0

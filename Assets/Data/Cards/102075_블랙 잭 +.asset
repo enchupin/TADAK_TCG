@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b4bd1118fb042d4bbad8fdee171a572, type: 3}
-  m_Name: "202045_\uAC38\uB974\uB4DC +"
+  m_Name: "102075_\uBE14\uB799 \uC7AD +"
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  cardId: 202045
-  cardName: "\uAC38\uB974\uB4DC +"
-  character: 2
+  cardId: 102075
+  cardName: "\uBE14\uB799 \uC7AD +"
+  character: 0
   cost: 0
-  description: "\uCE74\uB4DC\uB97C 4\uC7A5 \uBF51\uC2B5\uB2C8\uB2E4. \uC774\uBC88
-    \uD134\uC5D0 \uB354 \uC774\uC0C1 \uCE74\uB4DC\uB97C \uBF51\uC744 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4."
+  description: "\uC801 \uB458\uC744 \uC120\uD0DD\uD569\uB2C8\uB2E4. \uB458\uC740
+    \uC9C0\uAE08\uBD80\uD130 \uD30C\uD2F0\uAC00 \uB429\uB2C8\uB2E4."
   enforceCardIds: 
   artworkAddress: 
   effectAddress: 
   soundAddress: 
   effects:
-  - type: 2
+  - type: 0
     amount: 0
     amountFormula: 
     target: 0
@@ -55,12 +55,76 @@ MonoBehaviour:
     keyword: 
     keywordId: 0
     RandomCard: []
-  - type: 3
+  - type: 0
     amount: 0
     amountFormula: 
-    target: 2
+    target: 0
     stat: 
-    buffId: 1007
+    buffId: 0
+    duration: 0
+    baseDamage: 0
+    bonusPerCard: 0
+    hpThreshold: 0
+    multiplier: 0
+    nestedEffect:
+      rid: -2
+    subEffects: []
+    failEffect:
+      rid: -2
+    conditionData:
+      mode: And
+      checks: []
+      successEffect:
+        rid: -2
+      failEffect:
+        rid: -2
+    condition: 
+    conditionValue: 
+    onAction:
+      rid: -2
+    cardIdList: 
+    count: 0
+    keyword: 
+    keywordId: 0
+    RandomCard: []
+  - type: 0
+    amount: 0
+    amountFormula: 
+    target: 0
+    stat: 
+    buffId: 0
+    duration: 0
+    baseDamage: 0
+    bonusPerCard: 0
+    hpThreshold: 0
+    multiplier: 0
+    nestedEffect:
+      rid: -2
+    subEffects: []
+    failEffect:
+      rid: -2
+    conditionData:
+      mode: And
+      checks: []
+      successEffect:
+        rid: -2
+      failEffect:
+        rid: -2
+    condition: 
+    conditionValue: 
+    onAction:
+      rid: -2
+    cardIdList: 
+    count: 0
+    keyword: 
+    keywordId: 0
+    RandomCard: []
+  - type: 0
+    amount: 0
+    amountFormula: 
+    target: 0
+    stat: 
+    buffId: 0
     duration: 0
     baseDamage: 0
     bonusPerCard: 0

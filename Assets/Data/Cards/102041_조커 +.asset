@@ -10,25 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b4bd1118fb042d4bbad8fdee171a572, type: 3}
-  m_Name: "301065_\uB9C8\uB825 \uCE58\uD658 +"
+  m_Name: "102041_\uC870\uCEE4 +"
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  cardId: 301065
-  cardName: "\uB9C8\uB825 \uCE58\uD658 +"
-  character: 3
-  cost: 10
-  description: "\uC774 \uCE74\uB4DC\uB294 \uB0B4 \uBCF4\uD638\uB9C9\uC744 \uBE44\uC6A9\uC73C\uB85C
-    \uC0AC\uC6A9\uD569\uB2C8\uB2E4. \uC7AC\uC0DD\uC744 1 \uC5BB\uC2B5\uB2C8\uB2E4."
+  cardId: 102041
+  cardName: "\uC870\uCEE4 +"
+  character: 0
+  cost: 0
+  description: "\uB2E4\uB978 \uACE0\uC720 \uCE74\uB4DC\uB97C 1\uC7A5 \uC120\uD0DD\uD569\uB2C8\uB2E4.
+    \uADF8 \uCE74\uB4DC\uC758 \uBB34\uC791\uC704 \uAC15\uD654\uBCF8\uC744 1\uC7A5
+    \uD68D\uB4DD\uD569\uB2C8\uB2E4."
   enforceCardIds: 
   artworkAddress: 
   effectAddress: 
   soundAddress: 
   effects:
-  - type: 3
+  - type: 0
     amount: 0
     amountFormula: 
-    target: 2
+    target: 0
     stat: 
-    buffId: 2001
+    buffId: 0
     duration: 0
     baseDamage: 0
     bonusPerCard: 0

@@ -89,49 +89,51 @@ public class TrainingBattleManager : MonoBehaviour {
     /// 전투 초기화
     /// </summary>
     void InitializeBattle() {
+        if (playerData == null) {
+            playerData = PlayerData.Create();
+        }
 
-        playerData = PlayerData.Create();
-
-        // 선택된 캐릭터 3명의 maxHp 합산으로 초기 HP 설정
+        // 선택된 캐릭터의 스탯 합산
         int totalMaxHp = 0;
+        int totalDefense = 0;
+        int totalMaxEnergy = 3;
+
         foreach (Character character in SelectedButtonControl.selectedCharacterList)
         {
             CharacterData data = CharacterManager.GetCharacterByEnum(character);
-            if (data != null)
+            if (data != null) {
                 totalMaxHp += data.maxHp;
-            else
+            }
+            else {
                 Debug.LogWarning($"[BattleManager] {character}의 CharacterData를 찾을 수 없습니다.");
+            }
         }
-        playerData.maxHP = totalMaxHp > 0 ? totalMaxHp : 100; // 기본값 100
-        playerData.hp = playerData.maxHP;
-        Debug.Log($"[BattleManager] 초기 플레이어 HP 설정: {playerData.hp} (캐릭터 HP 합산)");
+
+        // PlayerData 초기화 메서드 호출
+        playerData.Initialize(totalMaxHp, totalDefense, totalMaxEnergy);
 
         monster = new Monster();
         battleContext = new BattleContext();  // 컨텍스트 초기화
 
-        if (!CardManager.IsInitialized())
-        {
+        if (!CardManager.IsInitialized()) {
             Debug.LogError("[BattleManager] CardManager가 초기화되지 않았습니다!");
             return;
         }
 
         // BuffManager 초기화 확인
-        if (BuffManager.Instance == null)
-        {
+        if (BuffManager.Instance == null) {
             Debug.Log("[BattleManager] BuffManager가 없어 새로 생성합니다.");
             GameObject go = new GameObject("BuffManager");
             go.AddComponent<BuffManager>();
         }
 
         // 1. BuildingDeck 초기화 (게임 최초 실행 시 한 번만)
-        if (buildingDeck == null)
-        {
+        if (buildingDeck == null) {
             Debug.Log("[BattleManager] 새로운 Run 시작: BuildingDeck을 생성합니다.");
             buildingDeck = new BuildingDeck();
             buildingDeck.Initialize(SelectedButtonControl.selectedCharacterList);
         }
-        else
-        {
+        else {
              Debug.Log($"[BattleManager] 기존 Run 이어하기: BuildingDeck 유지됨 ({buildingDeck.CopyDeck().Count}장)");
         }
 
