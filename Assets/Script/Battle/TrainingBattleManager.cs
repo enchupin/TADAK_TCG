@@ -180,8 +180,12 @@ public class TrainingBattleManager : MonoBehaviour {
         // 덱 초기화 및 셔플
         usableDeckManager.ShuffleDeck();
 
-        // 시작 손패 뽑기
-        DrawCards(drawCardCount);
+        if (isDebugMode) {
+            DebugDrawSpecificEffectCard();
+        } else {
+            // 시작 손패 뽑기
+            DrawCards(drawCardCount);
+        }
 
         Debug.Log("게임 시작! 카드를 클릭해서 사용하세요.");
     }
@@ -197,6 +201,90 @@ public class TrainingBattleManager : MonoBehaviour {
         List<Card> drawnCards = usableDeckManager.DrawCard(count);
         handManager.AddCard(drawnCards);
     }
+
+
+
+    // 테스트 용
+    // 디버그 모드 선택 시 특정 이펙트를 보유한 모든 카드가 핸드에 추가됨
+    [Header("디버그 모드")]
+    public bool isDebugMode = false;
+    public EffectType debugTargetEffect = EffectType.Barrier;
+    // 테스트 용
+    [ContextMenu("디버그: 특정 효과 카드 뽑기")]
+    public void DebugDrawSpecificEffectCard()
+    {
+        if (!isDebugMode || usableDeckManager == null || handManager == null) return;
+
+        List<Card> matchingCards = new List<Card>();
+        Queue<Card> remainingDeck = new Queue<Card>();
+
+        while (usableDeckManager.usableDeck.Count > 0)
+        {
+            Card card = usableDeckManager.usableDeck.Dequeue();
+            bool isMatch = false;
+
+            if (card.effects != null)
+            {
+                foreach (var effect in card.effects)
+                {
+                    switch (debugTargetEffect)
+                    {
+                        case EffectType.Barrier:
+                            isMatch = effect is BarrierEffect;
+                            break;
+                        case EffectType.Damage:
+                            isMatch = effect is DamageEffect;
+                            break;
+                        case EffectType.Draw:
+                            isMatch = effect is DrawEffect;
+                            break;
+                        case EffectType.Attack:
+                            isMatch = effect is AttackEffect;
+                            break;
+                        case EffectType.Execute:
+                            isMatch = effect is ExecuteDamageEffect;
+                            break;
+                        case EffectType.Heal:
+                            isMatch = effect is HealEffect;
+                            break;
+                        case EffectType.Buff:
+                            isMatch = effect is BuffEffect;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (isMatch) break; // 하나라도 맞으면 이 카드는 매치됨
+                }
+            }
+
+            if (isMatch)
+            {
+                matchingCards.Add(card);
+            }
+            else
+            {
+                remainingDeck.Enqueue(card);
+            }
+        }
+
+        // 매치되지 않은 카드들은 다시 덱으로
+        usableDeckManager.usableDeck = remainingDeck;
+
+        if (matchingCards.Count > 0)
+        {
+            Debug.Log($"[디버그] {debugTargetEffect} 효과를 가진 카드 {matchingCards.Count}장을 손패로 가져옵니다!");
+            handManager.AddCard(matchingCards);
+        }
+        else
+        {
+            Debug.LogWarning($"[디버그] 덱에 {debugTargetEffect} 효과를 가진 카드가 없습니다!");
+        }
+    }
+
+
+
+
 
 
     /// <summary>

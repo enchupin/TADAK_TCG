@@ -173,7 +173,7 @@ public class CardEffectData
                  return new SelectCardEffect { count = count, target = target };
             case EffectType.Damage:
                 return new DamageEffect { amount = amount, amountFormula = amountFormula, target = target };
-            case EffectType.Draw:
+            case EffectType.Draw: // clear
                 return new DrawEffect { amount = amount, amountFormula = amountFormula };
             case EffectType.Buff:
                 return new BuffEffect { stat = stat, buffId = buffId, amount = amount, amountFormula = amountFormula, duration = duration, target = target };
