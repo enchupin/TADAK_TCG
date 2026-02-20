@@ -14,7 +14,7 @@ public class MonsterSpawner : MonoBehaviour
     [SerializeField] private Transform spawnPoint;
 
     /// <summary>
-    /// 몬스터 프리팹을 지정된 위치에 스폰합니다.
+    /// 몬스터 프리팹을 지정된 위치에 스폰
     /// </summary>
     /// <returns>생성된 몬스터 객체 (없으면 null)</returns>
     public Monster SpawnMonster()
@@ -28,12 +28,15 @@ public class MonsterSpawner : MonoBehaviour
         Vector3 spawnPosition = spawnPoint != null ? spawnPoint.position : Vector3.zero;
         Quaternion spawnRotation = spawnPoint != null ? spawnPoint.rotation : Quaternion.identity;
 
-        GameObject spawnedObj = Instantiate(monsterPrefab, spawnPosition, spawnRotation);
-        spawnedObj.name = monsterPrefab.name; // "(Clone)" 글자 제거
-
-        Monster monsterComponent = spawnedObj.GetComponent<Monster>();
-        if (monsterComponent == null)
-        {
+        GameObject spawnedObj;
+        if (spawnPoint != null) {
+            // spawnPoint를 부모로 설정
+            spawnedObj = Instantiate(monsterPrefab, spawnPosition, spawnRotation, spawnPoint);
+        }
+        else {
+            spawnedObj = Instantiate(monsterPrefab, spawnPosition, spawnRotation);
+        }
+        if (!spawnedObj.TryGetComponent<Monster>(out var monsterComponent)) {
             Debug.LogError($"[MonsterSpawner] 생성된 프리팹 '{spawnedObj.name}'에 Monster 컴포넌트가 없습니다!");
         }
 
