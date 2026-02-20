@@ -1,10 +1,16 @@
 using UnityEngine;
+using TMPro;
 
 /// <summary>
 /// 몬스터의 전투 관련 데이터를 관리하는 클래스
 /// </summary>
-public class Monster
+public class Monster : MonoBehaviour
 {
+    [Header("UI Reference")]
+    [SerializeField] private TextMeshProUGUI hpText;
+    [SerializeField] private TextMeshProUGUI defenseText;
+
+    [Header("Stats")]
     // 체력 관련
     public int hp;
     public int maxHP;
@@ -13,15 +19,37 @@ public class Monster
     public int defense;
 
     // 몬스터 정보 (나중에 확장)
-    public string name;
+    public new string name;
     public int attackPower; // 기본 공격력
 
-
-    
-
-
-
     public System.Collections.Generic.List<Buff> currentBuffs = new System.Collections.Generic.List<Buff>();
+
+    private void Awake()
+    {
+        // 몬스터 기본 초기화
+        if (maxHP <= 0)
+        {
+            maxHP = 100;
+            hp = 100;
+            name = "Dummy Monster";
+            attackPower = 10;
+            defense = 0;
+        }
+    }
+
+    private void Start()
+    {
+        UpdateUI();
+    }
+
+    public void UpdateUI()
+    {
+        if (hpText != null)
+            hpText.text = $"HP : {hp}/{maxHP}";
+        
+        if (defenseText != null)
+            defenseText.text = defense > 0 ? $"🛡 {defense}" : "";
+    }
 
     /// <summary>
     /// 플레이어를 공격합니다.
@@ -48,7 +76,7 @@ public class Monster
         defense = Mathf.Max(0, defense - finalDamage);
 
         Debug.Log($"{name}이(가) {damageAfterDefense} 데미지를 받았습니다! (HP: {hp}/{maxHP})");
-        
+        UpdateUI();
         return damageAfterDefense;  // 실제 입힌 데미지 반환
     }
 
@@ -59,6 +87,7 @@ public class Monster
     {
         defense += amount;
         Debug.Log($"{name}의 방어력 +{amount} (현재: {defense})");
+        UpdateUI();
     }
     
     /// <summary>
@@ -115,5 +144,6 @@ public class Monster
         int healAmount = Mathf.Min(amount, maxHP - hp);
         hp += healAmount;
         Debug.Log($"{name}의 체력 +{healAmount} 회복 (현재: {hp}/{maxHP})");
+        UpdateUI();
     }
 }

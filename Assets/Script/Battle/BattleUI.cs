@@ -14,14 +14,9 @@ public class BattleUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playerEnergyText;
     [SerializeField] private TextMeshProUGUI playerDefenseText;
 
-    [Header("적 UI")]
-    [SerializeField] private TextMeshProUGUI enemyHPText;
-    [SerializeField] private TextMeshProUGUI enemyDefenseText;
-
     [Header("데이터 참조")]
     [SerializeField] private Monster monster;
     [SerializeField] private TrainingBattleManager battleManager;
-
 
     /// <summary>
     /// 플레이어 HP 업데이트
@@ -31,16 +26,6 @@ public class BattleUI : MonoBehaviour
         if (PlayerData.Instance == null) return;
         if (playerHPText != null)
             playerHPText.text = $"HP : {PlayerData.Instance.hp}/{PlayerData.Instance.maxHP}";
-    }
-
-    /// <summary>
-    /// 적 HP 업데이트
-    /// </summary>
-    public void UpdateEnemyHP()
-    {
-        if (monster == null) return;
-        if (enemyHPText != null)
-            enemyHPText.text = $"HP : {monster.hp}/{monster.maxHP}";
     }
 
     /// <summary>
@@ -63,15 +48,6 @@ public class BattleUI : MonoBehaviour
             playerDefenseText.text = $"Defense : {PlayerData.Instance.defense}";
     }
 
-    /// <summary>
-    /// 적 방어력 업데이트
-    /// </summary>
-    public void UpdateEnemyDefense()
-    {
-        if (monster == null) return;
-        if (enemyDefenseText != null)
-            enemyDefenseText.text = monster.defense > 0 ? $"🛡 {monster.defense}" : "";
-    }
 
     /// <summary>
     /// 모든 UI 업데이트
@@ -79,9 +55,7 @@ public class BattleUI : MonoBehaviour
     public void UpdateAllUI()
     {
         UpdatePlayerHP();
-        UpdateEnemyHP();
         UpdateEnergy();
         UpdatePlayerDefense();
-        UpdateEnemyDefense();
     }
 }

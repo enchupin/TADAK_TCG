@@ -18,17 +18,18 @@ public class DamageEffect : ICardEffect
         switch (target)
         {
             case TargetType.SingleEnemy:
-                if (battleManager.monster != null)
+                Monster singleTarget = UnityEngine.Object.FindFirstObjectByType<Monster>();
+                if (singleTarget != null)
                 {
-                    int damageDealt = battleManager.monster.TakeDamage(finalAmount, battleManager.playerData.strength);
+                    int damageDealt = singleTarget.TakeDamage(finalAmount, battleManager.playerData.strength);
                     battleManager.battleContext.OnDamageDealt(damageDealt);
                 }
                 break;
             case TargetType.AllEnemies:
-                // 여러 적 지원 시 구현
-                if (battleManager.monster != null)
+                Monster[] allMonsters = UnityEngine.Object.FindObjectsByType<Monster>(UnityEngine.FindObjectsSortMode.None);
+                foreach (var m in allMonsters)
                 {
-                    int damageDealt = battleManager.monster.TakeDamage(finalAmount, battleManager.playerData.strength);
+                    int damageDealt = m.TakeDamage(finalAmount, battleManager.playerData.strength);
                     battleManager.battleContext.OnDamageDealt(damageDealt);
                 }
                 break;

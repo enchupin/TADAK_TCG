@@ -228,11 +228,8 @@ public class CardJSONConverter : EditorWindow
         // 이번 구현에서는 "최상위 효과"의 amountFormula만 정확히 파싱하고, 중첩 효과는 정수값 위주로 처리하거나
         // 추후 개선된 파서를 적용한다.
         
-        effectData.amount = 0; // 기본값
-        // Try to parse amount from the current jsonData object if mapped (Unity JsonUtility doesn't map dynamic fields well)
-        // But we have custom parsing logic in `ParseAmountField` which relies on cardId/index.
-        // This is hard to apply to recursive inner effects without tracking index.
-        // For now, let's assume inner effects use simple integer amounts or we accept limitations.
+        effectData.amount = jsonData.amount;
+        effectData.amountFormula = jsonData.amountFormula;
         
         // target 필드
         if (!string.IsNullOrEmpty(jsonData.target))

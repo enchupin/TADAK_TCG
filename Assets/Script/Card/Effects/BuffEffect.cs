@@ -40,10 +40,10 @@ public class BuffEffect : ICardEffect
         }
         else if (target == TargetType.SingleEnemy || target == TargetType.AllEnemies)
         {
-            // Currently only 1 monster support
-            if (manager.monster != null)
+            Monster[] monsters = UnityEngine.Object.FindObjectsByType<Monster>(UnityEngine.FindObjectsSortMode.None);
+            foreach (var m in monsters)
             {
-                manager.monster.AddBuff(buffId, finalAmount);
+                m.AddBuff(buffId, finalAmount);
             }
         }
     }

@@ -11,7 +11,8 @@ public class ExecuteDamageEffect : ICardEffect
     
     public void Execute(TrainingBattleManager battleManager)
     {
-        Monster monster = battleManager.monster;
+        Monster monster = UnityEngine.Object.FindFirstObjectByType<Monster>();
+        if (monster == null) return;
         PlayerData player = battleManager.playerData;
         float enemyHpPercent = (float)monster.hp / monster.maxHP;
         
