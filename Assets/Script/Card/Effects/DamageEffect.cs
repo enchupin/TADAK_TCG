@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>
 /// 데미지 효과
@@ -15,24 +16,27 @@ public class DamageEffect : ICardEffect
     {
         int finalAmount = GetAmount(battleManager.battleContext, battleManager.playerData);
         
-        switch (target)
+        if (battleManager.spawnedMonsters.Count > 0)
         {
-            case TargetType.SingleEnemy:
-                Monster singleTarget = UnityEngine.Object.FindFirstObjectByType<Monster>();
-                if (singleTarget != null)
-                {
-                    int damageDealt = singleTarget.TakeDamage(finalAmount, battleManager.playerData.strength);
-                    battleManager.battleContext.OnDamageDealt(damageDealt);
-                }
-                break;
-            case TargetType.AllEnemies:
-                Monster[] allMonsters = UnityEngine.Object.FindObjectsByType<Monster>(UnityEngine.FindObjectsSortMode.None);
-                foreach (var m in allMonsters)
-                {
-                    int damageDealt = m.TakeDamage(finalAmount, battleManager.playerData.strength);
-                    battleManager.battleContext.OnDamageDealt(damageDealt);
-                }
-                break;
+            switch (target)
+            {
+                case TargetType.SingleEnemy:
+                    Monster singleTarget = battleManager.spawnedMonsters[0];
+                    if (singleTarget != null)
+                    {
+                        int damageDealt = singleTarget.TakeDamage(finalAmount, battleManager.playerData.strength);
+                        battleManager.battleContext.OnDamageDealt(damageDealt);
+                    }
+                    break;
+                case TargetType.AllEnemies:
+                    List<Monster> allMonsters = new List<Monster>(battleManager.spawnedMonsters);
+                    foreach (var m in allMonsters)
+                    {
+                        int damageDealt = m.TakeDamage(finalAmount, battleManager.playerData.strength);
+                        battleManager.battleContext.OnDamageDealt(damageDealt);
+                    }
+                    break;
+            }
         }
         
         battleManager.UpdateAllUI();
