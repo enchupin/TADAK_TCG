@@ -1,18 +1,20 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using System.Collections;
-
-/// <summary>
 /// 카드의 모든 상호작용을 담당하는 통합 핸들러
 /// 호버 효과, 드래그, 플레이스홀더, 카드 사용 판정
 /// </summary>
+[System.Serializable]
+public class CardPlayEvent : UnityEvent<Monster> { }
+
 public class CardInteractionHandler : UIHoverEffect,
     IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [Header("Events")]
-    [SerializeField] private UnityEvent onCardPlayRequested; // 카드 사용 이벤트
+    [SerializeField] private CardPlayEvent onCardPlayRequested; // 카드 사용 이벤트 (Target 정보 포함)
     
     [Header("Drag Settings")]
     private readonly float playThresholdYRatio = 0.3f; // 드래그 범위
@@ -35,9 +37,13 @@ public class CardInteractionHandler : UIHoverEffect,
     private LayoutElement layoutElement;
     private CardUI cardUI; // CardController 대신 CardUI 직접 참조
     
+    [Header("Targeting")]
+    private bool isTargetingMode = false;
+    private TargetingArrow targetingArrow;
+    
     private int originalSiblingIndex;
     private GameObject placeholder;
-    public UnityEvent OnCardPlayRequested => onCardPlayRequested; // 카드 사용 이벤트
+    public CardPlayEvent OnCardPlayRequested => onCardPlayRequested; // 카드 사용 이벤트
 
 
     protected override void Awake()
@@ -55,8 +61,14 @@ public class CardInteractionHandler : UIHoverEffect,
         layoutElement = GetComponent<LayoutElement>();
         cardUI = GetComponent<CardUI>(); // 추후 CardUI를 직접 참조하지 않는 방식으로 변경 예정
         
+        
         if (canvasGroup == null) canvasGroup = gameObject.AddComponent<CanvasGroup>();
         if (layoutElement == null) layoutElement = gameObject.AddComponent<LayoutElement>();
+
+        // 화살표 생성
+        GameObject arrowObj = new GameObject("TargetingArrow");
+        targetingArrow = arrowObj.AddComponent<TargetingArrow>();
+        targetingArrow.Initialize();
     }
     
     
@@ -64,6 +76,12 @@ public class CardInteractionHandler : UIHoverEffect,
     {
         // 모든 컴포넌트의 Start()가 완료된 후에 체크하도록 지연
         Invoke(nameof(CheckAndCreateThresholdLine), 0.01f);
+
+        if (targetingArrow != null && canvas != null)
+        {
+            targetingArrow.transform.SetParent(canvas.transform, false);
+            targetingArrow.transform.SetAsLastSibling();
+        }
     }
 
     private void CheckAndCreateThresholdLine()
@@ -97,7 +115,23 @@ public class CardInteractionHandler : UIHoverEffect,
     
     #endregion
     
-    #region Drag & Play
+    private bool RequiresTargeting()
+    {
+        if (cardUI == null) return false;
+        CardController cc = cardUI.GetComponent<CardController>();
+        if (cc == null || cc.Card == null || cc.Card.effects == null) return false;
+
+        foreach (var effect in cc.Card.effects)
+        {
+            if (effect is ExecuteDamageEffect) return true;
+            if (effect is DamageEffect damageEffect && damageEffect.target == TargetType.SingleEnemy) return true;
+            if (effect is AttackEffect attackEffect && attackEffect.target == TargetType.SingleEnemy) return true;
+        }
+        return false;
+    }
+
+
+    #region Drag
     /// <summary>
     /// 드래그 시작
     /// </summary>
@@ -112,25 +146,49 @@ public class CardInteractionHandler : UIHoverEffect,
         // Placeholder 생성 전에 크기 초기화
         StopAnimation();
         transform.localScale = originalScale;
-        
-        // Placeholder 생성
-        CreatePlaceholder();
-        
-        // 레이아웃 무시
-        layoutElement.ignoreLayout = true;
-        canvasGroup.blocksRaycasts = false;
-        
-        // 렌더링 순서 최상위로
-        transform.SetAsLastSibling();
+
+        isTargetingMode = RequiresTargeting();
+
+        if (isTargetingMode)
+        {
+            // 타겟팅 모드: 카드는 제자리에 두고 화살표만 활성화
+            if (targetingArrow != null)
+            {
+                targetingArrow.transform.SetAsLastSibling();
+                targetingArrow.gameObject.SetActive(true);
+                targetingArrow.UpdateArrow(rectTransform.position, eventData.position);
+            }
+        }
+        else
+        {
+            // 일반 모드: 카드 이동 준비
+            CreatePlaceholder();
+            layoutElement.ignoreLayout = true;
+            canvasGroup.blocksRaycasts = false;
+            transform.SetAsLastSibling();
+        }
     }
     
     public void OnDrag(PointerEventData eventData)
     {
-        if (canvas != null) {
-            rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+        if (canvas == null) return;
+        
+        if (isTargetingMode)
+        {
+            if (targetingArrow != null)
+            {
+                targetingArrow.UpdateArrow(rectTransform.position, eventData.position);
+            }
         }
-        else {
-            rectTransform.position = eventData.position;
+        else
+        {
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                canvas.transform as RectTransform,
+                eventData.position,
+                canvas.worldCamera,
+                out Vector2 localPoint);
+                
+            rectTransform.position = canvas.transform.TransformPoint(localPoint);
         }
     }
     
@@ -138,25 +196,59 @@ public class CardInteractionHandler : UIHoverEffect,
     {
         isDragging = false;
         isAnyCardDragging = false; // 전역 드래그 상태 비활성화
-        canvasGroup.blocksRaycasts = true;
-        layoutElement.ignoreLayout = false;
         
-        // 플레이스홀더 제거
-        DestroyPlaceholder();
-        
-        // 카드 사용 판정
-        if (eventData.position.y > Screen.height * playThresholdYRatio) {
-            // UnityEvent 발행
-            onCardPlayRequested?.Invoke();
+        if (isTargetingMode)
+        {
+            if (targetingArrow != null)
+            {
+                targetingArrow.gameObject.SetActive(false);
+            }
+
+            // 마우스 포인터 아래에 몬스터가 있는지 확인
+            Monster targetMonster = null;
+            if (eventData.hovered != null)
+            {
+                foreach (var go in eventData.hovered)
+                {
+                    Monster m = go.GetComponentInParent<Monster>();
+                    if (m != null)
+                    {
+                        targetMonster = m;
+                        break;
+                    }
+                }
+            }
+
+            if (targetMonster != null)
+            {
+                // 타겟을 찾았으므로 카드 사용
+                onCardPlayRequested?.Invoke(targetMonster);
+            }
+            // 허공에 놓았을 때는 카드가 이미 손패의 제자리에 머물러 있으므로 위치를 조정할 필요가 없습니다.
         }
-        else {
-            ReturnToHand();
+        else
+        {
+            canvasGroup.blocksRaycasts = true;
+            layoutElement.ignoreLayout = false;
+            
+            // 플레이스홀더 제거
+            DestroyPlaceholder();
+            
+            // 카드 사용 판정
+            if (eventData.position.y > Screen.height * playThresholdYRatio) {
+                // UnityEvent 발행
+                onCardPlayRequested?.Invoke(null);
+            }
+            else {
+                ReturnToHand();
+            }
         }
         
-        // 원래 크기로 복원
+        // 어떤 모드든 드래그가 끝나면 원래 크기로 복원
         StopAnimation();
         StartCoroutine(AnimateScale(originalScale));
     }
+
     
     
     private void ReturnToHand()
@@ -164,11 +256,12 @@ public class CardInteractionHandler : UIHoverEffect,
         transform.SetSiblingIndex(originalSiblingIndex);
         rectTransform.anchoredPosition = Vector2.zero;
     }
-    
+
     #endregion
-    
+
+
     #region Placeholder
-    
+
     private void CreatePlaceholder()
     {
         if (placeholder != null) return;

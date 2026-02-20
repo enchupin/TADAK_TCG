@@ -61,14 +61,14 @@ public class CardController : MonoBehaviour
     /// <summary>
     /// CardInteractionHandler로부터 카드 플레이 요청을 받았을 때 처리
     /// </summary>
-    private void HandleCardPlayRequest()
+    private void HandleCardPlayRequest(Monster targetMonster = null)
     {
         if (card == null) {
             Debug.LogWarning("[CardController] Card is null, cannot play card");
             return;
         }
         // CardController가 직접 이벤트 발행
-        CardPlayEventData eventData = new CardPlayEventData(this);
+        CardPlayEventData eventData = new CardPlayEventData(this, targetMonster);
         CardPlayEvents.RaiseCardPlayed(eventData);
     }
 }

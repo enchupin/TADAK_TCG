@@ -30,10 +30,12 @@ public static class CardPlayEvents
 public class CardPlayEventData
 {
     public CardController cardController;
+    public Monster targetMonster;
 
     // CardController를 받는 생성자
-    public CardPlayEventData(CardController cardController) {
+    public CardPlayEventData(CardController cardController, Monster targetMonster = null) {
         this.cardController = cardController;
+        this.targetMonster = targetMonster;
     }
 
 }
