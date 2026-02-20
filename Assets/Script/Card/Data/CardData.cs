@@ -120,21 +120,6 @@ public class CardEffectData
     {
         switch (type)
         {
-            // onAction 처리 로직은 ICardEffect 구현체에서 처리해야 함
-            // 현재 구조에서는 데이터만 전달하거나, ICardEffect가 데이터를 가지도록 변경 필요
-            // 일단은 기본 값들만 매핑
-            case EffectType.Attack:
-                return new AttackEffect { amount = amount,  amountFormula = amountFormula, target = target };
-            case EffectType.Barrier:
-                return new BarrierEffect { amount = amount, amountFormula = amountFormula, target = target };
-
-
-
-
-
-
-
-
             // 중첩 효과 파싱
             case EffectType.Repeat:
                 List<ICardEffect> repeatedEffects = new List<ICardEffect>();
@@ -173,14 +158,14 @@ public class CardEffectData
                     var eff = failEffect.CreateEffect();
                     if (eff != null) fail.Add(eff);
                 }
-
-                // ConditionData 전달
                 return new ConditionalEffect { conditionData = this.conditionData, successEffects = success, failEffects = fail };
 
-            // ... 나머지 케이스들은 생략하지 않고 모두 포함해야 함 ...
-            // 지면 관계상 핵심 변경점 위주로 작성하되, 실제 파일에는 모든 케이스가 있어야 함.
-            // replace_file_content는 부분 교체가 가능하므로 switch문 전체를 다시 씀.
 
+
+            case EffectType.Attack:
+                return new AttackEffect { amount = amount, amountFormula = amountFormula, target = target };
+            case EffectType.Barrier:
+                return new BarrierEffect { amount = amount, amountFormula = amountFormula, target = target };
             case EffectType.DiscardHand:
                 return new DiscardHandEffect { count = count, target = target };
             case EffectType.ExhaustHand:
@@ -213,15 +198,11 @@ public class CardEffectData
                 return new GenerateCardEffect { RandomCard = RandomCard, cardIdList = cardIdList, target = target };
             case EffectType.Keyword:
                 return new KeywordEffect { keyword = keyword, amount = amount, amountFormula = amountFormula };
-            
+            // count or amount based on field usage
             case EffectType.ChoiceDiscard:
-                return new ChoiceDiscardEffect { 
-                    amount = count, // count or amount based on field usage
-                    effect = nestedEffect?.CreateEffect() 
-                };
+                return new ChoiceDiscardEffect {  amount = count,effect = nestedEffect?.CreateEffect() };
             case EffectType.Pickup:
                 return new PickupEffect();
-            
             case EffectType.RandomGenerate:
                 Debug.LogWarning($"[CardData] 아직 구현되지 않은 효과 타입: {type}");
                 return null;
