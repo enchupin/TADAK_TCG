@@ -89,39 +89,25 @@ public class TrainingBattleManager : MonoBehaviour {
     /// 전투 초기화
     /// </summary>
     void InitializeBattle() {
-
-        if (playerData == null)
-        {
-            playerData = FindObjectOfType<PlayerData>();
-            if (playerData == null)
-            {
-                playerData = PlayerData.Create();
-            }
+        if (playerData == null) {
+            playerData = PlayerData.Create();
         }
 
-        // 3명 캐릭터의 스탯 합산
+        // 선택된 캐릭터의 스탯 합산
         int totalMaxHp = 0;
-        int totalDefense = 0; // 초기 방어력
-        int totalMaxEnergy = 3; // 기본 에너지 (캐릭터 특성에 따라 합산 가능)
+        int totalDefense = 0;
+        int totalMaxEnergy = 3;
 
         foreach (Character character in SelectedButtonControl.selectedCharacterList)
         {
             CharacterData data = CharacterManager.GetCharacterByEnum(character);
-            if (data != null)
-            {
+            if (data != null) {
                 totalMaxHp += data.maxHp;
-                // 추후 캐릭터별 초기 방어력이나 에너지가 있다면 여기서 합산
-                // totalDefense += data.initialDefense;
-                // totalMaxEnergy += data.bonusEnergy;
             }
-            else
-            {
+            else {
                 Debug.LogWarning($"[BattleManager] {character}의 CharacterData를 찾을 수 없습니다.");
             }
         }
-
-        // 합산된 스탯이 0이면 기본값 설정
-        totalMaxHp = totalMaxHp > 0 ? totalMaxHp : 100;
 
         // PlayerData 초기화 메서드 호출
         playerData.Initialize(totalMaxHp, totalDefense, totalMaxEnergy);
@@ -129,29 +115,25 @@ public class TrainingBattleManager : MonoBehaviour {
         monster = new Monster();
         battleContext = new BattleContext();  // 컨텍스트 초기화
 
-        if (!CardManager.IsInitialized())
-        {
+        if (!CardManager.IsInitialized()) {
             Debug.LogError("[BattleManager] CardManager가 초기화되지 않았습니다!");
             return;
         }
 
         // BuffManager 초기화 확인
-        if (BuffManager.Instance == null)
-        {
+        if (BuffManager.Instance == null) {
             Debug.Log("[BattleManager] BuffManager가 없어 새로 생성합니다.");
             GameObject go = new GameObject("BuffManager");
             go.AddComponent<BuffManager>();
         }
 
         // 1. BuildingDeck 초기화 (게임 최초 실행 시 한 번만)
-        if (buildingDeck == null)
-        {
+        if (buildingDeck == null) {
             Debug.Log("[BattleManager] 새로운 Run 시작: BuildingDeck을 생성합니다.");
             buildingDeck = new BuildingDeck();
             buildingDeck.Initialize(SelectedButtonControl.selectedCharacterList);
         }
-        else
-        {
+        else {
              Debug.Log($"[BattleManager] 기존 Run 이어하기: BuildingDeck 유지됨 ({buildingDeck.CopyDeck().Count}장)");
         }
 
