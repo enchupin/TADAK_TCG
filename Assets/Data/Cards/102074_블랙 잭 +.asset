@@ -10,25 +10,57 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b4bd1118fb042d4bbad8fdee171a572, type: 3}
-  m_Name: "301065_\uB9C8\uB825 \uCE58\uD658 +"
+  m_Name: "102074_\uBE14\uB799 \uC7AD +"
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  cardId: 301065
-  cardName: "\uB9C8\uB825 \uCE58\uD658 +"
-  character: 3
-  cost: 10
-  description: "\uC774 \uCE74\uB4DC\uB294 \uB0B4 \uBCF4\uD638\uB9C9\uC744 \uBE44\uC6A9\uC73C\uB85C
-    \uC0AC\uC6A9\uD569\uB2C8\uB2E4. \uC7AC\uC0DD\uC744 1 \uC5BB\uC2B5\uB2C8\uB2E4."
+  cardId: 102074
+  cardName: "\uBE14\uB799 \uC7AD +"
+  character: 0
+  cost: 0
+  description: "\uC2A4\uD14C\uBBF8\uB098\uB97C 2 \uC5BB\uC2B5\uB2C8\uB2E4. \uCE74\uB4DC\uB97C 
+    1\uC7A5 \uBF51\uC2B5\uB2C8\uB2E4."
   enforceCardIds: 
   artworkAddress: 
   effectAddress: 
   soundAddress: 
   effects:
-  - type: 3
+  - type: 0
     amount: 0
     amountFormula: 
-    target: 2
+    target: 0
     stat: 
-    buffId: 2001
+    buffId: 0
+    duration: 0
+    baseDamage: 0
+    bonusPerCard: 0
+    hpThreshold: 0
+    multiplier: 0
+    nestedEffect:
+      rid: -2
+    subEffects: []
+    failEffect:
+      rid: -2
+    conditionData:
+      mode: And
+      checks: []
+      successEffect:
+        rid: -2
+      failEffect:
+        rid: -2
+    condition: 
+    conditionValue: 
+    onAction:
+      rid: -2
+    cardIdList: 
+    count: 0
+    keyword: 
+    keywordId: 0
+    RandomCard: []
+  - type: 2
+    amount: 0
+    amountFormula: 
+    target: 0
+    stat: 
+    buffId: 0
     duration: 0
     baseDamage: 0
     bonusPerCard: 0
