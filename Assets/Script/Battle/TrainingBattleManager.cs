@@ -90,21 +90,41 @@ public class TrainingBattleManager : MonoBehaviour {
     /// </summary>
     void InitializeBattle() {
 
-        playerData = PlayerData.Create();
+        if (playerData == null)
+        {
+            playerData = FindObjectOfType<PlayerData>();
+            if (playerData == null)
+            {
+                playerData = PlayerData.Create();
+            }
+        }
 
-        // 선택된 캐릭터 3명의 maxHp 합산으로 초기 HP 설정
+        // 3명 캐릭터의 스탯 합산
         int totalMaxHp = 0;
+        int totalDefense = 0; // 초기 방어력
+        int totalMaxEnergy = 3; // 기본 에너지 (캐릭터 특성에 따라 합산 가능)
+
         foreach (Character character in SelectedButtonControl.selectedCharacterList)
         {
             CharacterData data = CharacterManager.GetCharacterByEnum(character);
             if (data != null)
+            {
                 totalMaxHp += data.maxHp;
+                // 추후 캐릭터별 초기 방어력이나 에너지가 있다면 여기서 합산
+                // totalDefense += data.initialDefense;
+                // totalMaxEnergy += data.bonusEnergy;
+            }
             else
+            {
                 Debug.LogWarning($"[BattleManager] {character}의 CharacterData를 찾을 수 없습니다.");
+            }
         }
-        playerData.maxHP = totalMaxHp > 0 ? totalMaxHp : 100; // 기본값 100
-        playerData.hp = playerData.maxHP;
-        Debug.Log($"[BattleManager] 초기 플레이어 HP 설정: {playerData.hp} (캐릭터 HP 합산)");
+
+        // 합산된 스탯이 0이면 기본값 설정
+        totalMaxHp = totalMaxHp > 0 ? totalMaxHp : 100;
+
+        // PlayerData 초기화 메서드 호출
+        playerData.Initialize(totalMaxHp, totalDefense, totalMaxEnergy);
 
         monster = new Monster();
         battleContext = new BattleContext();  // 컨텍스트 초기화

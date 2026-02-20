@@ -3,17 +3,50 @@ using UnityEngine;
 /// <summary>
 /// 플레이어의 전투 관련 데이터를 관리하는 클래스
 /// </summary>
-public class PlayerData
+public class PlayerData : MonoBehaviour
 {
     /// <summary>싱글톤 인스턴스 (TrainingBattleManager.InitializeBattle()에서 생성)</summary>
     public static PlayerData Instance { get; private set; }
+    
     /// <summary>새 인스턴스를 생성하고 싱글톤으로 등록</summary>
     public static PlayerData Create() {
-        Instance = new PlayerData();
+        if (Instance == null)
+        {
+            GameObject go = new GameObject("PlayerData");
+            Instance = go.AddComponent<PlayerData>();
+        }
         return Instance;
     }
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
+
     /// <summary>씬 종료 시 인스턴스 해제</summary>
-    public static void Reset() => Instance = null;
+    public static void Reset()
+    {
+        if (Instance != null)
+        {
+            Destroy(Instance.gameObject);
+            Instance = null;
+        }
+    }
     
 
 
@@ -33,7 +66,21 @@ public class PlayerData
     public System.Collections.Generic.List<Buff> currentBuffs = new System.Collections.Generic.List<Buff>();
 
     /// <summary>
-    /// 방어력을 추가합니다.
+    /// 플레이어의 전투 시작 스탯을 초기화
+    /// </summary>
+    public void Initialize(int startMaxHp, int startDefense = 0, int startMaxEnergy = 3)
+    {
+        maxHP = startMaxHp;
+        hp = maxHP;
+        defense = startDefense;
+        maxEnergy = startMaxEnergy;
+        energy = maxEnergy;
+        
+        Debug.Log($"플레이어 초기화 완료 - HP: {hp}/{maxHP}, 방어력: {defense}, 에너지: {energy}/{maxEnergy}");
+    }
+
+    /// <summary>
+    /// 방어력 추가
     /// </summary>
     public void AddDefense(int amount)
     {
@@ -42,7 +89,7 @@ public class PlayerData
     }
 
     /// <summary>
-    /// 힘 버프를 추가합니다.
+    /// 힘 버프 추가
     /// </summary>
     public void AddStrength(int amount)
     {
@@ -51,7 +98,7 @@ public class PlayerData
     }
 
     /// <summary>
-    /// 버프를 추가합니다.
+    /// 버프 추가
     /// </summary>
     public void AddBuff(int buffId, int amount)
     {
@@ -73,7 +120,7 @@ public class PlayerData
     }
 
     /// <summary>
-    /// 에너지를 추가합니다.
+    /// 에너지 추가
     /// </summary>
     public void AddEnergy(int amount)
     {
@@ -82,7 +129,7 @@ public class PlayerData
     }
 
     /// <summary>
-    /// 에너지를 사용합니다.
+    /// 에너지 사용
     /// </summary>
     public bool UseEnergy(int amount)
     {
@@ -96,7 +143,7 @@ public class PlayerData
     }
 
     /// <summary>
-    /// 데미지를 받습니다. (방어력 적용)
+    /// 피격 (방어력 적용)
     /// </summary>
     public void TakeDamage(int amount)
     {
@@ -108,7 +155,7 @@ public class PlayerData
     }
 
     /// <summary>
-    /// 체력을 회복합니다.
+    /// 체력 회복
     /// </summary>
     public void Heal(int amount)
     {
