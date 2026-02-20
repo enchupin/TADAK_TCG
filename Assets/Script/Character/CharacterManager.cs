@@ -163,58 +163,36 @@ public static class CharacterManager
         return isInitialized;
     }
     
+
+          
     /// <summary>
-    /// characterId를 Character enum으로 변환
-    /// 새로운 캐릭터 추가 시 이 메서드를 업데이트하세요.
-    /// </summary>
-    /// <summary>
-    /// characterId를 Character enum으로 변환
-    /// 새로운 캐릭터 추가 시 이 메서드를 업데이트하세요.
+    /// Chacacter ID가 유효한지 검증
     /// </summary>
     public static Character GetCharacterEnumById(int characterId)
     {
-        switch (characterId)
-        {
-            case 101: return Character.Isla;
-            case 201: return Character.Ignia;
-            case 202: return Character.Vanessa;
-            case 301: return Character.Polar;
-            default:
-                Debug.LogWarning($"[CharacterManager] Unknown characterId: {characterId}, defaulting to Isla");
-                return Character.Isla;
+        if (System.Enum.IsDefined(typeof(Character), characterId)) {
+            return (Character)characterId;
+        }
+        else {
+            Debug.LogWarning($"[CharacterManager] Unknown characterId: {characterId}, defaulting to Isla");
+            return Character.Isla;
         }
     }
 
     /// <summary>
-    /// characterId를 Character enum으로 변환
-    /// 새로운 캐릭터 추가 시 이 메서드를 업데이트하세요.
+    /// Character enum을 characterId로 변환
     /// </summary>
     public static int GetIdByCharacterEnum(Character character) {
-        switch (character) {
-            case Character.Isla: return 101;
-            case Character.Ignia: return 201;
-            case Character.Vanessa: return 202;
-            case Character.Polar: return 301;
-            default:
-                Debug.LogWarning($"[CharacterManager] Unknown characterId: {character}, defaulting to Isla");
-                return 101;
-        }
+        return (int)character;
     }
 
-    /// <summary>
-    /// Character Enum을 characterId로 변환
-    /// </summary>
-    public static int GetCharacterIdFromEnum(Character character)
-    {
-        return GetIdByCharacterEnum(character);
-    }
 
     /// <summary>
     /// Character Enum으로 CharacterData 조회
     /// </summary>
     public static CharacterData GetCharacterByEnum(Character character)
     {
-        int id = GetCharacterIdFromEnum(character);
+        int id = GetIdByCharacterEnum(character);
         return GetCharacter(id);
     }
 }

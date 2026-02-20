@@ -15,12 +15,11 @@ public class CharacterBookButton : MonoBehaviour
     public void OnButtonClick()
     {
         if (cardManager != null) {
-            List<int> startdeck = CharacterManager.GetStartDeck(character);
+            List<CardData> characterCards = CardManager.GetCardsByCharacter(character);
             List<Card> cardObjects = new List<Card>();
-             foreach (int id in startdeck) {
-                Card card = CardManager.GetCardAsCard(id);
-                if (card != null) {
-                    cardObjects.Add(card);
+             foreach (CardData data in characterCards) {
+                if (data != null) {
+                    cardObjects.Add(data.ToCard());
                 }
             }
             cardManager.ClearHand();
