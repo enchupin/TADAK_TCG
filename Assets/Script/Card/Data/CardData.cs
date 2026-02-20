@@ -157,11 +157,9 @@ public class CardEffectData
                 }
                 return new ConditionalEffect { conditionData = this.conditionData, successEffects = success, failEffects = fail };
 
-
-
             case EffectType.Attack:
                 return new AttackEffect { amount = amount, amountFormula = amountFormula, target = target };
-            case EffectType.Barrier:
+            case EffectType.Barrier: // clear
                 return new BarrierEffect { amount = amount, amountFormula = amountFormula, target = target };
             case EffectType.DiscardHand:
                 return new DiscardHandEffect { count = count, target = target };
@@ -195,8 +193,7 @@ public class CardEffectData
                 return new GenerateCardEffect { RandomCard = RandomCard, cardIdList = cardIdList, target = target };
             case EffectType.Keyword:
                 return new KeywordEffect { keyword = keyword, amount = amount, amountFormula = amountFormula };
-            // count or amount based on field usage
-            case EffectType.ChoiceDiscard:
+            case EffectType.ChoiceDiscard: // count or amount based on field usage
                 return new ChoiceDiscardEffect {  amount = count,effect = nestedEffect?.CreateEffect() };
             case EffectType.Pickup:
                 return new PickupEffect();
