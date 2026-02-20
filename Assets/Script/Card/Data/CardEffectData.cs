@@ -101,7 +101,7 @@ public class CardEffectData
                 }
                 return new ConditionalEffect { conditionData = this.conditionData, successEffects = success, failEffects = fail };
 
-            case EffectType.Attack:
+            case EffectType.Attack: // ongoing
                 return new AttackEffect { amount = amount, amountFormula = amountFormula, target = target };
             case EffectType.Barrier: // clear
                 return new BarrierEffect { amount = amount, amountFormula = amountFormula, target = target };

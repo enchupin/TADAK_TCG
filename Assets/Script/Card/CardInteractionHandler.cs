@@ -126,12 +126,15 @@ public class CardInteractionHandler : UIHoverEffect,
     
     public void OnDrag(PointerEventData eventData)
     {
-        if (canvas != null) {
-            rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
-        }
-        else {
-            rectTransform.position = eventData.position;
-        }
+        if (canvas == null) return;
+        
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvas.transform as RectTransform,
+            eventData.position,
+            canvas.worldCamera,
+            out Vector2 localPoint);
+            
+        rectTransform.position = canvas.transform.TransformPoint(localPoint);
     }
     
     public void OnEndDrag(PointerEventData eventData)
