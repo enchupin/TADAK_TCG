@@ -23,8 +23,8 @@ MonoBehaviour:
   effectAddress: 
   soundAddress: 
   effects:
-  - type: 2
-    amount: 0
+  - type: 1
+    amount: 2
     amountFormula: 
     target: 0
     stat: 
@@ -55,7 +55,7 @@ MonoBehaviour:
     keyword: 
     keywordId: 0
     RandomCard: []
-  - type: 16
+  - type: 15
     amount: 0
     amountFormula: 
     target: 0
@@ -80,9 +80,9 @@ MonoBehaviour:
         operator: Lte
         value: 4
       successEffect:
-        rid: 589631158974152780
+        rid: 589631160722128965
       failEffect:
-        rid: 589631158974152781
+        rid: 589631160722128966
     condition: 
     conditionValue: 
     onAction:
@@ -97,7 +97,7 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 589631158974152780
+    - rid: 589631160722128965
       type: {class: CardEffectData, ns: , asm: Assembly-CSharp}
       data:
         type: 0
@@ -132,7 +132,7 @@ MonoBehaviour:
         keyword: 
         keywordId: 0
         RandomCard: []
-    - rid: 589631158974152781
+    - rid: 589631160722128966
       type: {class: CardEffectData, ns: , asm: Assembly-CSharp}
       data:
         type: 0

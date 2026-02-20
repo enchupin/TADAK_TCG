@@ -24,8 +24,8 @@ MonoBehaviour:
   effectAddress: 
   soundAddress: 
   effects:
-  - type: 3
-    amount: 0
+  - type: 2
+    amount: 1
     amountFormula: 
     target: 2
     stat: 
@@ -56,9 +56,9 @@ MonoBehaviour:
     keyword: 
     keywordId: 0
     RandomCard: []
-  - type: 13
+  - type: 12
     amount: 0
-    amountFormula: 
+    amountFormula: GetBuffStack(3031)
     target: 2
     stat: 
     buffId: 0
@@ -88,8 +88,8 @@ MonoBehaviour:
     keyword: 
     keywordId: 0
     RandomCard: []
-  - type: 3
-    amount: 0
+  - type: 2
+    amount: 1
     amountFormula: 
     target: 2
     stat: 
