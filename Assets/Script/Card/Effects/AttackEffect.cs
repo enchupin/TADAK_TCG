@@ -19,11 +19,12 @@ public class AttackEffect : ICardEffect
         // Apply damage based on target
         // Currently, TrainingBattleManager only has one monster, so we target it.
         // In the future, if multiple monsters exist, we'd iterate or use selection logic.
-        if (battleManager.monster != null)
+        Monster targetMonster = UnityEngine.Object.FindFirstObjectByType<Monster>();
+        if (targetMonster != null)
         {
             // TODO: Trigger OnAttack events if needed (e.g. from battleManager.playerData)
             
-            battleManager.monster.TakeDamage(finalAmount);
+            targetMonster.TakeDamage(finalAmount, battleManager.playerData.strength);
         }
     }
 }

@@ -12,13 +12,13 @@ public class TrainingBattleManager : MonoBehaviour {
 
     [Header("전투 데이터")]
     public PlayerData playerData;
-    public Monster monster;
     public BattleContext battleContext;  // 수식 평가용 컨텍스트
 
     [Header("매니저 연결")]
     public UsableDeckManager usableDeckManager;
     public HandManager handManager;
     public BattleUI battleUI;
+    public MonsterSpawner monsterSpawner;
 
     [Header("드로우 수")]
     public int drawCardCount = 6;
@@ -112,7 +112,15 @@ public class TrainingBattleManager : MonoBehaviour {
         // PlayerData 초기화 메서드 호출
         playerData.Initialize(totalMaxHp, totalDefense, totalMaxEnergy);
 
-        monster = new Monster();
+        // 몬스터 스폰
+        if (monsterSpawner != null) {
+            monsterSpawner.SpawnMonster();
+            // 스폰된 몬스터는 스스로 Start()에서 RegisterMonster()를 호출하여 매니저에 등록될 것입니다.
+        }
+        else {
+            Debug.LogWarning("[BattleManager] MonsterSpawner가 할당되지 않아 몬스터를 스폰할 수 없습니다.");
+        }
+
         battleContext = new BattleContext();  // 컨텍스트 초기화
 
         if (!CardManager.IsInitialized()) {
@@ -165,10 +173,6 @@ public class TrainingBattleManager : MonoBehaviour {
         }
         if (playerData == null) {
             Debug.LogError("playerData가 없거나 카드가 로드되지 않았습니다!");
-            return;
-        }
-        if (monster == null) {
-            Debug.LogError("monster가 없거나 카드가 로드되지 않았습니다!");
             return;
         }
 
@@ -267,8 +271,6 @@ public class TrainingBattleManager : MonoBehaviour {
         playerData.OnTurnEnd();
         playerData.OnTurnStart();
 
-        // 적 턴 (간단한 AI)
-        monster.EnemyTurn(playerData);
 
         // 새 손패 뽑기
         DrawCards(drawCardCount);
@@ -283,6 +285,7 @@ public class TrainingBattleManager : MonoBehaviour {
     /// 전투 종료 체크
     /// </summary>
     void CheckBattleEnd() {
+        /*
         if (monster.IsDead()) {
             Debug.Log("\n🎉 승리! 적을 물리쳤습니다!");
             // 승리 UI 표시 (나중에 구현)
@@ -290,6 +293,7 @@ public class TrainingBattleManager : MonoBehaviour {
             Debug.Log("\n💀 패배... 플레이어가 쓰러졌습니다.");
             // 패배 UI 표시 (나중에 구현)
         }
+        */
     }
 
     /// <summary>

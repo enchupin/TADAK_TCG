@@ -62,7 +62,7 @@ public static class ConditionEvaluator
             case "Source": // 플레이어 (또는 시전 주체)
                 return bm.playerData;
             case "Target": // 타겟 (적) - 단일 타겟 기준
-                return bm.monster; 
+                return UnityEngine.Object.FindFirstObjectByType<Monster>(); 
             case "Hand":
                 return bm.handManager;
             default:
