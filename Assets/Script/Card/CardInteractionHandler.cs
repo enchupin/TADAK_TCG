@@ -7,11 +7,14 @@ using System.Collections;
 /// 카드의 모든 상호작용을 담당하는 통합 핸들러
 /// 호버 효과, 드래그, 플레이스홀더, 카드 사용 판정
 /// </summary>
+[System.Serializable]
+public class CardPlayEvent : UnityEvent<Monster> { }
+
 public class CardInteractionHandler : UIHoverEffect,
     IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [Header("Events")]
-    [SerializeField] private UnityEvent onCardPlayRequested; // 카드 사용 이벤트
+    [SerializeField] private CardPlayEvent onCardPlayRequested; // 카드 사용 이벤트 (Target 정보 포함)
     
     [Header("Drag Settings")]
     private readonly float playThresholdYRatio = 0.3f; // 드래그 범위
@@ -40,7 +43,7 @@ public class CardInteractionHandler : UIHoverEffect,
     
     private int originalSiblingIndex;
     private GameObject placeholder;
-    public UnityEvent OnCardPlayRequested => onCardPlayRequested; // 카드 사용 이벤트
+    public CardPlayEvent OnCardPlayRequested => onCardPlayRequested; // 카드 사용 이벤트
 
 
     protected override void Awake()
@@ -219,9 +222,7 @@ public class CardInteractionHandler : UIHoverEffect,
             if (targetMonster != null)
             {
                 // 타겟을 찾았으므로 카드 사용
-                // 현재는 단일 타겟 지정을 지원하지 않으므로 (임시로 0번째 몬스터 공격 중) 
-                // 향후 BattleManager나 CardPlay에 타겟 정보를 넘길 수 있도록 이벤트 발행
-                onCardPlayRequested?.Invoke();
+                onCardPlayRequested?.Invoke(targetMonster);
             }
             // 허공에 놓았을 때는 카드가 이미 손패의 제자리에 머물러 있으므로 위치를 조정할 필요가 없습니다.
         }
@@ -236,7 +237,7 @@ public class CardInteractionHandler : UIHoverEffect,
             // 카드 사용 판정
             if (eventData.position.y > Screen.height * playThresholdYRatio) {
                 // UnityEvent 발행
-                onCardPlayRequested?.Invoke();
+                onCardPlayRequested?.Invoke(null);
             }
             else {
                 ReturnToHand();

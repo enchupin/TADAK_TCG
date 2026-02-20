@@ -8,11 +8,12 @@ public class TargetingArrow : MonoBehaviour
 
     public void Initialize()
     {
-        // Image를 추가하면 자동으로 RectTransform이 추가됩니다.
+        // Image를 추가하면 자동으로 RectTransform이 추가
         lineImage = gameObject.AddComponent<Image>();
         rectTransform = GetComponent<RectTransform>();
         
         lineImage.color = new Color(1f, 0f, 0f, 0.6f);
+        lineImage.raycastTarget = false; // 화살표가 몬스터를 가려 마우스 클릭을 방해하는 것을 방지
         
         // Pivot 중단 좌측 (시작점)으로 설정
         rectTransform.pivot = new Vector2(0f, 0.5f);

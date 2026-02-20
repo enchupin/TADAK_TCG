@@ -31,10 +31,17 @@ public class AttackEffect : ICardEffect
             }
             else
             {
-                // 단일 적 (현재 타겟팅 시스템이 없으므로 첫 번째 몬스터를 임시로 공격)
-                // 추후 사용자가 선택한 타겟을 가져오는 로직 추가 필요
-                Monster targetMonster = battleManager.spawnedMonsters[0];
-                targetMonster.TakeDamage(finalAmount, battleManager.playerData.strength);
+                // 단일 적 타겟팅 (마우스 드래그로 지정한 타겟이 있으면 사용, 없으면 첫 번째 몬스터)
+                Monster targetMonster = battleManager.currentTarget;
+                if (targetMonster == null && battleManager.spawnedMonsters.Count > 0)
+                {
+                    targetMonster = battleManager.spawnedMonsters[0];
+                }
+                
+                if (targetMonster != null)
+                {
+                    targetMonster.TakeDamage(finalAmount, battleManager.playerData.strength);
+                }
             }
         }
     }

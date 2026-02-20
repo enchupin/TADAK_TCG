@@ -26,6 +26,9 @@ public class TrainingBattleManager : MonoBehaviour {
     [Header("스폰된 몬스터")]
     public List<Monster> spawnedMonsters = new List<Monster>();
 
+    // 카드 사용 시 지정된 대상 몬스터를 임시 저장합니다.
+    public Monster currentTarget;
+
     // 런 동안 유지되는 영구 덱 (씬이 바뀌어도 유지되도록 static)
     [Header("덱 시스템")]
     public static BuildingDeck buildingDeck;
@@ -314,13 +317,14 @@ public class TrainingBattleManager : MonoBehaviour {
     private void HandleCardClicked(CardPlayEventData eventData)
     {
         Debug.Log($"[BattleManager] 카드 클릭 이벤트 받음: {eventData}");
-        PlayCard(eventData.cardController);
+        PlayCard(eventData);
     }
 
     /// <summary>
     /// 카드 사용
     /// </summary>
-    private void PlayCard(CardController controller) {
+    private void PlayCard(CardPlayEventData eventData) {
+        CardController controller = eventData.cardController;
         if (controller == null || controller.Card == null) {
             Debug.LogWarning("[TrainingBattleManager] CardController 또는 Card를 찾을 수 없습니다!");
             return;
@@ -334,8 +338,14 @@ public class TrainingBattleManager : MonoBehaviour {
         // 컨텍스트 업데이트
         battleContext.OnCardPlayed(playedCard);
 
+        // 현재 선택된 타겟을 임시 저장
+        currentTarget = eventData.targetMonster;
+
         // 카드 효과 실행
         playedCard.Play(this);
+
+        // 사용이 끝났으므로 타겟 초기화 (다른 동작에서 참조하지 않도록)
+        currentTarget = null;
 
         // 손패에서 제거
         if (handManager != null) {
