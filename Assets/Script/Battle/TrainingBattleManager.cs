@@ -23,9 +23,30 @@ public class TrainingBattleManager : MonoBehaviour {
     [Header("드로우 수")]
     public int drawCardCount = 6;
 
+    [Header("스폰된 몬스터")]
+    public List<Monster> spawnedMonsters = new List<Monster>();
+
     // 런 동안 유지되는 영구 덱 (씬이 바뀌어도 유지되도록 static)
     [Header("덱 시스템")]
     public static BuildingDeck buildingDeck;
+
+    public void RegisterMonster(Monster monster)
+    {
+        if (!spawnedMonsters.Contains(monster))
+        {
+            spawnedMonsters.Add(monster);
+            Debug.Log($"[BattleManager] 몬스터 등록됨: {monster.name} (현재 총 {spawnedMonsters.Count}마리)");
+        }
+    }
+
+    public void UnregisterMonster(Monster monster)
+    {
+        if (spawnedMonsters.Contains(monster))
+        {
+            spawnedMonsters.Remove(monster);
+            Debug.Log($"[BattleManager] 몬스터 등록 해제됨: {monster.name} (현재 총 {spawnedMonsters.Count}마리)");
+        }
+    }
 
 
 

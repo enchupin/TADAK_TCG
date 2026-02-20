@@ -35,6 +35,18 @@ public class Monster : MonoBehaviour
     private void Start()
     {
         UpdateUI();
+        if (TrainingBattleManager.Instance != null)
+        {
+            TrainingBattleManager.Instance.RegisterMonster(this);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (TrainingBattleManager.Instance != null)
+        {
+            TrainingBattleManager.Instance.UnregisterMonster(this);
+        }
     }
 
     public void UpdateUI()
