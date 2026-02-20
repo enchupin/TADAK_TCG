@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using System.Collections.Generic;
 
 /// <summary>
 /// 몬스터의 전투 관련 데이터를 관리하는 클래스
@@ -11,18 +12,12 @@ public class Monster : MonoBehaviour
     [SerializeField] private TextMeshProUGUI defenseText;
 
     [Header("Stats")]
-    // 체력 관련
     public int hp;
     public int maxHP;
-
-    // 방어력
     public int defense;
-
-    // 몬스터 정보 (나중에 확장)
+    public int attackPower;
     public new string name;
-    public int attackPower; // 기본 공격력
-
-    public System.Collections.Generic.List<Buff> currentBuffs = new System.Collections.Generic.List<Buff>();
+    public List<Buff> currentBuffs = new();
 
     private void Awake()
     {
