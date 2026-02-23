@@ -15,25 +15,47 @@ public class AttackEffect : ICardEffect
             ? amount : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData);
         int totalDamageDealt = 0; // 총 누적 데미지
 
-        if (battleManager.spawnedMonsters.Count > 0) {
-            if (target == TargetType.AllEnemies) { // 모든 적에게 데미지
+        switch (target) {
+            case TargetType.AllEnemies: // 모든 적에게 데미지
+                if (battleManager.spawnedMonsters.Count <= 0) {
+                    Debug.LogWarning("[AttackEffect] No enemies available for AllEnemies target. Effect cancelled.");
+                    break;
+                }
+
                 List<Monster> targets = new(battleManager.spawnedMonsters);
                 if (targets == null) {
                     Debug.LogWarning("[AttackEffect] EnemiesList is missing. Effect cancelled.");
                     return;
                 }
+
                 foreach (var monster in targets) {
                     totalDamageDealt += monster.TakeDamage(finalAmount, battleManager.playerData.strength);
                 }
-            }
-            else if (target == TargetType.SingleEnemy) { // 단일 적에게 데미지
+                break;
+
+            case TargetType.SingleEnemy: // 단일 적에게 데미지
+                if (battleManager.spawnedMonsters.Count <= 0) {
+                    Debug.LogWarning("[AttackEffect] No enemies available for SingleEnemy target. Effect cancelled.");
+                    break;
+                }
+
                 Monster targetMonster = battleManager.currentTarget;
                 if (targetMonster == null) {
                     Debug.LogWarning("[AttackEffect] SingleEnemy target is missing. Effect cancelled.");
                     return;
                 }
+
                 totalDamageDealt += targetMonster.TakeDamage(finalAmount, battleManager.playerData.strength);
-            }
+                break;
+
+            case TargetType.Self: // 자신에게 데미지
+                if (battleManager.playerData == null) {
+                    Debug.LogWarning("[AttackEffect] PlayerData is missing. Self target effect cancelled.");
+                    return;
+                }
+
+                battleManager.playerData.TakeDamage(finalAmount);
+                break;
         }
 
         battleManager.battleContext?.OnDamageDealt(totalDamageDealt);

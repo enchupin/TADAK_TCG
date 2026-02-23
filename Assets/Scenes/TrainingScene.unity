@@ -1486,6 +1486,7 @@ MonoBehaviour:
   spawnedMonsters: []
   isDebugMode: 1
   debugTargetEffect: 11
+  debugEnergyAmount: 1000
   currentTarget: {fileID: 0}
 --- !u!1001 &1591498645
 PrefabInstance:
