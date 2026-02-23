@@ -37,7 +37,7 @@ MonoBehaviour:
     nestedEffect:
       rid: -2
     subEffects:
-    - rid: 589631160722128971
+    - rid: 1607419455424168022
     failEffect:
       rid: -2
     conditionData:
@@ -61,7 +61,7 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 589631160722128971
+    - rid: 1607419455424168022
       type: {class: CardEffectData, ns: , asm: Assembly-CSharp}
       data:
         type: 0

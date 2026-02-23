@@ -49,9 +49,9 @@ MonoBehaviour:
         operator: Gt
         value: 0
       successEffect:
-        rid: 589631160722128974
+        rid: 1607419455424168025
       failEffect:
-        rid: 589631160722128975
+        rid: 1607419455424168026
     condition: 
     conditionValue: 
     onAction:
@@ -66,7 +66,7 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 589631160722128974
+    - rid: 1607419455424168025
       type: {class: CardEffectData, ns: , asm: Assembly-CSharp}
       data:
         type: 0
@@ -101,7 +101,7 @@ MonoBehaviour:
         keyword: 
         keywordId: 0
         RandomCard: []
-    - rid: 589631160722128975
+    - rid: 1607419455424168026
       type: {class: CardEffectData, ns: , asm: Assembly-CSharp}
       data:
         type: 0

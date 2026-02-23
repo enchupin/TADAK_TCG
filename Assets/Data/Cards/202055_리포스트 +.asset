@@ -49,9 +49,9 @@ MonoBehaviour:
         operator: Eq
         value: Attack
       successEffect:
-        rid: 589631160722128967
+        rid: 1607419455424168018
       failEffect:
-        rid: 589631160722128968
+        rid: 1607419455424168019
     condition: 
     conditionValue: 
     onAction:
@@ -66,7 +66,7 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 589631160722128967
+    - rid: 1607419455424168018
       type: {class: CardEffectData, ns: , asm: Assembly-CSharp}
       data:
         type: 0
@@ -101,7 +101,7 @@ MonoBehaviour:
         keyword: 
         keywordId: 0
         RandomCard: []
-    - rid: 589631160722128968
+    - rid: 1607419455424168019
       type: {class: CardEffectData, ns: , asm: Assembly-CSharp}
       data:
         type: 0

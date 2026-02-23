@@ -13,20 +13,49 @@ MonoBehaviour:
   m_Name: "301010_\uBB34\uAC8C \uC99D\uAC00"
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardId: 301010
-  cardName: "\uBB34\uAC8C \uC99D\uAC00"
-  character: 2
+  cardName: "\uBC29\uD328 \uAC15\uD0C0"
+  character: 301
   cost: 1
-  rarity: 
+  description: "\uD53C\uD574\uB97C 6 \uC785\uD799\uB2C8\uB2E4."
+  enforceCardIds: 
   artworkAddress: 
   effectAddress: 
   soundAddress: 
   effects:
-  - type: 0
+  - type: 11
     amount: 6
+    amountFormula: 
     target: 0
     stat: 
+    buffId: 0
     duration: 0
     baseDamage: 0
     bonusPerCard: 0
     hpThreshold: 0
     multiplier: 0
+    nestedEffect:
+      rid: -2
+    subEffects: []
+    failEffect:
+      rid: -2
+    conditionData:
+      mode: And
+      checks: []
+      successEffect:
+        rid: -2
+      failEffect:
+        rid: -2
+    condition: 
+    conditionValue: 
+    onAction:
+      rid: -2
+    cardIdList: 
+    count: 0
+    keyword: 
+    keywordId: 0
+    RandomCard: []
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }

@@ -71,12 +71,16 @@ public class CardJSONConverter : EditorWindow
         
         int totalSuccessCount = 0;
         CardCollection collection = GetOrCreateCardCollection();
+        Dictionary<int, CardData> cardIndexById = BuildCardIndexById();
+        collection.allCards.Clear();
 
         foreach (string filePath in jsonFiles)
         {
-            int count = ConvertFileInternal(filePath, collection);
+            int count = ConvertFileInternal(filePath, collection, cardIndexById);
             totalSuccessCount += count;
         }
+
+        NormalizeCollection(collection);
 
         // 최종 저장
         EditorUtility.SetDirty(collection);
@@ -90,10 +94,12 @@ public class CardJSONConverter : EditorWindow
     void ConvertSingleFileFromPath(string path)
     {
         CardCollection collection = GetOrCreateCardCollection();
-        int count = ConvertFileInternal(path, collection);
+        Dictionary<int, CardData> cardIndexById = BuildCardIndexById();
+        int count = ConvertFileInternal(path, collection, cardIndexById);
         
         if (count > 0)
         {
+            NormalizeCollection(collection);
             EditorUtility.SetDirty(collection);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -101,7 +107,7 @@ public class CardJSONConverter : EditorWindow
         }
     }
 
-    int ConvertFileInternal(string path, CardCollection collection)
+    int ConvertFileInternal(string path, CardCollection collection, Dictionary<int, CardData> cardIndexById)
     {
         TextAsset jsonFile = AssetDatabase.LoadAssetAtPath<TextAsset>(path.Replace("\\", "/"));
         if (jsonFile == null) return 0;
@@ -120,7 +126,15 @@ public class CardJSONConverter : EditorWindow
             string fileName = string.Join("_", rawFileName.Split(Path.GetInvalidFileNameChars()));
             string assetPath = Path.Combine(outputPath, fileName).Replace("\\", "/");
 
-            CardData cardData = AssetDatabase.LoadAssetAtPath<CardData>(assetPath);
+            CardData cardData = null;
+            if (cardIndexById.TryGetValue(cardJson.cardId, out CardData indexedCard))
+            {
+                cardData = indexedCard;
+            }
+            else
+            {
+                cardData = AssetDatabase.LoadAssetAtPath<CardData>(assetPath);
+            }
             bool isNew = false;
 
             if (cardData == null)
@@ -133,6 +147,8 @@ public class CardJSONConverter : EditorWindow
 
             if (isNew) AssetDatabase.CreateAsset(cardData, assetPath);
             else EditorUtility.SetDirty(cardData);
+            
+            cardIndexById[cardData.cardId] = cardData;
 
             // Collection에 추가
             int existingIndex = collection.allCards.FindIndex(c => c != null && c.cardId == cardData.cardId);
@@ -150,6 +166,56 @@ public class CardJSONConverter : EditorWindow
         
         Debug.Log($"[Converter] {Path.GetFileName(path)}: {count}장 변환 완료");
         return count;
+    }
+
+    Dictionary<int, CardData> BuildCardIndexById()
+    {
+        Dictionary<int, CardData> index = new Dictionary<int, CardData>();
+        Dictionary<int, List<string>> duplicatePaths = new Dictionary<int, List<string>>();
+
+        string[] guids = AssetDatabase.FindAssets("t:CardData", new[] { outputPath });
+        foreach (string guid in guids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            CardData cardData = AssetDatabase.LoadAssetAtPath<CardData>(path);
+            if (cardData == null) continue;
+
+            if (index.TryGetValue(cardData.cardId, out CardData existing))
+            {
+                if (!duplicatePaths.ContainsKey(cardData.cardId))
+                {
+                    duplicatePaths[cardData.cardId] = new List<string>
+                    {
+                        AssetDatabase.GetAssetPath(existing)
+                    };
+                }
+                duplicatePaths[cardData.cardId].Add(path);
+                continue;
+            }
+
+            index[cardData.cardId] = cardData;
+        }
+
+        foreach (var pair in duplicatePaths)
+        {
+            Debug.LogWarning($"[Converter] Duplicate CardData assets detected for cardId={pair.Key}: {string.Join(", ", pair.Value)}");
+        }
+
+        return index;
+    }
+
+    void NormalizeCollection(CardCollection collection)
+    {
+        Dictionary<int, CardData> byId = new Dictionary<int, CardData>();
+        foreach (CardData cardData in collection.allCards)
+        {
+            if (cardData == null) continue;
+            byId[cardData.cardId] = cardData;
+        }
+
+        List<CardData> normalized = new List<CardData>(byId.Values);
+        normalized.Sort((a, b) => a.cardId.CompareTo(b.cardId));
+        collection.allCards = normalized;
     }
 
     CardCollection GetOrCreateCardCollection()
