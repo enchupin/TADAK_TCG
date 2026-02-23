@@ -16,21 +16,19 @@ MonoBehaviour:
   cardName: "\uB728\uAC70\uC6B4 \uD53C\uBD80 +"
   character: 201
   cost: 1
-  description: "\uD604\uC7AC \uB0B4 \uBCF4\uD638\uB9C9\uC744 \uC6A9\uC554 \uD53C\uBD80\uB85C
-    \uBCC0\uACBD\uD569\uB2C8\uB2E4. \uC6A9\uC554 \uD53C\uBD80\uB294 \uD134 \uC2DC\uC791
-    \uC2DC \uC0AC\uB77C\uC9C0\uC9C0 \uC54A\uACE0, \uCD08\uACFC\uD558\uB294 \uD53C\uD574\uB97C
-    1\uD68C \uB9C9\uC544\uB0C5\uB2C8\uB2E4."
+  description: "\uBCF4\uD638\uB9C9\uC774 \uD30C\uAD34\uB420 \uB54C, \uBCF4\uD638\uB9C9\uC744
+    \uCD08\uACFC\uD558\uB294 \uD53C\uD574\uB97C 1\uD68C \uB9C9\uC544\uB0C5\uB2C8\uB2E4."
   enforceCardIds: 
   artworkAddress: 
   effectAddress: 
   soundAddress: 
   effects:
-  - type: 0
+  - type: 2
     amount: 0
     amountFormula: 
     target: 2
     stat: 
-    buffId: 0
+    buffId: 3033
     duration: 0
     baseDamage: 0
     bonusPerCard: 0

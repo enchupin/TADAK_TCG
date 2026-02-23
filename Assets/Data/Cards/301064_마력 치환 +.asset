@@ -15,20 +15,20 @@ MonoBehaviour:
   cardId: 301064
   cardName: "\uB9C8\uB825 \uCE58\uD658 +"
   character: 301
-  cost: 10
-  description: "\uC774 \uCE74\uB4DC\uB294 \uB0B4 \uBCF4\uD638\uB9C9\uC744 \uBE44\uC6A9\uC73C\uB85C
-    \uC0AC\uC6A9\uD569\uB2C8\uB2E4. \uBE59\uD558 \uACB0\uC18D\uC744 1 \uC5BB\uC2B5\uB2C8\uB2E4."
+  cost: 0
+  description: "\uB0B4 \uBCF4\uD638\uB9C9\uC774 10 \uC774\uC0C1\uC774\uBA74, \uBCF4\uD638\uB9C9\uC744
+    10 \uC783\uACE0 \uBE59\uD558 \uACB0\uC18D\uC744 1 \uC5BB\uC2B5\uB2C8\uB2E4."
   enforceCardIds: 
   artworkAddress: 
   effectAddress: 
   soundAddress: 
   effects:
-  - type: 2
-    amount: 1
+  - type: 15
+    amount: 0
     amountFormula: 
-    target: 2
+    target: 0
     stat: 
-    buffId: 3012
+    buffId: 0
     duration: 0
     baseDamage: 0
     bonusPerCard: 0
@@ -41,11 +41,16 @@ MonoBehaviour:
       rid: -2
     conditionData:
       mode: And
-      checks: []
+      checks:
+      - subject: Barrier
+        property: 
+        param: 
+        operator: Lte
+        value: 10
       successEffect:
-        rid: -2
+        rid: 1607419459296559179
       failEffect:
-        rid: -2
+        rid: 1607419459296559180
     condition: 
     conditionValue: 
     onAction:
@@ -60,3 +65,73 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 1607419459296559179
+      type: {class: CardEffectData, ns: , asm: Assembly-CSharp}
+      data:
+        type: 0
+        amount: 0
+        amountFormula: 
+        target: 0
+        stat: 
+        buffId: 0
+        duration: 0
+        baseDamage: 0
+        bonusPerCard: 0
+        hpThreshold: 0
+        multiplier: 0
+        nestedEffect:
+          rid: -2
+        subEffects: []
+        failEffect:
+          rid: -2
+        conditionData:
+          mode: And
+          checks: []
+          successEffect:
+            rid: -2
+          failEffect:
+            rid: -2
+        condition: 
+        conditionValue: 
+        onAction:
+          rid: -2
+        cardIdList: 
+        count: 0
+        keyword: 
+        keywordId: 0
+        RandomCard: []
+    - rid: 1607419459296559180
+      type: {class: CardEffectData, ns: , asm: Assembly-CSharp}
+      data:
+        type: 0
+        amount: 0
+        amountFormula: 
+        target: 0
+        stat: 
+        buffId: 0
+        duration: 0
+        baseDamage: 0
+        bonusPerCard: 0
+        hpThreshold: 0
+        multiplier: 0
+        nestedEffect:
+          rid: -2
+        subEffects: []
+        failEffect:
+          rid: -2
+        conditionData:
+          mode: And
+          checks: []
+          successEffect:
+            rid: -2
+          failEffect:
+            rid: -2
+        condition: 
+        conditionValue: 
+        onAction:
+          rid: -2
+        cardIdList: 
+        count: 0
+        keyword: 
+        keywordId: 0
+        RandomCard: []

@@ -16,7 +16,7 @@ MonoBehaviour:
   cardName: "\uBAB8\uC5D0 \uC88B\uC740 \uC57D"
   character: 101
   cost: 1
-  description: "\uCCB4\uB825\uC744 {amount} \uD68C\uBCF5\uD569\uB2C8\uB2E4."
+  description: "\uCCB4\uB825\uC744 4 \uD68C\uBCF5\uD569\uB2C8\uB2E4."
   enforceCardIds: 
   artworkAddress: 
   effectAddress: 
