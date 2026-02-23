@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System.Collections.Generic;
+using System.Globalization;
+using Newtonsoft.Json.Linq;
 
 /// <summary>
 /// JSON을 ScriptableObject로 자동 변환하는 에디터 툴
@@ -115,6 +117,23 @@ public class CardJSONConverter : EditorWindow
         CardDataList cardDataList = JsonUtility.FromJson<CardDataList>(jsonFile.text);
         if (cardDataList == null || cardDataList.cards == null) return 0;
 
+        JObject rootObject = JObject.Parse(jsonFile.text);
+        Dictionary<int, JObject> cardObjectById = new Dictionary<int, JObject>();
+        if (rootObject["cards"] is JArray cardsArray)
+        {
+            foreach (JToken token in cardsArray)
+            {
+                if (!(token is JObject cardObject))
+                    continue;
+
+                int id = SafeInt(cardObject, "cardId");
+                if (id != 0)
+                {
+                    cardObjectById[id] = cardObject;
+                }
+            }
+        }
+
         // 출력 폴더 생성
         if (!Directory.Exists(outputPath)) Directory.CreateDirectory(outputPath);
 
@@ -143,7 +162,8 @@ public class CardJSONConverter : EditorWindow
                 isNew = true;
             }
 
-            UpdateCardData(cardData, cardJson, jsonFile.text);
+            cardObjectById.TryGetValue(cardJson.cardId, out JObject cardObject);
+            UpdateCardData(cardData, cardJson, jsonFile.text, cardObject);
 
             if (isNew) AssetDatabase.CreateAsset(cardData, assetPath);
             else EditorUtility.SetDirty(cardData);
@@ -234,7 +254,7 @@ public class CardJSONConverter : EditorWindow
         return collection;
     }
     
-    void UpdateCardData(CardData cardData, CardJsonData jsonData, string rawJson)
+    void UpdateCardData(CardData cardData, CardJsonData jsonData, string rawJson, JObject cardObject = null)
     {
         // 기본 정보
         cardData.cardId = jsonData.cardId;
@@ -260,6 +280,22 @@ public class CardJSONConverter : EditorWindow
         
         // 효과 변환 (수동 파싱으로 amount 처리)
         cardData.effects.Clear();
+        if (cardObject != null && cardObject["effects"] is JArray effectsArray)
+        {
+            foreach (JToken effectToken in effectsArray)
+            {
+                if (!(effectToken is JObject effectObject))
+                    continue;
+
+                CardEffectData effectData = CreateEffectDataFromObject(effectObject);
+                if (effectData != null)
+                {
+                    cardData.effects.Add(effectData);
+                }
+            }
+
+            return;
+        }
         if (jsonData.effects != null)
         {
             for (int i = 0; i < jsonData.effects.Count; i++)
@@ -275,6 +311,273 @@ public class CardJSONConverter : EditorWindow
         }
     }
     
+    CardEffectData CreateEffectDataFromObject(JObject jsonObject)
+    {
+        if (jsonObject == null) return null;
+
+        CardEffectData effectData = new CardEffectData();
+        string effectType = jsonObject.Value<string>("type");
+
+        JToken amountToken = jsonObject["amount"];
+        if (amountToken != null)
+        {
+            if (amountToken.Type == JTokenType.Integer || amountToken.Type == JTokenType.Float)
+            {
+                effectData.amount = amountToken.Value<int>();
+            }
+            else if (amountToken.Type == JTokenType.String)
+            {
+                effectData.amountFormula = amountToken.Value<string>();
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(effectData.amountFormula))
+            effectData.amountFormula = jsonObject.Value<string>("amountFormula");
+        if (string.IsNullOrWhiteSpace(effectData.amountFormula))
+            effectData.amountFormula = jsonObject.Value<string>("getAmount");
+        if (string.IsNullOrWhiteSpace(effectData.amountFormula))
+            effectData.amountFormula = jsonObject.Value<string>("GetAmount");
+        if (string.IsNullOrWhiteSpace(effectData.amountFormula))
+            effectData.amountFormula = jsonObject.Value<string>("getamount");
+
+        string target = jsonObject.Value<string>("target");
+        if (!string.IsNullOrEmpty(target))
+        {
+            effectData.target = target switch
+            {
+                "AllEnemies" => TargetType.AllEnemies,
+                "SingleEnemy" => TargetType.SingleEnemy,
+                "Enemy" => TargetType.SingleEnemy,
+                "Self" => TargetType.Self,
+                "RandomEnemy" => TargetType.SingleEnemy,
+                _ => TargetType.SingleEnemy
+            };
+        }
+
+        effectData.count = SafeInt(jsonObject, "count");
+        effectData.baseDamage = SafeInt(jsonObject, "baseDamage");
+        effectData.bonusPerCard = SafeInt(jsonObject, "bonusPerCard");
+        effectData.hpThreshold = SafeFloat(jsonObject, "hpThreshold");
+        effectData.multiplier = SafeFloat(jsonObject, "multiplier");
+        effectData.stat = jsonObject.Value<string>("stat") ?? "";
+        effectData.buffId = SafeInt(jsonObject, "buffId");
+        effectData.duration = SafeInt(jsonObject, "duration");
+        effectData.keyword = jsonObject.Value<string>("keyword") ?? "";
+
+        if (jsonObject["RandomCard"] is JArray randomCardArray)
+        {
+            effectData.RandomCard = new List<RandomCardData>();
+            foreach (JToken token in randomCardArray)
+            {
+                if (!(token is JObject randomObject)) continue;
+                effectData.RandomCard.Add(new RandomCardData
+                {
+                    cardId = SafeInt(randomObject, "cardId"),
+                    weight = SafeInt(randomObject, "weight")
+                });
+            }
+        }
+
+        if (jsonObject["cardId"] is JArray cardIdArray)
+        {
+            effectData.cardIdList = new List<int>();
+            foreach (JToken token in cardIdArray)
+            {
+                int parsedCardId = SafeInt(token, 0);
+                if (parsedCardId != 0)
+                {
+                    effectData.cardIdList.Add(parsedCardId);
+                }
+            }
+        }
+
+        switch (effectType)
+        {
+            case "Attack":
+                effectData.type = EffectType.Attack;
+                break;
+            case "Damage":
+                effectData.type = EffectType.Damage;
+                break;
+            case "Defense":
+            case "Barrier":
+                effectData.type = EffectType.Barrier;
+                break;
+            case "Draw":
+                effectData.type = EffectType.Draw;
+                break;
+            case "Buff":
+                effectData.type = EffectType.Buff;
+                break;
+            case "Energy":
+                effectData.type = EffectType.Energy;
+                break;
+            case "Heal":
+                effectData.type = EffectType.Heal;
+                break;
+            case "MultiplyDefense":
+            case "MultimediaDefense":
+                effectData.type = EffectType.MultiplyDefense;
+                break;
+            case "ConsumeDefense":
+                effectData.type = EffectType.ConsumeDefense;
+                break;
+            case "GenerateCard":
+                effectData.type = EffectType.GenerateCard;
+                break;
+            case "Keyword":
+                effectData.type = EffectType.Keyword;
+                break;
+            case "DiscardHand":
+                effectData.type = EffectType.DiscardHand;
+                break;
+            case "ChoiceDiscard":
+                effectData.type = EffectType.ChoiceDiscard;
+                break;
+            case "Pickup":
+                effectData.type = EffectType.Pickup;
+                break;
+            case "ExhaustHand":
+                effectData.type = EffectType.ExhaustHand;
+                break;
+            case "Repeat":
+                effectData.type = EffectType.Repeat;
+                break;
+            case "Conditional":
+                effectData.type = EffectType.Conditional;
+                break;
+            default:
+                effectData.type = EffectType.Damage;
+                break;
+        }
+
+        if (jsonObject["effect"] is JObject nestedObject)
+        {
+            effectData.nestedEffect = CreateEffectDataFromObject(nestedObject);
+        }
+
+        if (jsonObject["effects"] is JArray subEffectsArray)
+        {
+            effectData.subEffects = new List<CardEffectData>();
+            foreach (JToken token in subEffectsArray)
+            {
+                if (!(token is JObject subObject)) continue;
+                CardEffectData subEffect = CreateEffectDataFromObject(subObject);
+                if (subEffect != null) effectData.subEffects.Add(subEffect);
+            }
+        }
+
+        if (jsonObject["condition"] is JObject conditionObject)
+        {
+            effectData.conditionData = ConvertConditionFromObject(conditionObject);
+        }
+
+        if (jsonObject["onAction"] is JObject onActionObject)
+        {
+            effectData.onAction = CreateEffectDataFromObject(onActionObject);
+        }
+
+        return effectData;
+    }
+
+    ConditionData ConvertConditionFromObject(JObject conditionObject)
+    {
+        if (conditionObject == null) return null;
+
+        ConditionData conditionData = new ConditionData
+        {
+            mode = conditionObject.Value<string>("mode") ?? "And"
+        };
+
+        if (conditionObject["checks"] is JArray checksArray)
+        {
+            foreach (JToken token in checksArray)
+            {
+                if (!(token is JObject checkObject)) continue;
+                conditionData.checks.Add(new CheckData
+                {
+                    subject = checkObject.Value<string>("subject"),
+                    property = checkObject.Value<string>("property"),
+                    param = checkObject.Value<string>("param"),
+                    @operator = checkObject.Value<string>("operator"),
+                    value = checkObject.Value<string>("value")
+                });
+            }
+        }
+
+        if (conditionObject["successEffect"] is JObject successObject)
+        {
+            conditionData.successEffect = CreateEffectDataFromObject(successObject);
+        }
+
+        if (conditionObject["failEffect"] is JObject failObject)
+        {
+            conditionData.failEffect = CreateEffectDataFromObject(failObject);
+        }
+
+        return conditionData;
+    }
+
+    int SafeInt(JObject obj, string key, int defaultValue = 0)
+    {
+        if (obj == null) return defaultValue;
+        return SafeInt(obj[key], defaultValue);
+    }
+
+    int SafeInt(JToken token, int defaultValue = 0)
+    {
+        if (token == null || token.Type == JTokenType.Null || token.Type == JTokenType.Undefined)
+            return defaultValue;
+
+        if (token.Type == JTokenType.Integer)
+            return token.Value<int>();
+
+        if (token.Type == JTokenType.Float)
+            return Mathf.RoundToInt(token.Value<float>());
+
+        if (token.Type == JTokenType.String)
+        {
+            string raw = token.Value<string>();
+            if (string.IsNullOrWhiteSpace(raw))
+                return defaultValue;
+
+            if (int.TryParse(raw, NumberStyles.Integer, CultureInfo.InvariantCulture, out int intValue))
+                return intValue;
+
+            if (float.TryParse(raw, NumberStyles.Float, CultureInfo.InvariantCulture, out float floatValue))
+                return Mathf.RoundToInt(floatValue);
+        }
+
+        return defaultValue;
+    }
+
+    float SafeFloat(JObject obj, string key, float defaultValue = 0f)
+    {
+        if (obj == null) return defaultValue;
+        return SafeFloat(obj[key], defaultValue);
+    }
+
+    float SafeFloat(JToken token, float defaultValue = 0f)
+    {
+        if (token == null || token.Type == JTokenType.Null || token.Type == JTokenType.Undefined)
+            return defaultValue;
+
+        if (token.Type == JTokenType.Float || token.Type == JTokenType.Integer)
+            return token.Value<float>();
+
+        if (token.Type == JTokenType.String)
+        {
+            string raw = token.Value<string>();
+            if (string.IsNullOrWhiteSpace(raw))
+                return defaultValue;
+
+            if (float.TryParse(raw, NumberStyles.Float, CultureInfo.InvariantCulture, out float floatValue))
+                return floatValue;
+        }
+
+        return defaultValue;
+    }
+
     CardEffectData CreateEffectData(EffectJsonData jsonData, string rawJson)
     {
         if (jsonData == null) return null;
