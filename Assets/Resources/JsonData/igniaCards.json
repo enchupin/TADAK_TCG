@@ -339,7 +339,9 @@
                     "condition": {
                         "checks": [
                             {
-                                "type": "CostLessEqual",
+                                "subject": "Self",
+                                "property": "Cost",
+                                "operator": "Lte",
                                 "value": 2
                             }
                         ],
@@ -535,17 +537,32 @@
             "name": "지옥불",
             "characterId": 201,
             "cost": 1,
-            "description": "모든 적에게 피해를 4 입힙니다. 적이 혼자인 경우, 피해량이 3배가 됩니다.",
+            "description": "모든 적에게 피해를 4 입힙니다. 적이 혼자인 경우, 대신 피해를 12 입힙니다.",
             "effects": [
                 {
-                    "type": "Attack",
-                    "amount": 4,
-                    "target": "AllEnemies",
-                    "condition": "EnemyCount",
-                    "conditionValue": 1,
-                    "onAction": {
-                        "type": "MultiplyDamage",
-                        "amount": 3
+                    "type": "Conditional",
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "EnemyCount",
+                                "operator": "Eq",
+                                "value": 1
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "Attack",
+                                "amount": 12,
+                                "target": "Enemy"
+                            }
+                        ],
+                        "elseEffects": [
+                            {
+                                "type": "Attack",
+                                "amount": 4,
+                                "target": "AllEnemies"
+                            }
+                        ]
                     }
                 }
             ],
@@ -567,17 +584,32 @@
             "name": "지옥불 +",
             "characterId": 201,
             "cost": 1,
-            "description": "모든 적에게 피해를 4 입힙니다. 적이 혼자인 경우, 피해량이 5배가 됩니다.",
+            "description": "모든 적에게 피해를 4 입힙니다. 적이 혼자인 경우, 대신 피해를 20입힙니다.",
             "effects": [
                 {
-                    "type": "Attack",
-                    "amount": 4,
-                    "target": "AllEnemies",
-                    "condition": "EnemyCount",
-                    "conditionValue": 1,
-                    "onAction": {
-                        "type": "MultiplyDamage",
-                        "amount": 5
+                    "type": "Conditional",
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "EnemyCount",
+                                "operator": "Eq",
+                                "value": 1
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "Attack",
+                                "amount": 20,
+                                "target": "Enemy"
+                            }
+                        ],
+                        "elseEffects": [
+                            {
+                                "type": "Attack",
+                                "amount": 4,
+                                "target": "AllEnemies"
+                            }
+                        ]
                     }
                 }
             ],
