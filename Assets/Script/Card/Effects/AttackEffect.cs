@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 
 public class AttackEffect : ICardEffect
@@ -6,43 +6,47 @@ public class AttackEffect : ICardEffect
     public int amount;
     public string amountFormula;
     public TargetType target;
+    public ICardEffect onAction;
 
     public void Execute(TrainingBattleManager battleManager)
     {
-        int finalAmount = amount;
-        
-        // Use FormulaEvaluator with BattleContext and PlayerData
-        if (!string.IsNullOrEmpty(amountFormula))
-        {
-            finalAmount = FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData);
+        int finalAmount = amount; // 유닛 당 데미지
+        int totalDamageDealt = 0; // 총 누적 데미지
+
+        if (battleManager.spawnedMonsters.Count > 0) {
+            if (target == TargetType.AllEnemies) { // 모든 적에게 데미지
+                List<Monster> targets = new(battleManager.spawnedMonsters);
+                if (targets == null) {
+                    Debug.LogWarning("[AttackEffect] EnemiesList is missing. Effect cancelled.");
+                    return;
+                }
+                foreach (var monster in targets) {
+                    totalDamageDealt += monster.TakeDamage(finalAmount, battleManager.playerData.strength);
+                }
+            }
+            else if (target == TargetType.SingleEnemy) { // 단일 적에게 데미지
+                Monster targetMonster = battleManager.currentTarget;
+                if (targetMonster == null) {
+                    Debug.LogWarning("[AttackEffect] SingleEnemy target is missing. Effect cancelled.");
+                    return;
+                }
+                totalDamageDealt += targetMonster.TakeDamage(finalAmount, battleManager.playerData.strength);
+            }
         }
 
-        if (battleManager.spawnedMonsters.Count > 0)
-        {
-            if (target == TargetType.AllEnemies)
-            {
-                // 모든 적에게 데미지
-                // 리스트 복사본을 만들어 루프 중 몬스터가 죽어서 리스트가 변경되는 오류 방지
-                List<Monster> targets = new List<Monster>(battleManager.spawnedMonsters);
-                foreach (var monster in targets)
-                {
-                    monster.TakeDamage(finalAmount, battleManager.playerData.strength);
-                }
-            }
-            else
-            {
-                // 단일 적 타겟팅 (마우스 드래그로 지정한 타겟이 있으면 사용, 없으면 첫 번째 몬스터)
-                Monster targetMonster = battleManager.currentTarget;
-                if (targetMonster == null && battleManager.spawnedMonsters.Count > 0)
-                {
-                    targetMonster = battleManager.spawnedMonsters[0];
-                }
-                
-                if (targetMonster != null)
-                {
-                    targetMonster.TakeDamage(finalAmount, battleManager.playerData.strength);
-                }
-            }
-        }
+        battleManager.battleContext.OnDamageDealt(totalDamageDealt);
+
+        onAction?.Execute(battleManager);
     }
+    /*
+    public int GetAmount(BattleContext context, PlayerData player = null)
+    {
+        if (!string.IsNullOrWhiteSpace(amountFormula))
+        {
+            return FormulaEvaluator.Evaluate(amountFormula, context, player);
+        }
+
+        return amount;
+    }
+    */
 }
