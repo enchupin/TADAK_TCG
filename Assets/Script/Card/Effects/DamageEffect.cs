@@ -2,8 +2,8 @@ using UnityEngine;
 using System.Collections.Generic;
 
 /// <summary>
-/// 데미지 효과
-/// 적에게 데미지를 입힙니다.
+/// Damage effect
+/// Deals damage to targets.
 /// </summary>
 [System.Serializable]
 public class DamageEffect : ICardEffect
@@ -12,53 +12,68 @@ public class DamageEffect : ICardEffect
     public string amountFormula;
     public TargetType target = TargetType.SingleEnemy;
     public ICardEffect onAction;
-    
+
     public void Execute(TrainingBattleManager battleManager)
     {
-        int finalAmount = GetAmount(battleManager.battleContext, battleManager.playerData);
+        int finalAmount = string.IsNullOrWhiteSpace(amountFormula)
+            ? amount
+            : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData);
         int totalDamageDealt = 0;
-        
-        if (battleManager.spawnedMonsters.Count > 0) // 몬스터가 존재할 때
+
+        switch (target)
         {
-            switch (target)
-            {
-                case TargetType.SingleEnemy: // 단일 몬스터
-                    Monster singleTarget = battleManager.spawnedMonsters[0];
-                    if (singleTarget != null) {
-                        totalDamageDealt += singleTarget.TakeDamage(finalAmount, battleManager.playerData.strength);
-                    }
+            case TargetType.SingleEnemy: // 단일 적 대상
+                if (battleManager.spawnedMonsters.Count <= 0) {
+                    Debug.LogWarning("[DamageEffect] No enemies available for SingleEnemy target. Effect cancelled.");
                     break;
-                case TargetType.AllEnemies: // 몬스터 전체
-                    List<Monster> allMonsters = new List<Monster>(battleManager.spawnedMonsters);
-                    foreach (var m in allMonsters) {
-                        totalDamageDealt += m.TakeDamage(finalAmount, battleManager.playerData.strength);
-                    }
+                }
+
+                Monster singleTarget = battleManager.currentTarget;
+                if (singleTarget == null) {
+                    Debug.LogWarning("[DamageEffect] SingleEnemy target is missing. Effect cancelled.");
                     break;
-            }
+                }
+
+                totalDamageDealt += singleTarget.TakeDamage(finalAmount, battleManager.playerData.strength);
+                break;
+
+            case TargetType.AllEnemies: // 모든 적 대상
+                if (battleManager.spawnedMonsters.Count <= 0) {
+                    Debug.LogWarning("[DamageEffect] No enemies available for AllEnemies target. Effect cancelled.");
+                    break;
+                }
+
+                List<Monster> allMonsters = new List<Monster>(battleManager.spawnedMonsters);
+                foreach (var m in allMonsters)
+                {
+                    totalDamageDealt += m.TakeDamage(finalAmount, battleManager.playerData.strength);
+                }
+                break;
+
+            case TargetType.Self: // 플레이어 대상
+                if (battleManager.playerData == null)
+                {
+                    Debug.LogWarning("[DamageEffect] PlayerData is missing. Self target effect cancelled.");
+                    break;
+                }
+
+                battleManager.playerData.TakeDamage(finalAmount);
+                break;
         }
 
         battleManager.battleContext.OnDamageDealt(totalDamageDealt);
 
-        if (onAction != null) {
+        if (onAction != null)
+        {
             onAction.Execute(battleManager);
         }
-        
-        // UI 업데이트는 왜 하는지 모르겠음, 추후 확인
+
         battleManager.UpdateAllUI();
-    }
-    
-    public int GetAmount(BattleContext context, PlayerData player = null)
-    {
-        if (!string.IsNullOrEmpty(amountFormula))
-        {
-            return FormulaEvaluator.Evaluate(amountFormula, context, player);
-        }
-        return amount;
     }
 }
 
 /// <summary>
-/// 타겟 타입 열거형
+/// Effect target enum
 /// </summary>
 public enum TargetType
 {

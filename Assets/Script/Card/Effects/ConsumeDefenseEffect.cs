@@ -37,18 +37,8 @@ public class ConsumeDefenseEffect : ICardEffect
     
     private int GetConsumeAmount(TrainingBattleManager battleManager)
     {
-        if (!string.IsNullOrEmpty(amountFormula))
-        {
-            // "all"인 경우
-            if (amountFormula.ToLower() == "all")
-            {
-                return battleManager.playerData.defense;
-            }
-            
-            // 수식 계산
-            return FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData);
-        }
-        
-        return amount;
+        return string.IsNullOrWhiteSpace(amountFormula)
+            ? amount
+            : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData);
     }
 }

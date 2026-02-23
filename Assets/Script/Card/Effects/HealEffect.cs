@@ -11,7 +11,8 @@ public class HealEffect : ICardEffect
     
     public void Execute(TrainingBattleManager battleManager)
     {
-        int healAmount = GetAmount(battleManager.battleContext, battleManager.playerData);
+        int healAmount = string.IsNullOrWhiteSpace(amountFormula)
+            ? amount : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData);
         
         if (target == TargetType.Self)
         {
@@ -22,12 +23,4 @@ public class HealEffect : ICardEffect
         battleManager.UpdateAllUI();
     }
     
-    public int GetAmount(BattleContext context, PlayerData player = null)
-    {
-        if (!string.IsNullOrEmpty(amountFormula))
-        {
-            return FormulaEvaluator.Evaluate(amountFormula, context, player);
-        }
-        return amount;
-    }
 }

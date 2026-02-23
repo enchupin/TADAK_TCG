@@ -49,6 +49,7 @@ public class TrainingBattleManager : MonoBehaviour
     [Header("Debug")]
     public bool isDebugMode = false;
     public EffectType debugTargetEffect = EffectType.Barrier;
+    [SerializeField] private int debugEnergyAmount = 1000;
 
     // Temporary target used while card effects are executing.
     public Monster currentTarget;
@@ -177,6 +178,7 @@ public class TrainingBattleManager : MonoBehaviour
         }
 
         playerData.Initialize(totalMaxHp, totalDefense, playerBaseEnergyPerTurn);
+        ApplyDebugEnergy();
 
         if (monsterSpawner != null)
         {
@@ -268,66 +270,29 @@ public class TrainingBattleManager : MonoBehaviour
     [ContextMenu("Debug Draw Cards By Effect")]
     public void DebugDrawSpecificEffectCard()
     {
-        if (!isDebugMode || usableDeckManager == null || handManager == null || usableDeckManager.usableDeck == null)
+        if (!isDebugMode || handManager == null)
             return;
 
         List<Card> matchingCards = new List<Card>();
-        Queue<Card> remainingDeck = new Queue<Card>();
-
-        while (usableDeckManager.usableDeck.Count > 0)
+        List<CardData> allCardData = CardManager.GetAllCards();
+        foreach (CardData cardData in allCardData)
         {
-            Card card = usableDeckManager.usableDeck.Dequeue();
-            bool isMatch = false;
+            if (cardData == null)
+                continue;
 
-            if (card.effects != null)
-            {
-                foreach (var effect in card.effects)
-                {
-                    switch (debugTargetEffect)
-                    {
-                        case EffectType.Barrier:
-                            isMatch = effect is BarrierEffect;
-                            break;
-                        case EffectType.Damage:
-                            isMatch = effect is DamageEffect;
-                            break;
-                        case EffectType.Draw:
-                            isMatch = effect is DrawEffect;
-                            break;
-                        case EffectType.Attack:
-                            isMatch = effect is AttackEffect;
-                            break;
-                        case EffectType.Execute:
-                            isMatch = effect is ExecuteDamageEffect;
-                            break;
-                        case EffectType.Heal:
-                            isMatch = effect is HealEffect;
-                            break;
-                        case EffectType.Buff:
-                            isMatch = effect is BuffEffect;
-                            break;
-                    }
+            Card card = cardData.ToCard();
+            if (card == null)
+                continue;
 
-                    if (isMatch)
-                        break;
-                }
-            }
-
-            if (isMatch)
+            if (CardHasDebugTargetEffect(card))
             {
                 matchingCards.Add(card);
             }
-            else
-            {
-                remainingDeck.Enqueue(card);
-            }
         }
-
-        usableDeckManager.usableDeck = remainingDeck;
 
         if (matchingCards.Count > 0)
         {
-            Debug.Log($"[Debug] Added {matchingCards.Count} cards with {debugTargetEffect} effect to hand.");
+            Debug.Log($"[Debug] Added {matchingCards.Count} cards with {debugTargetEffect} effect from CardManager.");
             handManager.AddCard(matchingCards);
             if (battleContext != null)
             {
@@ -341,6 +306,90 @@ public class TrainingBattleManager : MonoBehaviour
 
         RefreshHandPlayableState();
         UpdateAllUI();
+    }
+
+    private bool CardHasDebugTargetEffect(Card card)
+    {
+        if (card == null || card.effects == null)
+            return false;
+
+        foreach (ICardEffect effect in card.effects)
+        {
+            if (EffectMatchesDebugTarget(effect))
+                return true;
+        }
+
+        return false;
+    }
+
+    private bool EffectMatchesDebugTarget(ICardEffect effect)
+    {
+        if (effect == null)
+            return false;
+
+        switch (debugTargetEffect)
+        {
+            case EffectType.Barrier:
+                if (effect is BarrierEffect) return true;
+                break;
+            case EffectType.Damage:
+                if (effect is DamageEffect) return true;
+                break;
+            case EffectType.Draw:
+                if (effect is DrawEffect) return true;
+                break;
+            case EffectType.Attack:
+                if (effect is AttackEffect) return true;
+                break;
+            case EffectType.Execute:
+                if (effect is ExecuteDamageEffect) return true;
+                break;
+            case EffectType.Heal:
+                if (effect is HealEffect) return true;
+                break;
+            case EffectType.Buff:
+                if (effect is BuffEffect) return true;
+                break;
+        }
+
+        if (effect is AttackEffect attack && EffectMatchesDebugTarget(attack.onAction))
+            return true;
+        if (effect is DamageEffect damage && EffectMatchesDebugTarget(damage.onAction))
+            return true;
+        if (effect is BarrierEffect barrier && EffectMatchesDebugTarget(barrier.onAction))
+            return true;
+        if (effect is ConsumeDefenseEffect consume && EffectMatchesDebugTarget(consume.nestedEffect))
+            return true;
+        if (effect is RepeatEffect repeat && repeat.effectsToRepeat != null)
+        {
+            foreach (ICardEffect nested in repeat.effectsToRepeat)
+            {
+                if (EffectMatchesDebugTarget(nested))
+                    return true;
+            }
+        }
+        if (effect is ConditionalEffect conditional)
+        {
+            if (conditional.successEffects != null)
+            {
+                foreach (ICardEffect nested in conditional.successEffects)
+                {
+                    if (EffectMatchesDebugTarget(nested))
+                        return true;
+                }
+            }
+
+            if (conditional.failEffects != null)
+            {
+                foreach (ICardEffect nested in conditional.failEffects)
+                {
+                    if (EffectMatchesDebugTarget(nested))
+                        return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private void HandleCardClicked(CardPlayEventData eventData)
@@ -379,6 +428,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void ApplyPlayerTurnStartEffects()
     {
+        ApplyDebugEnergy();
         // Placeholder: player turn-start trigger effects.
     }
 
@@ -475,5 +525,14 @@ public class TrainingBattleManager : MonoBehaviour
     {
         if (battleUI != null)
             battleUI.UpdateAllUI();
+    }
+
+    private void ApplyDebugEnergy()
+    {
+        if (!isDebugMode || playerData == null)
+            return;
+
+        playerData.maxEnergy = debugEnergyAmount;
+        playerData.energy = debugEnergyAmount;
     }
 }

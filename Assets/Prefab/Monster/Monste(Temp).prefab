@@ -366,8 +366,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Monster
   hpText: {fileID: 2532405729148732153}
   defenseText: {fileID: 1137208144515008067}
-  hp: 150
-  maxHP: 150
+  intentText: {fileID: 0}
+  hp: 1500
+  maxHP: 1500
   defense: 0
   attackPower: 0
   name: 

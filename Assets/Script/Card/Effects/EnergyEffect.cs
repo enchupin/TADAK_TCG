@@ -12,17 +12,9 @@ public class EnergyEffect : ICardEffect
     
     public void Execute(TrainingBattleManager battleManager)
     {
-        int finalAmount = GetAmount(battleManager.battleContext, battleManager.playerData);
+        int finalAmount = string.IsNullOrWhiteSpace(amountFormula)
+            ? amount : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData);
         battleManager.playerData.AddEnergy(finalAmount);
         battleManager.UpdateAllUI();
-    }
-    
-    public int GetAmount(BattleContext context, PlayerData player = null)
-    {
-        if (!string.IsNullOrEmpty(amountFormula))
-        {
-            return FormulaEvaluator.Evaluate(amountFormula, context, player);
-        }
-        return amount;
     }
 }

@@ -11,7 +11,8 @@ public class KeywordEffect : ICardEffect
     
     public void Execute(TrainingBattleManager battleManager)
     {
-        int keywordAmount = GetAmount(battleManager.battleContext, battleManager.playerData);
+        int keywordAmount = string.IsNullOrWhiteSpace(amountFormula)
+            ? amount : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData);
         
         // TODO: 키워드 시스템 구현 필요
         // 현재는 로그만 출력
@@ -24,12 +25,4 @@ public class KeywordEffect : ICardEffect
         battleManager.UpdateAllUI();
     }
     
-    public int GetAmount(BattleContext context, PlayerData player = null)
-    {
-        if (!string.IsNullOrEmpty(amountFormula))
-        {
-            return FormulaEvaluator.Evaluate(amountFormula, context, player);
-        }
-        return amount;
-    }
 }

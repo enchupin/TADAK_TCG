@@ -9,7 +9,8 @@ public class BarrierEffect : ICardEffect
 
     public void Execute(TrainingBattleManager battleManager)
     {
-        int finalAmount = amount;
+        int finalAmount = string.IsNullOrWhiteSpace(amountFormula)
+            ? amount : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData);
 
         // Barrier only applies to player when target is Self.
         if (target == TargetType.Self && battleManager.playerData != null)
@@ -18,6 +19,6 @@ public class BarrierEffect : ICardEffect
             battleManager.UpdateAllUI();
         }
 
-        onAction?.Execute(battleManager);
+        onAction?.Execute(battleManager, finalAmount);
     }
 }

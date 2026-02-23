@@ -10,7 +10,8 @@ public class MultiplyDefenseEffect : ICardEffect
     
     public void Execute(TrainingBattleManager battleManager)
     {
-        int multiplier = GetAmount(battleManager.battleContext, battleManager.playerData);
+        int multiplier = string.IsNullOrWhiteSpace(amountFormula)
+            ? amount : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData);
         int currentDefense = battleManager.playerData.defense;
         int additionalDefense = currentDefense * (multiplier - 1);
         
@@ -23,12 +24,4 @@ public class MultiplyDefenseEffect : ICardEffect
         battleManager.UpdateAllUI();
     }
     
-    public int GetAmount(BattleContext context, PlayerData player = null)
-    {
-        if (!string.IsNullOrEmpty(amountFormula))
-        {
-            return FormulaEvaluator.Evaluate(amountFormula, context, player);
-        }
-        return amount;
-    }
 }
