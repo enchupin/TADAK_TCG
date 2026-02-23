@@ -187,7 +187,6 @@
                     "target": "Self"
                 }
             ],
-            "description": "카드를 2장 낼 때마다 체력을 1 회복합니다.",
             "condition": {
                 "checks": [
                     {
@@ -213,7 +212,8 @@
                         "target": "Self"
                     }
                 ]
-            }
+            },
+            "description": "카드를 2장 낼 때마다 체력을 1 회복합니다."
         },
         {
             "buffId": 1008,
@@ -266,8 +266,8 @@
                     {
                         "type": "ChangeStat",
                         "stat": "Buff",
-                        "buffId": 1009,
                         "change": "Decrease",
+                        "buffId": 1009,
                         "amount": 1,
                         "target": "Self"
                     }
@@ -330,9 +330,7 @@
             "effects": [
                 {
                     "type": "Cancel",
-                    "cancel": "ChangeStat",
-                    "stat": "Barrier",
-                    "change": "Decrease"
+                    "cancel": "ReduceBarrier"
                 },
                 {
                     "type": "ChangeStat",
@@ -464,6 +462,7 @@
                         "type": "ChangeStat",
                         "stat": "Buff",
                         "change": "Increase",
+                        "buffId": 4001,
                         "target": "RandEnemy"
                     }
                 ]
@@ -617,9 +616,7 @@
             "effects": [
                 {
                     "type": "Cancel",
-                    "cancel": "ChangeStat",
-                    "stat": "Barrier",
-                    "change": "Decrease"
+                    "cancel": "ReduceBarrier"
                 }
             ],
             "decrease": {
@@ -894,7 +891,8 @@
             },
             "effects": [
                 {
-                    "type": "ModifyDamage",
+                    "type": "ChangeStat",
+                    "stat": "EventValue",
                     "operation": "Set",
                     "amount": 1
                 }
@@ -1033,6 +1031,43 @@
             "description": "매 턴 종료 시 룬을 {stack} 얻습니다."
         },
         {
+            "buffId": 3033,
+            "name": "용암 보호막",
+            "buffType": 3,
+            "trigger": {
+                "event": "OnDamaged"
+            },
+            "condition": [
+                {
+                    "check": [
+                        {
+                            "subject": "Defense",
+                            "operator": "Gt",
+                            "value": 0
+                        },
+                        {
+                            "subject": "Defense",
+                            "operator": "Lt",
+                            "value": "EventValue"
+                        }
+                    ],
+                    "effect": [
+                        {
+                            "type": "ChangeStat",
+                            "stat": "EventValue",
+                            "operation": "Set",
+                            "amount": 0
+                        }
+                    ]
+                }
+            ],
+            "decrease": {
+                "timing": "OffTrigger",
+                "amount": 1
+            },
+            "description": "보호막이 파괴될 때, 보호막을 초과하는 피해를 1회 막아냅니다."
+        },
+        {
             "buffId": 4001,
             "name": "부식",
             "buffType": 4,
@@ -1041,16 +1076,17 @@
             },
             "effects": [
                 {
-                    "type": "Multiply",
-                    "amount": 1.25,
-                    "target": "Damage"
+                    "type": "ChangeStat",
+                    "stat": "EventValue",
+                    "change": "Multiply",
+                    "amount": 1.25
                 }
             ],
             "decrease": {
                 "timing": "OffTrigger",
                 "amount": 1
             },
-            "description": "받는 피해가 25% 증가합니다."
+            "description": "다음 받는 피해가 25% 증가합니다."
         },
         {
             "buffId": 4002,
@@ -1061,16 +1097,17 @@
             },
             "effects": [
                 {
-                    "type": "Multiply",
-                    "amount": 1.5,
-                    "target": "Damage"
+                    "type": "ChangeStat",
+                    "stat": "EventValue",
+                    "change": "Multiply",
+                    "amount": 1.5
                 }
             ],
             "decrease": {
                 "timing": "OffTrigger",
                 "amount": 1
             },
-            "description": "받는 피해가 50% 증가합니다."
+            "description": "다음 받는 피해가 50% 증가합니다."
         },
         {
             "buffId": 4003,
@@ -1150,6 +1187,7 @@
                     "type": "ChangeStat",
                     "stat": "Buff",
                     "change": "Remove",
+                    "buffId": 3021,
                     "target": "Self"
                 }
             ],
@@ -1170,7 +1208,8 @@
                     "type": "ChangeStat",
                     "stat": "Buff",
                     "change": "Decrease",
-                    "target": "EventSource"
+                    "buffId": 3002,
+                    "target": "Self"
                 }
             ],
             "remove": {
@@ -1190,7 +1229,8 @@
                     "type": "ChangeStat",
                     "stat": "Buff",
                     "change": "Decrease",
-                    "target": "EventSource"
+                    "buffId": 3017,
+                    "target": "Self"
                 }
             ],
             "remove": {

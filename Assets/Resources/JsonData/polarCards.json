@@ -473,12 +473,13 @@
             "description": "내 보호막을 모두 잃습니다. 잃은 보호막 10마다 빙하 조형 카드를 1장 생성합니다.",
             "effects": [
                 {
-                    "type": "ConsumeBarrier",
-                    "amountFormula": "all",
+                    "type": "ChangeStat",
+                    "stat": "Barrier",
+                    "change": "remove",
                     "onAction": {
                         "type": "GenerateCard",
                         "cardId": 301080,
-                        "amountFormula": "consumed / 10",
+                        "amountFormula": "eventValue / 10",
                         "target": "Hand"
                     }
                 }
@@ -507,11 +508,12 @@
             "description": "내 보호막을 모두 잃습니다. 잃은 보호막만큼 체력을 회복합니다.",
             "effects": [
                 {
-                    "type": "ConsumeBarrier",
-                    "amountFormula": "all",
+                    "type": "ChangeStat",
+                    "stat": "Barrier",
+                    "change": "remove",
                     "onAction": {
                         "type": "Heal",
-                        "amountFormula": "consumed",
+                        "amountFormula": "eventValue",
                         "target": "Self"
                     }
                 }
@@ -533,11 +535,12 @@
             "description": "내 보호막을 모두 잃습니다. 모든 적에게 잃은 보호막만큼 피해를 입힙니다.",
             "effects": [
                 {
-                    "type": "ConsumeBarrier",
-                    "amountFormula": "all",
+                    "type": "ChangeStat",
+                    "stat": "Barrier",
+                    "change": "remove",
                     "onAction": {
                         "type": "Damage",
-                        "amountFormula": "consumed",
+                        "amountFormula": "eventValue",
                         "target": "AllEnemies"
                     }
                 }
@@ -552,14 +555,34 @@
             "cardId": 301063,
             "name": "마력 치환 +",
             "characterId": 301,
-            "cost": 10,
-            "description": "이 카드는 내 보호막을 비용으로 사용합니다. 빙하 조형 카드를 2장 생성합니다.",
+            "cost": 0,
+            "description": "내 보호막이 10 이상이면, 보호막을 10 잃고 빙하 조형 카드를 2장 생성합니다.",
             "effects": [
                 {
-                    "type": "GenerateCard",
-                    "cardId": 301080,
-                    "amount": 2,
-                    "target": "Hand"
+                    "type": "Conditional",
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "Barrier",
+                                "operator": "Lte",
+                                "value": 10
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "ChangeStat",
+                                "stat": "Barrier",
+                                "change": "decrease",
+                                "amount": 10,
+                                "onAction": {
+                                    "type": "GenerateCard",
+                                    "cardId": 301080,
+                                    "amount": 2,
+                                    "target": "Hand"
+                                }
+                            }
+                        ]
+                    }
                 }
             ],
             "addressables": {
@@ -572,14 +595,34 @@
             "cardId": 301064,
             "name": "마력 치환 +",
             "characterId": 301,
-            "cost": 10,
-            "description": "이 카드는 내 보호막을 비용으로 사용합니다. 빙하 결속을 1 얻습니다.",
+            "cost": 0,
+            "description": "내 보호막이 10 이상이면, 보호막을 10 잃고 빙하 결속을 1 얻습니다.",
             "effects": [
                 {
-                    "type": "Buff",
-                    "buffId": 3012,
-                    "amount": 1,
-                    "target": "Self"
+                    "type": "Conditional",
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "Barrier",
+                                "operator": "Lte",
+                                "value": 10
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "ChangeStat",
+                                "stat": "Barrier",
+                                "change": "decrease",
+                                "amount": 10,
+                                "onAction": {
+                                    "type": "Buff",
+                                    "buffId": 3012,
+                                    "amount": 1,
+                                    "target": "Self"
+                                }
+                            }
+                        ]
+                    }
                 }
             ],
             "addressables": {
@@ -592,18 +635,38 @@
             "cardId": 301065,
             "name": "마력 치환 +",
             "characterId": 301,
-            "cost": 10,
+            "cost": 0,
             "keywords": [
                 6,
                 3
             ],
-            "description": "이 카드는 내 보호막을 비용으로 사용합니다. 재생을 1 얻습니다.",
+            "description": "내 보호막이 10 이상이면, 보호막을 10 잃고 재생을 1 얻습니다.",
             "effects": [
                 {
-                    "type": "Buff",
-                    "buffId": 3001,
-                    "amount": 1,
-                    "target": "Self"
+                    "type": "Conditional",
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "Barrier",
+                                "operator": "Lte",
+                                "value": 10
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "ChangeStat",
+                                "stat": "Barrier",
+                                "change": "decrease",
+                                "amount": 10,
+                                "onAction": {
+                                    "type": "Buff",
+                                    "buffId": 3001,
+                                    "amount": 1,
+                                    "target": "Self"
+                                }
+                            }
+                        ]
+                    }
                 }
             ],
             "addressables": {
