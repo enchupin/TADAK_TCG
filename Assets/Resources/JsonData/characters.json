@@ -218,7 +218,7 @@
                         "timing": "OnTurnEnd"
                     }
                 ],
-                "description": "룬을 5 얻습니다. 내 턴 종료 시 효과를 모두 1회 발동합니다."
+                "description": "룬을 5 얻습니다. 내 턴 종료 시 효과들을 1회 발동합니다."
             },
             "addressables": {
                 "artwork": "Characters/Rune/Artwork",
