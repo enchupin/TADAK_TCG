@@ -30,6 +30,13 @@ public class DamageEffect : ICardEffect
 
                 Monster singleTarget = battleManager.currentTarget;
                 if (singleTarget == null) {
+                    // If only one enemy exists, auto-select it.
+                    List<Monster> livingMonsters = battleManager.GetLivingMonsters();
+                    if (livingMonsters != null && livingMonsters.Count == 1) {
+                        singleTarget = livingMonsters[0];
+                    }
+                }
+                if (singleTarget == null) {
                     Debug.LogWarning("[DamageEffect] SingleEnemy target is missing. Effect cancelled.");
                     break;
                 }
