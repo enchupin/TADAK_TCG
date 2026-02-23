@@ -5,7 +5,7 @@
             "name": "폭발 실험",
             "characterId": 101,
             "cost": 1,
-            "description": "피해를 {amount} 입힙니다.",
+            "description": "피해를 6 입힙니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -24,7 +24,7 @@
             "name": "몸에 좋은 약",
             "characterId": 101,
             "cost": 1,
-            "description": "체력을 {amount} 회복합니다.",
+            "description": "체력을 4 회복합니다.",
             "effects": [
                 {
                     "type": "Heal",
