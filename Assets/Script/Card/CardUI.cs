@@ -1,22 +1,21 @@
 using UnityEngine;
 using UnityEngine.UI;
-
 using TMPro;
 
 /// <summary>
-/// 카드 UI 컴포넌트
-/// 카드 데이터를 받아서 UI에 표시하고 클릭 이벤트 처리
+/// Card UI component.
+/// Displays card data and exposes playability visuals.
 /// </summary>
 public class CardUI : MonoBehaviour
 {
-    [Header("UI 컴포넌트")]
+    [Header("UI Components")]
     [SerializeField] private TextMeshProUGUI cardNameText;
     [SerializeField] private TextMeshProUGUI costText;
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private Image backgroundImage;
     [SerializeField] private Image cardArtwork;
-    
-    [Header("설정")]
+
+    [Header("Visual Settings")]
     [SerializeField] private Color normalColor = Color.white;
     [SerializeField] private Color unplayableColor = Color.gray;
 
@@ -24,7 +23,7 @@ public class CardUI : MonoBehaviour
     public bool IsPlayable => isPlayable;
 
     /// <summary>
-    /// UI 업데이트 - CardController로부터 Card 데이터를 받아서 표시
+    /// Updates text/icon fields from card data.
     /// </summary>
     public void UpdateDisplay(Card card)
     {
@@ -33,15 +32,30 @@ public class CardUI : MonoBehaviour
             Debug.LogWarning("[CardUI] Card is null!");
             return;
         }
-        
-        // 텍스트 업데이트
+
         if (cardNameText != null)
             cardNameText.text = card.cardName;
-        
+
         if (costText != null)
             costText.text = card.cost.ToString();
-        
+
         if (descriptionText != null)
-            descriptionText.text = card.description ?? "";
+            descriptionText.text = card.description ?? string.Empty;
+
+        ApplyPlayableVisual();
+    }
+
+    public void SetPlayable(bool playable)
+    {
+        isPlayable = playable;
+        ApplyPlayableVisual();
+    }
+
+    private void ApplyPlayableVisual()
+    {
+        if (backgroundImage == null)
+            return;
+
+        backgroundImage.color = isPlayable ? normalColor : unplayableColor;
     }
 }
