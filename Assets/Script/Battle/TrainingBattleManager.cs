@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,8 +19,8 @@ public enum BattleTurnState
 }
 
 /// <summary>
-/// Training mode battle manager.
-/// Selects 3 characters, composes one battle deck, and runs turn-based combat.
+/// Training mode battle orchestrator.
+/// Responsible for wiring references and delegating combat flow to subsystems.
 /// </summary>
 public class TrainingBattleManager : MonoBehaviour
 {
@@ -59,33 +58,11 @@ public class TrainingBattleManager : MonoBehaviour
 
     public BattleTurnState CurrentTurnState { get; private set; } = BattleTurnState.None;
 
-    private bool isTurnTransitioning;
-    private int turnNumber;
-    private int pendingExtraDrawAtTurnStart;
+    private TurnSystem turnSystem;
+    private CombatResolver combatResolver;
+    private EncounterSystem encounterSystem;
 
-    public void RegisterMonster(Monster monster)
-    {
-        if (monster == null)
-            return;
-
-        if (!spawnedMonsters.Contains(monster))
-        {
-            spawnedMonsters.Add(monster);
-            Debug.Log($"[BattleManager] Monster registered: {monster.name} (total: {spawnedMonsters.Count})");
-        }
-    }
-
-    public void UnregisterMonster(Monster monster)
-    {
-        if (monster == null)
-            return;
-
-        if (spawnedMonsters.Contains(monster))
-        {
-            spawnedMonsters.Remove(monster);
-            Debug.Log($"[BattleManager] Monster unregistered: {monster.name} (total: {spawnedMonsters.Count})");
-        }
-    }
+    public float EnemyActionDelay => enemyActionDelay;
 
     private void Awake()
     {
@@ -98,6 +75,10 @@ public class TrainingBattleManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
+        encounterSystem = new EncounterSystem(this);
+        turnSystem = new TurnSystem(this);
+        combatResolver = new CombatResolver(this);
     }
 
     private void Start()
@@ -127,6 +108,30 @@ public class TrainingBattleManager : MonoBehaviour
     private void OnDestroy()
     {
         CardPlayEvents.OnCardPlayed -= HandleCardClicked;
+    }
+
+    public void RegisterMonster(Monster monster)
+    {
+        if (monster == null)
+            return;
+
+        if (!spawnedMonsters.Contains(monster))
+        {
+            spawnedMonsters.Add(monster);
+            Debug.Log($"[BattleManager] Monster registered: {monster.name} (total: {spawnedMonsters.Count})");
+        }
+    }
+
+    public void UnregisterMonster(Monster monster)
+    {
+        if (monster == null)
+            return;
+
+        if (spawnedMonsters.Contains(monster))
+        {
+            spawnedMonsters.Remove(monster);
+            Debug.Log($"[BattleManager] Monster unregistered: {monster.name} (total: {spawnedMonsters.Count})");
+        }
     }
 
     private void InitializeCharacterSelection()
@@ -230,19 +235,17 @@ public class TrainingBattleManager : MonoBehaviour
             return;
 
         SetState(BattleTurnState.CombatStart);
-        turnNumber = 0;
-        pendingExtraDrawAtTurnStart = 0;
-        isTurnTransitioning = false;
 
         battleContext.OnCombatStart();
         usableDeckManager.ShuffleDeck();
 
+        turnSystem.ResetForCombat();
         ApplyCombatStartEffects();
 
         if (TryHandleCombatEnd())
             return;
 
-        BeginPlayerTurn();
+        turnSystem.BeginPlayerTurn();
     }
 
     public void DrawCards(int count)
@@ -342,77 +345,15 @@ public class TrainingBattleManager : MonoBehaviour
 
     private void HandleCardClicked(CardPlayEventData eventData)
     {
-        PlayCard(eventData);
-    }
-
-    private void PlayCard(CardPlayEventData eventData)
-    {
-        if (!CanPlayerPlayCard())
-        {
-            Debug.LogWarning("[BattleManager] Cannot play card right now. Not in player action state.");
-            return;
-        }
-
-        if (eventData == null || eventData.cardController == null || eventData.cardController.Card == null)
-        {
-            Debug.LogWarning("[BattleManager] Missing CardController or Card.");
-            return;
-        }
-
-        CardController controller = eventData.cardController;
-        Card playedCard = controller.Card;
-
-        if (playerData == null)
-            return;
-
-        if (playerData.energy < playedCard.cost)
-        {
-            Debug.LogWarning($"[BattleManager] Not enough energy for {playedCard.cardName}. Needed: {playedCard.cost}, Current: {playerData.energy}");
-            RefreshHandPlayableState();
-            UpdateAllUI();
-            return;
-        }
-
-        bool spent = playerData.UseEnergy(playedCard.cost);
-        if (!spent)
-        {
-            RefreshHandPlayableState();
-            UpdateAllUI();
-            return;
-        }
-
-        Debug.Log($"[Player] Used card: {playedCard.cardName} (Energy now: {playerData.energy})");
-
-        battleContext?.OnCardPlayed(playedCard);
-
-        currentTarget = eventData.targetMonster;
-        playedCard.Play(this);
-        currentTarget = null;
-
-        if (handManager != null)
-        {
-            handManager.RemoveCardFromHand(controller.cardUI);
-        }
-
-        if (usableDeckManager != null)
-        {
-            usableDeckManager.AddToDiscard(playedCard);
-        }
-
-        RefreshHandPlayableState();
-        UpdateAllUI();
-        TryHandleCombatEnd();
+        combatResolver.TryPlayCard(eventData);
     }
 
     public void EndTurn()
     {
-        if (!CanEndPlayerTurn())
+        if (!turnSystem.TryEndPlayerTurn())
         {
             Debug.LogWarning("[BattleManager] EndTurn ignored. It is not the player's actionable state.");
-            return;
         }
-
-        StartCoroutine(RunEnemyTurnSequence());
     }
 
     /// <summary>
@@ -420,132 +361,7 @@ public class TrainingBattleManager : MonoBehaviour
     /// </summary>
     public void ForceEndPlayerTurn()
     {
-        if (CurrentTurnState == BattleTurnState.CombatEnd || isTurnTransitioning)
-            return;
-
-        if (CurrentTurnState == BattleTurnState.PlayerTurnStart ||
-            CurrentTurnState == BattleTurnState.PlayerAction ||
-            CurrentTurnState == BattleTurnState.PlayerTurnEnd)
-        {
-            StartCoroutine(RunEnemyTurnSequence());
-        }
-    }
-
-    private IEnumerator RunEnemyTurnSequence()
-    {
-        if (isTurnTransitioning)
-            yield break;
-
-        isTurnTransitioning = true;
-
-        SetState(BattleTurnState.PlayerTurnEnd);
-        UpdateEndTurnButtonState();
-        RefreshHandPlayableState();
-
-        ApplyPlayerTurnEndEffects();
-        DiscardRemainingHandCards();
-
-        UpdateAllUI();
-
-        if (TryHandleCombatEnd())
-        {
-            isTurnTransitioning = false;
-            yield break;
-        }
-
-        SetState(BattleTurnState.EnemyTurnStart);
-        foreach (Monster monster in GetLivingMonsters())
-        {
-            monster.OnTurnStart();
-        }
-
-        yield return new WaitForSeconds(enemyActionDelay);
-
-        SetState(BattleTurnState.EnemyAction);
-
-        List<Monster> enemiesForAction = GetLivingMonsters();
-        foreach (Monster monster in enemiesForAction)
-        {
-            if (monster == null || monster.IsDead())
-                continue;
-
-            monster.ExecutePlannedAction(playerData);
-            UpdateAllUI();
-
-            if (playerData != null && playerData.IsDead())
-                break;
-
-            yield return new WaitForSeconds(enemyActionDelay);
-        }
-
-        if (TryHandleCombatEnd())
-        {
-            isTurnTransitioning = false;
-            yield break;
-        }
-
-        SetState(BattleTurnState.EnemyTurnEnd);
-        foreach (Monster monster in GetLivingMonsters())
-        {
-            monster.OnTurnEnd();
-        }
-
-        yield return new WaitForSeconds(enemyActionDelay);
-
-        if (TryHandleCombatEnd())
-        {
-            isTurnTransitioning = false;
-            yield break;
-        }
-
-        isTurnTransitioning = false;
-        BeginPlayerTurn();
-    }
-
-    private void BeginPlayerTurn()
-    {
-        if (CurrentTurnState == BattleTurnState.CombatEnd)
-            return;
-
-        turnNumber++;
-        SetState(BattleTurnState.PlayerTurnStart);
-
-        if (battleContext == null)
-        {
-            battleContext = new BattleContext();
-        }
-        battleContext.OnTurnStart();
-
-        if (playerData != null)
-        {
-            playerData.OnTurnStart();
-        }
-
-        ApplyPlayerTurnStartEffects();
-        PlanEnemyNextActions();
-
-        if (isDebugMode && turnNumber == 1)
-        {
-            DebugDrawSpecificEffectCard();
-        }
-        else
-        {
-            DrawCards(GetTurnStartDrawCount());
-        }
-
-        SetState(BattleTurnState.PlayerAction);
-        UpdateEndTurnButtonState();
-        RefreshHandPlayableState();
-        UpdateAllUI();
-
-        Debug.Log($"[BattleManager] Player turn started. Turn: {turnNumber}");
-    }
-
-    private int GetTurnStartDrawCount()
-    {
-        int total = Mathf.Max(0, drawCardCount + pendingExtraDrawAtTurnStart);
-        pendingExtraDrawAtTurnStart = 0;
-        return total;
+        turnSystem.ForceEndPlayerTurn();
     }
 
     /// <summary>
@@ -553,20 +369,20 @@ public class TrainingBattleManager : MonoBehaviour
     /// </summary>
     public void AddTurnStartDrawModifier(int amount)
     {
-        pendingExtraDrawAtTurnStart += amount;
+        turnSystem.AddTurnStartDrawModifier(amount);
     }
 
-    private void ApplyCombatStartEffects()
+    public void ApplyCombatStartEffects()
     {
         // Placeholder: start-of-combat buffs/debuffs can be resolved here.
     }
 
-    private void ApplyPlayerTurnStartEffects()
+    public void ApplyPlayerTurnStartEffects()
     {
         // Placeholder: player turn-start trigger effects.
     }
 
-    private void ApplyPlayerTurnEndEffects()
+    public void ApplyPlayerTurnEndEffects()
     {
         if (playerData != null)
         {
@@ -576,97 +392,32 @@ public class TrainingBattleManager : MonoBehaviour
         // Placeholder: player turn-end trigger effects.
     }
 
-    private void PlanEnemyNextActions()
+    public bool TryHandleCombatEnd()
     {
-        foreach (Monster monster in GetLivingMonsters())
-        {
-            monster.PlanNextAction();
-        }
+        return encounterSystem.TryHandleCombatEnd();
     }
 
-    private void DiscardRemainingHandCards()
+    public List<Monster> GetLivingMonsters()
     {
-        if (handManager == null || usableDeckManager == null)
-            return;
-
-        List<Card> remainingCards = handManager.GetHandCards();
-        if (remainingCards.Count > 0)
-        {
-            usableDeckManager.AddToDiscard(remainingCards);
-            if (battleContext != null)
-            {
-                battleContext.cardsDiscardedThisTurn += remainingCards.Count;
-            }
-        }
-
-        handManager.ClearHand();
+        return encounterSystem.GetLivingMonsters();
     }
 
-    private List<Monster> GetLivingMonsters()
+    public bool CanPlayerPlayCard()
     {
-        CleanupMonsterList();
-
-        List<Monster> alive = new List<Monster>();
-        foreach (Monster monster in spawnedMonsters)
-        {
-            if (monster != null && !monster.IsDead())
-            {
-                alive.Add(monster);
-            }
-        }
-
-        return alive;
+        return turnSystem.CanPlayerPlayCard();
     }
 
-    private void CleanupMonsterList()
+    public bool CanEndPlayerTurn()
     {
-        spawnedMonsters.RemoveAll(monster => monster == null);
-    }
-
-    private bool TryHandleCombatEnd()
-    {
-        if (CurrentTurnState == BattleTurnState.CombatEnd)
-            return true;
-
-        if (playerData != null && playerData.IsDead())
-        {
-            SetState(BattleTurnState.CombatEnd);
-            UpdateEndTurnButtonState();
-            RefreshHandPlayableState();
-            UpdateAllUI();
-            Debug.Log("[BattleManager] Defeat. Player is dead.");
-            return true;
-        }
-
-        if (GetLivingMonsters().Count == 0)
-        {
-            SetState(BattleTurnState.CombatEnd);
-            UpdateEndTurnButtonState();
-            RefreshHandPlayableState();
-            UpdateAllUI();
-            Debug.Log("[BattleManager] Victory. All enemies are dead.");
-            return true;
-        }
-
-        return false;
-    }
-
-    private bool CanPlayerPlayCard()
-    {
-        return !isTurnTransitioning && CurrentTurnState == BattleTurnState.PlayerAction;
-    }
-
-    private bool CanEndPlayerTurn()
-    {
-        return !isTurnTransitioning && CurrentTurnState == BattleTurnState.PlayerAction;
+        return turnSystem.CanEndPlayerTurn();
     }
 
     public bool CanUseIdentityAbility()
     {
-        return !isTurnTransitioning && CurrentTurnState == BattleTurnState.PlayerAction;
+        return turnSystem.CanPlayerPlayCard();
     }
 
-    private void UpdateEndTurnButtonState()
+    public void UpdateEndTurnButtonState()
     {
         if (endTurnButton == null)
             return;
@@ -674,7 +425,7 @@ public class TrainingBattleManager : MonoBehaviour
         endTurnButton.interactable = CanEndPlayerTurn();
     }
 
-    private void RefreshHandPlayableState()
+    public void RefreshHandPlayableState()
     {
         if (handManager == null)
             return;
@@ -715,7 +466,7 @@ public class TrainingBattleManager : MonoBehaviour
         return true;
     }
 
-    private void SetState(BattleTurnState newState)
+    public void SetState(BattleTurnState newState)
     {
         CurrentTurnState = newState;
     }
