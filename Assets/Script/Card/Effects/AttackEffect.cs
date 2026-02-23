@@ -41,6 +41,13 @@ public class AttackEffect : ICardEffect
 
                 Monster targetMonster = battleManager.currentTarget;
                 if (targetMonster == null) {
+                    // If only one enemy exists, auto-select it.
+                    List<Monster> livingMonsters = battleManager.GetLivingMonsters();
+                    if (livingMonsters != null && livingMonsters.Count == 1) {
+                        targetMonster = livingMonsters[0];
+                    }
+                }
+                if (targetMonster == null) {
                     Debug.LogWarning("[AttackEffect] SingleEnemy target is missing. Effect cancelled.");
                     return;
                 }
