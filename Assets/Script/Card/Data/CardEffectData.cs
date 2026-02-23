@@ -105,8 +105,8 @@ public class CardEffectData
                 return new AttackEffect { amount = amount, amountFormula = amountFormula, target = target };
             case EffectType.Barrier: // clear
                 return new BarrierEffect { amount = amount, amountFormula = amountFormula, target = target };
-            case EffectType.DiscardHand:
-                return new DiscardHandEffect { count = count, target = target };
+            case EffectType.DiscardHand: // clear
+                return new DiscardHandEffect { count = count, amountFormula = amountFormula, target = target };
             case EffectType.ExhaustHand:
                 return new ExhaustHandEffect { count = count, target = target };
             case EffectType.Scry:
