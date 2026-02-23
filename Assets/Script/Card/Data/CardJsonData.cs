@@ -80,6 +80,8 @@ public class ConditionJsonData
     public List<CheckJsonData> checks;
     public EffectJsonData successEffect;
     public EffectJsonData failEffect;
+    public List<EffectJsonData> effects;
+    public List<EffectJsonData> elseEffects;
 }
 
 [Serializable]

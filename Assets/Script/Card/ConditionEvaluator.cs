@@ -2,22 +2,19 @@ using UnityEngine;
 using System.Collections.Generic;
 
 /// <summary>
-/// 조건 데이터를 평가하는 정적 클래스
-/// Subject(대상) -> Property(속성) -> Operator(비교) 구조를 지원합니다.
+/// Evaluates card conditions.
 /// </summary>
 public static class ConditionEvaluator
 {
-    // 레거시 지원용
+    // Legacy string condition support.
     public static bool Evaluate(string condition, string value, TrainingBattleManager battleManager)
     {
         if (string.IsNullOrEmpty(condition)) return true;
-        // 기존 단순 문자열 조건 처리 로직 유지 또는 ConditionData로 변환하여 처리
-        // 여기서는 간단히 기존 로직 유지
-        return true; 
+        return true;
     }
 
     /// <summary>
-    /// 새로운 ConditionData 구조체 평가
+    /// Evaluates ConditionData checks with And/Or mode.
     /// </summary>
     public static bool Evaluate(ConditionData data, TrainingBattleManager battleManager)
     {
@@ -25,17 +22,17 @@ public static class ConditionEvaluator
 
         bool result = (data.mode == "Or") ? false : true;
 
-        foreach (var check in data.checks)
+        foreach (CheckData check in data.checks)
         {
             bool isCheckMet = EvaluateCheck(check, battleManager);
 
             if (data.mode == "Or")
             {
-                if (isCheckMet) return true; // 하나라도 만족하면 True
+                if (isCheckMet) return true;
             }
-            else // And
+            else
             {
-                if (!isCheckMet) return false; // 하나라도 불만족하면 False
+                if (!isCheckMet) return false;
             }
         }
 
@@ -44,30 +41,52 @@ public static class ConditionEvaluator
 
     private static bool EvaluateCheck(CheckData check, TrainingBattleManager battleManager)
     {
-        // 1. 대상(Subject) 결정
+        if (check == null || battleManager == null) return false;
+
+        // Requested support:
+        // { "subject": "EnemyCount", "operator": "Eq", "value": 1 }
+        string op = string.IsNullOrEmpty(check.@operator) ? "Eq" : check.@operator;
+
+        if (check.subject == "EnemyCount" || check.property == "EnemyCount")
+        {
+            int enemyCount = 0;
+            List<Monster> livingMonsters = battleManager.GetLivingMonsters();
+            if (livingMonsters != null)
+            {
+                enemyCount = livingMonsters.Count;
+            }
+            else if (battleManager.spawnedMonsters != null)
+            {
+                foreach (Monster monster in battleManager.spawnedMonsters)
+                {
+                    if (monster != null && !monster.IsDead())
+                    {
+                        enemyCount++;
+                    }
+                }
+            }
+
+            return Compare(enemyCount, op, check.value);
+        }
+
         object subjectObj = GetSubject(check.subject, battleManager);
         if (subjectObj == null) return false;
 
-        // 2. 속성(Property) 값 추출
         float subjectValue = GetPropertyValue(subjectObj, check.property, check.param);
-
-        // 3. 비교(Operator)
-        return Compare(subjectValue, check.@operator, check.value);
+        return Compare(subjectValue, op, check.value);
     }
 
     private static object GetSubject(string subjectType, TrainingBattleManager bm)
     {
         switch (subjectType)
         {
-            case "Source": // 플레이어 (또는 시전 주체)
+            case "Source":
                 return bm.playerData;
-            case "Target": // 타겟 (적) - 단일 타겟 기준
-                return UnityEngine.Object.FindFirstObjectByType<Monster>(); 
+            case "Target":
+                return UnityEngine.Object.FindFirstObjectByType<Monster>();
             case "Hand":
                 return bm.handManager;
             default:
-                // EventValue 등 추가 컨텍스트가 필요한 경우 여기서 처리 불가할 수 있음
-                // 필요한 경우 메서드 시그니처 수정 필요
                 return bm.playerData;
         }
     }
@@ -81,10 +100,10 @@ public static class ConditionEvaluator
                 case "Hp": return player.hp;
                 case "Defense": return player.defense;
                 case "Energy": return player.energy;
-                case "Buff": 
-                    int buffId = int.Parse(param);
-                    var buff = player.currentBuffs.Find(b => b.data.buffId == buffId);
-                    return buff != null ? buff.stack : 0;
+                case "Buff":
+                    int playerBuffId = int.Parse(param);
+                    Buff playerBuff = player.currentBuffs.Find(b => b.data.buffId == playerBuffId);
+                    return playerBuff != null ? playerBuff.stack : 0;
             }
         }
         else if (subject is Monster monster)
@@ -94,10 +113,9 @@ public static class ConditionEvaluator
                 case "Hp": return monster.hp;
                 case "Defense": return monster.defense;
                 case "Buff":
-                    int buffId = int.Parse(param);
-                    var buff = monster.currentBuffs.Find(b => b.data.buffId == buffId);
-                    return buff != null ? buff.stack : 0;
-                 // Intent 등 추가 가능
+                    int monsterBuffId = int.Parse(param);
+                    Buff monsterBuff = monster.currentBuffs.Find(b => b.data.buffId == monsterBuffId);
+                    return monsterBuff != null ? monsterBuff.stack : 0;
             }
         }
         else if (subject is HandManager hand)

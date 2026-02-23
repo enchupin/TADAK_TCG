@@ -318,19 +318,27 @@ public class CardJSONConverter : EditorWindow
         {
             foreach (JToken token in checksArray)
             {
-                if (!(token is JObject checkObject))
+                if (token is JObject checkObject)
                 {
-                    continue;
+                    condition.checks.Add(new CheckData
+                    {
+                        subject = ReadFirstNonEmptyString(checkObject, "subject", "check", "checks"),
+                        property = ReadString(checkObject, "property"),
+                        param = ReadString(checkObject, "param"),
+                        @operator = ReadString(checkObject, "operator"),
+                        value = ReadString(checkObject, "value")
+                    });
                 }
-
-                condition.checks.Add(new CheckData
+                else if (token.Type == JTokenType.String)
                 {
-                    subject = ReadString(checkObject, "subject"),
-                    property = ReadString(checkObject, "property"),
-                    param = ReadString(checkObject, "param"),
-                    @operator = ReadString(checkObject, "operator"),
-                    value = ReadString(checkObject, "value")
-                });
+                    // Fallback support for shorthand check entries.
+                    condition.checks.Add(new CheckData
+                    {
+                        subject = ReadString(token),
+                        @operator = "Eq",
+                        value = "1"
+                    });
+                }
             }
         }
 
@@ -338,14 +346,37 @@ public class CardJSONConverter : EditorWindow
         {
             condition.successEffect = ReadEffect(successObject);
         }
-        else if (conditionObject["effects"] is JArray successEffectsArray)
+
+        if (conditionObject["effects"] is JArray successEffectsArray)
         {
-            condition.successEffect = ReadFirstEffect(successEffectsArray);
+            condition.successEffects = ReadEffectList(successEffectsArray);
+            if (condition.successEffect == null)
+            {
+                condition.successEffect = ReadFirstEffect(successEffectsArray);
+            }
         }
 
         if (conditionObject["failEffect"] is JObject failObject)
         {
             condition.failEffect = ReadEffect(failObject);
+        }
+
+        if (conditionObject["elseEffects"] is JArray elseEffectsArray)
+        {
+            condition.elseEffects = ReadEffectList(elseEffectsArray);
+            if (condition.failEffect == null)
+            {
+                condition.failEffect = ReadFirstEffect(elseEffectsArray);
+            }
+        }
+
+        if (conditionObject["failEffects"] is JArray failEffectsArray)
+        {
+            condition.elseEffects = ReadEffectList(failEffectsArray);
+            if (condition.failEffect == null)
+            {
+                condition.failEffect = ReadFirstEffect(failEffectsArray);
+            }
         }
 
         return condition;
@@ -362,6 +393,31 @@ public class CardJSONConverter : EditorWindow
         }
 
         return null;
+    }
+
+    private static List<CardEffectData> ReadEffectList(JArray effectsArray)
+    {
+        List<CardEffectData> result = new List<CardEffectData>();
+        if (effectsArray == null)
+        {
+            return result;
+        }
+
+        foreach (JToken token in effectsArray)
+        {
+            if (!(token is JObject effectObject))
+            {
+                continue;
+            }
+
+            CardEffectData effect = ReadEffect(effectObject);
+            if (effect != null)
+            {
+                result.Add(effect);
+            }
+        }
+
+        return result;
     }
 
     private static List<int> ReadCardIdList(JToken token)
