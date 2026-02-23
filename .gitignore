@@ -123,5 +123,6 @@ dataSources.local.xml
 httpRequests/
 .idea/
 
-# ScriptableObject assets
-*.asset
+# ScriptableObject assets (generated card data)
+Assets/Data/Cards/*.asset
+Assets/Resources/CardCollection.asset
