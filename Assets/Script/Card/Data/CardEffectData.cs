@@ -101,14 +101,14 @@ public class CardEffectData
                 }
                 return new ConditionalEffect { conditionData = this.conditionData, successEffects = success, failEffects = fail };
 
-            case EffectType.Attack: // ongoing
-                return new AttackEffect { amount = amount, amountFormula = amountFormula, target = target };
-            case EffectType.Barrier: // clear
-                return new BarrierEffect { amount = amount, amountFormula = amountFormula, target = target };
-            case EffectType.DiscardHand:
-                return new DiscardHandEffect { count = count, target = target };
-            case EffectType.ExhaustHand:
-                return new ExhaustHandEffect { count = count, target = target };
+            case EffectType.Attack: // ongoing (only clear without buff)
+                return new AttackEffect { amount = amount, amountFormula = amountFormula, target = target, onAction = onAction?.CreateEffect() };
+            case EffectType.Barrier: // onging (only clear when amountFormula == all)
+                return new BarrierEffect { amount = amount, amountFormula = amountFormula, target = target, onAction = onAction?.CreateEffect() };
+            case EffectType.DiscardHand: // onging (only clear when amountFormula == all)
+                return new DiscardHandEffect { count = count, amountFormula = amountFormula, target = target };
+            case EffectType.ExhaustHand: // onging (only clear when amountFormula == all)
+                return new ExhaustHandEffect { amountFormula = amountFormula };
             case EffectType.Scry:
                 return new ScryEffect { count = count };
             case EffectType.ChoiceHand:
@@ -116,7 +116,7 @@ public class CardEffectData
             case EffectType.SelectCard:
                  return new SelectCardEffect { count = count, target = target };
             case EffectType.Damage:
-                return new DamageEffect { amount = amount, amountFormula = amountFormula, target = target };
+                return new DamageEffect { amount = amount, amountFormula = amountFormula, target = target, onAction = onAction?.CreateEffect() };
             case EffectType.Draw: // clear
                 return new DrawEffect { amount = amount, amountFormula = amountFormula };
             case EffectType.Buff:
