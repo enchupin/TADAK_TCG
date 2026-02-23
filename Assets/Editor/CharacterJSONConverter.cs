@@ -1,314 +1,295 @@
-using UnityEngine;
-using UnityEditor;
-using System.IO;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using UnityEditor;
+using UnityEngine;
 
 /// <summary>
-/// Character JSON을 ScriptableObject로 자동 변환하는 에디터 툴
-/// Tools → TCG → Character JSON Converter
+/// Character JSON to ScriptableObject converter.
 /// </summary>
 public class CharacterJSONConverter : EditorWindow
 {
-    private string jsonFilePath = "Assets/Resources/JsonData/characters.json";
-    private string outputPath = "Assets/Data/Character";
-    
+    private const string DefaultJsonFilePath = "Assets/Resources/JsonData/characters.json";
+    private const string DefaultOutputPath = "Assets/Data/Character";
+    private const string CharacterCollectionPath = "Assets/Resources/CharacterCollection.asset";
+
+    private string jsonFilePath = DefaultJsonFilePath;
+    private string outputPath = DefaultOutputPath;
+
     [MenuItem("Tools/TCG/Character JSON Converter")]
     public static void ShowWindow()
     {
         GetWindow<CharacterJSONConverter>("Character Converter");
     }
-    
-    void OnGUI()
+
+    private void OnGUI()
     {
-        GUILayout.Label("Character JSON to ScriptableObject Converter", EditorStyles.boldLabel);
+        GUILayout.Label("Character JSON Converter", EditorStyles.boldLabel);
         GUILayout.Space(10);
-        
+
         jsonFilePath = EditorGUILayout.TextField("JSON File Path", jsonFilePath);
         outputPath = EditorGUILayout.TextField("Output Path", outputPath);
-        
+
         GUILayout.Space(10);
-        
         if (GUILayout.Button("Convert All Characters", GUILayout.Height(30)))
         {
             ConvertCharactersToScriptableObjects();
         }
-        
+
         GUILayout.Space(10);
         EditorGUILayout.HelpBox(
-            "1. JSON 파일 경로를 확인하세요\n" +
-            "2. 출력 경로를 설정하세요\n" +
-            "3. Convert All Characters 버튼을 클릭하세요", 
+            "Converts characters.json to CharacterData assets and updates CharacterCollection.",
             MessageType.Info);
     }
-    
-    void ConvertCharactersToScriptableObjects()
+
+    private void ConvertCharactersToScriptableObjects()
     {
         TextAsset jsonFile = AssetDatabase.LoadAssetAtPath<TextAsset>(jsonFilePath);
-
         if (jsonFile == null)
         {
-            EditorUtility.DisplayDialog("Error", $"Could not find JSON file at {jsonFilePath}", "OK");
+            EditorUtility.DisplayDialog("Error", $"Could not find JSON file: {jsonFilePath}", "OK");
             return;
         }
-        
-        // JSON 파싱
-        CharacterJsonRoot jsonRoot = JsonUtility.FromJson<CharacterJsonRoot>(jsonFile.text);
-        
-        if (jsonRoot == null || jsonRoot.characters == null)
+
+        CharacterJsonRoot root;
+        try
         {
-            EditorUtility.DisplayDialog("Error", "Invalid JSON format!", "OK");
+            root = JsonUtility.FromJson<CharacterJsonRoot>(jsonFile.text);
+        }
+        catch (Exception ex)
+        {
+            EditorUtility.DisplayDialog("Error", $"Invalid JSON: {ex.Message}", "OK");
             return;
         }
-        
-        // 출력 폴더 생성
-        if (!Directory.Exists(outputPath))
+
+        if (root?.characters == null)
         {
-            Directory.CreateDirectory(outputPath);
+            EditorUtility.DisplayDialog("Error", "JSON does not contain a valid 'characters' array.", "OK");
+            return;
         }
-        
-        // ✅ CharacterCollection 생성/업데이트
-        string collectionPath = "Assets/Resources/CharacterCollection.asset";
-        CharacterCollection collection = AssetDatabase.LoadAssetAtPath<CharacterCollection>(collectionPath);
-        
-        if (collection == null)
-        {
-            Debug.Log($"[CharacterJSONConverter] CharacterCollection이 {collectionPath}에 없음. 새로 생성합니다.");
-            
-            // Resources 폴더 확인
-            if (!Directory.Exists("Assets/Resources"))
-            {
-                Directory.CreateDirectory("Assets/Resources");
-                AssetDatabase.Refresh();
-                Debug.Log("[CharacterJSONConverter] Assets/Resources 폴더 생성");
-            }
-            
-            // 새로 생성
-            collection = ScriptableObject.CreateInstance<CharacterCollection>();
-            AssetDatabase.CreateAsset(collection, collectionPath);
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-            
-            // 다시 로드하여 확인
-            collection = AssetDatabase.LoadAssetAtPath<CharacterCollection>(collectionPath);
-            if (collection != null)
-            {
-                Debug.Log($"[CharacterJSONConverter] 새 CharacterCollection 생성 완료: {collectionPath}");
-            }
-            else
-            {
-                Debug.LogError($"[CharacterJSONConverter] CharacterCollection 생성 실패! {collectionPath}");
-            }
-        }
-        else
-        {
-            // 기존 컬렉션 초기화
-            Debug.Log($"[CharacterJSONConverter] 기존 CharacterCollection 발견: {collectionPath}, 현재 캐릭터 수: {collection.allCharacters.Count}");
-            collection.allCharacters.Clear();
-            Debug.Log("[CharacterJSONConverter] 기존 CharacterCollection 초기화 완료");
-        }
-        
+
+        EnsureDirectory(outputPath);
+        CharacterCollection collection = GetOrCreateCollection();
+        Dictionary<int, CharacterData> existingById = BuildIndexById();
+        Dictionary<int, CharacterData> updatedById = new Dictionary<int, CharacterData>();
+
         int successCount = 0;
         int failCount = 0;
-        List<string> createdCharacterPaths = new List<string>();
-        
-        // 각 캐릭터를 ScriptableObject로 변환
-        foreach (var jsonChar in jsonRoot.characters)
+
+        foreach (CharacterJsonData jsonCharacter in root.characters)
         {
+            if (jsonCharacter == null || jsonCharacter.characterId <= 0)
+            {
+                failCount++;
+                continue;
+            }
+
             try
             {
-                // 파일 이름 생성
-                string fileName = $"Character_{jsonChar.characterId}_{jsonChar.name}.asset";
-                string assetPath = Path.Combine(outputPath, fileName).Replace("\\", "/");
-                
-                // 이미 존재하는 에셋인지 확인
-                CharacterData characterData = AssetDatabase.LoadAssetAtPath<CharacterData>(assetPath);
-                bool isNew = false;
-                
-                if (characterData == null)
+                CharacterData data = GetOrCreateCharacterData(jsonCharacter, existingById);
+                ApplyCharacterData(data, jsonCharacter);
+
+                if (!AssetDatabase.Contains(data))
                 {
-                    characterData = ScriptableObject.CreateInstance<CharacterData>();
-                    isNew = true;
-                }
-                
-                // 데이터 업데이트
-                UpdateCharacterData(characterData, jsonChar);
-                
-                if (isNew)
-                {
-                    AssetDatabase.CreateAsset(characterData, assetPath);
-                    Debug.Log($"Created: {assetPath}");
+                    AssetDatabase.CreateAsset(data, BuildCharacterAssetPath(data));
                 }
                 else
                 {
-                    EditorUtility.SetDirty(characterData);
-                    Debug.Log($"Updated: {assetPath}");
+                    EditorUtility.SetDirty(data);
                 }
-                
-                // 생성된 캐릭터 경로 저장
-                createdCharacterPaths.Add(assetPath);
-                
+
+                existingById[data.characterId] = data;
+                updatedById[data.characterId] = data;
                 successCount++;
             }
-            catch (System.Exception e)
+            catch (Exception ex)
             {
-                Debug.LogError($"Failed to create character {jsonChar.characterId} ({jsonChar.name}): {e.Message}");
+                Debug.LogError($"[CharacterJSONConverter] Failed characterId={jsonCharacter.characterId}: {ex.Message}");
                 failCount++;
             }
         }
-        
-        // ✅ 먼저 모든 CharacterData 저장
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        
-        // ✅ 저장된 CharacterData를 다시 로드하여 CharacterCollection에 추가
-        foreach (string characterPath in createdCharacterPaths)
-        {
-            CharacterData savedCharacter = AssetDatabase.LoadAssetAtPath<CharacterData>(characterPath);
-            if (savedCharacter != null)
-            {
-                collection.allCharacters.Add(savedCharacter);
-            }
-        }
-        
+
+        List<CharacterData> normalized = new List<CharacterData>(updatedById.Values);
+        normalized.Sort((a, b) => a.characterId.CompareTo(b.characterId));
+        collection.allCharacters = normalized;
+
         EditorUtility.SetDirty(collection);
-        Debug.Log($"[CharacterJSONConverter] CharacterCollection에 {collection.allCharacters.Count}명의 캐릭터 추가 완료");
-        
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        
-        string message = $"Successfully converted {successCount} characters!\n";
-        if (failCount > 0)
-        {
-            message += $"Failed: {failCount}\n";
-        }
-        message += $"CharacterCollection: {collection.allCharacters.Count} characters\n";
-        message += $"Saved to: {outputPath}";
-        
-        EditorUtility.DisplayDialog("Conversion Complete", message, "OK");
-        Debug.Log($"<color=green>Character conversion completed!</color> Success: {successCount}, Failed: {failCount}");
+
+        EditorUtility.DisplayDialog(
+            "Conversion Complete",
+            $"Success: {successCount}\nFailed: {failCount}\nCollection: {collection.allCharacters.Count}",
+            "OK");
     }
-    
-    void UpdateCharacterData(CharacterData data, CharacterJsonData jsonChar)
+
+    private CharacterData GetOrCreateCharacterData(CharacterJsonData jsonCharacter, Dictionary<int, CharacterData> existingById)
     {
-        // 기본 정보
-        data.characterId = jsonChar.characterId;
-        data.characterName = jsonChar.name;
-        data.maxHp = jsonChar.maxHp;
-        data.cost = jsonChar.cost;
-        data.characterColor = jsonChar.characterColor;
-        
-        // Addressables
-        if (jsonChar.addressables != null)
+        if (existingById.TryGetValue(jsonCharacter.characterId, out CharacterData existing) && existing != null)
         {
-            data.artworkAddress = jsonChar.addressables.artwork ?? "";
-            data.effectAddress = jsonChar.addressables.effect ?? "";
-            data.soundAddress = jsonChar.addressables.sound ?? "";
+            return existing;
         }
-        else
+
+        string expectedPath = BuildCharacterAssetPath(jsonCharacter.characterId, jsonCharacter.name);
+        CharacterData byPath = AssetDatabase.LoadAssetAtPath<CharacterData>(expectedPath);
+        if (byPath != null)
         {
-            data.artworkAddress = "";
-            data.effectAddress = "";
-            data.soundAddress = "";
+            return byPath;
         }
-        
-        // 시작 덱
-        if (jsonChar.startDeck != null)
+
+        return ScriptableObject.CreateInstance<CharacterData>();
+    }
+
+    private void ApplyCharacterData(CharacterData data, CharacterJsonData jsonCharacter)
+    {
+        data.characterId = jsonCharacter.characterId;
+        data.characterName = jsonCharacter.name ?? string.Empty;
+        data.maxHp = jsonCharacter.maxHp;
+        data.cost = jsonCharacter.cost;
+        data.characterColor = jsonCharacter.characterColor ?? string.Empty;
+
+        data.artworkAddress = jsonCharacter.addressables?.artwork ?? string.Empty;
+        data.effectAddress = jsonCharacter.addressables?.effect ?? string.Empty;
+        data.soundAddress = jsonCharacter.addressables?.sound ?? string.Empty;
+
+        data.startDeckCardIds = jsonCharacter.startDeck != null
+            ? new List<int>(jsonCharacter.startDeck)
+            : new List<int>();
+
+        data.identity = BuildIdentity(jsonCharacter.identity);
+    }
+
+    private static IdentitySkillData BuildIdentity(CharacterIdentityJsonData identityJson)
+    {
+        if (identityJson == null || identityJson.effects == null || identityJson.effects.Count == 0)
         {
-            data.startDeckCardIds = new List<int>(jsonChar.startDeck);
+            return null;
         }
-        else
+
+        IdentitySkillData identity = new IdentitySkillData
         {
-            data.startDeckCardIds = new List<int>();
-        }
-        
-        // Identity 스킬
-        if (jsonChar.identity != null && jsonChar.identity.effects != null && jsonChar.identity.effects.Count > 0)
+            cost = identityJson.cost,
+            description = identityJson.description ?? string.Empty,
+            effects = new List<IdentityEffectData>()
+        };
+
+        foreach (CharacterEffectJsonData effectJson in identityJson.effects)
         {
-            data.identity = new IdentitySkillData
+            if (effectJson == null)
             {
-                cost = jsonChar.identity.cost,
-                description = jsonChar.identity.description ?? "",
-                effects = new List<IdentityEffectData>()
-            };
-            
-            foreach (var jsonEffect in jsonChar.identity.effects)
-            {
-                IdentityEffectData effectData = new IdentityEffectData
-                {
-                    type = ParseIdentityEffectType(jsonEffect.type),
-                    amount = jsonEffect.amount,
-                    target = ParseIdentityTargetType(jsonEffect.target),
-                    buffType = jsonEffect.buffType ?? "",
-                    cardId = jsonEffect.cardId
-                };
-                
-                data.identity.effects.Add(effectData);
+                continue;
             }
+
+            identity.effects.Add(new IdentityEffectData
+            {
+                type = ParseIdentityEffectType(effectJson.type),
+                amount = effectJson.amount,
+                target = ParseIdentityTargetType(effectJson.target),
+                buffType = effectJson.buffType ?? string.Empty,
+                cardId = effectJson.cardId
+            });
         }
-        else
+
+        return identity;
+    }
+
+    private Dictionary<int, CharacterData> BuildIndexById()
+    {
+        Dictionary<int, CharacterData> map = new Dictionary<int, CharacterData>();
+        string[] guids = AssetDatabase.FindAssets("t:CharacterData", new[] { outputPath });
+
+        foreach (string guid in guids)
         {
-            // Identity가 없는 경우 null로 설정
-            data.identity = null;
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            CharacterData data = AssetDatabase.LoadAssetAtPath<CharacterData>(path);
+            if (data == null || data.characterId <= 0)
+            {
+                continue;
+            }
+
+            map[data.characterId] = data;
+        }
+
+        return map;
+    }
+
+    private CharacterCollection GetOrCreateCollection()
+    {
+        EnsureDirectory("Assets/Resources");
+
+        CharacterCollection collection = AssetDatabase.LoadAssetAtPath<CharacterCollection>(CharacterCollectionPath);
+        if (collection != null)
+        {
+            return collection;
+        }
+
+        collection = ScriptableObject.CreateInstance<CharacterCollection>();
+        AssetDatabase.CreateAsset(collection, CharacterCollectionPath);
+        return collection;
+    }
+
+    private string BuildCharacterAssetPath(CharacterData data)
+    {
+        return BuildCharacterAssetPath(data.characterId, data.characterName);
+    }
+
+    private string BuildCharacterAssetPath(int characterId, string characterName)
+    {
+        string fileName = SanitizeFileName($"Character_{characterId}_{characterName}.asset");
+        return Path.Combine(outputPath, fileName).Replace("\\", "/");
+    }
+
+    private static string SanitizeFileName(string name)
+    {
+        foreach (char invalid in Path.GetInvalidFileNameChars())
+        {
+            name = name.Replace(invalid.ToString(), "_");
+        }
+
+        return name;
+    }
+
+    private static void EnsureDirectory(string path)
+    {
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
         }
     }
-    
-    private IdentityEffectType ParseIdentityEffectType(string type)
+
+    private static IdentityEffectType ParseIdentityEffectType(string type)
     {
-        if (string.IsNullOrEmpty(type))
-        {
-            Debug.LogWarning("Effect type is null or empty, defaulting to Buff");
-            return IdentityEffectType.Buff;
-        }
-        
         switch (type)
         {
-            case "Buff": return IdentityEffectType.Buff;
             case "Draw": return IdentityEffectType.Draw;
             case "GenerateCard": return IdentityEffectType.GenerateCard;
             case "Damage": return IdentityEffectType.Damage;
             case "Heal": return IdentityEffectType.Heal;
-            default:
-                Debug.LogWarning($"Unknown identity effect type: {type}, defaulting to Buff");
-                return IdentityEffectType.Buff;
+            case "Buff":
+            default: return IdentityEffectType.Buff;
         }
     }
-    
-    private IdentityTargetType ParseIdentityTargetType(string target)
+
+    private static IdentityTargetType ParseIdentityTargetType(string target)
     {
-        if (string.IsNullOrEmpty(target))
-        {
-            Debug.LogWarning("Target type is null or empty, defaulting to Self");
-            return IdentityTargetType.Self;
-        }
-        
         switch (target)
         {
-            case "Self": return IdentityTargetType.Self;
             case "AllEnemies": return IdentityTargetType.AllEnemies;
             case "RandomEnemy": return IdentityTargetType.RandomEnemy;
             case "Hand": return IdentityTargetType.Hand;
-            default:
-                Debug.LogWarning($"Unknown identity target type: {target}, defaulting to Self");
-                return IdentityTargetType.Self;
+            case "Self":
+            default: return IdentityTargetType.Self;
         }
     }
 }
 
-// ==================== Character JSON Data Classes ====================
-
-/// <summary>
-/// JSON 파싱용 루트 클래스
-/// </summary>
-[System.Serializable]
+[Serializable]
 public class CharacterJsonRoot
 {
     public List<CharacterJsonData> characters;
 }
 
-/// <summary>
-/// JSON 파싱용 캐릭터 데이터
-/// </summary>
-[System.Serializable]
+[Serializable]
 public class CharacterJsonData
 {
     public int characterId;
@@ -321,10 +302,7 @@ public class CharacterJsonData
     public List<int> startDeck;
 }
 
-/// <summary>
-/// JSON 파싱용 Identity 데이터
-/// </summary>
-[System.Serializable]
+[Serializable]
 public class CharacterIdentityJsonData
 {
     public int cost;
@@ -332,10 +310,7 @@ public class CharacterIdentityJsonData
     public string description;
 }
 
-/// <summary>
-/// JSON 파싱용 효과 데이터
-/// </summary>
-[System.Serializable]
+[Serializable]
 public class CharacterEffectJsonData
 {
     public string type;
@@ -345,13 +320,11 @@ public class CharacterEffectJsonData
     public int cardId;
 }
 
-/// <summary>
-/// JSON 파싱용 Addressables 데이터
-/// </summary>
-[System.Serializable]
+[Serializable]
 public class CharacterAddressablesJsonData
 {
     public string artwork;
     public string effect;
     public string sound;
 }
+

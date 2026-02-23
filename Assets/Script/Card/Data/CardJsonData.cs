@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 /// <summary>
-/// JSON 직렬화를 위한 데이터 클래스들
+/// JSON deserialization DTOs for card conversion.
 /// </summary>
 
 [Serializable]
@@ -25,7 +25,6 @@ public class CardJsonData
     public List<EffectJsonData> effects;
 }
 
-
 [Serializable]
 public class AddressablesData
 {
@@ -38,48 +37,38 @@ public class AddressablesData
 public class EffectJsonData
 {
     public string type;
-    
-    // Common
-    public int amount; // or string based formula, handled by custom parser
+
+    public int amount;
     public string amountFormula;
-    public string getAmount;   // alias support
-    public string GetAmount;   // alias support
-    public string getamount;   // alias support
-    public string target; // "SingleEnemy", "AllEnemies", "Self", etc.
-    
-    // DamagePerCardPlayedEffect
+    public string getAmount;
+    public string GetAmount;
+    public string getamount;
+    public string target;
+
     public int baseDamage;
     public int bonusPerCard;
-    
-    // ExecuteDamageEffect
+
     public float hpThreshold;
     public float multiplier;
-    
-    // BuffEffect
-    public string stat; // Legacy?
-    public int buffId;  // New
-    public string buffType; 
+
+    public string stat;
+    public int buffId;
+    public string buffType;
     public int duration;
-    
-    // KeywordEffect
-    public string keyword;  // "보존", "휘발" 등
-    
-    // Generator Effects
+
+    public string keyword;
+
     public List<RandomCardData> RandomCard;
-    public List<int> cardId; // For ChoiceGenerate or specific card lists
-    
-    // New Fields for Complex Effects
-    public int count; // For Repeat, DiscardHand, ExhaustHand
-    
-    // Nested Effects (Recursive)
-    public EffectJsonData effect; // Single nested effect (e.g. for ConsumeDefense?)
-    public List<EffectJsonData> effects; // List of nested effects (e.g. for Repeat)
-    
-    // Conditional & Reactive
+    public List<int> cardId;
+
+    public int count;
+
+    public EffectJsonData effect;
+    public List<EffectJsonData> effects;
+
     public ConditionJsonData condition;
-    public EffectJsonData onAction; // 반응형 효과
-    
-    // Legacy support fields (if needed)
+    public EffectJsonData onAction;
+
     public EffectJsonData successEffect;
     public EffectJsonData failEffect;
 }
@@ -87,7 +76,7 @@ public class EffectJsonData
 [Serializable]
 public class ConditionJsonData
 {
-    public string mode; // "And", "Or"
+    public string mode;
     public List<CheckJsonData> checks;
     public EffectJsonData successEffect;
     public EffectJsonData failEffect;
@@ -96,11 +85,11 @@ public class ConditionJsonData
 [Serializable]
 public class CheckJsonData
 {
-    public string subject;   // "Source", "Target", "EventValue"
-    public string property;  // "Hp", "Cost", "BuffId"...
-    public string param;     // Optional param (BuffId etc)
-    public string @operator; // "Eq", "Gt", "In"...
-    public string value;     // Value to compare
+    public string subject;
+    public string property;
+    public string param;
+    public string @operator;
+    public string value;
 }
 
 [Serializable]

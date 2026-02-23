@@ -24,25 +24,39 @@ public class BuffManager : MonoBehaviour
 
     private void LoadBuffData()
     {
+        buffDatabase.Clear();
+
         TextAsset jsonFile = Resources.Load<TextAsset>("JsonData/buffs");
         if (jsonFile == null)
         {
-            Debug.LogError("[BuffManager] Failed to load buffs.json");
+            Debug.LogError("[BuffManager] Failed to load JsonData/buffs.json.");
             return;
         }
 
         BuffList buffList = JsonUtility.FromJson<BuffList>(jsonFile.text);
-        if (buffList != null && buffList.buffs != null)
+        if (buffList?.buffs == null)
         {
-            foreach (var buff in buffList.buffs)
-            {
-                if (!buffDatabase.ContainsKey(buff.buffId))
-                {
-                    buffDatabase.Add(buff.buffId, buff);
-                }
-            }
-            Debug.Log($"[BuffManager] Loaded {buffDatabase.Count} buffs.");
+            Debug.LogError("[BuffManager] Invalid buffs.json format.");
+            return;
         }
+
+        foreach (BuffData buff in buffList.buffs)
+        {
+            if (buff == null)
+            {
+                continue;
+            }
+
+            if (buffDatabase.ContainsKey(buff.buffId))
+            {
+                Debug.LogWarning($"[BuffManager] Duplicate buffId detected: {buff.buffId}. Later entry ignored.");
+                continue;
+            }
+
+            buffDatabase.Add(buff.buffId, buff);
+        }
+
+        Debug.Log($"[BuffManager] Loaded {buffDatabase.Count} buffs.");
     }
 
     public BuffData GetBuffData(int buffId)
