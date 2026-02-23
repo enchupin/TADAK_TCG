@@ -37,6 +37,8 @@ public class ConsumeDefenseEffect : ICardEffect
     
     private int GetConsumeAmount(TrainingBattleManager battleManager)
     {
-        return EffectAmountResolver.Resolve(amount, amountFormula, battleManager.battleContext, battleManager.playerData);
+        return string.IsNullOrWhiteSpace(amountFormula)
+            ? amount
+            : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData);
     }
 }
