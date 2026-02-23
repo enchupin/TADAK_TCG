@@ -296,6 +296,18 @@ public class CardJSONConverter : EditorWindow
         
         effectData.amount = jsonData.amount;
         effectData.amountFormula = jsonData.amountFormula;
+        if (string.IsNullOrWhiteSpace(effectData.amountFormula))
+        {
+            effectData.amountFormula = jsonData.getAmount;
+        }
+        if (string.IsNullOrWhiteSpace(effectData.amountFormula))
+        {
+            effectData.amountFormula = jsonData.GetAmount;
+        }
+        if (string.IsNullOrWhiteSpace(effectData.amountFormula))
+        {
+            effectData.amountFormula = jsonData.getamount;
+        }
         
         // target 필드
         if (!string.IsNullOrEmpty(jsonData.target))

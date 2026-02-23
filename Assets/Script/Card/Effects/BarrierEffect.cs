@@ -9,7 +9,7 @@ public class BarrierEffect : ICardEffect
 
     public void Execute(TrainingBattleManager battleManager)
     {
-        int finalAmount = amount;
+        int finalAmount = EffectAmountResolver.Resolve(amount, amountFormula, battleManager.battleContext, battleManager.playerData);
 
         // Barrier only applies to player when target is Self.
         if (target == TargetType.Self && battleManager.playerData != null)

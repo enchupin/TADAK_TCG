@@ -10,7 +10,7 @@ public class AttackEffect : ICardEffect
 
     public void Execute(TrainingBattleManager battleManager)
     {
-        int finalAmount = amount; // 유닛 당 데미지
+        int finalAmount = EffectAmountResolver.Resolve(amount, amountFormula, battleManager.battleContext, battleManager.playerData); // 유닛 당 데미지
         int totalDamageDealt = 0; // 총 누적 데미지
 
         if (battleManager.spawnedMonsters.Count > 0) {
@@ -34,19 +34,8 @@ public class AttackEffect : ICardEffect
             }
         }
 
-        battleManager.battleContext.OnDamageDealt(totalDamageDealt);
+        battleManager.battleContext?.OnDamageDealt(totalDamageDealt);
 
         onAction?.Execute(battleManager);
     }
-    /*
-    public int GetAmount(BattleContext context, PlayerData player = null)
-    {
-        if (!string.IsNullOrWhiteSpace(amountFormula))
-        {
-            return FormulaEvaluator.Evaluate(amountFormula, context, player);
-        }
-
-        return amount;
-    }
-    */
 }

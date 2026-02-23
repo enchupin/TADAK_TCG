@@ -42,6 +42,9 @@ public class EffectJsonData
     // Common
     public int amount; // or string based formula, handled by custom parser
     public string amountFormula;
+    public string getAmount;   // alias support
+    public string GetAmount;   // alias support
+    public string getamount;   // alias support
     public string target; // "SingleEnemy", "AllEnemies", "Self", etc.
     
     // DamagePerCardPlayedEffect

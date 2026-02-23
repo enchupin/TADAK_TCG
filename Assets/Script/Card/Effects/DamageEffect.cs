@@ -15,7 +15,7 @@ public class DamageEffect : ICardEffect
     
     public void Execute(TrainingBattleManager battleManager)
     {
-        int finalAmount = GetAmount(battleManager.battleContext, battleManager.playerData);
+        int finalAmount = EffectAmountResolver.Resolve(amount, amountFormula, battleManager.battleContext, battleManager.playerData);
         int totalDamageDealt = 0;
         
         if (battleManager.spawnedMonsters.Count > 0) // 몬스터가 존재할 때
@@ -47,14 +47,6 @@ public class DamageEffect : ICardEffect
         battleManager.UpdateAllUI();
     }
     
-    public int GetAmount(BattleContext context, PlayerData player = null)
-    {
-        if (!string.IsNullOrEmpty(amountFormula))
-        {
-            return FormulaEvaluator.Evaluate(amountFormula, context, player);
-        }
-        return amount;
-    }
 }
 
 /// <summary>

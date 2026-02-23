@@ -16,7 +16,7 @@ public class BuffEffect : ICardEffect
     
     public void Execute(TrainingBattleManager battleManager)
     {
-        int finalAmount = GetAmount(battleManager.battleContext, battleManager.playerData);
+        int finalAmount = EffectAmountResolver.Resolve(amount, amountFormula, battleManager.battleContext, battleManager.playerData);
         
         if (buffId > 0)
         {
@@ -62,12 +62,4 @@ public class BuffEffect : ICardEffect
         }
     }
     
-    public int GetAmount(BattleContext context, PlayerData player = null)
-    {
-        if (!string.IsNullOrEmpty(amountFormula))
-        {
-            return FormulaEvaluator.Evaluate(amountFormula, context, player);
-        }
-        return amount;
-    }
 }
