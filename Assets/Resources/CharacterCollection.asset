@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CharacterCollection
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCollection
   allCharacters:
-  - {fileID: 11400000, guid: 92271f2ad28459d4b9f9d220da72b4f0, type: 2}
+  - {fileID: 11400000, guid: 51f18a21f2abe2b43b95618c2dda03b9, type: 2}
   - {fileID: 11400000, guid: c65b1c70486ec724ab2e6e392f16d2b1, type: 2}
   - {fileID: 11400000, guid: cb8977c814c44a5479ba27589cb3ee7a, type: 2}
   - {fileID: 11400000, guid: d314e7099db7e12489a0633313219ac4, type: 2}
