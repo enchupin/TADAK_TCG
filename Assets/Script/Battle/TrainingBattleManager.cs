@@ -43,6 +43,10 @@ public class TrainingBattleManager : MonoBehaviour
     [SerializeField] private Button endTurnButton;
     [SerializeField] private bool enableKeyboardEndTurn = true;
 
+    [Header("Training Flow")]
+    [SerializeField] private bool enableTrainingRunFlow = true;
+    [SerializeField] private float battleResultTransitionDelay = 0.8f;
+
     [Header("Spawned Monsters")]
     public List<Monster> spawnedMonsters = new List<Monster>();
 
@@ -62,6 +66,7 @@ public class TrainingBattleManager : MonoBehaviour
     private TurnSystem turnSystem;
     private CombatResolver combatResolver;
     private EncounterSystem encounterSystem;
+    private bool hasResolvedBattleResult;
 
     public float EnemyActionDelay => enemyActionDelay;
 
@@ -237,6 +242,7 @@ public class TrainingBattleManager : MonoBehaviour
             return;
 
         SetState(BattleTurnState.CombatStart);
+        hasResolvedBattleResult = false;
 
         battleContext.OnCombatStart();
         usableDeckManager.ShuffleDeck();
@@ -447,6 +453,28 @@ public class TrainingBattleManager : MonoBehaviour
         return encounterSystem.TryHandleCombatEnd();
     }
 
+    public void ResolveBattleResult(bool isVictory)
+    {
+        if (hasResolvedBattleResult)
+            return;
+
+        hasResolvedBattleResult = true;
+
+        SetState(BattleTurnState.CombatEnd);
+        UpdateEndTurnButtonState();
+        RefreshHandPlayableState();
+        UpdateAllUI();
+
+        Debug.Log(isVictory
+            ? "[BattleManager] Victory. All enemies are dead."
+            : "[BattleManager] Defeat. Player is dead.");
+
+        if (enableTrainingRunFlow && TrainingRunState.IsRunActive)
+        {
+            StartCoroutine(HandleTrainingRunBattleResult(isVictory));
+        }
+    }
+
     public List<Monster> GetLivingMonsters()
     {
         return encounterSystem.GetLivingMonsters();
@@ -534,5 +562,15 @@ public class TrainingBattleManager : MonoBehaviour
 
         playerData.maxEnergy = debugEnergyAmount;
         playerData.energy = debugEnergyAmount;
+    }
+
+    private System.Collections.IEnumerator HandleTrainingRunBattleResult(bool isVictory)
+    {
+        if (battleResultTransitionDelay > 0f)
+        {
+            yield return new WaitForSeconds(battleResultTransitionDelay);
+        }
+
+        TrainingRunSceneActions.HandleBattleFinished(isVictory);
     }
 }

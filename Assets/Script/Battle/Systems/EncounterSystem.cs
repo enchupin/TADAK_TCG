@@ -36,21 +36,13 @@ public class EncounterSystem
 
         if (battleManager.playerData != null && battleManager.playerData.IsDead())
         {
-            battleManager.SetState(BattleTurnState.CombatEnd);
-            battleManager.UpdateEndTurnButtonState();
-            battleManager.RefreshHandPlayableState();
-            battleManager.UpdateAllUI();
-            Debug.Log("[EncounterSystem] Defeat. Player is dead.");
+            battleManager.ResolveBattleResult(false);
             return true;
         }
 
         if (GetLivingMonsters().Count == 0)
         {
-            battleManager.SetState(BattleTurnState.CombatEnd);
-            battleManager.UpdateEndTurnButtonState();
-            battleManager.RefreshHandPlayableState();
-            battleManager.UpdateAllUI();
-            Debug.Log("[EncounterSystem] Victory. All enemies are dead.");
+            battleManager.ResolveBattleResult(true);
             return true;
         }
 
