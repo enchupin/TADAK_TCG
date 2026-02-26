@@ -266,7 +266,7 @@ public class TrainingBattleManager : MonoBehaviour
 
         if (battleContext != null)
         {
-            battleContext.cardsDrawnThisTurn += drawnCards.Count;
+            battleContext.OnCardsDrawn(drawnCards.Count);
         }
 
         RefreshHandPlayableState();
@@ -302,7 +302,7 @@ public class TrainingBattleManager : MonoBehaviour
             handManager.AddCard(matchingCards);
             if (battleContext != null)
             {
-                battleContext.cardsDrawnThisTurn += matchingCards.Count;
+                battleContext.OnCardsDrawn(matchingCards.Count);
             }
         }
         else

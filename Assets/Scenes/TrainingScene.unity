@@ -1483,8 +1483,10 @@ MonoBehaviour:
   enemyActionDelay: 0.2
   endTurnButton: {fileID: 1007523897}
   enableKeyboardEndTurn: 1
+  enableTrainingRunFlow: 1
+  battleResultTransitionDelay: 0.8
   spawnedMonsters: []
-  isDebugMode: 0
+  isDebugMode: 1
   debugTargetEffect: 11
   debugEnergyAmount: 1000
   currentTarget: {fileID: 0}

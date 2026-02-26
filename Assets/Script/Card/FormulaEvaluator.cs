@@ -49,6 +49,9 @@ public static class FormulaEvaluator
                 
             case "usecardincombat":
                 return context.cardsPlayedThisCombat;
+
+            case "usecardinturn":
+                return context.cardsPlayedThisTurn;
                 
             case "consumed":
                 return context.defenseConsumed;
@@ -58,6 +61,9 @@ public static class FormulaEvaluator
                 
             case "exhausted":
                 return context.cardsExhaustedThisTurn;
+
+            case "cardsdrawnthisturn":
+                return context.cardsDrawnThisTurn;
                 
             case "finaldamage":
                 return context.lastDamageDealt;
@@ -73,9 +79,11 @@ public static class FormulaEvaluator
             // 변수 치환
             string expression = formula;
             expression = expression.Replace("UseCardInCombat", context.cardsPlayedThisCombat.ToString());
+            expression = expression.Replace("UseCardInTurn", context.cardsPlayedThisTurn.ToString());
             expression = expression.Replace("consumed", context.defenseConsumed.ToString());
             expression = expression.Replace("discarded", context.cardsDiscardedThisTurn.ToString());
             expression = expression.Replace("exhausted", context.cardsExhaustedThisTurn.ToString());
+            expression = expression.Replace("cardsDrawnThisTurn", context.cardsDrawnThisTurn.ToString());
             expression = expression.Replace("finalDamage", context.lastDamageDealt.ToString());
             
             // 간단한 수식 계산 (*, /, +, -)
