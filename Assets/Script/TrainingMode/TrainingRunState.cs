@@ -46,6 +46,11 @@ public static class TrainingRunState
         return clearedNodeIds.Contains(nodeId);
     }
 
+    public static bool TryGetNode(int nodeId, out TrainingMapNodeData node)
+    {
+        return nodesById.TryGetValue(nodeId, out node);
+    }
+
     public static void SetPlayerHealthState(int currentHp, int maxHp)
     {
         PlayerMaxHp = Mathf.Max(1, maxHp);
