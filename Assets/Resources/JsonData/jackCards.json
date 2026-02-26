@@ -1,4 +1,4 @@
-{
+﻿{
     "cards": [
         {
             "cardId": 102010,
@@ -58,13 +58,7 @@
                     }
                 }
             ],
-            "enforce": [
-                102031,
-                102032,
-                102033,
-                102034,
-                102035
-            ],
+            "enforceGroup": "enforce_102030",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -227,13 +221,7 @@
                     }
                 }
             ],
-            "enforce": [
-                102041,
-                102042,
-                102043,
-                102044,
-                102045
-            ],
+            "enforceGroup": "enforce_102040",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -386,13 +374,7 @@
                     "target": "Enemy"
                 }
             ],
-            "enforce": [
-                102051,
-                102052,
-                102053,
-                102054,
-                102055
-            ],
+            "enforceGroup": "enforce_102050",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -529,13 +511,7 @@
                     "target": "Enemy"
                 }
             ],
-            "enforce": [
-                102061,
-                102062,
-                102063,
-                102064,
-                102065
-            ],
+            "enforceGroup": "enforce_102060",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -674,13 +650,7 @@
                     "target": "Self"
                 }
             ],
-            "enforce": [
-                102071,
-                102072,
-                102073,
-                102074,
-                102075
-            ],
+            "enforceGroup": "enforce_102070",
             "addressables": {
                 "artwork": "",
                 "effect": "",

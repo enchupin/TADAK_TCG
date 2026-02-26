@@ -1,4 +1,4 @@
-{
+﻿{
     "cards": [
         {
             "cardId": 202010,
@@ -57,13 +57,7 @@
                     "target": "Enemy"
                 }
             ],
-            "enforce": [
-                202031,
-                202032,
-                202033,
-                202034,
-                202035
-            ],
+            "enforceGroup": "enforce_202030",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -206,13 +200,7 @@
                     }
                 }
             ],
-            "enforce": [
-                202041,
-                202042,
-                202043,
-                202044,
-                202045
-            ],
+            "enforceGroup": "enforce_202040",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -396,13 +384,7 @@
                     "target": "Self"
                 }
             ],
-            "enforce": [
-                202051,
-                202052,
-                202053,
-                202054,
-                202055
-            ],
+            "enforceGroup": "enforce_202050",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -572,13 +554,7 @@
                     }
                 }
             ],
-            "enforce": [
-                202061,
-                202062,
-                202063,
-                202064,
-                202065
-            ],
+            "enforceGroup": "enforce_202060",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -726,13 +702,7 @@
                     }
                 }
             ],
-            "enforce": [
-                202071,
-                202072,
-                202073,
-                202074,
-                202075
-            ],
+            "enforceGroup": "enforce_202070",
             "addressables": {
                 "artwork": "",
                 "effect": "",

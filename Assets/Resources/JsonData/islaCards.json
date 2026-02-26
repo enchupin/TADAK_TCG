@@ -1,4 +1,4 @@
-{
+﻿{
     "cards": [
         {
             "cardId": 101010,
@@ -50,13 +50,7 @@
                     "amount": 2
                 }
             ],
-            "enforce": [
-                101031,
-                101032,
-                101033,
-                101034,
-                101035
-            ],
+            "enforceGroup": "enforce_101030",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -216,13 +210,7 @@
                     "target": "Hand"
                 }
             ],
-            "enforce": [
-                101041,
-                101042,
-                101043,
-                101044,
-                101045
-            ],
+            "enforceGroup": "enforce_101040",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -276,12 +264,7 @@
                 {
                     "type": "ChoiceGenerate",
                     "amount": 1,
-                    "cardId": [
-                        101050,
-                        101052,
-                        101054,
-                        101056
-                    ],
+                    "cardIdGroup": "isla_potion_enhanced_even_pool",
                     "target": "Hand"
                 }
             ],
@@ -405,26 +388,11 @@
                 {
                     "type": "Attack",
                     "amountFormula": "UseCardInCombat * 3",
-                    "cardId": [
-                        101080,
-                        101081,
-                        101082,
-                        101083,
-                        101084,
-                        101085,
-                        101086,
-                        101087
-                    ],
+                    "cardIdGroup": "isla_potion_all",
                     "target": "Enemy"
                 }
             ],
-            "enforce": [
-                101051,
-                101052,
-                101053,
-                101054,
-                101055
-            ],
+            "enforceGroup": "enforce_101050",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -444,16 +412,7 @@
                 {
                     "type": "Attack",
                     "amountFormula": "UseCardInCombat * 3",
-                    "cardId": [
-                        101080,
-                        101081,
-                        101082,
-                        101083,
-                        101084,
-                        101085,
-                        101086,
-                        101087
-                    ],
+                    "cardIdGroup": "isla_potion_all",
                     "target": "Enemy"
                 },
                 {
@@ -480,16 +439,7 @@
                 {
                     "type": "Heal",
                     "amountFormula": "UseCardInCombat",
-                    "cardId": [
-                        101080,
-                        101081,
-                        101082,
-                        101083,
-                        101084,
-                        101085,
-                        101086,
-                        101087
-                    ],
+                    "cardIdGroup": "isla_potion_all",
                     "target": "Self"
                 }
             ],
@@ -509,16 +459,7 @@
                 {
                     "type": "Attack",
                     "amountFormula": "UseCardInCombat * 3",
-                    "cardId": [
-                        101080,
-                        101081,
-                        101082,
-                        101083,
-                        101084,
-                        101085,
-                        101086,
-                        101087
-                    ],
+                    "cardIdGroup": "isla_potion_all",
                     "target": "AllEnemies"
                 }
             ],
@@ -589,13 +530,7 @@
                     "target": "Self"
                 }
             ],
-            "enforce": [
-                101061,
-                101062,
-                101063,
-                101064,
-                101065
-            ],
+            "enforceGroup": "enforce_101060",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -654,12 +589,7 @@
                         "effects": [
                             {
                                 "type": "CreateCard",
-                                "cardId": [
-                                    101080,
-                                    101082,
-                                    101084,
-                                    101086
-                                ]
+                                "cardIdGroup": "isla_potion_even_base_pool"
                             }
                         ]
                     }
@@ -905,9 +835,7 @@
                     "target": "Enemy"
                 }
             ],
-            "enforce": [
-                101081
-            ],
+            "enforceGroup": "enforce_101080",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -951,9 +879,7 @@
                     "amount": 1
                 }
             ],
-            "enforce": [
-                101083
-            ],
+            "enforceGroup": "enforce_101082",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -997,9 +923,7 @@
                     "target": "Self"
                 }
             ],
-            "enforce": [
-                101085
-            ],
+            "enforceGroup": "enforce_101084",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -1045,9 +969,7 @@
                     "target": "Enemy"
                 }
             ],
-            "enforce": [
-                101087
-            ],
+            "enforceGroup": "enforce_101086",
             "addressables": {
                 "artwork": "",
                 "effect": "",

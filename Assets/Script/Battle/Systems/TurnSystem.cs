@@ -199,7 +199,7 @@ public class TurnSystem
             battleManager.usableDeckManager.AddToDiscard(remainingCards);
             if (battleManager.battleContext != null)
             {
-                battleManager.battleContext.cardsDiscardedThisTurn += remainingCards.Count;
+                battleManager.battleContext.OnCardsDiscarded(remainingCards.Count);
             }
         }
 

@@ -1,4 +1,4 @@
-{
+﻿{
     "cards": [
         {
             "cardId": 201010,
@@ -61,13 +61,7 @@
                     "target": "Self"
                 }
             ],
-            "enforce": [
-                201031,
-                201032,
-                201033,
-                201034,
-                201035
-            ],
+            "enforceGroup": "enforce_201030",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -220,13 +214,7 @@
                     "target": "Enemy"
                 }
             ],
-            "enforce": [
-                201041,
-                201042,
-                201043,
-                201044,
-                201045
-            ],
+            "enforceGroup": "enforce_201040",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -379,13 +367,7 @@
                     }
                 }
             ],
-            "enforce": [
-                201051,
-                201052,
-                201053,
-                201054,
-                201055
-            ],
+            "enforceGroup": "enforce_201050",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -566,13 +548,7 @@
                     }
                 }
             ],
-            "enforce": [
-                201061,
-                201062,
-                201063,
-                201064,
-                201065
-            ],
+            "enforceGroup": "enforce_201060",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -726,13 +702,7 @@
                     "target": "Self"
                 }
             ],
-            "enforce": [
-                201071,
-                201072,
-                201073,
-                201074,
-                201075
-            ],
+            "enforceGroup": "enforce_201070",
             "addressables": {
                 "artwork": "",
                 "effect": "",

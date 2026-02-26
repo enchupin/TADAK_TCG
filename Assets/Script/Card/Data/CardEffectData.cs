@@ -85,7 +85,7 @@ public class CardEffectData
                 };
 
             case EffectType.Attack:
-                return new AttackEffect { amount = amount, amountFormula = amountFormula, target = target, onAction = onAction?.CreateEffect() };
+                return new AttackEffect { amount = amount, amountFormula = amountFormula, cardIdList = cardIdList, target = target, onAction = onAction?.CreateEffect() };
             case EffectType.Barrier:
                 return new BarrierEffect { amount = amount, amountFormula = amountFormula, target = target, onAction = onAction?.CreateEffect() };
             case EffectType.DiscardHand:
