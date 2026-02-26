@@ -47,12 +47,12 @@ public class PlayerData : MonoBehaviour
             Instance = null;
         }
     }
-    
-
 
     // 체력 관련
     public int hp;
     public int maxHP;
+    public int hpLostThisTurn;
+    public bool hasLostHpThisTurn;
 
     // 방어력
     public int defense;
@@ -72,6 +72,8 @@ public class PlayerData : MonoBehaviour
     {
         maxHP = startMaxHp;
         hp = maxHP;
+        hpLostThisTurn = 0;
+        hasLostHpThisTurn = false;
         defense = startDefense;
         maxEnergy = startMaxEnergy;
         energy = maxEnergy;
@@ -149,6 +151,11 @@ public class PlayerData : MonoBehaviour
     {
         int damageAfterDefense = Mathf.Max(0, amount - defense);
         hp -= damageAfterDefense;
+        hpLostThisTurn += damageAfterDefense;
+        if (damageAfterDefense > 0)
+        {
+            hasLostHpThisTurn = true;
+        }
         defense = Mathf.Max(0, defense - amount);
 
         Debug.Log($"플레이어가 {damageAfterDefense} 데미지를 받았습니다! (HP: {hp}/{maxHP})");
@@ -169,6 +176,8 @@ public class PlayerData : MonoBehaviour
     /// </summary>
     public void OnTurnStart()
     {
+        hpLostThisTurn = 0;
+        hasLostHpThisTurn = false;
         defense = 0; // 방어력 리셋
         energy = maxEnergy; // 에너지 회복
         Debug.Log("턴 시작: 방어력 리셋, 에너지 회복");
