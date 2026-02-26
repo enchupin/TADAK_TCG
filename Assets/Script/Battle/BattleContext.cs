@@ -115,6 +115,9 @@ public class BattleContext {
     /// </summary>
     public void OnDamageDealt(int amount)
     {
+        if (amount <= 0)
+            return;
+
         lastDamageDealt = amount;
         totalDamageDealt += amount;
     }

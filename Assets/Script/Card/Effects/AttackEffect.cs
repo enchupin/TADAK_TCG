@@ -66,6 +66,10 @@ public class AttackEffect : ICardEffect
         }
 
         battleManager.battleContext?.OnDamageDealt(totalDamageDealt);
+        if (totalDamageDealt > 0 && battleManager.battleContext != null)
+        {
+            Debug.Log($"[AttackEffect] Damage dealt: {totalDamageDealt}, LastDamage: {battleManager.battleContext.lastDamageDealt}, ThisTurnTotal: {battleManager.battleContext.totalDamageDealt}");
+        }
 
         onAction?.Execute(battleManager, totalDamageDealt);
     }
