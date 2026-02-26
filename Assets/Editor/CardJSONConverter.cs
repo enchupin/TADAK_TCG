@@ -14,14 +14,28 @@ public class CardJSONConverter : EditorWindow
     private const string DefaultJsonFolderPath = "Assets/Resources/JsonData";
     private const string DefaultOutputPath = "Assets/Data/Cards";
     private const string CardCollectionPath = "Assets/Resources/CardCollection.asset";
+    private const string CardIdGroupsFileName = "cardIdGroups.json";
 
     private string jsonFolderPath = DefaultJsonFolderPath;
     private string outputPath = DefaultOutputPath;
+    private Dictionary<string, List<int>> cardIdGroups = new Dictionary<string, List<int>>();
 
     [MenuItem("Tools/TCG/Card JSON Converter")]
     public static void ShowWindow()
     {
         GetWindow<CardJSONConverter>("Card Converter");
+    }
+
+    /// <summary>
+    /// Batch-mode entry point for CI/local automation.
+    /// Usage: Unity.exe -batchmode -quit -projectPath <path> -executeMethod CardJSONConverter.ConvertAllDefaultJsons
+    /// </summary>
+    public static void ConvertAllDefaultJsons()
+    {
+        CardJSONConverter converter = CreateInstance<CardJSONConverter>();
+        converter.jsonFolderPath = DefaultJsonFolderPath;
+        converter.outputPath = DefaultOutputPath;
+        converter.ConvertJSONToScriptableObjects();
     }
 
     private void OnGUI()
@@ -61,6 +75,7 @@ public class CardJSONConverter : EditorWindow
         }
 
         EnsureDirectory(outputPath);
+        cardIdGroups = LoadCardIdGroups();
 
         CardCollection collection = GetOrCreateCardCollection();
         Dictionary<int, CardData> existingById = BuildCardIndexById();
@@ -181,12 +196,31 @@ public class CardJSONConverter : EditorWindow
         cardData.description = ReadString(cardObject, "description");
 
         cardData.enforceCardIds.Clear();
+        string enforceGroup = ReadString(cardObject, "enforceGroup");
+        if (!string.IsNullOrWhiteSpace(enforceGroup))
+        {
+            if (cardIdGroups.TryGetValue(enforceGroup, out List<int> groupCardIds))
+            {
+                foreach (int cardId in groupCardIds)
+                {
+                    if (cardId != 0 && !cardData.enforceCardIds.Contains(cardId))
+                    {
+                        cardData.enforceCardIds.Add(cardId);
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[CardJSONConverter] enforceGroup not found: {enforceGroup}");
+            }
+        }
+
         if (cardObject["enforce"] is JArray enforceArray)
         {
             foreach (JToken token in enforceArray)
             {
                 int value = ReadInt(token);
-                if (value != 0)
+                if (value != 0 && !cardData.enforceCardIds.Contains(value))
                 {
                     cardData.enforceCardIds.Add(value);
                 }
@@ -216,7 +250,7 @@ public class CardJSONConverter : EditorWindow
         }
     }
 
-    private static CardEffectData ReadEffect(JObject effectObject)
+    private CardEffectData ReadEffect(JObject effectObject)
     {
         if (effectObject == null)
         {
@@ -264,7 +298,7 @@ public class CardJSONConverter : EditorWindow
             }
         }
 
-        effect.cardIdList = ReadCardIdList(effectObject["cardId"]);
+        effect.cardIdList = ReadCardIdList(effectObject);
 
         if (effectObject["effect"] is JObject nestedEffectObject)
         {
@@ -302,7 +336,7 @@ public class CardJSONConverter : EditorWindow
         return effect;
     }
 
-    private static ConditionData ReadCondition(JObject conditionObject)
+    private ConditionData ReadCondition(JObject conditionObject)
     {
         if (conditionObject == null)
         {
@@ -382,7 +416,7 @@ public class CardJSONConverter : EditorWindow
         return condition;
     }
 
-    private static CardEffectData ReadFirstEffect(JArray effectsArray)
+    private CardEffectData ReadFirstEffect(JArray effectsArray)
     {
         foreach (JToken token in effectsArray)
         {
@@ -395,7 +429,7 @@ public class CardJSONConverter : EditorWindow
         return null;
     }
 
-    private static List<CardEffectData> ReadEffectList(JArray effectsArray)
+    private List<CardEffectData> ReadEffectList(JArray effectsArray)
     {
         List<CardEffectData> result = new List<CardEffectData>();
         if (effectsArray == null)
@@ -420,9 +454,34 @@ public class CardJSONConverter : EditorWindow
         return result;
     }
 
-    private static List<int> ReadCardIdList(JToken token)
+    private List<int> ReadCardIdList(JObject effectObject)
     {
         List<int> result = new List<int>();
+        if (effectObject == null)
+        {
+            return result;
+        }
+
+        string groupId = ReadString(effectObject, "cardIdGroup");
+        if (!string.IsNullOrWhiteSpace(groupId))
+        {
+            if (cardIdGroups.TryGetValue(groupId, out List<int> groupCardIds))
+            {
+                foreach (int cardId in groupCardIds)
+                {
+                    if (cardId != 0 && !result.Contains(cardId))
+                    {
+                        result.Add(cardId);
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[CardJSONConverter] cardIdGroup not found: {groupId}");
+            }
+        }
+
+        JToken token = effectObject["cardId"] ?? effectObject["cardIds"];
         if (token == null)
         {
             return result;
@@ -433,7 +492,7 @@ public class CardJSONConverter : EditorWindow
             foreach (JToken item in array)
             {
                 int value = ReadInt(item);
-                if (value != 0)
+                if (value != 0 && !result.Contains(value))
                 {
                     result.Add(value);
                 }
@@ -443,12 +502,80 @@ public class CardJSONConverter : EditorWindow
         }
 
         int single = ReadInt(token);
-        if (single != 0)
+        if (single != 0 && !result.Contains(single))
         {
             result.Add(single);
         }
 
         return result;
+    }
+
+    private Dictionary<string, List<int>> LoadCardIdGroups()
+    {
+        Dictionary<string, List<int>> groups = new Dictionary<string, List<int>>();
+        string filePath = Path.Combine(jsonFolderPath, CardIdGroupsFileName).Replace("\\", "/");
+
+        if (!File.Exists(filePath))
+        {
+            Debug.Log($"[CardJSONConverter] Optional group file not found: {filePath}");
+            return groups;
+        }
+
+        TextAsset jsonFile = AssetDatabase.LoadAssetAtPath<TextAsset>(filePath);
+        if (jsonFile == null)
+        {
+            Debug.LogWarning($"[CardJSONConverter] Failed to load group file asset: {filePath}");
+            return groups;
+        }
+
+        JObject root;
+        try
+        {
+            root = JObject.Parse(jsonFile.text);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[CardJSONConverter] Invalid group JSON in {filePath}: {ex.Message}");
+            return groups;
+        }
+
+        if (!(root["groups"] is JArray groupsArray))
+        {
+            Debug.LogWarning($"[CardJSONConverter] Missing 'groups' array in {filePath}");
+            return groups;
+        }
+
+        foreach (JToken token in groupsArray)
+        {
+            if (!(token is JObject groupObject))
+            {
+                continue;
+            }
+
+            string id = ReadString(groupObject, "id");
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                continue;
+            }
+
+            List<int> cardIds = new List<int>();
+            if (groupObject["cardIds"] is JArray cardIdsArray)
+            {
+                foreach (JToken cardIdToken in cardIdsArray)
+                {
+                    int cardId = ReadInt(cardIdToken);
+                    if (cardId != 0 && !cardIds.Contains(cardId))
+                    {
+                        cardIds.Add(cardId);
+                    }
+                }
+            }
+
+            groups[id] = cardIds;
+        }
+
+        Debug.Log($"[CardJSONConverter] Loaded cardIdGroups: {groups.Count}");
+        return groups;
     }
 
     private string BuildCardAssetPath(CardData cardData)

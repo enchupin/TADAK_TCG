@@ -1,4 +1,4 @@
-{
+﻿{
     "cards": [
         {
             "cardId": 301010,
@@ -52,13 +52,7 @@
                     "target": "AllEnemies"
                 }
             ],
-            "enforce": [
-                301031,
-                301032,
-                301033,
-                301034,
-                301035
-            ],
+            "enforceGroup": "enforce_301030",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -190,13 +184,7 @@
                     "target": "Self"
                 }
             ],
-            "enforce": [
-                301041,
-                301042,
-                301043,
-                301044,
-                301045
-            ],
+            "enforceGroup": "enforce_301040",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -332,13 +320,7 @@
                     "target": "Enemy"
                 }
             ],
-            "enforce": [
-                301051,
-                301052,
-                301053,
-                301054,
-                301055
-            ],
+            "enforceGroup": "enforce_301050",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -484,13 +466,7 @@
                     }
                 }
             ],
-            "enforce": [
-                301061,
-                301062,
-                301063,
-                301064,
-                301065
-            ],
+            "enforceGroup": "enforce_301060",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -694,13 +670,7 @@
                     "target": "Self"
                 }
             ],
-            "enforce": [
-                301071,
-                301072,
-                301073,
-                301074,
-                301075
-            ],
+            "enforceGroup": "enforce_301070",
             "addressables": {
                 "artwork": "",
                 "effect": "",

@@ -1,4 +1,4 @@
-{
+﻿{
     "cards": [
         {
             "cardId": 302010,
@@ -52,13 +52,7 @@
                     "target": "Self"
                 }
             ],
-            "enforce": [
-                302031,
-                302032,
-                302033,
-                302034,
-                302035
-            ],
+            "enforceGroup": "enforce_302030",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -199,13 +193,7 @@
                     "target": "Self"
                 }
             ],
-            "enforce": [
-                302041,
-                302042,
-                302043,
-                302044,
-                302045
-            ],
+            "enforceGroup": "enforce_302040",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -356,13 +344,7 @@
                     "timing": "OnTurnEnd"
                 }
             ],
-            "enforce": [
-                302051,
-                302052,
-                302053,
-                302054,
-                302055
-            ],
+            "enforceGroup": "enforce_302050",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -504,13 +486,7 @@
                     "target": "Self"
                 }
             ],
-            "enforce": [
-                302061,
-                302062,
-                302063,
-                302064,
-                302065
-            ],
+            "enforceGroup": "enforce_302060",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -672,12 +648,7 @@
                 {
                     "type": "SelectCard",
                     "source": "CardId",
-                    "cardIds": [
-                        302030,
-                        302040,
-                        302050,
-                        302060
-                    ],
+                    "cardIdGroup": "rune_shape_base_pool",
                     "amount": 1,
                     "onAction": {
                         "type": "ChangeStat",
@@ -688,13 +659,7 @@
                     }
                 }
             ],
-            "enforce": [
-                302071,
-                302072,
-                302073,
-                302074,
-                302075
-            ],
+            "enforceGroup": "enforce_302070",
             "addressables": {
                 "artwork": "",
                 "effect": "",
@@ -711,12 +676,7 @@
                 {
                     "type": "SelectCard",
                     "source": "CardId",
-                    "cardIds": [
-                        302031,
-                        302041,
-                        302051,
-                        302061
-                    ],
+                    "cardIdGroup": "rune_shape_plus1_pool",
                     "amount": 1,
                     "onAction": {
                         "type": "ChangeStat",
@@ -743,12 +703,7 @@
                 {
                     "type": "SelectCard",
                     "source": "CardId",
-                    "cardIds": [
-                        302032,
-                        302042,
-                        302052,
-                        302062
-                    ],
+                    "cardIdGroup": "rune_shape_plus2_pool",
                     "amount": 1,
                     "onAction": {
                         "type": "ChangeStat",
@@ -775,12 +730,7 @@
                 {
                     "type": "SelectCard",
                     "source": "CardId",
-                    "cardIds": [
-                        302033,
-                        302043,
-                        302053,
-                        302063
-                    ],
+                    "cardIdGroup": "rune_shape_plus3_pool",
                     "amount": 1,
                     "onAction": {
                         "type": "ChangeStat",
@@ -807,12 +757,7 @@
                 {
                     "type": "SelectCard",
                     "source": "CardId",
-                    "cardIds": [
-                        302034,
-                        302044,
-                        302054,
-                        302064
-                    ],
+                    "cardIdGroup": "rune_shape_plus4_pool",
                     "amount": 1,
                     "onAction": {
                         "type": "ChangeStat",
@@ -839,12 +784,7 @@
                 {
                     "type": "SelectCard",
                     "source": "CardId",
-                    "cardIds": [
-                        302035,
-                        302045,
-                        302055,
-                        302065
-                    ],
+                    "cardIdGroup": "rune_shape_plus5_pool",
                     "amount": 1,
                     "onAction": {
                         "type": "ChangeStat",

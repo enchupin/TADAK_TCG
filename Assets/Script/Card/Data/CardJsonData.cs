@@ -21,6 +21,7 @@ public class CardJsonData
     public string description;
     public List<string> keywords;
     public List<int> enforce;
+    public string enforceGroup;
     public AddressablesData addressables;
     public List<EffectJsonData> effects;
 }
@@ -60,6 +61,7 @@ public class EffectJsonData
 
     public List<RandomCardData> RandomCard;
     public List<int> cardId;
+    public string cardIdGroup;
 
     public int count;
 
