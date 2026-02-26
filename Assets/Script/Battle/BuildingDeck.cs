@@ -1,16 +1,16 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 훈련 모드(Run) 동안 유지되는 영구 덱 데이터
+/// Persistent deck for a training run.
 /// </summary>
 public class BuildingDeck
 {
-    // 현재 보유한 모든 카드 리스트 (객체로 관리)
+    // Cards permanently owned during the current run.
     private List<Card> deckList = new List<Card>();
 
     /// <summary>
-    /// 캐릭터들의 기본 덱으로 초기화 (최초 1회)
+    /// Initialize with selected characters' starter cards.
     /// </summary>
     public void Initialize(List<Character> characters)
     {
@@ -22,7 +22,6 @@ public class BuildingDeck
             {
                 foreach (int cardId in data.startDeckCardIds)
                 {
-                    // ID로 새 Card 객체 생성하여 저장
                     Card newCard = CardManager.GetCardAsCard(cardId);
                     if (newCard != null)
                     {
@@ -31,44 +30,78 @@ public class BuildingDeck
                 }
             }
         }
-        Debug.Log($"[BuildingDeck] 초기화 완료: 총 {deckList.Count}장 (캐릭터 {characters.Count}명)");
+
+        Debug.Log($"[BuildingDeck] initialized: total {deckList.Count} cards (characters: {characters.Count})");
     }
 
     /// <summary>
-    /// 카드 추가 (보상 등)
+    /// Add reward card.
     /// </summary>
     public void AddCard(int cardId)
     {
-        // ID로 새 객체 생성
         Card newCard = CardManager.GetCardAsCard(cardId);
         if (newCard != null)
         {
             deckList.Add(newCard);
-            Debug.Log($"[BuildingDeck] 카드 추가됨: {newCard.cardName} (총 {deckList.Count}장)");
+            Debug.Log($"[BuildingDeck] card added: {newCard.cardName} (total {deckList.Count})");
         }
     }
 
     /// <summary>
-    /// 카드 제거 (상점 등)
+    /// Remove card from run deck.
     /// </summary>
     public void RemoveCard(Card card)
     {
         if (deckList.Contains(card))
         {
             deckList.Remove(card);
-            Debug.Log($"[BuildingDeck] 카드 제거됨: {card.cardName} (총 {deckList.Count}장)");
+            Debug.Log($"[BuildingDeck] card removed: {card.cardName} (total {deckList.Count})");
         }
         else
         {
-            Debug.LogWarning($"[BuildingDeck] 제거할 카드가 덱에 없음: {card.cardName}");
+            Debug.LogWarning($"[BuildingDeck] card not found for removal: {card.cardName}");
         }
     }
 
     /// <summary>
-    /// 전투용 덱 복사본 반환 (UsableDeck 생성용)
+    /// Returns a battle-safe deck copy (new Card instances, fresh effect instances).
     /// </summary>
     public List<Card> CopyDeck()
     {
-        return new List<Card>(deckList);
+        List<Card> copiedDeck = new List<Card>(deckList.Count);
+
+        foreach (Card sourceCard in deckList)
+        {
+            if (sourceCard == null)
+                continue;
+
+            // Rebuild from CardData so each copy has independent effect instances.
+            Card clonedCard = CardManager.GetCardAsCard(sourceCard.cardId);
+            if (clonedCard == null)
+            {
+                Debug.LogWarning($"[BuildingDeck] clone failed for cardId={sourceCard.cardId}, fallback to original reference.");
+                copiedDeck.Add(sourceCard);
+                continue;
+            }
+
+            // Preserve metadata that may have been adjusted on the source card.
+            clonedCard.cardName = sourceCard.cardName;
+            clonedCard.character = sourceCard.character;
+            clonedCard.cost = sourceCard.cost;
+            clonedCard.description = sourceCard.description;
+            clonedCard.enforceCardIds = sourceCard.enforceCardIds != null
+                ? new List<int>(sourceCard.enforceCardIds)
+                : new List<int>();
+            clonedCard.artworkAddress = sourceCard.artworkAddress;
+            clonedCard.effectAddress = sourceCard.effectAddress;
+            clonedCard.soundAddress = sourceCard.soundAddress;
+            clonedCard.artwork = sourceCard.artwork;
+            clonedCard.effectPrefab = sourceCard.effectPrefab;
+            clonedCard.soundClip = sourceCard.soundClip;
+
+            copiedDeck.Add(clonedCard);
+        }
+
+        return copiedDeck;
     }
 }
