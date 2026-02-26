@@ -98,6 +98,8 @@ public static class ConditionEvaluator
             switch (property)
             {
                 case "Hp": return player.hp;
+                case "HpLostTurn": return player.hpLostThisTurn;
+                case "HasLostHpThisTurn": return player.hasLostHpThisTurn ? 1f : 0f;
                 case "Defense": return player.defense;
                 case "Energy": return player.energy;
                 case "Buff":
@@ -131,6 +133,19 @@ public static class ConditionEvaluator
 
     private static bool Compare(float actual, string op, string targetStr)
     {
+        if (bool.TryParse(targetStr, out bool targetBool))
+        {
+            bool actualBool = !Mathf.Approximately(actual, 0f);
+            switch (op)
+            {
+                case "Eq": return actualBool == targetBool;
+                case "Neq": return actualBool != targetBool;
+                default:
+                    float boolTarget = targetBool ? 1f : 0f;
+                    return Compare(actual, op, boolTarget.ToString());
+            }
+        }
+
         float target = 0f;
         float.TryParse(targetStr, out target);
 

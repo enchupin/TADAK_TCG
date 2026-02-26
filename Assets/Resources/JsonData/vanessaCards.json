@@ -472,20 +472,24 @@
                         "checks": [
                             {
                                 "subject": "Source",
-                                "property": "HpLostTurn",
-                                "operator": "Gt",
-                                "value": 0
+                                "property": "HasLostHpThisTurn",
+                                "operator": "Eq",
+                                "value": true
                             }
                         ],
                         "effects": [
                             {
                                 "type": "Attack",
-                                "amount": 9,
+                                "amount": 3,
+                                "amountFormula": "*3",
                                 "target": "Enemy"
-                            },
+                            }
+                        ],
+                        "elseEffects": [
                             {
                                 "type": "Attack",
                                 "amount": 3,
+                                
                                 "target": "Enemy"
                             }
                         ]
@@ -519,9 +523,12 @@
                         "effects": [
                             {
                                 "type": "Attack",
-                                "amount": 12,
+                                "amount": 6,
+                                "amountFormula": "*2",
                                 "target": "Enemy"
-                            },
+                            }
+                        ],
+                        "elseEffects": [
                             {
                                 "type": "Attack",
                                 "amount": 6,

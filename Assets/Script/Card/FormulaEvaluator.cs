@@ -21,12 +21,12 @@ public static class FormulaEvaluator
     /// <summary>
     /// 수식 문자열을 평가하여 정수 반환
     /// </summary>
-    public static int Evaluate(string formula, BattleContext context, PlayerData player = null)
+    public static int Evaluate(string formula, BattleContext context, PlayerData player = null, int baseValue = 0)
     {
-        return Evaluate(formula, context, player, null);
+        return Evaluate(formula, context, player, null, baseValue);
     }
 
-    public static int Evaluate(string formula, BattleContext context, PlayerData player, List<int> cardIdFilter)
+    public static int Evaluate(string formula, BattleContext context, PlayerData player, List<int> cardIdFilter, int baseValue = 0)
     {
         if (string.IsNullOrEmpty(formula))
         {
@@ -46,6 +46,7 @@ public static class FormulaEvaluator
         int cardsPlayedInTurn = context != null
             ? context.GetCardsPlayedThisTurnCount(cardIdFilter)
             : 0;
+        int hasLostHpThisTurn = player != null && player.hasLostHpThisTurn ? 1 : 0;
 
         switch (formula.ToLower())
         {
@@ -74,12 +75,19 @@ public static class FormulaEvaluator
                 return context != null ? context.lastDamageDealt : 0;
 
             case "value":
-                return 0;
+                return baseValue;
+
+            case "haslosthpthisturn":
+                return hasLostHpThisTurn;
         }
 
         try
         {
             string expression = formula;
+            if (expression.StartsWith("*") || expression.StartsWith("/") || expression.StartsWith("+") || expression.StartsWith("-"))
+            {
+                expression = baseValue + expression;
+            }
             expression = expression.Replace("UseCardInCombat", cardsPlayedInCombat.ToString());
             expression = expression.Replace("UseCardInTurn", cardsPlayedInTurn.ToString());
             expression = expression.Replace("consumed", (context != null ? context.defenseConsumed : 0).ToString());
@@ -87,6 +95,8 @@ public static class FormulaEvaluator
             expression = expression.Replace("exhausted", (context != null ? context.cardsExhaustedThisTurn : 0).ToString());
             expression = expression.Replace("cardsDrawnThisTurn", (context != null ? context.cardsDrawnThisTurn : 0).ToString());
             expression = expression.Replace("finalDamage", (context != null ? context.lastDamageDealt : 0).ToString());
+            expression = expression.Replace("value", baseValue.ToString());
+            expression = expression.Replace("HasLostHpThisTurn", hasLostHpThisTurn.ToString());
 
             return EvaluateSimpleExpression(expression);
         }
