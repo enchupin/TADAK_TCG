@@ -20,6 +20,11 @@ public static class TrainingRunSceneActions
         if (!TrainingRunState.HasMapData)
             return;
 
+        if (PlayerData.Instance != null)
+        {
+            TrainingRunState.SetPlayerHealthState(PlayerData.Instance.hp, PlayerData.Instance.maxHP);
+        }
+
         TrainingRunState.CompletePendingNode(isVictory);
 
         if (!string.IsNullOrEmpty(TrainingRunState.MapSceneName))

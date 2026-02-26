@@ -183,6 +183,19 @@ public class TrainingBattleManager : MonoBehaviour
         }
 
         playerData.Initialize(totalMaxHp, totalDefense, playerBaseEnergyPerTurn);
+
+        if (TrainingRunState.IsRunActive)
+        {
+            if (TrainingRunState.TryGetPlayerHealthState(out int runHp, out int runMaxHp))
+            {
+                int resolvedMaxHp = runMaxHp > 0 ? runMaxHp : totalMaxHp;
+                playerData.maxHP = resolvedMaxHp;
+                playerData.hp = Mathf.Clamp(runHp, 0, resolvedMaxHp);
+            }
+
+            TrainingRunState.SetPlayerHealthState(playerData.hp, playerData.maxHP);
+        }
+
         ApplyDebugEnergy();
 
         if (monsterSpawner != null)

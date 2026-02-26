@@ -25,6 +25,10 @@ public static class TrainingRunState
     public static int? CurrentNodeId { get; private set; }
     public static int? PendingNodeId { get; private set; }
 
+    public static bool HasPlayerHealthState { get; private set; }
+    public static int PlayerCurrentHp { get; private set; }
+    public static int PlayerMaxHp { get; private set; }
+
     public static bool HasMapData => orderedNodes.Count > 0;
 
     public static IReadOnlyList<TrainingMapNodeData> GetAllNodes()
@@ -40,6 +44,26 @@ public static class TrainingRunState
     public static bool IsNodeCleared(int nodeId)
     {
         return clearedNodeIds.Contains(nodeId);
+    }
+
+    public static void SetPlayerHealthState(int currentHp, int maxHp)
+    {
+        PlayerMaxHp = Mathf.Max(1, maxHp);
+        PlayerCurrentHp = Mathf.Clamp(currentHp, 0, PlayerMaxHp);
+        HasPlayerHealthState = true;
+    }
+
+    public static bool TryGetPlayerHealthState(out int currentHp, out int maxHp)
+    {
+        currentHp = 0;
+        maxHp = 0;
+
+        if (!HasPlayerHealthState)
+            return false;
+
+        currentHp = PlayerCurrentHp;
+        maxHp = PlayerMaxHp;
+        return true;
     }
 
     public static void StartNewRun(string mapSceneName, string battleSceneName, int stageCount = 6, int laneCount = 3)
@@ -66,6 +90,10 @@ public static class TrainingRunState
 
         CurrentNodeId = null;
         PendingNodeId = null;
+
+        HasPlayerHealthState = false;
+        PlayerCurrentHp = 0;
+        PlayerMaxHp = 0;
 
         IsRunCompleted = false;
         IsRunFailed = false;
@@ -154,6 +182,10 @@ public static class TrainingRunState
 
         IsRunCompleted = false;
         IsRunFailed = false;
+
+        HasPlayerHealthState = false;
+        PlayerCurrentHp = 0;
+        PlayerMaxHp = 0;
     }
 
     private static void BuildSimpleMap(int stageCount, int laneCount)
