@@ -5,6 +5,7 @@ public class AttackEffect : ICardEffect
 {
     public int amount;
     public string amountFormula;
+    public List<int> cardIdList;
     public TargetType target;
     public ICardEffect onAction;
 
@@ -12,7 +13,8 @@ public class AttackEffect : ICardEffect
     {
         // 유닛 당 데미지
         int finalAmount = string.IsNullOrWhiteSpace(amountFormula)
-            ? amount : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData);
+            ? amount
+            : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, cardIdList);
         int totalDamageDealt = 0; // 총 누적 데미지
 
         switch (target) {
@@ -73,4 +75,5 @@ public class AttackEffect : ICardEffect
 
         onAction?.Execute(battleManager, totalDamageDealt);
     }
+
 }

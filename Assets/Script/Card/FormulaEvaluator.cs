@@ -1,7 +1,7 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
-
 /// <summary>
 /// 수식 문자열을 평가하는 클래스
 /// JSON의 "amount": "UseCardInCombat * 3" 같은 수식을 계산
@@ -14,79 +14,80 @@ public static class FormulaEvaluator
     public static bool IsFormula(string value)
     {
         if (string.IsNullOrEmpty(value)) return false;
-        
         // 숫자만 있으면 수식이 아님
         if (int.TryParse(value, out _)) return false;
-        
         return true;
     }
-    
     /// <summary>
     /// 수식 문자열을 평가하여 정수 반환
     /// </summary>
     public static int Evaluate(string formula, BattleContext context, PlayerData player = null)
     {
+        return Evaluate(formula, context, player, null);
+    }
+
+    public static int Evaluate(string formula, BattleContext context, PlayerData player, List<int> cardIdFilter)
+    {
         if (string.IsNullOrEmpty(formula))
         {
             return 0;
         }
-        
-        // 숫자면 바로 반환
+
         if (int.TryParse(formula, out int result))
         {
             return result;
         }
-        
-        // 공백 제거
+
         formula = formula.Replace(" ", "");
-        
-        // 특수 키워드 처리
+
+        int cardsPlayedInCombat = context != null
+            ? context.GetCardsPlayedThisCombatCount(cardIdFilter)
+            : 0;
+        int cardsPlayedInTurn = context != null
+            ? context.GetCardsPlayedThisTurnCount(cardIdFilter)
+            : 0;
+
         switch (formula.ToLower())
         {
             case "all":
-                // "all"은 컨텍스트에 따라 다름 (방어도 전체 등)
                 return player != null ? player.defense : 0;
-                
+
             case "usecardincombat":
-                return context.cardsPlayedThisCombat;
+                return cardsPlayedInCombat;
 
             case "usecardinturn":
-                return context.cardsPlayedThisTurn;
-                
+                return cardsPlayedInTurn;
+
             case "consumed":
-                return context.defenseConsumed;
-                
+                return context != null ? context.defenseConsumed : 0;
+
             case "discarded":
-                return context.cardsDiscardedThisTurn;
-                
+                return context != null ? context.cardsDiscardedThisTurn : 0;
+
             case "exhausted":
-                return context.cardsExhaustedThisTurn;
+                return context != null ? context.cardsExhaustedThisTurn : 0;
 
             case "cardsdrawnthisturn":
-                return context.cardsDrawnThisTurn;
-                
+                return context != null ? context.cardsDrawnThisTurn : 0;
+
             case "finaldamage":
-                return context.lastDamageDealt;
-                
+                return context != null ? context.lastDamageDealt : 0;
+
             case "value":
-                // 버프 스택 값 (별도 처리 필요)
                 return 0;
         }
-        
-        // 수식 평가 (간단한 사칙연산)
+
         try
         {
-            // 변수 치환
             string expression = formula;
-            expression = expression.Replace("UseCardInCombat", context.cardsPlayedThisCombat.ToString());
-            expression = expression.Replace("UseCardInTurn", context.cardsPlayedThisTurn.ToString());
-            expression = expression.Replace("consumed", context.defenseConsumed.ToString());
-            expression = expression.Replace("discarded", context.cardsDiscardedThisTurn.ToString());
-            expression = expression.Replace("exhausted", context.cardsExhaustedThisTurn.ToString());
-            expression = expression.Replace("cardsDrawnThisTurn", context.cardsDrawnThisTurn.ToString());
-            expression = expression.Replace("finalDamage", context.lastDamageDealt.ToString());
-            
-            // 간단한 수식 계산 (*, /, +, -)
+            expression = expression.Replace("UseCardInCombat", cardsPlayedInCombat.ToString());
+            expression = expression.Replace("UseCardInTurn", cardsPlayedInTurn.ToString());
+            expression = expression.Replace("consumed", (context != null ? context.defenseConsumed : 0).ToString());
+            expression = expression.Replace("discarded", (context != null ? context.cardsDiscardedThisTurn : 0).ToString());
+            expression = expression.Replace("exhausted", (context != null ? context.cardsExhaustedThisTurn : 0).ToString());
+            expression = expression.Replace("cardsDrawnThisTurn", (context != null ? context.cardsDrawnThisTurn : 0).ToString());
+            expression = expression.Replace("finalDamage", (context != null ? context.lastDamageDealt : 0).ToString());
+
             return EvaluateSimpleExpression(expression);
         }
         catch (Exception e)
@@ -95,63 +96,51 @@ public static class FormulaEvaluator
             return 0;
         }
     }
-    
-    /// <summary>
-    /// 간단한 수식 계산 (사칙연산만 지원)
-    /// </summary>
+
     private static int EvaluateSimpleExpression(string expression)
     {
-        // 괄호 처리
         while (expression.Contains("("))
         {
             int start = expression.LastIndexOf('(');
             int end = expression.IndexOf(')', start);
             if (end == -1) break;
-            
+
             string subExpr = expression.Substring(start + 1, end - start - 1);
             int subResult = EvaluateSimpleExpression(subExpr);
             expression = expression.Substring(0, start) + subResult + expression.Substring(end + 1);
         }
-        
-        // 곱셈, 나눗셈 먼저
+
         expression = EvaluateOperator(expression, '*');
         expression = EvaluateOperator(expression, '/');
-        
-        // 덧셈, 뺄셈
         expression = EvaluateOperator(expression, '+');
         expression = EvaluateOperator(expression, '-');
-        
-        // 최종 결과
+
         if (int.TryParse(expression, out int result))
         {
             return result;
         }
-        
-        // 실수 처리 (0.25 * damageValue 같은 경우)
+
         if (float.TryParse(expression, out float floatResult))
         {
             return Mathf.RoundToInt(floatResult);
         }
-        
+
         return 0;
     }
-    
-    /// <summary>
-    /// 특정 연산자 처리
-    /// </summary>
+
     private static string EvaluateOperator(string expression, char op)
     {
-        string pattern = op == '*' || op == '/' 
+        string pattern = op == '*' || op == '/'
             ? @"([\d.]+)\s*\" + op + @"\s*([\d.]+)"
             : @"(^|[^.\d])([\d.]+)\s*\" + op + @"\s*([\d.]+)";
-        
+
         while (Regex.IsMatch(expression, pattern))
         {
             Match match = Regex.Match(expression, pattern);
-            
+
             float left, right;
             string leftStr, rightStr;
-            
+
             if (op == '+' || op == '-')
             {
                 leftStr = match.Groups[2].Value;
@@ -162,12 +151,12 @@ public static class FormulaEvaluator
                 leftStr = match.Groups[1].Value;
                 rightStr = match.Groups[2].Value;
             }
-            
+
             if (!float.TryParse(leftStr, out left) || !float.TryParse(rightStr, out right))
             {
                 break;
             }
-            
+
             float result = op switch
             {
                 '*' => left * right,
@@ -176,10 +165,10 @@ public static class FormulaEvaluator
                 '-' => left - right,
                 _ => 0
             };
-            
+
             expression = expression.Replace(match.Value, result.ToString());
         }
-        
+
         return expression;
     }
 }

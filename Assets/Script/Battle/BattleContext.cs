@@ -1,16 +1,16 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-
 /// <summary>
 /// 전투 상태를 담는 컨텍스트 클래스
 /// 효과 실행 시 필요한 모든 정보를 제공합니다.
 /// </summary>
-public class BattleContext {
-
+public class BattleContext
+{
     // 카드 사용 통계
     public int cardsPlayedThisCombat = 0;
     public int cardsPlayedThisTurn = 0;
-    public List<Card> cardsPlayedThisTurnList = new List<Card>(); // 추후 연동 예정
+    public List<Card> cardsPlayedThisTurnList = new List<Card>();
+    public List<Card> cardsPlayedThisCombatList = new List<Card>();
 
     // 카드 이동 관련
     public int cardsDiscardedThisTurn = 0;
@@ -18,26 +18,22 @@ public class BattleContext {
     public int cardsDrawnThisTurn = 0;
 
     // 데미지 관련
-    public int lastDamageDealt = 0; // 추후 연동 예정
-    public int totalDamageDealt = 0; // 추후 연동 예정
+    public int lastDamageDealt = 0;
+    public int totalDamageDealt = 0;
 
     // 방어도 관련
-    public int defenseConsumed = 0; // 추후 연동 예정
-
+    public int defenseConsumed = 0;
 
     // 선택된 카드 (Choice -> Effect 연계용)
     private List<Card> selectedCards = new List<Card>();
-    
     public void SetSelectedCards(List<Card> cards)
     {
         selectedCards = new List<Card>(cards);
     }
-    
     public List<Card> GetSelectedCards()
     {
         return new List<Card>(selectedCards);
     }
-    
     public void ClearSelectedCards()
     {
         selectedCards.Clear();
@@ -63,23 +59,58 @@ public class BattleContext {
     public void OnCombatStart()
     {
         cardsPlayedThisCombat = 0;
+        cardsPlayedThisCombatList.Clear();
         totalDamageDealt = 0;
         OnTurnStart();
     }
-    
-    /// <summary>
-    /// 카드 사용 시 호출
-    /// </summary>
+
     public void OnCardPlayed(Card card)
     {
         cardsPlayedThisTurn++;
         cardsPlayedThisCombat++;
-        cardsPlayedThisTurnList.Add(card);
+
+        if (card != null)
+        {
+            cardsPlayedThisTurnList.Add(card);
+            cardsPlayedThisCombatList.Add(card);
+            Debug.Log($"[BattleContext] Card played. id={card.cardId}, turnCount={cardsPlayedThisTurn}, combatCount={cardsPlayedThisCombat}");
+        }
     }
 
-    /// <summary>
-    /// 카드 드로우 시 호출
-    /// </summary>
+    public int GetCardsPlayedThisCombatCount(List<int> targetCardIds)
+    {
+        if (targetCardIds == null || targetCardIds.Count == 0)
+            return cardsPlayedThisCombat;
+
+        int count = 0;
+        foreach (Card playedCard in cardsPlayedThisCombatList)
+        {
+            if (playedCard != null && targetCardIds.Contains(playedCard.cardId))
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public int GetCardsPlayedThisTurnCount(List<int> targetCardIds)
+    {
+        if (targetCardIds == null || targetCardIds.Count == 0)
+            return cardsPlayedThisTurn;
+
+        int count = 0;
+        foreach (Card playedCard in cardsPlayedThisTurnList)
+        {
+            if (playedCard != null && targetCardIds.Contains(playedCard.cardId))
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
     public void OnCardsDrawn(int count)
     {
         if (count <= 0)
@@ -88,9 +119,6 @@ public class BattleContext {
         cardsDrawnThisTurn += count;
     }
 
-    /// <summary>
-    /// 카드 버림 시 호출
-    /// </summary>
     public void OnCardsDiscarded(int count)
     {
         if (count <= 0)
@@ -99,9 +127,6 @@ public class BattleContext {
         cardsDiscardedThisTurn += count;
     }
 
-    /// <summary>
-    /// 카드 소멸 시 호출
-    /// </summary>
     public void OnCardsExhausted(int count)
     {
         if (count <= 0)
@@ -109,10 +134,7 @@ public class BattleContext {
 
         cardsExhaustedThisTurn += count;
     }
-    
-    /// <summary>
-    /// 데미지 입힌 후 호출
-    /// </summary>
+
     public void OnDamageDealt(int amount)
     {
         if (amount <= 0)
@@ -121,10 +143,7 @@ public class BattleContext {
         lastDamageDealt = amount;
         totalDamageDealt += amount;
     }
-    
-    /// <summary>
-    /// 방어도 소모 시 호출
-    /// </summary>
+
     public void OnDefenseConsumed(int amount)
     {
         defenseConsumed += amount;
