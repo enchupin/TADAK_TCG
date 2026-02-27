@@ -18,6 +18,7 @@ public class Monster : MonoBehaviour
     [SerializeField] private TextMeshProUGUI defenseText;
     [SerializeField] private TextMeshProUGUI intentText;
     [SerializeField] private TextMeshProUGUI corrosionText;
+    [SerializeField] private TextMeshProUGUI freezeText;
 
     [Header("Stats")]
     public int hp;
@@ -29,6 +30,7 @@ public class Monster : MonoBehaviour
 
     private MonsterIntentType plannedIntentType = MonsterIntentType.None;
     private int plannedIntentValue = 0;
+    private bool skipCurrentTurnAction = false;
 
     public MonsterIntentType PlannedIntentType => plannedIntentType;
     public int PlannedIntentValue => plannedIntentValue;
@@ -72,6 +74,7 @@ public class Monster : MonoBehaviour
 
         UpdateIntentUI();
         UpdateCorrosionUI();
+        UpdateFreezeUI();
     }
 
     public void PlanNextAction()
@@ -106,6 +109,16 @@ public class Monster : MonoBehaviour
     {
         if (target == null || IsDead())
             return;
+
+        if (skipCurrentTurnAction)
+        {
+            Debug.Log($"[Enemy Turn] {name}은(는) 기절 상태로 이번 턴 행동을 쉬었습니다.");
+            skipCurrentTurnAction = false;
+            plannedIntentType = MonsterIntentType.None;
+            plannedIntentValue = 0;
+            UpdateUI();
+            return;
+        }
 
         switch (plannedIntentType)
         {
@@ -177,7 +190,17 @@ public class Monster : MonoBehaviour
 
     public void OnTurnStart()
     {
-        // Reserved for buff/debuff start triggers.
+        int freezeStack = GetBuffStack(4004);
+        if (freezeStack >= 7)
+        {
+            DecreaseBuffStack(4004, 7);
+            skipCurrentTurnAction = true;
+            plannedIntentType = MonsterIntentType.None;
+            plannedIntentValue = 0;
+            Debug.Log($"[Monster] {name} 빙결 7스택으로 기절 상태가 되어 이번 턴 행동을 쉽니다.");
+        }
+
+        UpdateUI();
     }
 
     public void OnTurnEnd()
@@ -231,6 +254,15 @@ public class Monster : MonoBehaviour
         }
 
         corrosionText.text = $"corrosionStack : {corrosionStack}";
+    }
+
+    private void UpdateFreezeUI()
+    {
+        if (freezeText == null)
+            return;
+
+        int freezeStack = GetBuffStack(4004);
+        freezeText.text = $"FreezeStack : {freezeStack}";
     }
 
     private int GetBuffStack(int buffId)
