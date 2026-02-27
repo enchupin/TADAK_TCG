@@ -4,7 +4,7 @@ using TMPro;
 
 /// <summary>
 /// 전투 UI 관리
-/// HP, 에너지, 방어력 등 표시
+/// HP, 에너지, 방어력 등을 표시
 /// PlayerData.Instance / Monster를 직접 참조
 /// </summary>
 public class BattleUI : MonoBehaviour
@@ -13,6 +13,7 @@ public class BattleUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playerHPText;
     [SerializeField] private TextMeshProUGUI playerEnergyText;
     [SerializeField] private TextMeshProUGUI playerDefenseText;
+    [SerializeField] private TextMeshProUGUI overheatText;
 
     [Header("데이터 참조")]
     [SerializeField] private Monster monster;
@@ -48,6 +49,14 @@ public class BattleUI : MonoBehaviour
             playerDefenseText.text = $"Defense : {PlayerData.Instance.defense}";
     }
 
+    public void UpdateOverheat()
+    {
+        if (PlayerData.Instance == null || overheatText == null) return;
+
+        int overheat = PlayerData.Instance.GetBuffStack(3017);
+        int overheatPercent = overheat * 10;
+        overheatText.text = $"OverHeat : {overheatPercent}%";
+    }
 
     /// <summary>
     /// 모든 UI 업데이트
@@ -57,5 +66,6 @@ public class BattleUI : MonoBehaviour
         UpdatePlayerHP();
         UpdateEnergy();
         UpdatePlayerDefense();
+        UpdateOverheat();
     }
 }
