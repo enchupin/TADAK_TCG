@@ -106,6 +106,10 @@ public static class ConditionEvaluator
                     int playerBuffId = int.Parse(param);
                     Buff playerBuff = player.currentBuffs.Find(b => b.data.buffId == playerBuffId);
                     return playerBuff != null ? playerBuff.stack : 0;
+                case "HasBuff":
+                    int playerHasBuffId = int.Parse(param);
+                    Buff playerHasBuff = player.currentBuffs.Find(b => b.data.buffId == playerHasBuffId);
+                    return playerHasBuff != null && playerHasBuff.stack > 0 ? 1f : 0f;
             }
         }
         else if (subject is Monster monster)
@@ -118,6 +122,10 @@ public static class ConditionEvaluator
                     int monsterBuffId = int.Parse(param);
                     Buff monsterBuff = monster.currentBuffs.Find(b => b.data.buffId == monsterBuffId);
                     return monsterBuff != null ? monsterBuff.stack : 0;
+                case "HasBuff":
+                    int monsterHasBuffId = int.Parse(param);
+                    Buff monsterHasBuff = monster.currentBuffs.Find(b => b.data.buffId == monsterHasBuffId);
+                    return monsterHasBuff != null && monsterHasBuff.stack > 0 ? 1f : 0f;
             }
         }
         else if (subject is HandManager hand)
