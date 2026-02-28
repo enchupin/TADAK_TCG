@@ -391,6 +391,15 @@
                                    ]
                    },
                    {
+                       "id":  "isla_potion_enhanced_odd_pool",
+                       "cardIds":  [
+                                       101051,
+                                       101053,
+                                       101055,
+                                       101057
+                                   ]
+                   },
+                   {
                        "id":  "isla_potion_even_base_pool",
                        "cardIds":  [
                                        101080,

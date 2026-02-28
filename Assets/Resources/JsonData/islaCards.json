@@ -120,10 +120,13 @@
             "description": "버린 카드 더미에서 카드를 1장 선택해 손으로 가져옵니다.",
             "effects": [
                 {
-                    "type": "ChoiceDiscard",
+                    "type": "ChoiceCard",
+                    "from" : "Discard",
                     "amount": 1,
-                    "effect": {
-                        "type": "Pickup"
+                    "onAction": {
+                        "subject": "SelectedCard",
+                        "type": "Move",
+                        "to": "Hand"
                     }
                 }
             ],
@@ -132,6 +135,7 @@
                 "effect": "",
                 "sound": ""
             }
+            
         },
         {
             "cardId": 101034,
@@ -141,12 +145,32 @@
             "description": "손에 든 카드 1장을 선택해 복제합니다. 그 카드가 포션일 경우, 모든 적에게 부식을 2 부여합니다.",
             "effects": [
                 {
-                    "type": "ChoiceHand",
+                    "type": "ChoiceCard",
+                    "from": "Hand",
                     "amount": 1,
                     "onAction": {
+                        "subject": "SelectedCard",
                         "type": "Copy",
                         "amount": 1,
-                        "target": "Hand"
+                        "to": "Hand",
+                        "condition": {
+                            "checks": [
+                                {
+                                    "subject": "SelectedCard",
+                                    "property": "IsPotion",
+                                    "operator": "Eq",
+                                    "value": true
+                                }
+                            ],
+                            "effects": [
+                                {
+                                    "type": "Buff",
+                                    "buffId": 4001,
+                                    "amount": 2,
+                                    "target": "AllEnemies"
+                                }
+                            ]
+                        }
                     }
                 }
             ],
@@ -164,12 +188,35 @@
             "description": "손의 카드 1장을 선택해 복제합니다. 그 카드가 포션일 경우, 1장 더 복제합니다.",
             "effects": [
                 {
-                    "type": "ChoiceHand",
+                    "type": "ChoiceCard",
+                    "from": "Hand",
                     "amount": 1,
                     "onAction": {
-                        "type": "Copy",
-                        "amount": 1,
-                        "target": "Hand"
+                        "subject": "SelectedCard",
+                        "condition": {
+                            "checks": [
+                                {
+                                    "subject": "SelectedCard",
+                                    "property": "IsPotion",
+                                    "operator": "Eq",
+                                    "value": true
+                                }
+                            ],
+                            "effects": [
+                                {
+                                    "type": "Copy",
+                                    "amount": 2,
+                                    "to": "Hand"
+                                }
+                            ],
+                            "elseEffects": [
+                                {
+                                    "type": "Copy",
+                                    "amount": 2,
+                                    "to": "Hand"
+                                }
+                            ]
+                        }
                     }
                 }
             ],
@@ -186,28 +233,10 @@
             "cost": 0,
             "description": "무작위 포션 카드를 1장 제작합니다.",
             "effects": [
-                {
-                    "type": "RandGenerate",
-                    "amount": 1,
-                    "RandomCard": [
-                        {
-                            "cardId": 101050,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 101052,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 101054,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 101056,
-                            "weight": 1
-                        }
-                    ],
-                    "target": "Hand"
+                { "type": "RandGenerate",
+                "amount": 1,
+                "cardIdGroup": "isla_potion_enhanced_even_pool",
+                "target": "Hand"
                 }
             ],
             "enforceGroup": "enforce_101040",
@@ -227,24 +256,7 @@
                 {
                     "type": "RandGenerate",
                     "amount": 2,
-                    "RandomCard": [
-                        {
-                            "cardId": 101050,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 101052,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 101054,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 101056,
-                            "weight": 1
-                        }
-                    ],
+                    "cardIdGroup": "isla_potion_enhanced_even_pool",
                     "target": "Hand"
                 }
             ],
@@ -283,24 +295,7 @@
             "effects": [
                 {
                     "type": "RandGenerate",
-                    "RandomCard": [
-                        {
-                            "cardId": 101051,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 101053,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 101055,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 101057,
-                            "weight": 1
-                        }
-                    ],
+                    "cardIdGroup": "isla_potion_enhanced_odd_pool",
                     "target": "Hand"
                 }
             ],
@@ -328,24 +323,7 @@
                 {
                     "type": "RandGenerate",
                     "amount": 2,
-                    "RandomCard": [
-                        {
-                            "cardId": 101051,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 101053,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 101055,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 101057,
-                            "weight": 1
-                        }
-                    ],
+                    "cardIdGroup": "isla_potion_enhanced_odd_pool",
                     "target": "Hand"
                 }
             ],
