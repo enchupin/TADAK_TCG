@@ -87,7 +87,6 @@
                     "amount": 2
                 },
                 {
-                    "type": "Conditional",
                     "condition": {
                         "checks": [
                             {
@@ -316,6 +315,7 @@
                     "type": "ChoiceHand",
                     "amount": 1,
                     "onAction": {
+                        "subject": "SelectedCard",
                         "type": "Discard",
                         "amount": 1
                     }
@@ -553,7 +553,6 @@
             "description": "부식을 2 부여합니다. 대상이 이미 부식 상태라면, 무작위 포션 카드를 1장 제작합니다.",
             "effects": [
                 {
-                    "type": "Conditional",
                     "condition": {
                         "checks": [
                             {

@@ -195,8 +195,10 @@
                         "amount": 1,
                         "onAction": {
                             "type": "Draw",
-                            "target": "Selected"
-                        }
+                            "target": "Selected",
+                            "subject": "SelectedCard"
+                        },
+                        "subject": "ScryCard"
                     }
                 }
             ],
@@ -224,7 +226,7 @@
                             "condition": {
                                 "checks": [
                                     {
-                                        "subject": "EventValue",
+                                        "subject": "DrawnCard",
                                         "property": "Cost",
                                         "operator": "Neq",
                                         "value": 0
@@ -233,9 +235,11 @@
                             },
                             "effect": {
                                 "type": "Discard",
-                                "target": "EventValue"
-                            }
-                        }
+                                "target": "DrawnCard"
+                            },
+                            "subject": "DrawnCard"
+                        },
+                        "subject": "DrawnCard"
                     }
                 }
             ],
@@ -258,7 +262,8 @@
                     "amount": 2,
                     "onAction": {
                         "type": "Discard",
-                        "target": "Selected"
+                        "target": "Selected",
+                        "subject": "SelectedCard"
                     }
                 },
                 {
@@ -292,7 +297,7 @@
                             "condition": {
                                 "checks": [
                                     {
-                                        "subject": "EventValue",
+                                        "subject": "DrawnCard",
                                         "property": "CharacterId",
                                         "operator": "Eq",
                                         "value": 202
@@ -304,8 +309,10 @@
                                 "buffId": 3002,
                                 "amount": 1,
                                 "target": "Self"
-                            }
-                        }
+                            },
+                            "subject": "DrawnCard"
+                        },
+                        "subject": "DrawnCard"
                     }
                 }
             ],
@@ -467,7 +474,6 @@
             "description": "피해를 3 입힙니다. 이번 턴에 체력을 잃었다면 대신 3배의 피해를 입힙니다.",
             "effects": [
                 {
-                    "type": "Conditional",
                     "condition": {
                         "checks": [
                             {
@@ -489,7 +495,6 @@
                             {
                                 "type": "Attack",
                                 "amount": 3,
-                                
                                 "target": "Enemy"
                             }
                         ]
@@ -510,7 +515,6 @@
             "description": "피해를 6 입힙니다. 적에게 공격할 의도가 있다면 피해를 2배로 입힙니다.",
             "effects": [
                 {
-                    "type": "Conditional",
                     "condition": {
                         "checks": [
                             {
@@ -557,7 +561,8 @@
                     "onAction": {
                         "type": "Attack",
                         "amount": 4,
-                        "target": "Enemy"
+                        "target": "Enemy",
+                        "subject": "RepeatCount"
                     }
                 }
             ],
@@ -581,7 +586,8 @@
                     "onAction": {
                         "type": "Attack",
                         "amount": 1,
-                        "target": "Enemy"
+                        "target": "Enemy",
+                        "subject": "RepeatCount"
                     }
                 }
             ],
@@ -607,7 +613,8 @@
                     "onAction": {
                         "type": "Attack",
                         "amount": 4,
-                        "target": "Enemy"
+                        "target": "Enemy",
+                        "subject": "RepeatCount"
                     }
                 }
             ],
@@ -705,7 +712,8 @@
                         "type": "Buff",
                         "buffId": 3002,
                         "amountFormula": "UnblockedDamage",
-                        "target": "Self"
+                        "target": "Self",
+                        "subject": "UnblockedDamage"
                     }
                 }
             ],
@@ -734,7 +742,8 @@
                         "type": "Buff",
                         "buffId": 3002,
                         "amountFormula": "UnblockedDamage",
-                        "target": "Self"
+                        "target": "Self",
+                        "subject": "UnblockedDamage"
                     }
                 }
             ],
@@ -762,7 +771,8 @@
                         "type": "Buff",
                         "buffId": 3002,
                         "amountFormula": "UnblockedDamage",
-                        "target": "Self"
+                        "target": "Self",
+                        "subject": "UnblockedDamage"
                     }
                 }
             ],
@@ -840,7 +850,8 @@
                         "type": "Buff",
                         "buffId": 3021,
                         "amountFormula": "UnblockedDamage",
-                        "target": "Self"
+                        "target": "Self",
+                        "subject": "UnblockedDamage"
                     }
                 }
             ],

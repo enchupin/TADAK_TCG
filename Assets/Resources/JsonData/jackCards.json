@@ -217,7 +217,8 @@
                         "type": "GenerateCard",
                         "cardId": "Selected",
                         "amount": 1,
-                        "target": "Hand"
+                        "target": "Hand",
+                        "subject": "Selected"
                     }
                 }
             ],
@@ -251,7 +252,8 @@
                     "onAction": {
                         "type": "Upgrade",
                         "upgrade": "Random",
-                        "target": "Selected"
+                        "target": "Selected",
+                        "subject": "Selected"
                     }
                 }
             ],
@@ -279,7 +281,8 @@
                         "type": "GenerateCard",
                         "cardId": "Selected",
                         "amount": 1,
-                        "target": "Hand"
+                        "target": "Hand",
+                        "subject": "Selected"
                     }
                 }
             ],
@@ -307,7 +310,8 @@
                         "type": "GenerateCard",
                         "cardId": "Selected",
                         "amount": 3,
-                        "target": "Hand"
+                        "target": "Hand",
+                        "subject": "Selected"
                     }
                 }
             ],
@@ -430,7 +434,8 @@
                     "amount": 2,
                     "onAction": {
                         "type": "Discard",
-                        "target": "Selected"
+                        "target": "Selected",
+                        "subject": "Selected"
                     }
                 },
                 {

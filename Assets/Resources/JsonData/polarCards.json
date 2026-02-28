@@ -248,7 +248,8 @@
                     "onAction": {
                         "type": "Barrier",
                         "amountFormula": "finalDamage",
-                        "target": "Self"
+                        "target": "Self",
+                        "subject": "FinalDamage"
                     }
                 }
             ],
@@ -462,7 +463,8 @@
                         "type": "GenerateCard",
                         "cardId": 301080,
                         "amountFormula": "eventValue / 10",
-                        "target": "Hand"
+                        "target": "Hand",
+                        "subject": "LostBarrier"
                     }
                 }
             ],
@@ -490,7 +492,8 @@
                     "onAction": {
                         "type": "Heal",
                         "amountFormula": "eventValue",
-                        "target": "Self"
+                        "target": "Self",
+                        "subject": "LostBarrier"
                     }
                 }
             ],
@@ -517,7 +520,8 @@
                     "onAction": {
                         "type": "Damage",
                         "amountFormula": "eventValue",
-                        "target": "AllEnemies"
+                        "target": "AllEnemies",
+                        "subject": "LostBarrier"
                     }
                 }
             ],
@@ -535,7 +539,6 @@
             "description": "내 보호막이 10 이상이면, 보호막을 10 잃고 빙하 조형 카드를 2장 생성합니다.",
             "effects": [
                 {
-                    "type": "Conditional",
                     "condition": {
                         "checks": [
                             {
@@ -554,7 +557,8 @@
                                     "type": "GenerateCard",
                                     "cardId": 301080,
                                     "amount": 2,
-                                    "target": "Hand"
+                                    "target": "Hand",
+                                    "subject": "LostBarrier"
                                 }
                             }
                         ]
@@ -575,7 +579,6 @@
             "description": "내 보호막이 10 이상이면, 보호막을 10 잃고 빙하 결속을 1 얻습니다.",
             "effects": [
                 {
-                    "type": "Conditional",
                     "condition": {
                         "checks": [
                             {
@@ -594,7 +597,8 @@
                                     "type": "Buff",
                                     "buffId": 3012,
                                     "amount": 1,
-                                    "target": "Self"
+                                    "target": "Self",
+                                    "subject": "LostBarrier"
                                 }
                             }
                         ]
@@ -619,7 +623,6 @@
             "description": "내 보호막이 10 이상이면, 보호막을 10 잃고 재생을 1 얻습니다.",
             "effects": [
                 {
-                    "type": "Conditional",
                     "condition": {
                         "checks": [
                             {
@@ -638,7 +641,8 @@
                                     "type": "Buff",
                                     "buffId": 3001,
                                     "amount": 1,
-                                    "target": "Self"
+                                    "target": "Self",
+                                    "subject": "LostBarrier"
                                 }
                             }
                         ]
