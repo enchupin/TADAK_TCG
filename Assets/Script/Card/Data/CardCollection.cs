@@ -9,7 +9,7 @@ using System.Collections.Generic;
 public class CardCollection : ScriptableObject
 {
     [Header("모든 카드")]
-    public List<CardData> allCards = new List<CardData>();
+    public List<CardData> allCards = new();
     
     /// <summary>
     /// 모든 CardData를 Card 객체로 변환
