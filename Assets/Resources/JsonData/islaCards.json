@@ -120,7 +120,7 @@
             "effects": [
                 {
                     "type": "ChoiceCard",
-                    "from" : "Discard",
+                    "from": "Discard",
                     "amount": 1,
                     "onAction": {
                         "subject": "SelectedCard",
@@ -134,7 +134,6 @@
                 "effect": "",
                 "sound": ""
             }
-            
         },
         {
             "cardId": 101034,
@@ -232,10 +231,11 @@
             "cost": 0,
             "description": "무작위 포션 카드를 1장 제작합니다.",
             "effects": [
-                { "type": "RandGenerate",
-                "amount": 1,
-                "cardIdGroup": "isla_potion_enhanced_even_pool",
-                "target": "Hand"
+                {
+                    "type": "RandGenerate",
+                    "amount": 1,
+                    "cardIdGroup": "isla_potion_enhanced_even_pool",
+                    "target": "Hand"
                 }
             ],
             "enforceGroup": "enforce_101040",
@@ -395,10 +395,12 @@
                 },
                 {
                     "type": "Keep",
-                    "effect": {
-                        "type": "Cost",
-                        "amount": -1
-                    }
+                    "effects": [
+                        {
+                            "type": "Cost",
+                            "amount": -1
+                        }
+                    ]
                 }
             ],
             "addressables": {

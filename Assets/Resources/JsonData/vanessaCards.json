@@ -233,11 +233,13 @@
                                     }
                                 ]
                             },
-                            "effect": {
-                                "type": "Discard",
-                                "target": "DrawnCard"
-                            },
-                            "subject": "DrawnCard"
+                            "subject": "DrawnCard",
+                            "effects": [
+                                {
+                                    "type": "Discard",
+                                    "target": "DrawnCard"
+                                }
+                            ]
                         },
                         "subject": "DrawnCard"
                     }
@@ -304,13 +306,15 @@
                                     }
                                 ]
                             },
-                            "effect": {
-                                "type": "Buff",
-                                "buffId": 3002,
-                                "amount": 1,
-                                "target": "Self"
-                            },
-                            "subject": "DrawnCard"
+                            "subject": "DrawnCard",
+                            "effects": [
+                                {
+                                    "type": "Buff",
+                                    "buffId": 3002,
+                                    "amount": 1,
+                                    "target": "Self"
+                                }
+                            ]
                         },
                         "subject": "DrawnCard"
                     }
@@ -821,12 +825,14 @@
                 },
                 {
                     "type": "Keep",
-                    "effect": {
-                        "type": "ModifyCard",
-                        "param": "Damage",
-                        "amountFormula": "Stack(2002)",
-                        "target": "Self"
-                    }
+                    "effects": [
+                        {
+                            "type": "ModifyCard",
+                            "param": "Damage",
+                            "amountFormula": "Stack(2002)",
+                            "target": "Self"
+                        }
+                    ]
                 }
             ],
             "addressables": {

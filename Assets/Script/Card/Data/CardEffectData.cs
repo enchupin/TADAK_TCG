@@ -41,6 +41,12 @@ public class CardEffectData
 
     [Header("Reactive Effect")]
     [SerializeReference] public CardEffectData onAction;
+    // onAction 실행 문맥(전달 데이터 식별자)
+    // JSON의 subject 값을 그대로 보존하기 위한 필드.
+    // 예: SelectedCard, DrawnCard, GeneratedCard, LostBarrier, UnblockedDamage
+    // 현재 CreateEffect() 단계에서는 런타임 Effect 인스턴스로 직접 주입하지 않고,
+    // 데이터/디버깅/후속 확장(런타임 라우팅) 용도로 저장한다.
+    public string subject;
 
     [Header("Targeting / Selection")]
     public List<int> cardIdList;
@@ -58,6 +64,12 @@ public class CardEffectData
     /// </summary>
     public ICardEffect CreateEffect()
     {
+        // 핵심 역할:
+        // - 직렬화된 데이터(CardEffectData)를 런타임 실행 객체(ICardEffect)로 변환한다.
+        // - type에 따라 필요한 필드만 골라 각 Effect 생성자 형태로 전달한다.
+        // 주의:
+        // - JSON/에셋에는 다양한 필드가 공존하지만, 실제 실행 시에는 각 효과가 사용하는 필드만 의미가 있다.
+        // - onAction은 재귀적으로 CreateEffect()를 호출해 체인 형태로 런타임 효과를 구성한다.
         switch (type)
         {
             case EffectType.Repeat:
@@ -135,6 +147,12 @@ public class CardEffectData
 
     private List<ICardEffect> BuildConditionalSuccessEffects()
     {
+        // 조건 성공 시 실행할 효과 리스트를 구성한다.
+        // 우선순위:
+        // 1) conditionData.successEffects (다중)
+        // 2) conditionData.successEffect (단일)
+        // 3) 레거시 subEffects (다중)
+        // 즉, 신규 구조를 우선 사용하고, 없으면 레거시 필드로 폴백한다.
         List<ICardEffect> success = new List<ICardEffect>();
 
         if (conditionData != null)
@@ -172,6 +190,12 @@ public class CardEffectData
 
     private List<ICardEffect> BuildConditionalFailEffects()
     {
+        // 조건 실패 시 실행할 효과 리스트를 구성한다.
+        // 우선순위:
+        // 1) conditionData.elseEffects (다중)
+        // 2) conditionData.failEffect (단일)
+        // 3) 레거시 failEffect (단일)
+        // 성공/실패 모두 동일한 패턴으로 구성해 데이터 스키마 변화에 유연하게 대응한다.
         List<ICardEffect> fail = new List<ICardEffect>();
 
         if (conditionData != null)
