@@ -39,6 +39,7 @@ public class CardEffectData
 
     [Header("Targeting / Selection")]
     public int count;
+    public List<int> formulaCardIdFilter;
 
     [Header("Keyword")]
     public string keyword;

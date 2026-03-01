@@ -278,6 +278,16 @@ public class CardJSONConverter : EditorWindow
             duration = ReadJsonInt(effectObject, "duration")
         };
 
+        string cardIdGroup = ReadJsonString(effectObject, "cardIdGroup");
+        if (!string.IsNullOrWhiteSpace(cardIdGroup)) {
+            if (cardGroups.TryGetValue(cardIdGroup, out List<int> groupCardIds)) {
+                effect.formulaCardIdFilter = new List<int>(groupCardIds);
+            }
+            else {
+                Debug.LogWarning($"[CardJSONConverter] cardIdGroup not found: {cardIdGroup}");
+            }
+        }
+
         if (effectObject["effects"] is JArray subEffectsArray)
         {
             effect.subEffects = new List<CardEffectData>();

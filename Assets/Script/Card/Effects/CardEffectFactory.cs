@@ -47,7 +47,7 @@ public static class CardEffectFactory
                 };
 
             case EffectType.Attack:
-                return new AttackEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, target = effectData.target, onActions = BuildRuntimeEffects(effectData.onAction) };
+                return new AttackEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, cardIdList = effectData.formulaCardIdFilter, target = effectData.target, onActions = BuildRuntimeEffects(effectData.onAction) };
             case EffectType.Barrier:
                 return new BarrierEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, target = effectData.target, onActions = BuildRuntimeEffects(effectData.onAction) };
             case EffectType.DiscardHand:
@@ -73,7 +73,7 @@ public static class CardEffectFactory
             case EffectType.Execute:
                 return new ExecuteDamageEffect { baseDamage = effectData.baseDamage, hpThreshold = effectData.hpThreshold, multiplier = effectData.multiplier };
             case EffectType.Heal:
-                return new HealEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, target = effectData.target };
+                return new HealEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, cardIdList = effectData.formulaCardIdFilter, target = effectData.target };
             case EffectType.MultiplyDefense:
                 return new MultiplyDefenseEffect { amount = effectData.amount, amountFormula = effectData.amountFormula };
             case EffectType.ConsumeDefense:

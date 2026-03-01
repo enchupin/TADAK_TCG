@@ -66,7 +66,16 @@ public static class ConditionEvaluator
             case "Source":
                 return bm.playerData;
             case "Target":
-                return UnityEngine.Object.FindFirstObjectByType<Monster>();
+                if (bm.currentTarget != null && !bm.currentTarget.IsDead()) {
+                    return bm.currentTarget;
+                }
+
+                List<Monster> livingMonsters = bm.GetLivingMonsters();
+                if (livingMonsters != null && livingMonsters.Count == 1) {
+                    return livingMonsters[0];
+                }
+
+                return null;
             case "Hand":
                 return bm.handManager;
             default:
@@ -101,6 +110,7 @@ public static class ConditionEvaluator
             {
                 case "Hp": return monster.hp;
                 case "Defense": return monster.defense;
+                case "HasAttackIntent": return monster.PlannedIntentType == MonsterIntentType.Attack ? 1f : 0f;
                 case "Buff":
                     int monsterBuffId = int.Parse(param);
                     Buff monsterBuff = monster.currentBuffs.Find(b => b.data.buffId == monsterBuffId);

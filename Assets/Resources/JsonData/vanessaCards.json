@@ -484,7 +484,7 @@
                                 "subject": "Source",
                                 "property": "HasLostHpThisTurn",
                                 "operator": "Eq",
-                                "value": true
+                                "value": 1
                             }
                         ],
                         "effects": [
@@ -523,9 +523,9 @@
                         "checks": [
                             {
                                 "subject": "Target",
-                                "property": "Intent",
+                                "property": "HasAttackIntent",
                                 "operator": "Eq",
-                                "value": "Attack"
+                                "value": 1
                             }
                         ],
                         "effects": [
