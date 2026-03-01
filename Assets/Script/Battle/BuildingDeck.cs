@@ -92,12 +92,6 @@ public class BuildingDeck
             clonedCard.enforceCardIds = sourceCard.enforceCardIds != null
                 ? new List<int>(sourceCard.enforceCardIds)
                 : new List<int>();
-            clonedCard.artworkAddress = sourceCard.artworkAddress;
-            clonedCard.effectAddress = sourceCard.effectAddress;
-            clonedCard.soundAddress = sourceCard.soundAddress;
-            clonedCard.artwork = sourceCard.artwork;
-            clonedCard.effectPrefab = sourceCard.effectPrefab;
-            clonedCard.soundClip = sourceCard.soundClip;
 
             copiedDeck.Add(clonedCard);
         }

@@ -109,16 +109,89 @@ public class CardInteractionHandler : UIHoverEffect,
         CardController cc = cardUI.GetComponent<CardController>();
         if (cc == null || cc.Card == null || cc.Card.effects == null) return false;
 
-        foreach (var effect in cc.Card.effects)
-        {
-            if (effect is ExecuteDamageEffect) return true;
-            if (effect is DamageEffect damageEffect && damageEffect.target == TargetType.SingleEnemy) return true;
-            if (effect is AttackEffect attackEffect && attackEffect.target == TargetType.SingleEnemy) return true;
-        }
-
-        return false;
+        bool hasSingleEnemyTarget = false;
+        bool hasAllEnemiesTarget = false;
+        CollectTargetingFlags(cc.Card.effects, ref hasSingleEnemyTarget, ref hasAllEnemiesTarget);
+        return hasSingleEnemyTarget && !hasAllEnemiesTarget;
     }
 
+    // 카드 효과 전체를 순회해 단일 대상/광역 대상 포함 여부를 수집한다.
+    private void CollectTargetingFlags(System.Collections.Generic.List<ICardEffect> effects, ref bool hasSingleEnemyTarget, ref bool hasAllEnemiesTarget)
+    {
+        if (effects == null) return;
+        foreach (var nested in effects) {
+            CollectTargetingFlags(nested, ref hasSingleEnemyTarget, ref hasAllEnemiesTarget);
+        }
+    }
+
+    private void CollectTargetingFlags(ICardEffect effect, ref bool hasSingleEnemyTarget, ref bool hasAllEnemiesTarget)
+    {
+        if (effect == null) return;
+
+        if (effect is ExecuteDamageEffect) {
+            hasSingleEnemyTarget = true;
+            return;
+        }
+
+        if (effect is DamageEffect damageEffect) {
+            if (damageEffect.target == TargetType.SingleEnemy) {
+                hasSingleEnemyTarget = true;
+            }
+            else if (damageEffect.target == TargetType.AllEnemies) {
+                hasAllEnemiesTarget = true;
+            }
+
+            CollectTargetingFlags(damageEffect.onActions, ref hasSingleEnemyTarget, ref hasAllEnemiesTarget);
+            return;
+        }
+
+        if (effect is AttackEffect attackEffect) {
+            if (attackEffect.target == TargetType.SingleEnemy) {
+                hasSingleEnemyTarget = true;
+            }
+            else if (attackEffect.target == TargetType.AllEnemies) {
+                hasAllEnemiesTarget = true;
+            }
+
+            CollectTargetingFlags(attackEffect.onActions, ref hasSingleEnemyTarget, ref hasAllEnemiesTarget);
+            return;
+        }
+
+        if (effect is BuffEffect buffEffect) {
+            if (buffEffect.target == TargetType.SingleEnemy) {
+                hasSingleEnemyTarget = true;
+            }
+            else if (buffEffect.target == TargetType.AllEnemies) {
+                hasAllEnemiesTarget = true;
+            }
+            return;
+        }
+
+        if (effect is BarrierEffect barrierEffect) {
+            CollectTargetingFlags(barrierEffect.onActions, ref hasSingleEnemyTarget, ref hasAllEnemiesTarget);
+            return;
+        }
+
+        if (effect is ConditionalEffect conditionalEffect) {
+            CollectTargetingFlags(conditionalEffect.successEffects, ref hasSingleEnemyTarget, ref hasAllEnemiesTarget);
+            CollectTargetingFlags(conditionalEffect.failEffects, ref hasSingleEnemyTarget, ref hasAllEnemiesTarget);
+            return;
+        }
+
+        if (effect is RepeatEffect repeatEffect) {
+            CollectTargetingFlags(repeatEffect.effectsToRepeat, ref hasSingleEnemyTarget, ref hasAllEnemiesTarget);
+            return;
+        }
+
+        if (effect is ConsumeDefenseEffect consumeDefenseEffect) {
+            CollectTargetingFlags(consumeDefenseEffect.nestedEffects, ref hasSingleEnemyTarget, ref hasAllEnemiesTarget);
+            return;
+        }
+
+        if (effect is ChoiceDiscardEffect choiceDiscardEffect) {
+            CollectTargetingFlags(choiceDiscardEffect.effects, ref hasSingleEnemyTarget, ref hasAllEnemiesTarget);
+        }
+    }
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (!CanStartDrag()) return;

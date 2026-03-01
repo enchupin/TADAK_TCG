@@ -371,14 +371,38 @@ public class TrainingBattleManager : MonoBehaviour
                 break;
         }
 
-        if (effect is AttackEffect attack && EffectMatchesDebugTarget(attack.onAction))
-            return true;
-        if (effect is DamageEffect damage && EffectMatchesDebugTarget(damage.onAction))
-            return true;
-        if (effect is BarrierEffect barrier && EffectMatchesDebugTarget(barrier.onAction))
-            return true;
-        if (effect is ConsumeDefenseEffect consume && EffectMatchesDebugTarget(consume.nestedEffect))
-            return true;
+        if (effect is AttackEffect attack && attack.onActions != null)
+        {
+            foreach (ICardEffect nested in attack.onActions)
+            {
+                if (EffectMatchesDebugTarget(nested))
+                    return true;
+            }
+        }
+        if (effect is DamageEffect damage && damage.onActions != null)
+        {
+            foreach (ICardEffect nested in damage.onActions)
+            {
+                if (EffectMatchesDebugTarget(nested))
+                    return true;
+            }
+        }
+        if (effect is BarrierEffect barrier && barrier.onActions != null)
+        {
+            foreach (ICardEffect nested in barrier.onActions)
+            {
+                if (EffectMatchesDebugTarget(nested))
+                    return true;
+            }
+        }
+        if (effect is ConsumeDefenseEffect consume && consume.nestedEffects != null)
+        {
+            foreach (ICardEffect nested in consume.nestedEffects)
+            {
+                if (EffectMatchesDebugTarget(nested))
+                    return true;
+            }
+        }
         if (effect is RepeatEffect repeat && repeat.effectsToRepeat != null)
         {
             foreach (ICardEffect nested in repeat.effectsToRepeat)

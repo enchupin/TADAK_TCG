@@ -39,12 +39,35 @@ public class BuffEffect : ICardEffect
         {
             manager.playerData.AddBuff(buffId, finalAmount);
         }
-        else if (target == TargetType.SingleEnemy || target == TargetType.AllEnemies)
+        else if (target == TargetType.SingleEnemy)
         {
-            Monster[] monsters = UnityEngine.Object.FindObjectsByType<Monster>(UnityEngine.FindObjectsSortMode.None);
-            foreach (var m in monsters)
+            Monster targetMonster = manager.currentTarget;
+            if (targetMonster == null)
             {
-                m.AddBuff(buffId, finalAmount);
+                System.Collections.Generic.List<Monster> livingMonsters = manager.GetLivingMonsters();
+                if (livingMonsters != null && livingMonsters.Count == 1)
+                {
+                    targetMonster = livingMonsters[0];
+                }
+            }
+
+            if (targetMonster != null && !targetMonster.IsDead())
+            {
+                targetMonster.AddBuff(buffId, finalAmount);
+            }
+        }
+        else if (target == TargetType.AllEnemies)
+        {
+            System.Collections.Generic.List<Monster> livingMonsters = manager.GetLivingMonsters();
+            if (livingMonsters == null)
+                return;
+
+            foreach (Monster monster in livingMonsters)
+            {
+                if (monster != null && !monster.IsDead())
+                {
+                    monster.AddBuff(buffId, finalAmount);
+                }
             }
         }
     }

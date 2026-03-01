@@ -256,7 +256,8 @@
                     "onAction": {
                         "type": "Damage",
                         "amountFormula": "discarded * 8",
-                        "target": "Enemy"
+                        "target": "Enemy",
+                        "subject": "DiscardedCount"
                     }
                 }
             ],
@@ -279,7 +280,8 @@
                     "onAction": {
                         "type": "Damage",
                         "amountFormula": "exhausted * 12",
-                        "target": "Enemy"
+                        "target": "Enemy",
+                        "subject": "ExhaustedCount"
                     }
                 }
             ],
@@ -305,7 +307,8 @@
                     "amountFormula": "all",
                     "onAction": {
                         "type": "Draw",
-                        "amountFormula": "discarded"
+                        "amountFormula": "discarded",
+                        "subject": "DiscardedCount"
                     }
                 }
             ],
@@ -323,7 +326,6 @@
             "description": "이 카드의 비용이 2 이하일 때 피해를 40 입힙니다.",
             "effects": [
                 {
-                    "type": "Conditional",
                     "condition": {
                         "checks": [
                             {
@@ -363,7 +365,8 @@
                     "onAction": {
                         "type": "ReduceCost",
                         "amount": 1,
-                        "duration": "Turn"
+                        "duration": "Turn",
+                        "subject": "DrawnCard"
                     }
                 }
             ],
@@ -391,7 +394,8 @@
                     "onAction": {
                         "type": "ReduceCost",
                         "amount": 1,
-                        "duration": "Turn"
+                        "duration": "Turn",
+                        "subject": "DrawnCard"
                     }
                 }
             ],
@@ -416,7 +420,8 @@
                     "onAction": {
                         "type": "ReduceCost",
                         "amount": 1,
-                        "duration": "Turn"
+                        "duration": "Turn",
+                        "subject": "GeneratedCard"
                     }
                 }
             ],
@@ -442,7 +447,8 @@
                     "onAction": {
                         "type": "ReduceCost",
                         "amount": 1,
-                        "duration": "Turn"
+                        "duration": "Turn",
+                        "subject": "DrawnCard"
                     }
                 }
             ],
@@ -466,7 +472,7 @@
                         "condition": {
                             "checks": [
                                 {
-                                    "subject": "EventValue",
+                                    "subject": "DrawnCard",
                                     "property": "CharacterId",
                                     "operator": "Eq",
                                     "value": 201
@@ -480,7 +486,8 @@
                                     "target": "RandEnemy"
                                 }
                             ]
-                        }
+                        },
+                        "subject": "DrawnCard"
                     }
                 }
             ],
@@ -504,7 +511,8 @@
                     "onAction": {
                         "type": "ReduceCost",
                         "amount": 1,
-                        "duration": "Game"
+                        "duration": "Game",
+                        "subject": "DrawnCard"
                     }
                 }
             ],
@@ -522,7 +530,6 @@
             "description": "모든 적에게 피해를 4 입힙니다. 적이 혼자인 경우, 대신 피해를 12 입힙니다.",
             "effects": [
                 {
-                    "type": "Conditional",
                     "condition": {
                         "checks": [
                             {
@@ -563,7 +570,6 @@
             "description": "모든 적에게 피해를 4 입힙니다. 적이 혼자인 경우, 대신 피해를 20입힙니다.",
             "effects": [
                 {
-                    "type": "Conditional",
                     "condition": {
                         "checks": [
                             {

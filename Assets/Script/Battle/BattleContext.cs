@@ -7,22 +7,22 @@ using UnityEngine;
 public class BattleContext
 {
     // 카드 사용 통계
-    public int cardsPlayedThisCombat = 0;
-    public int cardsPlayedThisTurn = 0;
-    public List<Card> cardsPlayedThisTurnList = new List<Card>();
-    public List<Card> cardsPlayedThisCombatList = new List<Card>();
+    private int cardsPlayedThisCombat;
+    private int cardsPlayedThisTurn;
+    private readonly List<Card> cardsPlayedThisTurnList = new List<Card>();
+    private readonly List<Card> cardsPlayedThisCombatList = new List<Card>();
 
     // 카드 이동 관련
-    public int cardsDiscardedThisTurn = 0;
-    public int cardsExhaustedThisTurn = 0;
-    public int cardsDrawnThisTurn = 0;
+    public int cardsDiscardedThisTurn;
+    public int cardsExhaustedThisTurn;
+    public int cardsDrawnThisTurn;
 
     // 데미지 관련
-    public int lastDamageDealt = 0;
-    public int totalDamageDealt = 0;
+    public int lastDamageDealt;
+    public int totalDamageDealt;
 
     // 방어도 관련
-    public int defenseConsumed = 0;
+    public int defenseConsumed;
 
     // 선택된 카드 (Choice -> Effect 연계용)
     private List<Card> selectedCards = new List<Card>();
@@ -34,7 +34,7 @@ public class BattleContext
     {
         return new List<Card>(selectedCards);
     }
-    public void ClearSelectedCards()
+    private void ClearSelectedCards()
     {
         selectedCards.Clear();
     }

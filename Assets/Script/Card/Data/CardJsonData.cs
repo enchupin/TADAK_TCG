@@ -5,11 +5,6 @@ using System.Collections.Generic;
 /// JSON deserialization DTOs for card conversion.
 /// </summary>
 
-[Serializable]
-public class CardDataList
-{
-    public List<CardJsonData> cards;
-}
 
 [Serializable]
 public class CardJsonData
@@ -19,13 +14,13 @@ public class CardJsonData
     public int characterId;
     public int cost;
     public string description;
-    public List<string> keywords;
-    public List<int> enforce;
-    public string enforceGroup;
-    public AddressablesData addressables;
+    public List<string> keywords; // 삭제 예정
+    public string enforceGroup; // 연결 예정
+    public AddressablesData addressables; // 삭제 예정
     public List<EffectJsonData> effects;
 }
 
+// 삭제 예정
 [Serializable]
 public class AddressablesData
 {
@@ -37,51 +32,46 @@ public class AddressablesData
 [Serializable]
 public class EffectJsonData
 {
+    // 효과 타입 문자열
     public string type;
 
+    // onAction/중첩 효과에서 "이 효과가 어떤 데이터를 전달받아 실행되는지"를 명시하는 키
+    public string subject;
+
+    // 
     public int amount;
+
+    // amountFormula는 수식 기반 값 계산용 문자열
     public string amountFormula;
-    public string getAmount;
-    public string GetAmount;
-    public string getamount;
+
     public string target;
 
-    public int baseDamage;
-    public int bonusPerCard;
-
-    public float hpThreshold;
-    public float multiplier;
-
     public string stat;
+
     public int buffId;
-    public string buffType;
+
     public int duration;
 
-    public string keyword;
-
-    public List<RandomCardData> RandomCard;
     public List<int> cardId;
+
     public string cardIdGroup;
 
     public int count;
 
-    public EffectJsonData effect;
+    // effects는 Repeat/Conditional 성공 분기처럼 다중 하위 효과가 필요한 경우 사용
     public List<EffectJsonData> effects;
 
     public ConditionJsonData condition;
-    public EffectJsonData onAction;
 
-    public EffectJsonData successEffect;
-    public EffectJsonData failEffect;
+    // 현재 효과가 끝난 뒤 연쇄적으로 실행할 후속 효과
+    // subject가 함께 정의되면 "어떤 데이터 문맥으로 후속 효과를 실행할지"를 명확히 표현 가능
+    public List<EffectJsonData> onAction;
 }
 
 [Serializable]
 public class ConditionJsonData
 {
-    public string mode;
     public List<CheckJsonData> checks;
-    public EffectJsonData successEffect;
-    public EffectJsonData failEffect;
     public List<EffectJsonData> effects;
     public List<EffectJsonData> elseEffects;
 }

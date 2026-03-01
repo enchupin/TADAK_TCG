@@ -217,7 +217,8 @@
                         "type": "GenerateCard",
                         "cardId": "Selected",
                         "amount": 1,
-                        "target": "Hand"
+                        "target": "Hand",
+                        "subject": "Selected"
                     }
                 }
             ],
@@ -251,7 +252,8 @@
                     "onAction": {
                         "type": "Upgrade",
                         "upgrade": "Random",
-                        "target": "Selected"
+                        "target": "Selected",
+                        "subject": "Selected"
                     }
                 }
             ],
@@ -279,7 +281,8 @@
                         "type": "GenerateCard",
                         "cardId": "Selected",
                         "amount": 1,
-                        "target": "Hand"
+                        "target": "Hand",
+                        "subject": "Selected"
                     }
                 }
             ],
@@ -307,7 +310,8 @@
                         "type": "GenerateCard",
                         "cardId": "Selected",
                         "amount": 3,
-                        "target": "Hand"
+                        "target": "Hand",
+                        "subject": "Selected"
                     }
                 }
             ],
@@ -430,7 +434,8 @@
                     "amount": 2,
                     "onAction": {
                         "type": "Discard",
-                        "target": "Selected"
+                        "target": "Selected",
+                        "subject": "Selected"
                     }
                 },
                 {
@@ -743,48 +748,6 @@
                 {
                     "type": "Draw",
                     "amount": 1
-                }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
-        },
-        {
-            "cardId": 102075,
-            "name": "블랙 잭 +",
-            "characterId": 102,
-            "cost": 0,
-            "keywords": [
-                3,
-                9
-            ],
-            "description": "적 둘을 선택합니다. 둘은 지금부터 파티가 됩니다.",
-            "effects": [
-                {
-                    "type": "SelectEnemy",
-                    "amount": 1,
-                    "storeAs": "Target1"
-                },
-                {
-                    "type": "SelectEnemy",
-                    "amount": 1,
-                    "storeAs": "Target2"
-                },
-                {
-                    "type": "TransferStats",
-                    "from": "Target2",
-                    "to": "Target1",
-                    "stats": [
-                        "Hp",
-                        "Buffs"
-                    ]
-                },
-                {
-                    "type": "Kill",
-                    "target": "Target2",
-                    "silent": true
                 }
             ],
             "addressables": {

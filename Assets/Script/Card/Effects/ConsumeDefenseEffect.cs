@@ -8,7 +8,7 @@ public class ConsumeDefenseEffect : ICardEffect
 {
     public int amount;  // 소모할 방어력 ("all"은 amountFormula로 처리)
     public string amountFormula;  // "all" 또는 수식
-    public ICardEffect nestedEffect;  // 소모 후 실행할 효과
+    public List<ICardEffect> nestedEffects;  // 소모 후 실행할 효과
     
     public void Execute(TrainingBattleManager battleManager)
     {
@@ -20,13 +20,15 @@ public class ConsumeDefenseEffect : ICardEffect
         Debug.Log($"[ConsumeDefenseEffect] 방어력 {actualConsumed} 소모 (남은 방어력: {battleManager.playerData.defense})");
         
         // 중첩 효과 실행 (consumed 값 전달)
-        if (nestedEffect != null && actualConsumed > 0)
+        if (nestedEffects != null && nestedEffects.Count > 0 && actualConsumed > 0)
         {
             // BattleContext에 consumed 값 임시 저장
             int previousConsumed = battleManager.battleContext.defenseConsumed;
             battleManager.battleContext.defenseConsumed = actualConsumed;
             
-            nestedEffect.Execute(battleManager);
+            foreach (ICardEffect nestedEffect in nestedEffects) {
+                nestedEffect?.Execute(battleManager, actualConsumed);
+            }
             
             // 복원
             battleManager.battleContext.defenseConsumed = previousConsumed;

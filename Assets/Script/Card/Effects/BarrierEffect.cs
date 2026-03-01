@@ -1,11 +1,12 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class BarrierEffect : ICardEffect
 {
     public int amount;
     public string amountFormula;
     public TargetType target;
-    public ICardEffect onAction;
+    public List<ICardEffect> onActions;
 
     public void Execute(TrainingBattleManager battleManager)
     {
@@ -19,6 +20,10 @@ public class BarrierEffect : ICardEffect
             battleManager.UpdateAllUI();
         }
 
-        onAction?.Execute(battleManager, finalAmount);
+        if (onActions != null) {
+            foreach (ICardEffect onAction in onActions) {
+                onAction?.Execute(battleManager, finalAmount);
+            }
+        }
     }
 }

@@ -9,7 +9,7 @@ using System.Linq;
 public class ChoiceDiscardEffect : ICardEffect
 {
     public int amount;
-    public ICardEffect effect; // 선택된 카드에 적용할 효과 (예: Pickup)
+    public List<ICardEffect> effects; // 선택된 카드에 적용할 효과 (예: Pickup)
     
     public void Execute(TrainingBattleManager battleManager)
     {
@@ -42,9 +42,11 @@ public class ChoiceDiscardEffect : ICardEffect
         battleManager.battleContext.SetSelectedCards(selectedCards);
         
         // 4. 후속 효과 실행 (Pickup 등)
-        if (effect != null)
+        if (effects != null)
         {
-            effect.Execute(battleManager);
+            foreach (ICardEffect effect in effects) {
+                effect?.Execute(battleManager);
+            }
         }
     }
 }

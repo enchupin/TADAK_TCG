@@ -6,37 +6,20 @@ using System.Collections.Generic;
 /// </summary>
 public static class ConditionEvaluator
 {
-    // Legacy string condition support.
-    public static bool Evaluate(string condition, string value, TrainingBattleManager battleManager)
-    {
-        if (string.IsNullOrEmpty(condition)) return true;
-        return true;
-    }
-
     /// <summary>
-    /// Evaluates ConditionData checks with And/Or mode.
+    /// Evaluates ConditionData checks.
     /// </summary>
     public static bool Evaluate(ConditionData data, TrainingBattleManager battleManager)
     {
         if (data == null || data.checks == null || data.checks.Count == 0) return true;
 
-        bool result = (data.mode == "Or") ? false : true;
-
         foreach (CheckData check in data.checks)
         {
             bool isCheckMet = EvaluateCheck(check, battleManager);
-
-            if (data.mode == "Or")
-            {
-                if (isCheckMet) return true;
-            }
-            else
-            {
-                if (!isCheckMet) return false;
-            }
+            if (!isCheckMet) return false;
         }
 
-        return result;
+        return true;
     }
 
     private static bool EvaluateCheck(CheckData check, TrainingBattleManager battleManager)
@@ -83,7 +66,16 @@ public static class ConditionEvaluator
             case "Source":
                 return bm.playerData;
             case "Target":
-                return UnityEngine.Object.FindFirstObjectByType<Monster>();
+                if (bm.currentTarget != null && !bm.currentTarget.IsDead()) {
+                    return bm.currentTarget;
+                }
+
+                List<Monster> livingMonsters = bm.GetLivingMonsters();
+                if (livingMonsters != null && livingMonsters.Count == 1) {
+                    return livingMonsters[0];
+                }
+
+                return null;
             case "Hand":
                 return bm.handManager;
             default:
@@ -106,6 +98,10 @@ public static class ConditionEvaluator
                     int playerBuffId = int.Parse(param);
                     Buff playerBuff = player.currentBuffs.Find(b => b.data.buffId == playerBuffId);
                     return playerBuff != null ? playerBuff.stack : 0;
+                case "HasBuff":
+                    int playerHasBuffId = int.Parse(param);
+                    Buff playerHasBuff = player.currentBuffs.Find(b => b.data.buffId == playerHasBuffId);
+                    return playerHasBuff != null && playerHasBuff.stack > 0 ? 1f : 0f;
             }
         }
         else if (subject is Monster monster)
@@ -114,10 +110,15 @@ public static class ConditionEvaluator
             {
                 case "Hp": return monster.hp;
                 case "Defense": return monster.defense;
+                case "HasAttackIntent": return monster.PlannedIntentType == MonsterIntentType.Attack ? 1f : 0f;
                 case "Buff":
                     int monsterBuffId = int.Parse(param);
                     Buff monsterBuff = monster.currentBuffs.Find(b => b.data.buffId == monsterBuffId);
                     return monsterBuff != null ? monsterBuff.stack : 0;
+                case "HasBuff":
+                    int monsterHasBuffId = int.Parse(param);
+                    Buff monsterHasBuff = monster.currentBuffs.Find(b => b.data.buffId == monsterHasBuffId);
+                    return monsterHasBuff != null && monsterHasBuff.stack > 0 ? 1f : 0f;
             }
         }
         else if (subject is HandManager hand)

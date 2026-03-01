@@ -48,6 +48,7 @@ public class PlayerData : MonoBehaviour
         }
     }
 
+
     // 체력 관련
     public int hp;
     public int maxHP;
@@ -105,7 +106,16 @@ public class PlayerData : MonoBehaviour
     public void AddBuff(int buffId, int amount)
     {
         BuffData data = BuffManager.Instance.GetBuffData(buffId);
-        if (data == null) return;
+        if (data == null)
+        {
+            data = new BuffData
+            {
+                buffId = buffId,
+                name = $"버프 {buffId}",
+                buffType = 0,
+                description = string.Empty
+            };
+        }
 
         Buff existingBuff = currentBuffs.Find(b => b.data.buffId == buffId);
         if (existingBuff != null)
@@ -181,7 +191,7 @@ public class PlayerData : MonoBehaviour
         defense = 0; // 방어력 리셋
         energy = maxEnergy; // 에너지 회복
         Debug.Log("턴 시작: 방어력 리셋, 에너지 회복");
-        
+
         // Buff trigger processing would go here
     }
 
@@ -191,6 +201,55 @@ public class PlayerData : MonoBehaviour
     public void OnTurnEnd()
     {
         // 턴 종료 시 필요한 처리 (예: 턴 지속 버프 감소 등)
+        int overheatDecay = GetBuffStack(4007);
+        if (overheatDecay > 0)
+        {
+            DecreaseBuffStack(3017, overheatDecay);
+            RemoveBuff(4007);
+        }
+    }
+
+    public int GetBuffStack(int buffId)
+    {
+        Buff buff = currentBuffs.Find(b => b.data != null && b.data.buffId == buffId);
+        return buff != null ? buff.stack : 0;
+    }
+
+    public float GetOverheatBonusMultiplier()
+    {
+        // 과열(3017) 1 스택 = 최종 데미지 10%
+        return GetBuffStack(3017) * 0.1f;
+    }
+
+    public int CalculateFinalDamage(int baseAmount, float cardMultiplier = 1f)
+    {
+        // 합연산 먼저: 기본 피해 + 고정 증가량(힘)
+        int additiveResult = Mathf.Max(0, baseAmount + strength);
+
+        // 곱연산은 마지막: 카드 배수 + 과열 배수(소수점 버림)
+        float totalMultiplier = Mathf.Max(0f, cardMultiplier + GetOverheatBonusMultiplier());
+        return Mathf.FloorToInt(additiveResult * totalMultiplier);
+    }
+
+    private void DecreaseBuffStack(int buffId, int amount)
+    {
+        if (amount <= 0)
+            return;
+
+        Buff buff = currentBuffs.Find(b => b.data != null && b.data.buffId == buffId);
+        if (buff == null)
+            return;
+
+        buff.stack -= amount;
+        if (buff.stack <= 0)
+        {
+            currentBuffs.Remove(buff);
+        }
+    }
+
+    private void RemoveBuff(int buffId)
+    {
+        currentBuffs.RemoveAll(b => b.data != null && b.data.buffId == buffId);
     }
 
     /// <summary>

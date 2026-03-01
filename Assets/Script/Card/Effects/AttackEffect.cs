@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
+using System.Globalization;
 
 public class AttackEffect : ICardEffect
 {
@@ -7,14 +8,12 @@ public class AttackEffect : ICardEffect
     public string amountFormula;
     public List<int> cardIdList;
     public TargetType target;
-    public ICardEffect onAction;
+    public List<ICardEffect> onActions;
 
     public void Execute(TrainingBattleManager battleManager)
     {
         // 유닛 당 데미지
-        int finalAmount = string.IsNullOrWhiteSpace(amountFormula)
-            ? amount
-            : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, cardIdList, amount);
+        int finalAmount = BuildFinalDamageAmount(battleManager);
         int totalDamageDealt = 0; // 총 누적 데미지
 
         switch (target) {
@@ -31,7 +30,7 @@ public class AttackEffect : ICardEffect
                 }
 
                 foreach (var monster in targets) {
-                    totalDamageDealt += monster.TakeDamage(finalAmount, battleManager.playerData.strength);
+                    totalDamageDealt += monster.TakeDamage(finalAmount, 0);
                 }
                 break;
 
@@ -54,7 +53,7 @@ public class AttackEffect : ICardEffect
                     return;
                 }
 
-                totalDamageDealt += targetMonster.TakeDamage(finalAmount, battleManager.playerData.strength);
+                totalDamageDealt += targetMonster.TakeDamage(finalAmount, 0);
                 break;
 
             case TargetType.Self: // 자신에게 데미지
@@ -73,7 +72,49 @@ public class AttackEffect : ICardEffect
             Debug.Log($"[AttackEffect] Damage dealt: {totalDamageDealt}, LastDamage: {battleManager.battleContext.lastDamageDealt}, ThisTurnTotal: {battleManager.battleContext.totalDamageDealt}");
         }
 
-        onAction?.Execute(battleManager, totalDamageDealt);
+        if (onActions != null) {
+            foreach (ICardEffect onAction in onActions) {
+                onAction?.Execute(battleManager, totalDamageDealt);
+            }
+        }
     }
 
+    private int BuildFinalDamageAmount(TrainingBattleManager battleManager)
+    {
+        float cardMultiplier = 1f;
+        int baseAmount = amount;
+
+        if (!string.IsNullOrWhiteSpace(amountFormula))
+        {
+            if (TryParseMultiplierFormula(amountFormula, out float parsedMultiplier))
+            {
+                cardMultiplier = parsedMultiplier;
+            }
+            else
+            {
+                baseAmount = FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, cardIdList, amount);
+            }
+        }
+
+        if (battleManager.playerData == null)
+        {
+            return Mathf.Max(0, baseAmount);
+        }
+
+        return battleManager.playerData.CalculateFinalDamage(baseAmount, cardMultiplier);
+    }
+
+    private bool TryParseMultiplierFormula(string formula, out float multiplier)
+    {
+        multiplier = 1f;
+        if (string.IsNullOrWhiteSpace(formula))
+            return false;
+
+        string trimmed = formula.Trim();
+        if (!trimmed.StartsWith("*"))
+            return false;
+
+        string numeric = trimmed.Substring(1);
+        return float.TryParse(numeric, NumberStyles.Float, CultureInfo.InvariantCulture, out multiplier);
+    }
 }
