@@ -8,7 +8,7 @@ public class AttackEffect : ICardEffect
     public string amountFormula;
     public List<int> cardIdList;
     public TargetType target;
-    public ICardEffect onAction;
+    public List<ICardEffect> onActions;
 
     public void Execute(TrainingBattleManager battleManager)
     {
@@ -72,7 +72,11 @@ public class AttackEffect : ICardEffect
             Debug.Log($"[AttackEffect] Damage dealt: {totalDamageDealt}, LastDamage: {battleManager.battleContext.lastDamageDealt}, ThisTurnTotal: {battleManager.battleContext.totalDamageDealt}");
         }
 
-        onAction?.Execute(battleManager, totalDamageDealt);
+        if (onActions != null) {
+            foreach (ICardEffect onAction in onActions) {
+                onAction?.Execute(battleManager, totalDamageDealt);
+            }
+        }
     }
 
     private int BuildFinalDamageAmount(TrainingBattleManager battleManager)

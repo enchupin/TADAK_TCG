@@ -1,0 +1,177 @@
+using UnityEngine;
+using System.Collections.Generic;
+
+/// <summary>
+/// CardEffectData를 런타임 ICardEffect로 변환하는 팩토리.
+/// </summary>
+public static class CardEffectFactory
+{
+    /// <summary>
+    /// Converts CardEffectData to runtime ICardEffect.
+    /// </summary>
+    public static ICardEffect CreateEffect(CardEffectData effectData)
+    {
+        if (effectData == null)
+        {
+            return null;
+        }
+
+        // 핵심 역할:
+        // - 직렬화된 데이터(CardEffectData)를 런타임 실행 객체(ICardEffect)로 변환한다.
+        // - type에 따라 필요한 필드만 골라 각 Effect 생성자 형태로 전달한다.
+        // 주의:
+        // - JSON/에셋에는 다양한 필드가 공존하지만, 실제 실행 시에는 각 효과가 사용하는 필드만 의미가 있다.
+        // - onAction은 재귀적으로 CreateEffect()를 호출해 체인 형태로 런타임 효과를 구성한다.
+        switch (effectData.type)
+        {
+            case EffectType.Repeat:
+                List<ICardEffect> repeatedEffects = new List<ICardEffect>();
+                if (effectData.subEffects != null)
+                {
+                    foreach (CardEffectData sub in effectData.subEffects)
+                    {
+                        ICardEffect eff = CreateEffect(sub);
+                        if (eff != null) repeatedEffects.Add(eff);
+                    }
+                }
+                return new RepeatEffect { count = effectData.count, countFormula = effectData.amountFormula, effectsToRepeat = repeatedEffects };
+
+            case EffectType.Conditional:
+                List<ICardEffect> success = BuildConditionalSuccessEffects(effectData);
+                List<ICardEffect> fail = BuildConditionalFailEffects(effectData);
+                return new ConditionalEffect
+                {
+                    conditionData = effectData.conditionData,
+                    successEffects = success,
+                    failEffects = fail
+                };
+
+            case EffectType.Attack:
+                return new AttackEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, target = effectData.target, onActions = BuildRuntimeEffects(effectData.onAction) };
+            case EffectType.Barrier:
+                return new BarrierEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, target = effectData.target, onActions = BuildRuntimeEffects(effectData.onAction) };
+            case EffectType.DiscardHand:
+                return new DiscardHandEffect { count = effectData.count, amountFormula = effectData.amountFormula, target = effectData.target };
+            case EffectType.ExhaustHand:
+                return new ExhaustHandEffect { amountFormula = effectData.amountFormula };
+            case EffectType.Scry:
+                return new ScryEffect { count = effectData.count };
+            case EffectType.ChoiceHand:
+                return new ChoiceHandEffect { count = effectData.count };
+            case EffectType.SelectCard:
+                return new SelectCardEffect { count = effectData.count, target = effectData.target };
+            case EffectType.Damage:
+                return new DamageEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, target = effectData.target, onActions = BuildRuntimeEffects(effectData.onAction) };
+            case EffectType.Draw:
+                return new DrawEffect { amount = effectData.amount, amountFormula = effectData.amountFormula };
+            case EffectType.Buff:
+                return new BuffEffect { stat = effectData.stat, buffId = effectData.buffId, amount = effectData.amount, amountFormula = effectData.amountFormula, duration = effectData.duration, target = effectData.target };
+            case EffectType.Energy:
+                return new EnergyEffect { amount = effectData.amount, amountFormula = effectData.amountFormula };
+            case EffectType.DamagePerCardPlayed:
+                return new DamagePerCardPlayedEffect { baseDamage = effectData.baseDamage, bonusPerCard = effectData.bonusPerCard };
+            case EffectType.Execute:
+                return new ExecuteDamageEffect { baseDamage = effectData.baseDamage, hpThreshold = effectData.hpThreshold, multiplier = effectData.multiplier };
+            case EffectType.Heal:
+                return new HealEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, target = effectData.target };
+            case EffectType.MultiplyDefense:
+                return new MultiplyDefenseEffect { amount = effectData.amount, amountFormula = effectData.amountFormula };
+            case EffectType.ConsumeDefense:
+                return new ConsumeDefenseEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, nestedEffects = BuildRuntimeEffects(effectData.subEffects) };
+            case EffectType.GenerateCard:
+                return new GenerateCardEffect { RandomCard = effectData.RandomCard, target = effectData.target };
+            case EffectType.Keyword:
+                return new KeywordEffect { keyword = effectData.keyword, amount = effectData.amount, amountFormula = effectData.amountFormula };
+            case EffectType.ChoiceDiscard:
+                return new ChoiceDiscardEffect { amount = effectData.count, effects = BuildRuntimeEffects(effectData.subEffects) };
+            case EffectType.Pickup:
+                return new PickupEffect();
+            case EffectType.RandomGenerate:
+                Debug.LogWarning($"[CardData] Not implemented effect type: {effectData.type}");
+                return null;
+            default:
+                Debug.LogWarning($"[CardData] Unknown effect type: {effectData.type}");
+                return null;
+        }
+    }
+
+    private static List<ICardEffect> BuildRuntimeEffects(List<CardEffectData> sourceEffects)
+    {
+        List<ICardEffect> runtimeEffects = new List<ICardEffect>();
+        if (sourceEffects == null)
+        {
+            return runtimeEffects;
+        }
+
+        foreach (CardEffectData nestedEffectData in sourceEffects)
+        {
+            ICardEffect effect = CreateEffect(nestedEffectData);
+            if (effect != null)
+            {
+                runtimeEffects.Add(effect);
+            }
+        }
+
+        return runtimeEffects;
+    }
+
+    private static List<ICardEffect> BuildConditionalSuccessEffects(CardEffectData effectData)
+    {
+        // 조건 성공 시 실행할 효과 리스트를 구성한다.
+        // 우선순위:
+        // 1) conditionData.successEffects (다중)
+        // 2) 레거시 subEffects (다중)
+        // 즉, 신규 구조를 우선 사용하고, 없으면 레거시 필드로 폴백한다.
+        List<ICardEffect> success = new List<ICardEffect>();
+
+        if (effectData.conditionData != null)
+        {
+            if (effectData.conditionData.successEffects != null && effectData.conditionData.successEffects.Count > 0)
+            {
+                foreach (CardEffectData nestedEffectData in effectData.conditionData.successEffects)
+                {
+                    ICardEffect effect = CreateEffect(nestedEffectData);
+                    if (effect != null) success.Add(effect);
+                }
+
+                return success;
+            }
+        }
+
+        if (effectData.subEffects != null)
+        {
+            foreach (CardEffectData nestedEffectData in effectData.subEffects)
+            {
+                ICardEffect effect = CreateEffect(nestedEffectData);
+                if (effect != null) success.Add(effect);
+            }
+        }
+
+        return success;
+    }
+
+    private static List<ICardEffect> BuildConditionalFailEffects(CardEffectData effectData)
+    {
+        // 조건 실패 시 실행할 효과 리스트를 구성한다.
+        // 우선순위:
+        // 1) conditionData.elseEffects (다중)
+        // 성공/실패 모두 동일한 패턴으로 구성해 데이터 스키마 변화에 유연하게 대응한다.
+        List<ICardEffect> fail = new List<ICardEffect>();
+
+        if (effectData.conditionData != null)
+        {
+            if (effectData.conditionData.elseEffects != null && effectData.conditionData.elseEffects.Count > 0)
+            {
+                foreach (CardEffectData nestedEffectData in effectData.conditionData.elseEffects)
+                {
+                    ICardEffect effect = CreateEffect(nestedEffectData);
+                    if (effect != null) fail.Add(effect);
+                }
+
+                return fail;
+            }
+        }
+
+        return fail;
+    }
+}

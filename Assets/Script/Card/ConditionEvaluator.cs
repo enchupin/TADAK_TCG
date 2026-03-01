@@ -6,37 +6,20 @@ using System.Collections.Generic;
 /// </summary>
 public static class ConditionEvaluator
 {
-    // Legacy string condition support.
-    public static bool Evaluate(string condition, string value, TrainingBattleManager battleManager)
-    {
-        if (string.IsNullOrEmpty(condition)) return true;
-        return true;
-    }
-
     /// <summary>
-    /// Evaluates ConditionData checks with And/Or mode.
+    /// Evaluates ConditionData checks.
     /// </summary>
     public static bool Evaluate(ConditionData data, TrainingBattleManager battleManager)
     {
         if (data == null || data.checks == null || data.checks.Count == 0) return true;
 
-        bool result = (data.mode == "Or") ? false : true;
-
         foreach (CheckData check in data.checks)
         {
             bool isCheckMet = EvaluateCheck(check, battleManager);
-
-            if (data.mode == "Or")
-            {
-                if (isCheckMet) return true;
-            }
-            else
-            {
-                if (!isCheckMet) return false;
-            }
+            if (!isCheckMet) return false;
         }
 
-        return result;
+        return true;
     }
 
     private static bool EvaluateCheck(CheckData check, TrainingBattleManager battleManager)

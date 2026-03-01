@@ -65,7 +65,7 @@ public class EffectJsonData
 
     // 현재 효과가 끝난 뒤 연쇄적으로 실행할 후속 효과
     // subject가 함께 정의되면 "어떤 데이터 문맥으로 후속 효과를 실행할지"를 명확히 표현 가능
-    public EffectJsonData onAction;
+    public List<EffectJsonData> onAction;
 }
 
 [Serializable]

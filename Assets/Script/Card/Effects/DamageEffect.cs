@@ -12,7 +12,7 @@ public class DamageEffect : ICardEffect
     public int amount;
     public string amountFormula;
     public TargetType target = TargetType.SingleEnemy;
-    public ICardEffect onAction;
+    public List<ICardEffect> onActions;
 
     public void Execute(TrainingBattleManager battleManager)
     {
@@ -69,9 +69,10 @@ public class DamageEffect : ICardEffect
 
         battleManager.battleContext.OnDamageDealt(totalDamageDealt);
 
-        if (onAction != null)
-        {
-            onAction.Execute(battleManager);
+        if (onActions != null) {
+            foreach (ICardEffect onAction in onActions) {
+                onAction?.Execute(battleManager, totalDamageDealt);
+            }
         }
 
         battleManager.UpdateAllUI();
