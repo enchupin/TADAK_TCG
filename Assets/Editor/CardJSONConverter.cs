@@ -157,10 +157,9 @@ public class CardJSONConverter : EditorWindow
                 continue;
             }
 
-            int cardId = ReadJsonInt(cardObject, "cardId");
+            int cardId = ReadRequiredJsonInt(cardObject, "cardId");
             if (cardId <= 0) {
-                Debug.LogWarning($"[CardJSONConverter] Skipped card without valid cardId in {assetPath}");
-                continue;
+                throw new ArgumentException($"[CardJSONConverter] cardId must be greater than 0 in {assetPath}");
             }
 
             CardData cardData = GetOrCreateCardData(cardObject, cardId, existingById);
@@ -215,11 +214,11 @@ public class CardJSONConverter : EditorWindow
     /// </summary>
     private void UpdateCardData(CardData cardData, JObject cardObject)
     {
-        cardData.cardId = ReadJsonInt(cardObject, "cardId");
-        cardData.cardName = ReadJsonString(cardObject, "name");
-        cardData.character = CharacterManager.GetCharacterEnumById(ReadJsonInt(cardObject, "cardId")/100);
-        cardData.cost = ReadJsonInt(cardObject, "cost");
-        cardData.description = ReadJsonString(cardObject, "description");
+        cardData.cardId = ReadRequiredJsonInt(cardObject, "cardId");
+        cardData.cardName = ReadRequiredJsonString(cardObject, "name");
+        cardData.character = CharacterManager.GetCharacterEnumById(ReadRequiredJsonInt(cardObject, "characterId"));
+        cardData.cost = ReadRequiredJsonInt(cardObject, "cost");
+        cardData.description = ReadRequiredJsonString(cardObject, "description");
 
         cardData.enforceCardIds.Clear();
         string enforceGroup = ReadJsonString(cardObject, "enforceGroup");
@@ -544,23 +543,54 @@ public class CardJSONConverter : EditorWindow
         {
             case "Attack": return EffectType.Attack;
             case "Damage": return EffectType.Damage;
-            case "Defense":
             case "Barrier": return EffectType.Barrier;
             case "Draw": return EffectType.Draw;
-            case "Buff": return EffectType.Buff;
-            case "Energy": return EffectType.Energy;
-            case "Heal": return EffectType.Heal;
+            case "DrawSpecific": return EffectType.Draw; // 추후 삭제 or 수정 예정
+            case "Buff": return EffectType.Buff; 
+            case "Energy": return EffectType.Energy; 
+            case "Heal": return EffectType.Heal; 
             case "MultiplyDefense":
-            case "MultimediaDefense": return EffectType.MultiplyDefense;
-            case "ConsumeDefense": return EffectType.ConsumeDefense;
-            case "GenerateCard": return EffectType.GenerateCard;
-            case "Keyword": return EffectType.Keyword;
-            case "DiscardHand": return EffectType.DiscardHand;
-            case "ChoiceDiscard": return EffectType.ChoiceDiscard;
-            case "Pickup": return EffectType.Pickup;
-            case "ExhaustHand": return EffectType.ExhaustHand;
-            case "Repeat": return EffectType.Repeat;
-            default: throw new ArgumentException($"[CardJSONConverter] Unknown effect type: {type}");
+            case "MultimediaDefense": return EffectType.MultiplyDefense; // 추후 삭제 or 수정 예정
+            case "ConsumeDefense": return EffectType.ConsumeDefense; // 추후 삭제 or 수정 예정
+            case "GenerateCard": return EffectType.GenerateCard; // 추후 삭제 or 수정 예정
+            case "Keyword": return EffectType.Keyword; // 추후 삭제 or 수정 예정
+            case "DiscardHand": return EffectType.DiscardHand; // 추후 삭제 or 수정 예정
+            case "ChoiceDiscard": return EffectType.ChoiceDiscard; // 추후 삭제 or 수정 예정
+            case "Pickup": return EffectType.Pickup; // 추후 삭제 or 수정 예정
+            case "ExhaustHand": return EffectType.ExhaustHand; // 추후 삭제 or 수정 예정
+            case "Conditional": return EffectType.Conditional; // 추후 삭제 or 수정 예정
+            case "Repeat": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "ReduceCost": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "ChoiceCard": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "Move": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "Copy": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "RandGenerate": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "ChoiceGenerate": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "ChoiceHand": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "Discard": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "Keep": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "Cost": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "CreateCard": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "SelectCard": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "Upgrade": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "MixBuff": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "ModifyCards": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "ModifyCard": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "Kill": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "ChangeStat": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "ExtraTurn": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "Stamina": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "SelectEnemy": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "TransferStats": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "MultiplyBarrier": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "Trigger": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "RemoveBuff": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "Scry": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "DrawnCard": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+
+            default:
+                Debug.LogWarning($"[CardJSONConverter] Unknown effect type: {type}. Fallback to Repeat.");
+                return EffectType.Repeat;
         }
     }
 
@@ -574,9 +604,8 @@ public class CardJSONConverter : EditorWindow
     /// <exception cref="ArgumentException"> target이 null이거나 비어있으면 예외 발생 </exception>
     private static TargetType ParseTargetType(string target)
     {
-        if (string.IsNullOrWhiteSpace(target))
-        {
-            throw new ArgumentException("[CardJSONConverter] Missing required target type.");
+        if (string.IsNullOrWhiteSpace(target)) {
+            return TargetType.None;
         }
 
         switch (target)
@@ -594,7 +623,9 @@ public class CardJSONConverter : EditorWindow
             case "DrawPile": return TargetType.Deck;
             case "None":
             case "Selected": return TargetType.None;
-            default: throw new ArgumentException($"[CardJSONConverter] Unknown target type: {target}");
+            default:
+                Debug.LogWarning($"[CardJSONConverter] Unknown target type: {target}. Fallback to None.");
+                return TargetType.None;
         }
     }
 
@@ -684,6 +715,30 @@ public class CardJSONConverter : EditorWindow
         }
 
         return defaultValue;
+    }
+
+    private static string ReadRequiredJsonString(JObject obj, string key)
+    {
+        if (obj == null || obj[key] == null || obj[key].Type == JTokenType.Null || obj[key].Type == JTokenType.Undefined) {
+            throw new ArgumentException($"[CardJSONConverter] Missing required string field: {key}");
+        }
+
+        return ReadJsonString(obj[key], string.Empty);
+    }
+
+    private static int ReadRequiredJsonInt(JObject obj, string key)
+    {
+        if (obj == null || obj[key] == null || obj[key].Type == JTokenType.Null || obj[key].Type == JTokenType.Undefined) {
+            throw new ArgumentException($"[CardJSONConverter] Missing required int field: {key}");
+        }
+
+        JToken token = obj[key];
+        int parsed = ReadJsonInt(token, int.MinValue);
+        if (parsed == int.MinValue) {
+            throw new ArgumentException($"[CardJSONConverter] Required int field is invalid: {key}");
+        }
+
+        return parsed;
     }
 
     /// <summary>

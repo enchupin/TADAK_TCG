@@ -755,48 +755,6 @@
                 "effect": "",
                 "sound": ""
             }
-        },
-        {
-            "cardId": 102075,
-            "name": "블랙 잭 +",
-            "characterId": 102,
-            "cost": 0,
-            "keywords": [
-                3,
-                9
-            ],
-            "description": "적 둘을 선택합니다. 둘은 지금부터 파티가 됩니다.",
-            "effects": [
-                {
-                    "type": "SelectEnemy",
-                    "amount": 1,
-                    "storeAs": "Target1"
-                },
-                {
-                    "type": "SelectEnemy",
-                    "amount": 1,
-                    "storeAs": "Target2"
-                },
-                {
-                    "type": "TransferStats",
-                    "from": "Target2",
-                    "to": "Target1",
-                    "stats": [
-                        "Hp",
-                        "Buffs"
-                    ]
-                },
-                {
-                    "type": "Kill",
-                    "target": "Target2",
-                    "silent": true
-                }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
         }
     ]
 }
