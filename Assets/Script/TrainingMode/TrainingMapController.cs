@@ -15,6 +15,7 @@ public class TrainingMapController : MonoBehaviour
 
     [Header("Run Setup")]
     [SerializeField] private string battleSceneName = "TrainingScene";
+    [SerializeField] private string restSceneName = "TrainingRestScene";
     [SerializeField] private bool autoStartRunIfMissing = true;
     [SerializeField] private int defaultStageCount = 6;
     [SerializeField] private int defaultLaneCount = 3;
@@ -86,6 +87,20 @@ public class TrainingMapController : MonoBehaviour
             return;
 
         Debug.Log($"[TrainingMapController] Node selected: {node.nodeId} ({node.nodeType})");
+
+        if (node.nodeType == TrainingNodeType.Rest)
+        {
+            if (string.IsNullOrEmpty(restSceneName))
+            {
+                Debug.LogWarning("[TrainingMapController] Rest scene is empty. Resolving rest node immediately.");
+                TrainingRunState.CompletePendingNode(true);
+                BuildMapUI();
+                return;
+            }
+
+            SceneManager.LoadScene(restSceneName);
+            return;
+        }
 
         if (NodeRequiresBattle(node.nodeType))
         {
