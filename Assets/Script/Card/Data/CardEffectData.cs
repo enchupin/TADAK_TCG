@@ -37,6 +37,11 @@ public class CardEffectData
     [SerializeReference] public List<CardEffectData> onAction;
     public string subject;
 
+    [Header("Move")]
+    public MoveZoneType from;
+    public MoveZoneType to;
+    public MovePositionType position;
+
     [Header("Targeting / Selection")]
     public int count;
     public List<int> formulaCardIdFilter;

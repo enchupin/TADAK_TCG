@@ -32,5 +32,6 @@ public enum EffectType
     Increase,
     Cancel,
     Pickup,
-    DrawBasic
+    DrawBasic,
+    Move
 }

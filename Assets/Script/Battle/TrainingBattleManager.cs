@@ -306,42 +306,103 @@ public class TrainingBattleManager : MonoBehaviour
     [ContextMenu("Debug Draw Cards By Effect")]
     public void DebugDrawSpecificEffectCard()
     {
-        if (!isDebugMode || handManager == null)
+        if (!isDebugMode || handManager == null) {
             return;
+        }
 
         List<Card> matchingCards = new List<Card>();
         List<CardData> allCardData = CardManager.GetAllCards();
-        foreach (CardData cardData in allCardData)
-        {
-            if (cardData == null)
+        foreach (CardData cardData in allCardData) {
+            if (cardData == null) {
                 continue;
+            }
+
+            if (!CardDataHasDebugTargetEffect(cardData)) {
+                continue;
+            }
 
             Card card = cardData.ToCard();
-            if (card == null)
+            if (card == null) {
                 continue;
-
-            if (CardHasDebugTargetEffect(card))
-            {
-                matchingCards.Add(card);
             }
+
+            matchingCards.Add(card);
         }
 
-        if (matchingCards.Count > 0)
-        {
+        if (matchingCards.Count > 0) {
             Debug.Log($"[Debug] Added {matchingCards.Count} cards with {debugTargetEffect} effect from CardManager.");
             handManager.AddCard(matchingCards);
-            if (battleContext != null)
-            {
+            if (battleContext != null) {
                 battleContext.OnCardsDrawn(matchingCards.Count);
             }
         }
-        else
-        {
-            Debug.LogWarning($"[Debug] No cards with {debugTargetEffect} effect found in deck.");
+        else {
+            Debug.LogWarning($"[Debug] No cards with {debugTargetEffect} effect found in CardManager cache. 카드 JSON 변환/카드 컬렉션 갱신 여부를 확인하세요.");
         }
 
         RefreshHandPlayableState();
         UpdateAllUI();
+    }
+
+    private bool CardDataHasDebugTargetEffect(CardData cardData)
+    {
+        if (cardData == null || cardData.effects == null) {
+            return false;
+        }
+
+        foreach (CardEffectData effectData in cardData.effects) {
+            if (EffectDataMatchesDebugTarget(effectData)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool EffectDataMatchesDebugTarget(CardEffectData effectData)
+    {
+        if (effectData == null) {
+            return false;
+        }
+
+        if (effectData.type == debugTargetEffect) {
+            return true;
+        }
+
+        if (effectData.onAction != null) {
+            foreach (CardEffectData nested in effectData.onAction) {
+                if (EffectDataMatchesDebugTarget(nested)) {
+                    return true;
+                }
+            }
+        }
+
+        if (effectData.subEffects != null) {
+            foreach (CardEffectData nested in effectData.subEffects) {
+                if (EffectDataMatchesDebugTarget(nested)) {
+                    return true;
+                }
+            }
+        }
+
+        if (effectData.conditionData != null) {
+            if (effectData.conditionData.successEffects != null) {
+                foreach (CardEffectData nested in effectData.conditionData.successEffects) {
+                    if (EffectDataMatchesDebugTarget(nested)) {
+                        return true;
+                    }
+                }
+            }
+            if (effectData.conditionData.elseEffects != null) {
+                foreach (CardEffectData nested in effectData.conditionData.elseEffects) {
+                    if (EffectDataMatchesDebugTarget(nested)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     private bool CardHasDebugTargetEffect(Card card)
@@ -376,6 +437,9 @@ public class TrainingBattleManager : MonoBehaviour
                 break;
             case EffectType.DrawBasic:
                 if (effect is DrawBasicEffect) return true;
+                break;
+            case EffectType.Move:
+                if (effect is MoveEffect) return true;
                 break;
             case EffectType.Attack:
                 if (effect is AttackEffect) return true;

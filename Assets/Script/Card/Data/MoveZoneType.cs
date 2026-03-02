@@ -1,0 +1,9 @@
+[System.Serializable]
+public enum MoveZoneType
+{
+    None,
+    Source,
+    Hand,
+    DrawPile,
+    DiscardPile
+}

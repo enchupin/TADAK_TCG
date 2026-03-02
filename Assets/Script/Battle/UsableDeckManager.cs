@@ -156,6 +156,46 @@ public class UsableDeckManager : MonoBehaviour
         return suffix == 10 || suffix == 20;
     }
 
+    public bool RemoveFromDrawPile(Card card)
+    {
+        if (card == null || usableDeck == null || usableDeck.Count == 0) {
+            return false;
+        }
+
+        List<Card> drawPile = new List<Card>(usableDeck);
+        int index = drawPile.IndexOf(card);
+        if (index < 0) {
+            return false;
+        }
+
+        drawPile.RemoveAt(index);
+        usableDeck = new Queue<Card>(drawPile);
+        return true;
+    }
+
+    public void AddToDrawPileTop(Card card)
+    {
+        if (card == null) {
+            return;
+        }
+
+        List<Card> drawPile = usableDeck != null ? new List<Card>(usableDeck) : new List<Card>();
+        drawPile.Insert(0, card);
+        usableDeck = new Queue<Card>(drawPile);
+    }
+
+    public void AddToDrawPileRandom(Card card)
+    {
+        if (card == null) {
+            return;
+        }
+
+        List<Card> drawPile = usableDeck != null ? new List<Card>(usableDeck) : new List<Card>();
+        int index = Random.Range(0, drawPile.Count + 1);
+        drawPile.Insert(index, card);
+        usableDeck = new Queue<Card>(drawPile);
+    }
+
 
     /// <summary>
     /// 버린 카드를 덱으로 되돌리고 셔플
