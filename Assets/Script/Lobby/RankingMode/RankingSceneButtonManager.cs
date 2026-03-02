@@ -10,8 +10,6 @@ namespace RankingMode
         [SerializeField] private List<Button> characterButtons;
 
         [Header("레이아웃 설정")]
-        [SerializeField] private float startXPosition = 0f; // 시작 X 좌표
-        [SerializeField] private float spawnSpacing = 20f; // 간격
         [SerializeField] private float expandShiftAmount = 160f; // 버튼 클릭 시 뒤 버튼들이 이동하는 거리
 
         private List<CharacterSelectBtn> currentExpandedBtnList = new(); // 현재 활성화된 선택창 오브젝트

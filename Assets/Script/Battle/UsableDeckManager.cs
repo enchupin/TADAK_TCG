@@ -240,6 +240,10 @@ public class UsableDeckManager : MonoBehaviour
         return usableDeck != null ? usableDeck.Count : 0;
     }
 
+    public int GetDiscardPileCount() {
+        return discardPile != null ? discardPile.Count : 0;
+    }
+
     /// <summary>
     /// 외부에서 덱을 설정 (전투 시작 시 호출)
     /// </summary>

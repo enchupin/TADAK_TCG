@@ -14,6 +14,8 @@ public class BattleUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playerEnergyText;
     [SerializeField] private TextMeshProUGUI playerDefenseText;
     [SerializeField] private TextMeshProUGUI overheatText;
+    [SerializeField] private TextMeshProUGUI drawPileCountText;
+    [SerializeField] private TextMeshProUGUI discardPileCountText;
 
     [Header("데이터 참조")]
     [SerializeField] private Monster monster;
@@ -58,6 +60,21 @@ public class BattleUI : MonoBehaviour
         overheatText.text = $"OverHeat : {overheatPercent}%";
     }
 
+    public void UpdateDeckPileCount()
+    {
+        if (battleManager == null || battleManager.usableDeckManager == null) {
+            return;
+        }
+
+        if (drawPileCountText != null) {
+            drawPileCountText.text = $"Deck : {battleManager.usableDeckManager.GetRemainingCardCount()}";
+        }
+
+        if (discardPileCountText != null) {
+            discardPileCountText.text = $"Discard Pile : {battleManager.usableDeckManager.GetDiscardPileCount()}";
+        }
+    }
+
     /// <summary>
     /// 모든 UI 업데이트
     /// </summary>
@@ -67,5 +84,6 @@ public class BattleUI : MonoBehaviour
         UpdateEnergy();
         UpdatePlayerDefense();
         UpdateOverheat();
+        UpdateDeckPileCount();
     }
 }
