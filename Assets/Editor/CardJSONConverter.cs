@@ -29,6 +29,41 @@ public class CardJSONConverter : EditorWindow
         GetWindow<CardJSONConverter>("Card Converter");
     }
 
+    private static MoveZoneType ParseMoveZoneType(string zone, MoveZoneType defaultZone)
+    {
+        if (string.IsNullOrWhiteSpace(zone)) {
+            return defaultZone;
+        }
+
+        switch (zone)
+        {
+            case "Source": return MoveZoneType.Source;
+            case "Hand": return MoveZoneType.Hand;
+            case "Deck":
+            case "DrawPile": return MoveZoneType.DrawPile;
+            case "Discard":
+            case "DiscardPile": return MoveZoneType.DiscardPile;
+            default:
+                Debug.LogWarning($"[CardJSONConverter] Unknown move zone: {zone}. Fallback to {defaultZone}.");
+                return defaultZone;
+        }
+    }
+
+    private static MovePositionType ParseMovePositionType(string position)
+    {
+        if (string.IsNullOrWhiteSpace(position)) {
+            return MovePositionType.None;
+        }
+
+        switch (position)
+        {
+            case "Top": return MovePositionType.Top;
+            case "Random": return MovePositionType.Random;
+            default:
+                Debug.LogWarning($"[CardJSONConverter] Unknown move position: {position}. Fallback to None.");
+                return MovePositionType.None;
+        }
+    }
 
     /// <summary>
     /// CI에서 Unity없이 커맨드라인에서 자동으로 실행할 수 있는 진입점
@@ -254,7 +289,7 @@ public class CardJSONConverter : EditorWindow
     /// <summary>
     /// Json 파일의 effects 키워드를 CardEffectData 타입으로 반환
     /// </summary>
-    private CardEffectData ReadEffect(JObject effectObject)
+    private CardEffectData ReadEffect(JObject effectObject, bool isOnActionContext = false)
     {
         if (effectObject == null) {
             return null;
@@ -270,6 +305,9 @@ public class CardJSONConverter : EditorWindow
             type = ParseEffectType(effectTypeRaw),
             target = ParseTargetType(ReadJsonString(effectObject, "target")),
             subject = ReadJsonString(effectObject, "subject"),
+            from = ParseMoveZoneType(ReadJsonString(effectObject, "from"), MoveZoneType.Source),
+            to = ParseMoveZoneType(ReadJsonString(effectObject, "to"), MoveZoneType.None),
+            position = ParseMovePositionType(ReadJsonString(effectObject, "position")),
             amount = ReadJsonInt(effectObject, "amount"),
             amountFormula = ReadJsonString(effectObject, "amountFormula"),
             count = ReadJsonInt(effectObject, "count"),
@@ -277,6 +315,23 @@ public class CardJSONConverter : EditorWindow
             buffId = ReadJsonInt(effectObject, "buffId"),
             duration = ReadJsonInt(effectObject, "duration")
         };
+
+        if (!string.IsNullOrWhiteSpace(effect.subject) && !isOnActionContext) {
+            throw new ArgumentException("[CardJSONConverter] 'subject' is only allowed inside onAction effects.");
+        }
+
+        if (effect.type == EffectType.Move && string.Equals(effect.subject, "All", StringComparison.OrdinalIgnoreCase)) {
+            throw new ArgumentException("[CardJSONConverter] Move effect cannot use subject=\"All\". Use amountFormula=\"all\".");
+        }
+
+        if (effect.type == EffectType.Move) {
+            bool hasAmount = effect.amount > 0;
+            bool hasAmountFormula = !string.IsNullOrWhiteSpace(effect.amountFormula);
+            bool hasOnActionSubject = isOnActionContext && !string.IsNullOrWhiteSpace(effect.subject);
+            if (!hasAmount && !hasAmountFormula && !hasOnActionSubject) {
+                throw new ArgumentException("[CardJSONConverter] Move effect requires amount/amountFormula, or subject in onAction context.");
+            }
+        }
 
         string cardIdGroup = ReadJsonString(effectObject, "cardIdGroup");
         if (!string.IsNullOrWhiteSpace(cardIdGroup)) {
@@ -298,7 +353,7 @@ public class CardJSONConverter : EditorWindow
                     continue;
                 }
 
-                CardEffectData subEffect = ReadEffect(subEffectObject);
+                CardEffectData subEffect = ReadEffect(subEffectObject, isOnActionContext);
                 if (subEffect != null)
                 {
                     effect.subEffects.Add(subEffect);
@@ -307,14 +362,14 @@ public class CardJSONConverter : EditorWindow
         }
 
         if (effectObject["condition"] is JObject conditionObject) {
-            effect.conditionData = ReadCondition(conditionObject);
+            effect.conditionData = ReadCondition(conditionObject, isOnActionContext);
         }
         if (effectObject["onAction"] is JArray onActionArray) {
-            effect.onAction = ReadEffectList(onActionArray);
+            effect.onAction = ReadEffectList(onActionArray, true);
         }
         else if (effectObject["onAction"] is JObject onActionObject) {
             effect.onAction = new List<CardEffectData>();
-            CardEffectData onAction = ReadEffect(onActionObject);
+            CardEffectData onAction = ReadEffect(onActionObject, true);
             if (onAction != null) {
                 effect.onAction.Add(onAction);
             }
@@ -328,7 +383,7 @@ public class CardJSONConverter : EditorWindow
     /// <summary>
     /// Json파일의 effects 키워드를 List<CardEffectData> 타입으로 반환
     /// </summary>
-    private List<CardEffectData> ReadEffectList(JArray effectsArray) {
+    private List<CardEffectData> ReadEffectList(JArray effectsArray, bool isOnActionContext = false) {
         List<CardEffectData> result = new List<CardEffectData>();
         if (effectsArray == null) {
             return result;
@@ -339,7 +394,7 @@ public class CardJSONConverter : EditorWindow
                 continue;
             }
 
-            CardEffectData effect = ReadEffect(effectObject);
+            CardEffectData effect = ReadEffect(effectObject, isOnActionContext);
             if (effect != null) {
                 result.Add(effect);
             }
@@ -352,7 +407,7 @@ public class CardJSONConverter : EditorWindow
     /// <summary>
     /// Json파일의 condtion 키워드를 CoditinoData Class로 변환
     /// </summary>
-    private ConditionData ReadCondition(JObject conditionObject)
+    private ConditionData ReadCondition(JObject conditionObject, bool isOnActionContext = false)
     {
         if (conditionObject == null) {
             return null;
@@ -381,12 +436,12 @@ public class CardJSONConverter : EditorWindow
 
         if (conditionObject["effects"] is JArray successEffectsArray)
         {
-            condition.successEffects = ReadEffectList(successEffectsArray);
+            condition.successEffects = ReadEffectList(successEffectsArray, isOnActionContext);
         }
 
         if (conditionObject["elseEffects"] is JArray elseEffectsArray)
         {
-            condition.elseEffects = ReadEffectList(elseEffectsArray);
+            condition.elseEffects = ReadEffectList(elseEffectsArray, isOnActionContext);
         }
 
         return condition;
@@ -555,6 +610,7 @@ public class CardJSONConverter : EditorWindow
             case "Damage": return EffectType.Damage;
             case "Barrier": return EffectType.Barrier;
             case "Draw": return EffectType.Draw;
+            case "DrawBasic": return EffectType.DrawBasic;
             case "DrawSpecific": return EffectType.Draw; // 추후 삭제 or 수정 예정
             case "Buff": return EffectType.Buff; 
             case "Energy": return EffectType.Energy; 
@@ -572,16 +628,16 @@ public class CardJSONConverter : EditorWindow
             case "Repeat": return EffectType.Repeat; // 추후 삭제 or 수정 예정
             case "ReduceCost": return EffectType.Repeat; // 추후 삭제 or 수정 예정
             case "ChoiceCard": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "Move": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "Move": return EffectType.Move; // 추후 삭제 or 수정 예정
             case "Copy": return EffectType.Repeat; // 추후 삭제 or 수정 예정
             case "RandGenerate": return EffectType.Repeat; // 추후 삭제 or 수정 예정
             case "ChoiceGenerate": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "ChoiceHand": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "ChoiceHand": return EffectType.ChoiceHand;
             case "Discard": return EffectType.Repeat; // 추후 삭제 or 수정 예정
             case "Keep": return EffectType.Repeat; // 추후 삭제 or 수정 예정
             case "Cost": return EffectType.Repeat; // 추후 삭제 or 수정 예정
             case "CreateCard": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "SelectCard": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "SelectCard": return EffectType.SelectCard;
             case "Upgrade": return EffectType.Repeat; // 추후 삭제 or 수정 예정
             case "MixBuff": return EffectType.Repeat; // 추후 삭제 or 수정 예정
             case "ModifyCards": return EffectType.Repeat; // 추후 삭제 or 수정 예정
@@ -595,7 +651,7 @@ public class CardJSONConverter : EditorWindow
             case "MultiplyBarrier": return EffectType.Repeat; // 추후 삭제 or 수정 예정
             case "Trigger": return EffectType.Repeat; // 추후 삭제 or 수정 예정
             case "RemoveBuff": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "Scry": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "Scry": return EffectType.Scry;
             case "DrawnCard": return EffectType.Repeat; // 추후 삭제 or 수정 예정
 
             default:

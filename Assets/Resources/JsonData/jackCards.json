@@ -77,7 +77,7 @@
             "effects": [
                 {
                     "type": "Move",
-                    "subject": "All",
+                    "amountFormula": "all",
                     "from": "Hand",
                     "to": "DrawPile",
                     "position": "Random"
@@ -85,7 +85,7 @@
                 {
                     "type": "Move",
                     "from": "DiscardPile",
-                    "subject": "All",
+                    "amountFormula": "all",
                     "to": "DrawPile",
                     "position": "Random"
                 },
@@ -110,7 +110,7 @@
                 {
                     "type": "Move",
                     "from": "DiscardPile",
-                    "subject": "All",
+                    "amountFormula": "all",
                     "to": "DrawPile",
                     "position": "Random"
                 },

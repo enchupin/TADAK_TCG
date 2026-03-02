@@ -133,6 +133,26 @@ public class HandManager : MonoBehaviour
         Destroy(cardUI.gameObject);
     }
 
+    public bool RemoveCard(Card card)
+    {
+        if (card == null) {
+            return false;
+        }
+
+        if (!handCardList.Contains(card)) {
+            return false;
+        }
+
+        handCardList.Remove(card);
+
+        CardUI cardUI = GetCardUI(card);
+        if (cardUI != null) {
+            Destroy(cardUI.gameObject);
+        }
+
+        return true;
+    }
+
     public List<Card> ClearHand()
     {
         List<Card> discardedCards = new List<Card>(handCardList);

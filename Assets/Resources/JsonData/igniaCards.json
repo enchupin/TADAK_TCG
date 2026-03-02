@@ -359,8 +359,7 @@
             "description": "내 기본 카드를 1장 뽑습니다. 이번 턴에 그 카드의 비용이 1 감소합니다.",
             "effects": [
                 {
-                    "type": "DrawSpecific",
-                    "cardType": "Basic",
+                    "type": "DrawBasic",
                     "amount": 1,
                     "onAction": {
                         "type": "ReduceCost",
@@ -385,11 +384,7 @@
             "description": "내 기본 카드를 2장 뽑습니다. 이번 턴에 그 카드들의 비용이 1 감소합니다.",
             "effects": [
                 {
-                    "type": "DrawSpecific",
-                    "specific": {
-                        "cardType": "Basic",
-                        "characterId": 201
-                    },
+                    "type": "DrawBasic",
                     "amount": 2,
                     "onAction": {
                         "type": "ReduceCost",
@@ -542,7 +537,7 @@
                             {
                                 "type": "Attack",
                                 "amount": 12,
-                                "target": "Enemy"
+                                "target": "AllEnemies"
                             }
                         ],
                         "elseEffects": [
@@ -582,7 +577,7 @@
                             {
                                 "type": "Attack",
                                 "amount": 20,
-                                "target": "Enemy"
+                                "target": "AllEnemies"
                             }
                         ],
                         "elseEffects": [
