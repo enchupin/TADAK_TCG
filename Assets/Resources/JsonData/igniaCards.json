@@ -542,7 +542,7 @@
                             {
                                 "type": "Attack",
                                 "amount": 12,
-                                "target": "Enemy"
+                                "target": "AllEnemies"
                             }
                         ],
                         "elseEffects": [
@@ -582,7 +582,7 @@
                             {
                                 "type": "Attack",
                                 "amount": 20,
-                                "target": "Enemy"
+                                "target": "AllEnemies"
                             }
                         ],
                         "elseEffects": [
