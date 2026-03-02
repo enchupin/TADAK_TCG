@@ -111,6 +111,15 @@ public class BattleContext
         return count;
     }
 
+    public Card GetLastPlayedCard()
+    {
+        if (cardsPlayedThisTurnList == null || cardsPlayedThisTurnList.Count == 0) {
+            return null;
+        }
+
+        return cardsPlayedThisTurnList[cardsPlayedThisTurnList.Count - 1];
+    }
+
     public void OnCardsDrawn(int count)
     {
         if (count <= 0)

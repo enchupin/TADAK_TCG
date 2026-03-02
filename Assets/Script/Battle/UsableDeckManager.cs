@@ -89,6 +89,73 @@ public class UsableDeckManager : MonoBehaviour
         return drawnCards;
     }
 
+    /// <summary>
+    /// 덱에서 "기본카드"(카드ID 끝자리 010/020)만 지정한 수만큼 드로우
+    /// </summary>
+    public List<Card> DrawBasicCards(int count, Character? characterFilter = null)
+    {
+        List<Card> drawnCards = new List<Card>();
+        if (count <= 0) {
+            return drawnCards;
+        }
+
+        for (int i = 0; i < count; i++) {
+            Card card = DrawBasicCard(characterFilter);
+            if (card == null) {
+                break;
+            }
+
+            drawnCards.Add(card);
+        }
+
+        return drawnCards;
+    }
+
+    /// <summary>
+    /// 덱에서 기본카드 1장을 찾아 드로우 (없으면 null)
+    /// </summary>
+    private Card DrawBasicCard(Character? characterFilter)
+    {
+        if (usableDeck == null || usableDeck.Count == 0) {
+            if (discardPile.Count > 0) {
+                ReshuffleDiscardToDeck();
+            }
+            else {
+                return null;
+            }
+        }
+
+        if (usableDeck == null || usableDeck.Count == 0) {
+            return null;
+        }
+
+        List<Card> drawPile = new List<Card>(usableDeck);
+        int foundIndex = -1;
+
+        for (int i = 0; i < drawPile.Count; i++) {
+            Card candidate = drawPile[i];
+            if (candidate != null && IsBasicCardId(candidate.cardId) && (!characterFilter.HasValue || candidate.character == characterFilter.Value)) {
+                foundIndex = i;
+                break;
+            }
+        }
+
+        if (foundIndex < 0) {
+            return null;
+        }
+
+        Card drawnCard = drawPile[foundIndex];
+        drawPile.RemoveAt(foundIndex);
+        usableDeck = new Queue<Card>(drawPile);
+        return drawnCard;
+    }
+
+    private static bool IsBasicCardId(int cardId)
+    {
+        int suffix = Mathf.Abs(cardId) % 1000;
+        return suffix == 10 || suffix == 20;
+    }
+
 
     /// <summary>
     /// 버린 카드를 덱으로 되돌리고 셔플
