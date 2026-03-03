@@ -517,17 +517,16 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "CardId",
-                    "cardIdGroup": "rune_shape_base_pool",
+                    "from": "Unique",
                     "amount": 1,
                     "onAction": {
                         "type": "ChangeStat",
                         "stat": "CardId",
                         "change": "Set",
                         "amount": "Selected",
-                        "target": "ThisCard",
-                        "subject": "Selected"
-                    }
+                        "target": "ThisCard"
+                    },
+                    "subject": "Selected"
                 }
             ],
             "enforceGroup": "enforce_302070"
@@ -541,17 +540,16 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "CardId",
-                    "cardIdGroup": "rune_shape_plus1_pool",
+                    "from": "Unique",
                     "amount": 1,
                     "onAction": {
                         "type": "ChangeStat",
                         "stat": "CardId",
                         "change": "Set",
                         "amount": "Selected",
-                        "target": "ThisCard",
-                        "subject": "Selected"
-                    }
+                        "target": "ThisCard"
+                    },
+                    "subject": "Selected"
                 }
             ]
         },
@@ -564,17 +562,16 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "CardId",
-                    "cardIdGroup": "rune_shape_plus2_pool",
+                    "from": "Unique",
                     "amount": 1,
                     "onAction": {
                         "type": "ChangeStat",
                         "stat": "CardId",
                         "change": "Set",
                         "amount": "Selected",
-                        "target": "ThisCard",
-                        "subject": "Selected"
-                    }
+                        "target": "ThisCard"
+                    },
+                    "subject": "Selected"
                 }
             ]
         },
@@ -587,17 +584,16 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "CardId",
-                    "cardIdGroup": "rune_shape_plus3_pool",
+                    "from": "Unique",
                     "amount": 1,
                     "onAction": {
                         "type": "ChangeStat",
                         "stat": "CardId",
                         "change": "Set",
                         "amount": "Selected",
-                        "target": "ThisCard",
-                        "subject": "Selected"
-                    }
+                        "target": "ThisCard"
+                    },
+                    "subject": "Selected"
                 }
             ]
         },
@@ -610,17 +606,16 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "CardId",
-                    "cardIdGroup": "rune_shape_plus4_pool",
+                    "from": "Unique",
                     "amount": 1,
                     "onAction": {
                         "type": "ChangeStat",
                         "stat": "CardId",
                         "change": "Set",
                         "amount": "Selected",
-                        "target": "ThisCard",
-                        "subject": "Selected"
-                    }
+                        "target": "ThisCard"
+                    },
+                    "subject": "Selected"
                 }
             ]
         },
@@ -633,17 +628,16 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "CardId",
-                    "cardIdGroup": "rune_shape_plus5_pool",
+                    "from": "Unique",
                     "amount": 1,
                     "onAction": {
                         "type": "ChangeStat",
                         "stat": "CardId",
                         "change": "Set",
                         "amount": "Selected",
-                        "target": "ThisCard",
-                        "subject": "Selected"
-                    }
+                        "target": "ThisCard"
+                    },
+                    "subject": "Selected"
                 }
             ]
         }

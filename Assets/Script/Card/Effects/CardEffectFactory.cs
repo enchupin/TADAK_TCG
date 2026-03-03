@@ -11,10 +11,17 @@ public static class CardEffectFactory
     /// </summary>
     public static ICardEffect CreateEffect(CardEffectData effectData)
     {
+        return CreateEffect(effectData, null);
+    }
+
+    private static ICardEffect CreateEffect(CardEffectData effectData, string inheritedSubject)
+    {
         if (effectData == null)
         {
             return null;
         }
+
+        string resolvedSubject = ResolveSubject(effectData.subject, inheritedSubject);
 
         // 핵심 역할:
         // - 직렬화된 데이터(CardEffectData)를 런타임 실행 객체(ICardEffect)로 변환한다.
@@ -30,15 +37,15 @@ public static class CardEffectFactory
                 {
                     foreach (CardEffectData sub in effectData.subEffects)
                     {
-                        ICardEffect eff = CreateEffect(sub);
+                        ICardEffect eff = CreateEffect(sub, resolvedSubject);
                         if (eff != null) repeatedEffects.Add(eff);
                     }
                 }
                 return new RepeatEffect { count = effectData.count, countFormula = effectData.amountFormula, effectsToRepeat = repeatedEffects };
 
             case EffectType.Conditional:
-                List<ICardEffect> success = BuildConditionalSuccessEffects(effectData);
-                List<ICardEffect> fail = BuildConditionalFailEffects(effectData);
+                List<ICardEffect> success = BuildConditionalSuccessEffects(effectData, resolvedSubject);
+                List<ICardEffect> fail = BuildConditionalFailEffects(effectData, resolvedSubject);
                 return new ConditionalEffect
                 {
                     conditionData = effectData.conditionData,
@@ -47,9 +54,9 @@ public static class CardEffectFactory
                 };
 
             case EffectType.Attack:
-                return new AttackEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, cardIdList = effectData.formulaCardIdFilter, target = effectData.target, onActions = BuildRuntimeEffects(effectData.onAction) };
+                return new AttackEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, cardIdList = effectData.formulaCardIdFilter, target = effectData.target, onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject) };
             case EffectType.Barrier:
-                return new BarrierEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, target = effectData.target, onActions = BuildRuntimeEffects(effectData.onAction) };
+                return new BarrierEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, target = effectData.target, onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject) };
             case EffectType.DiscardHand:
                 return new DiscardHandEffect { count = effectData.count, amountFormula = effectData.amountFormula, target = effectData.target };
             case EffectType.ExhaustHand:
@@ -59,15 +66,21 @@ public static class CardEffectFactory
             case EffectType.ChoiceHand:
                 return new ChoiceHandEffect { count = effectData.count };
             case EffectType.SelectCard:
-                return new SelectCardEffect { count = effectData.count, target = effectData.target };
+                return new SelectCardEffect
+                {
+                    count = effectData.count > 0 ? effectData.count : effectData.amount,
+                    from = effectData.from,
+                    cardIdFilter = effectData.formulaCardIdFilter == null ? null : new List<int>(effectData.formulaCardIdFilter),
+                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
+                };
             case EffectType.Damage:
-                return new DamageEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, target = effectData.target, onActions = BuildRuntimeEffects(effectData.onAction) };
+                return new DamageEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, target = effectData.target, onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject) };
             case EffectType.Draw:
                 return new DrawEffect { amount = effectData.amount, amountFormula = effectData.amountFormula };
             case EffectType.DrawBasic:
                 return new DrawBasicEffect { amount = effectData.amount, amountFormula = effectData.amountFormula };
             case EffectType.Move:
-                return new MoveEffect { from = effectData.from, to = effectData.to, position = effectData.position, subject = effectData.subject, amount = effectData.amount, amountFormula = effectData.amountFormula };
+                return new MoveEffect { from = effectData.from, to = effectData.to, position = effectData.position, subject = resolvedSubject, amount = effectData.amount, amountFormula = effectData.amountFormula };
             case EffectType.Buff:
                 return new BuffEffect { stat = effectData.stat, buffId = effectData.buffId, amount = effectData.amount, amountFormula = effectData.amountFormula, duration = effectData.duration, target = effectData.target };
             case EffectType.Energy:
@@ -81,13 +94,13 @@ public static class CardEffectFactory
             case EffectType.MultiplyDefense:
                 return new MultiplyDefenseEffect { amount = effectData.amount, amountFormula = effectData.amountFormula };
             case EffectType.ConsumeDefense:
-                return new ConsumeDefenseEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, nestedEffects = BuildRuntimeEffects(effectData.subEffects) };
+                return new ConsumeDefenseEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, nestedEffects = BuildRuntimeEffects(effectData.subEffects, resolvedSubject) };
             case EffectType.GenerateCard:
                 return new GenerateCardEffect { RandomCard = effectData.RandomCard, target = effectData.target };
             case EffectType.Keyword:
                 return new KeywordEffect { keyword = effectData.keyword, amount = effectData.amount, amountFormula = effectData.amountFormula };
             case EffectType.ChoiceDiscard:
-                return new ChoiceDiscardEffect { amount = effectData.count, effects = BuildRuntimeEffects(effectData.subEffects) };
+                return new ChoiceDiscardEffect { amount = effectData.count, effects = BuildRuntimeEffects(effectData.subEffects, resolvedSubject) };
             case EffectType.Pickup:
                 return new PickupEffect();
             case EffectType.RandomGenerate:
@@ -99,7 +112,7 @@ public static class CardEffectFactory
         }
     }
 
-    private static List<ICardEffect> BuildRuntimeEffects(List<CardEffectData> sourceEffects)
+    private static List<ICardEffect> BuildRuntimeEffects(List<CardEffectData> sourceEffects, string inheritedSubject = null)
     {
         List<ICardEffect> runtimeEffects = new List<ICardEffect>();
         if (sourceEffects == null)
@@ -109,7 +122,7 @@ public static class CardEffectFactory
 
         foreach (CardEffectData nestedEffectData in sourceEffects)
         {
-            ICardEffect effect = CreateEffect(nestedEffectData);
+            ICardEffect effect = CreateEffect(nestedEffectData, inheritedSubject);
             if (effect != null)
             {
                 runtimeEffects.Add(effect);
@@ -119,7 +132,7 @@ public static class CardEffectFactory
         return runtimeEffects;
     }
 
-    private static List<ICardEffect> BuildConditionalSuccessEffects(CardEffectData effectData)
+    private static List<ICardEffect> BuildConditionalSuccessEffects(CardEffectData effectData, string inheritedSubject)
     {
         // 조건 성공 시 실행할 효과 리스트를 구성한다.
         // 우선순위:
@@ -134,7 +147,7 @@ public static class CardEffectFactory
             {
                 foreach (CardEffectData nestedEffectData in effectData.conditionData.successEffects)
                 {
-                    ICardEffect effect = CreateEffect(nestedEffectData);
+                    ICardEffect effect = CreateEffect(nestedEffectData, inheritedSubject);
                     if (effect != null) success.Add(effect);
                 }
 
@@ -146,7 +159,7 @@ public static class CardEffectFactory
         {
             foreach (CardEffectData nestedEffectData in effectData.subEffects)
             {
-                ICardEffect effect = CreateEffect(nestedEffectData);
+                ICardEffect effect = CreateEffect(nestedEffectData, inheritedSubject);
                 if (effect != null) success.Add(effect);
             }
         }
@@ -154,7 +167,7 @@ public static class CardEffectFactory
         return success;
     }
 
-    private static List<ICardEffect> BuildConditionalFailEffects(CardEffectData effectData)
+    private static List<ICardEffect> BuildConditionalFailEffects(CardEffectData effectData, string inheritedSubject)
     {
         // 조건 실패 시 실행할 효과 리스트를 구성한다.
         // 우선순위:
@@ -168,7 +181,7 @@ public static class CardEffectFactory
             {
                 foreach (CardEffectData nestedEffectData in effectData.conditionData.elseEffects)
                 {
-                    ICardEffect effect = CreateEffect(nestedEffectData);
+                    ICardEffect effect = CreateEffect(nestedEffectData, inheritedSubject);
                     if (effect != null) fail.Add(effect);
                 }
 
@@ -177,5 +190,14 @@ public static class CardEffectFactory
         }
 
         return fail;
+    }
+
+    private static string ResolveSubject(string effectSubject, string inheritedSubject)
+    {
+        if (!string.IsNullOrWhiteSpace(effectSubject)) {
+            return effectSubject;
+        }
+
+        return inheritedSubject;
     }
 }

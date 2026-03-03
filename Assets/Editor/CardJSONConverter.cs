@@ -39,10 +39,12 @@ public class CardJSONConverter : EditorWindow
         {
             case "Source": return MoveZoneType.Source;
             case "Hand": return MoveZoneType.Hand;
-            case "Deck":
             case "DrawPile": return MoveZoneType.DrawPile;
-            case "Discard":
             case "DiscardPile": return MoveZoneType.DiscardPile;
+            case "AllCards": return MoveZoneType.AllCards;
+            case "CardId": return MoveZoneType.CardId;
+            case "Basic": return MoveZoneType.Basic;
+            case "Unique": return MoveZoneType.Unique;
             default:
                 Debug.LogWarning($"[CardJSONConverter] Unknown move zone: {zone}. Fallback to {defaultZone}.");
                 return defaultZone;
@@ -300,12 +302,30 @@ public class CardJSONConverter : EditorWindow
             effectTypeRaw = "Conditional";
         }
 
+        EffectType effectType = ParseEffectType(effectTypeRaw);
+        string fromRaw = ReadJsonString(effectObject, "from");
+        bool hasOnAction = effectObject["onAction"] is JObject || effectObject["onAction"] is JArray;
+
+        // SelectCard Effect는 from 키워드를 소유하도록 강제
+        if (effectType == EffectType.SelectCard && !isOnActionContext && string.IsNullOrWhiteSpace(fromRaw)) {
+            throw new ArgumentException("[CardJSONConverter] SelectCard effect requires 'from' outside onAction context.");
+        }
+
+        // onACtion은 Subject 키워드를 소유하도록 강제
+        if (hasOnAction && string.IsNullOrWhiteSpace(ReadJsonString(effectObject, "subject"))) {
+            throw new ArgumentException("[CardJSONConverter] Effect with onAction requires outer 'subject'.");
+        }
+        
+
+        MoveZoneType fromDefault = effectType == EffectType.SelectCard
+            ? MoveZoneType.None
+            : MoveZoneType.Source;
+
         CardEffectData effect = new CardEffectData
         {
-            type = ParseEffectType(effectTypeRaw),
+            type = effectType,
             target = ParseTargetType(ReadJsonString(effectObject, "target")),
-            subject = ReadJsonString(effectObject, "subject"),
-            from = ParseMoveZoneType(ReadJsonString(effectObject, "from"), MoveZoneType.Source),
+            from = ParseMoveZoneType(fromRaw, fromDefault),
             to = ParseMoveZoneType(ReadJsonString(effectObject, "to"), MoveZoneType.None),
             position = ParseMovePositionType(ReadJsonString(effectObject, "position")),
             amount = ReadJsonInt(effectObject, "amount"),
@@ -313,12 +333,9 @@ public class CardJSONConverter : EditorWindow
             count = ReadJsonInt(effectObject, "count"),
             stat = ReadJsonString(effectObject, "stat"),
             buffId = ReadJsonInt(effectObject, "buffId"),
-            duration = ReadJsonInt(effectObject, "duration")
+            duration = ReadJsonInt(effectObject, "duration"),
+            subject = ReadJsonString(effectObject, "subject")
         };
-
-        if (!string.IsNullOrWhiteSpace(effect.subject) && !isOnActionContext) {
-            throw new ArgumentException("[CardJSONConverter] 'subject' is only allowed inside onAction effects.");
-        }
 
         if (effect.type == EffectType.Move && string.Equals(effect.subject, "All", StringComparison.OrdinalIgnoreCase)) {
             throw new ArgumentException("[CardJSONConverter] Move effect cannot use subject=\"All\". Use amountFormula=\"all\".");
@@ -340,6 +357,19 @@ public class CardJSONConverter : EditorWindow
             }
             else {
                 Debug.LogWarning($"[CardJSONConverter] cardIdGroup not found: {cardIdGroup}");
+            }
+        }
+
+        if (effectObject["cardIds"] is JArray cardIdsArray) {
+            if (effect.formulaCardIdFilter == null) {
+                effect.formulaCardIdFilter = new List<int>();
+            }
+
+            foreach (JToken cardIdToken in cardIdsArray) {
+                int cardId = ReadJsonInt(cardIdToken, 0);
+                if (cardId > 0 && !effect.formulaCardIdFilter.Contains(cardId)) {
+                    effect.formulaCardIdFilter.Add(cardId);
+                }
             }
         }
 
