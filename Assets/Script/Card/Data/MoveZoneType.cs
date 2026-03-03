@@ -7,5 +7,7 @@ public enum MoveZoneType
     DrawPile,
     DiscardPile,
     AllCards,
-    CardId
+    CardId,
+    Basic,
+    Unique
 }

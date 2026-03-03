@@ -517,8 +517,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "from": "CardId",
-                    "cardIdGroup": "rune_shape_base_pool",
+                    "from": "Unique",
                     "amount": 1,
                     "onAction": {
                         "type": "ChangeStat",
@@ -541,8 +540,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "from": "CardId",
-                    "cardIdGroup": "rune_shape_plus1_pool",
+                    "from": "Unique",
                     "amount": 1,
                     "onAction": {
                         "type": "ChangeStat",
@@ -564,8 +562,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "from": "CardId",
-                    "cardIdGroup": "rune_shape_plus2_pool",
+                    "from": "Unique",
                     "amount": 1,
                     "onAction": {
                         "type": "ChangeStat",
@@ -587,8 +584,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "from": "CardId",
-                    "cardIdGroup": "rune_shape_plus3_pool",
+                    "from": "Unique",
                     "amount": 1,
                     "onAction": {
                         "type": "ChangeStat",
@@ -610,8 +606,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "from": "CardId",
-                    "cardIdGroup": "rune_shape_plus4_pool",
+                    "from": "Unique",
                     "amount": 1,
                     "onAction": {
                         "type": "ChangeStat",
@@ -633,8 +628,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "from": "CardId",
-                    "cardIdGroup": "rune_shape_plus5_pool",
+                    "from": "Unique",
                     "amount": 1,
                     "onAction": {
                         "type": "ChangeStat",

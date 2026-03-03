@@ -39,12 +39,12 @@ public class CardJSONConverter : EditorWindow
         {
             case "Source": return MoveZoneType.Source;
             case "Hand": return MoveZoneType.Hand;
-            case "Deck":
             case "DrawPile": return MoveZoneType.DrawPile;
-            case "Discard":
             case "DiscardPile": return MoveZoneType.DiscardPile;
             case "AllCards": return MoveZoneType.AllCards;
             case "CardId": return MoveZoneType.CardId;
+            case "Basic": return MoveZoneType.Basic;
+            case "Unique": return MoveZoneType.Unique;
             default:
                 Debug.LogWarning($"[CardJSONConverter] Unknown move zone: {zone}. Fallback to {defaultZone}.");
                 return defaultZone;

@@ -77,10 +77,16 @@ public class SelectCardEffect : ICardEffect
                 AddUnique(sourceCards, battleManager.usableDeckManager.GetDiscardPile());
                 break;
             case MoveZoneType.AllCards:
-                AddAllCards(sourceCards);
+                AddAllBattleCards(sourceCards, battleManager);
                 break;
             case MoveZoneType.CardId:
                 AddCardsByIdFilter(sourceCards);
+                break;
+            case MoveZoneType.Basic:
+                AddCardsByCardType(sourceCards, battleManager, true);
+                break;
+            case MoveZoneType.Unique:
+                AddCardsByCardType(sourceCards, battleManager, false);
                 break;
             case MoveZoneType.Source:
             case MoveZoneType.None:
@@ -106,16 +112,44 @@ public class SelectCardEffect : ICardEffect
         }
     }
 
-    private static void AddAllCards(List<Card> target)
+    private static void AddAllBattleCards(List<Card> target, TrainingBattleManager battleManager)
     {
-        List<CardData> allCardData = CardManager.GetAllCards();
-        if (allCardData == null) {
+        if (battleManager == null || battleManager.usableDeckManager == null || battleManager.handManager == null) {
             return;
         }
 
-        foreach (CardData cardData in allCardData) {
+        AddHandCards(target, battleManager);
+        AddUnique(target, battleManager.usableDeckManager.GetDiscardPile());
+        AddUnique(target, battleManager.usableDeckManager.GetDrawPile());
+    }
+
+    private static void AddCardsByCardType(List<Card> target, TrainingBattleManager battleManager, bool isBasicTarget)
+    {
+        Character? sourceCharacter = ResolveSourceCharacter(battleManager);
+        if (!sourceCharacter.HasValue) {
+            Debug.LogWarning("[SelectCard] Basic/Unique 기준 캐릭터를 찾을 수 없습니다");
+            return;
+        }
+
+        List<CardData> characterCards = CardManager.GetCardsByCharacter(sourceCharacter.Value);
+        if (characterCards == null) {
+            return;
+        }
+
+        foreach (CardData cardData in characterCards) {
             if (cardData == null) {
                 continue;
+            }
+
+            bool isBasic = IsBasicCardId(cardData.cardId);
+            if (isBasicTarget) {
+                if (!isBasic) {
+                    continue;
+                }
+            } else {
+                if (!IsUniqueCardId(cardData.cardId)) {
+                    continue;
+                }
             }
 
             Card card = cardData.ToCard();
@@ -123,6 +157,20 @@ public class SelectCardEffect : ICardEffect
                 AddUnique(target, card);
             }
         }
+    }
+
+    private static Character? ResolveSourceCharacter(TrainingBattleManager battleManager)
+    {
+        if (battleManager?.battleContext == null) {
+            return null;
+        }
+
+        Card lastPlayedCard = battleManager.battleContext.GetLastPlayedCard();
+        if (lastPlayedCard == null) {
+            return null;
+        }
+
+        return lastPlayedCard.character;
     }
 
     private void AddCardsByIdFilter(List<Card> target)
@@ -164,5 +212,20 @@ public class SelectCardEffect : ICardEffect
         if (!target.Contains(card)) {
             target.Add(card);
         }
+    }
+
+    private static bool IsBasicCardId(int cardId)
+    {
+        int suffix = Mathf.Abs(cardId) % 1000;
+        return suffix == 10 || suffix == 20;
+    }
+
+    private static bool IsUniqueCardId(int cardId)
+    {
+        if (IsBasicCardId(cardId)) {
+            return false;
+        }
+
+        return Mathf.Abs(cardId) % 10 == 0;
     }
 }

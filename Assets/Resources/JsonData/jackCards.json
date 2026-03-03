@@ -164,14 +164,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "from": "CardId",
-                    "cardIds": [
-                        102030,
-                        102040,
-                        102050,
-                        102060,
-                        102070
-                    ],
+                    "from": "Unique",
                     "amount": 1,
                     "onAction": {
                         "type": "GenerateCard",
@@ -196,13 +189,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "from": "CardId",
-                    "cardIds": [
-                        102030,
-                        102050,
-                        102060,
-                        102070
-                    ],
+                    "from": "Unique",
                     "amount": 1,
                     "onAction": {
                         "type": "Upgrade",

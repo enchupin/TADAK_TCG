@@ -2263,6 +2263,7 @@ MonoBehaviour:
   handManager: {fileID: 1234122067}
   battleUI: {fileID: 508993663}
   monsterSpawner: {fileID: 2073456888}
+  battleDeckViewer: {fileID: 0}
   drawCardCount: 6
   playerBaseEnergyPerTurn: 3
   enemyActionDelay: 0.2
@@ -2272,7 +2273,7 @@ MonoBehaviour:
   battleResultTransitionDelay: 0.8
   spawnedMonsters: []
   isDebugMode: 1
-  debugTargetEffect: 33
+  debugTargetEffect: 19
   debugEnergyAmount: 1000
   currentTarget: {fileID: 0}
 --- !u!1001 &1591498645
