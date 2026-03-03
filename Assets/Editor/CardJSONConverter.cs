@@ -43,6 +43,8 @@ public class CardJSONConverter : EditorWindow
             case "DrawPile": return MoveZoneType.DrawPile;
             case "Discard":
             case "DiscardPile": return MoveZoneType.DiscardPile;
+            case "AllCards": return MoveZoneType.AllCards;
+            case "CardId": return MoveZoneType.CardId;
             default:
                 Debug.LogWarning($"[CardJSONConverter] Unknown move zone: {zone}. Fallback to {defaultZone}.");
                 return defaultZone;
@@ -300,12 +302,28 @@ public class CardJSONConverter : EditorWindow
             effectTypeRaw = "Conditional";
         }
 
+        EffectType effectType = ParseEffectType(effectTypeRaw);
+        string fromRaw = ReadJsonString(effectObject, "from");
+        string sourceRaw = ReadJsonString(effectObject, "source");
+
+        if (effectType == EffectType.SelectCard && !string.IsNullOrWhiteSpace(sourceRaw)) {
+            throw new ArgumentException("[CardJSONConverter] SelectCard effect uses deprecated 'source'. Use 'from'.");
+        }
+
+        if (effectType == EffectType.SelectCard && !isOnActionContext && string.IsNullOrWhiteSpace(fromRaw)) {
+            throw new ArgumentException("[CardJSONConverter] SelectCard effect requires 'from' outside onAction context.");
+        }
+
+        MoveZoneType fromDefault = effectType == EffectType.SelectCard
+            ? MoveZoneType.None
+            : MoveZoneType.Source;
+
         CardEffectData effect = new CardEffectData
         {
-            type = ParseEffectType(effectTypeRaw),
+            type = effectType,
             target = ParseTargetType(ReadJsonString(effectObject, "target")),
             subject = ReadJsonString(effectObject, "subject"),
-            from = ParseMoveZoneType(ReadJsonString(effectObject, "from"), MoveZoneType.Source),
+            from = ParseMoveZoneType(fromRaw, fromDefault),
             to = ParseMoveZoneType(ReadJsonString(effectObject, "to"), MoveZoneType.None),
             position = ParseMovePositionType(ReadJsonString(effectObject, "position")),
             amount = ReadJsonInt(effectObject, "amount"),
@@ -340,6 +358,19 @@ public class CardJSONConverter : EditorWindow
             }
             else {
                 Debug.LogWarning($"[CardJSONConverter] cardIdGroup not found: {cardIdGroup}");
+            }
+        }
+
+        if (effectObject["cardIds"] is JArray cardIdsArray) {
+            if (effect.formulaCardIdFilter == null) {
+                effect.formulaCardIdFilter = new List<int>();
+            }
+
+            foreach (JToken cardIdToken in cardIdsArray) {
+                int cardId = ReadJsonInt(cardIdToken, 0);
+                if (cardId > 0 && !effect.formulaCardIdFilter.Contains(cardId)) {
+                    effect.formulaCardIdFilter.Add(cardId);
+                }
             }
         }
 

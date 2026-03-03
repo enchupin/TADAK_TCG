@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -35,6 +36,7 @@ public class TrainingBattleManager : MonoBehaviour
     public HandManager handManager;
     public BattleUI battleUI;
     public MonsterSpawner monsterSpawner;
+    [SerializeField] private BattleDeckViewer battleDeckViewer;
 
     [Header("Turn Settings")]
     public int drawCardCount = 6;
@@ -85,6 +87,11 @@ public class TrainingBattleManager : MonoBehaviour
         encounterSystem = new EncounterSystem(this);
         turnSystem = new TurnSystem(this);
         combatResolver = new CombatResolver(this);
+
+        if (battleDeckViewer == null)
+        {
+            battleDeckViewer = FindAnyObjectByType<BattleDeckViewer>();
+        }
     }
 
     private void Start()
@@ -674,6 +681,17 @@ public class TrainingBattleManager : MonoBehaviour
     {
         if (battleUI != null)
             battleUI.UpdateAllUI();
+    }
+
+    public bool OpenSelectCardPanel(List<Card> selectableCards, int selectCount, Action<List<Card>> onSelected)
+    {
+        if (battleDeckViewer == null)
+        {
+            Debug.LogWarning("[BattleManager] BattleDeckViewer is missing. Fallback to auto selection.");
+            return false;
+        }
+
+        return battleDeckViewer.OpenSelectionPanel(selectableCards, selectCount, onSelected);
     }
 
     private void ApplyDebugEnergy()

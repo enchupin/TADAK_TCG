@@ -59,7 +59,13 @@ public static class CardEffectFactory
             case EffectType.ChoiceHand:
                 return new ChoiceHandEffect { count = effectData.count };
             case EffectType.SelectCard:
-                return new SelectCardEffect { count = effectData.count, target = effectData.target };
+                return new SelectCardEffect
+                {
+                    count = effectData.count > 0 ? effectData.count : effectData.amount,
+                    from = effectData.from,
+                    cardIdFilter = effectData.formulaCardIdFilter == null ? null : new List<int>(effectData.formulaCardIdFilter),
+                    onActions = BuildRuntimeEffects(effectData.onAction)
+                };
             case EffectType.Damage:
                 return new DamageEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, target = effectData.target, onActions = BuildRuntimeEffects(effectData.onAction) };
             case EffectType.Draw:

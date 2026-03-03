@@ -5,5 +5,7 @@ public enum MoveZoneType
     Source,
     Hand,
     DrawPile,
-    DiscardPile
+    DiscardPile,
+    AllCards,
+    CardId
 }

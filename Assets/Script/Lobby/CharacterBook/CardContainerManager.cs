@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// 카드 컨테이너 관리 시스템
@@ -33,6 +35,7 @@ public class CardContainerManager : MonoBehaviour {
     private List<Card> cardList = new List<Card>(); // 카드 컨테이너를 Card 객체로 관리
     
     private GridLayoutGroup gridLayout;
+    private Action<CardController> onCardClicked;
     
 
     private void Awake() {
@@ -184,6 +187,7 @@ public class CardContainerManager : MonoBehaviour {
         CardController controller = cardObj.GetComponent<CardController>();
         if (controller != null) {
             controller.Initialize(card);
+            BindCardClickHandler(cardObj, controller);
         } else {
             Debug.LogWarning($"[CardContainerManager] CardController를 찾을 수 없습니다!");
         }
@@ -234,6 +238,7 @@ public class CardContainerManager : MonoBehaviour {
             Debug.Log($"[CardContainerManager] CardController 발견, 초기화 중...");
             controller.Initialize(card);
             controller.useInteractionHandler = false;
+            BindCardClickHandler(cardObj, controller);
             Debug.Log($"[CardContainerManager] CardController 초기화 완료 (useInteractionHandler=false)");
         } else {
             Debug.LogWarning($"[CardContainerManager] CardController를 찾을 수 없습니다! 프리팹에 CardController가 있는지 확인하세요.");
@@ -303,7 +308,47 @@ public class CardContainerManager : MonoBehaviour {
         return new List<Card>(cardList);
     }
 
+    public void SetCardClickHandler(Action<CardController> clickHandler) {
+        onCardClicked = clickHandler;
+    }
+
+    private void BindCardClickHandler(GameObject cardObj, CardController controller) {
+        if (cardObj == null || controller == null || onCardClicked == null) {
+            return;
+        }
+
+        CardSelectionClickHandler clickHandler = cardObj.GetComponent<CardSelectionClickHandler>();
+        if (clickHandler == null) {
+            clickHandler = cardObj.AddComponent<CardSelectionClickHandler>();
+        }
+
+        clickHandler.Bind(controller, () => onCardClicked?.Invoke(controller));
+    }
 
 
 
+
+}
+
+public class CardSelectionClickHandler : MonoBehaviour, IPointerClickHandler
+{
+    private CardController cardController;
+    private Action onClicked;
+
+    public void Bind(CardController controller, Action clickAction) {
+        cardController = controller;
+        onClicked = clickAction;
+    }
+
+    public void OnPointerClick(PointerEventData eventData) {
+        if (eventData == null || eventData.button != PointerEventData.InputButton.Left) {
+            return;
+        }
+
+        if (cardController == null) {
+            return;
+        }
+
+        onClicked?.Invoke();
+    }
 }
