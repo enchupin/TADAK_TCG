@@ -206,9 +206,9 @@
                     "onAction": {
                         "type": "Damage",
                         "amountFormula": "discarded * 8",
-                        "target": "Enemy",
-                        "subject": "DiscardedCount"
-                    }
+                        "target": "Enemy"
+                    },
+                    "subject": "DiscardedCount"
                 }
             ]
         },
@@ -225,9 +225,9 @@
                     "onAction": {
                         "type": "Damage",
                         "amountFormula": "exhausted * 12",
-                        "target": "Enemy",
-                        "subject": "ExhaustedCount"
-                    }
+                        "target": "Enemy"
+                    },
+                    "subject": "ExhaustedCount"
                 }
             ]
         },
@@ -247,9 +247,9 @@
                     "amountFormula": "all",
                     "onAction": {
                         "type": "Draw",
-                        "amountFormula": "discarded",
-                        "subject": "DiscardedCount"
-                    }
+                        "amountFormula": "discarded"
+                    },
+                    "subject": "DiscardedCount"
                 }
             ]
         },
@@ -294,9 +294,9 @@
                     "onAction": {
                         "type": "ReduceCost",
                         "amount": 1,
-                        "duration": "Turn",
-                        "subject": "DrawnCard"
-                    }
+                        "duration": "Turn"
+                    },
+                    "subject": "DrawnCard"
                 }
             ],
             "enforceGroup": "enforce_201050"
@@ -314,9 +314,9 @@
                     "onAction": {
                         "type": "ReduceCost",
                         "amount": 1,
-                        "duration": "Turn",
-                        "subject": "DrawnCard"
-                    }
+                        "duration": "Turn"
+                    },
+                    "subject": "DrawnCard"
                 }
             ]
         },
@@ -335,9 +335,9 @@
                     "onAction": {
                         "type": "ReduceCost",
                         "amount": 1,
-                        "duration": "Turn",
-                        "subject": "GeneratedCard"
-                    }
+                        "duration": "Turn"
+                    },
+                    "subject": "GeneratedCard"
                 }
             ]
         },
@@ -357,9 +357,9 @@
                     "onAction": {
                         "type": "ReduceCost",
                         "amount": 1,
-                        "duration": "Turn",
-                        "subject": "DrawnCard"
-                    }
+                        "duration": "Turn"
+                    },
+                    "subject": "DrawnCard"
                 }
             ]
         },
@@ -391,9 +391,9 @@
                                     "target": "RandEnemy"
                                 }
                             ]
-                        },
-                        "subject": "DrawnCard"
-                    }
+                        }
+                    },
+                    "subject": "DrawnCard"
                 }
             ]
         },
@@ -411,9 +411,9 @@
                     "onAction": {
                         "type": "ReduceCost",
                         "amount": 1,
-                        "duration": "Game",
-                        "subject": "DrawnCard"
-                    }
+                        "duration": "Game"
+                    },
+                    "subject": "DrawnCard"
                 }
             ]
         },

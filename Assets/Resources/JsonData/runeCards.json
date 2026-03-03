@@ -524,9 +524,9 @@
                         "stat": "CardId",
                         "change": "Set",
                         "amount": "Selected",
-                        "target": "ThisCard",
-                        "subject": "Selected"
-                    }
+                        "target": "ThisCard"
+                    },
+                    "subject": "Selected"
                 }
             ],
             "enforceGroup": "enforce_302070"
@@ -547,9 +547,9 @@
                         "stat": "CardId",
                         "change": "Set",
                         "amount": "Selected",
-                        "target": "ThisCard",
-                        "subject": "Selected"
-                    }
+                        "target": "ThisCard"
+                    },
+                    "subject": "Selected"
                 }
             ]
         },
@@ -569,9 +569,9 @@
                         "stat": "CardId",
                         "change": "Set",
                         "amount": "Selected",
-                        "target": "ThisCard",
-                        "subject": "Selected"
-                    }
+                        "target": "ThisCard"
+                    },
+                    "subject": "Selected"
                 }
             ]
         },
@@ -591,9 +591,9 @@
                         "stat": "CardId",
                         "change": "Set",
                         "amount": "Selected",
-                        "target": "ThisCard",
-                        "subject": "Selected"
-                    }
+                        "target": "ThisCard"
+                    },
+                    "subject": "Selected"
                 }
             ]
         },
@@ -613,9 +613,9 @@
                         "stat": "CardId",
                         "change": "Set",
                         "amount": "Selected",
-                        "target": "ThisCard",
-                        "subject": "Selected"
-                    }
+                        "target": "ThisCard"
+                    },
+                    "subject": "Selected"
                 }
             ]
         },
@@ -635,9 +635,9 @@
                         "stat": "CardId",
                         "change": "Set",
                         "amount": "Selected",
-                        "target": "ThisCard",
-                        "subject": "Selected"
-                    }
+                        "target": "ThisCard"
+                    },
+                    "subject": "Selected"
                 }
             ]
         }

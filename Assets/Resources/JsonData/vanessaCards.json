@@ -155,11 +155,11 @@
                         "amount": 1,
                         "onAction": {
                             "type": "Draw",
-                            "target": "Selected",
-                            "subject": "SelectedCard"
+                            "target": "Selected"
                         },
                         "subject": "ScryCard"
-                    }
+                    },
+                    "subject": "ScryCard"
                 }
             ],
             "enforceGroup": "enforce_202040"
@@ -188,7 +188,6 @@
                                     }
                                 ]
                             },
-                            "subject": "DrawnCard",
                             "effects": [
                                 {
                                     "type": "Discard",
@@ -197,7 +196,8 @@
                             ]
                         },
                         "subject": "DrawnCard"
-                    }
+                    },
+                    "subject": "DrawnCard"
                 }
             ]
         },
@@ -214,9 +214,9 @@
                     "amount": 2,
                     "onAction": {
                         "type": "Discard",
-                        "target": "Selected",
-                        "subject": "SelectedCard"
-                    }
+                        "target": "Selected"
+                    },
+                    "subject": "SelectedCard"
                 },
                 {
                     "type": "Draw",
@@ -251,7 +251,6 @@
                                     }
                                 ]
                             },
-                            "subject": "DrawnCard",
                             "effects": [
                                 {
                                     "type": "Buff",
@@ -262,7 +261,8 @@
                             ]
                         },
                         "subject": "DrawnCard"
-                    }
+                    },
+                    "subject": "DrawnCard"
                 }
             ]
         },
@@ -465,9 +465,9 @@
                     "onAction": {
                         "type": "Attack",
                         "amount": 4,
-                        "target": "Enemy",
-                        "subject": "RepeatCount"
-                    }
+                        "target": "Enemy"
+                    },
+                    "subject": "RepeatCount"
                 }
             ],
             "enforceGroup": "enforce_202060"
@@ -485,9 +485,9 @@
                     "onAction": {
                         "type": "Attack",
                         "amount": 1,
-                        "target": "Enemy",
-                        "subject": "RepeatCount"
-                    }
+                        "target": "Enemy"
+                    },
+                    "subject": "RepeatCount"
                 }
             ]
         },
@@ -507,9 +507,9 @@
                     "onAction": {
                         "type": "Attack",
                         "amount": 4,
-                        "target": "Enemy",
-                        "subject": "RepeatCount"
-                    }
+                        "target": "Enemy"
+                    },
+                    "subject": "RepeatCount"
                 }
             ]
         },
@@ -586,9 +586,9 @@
                         "type": "Buff",
                         "buffId": 3002,
                         "amountFormula": "UnblockedDamage",
-                        "target": "Self",
-                        "subject": "UnblockedDamage"
-                    }
+                        "target": "Self"
+                    },
+                    "subject": "UnblockedDamage"
                 }
             ],
             "enforceGroup": "enforce_202070"
@@ -611,9 +611,9 @@
                         "type": "Buff",
                         "buffId": 3002,
                         "amountFormula": "UnblockedDamage",
-                        "target": "Self",
-                        "subject": "UnblockedDamage"
-                    }
+                        "target": "Self"
+                    },
+                    "subject": "UnblockedDamage"
                 }
             ]
         },
@@ -635,9 +635,9 @@
                         "type": "Buff",
                         "buffId": 3002,
                         "amountFormula": "UnblockedDamage",
-                        "target": "Self",
-                        "subject": "UnblockedDamage"
-                    }
+                        "target": "Self"
+                    },
+                    "subject": "UnblockedDamage"
                 }
             ]
         },
@@ -701,9 +701,9 @@
                         "type": "Buff",
                         "buffId": 3021,
                         "amountFormula": "UnblockedDamage",
-                        "target": "Self",
-                        "subject": "UnblockedDamage"
-                    }
+                        "target": "Self"
+                    },
+                    "subject": "UnblockedDamage"
                 }
             ]
         }

@@ -42,10 +42,10 @@
                     "onAction": {
                         "type": "Move",
                         "from": "Hand",
-                        "subject": "Selected",
                         "to": "DrawPile",
                         "position": "Top"
-                    }
+                    },
+                    "subject": "Selected"
                 }
             ],
             "enforceGroup": "enforce_102030"
@@ -114,10 +114,10 @@
                     "onAction": {
                         "type": "Move",
                         "from": "Source",
-                        "subject": "Selected",
                         "to": "DrawPile",
                         "position": "Top"
-                    }
+                    },
+                    "subject": "Selected"
                 }
             ]
         },
@@ -170,9 +170,9 @@
                         "type": "GenerateCard",
                         "cardId": "Selected",
                         "amount": 1,
-                        "target": "Hand",
-                        "subject": "Selected"
-                    }
+                        "target": "Hand"
+                    },
+                    "subject": "Selected"
                 }
             ],
             "enforceGroup": "enforce_102040"
@@ -194,9 +194,9 @@
                     "onAction": {
                         "type": "Upgrade",
                         "upgrade": "Random",
-                        "target": "Selected",
-                        "subject": "Selected"
-                    }
+                        "target": "Selected"
+                    },
+                    "subject": "Selected"
                 }
             ]
         },
@@ -218,9 +218,9 @@
                         "type": "GenerateCard",
                         "cardId": "Selected",
                         "amount": 1,
-                        "target": "Hand",
-                        "subject": "Selected"
-                    }
+                        "target": "Hand"
+                    },
+                    "subject": "Selected"
                 }
             ]
         },
@@ -242,9 +242,9 @@
                         "type": "GenerateCard",
                         "cardId": "Selected",
                         "amount": 3,
-                        "target": "Hand",
-                        "subject": "Selected"
-                    }
+                        "target": "Hand"
+                    },
+                    "subject": "Selected"
                 }
             ]
         },
@@ -336,9 +336,9 @@
                     "amount": 2,
                     "onAction": {
                         "type": "Discard",
-                        "target": "Selected",
-                        "subject": "Selected"
-                    }
+                        "target": "Selected"
+                    },
+                    "subject": "Selected"
                 },
                 {
                     "type": "Draw",

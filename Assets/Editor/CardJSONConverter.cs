@@ -304,15 +304,18 @@ public class CardJSONConverter : EditorWindow
 
         EffectType effectType = ParseEffectType(effectTypeRaw);
         string fromRaw = ReadJsonString(effectObject, "from");
-        string sourceRaw = ReadJsonString(effectObject, "source");
+        bool hasOnAction = effectObject["onAction"] is JObject || effectObject["onAction"] is JArray;
 
-        if (effectType == EffectType.SelectCard && !string.IsNullOrWhiteSpace(sourceRaw)) {
-            throw new ArgumentException("[CardJSONConverter] SelectCard effect uses deprecated 'source'. Use 'from'.");
-        }
-
+        // SelectCard Effect는 from 키워드를 소유하도록 강제
         if (effectType == EffectType.SelectCard && !isOnActionContext && string.IsNullOrWhiteSpace(fromRaw)) {
             throw new ArgumentException("[CardJSONConverter] SelectCard effect requires 'from' outside onAction context.");
         }
+
+        // onACtion은 Subject 키워드를 소유하도록 강제
+        if (hasOnAction && string.IsNullOrWhiteSpace(ReadJsonString(effectObject, "subject"))) {
+            throw new ArgumentException("[CardJSONConverter] Effect with onAction requires outer 'subject'.");
+        }
+        
 
         MoveZoneType fromDefault = effectType == EffectType.SelectCard
             ? MoveZoneType.None
@@ -322,7 +325,6 @@ public class CardJSONConverter : EditorWindow
         {
             type = effectType,
             target = ParseTargetType(ReadJsonString(effectObject, "target")),
-            subject = ReadJsonString(effectObject, "subject"),
             from = ParseMoveZoneType(fromRaw, fromDefault),
             to = ParseMoveZoneType(ReadJsonString(effectObject, "to"), MoveZoneType.None),
             position = ParseMovePositionType(ReadJsonString(effectObject, "position")),
@@ -331,12 +333,9 @@ public class CardJSONConverter : EditorWindow
             count = ReadJsonInt(effectObject, "count"),
             stat = ReadJsonString(effectObject, "stat"),
             buffId = ReadJsonInt(effectObject, "buffId"),
-            duration = ReadJsonInt(effectObject, "duration")
+            duration = ReadJsonInt(effectObject, "duration"),
+            subject = ReadJsonString(effectObject, "subject")
         };
-
-        if (!string.IsNullOrWhiteSpace(effect.subject) && !isOnActionContext) {
-            throw new ArgumentException("[CardJSONConverter] 'subject' is only allowed inside onAction effects.");
-        }
 
         if (effect.type == EffectType.Move && string.Equals(effect.subject, "All", StringComparison.OrdinalIgnoreCase)) {
             throw new ArgumentException("[CardJSONConverter] Move effect cannot use subject=\"All\". Use amountFormula=\"all\".");

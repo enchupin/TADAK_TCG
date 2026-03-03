@@ -193,9 +193,9 @@
                     "onAction": {
                         "type": "Barrier",
                         "amountFormula": "finalDamage",
-                        "target": "Self",
-                        "subject": "FinalDamage"
-                    }
+                        "target": "Self"
+                    },
+                    "subject": "FinalDamage"
                 }
             ]
         },
@@ -363,9 +363,9 @@
                         "type": "GenerateCard",
                         "cardId": 301080,
                         "amountFormula": "eventValue / 10",
-                        "target": "Hand",
-                        "subject": "LostBarrier"
-                    }
+                        "target": "Hand"
+                    },
+                    "subject": "LostBarrier"
                 }
             ],
             "enforceGroup": "enforce_301060"
@@ -387,9 +387,9 @@
                     "onAction": {
                         "type": "Heal",
                         "amountFormula": "eventValue",
-                        "target": "Self",
-                        "subject": "LostBarrier"
-                    }
+                        "target": "Self"
+                    },
+                    "subject": "LostBarrier"
                 }
             ]
         },
@@ -410,9 +410,9 @@
                     "onAction": {
                         "type": "Damage",
                         "amountFormula": "eventValue",
-                        "target": "AllEnemies",
-                        "subject": "LostBarrier"
-                    }
+                        "target": "AllEnemies"
+                    },
+                    "subject": "LostBarrier"
                 }
             ]
         },
@@ -442,9 +442,9 @@
                                     "type": "GenerateCard",
                                     "cardId": 301080,
                                     "amount": 2,
-                                    "target": "Hand",
-                                    "subject": "LostBarrier"
-                                }
+                                    "target": "Hand"
+                                },
+                                "subject": "LostBarrier"
                             }
                         ]
                     }
@@ -477,9 +477,9 @@
                                     "type": "Buff",
                                     "buffId": 3012,
                                     "amount": 1,
-                                    "target": "Self",
-                                    "subject": "LostBarrier"
-                                }
+                                    "target": "Self"
+                                },
+                                "subject": "LostBarrier"
                             }
                         ]
                     }
@@ -516,9 +516,9 @@
                                     "type": "Buff",
                                     "buffId": 3001,
                                     "amount": 1,
-                                    "target": "Self",
-                                    "subject": "LostBarrier"
-                                }
+                                    "target": "Self"
+                                },
+                                "subject": "LostBarrier"
                             }
                         ]
                     }
