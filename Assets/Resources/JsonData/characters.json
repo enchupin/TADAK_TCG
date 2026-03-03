@@ -21,12 +21,6 @@
                 ],
                 "description": "카드를 2장 뽑습니다. 모든 적에게 부식을 3 부여합니다."
             },
-            "addressables": {
-                "artwork": "Characters/Isla/Artwork",
-                "standing": "Characters/Isla/Standing",
-                "effect": "Effects/Isla",
-                "sound": "Sounds/Isla"
-            },
             "characterColor": "green",
             "startDeck": [
                 101010,
@@ -75,12 +69,6 @@
                 ],
                 "description": "무작위 강화된 조커 카드를 1장 생성합니다."
             },
-            "addressables": {
-                "artwork": "Characters/Jack/Artwork",
-                "standing": "Characters/Jack/Standing",
-                "effect": "Effects/Jack",
-                "sound": "Sounds/Jack"
-            },
             "characterColor": "trump",
             "startDeck": [
                 102010,
@@ -109,12 +97,6 @@
                 ],
                 "description": "다음 공격이 20의 추가 피해를 입힙니다."
             },
-            "addressables": {
-                "artwork": "Characters/Ignia/Artwork",
-                "standing": "Characters/Ignia/Standing",
-                "effect": "Effects/Ignia",
-                "sound": "Sounds/Ignia"
-            },
             "characterColor": "red",
             "startDeck": [
                 201010,
@@ -142,12 +124,6 @@
                     }
                 ],
                 "description": "반격을 3 얻습니다."
-            },
-            "addressables": {
-                "artwork": "Characters/Vanessa/Artwork",
-                "standing": "Characters/Vanessa/Standing",
-                "effect": "Effects/Vanessa",
-                "sound": "Sounds/Vanessa"
             },
             "characterColor": "bee",
             "startDeck": [
@@ -182,12 +158,6 @@
                 ],
                 "description": "방어도를 10 얻습니다. 모든 적에게 빙결을 2 부여합니다."
             },
-            "addressables": {
-                "artwork": "Characters/Pola/Artwork",
-                "standing": "Characters/Pola/Standing",
-                "effect": "Effects/Pola",
-                "sound": "Sounds/Pola"
-            },
             "characterColor": "white",
             "startDeck": [
                 301010,
@@ -219,12 +189,6 @@
                     }
                 ],
                 "description": "룬을 5 얻습니다. 내 턴 종료 시 효과들을 1회 발동합니다."
-            },
-            "addressables": {
-                "artwork": "Characters/Rune/Artwork",
-                "standing": "Characters/Rune/Standing",
-                "effect": "Effects/Rune",
-                "sound": "Sounds/Rune"
             },
             "characterColor": "brown",
             "startDeck": [
