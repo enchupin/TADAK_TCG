@@ -37,7 +37,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "Hand",
+                    "from": "Hand",
                     "amount": 1,
                     "onAction": {
                         "type": "Move",
@@ -109,7 +109,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "AllCards",
+                    "from": "AllCards",
                     "amount": 1,
                     "onAction": {
                         "type": "Move",
@@ -164,7 +164,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "CardId",
+                    "from": "CardId",
                     "cardIds": [
                         102030,
                         102040,
@@ -196,7 +196,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "CardId",
+                    "from": "CardId",
                     "cardIds": [
                         102030,
                         102050,
@@ -225,7 +225,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "AllCards",
+                    "from": "AllCards",
                     "amount": 1,
                     "onAction": {
                         "type": "GenerateCard",
@@ -249,7 +249,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "Hand",
+                    "from": "Hand",
                     "amount": 1,
                     "onAction": {
                         "type": "GenerateCard",
@@ -345,7 +345,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "Hand",
+                    "from": "Hand",
                     "amount": 2,
                     "onAction": {
                         "type": "Discard",

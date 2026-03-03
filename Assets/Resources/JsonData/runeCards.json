@@ -517,7 +517,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "CardId",
+                    "from": "CardId",
                     "cardIdGroup": "rune_shape_base_pool",
                     "amount": 1,
                     "onAction": {
@@ -541,7 +541,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "CardId",
+                    "from": "CardId",
                     "cardIdGroup": "rune_shape_plus1_pool",
                     "amount": 1,
                     "onAction": {
@@ -564,7 +564,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "CardId",
+                    "from": "CardId",
                     "cardIdGroup": "rune_shape_plus2_pool",
                     "amount": 1,
                     "onAction": {
@@ -587,7 +587,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "CardId",
+                    "from": "CardId",
                     "cardIdGroup": "rune_shape_plus3_pool",
                     "amount": 1,
                     "onAction": {
@@ -610,7 +610,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "CardId",
+                    "from": "CardId",
                     "cardIdGroup": "rune_shape_plus4_pool",
                     "amount": 1,
                     "onAction": {
@@ -633,7 +633,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "CardId",
+                    "from": "CardId",
                     "cardIdGroup": "rune_shape_plus5_pool",
                     "amount": 1,
                     "onAction": {

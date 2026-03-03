@@ -210,7 +210,7 @@
             "effects": [
                 {
                     "type": "SelectCard",
-                    "source": "Hand",
+                    "from": "Hand",
                     "amount": 2,
                     "onAction": {
                         "type": "Discard",
