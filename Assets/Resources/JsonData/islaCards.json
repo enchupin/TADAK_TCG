@@ -1,4 +1,4 @@
-﻿{
+{
     "cards": [
         {
             "cardId": 101010,
@@ -12,12 +12,7 @@
                     "amount": 6,
                     "target": "Enemy"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101020,
@@ -31,12 +26,7 @@
                     "amount": 4,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101030,
@@ -50,12 +40,7 @@
                     "amount": 2
                 }
             ],
-            "enforceGroup": "enforce_101030",
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            "enforceGroup": "enforce_101030"
         },
         {
             "cardId": 101031,
@@ -68,12 +53,7 @@
                     "type": "Draw",
                     "amount": 1
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101032,
@@ -104,12 +84,7 @@
                         ]
                     }
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101033,
@@ -128,12 +103,7 @@
                         "to": "Hand"
                     }
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101034,
@@ -171,12 +141,7 @@
                         }
                     }
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101035,
@@ -217,12 +182,7 @@
                         }
                     }
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101040,
@@ -238,12 +198,7 @@
                     "target": "Hand"
                 }
             ],
-            "enforceGroup": "enforce_101040",
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            "enforceGroup": "enforce_101040"
         },
         {
             "cardId": 101041,
@@ -258,12 +213,7 @@
                     "cardIdGroup": "isla_potion_enhanced_even_pool",
                     "target": "Hand"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101042,
@@ -278,12 +228,7 @@
                     "cardIdGroup": "isla_potion_enhanced_even_pool",
                     "target": "Hand"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101043,
@@ -297,12 +242,7 @@
                     "cardIdGroup": "isla_potion_enhanced_odd_pool",
                     "target": "Hand"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101044,
@@ -326,12 +266,7 @@
                     "cardIdGroup": "isla_potion_enhanced_odd_pool",
                     "target": "Hand"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101045,
@@ -349,12 +284,7 @@
                     "amount": 1,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101050,
@@ -370,12 +300,7 @@
                     "target": "Enemy"
                 }
             ],
-            "enforceGroup": "enforce_101050",
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            "enforceGroup": "enforce_101050"
         },
         {
             "cardId": 101051,
@@ -402,12 +327,7 @@
                         }
                     ]
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101052,
@@ -422,12 +342,7 @@
                     "cardIdGroup": "isla_potion_all",
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101053,
@@ -442,12 +357,7 @@
                     "cardIdGroup": "isla_potion_all",
                     "target": "AllEnemies"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101054,
@@ -464,12 +374,7 @@
                     "buffId": 1002,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101055,
@@ -486,12 +391,7 @@
                     "buffId": 3003,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101060,
@@ -510,12 +410,7 @@
                     "target": "Self"
                 }
             ],
-            "enforceGroup": "enforce_101060",
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            "enforceGroup": "enforce_101060"
         },
         {
             "cardId": 101061,
@@ -537,12 +432,7 @@
                     "amount": 2,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101062,
@@ -579,12 +469,7 @@
                     "amount": 2,
                     "target": "Enemy"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101063,
@@ -602,12 +487,7 @@
                     "amount": 1,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101064,
@@ -625,12 +505,7 @@
                     "amount": 2,
                     "target": "Enemy"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101065,
@@ -651,12 +526,7 @@
                     "amount": 1,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101070,
@@ -674,12 +544,7 @@
                     "amount": 2,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101071,
@@ -698,12 +563,7 @@
                     "amount": 2,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101072,
@@ -721,12 +581,7 @@
                     "amount": 2,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101073,
@@ -744,12 +599,7 @@
                     "amount": 4,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101074,
@@ -767,12 +617,7 @@
                     "amount": 2,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101075,
@@ -791,12 +636,7 @@
                     "amount": 1,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101080,
@@ -814,12 +654,7 @@
                     "target": "Enemy"
                 }
             ],
-            "enforceGroup": "enforce_101080",
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            "enforceGroup": "enforce_101080"
         },
         {
             "cardId": 101081,
@@ -836,12 +671,7 @@
                     "amount": 6,
                     "target": "Enemy"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101082,
@@ -858,12 +688,7 @@
                     "amount": 1
                 }
             ],
-            "enforceGroup": "enforce_101082",
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            "enforceGroup": "enforce_101082"
         },
         {
             "cardId": 101083,
@@ -879,12 +704,7 @@
                     "type": "Draw",
                     "amount": 2
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101084,
@@ -902,12 +722,7 @@
                     "target": "Self"
                 }
             ],
-            "enforceGroup": "enforce_101084",
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            "enforceGroup": "enforce_101084"
         },
         {
             "cardId": 101085,
@@ -924,12 +739,7 @@
                     "amount": 6,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 101086,
@@ -948,12 +758,7 @@
                     "target": "Enemy"
                 }
             ],
-            "enforceGroup": "enforce_101086",
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            "enforceGroup": "enforce_101086"
         },
         {
             "cardId": 101087,
@@ -971,12 +776,7 @@
                     "amount": 2,
                     "target": "Enemy"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         }
     ]
 }

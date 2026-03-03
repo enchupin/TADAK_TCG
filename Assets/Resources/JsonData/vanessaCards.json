@@ -1,4 +1,4 @@
-﻿{
+{
     "cards": [
         {
             "cardId": 202010,
@@ -12,12 +12,7 @@
                     "amount": 4,
                     "target": "Enemy"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202020,
@@ -31,12 +26,7 @@
                     "amount": 6,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202030,
@@ -57,12 +47,7 @@
                     "target": "Enemy"
                 }
             ],
-            "enforceGroup": "enforce_202030",
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            "enforceGroup": "enforce_202030"
         },
         {
             "cardId": 202031,
@@ -85,12 +70,7 @@
                     "amount": 2,
                     "target": "Enemy"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202032,
@@ -104,12 +84,7 @@
                     "amount": 4,
                     "target": "AllEnemies"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202033,
@@ -124,12 +99,7 @@
                     "target": "Enemy",
                     "ampMultiplier": 2
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202034,
@@ -149,12 +119,7 @@
                     "amount": 2,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202035,
@@ -173,12 +138,7 @@
                     "amount": 14,
                     "target": "Enemy"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202040,
@@ -202,12 +162,7 @@
                     }
                 }
             ],
-            "enforceGroup": "enforce_202040",
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            "enforceGroup": "enforce_202040"
         },
         {
             "cardId": 202041,
@@ -244,12 +199,7 @@
                         "subject": "DrawnCard"
                     }
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202042,
@@ -272,12 +222,7 @@
                     "type": "Draw",
                     "amount": 2
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202043,
@@ -319,12 +264,7 @@
                         "subject": "DrawnCard"
                     }
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202044,
@@ -345,12 +285,7 @@
                     "amount": 2,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202045,
@@ -368,12 +303,7 @@
                     "buffId": 2001,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202050,
@@ -395,12 +325,7 @@
                     "target": "Self"
                 }
             ],
-            "enforceGroup": "enforce_202050",
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            "enforceGroup": "enforce_202050"
         },
         {
             "cardId": 202051,
@@ -418,12 +343,7 @@
                     "amount": 3,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202052,
@@ -438,12 +358,7 @@
                     "amount": 1,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202053,
@@ -463,12 +378,7 @@
                     "amount": 1,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202054,
@@ -504,12 +414,7 @@
                         ]
                     }
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202055,
@@ -545,12 +450,7 @@
                         ]
                     }
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202060,
@@ -570,12 +470,7 @@
                     }
                 }
             ],
-            "enforceGroup": "enforce_202060",
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            "enforceGroup": "enforce_202060"
         },
         {
             "cardId": 202061,
@@ -594,12 +489,7 @@
                         "subject": "RepeatCount"
                     }
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202062,
@@ -621,12 +511,7 @@
                         "subject": "RepeatCount"
                     }
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202063,
@@ -649,12 +534,7 @@
                     "amount": 1,
                     "target": "DrawPile"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202064,
@@ -672,12 +552,7 @@
                     "amount": 1,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202065,
@@ -691,12 +566,7 @@
                     "buffId": 3024,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202070,
@@ -721,12 +591,7 @@
                     }
                 }
             ],
-            "enforceGroup": "enforce_202070",
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            "enforceGroup": "enforce_202070"
         },
         {
             "cardId": 202071,
@@ -750,12 +615,7 @@
                         "subject": "UnblockedDamage"
                     }
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202072,
@@ -779,12 +639,7 @@
                         "subject": "UnblockedDamage"
                     }
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202073,
@@ -801,12 +656,7 @@
                     "buffId": 3022,
                     "target": "Self"
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202074,
@@ -834,12 +684,7 @@
                         }
                     ]
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         },
         {
             "cardId": 202075,
@@ -860,12 +705,7 @@
                         "subject": "UnblockedDamage"
                     }
                 }
-            ],
-            "addressables": {
-                "artwork": "",
-                "effect": "",
-                "sound": ""
-            }
+            ]
         }
     ]
 }
