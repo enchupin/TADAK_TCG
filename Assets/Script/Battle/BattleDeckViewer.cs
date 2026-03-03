@@ -12,6 +12,7 @@ public class BattleDeckViewer : MonoBehaviour
     [Header("패널/컨테이너")]
     [SerializeField] private GameObject deckPanelRoot;
     [SerializeField] private CardContainerManager cardContainerManager;
+    [SerializeField] private Button selectionConfirmButton;
 
     [Header("참조")]
     [SerializeField] private TrainingBattleManager battleManager;
@@ -30,11 +31,23 @@ public class BattleDeckViewer : MonoBehaviour
     /// </summary>
     public void OnClickDeckButton() {
         if (isSelectionMode) {
-            Debug.Log("[BattleDeckViewer] 카드 선택 중에는 덱 뷰를 닫을 수 없습니다");
+            OnClickSelectionConfirm();
             return;
         }
 
         ToggleDeckPanel();
+    }
+
+    public void OnClickSelectionConfirm() {
+        if (!isSelectionMode) {
+            return;
+        }
+
+        if (!CanConfirmSelection()) {
+            return;
+        }
+
+        CompleteSelection(new List<Card>(selectedCards));
     }
 
     public void ToggleDeckPanel() {
@@ -92,11 +105,13 @@ public class BattleDeckViewer : MonoBehaviour
         onSelectionCompleted = onComplete;
         selectedCards.Clear();
         selectedControllers.Clear();
+        UpdateConfirmButtonState();
 
         cardContainerManager.ClearHand();
         cardContainerManager.SetCardClickHandler(null);
         cardContainerManager.SetCardClickHandler(HandleSelectableCardClicked);
         cardContainerManager.AddCardWithoutInputController(selectableCards);
+        UpdateConfirmButtonState();
 
         if (requiredSelectionCount == 0) {
             CompleteSelection(new List<Card>());
@@ -138,6 +153,7 @@ public class BattleDeckViewer : MonoBehaviour
             selectedControllers.RemoveAt(selectedIndex);
             selectedCards.RemoveAt(selectedIndex);
             SetSelectedVisual(controller, false);
+            UpdateConfirmButtonState();
             return;
         }
 
@@ -148,10 +164,7 @@ public class BattleDeckViewer : MonoBehaviour
         selectedControllers.Add(controller);
         selectedCards.Add(controller.Card);
         SetSelectedVisual(controller, true);
-
-        if (selectedCards.Count >= requiredSelectionCount) {
-            CompleteSelection(new List<Card>(selectedCards));
-        }
+        UpdateConfirmButtonState();
     }
 
     private void CompleteSelection(List<Card> result) {
@@ -162,6 +175,7 @@ public class BattleDeckViewer : MonoBehaviour
         onSelectionCompleted = null;
         selectedCards.Clear();
         selectedControllers.Clear();
+        UpdateConfirmButtonState();
 
         cardContainerManager.SetCardClickHandler(null);
         cardContainerManager.ClearHand();
@@ -185,6 +199,18 @@ public class BattleDeckViewer : MonoBehaviour
         image.color = isSelected
             ? new Color(0.65f, 1f, 0.65f, 1f)
             : Color.white;
+    }
+
+    private bool CanConfirmSelection() {
+        return selectedCards.Count >= requiredSelectionCount;
+    }
+
+    private void UpdateConfirmButtonState() {
+        if (selectionConfirmButton == null) {
+            return;
+        }
+
+        selectionConfirmButton.interactable = isSelectionMode && CanConfirmSelection();
     }
 
     private void ValidateRequiredReferences() {
