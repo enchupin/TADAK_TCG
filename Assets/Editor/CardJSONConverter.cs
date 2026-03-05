@@ -337,6 +337,7 @@ public class CardJSONConverter : EditorWindow
             subject = ReadJsonString(effectObject, "subject")
         };
 
+        /*
         if (effect.type == EffectType.Move && string.Equals(effect.subject, "All", StringComparison.OrdinalIgnoreCase)) {
             throw new ArgumentException("[CardJSONConverter] Move effect cannot use subject=\"All\". Use amountFormula=\"all\".");
         }
@@ -349,6 +350,7 @@ public class CardJSONConverter : EditorWindow
                 throw new ArgumentException("[CardJSONConverter] Move effect requires amount/amountFormula, or subject in onAction context.");
             }
         }
+        */
 
         string cardIdGroup = ReadJsonString(effectObject, "cardIdGroup");
         if (!string.IsNullOrWhiteSpace(cardIdGroup)) {
