@@ -39,7 +39,9 @@ public class CardJSONConverter : EditorWindow
         {
             case "Source": return MoveZoneType.Source;
             case "Hand": return MoveZoneType.Hand;
+            case "Deck":
             case "DrawPile": return MoveZoneType.DrawPile;
+            case "Discard":
             case "DiscardPile": return MoveZoneType.DiscardPile;
             case "AllCards": return MoveZoneType.AllCards;
             case "CardId": return MoveZoneType.CardId;
@@ -298,12 +300,14 @@ public class CardJSONConverter : EditorWindow
         }
 
         string effectTypeRaw = ReadJsonString(effectObject, "type");
-        if (effectObject["condition"] is JObject) {
+        if (string.IsNullOrWhiteSpace(effectTypeRaw) && effectObject["condition"] is JObject) {
             effectTypeRaw = "Conditional";
         }
 
         EffectType effectType = ParseEffectType(effectTypeRaw);
         string fromRaw = ReadJsonString(effectObject, "from");
+        string toRaw = ReadJsonString(effectObject, "to");
+        string targetRaw = ReadJsonString(effectObject, "target");
         bool hasOnAction = effectObject["onAction"] is JObject || effectObject["onAction"] is JArray;
 
         // SelectCard Effect는 from 키워드를 소유하도록 강제
@@ -324,9 +328,9 @@ public class CardJSONConverter : EditorWindow
         CardEffectData effect = new CardEffectData
         {
             type = effectType,
-            target = ParseTargetType(ReadJsonString(effectObject, "target")),
+            target = ParseTargetType(targetRaw),
             from = ParseMoveZoneType(fromRaw, fromDefault),
-            to = ParseMoveZoneType(ReadJsonString(effectObject, "to"), MoveZoneType.None),
+            to = ParseMoveZoneType(toRaw, MoveZoneType.None),
             position = ParseMovePositionType(ReadJsonString(effectObject, "position")),
             amount = ReadJsonInt(effectObject, "amount"),
             amountFormula = ReadJsonString(effectObject, "amountFormula"),
@@ -336,6 +340,8 @@ public class CardJSONConverter : EditorWindow
             duration = ReadJsonInt(effectObject, "duration"),
             subject = ReadJsonString(effectObject, "subject")
         };
+
+        ValidateCopyEffectSchema(effectObject, effectType, fromRaw, toRaw, targetRaw);
 
         /*
         if (effect.type == EffectType.Move && string.Equals(effect.subject, "All", StringComparison.OrdinalIgnoreCase)) {
@@ -659,9 +665,9 @@ public class CardJSONConverter : EditorWindow
             case "Conditional": return EffectType.Conditional; // 추후 삭제 or 수정 예정
             case "Repeat": return EffectType.Repeat; // 추후 삭제 or 수정 예정
             case "ReduceCost": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "ChoiceCard": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "Move": return EffectType.Move; // 추후 삭제 or 수정 예정
-            case "Copy": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            
+            case "Move": return EffectType.Move;
+            case "Copy": return EffectType.Copy;
             case "RandGenerate": return EffectType.Repeat; // 추후 삭제 or 수정 예정
             case "ChoiceGenerate": return EffectType.Repeat; // 추후 삭제 or 수정 예정
             case "ChoiceHand": return EffectType.ChoiceHand;
@@ -669,6 +675,7 @@ public class CardJSONConverter : EditorWindow
             case "Keep": return EffectType.Repeat; // 추후 삭제 or 수정 예정
             case "Cost": return EffectType.Repeat; // 추후 삭제 or 수정 예정
             case "CreateCard": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "ChoiceCard":
             case "SelectCard": return EffectType.SelectCard;
             case "Upgrade": return EffectType.Repeat; // 추후 삭제 or 수정 예정
             case "MixBuff": return EffectType.Repeat; // 추후 삭제 or 수정 예정
@@ -725,6 +732,47 @@ public class CardJSONConverter : EditorWindow
                 Debug.LogWarning($"[CardJSONConverter] Unknown target type: {target}. Fallback to None.");
                 return TargetType.None;
         }
+    }
+
+    private static void ValidateCopyEffectSchema(JObject effectObject, EffectType effectType, string fromRaw, string toRaw, string targetRaw)
+    {
+        if (effectType != EffectType.Copy) {
+            return;
+        }
+
+        bool hasLegacyCardId = HasJsonValue(effectObject, "cardId");
+        bool hasLegacyTarget = !string.IsNullOrWhiteSpace(targetRaw);
+
+        if (hasLegacyCardId || hasLegacyTarget) {
+            List<string> legacyFields = new List<string>();
+            if (hasLegacyCardId) legacyFields.Add("cardId");
+            if (hasLegacyTarget) legacyFields.Add("target");
+            throw new ArgumentException($"[CardJSONConverter] Copy effect must use from/to. Remove legacy field(s): {string.Join(", ", legacyFields)}.");
+        }
+
+        if (string.IsNullOrWhiteSpace(fromRaw) || string.IsNullOrWhiteSpace(toRaw)) {
+            throw new ArgumentException("[CardJSONConverter] Copy effect requires both 'from' and 'to'.");
+        }
+
+        if (string.Equals(fromRaw, "CardId", StringComparison.OrdinalIgnoreCase)) {
+            if (effectObject["cardIds"] is not JArray cardIds || cardIds.Count == 0) {
+                throw new ArgumentException("[CardJSONConverter] Copy effect with from=\"CardId\" requires non-empty 'cardIds'.");
+            }
+        }
+    }
+
+    private static bool HasJsonValue(JObject obj, string key)
+    {
+        if (obj == null || string.IsNullOrWhiteSpace(key)) {
+            return false;
+        }
+
+        JToken token = obj[key];
+        if (token == null) {
+            return false;
+        }
+
+        return token.Type != JTokenType.Null && token.Type != JTokenType.Undefined;
     }
 
 

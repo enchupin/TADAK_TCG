@@ -328,10 +328,11 @@
             "description": "화염탄 카드를 1장 생성합니다. 이번 턴에 그 카드의 비용이 1 감소합니다.",
             "effects": [
                 {
-                    "type": "GenerateCard",
-                    "cardId": 201010,
+                    "type": "Copy",
+                    "from": "CardId",
+                    "cardIds": [201010],
                     "amount": 1,
-                    "target": "Hand",
+                    "to": "Hand",
                     "onAction": {
                         "type": "ReduceCost",
                         "amount": 1,
