@@ -16,6 +16,7 @@ public class BattleUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI overheatText;
     [SerializeField] private TextMeshProUGUI drawPileCountText;
     [SerializeField] private TextMeshProUGUI discardPileCountText;
+    [SerializeField] private TextMeshProUGUI handCountText;
 
     [Header("데이터 참조")]
     [SerializeField] private Monster monster;
@@ -72,6 +73,10 @@ public class BattleUI : MonoBehaviour
 
         if (discardPileCountText != null) {
             discardPileCountText.text = $"Discard Pile : {battleManager.usableDeckManager.GetDiscardPileCount()}";
+        }
+
+        if (handCountText != null && battleManager.handManager != null) {
+            handCountText.text = $"Hand : {battleManager.handManager.GetHandCount()}";
         }
     }
 

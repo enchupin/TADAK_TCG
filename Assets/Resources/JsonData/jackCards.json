@@ -167,10 +167,10 @@
                     "from": "Unique",
                     "amount": 1,
                     "onAction": {
-                        "type": "GenerateCard",
-                        "cardId": "Selected",
+                        "type": "Copy",
+                        "from": "Source",
                         "amount": 1,
-                        "target": "Hand"
+                        "to": "Hand"
                     },
                     "subject": "Selected"
                 }
@@ -215,10 +215,10 @@
                     "from": "AllCards",
                     "amount": 1,
                     "onAction": {
-                        "type": "GenerateCard",
-                        "cardId": "Selected",
+                        "type": "Copy",
+                        "from": "Source",
                         "amount": 1,
-                        "target": "Hand"
+                        "to": "Hand"
                     },
                     "subject": "Selected"
                 }
@@ -239,10 +239,10 @@
                     "from": "Hand",
                     "amount": 1,
                     "onAction": {
-                        "type": "GenerateCard",
-                        "cardId": "Selected",
+                        "type": "Copy",
+                        "from": "Source",
                         "amount": 3,
-                        "target": "Hand"
+                        "to": "Hand"
                     },
                     "subject": "Selected"
                 }

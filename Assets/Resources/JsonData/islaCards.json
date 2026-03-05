@@ -118,6 +118,7 @@
                     "amount": 1,
                     "onAction": {
                         "type": "Copy",
+                        "from": "Source",
                         "amount": 1,
                         "to": "Hand",
                         "condition": {
@@ -167,6 +168,7 @@
                             "effects": [
                                 {
                                     "type": "Copy",
+                                    "from": "Source",
                                     "amount": 2,
                                     "to": "Hand"
                                 }
@@ -174,6 +176,7 @@
                             "elseEffects": [
                                 {
                                     "type": "Copy",
+                                    "from": "Source",
                                     "amount": 2,
                                     "to": "Hand"
                                 }

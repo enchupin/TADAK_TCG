@@ -207,10 +207,11 @@
             "description": "빙하 조형 카드를 3장 생성합니다.",
             "effects": [
                 {
-                    "type": "GenerateCard",
-                    "cardId": 301080,
+                    "type": "Copy",
+                    "from": "CardId",
+                    "cardIds": [301080],
                     "amount": 3,
-                    "target": "Hand"
+                    "to": "Hand"
                 }
             ]
         },
@@ -360,10 +361,11 @@
                     "stat": "Barrier",
                     "change": "remove",
                     "onAction": {
-                        "type": "GenerateCard",
-                        "cardId": 301080,
+                        "type": "Copy",
+                        "from": "CardId",
+                        "cardIds": [301080],
                         "amountFormula": "eventValue / 10",
-                        "target": "Hand"
+                        "to": "Hand"
                     },
                     "subject": "LostBarrier"
                 }
@@ -439,10 +441,11 @@
                                 "change": "decrease",
                                 "amount": 10,
                                 "onAction": {
-                                    "type": "GenerateCard",
-                                    "cardId": 301080,
+                                    "type": "Copy",
+                                    "from": "CardId",
+                                    "cardIds": [301080],
                                     "amount": 2,
-                                    "target": "Hand"
+                                    "to": "Hand"
                                 },
                                 "subject": "LostBarrier"
                             }

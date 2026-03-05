@@ -529,10 +529,11 @@
                     "target": "Enemy"
                 },
                 {
-                    "type": "GenerateCard",
-                    "cardId": 202063,
+                    "type": "Copy",
+                    "from": "CardId",
+                    "cardIds": [202063],
                     "amount": 1,
-                    "target": "DrawPile"
+                    "to": "DrawPile"
                 }
             ]
         },

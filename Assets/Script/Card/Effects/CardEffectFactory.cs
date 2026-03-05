@@ -81,6 +81,8 @@ public static class CardEffectFactory
                 return new DrawBasicEffect { amount = effectData.amount, amountFormula = effectData.amountFormula };
             case EffectType.Move:
                 return new MoveEffect { from = effectData.from, to = effectData.to, position = effectData.position, subject = resolvedSubject, amount = effectData.amount, amountFormula = effectData.amountFormula };
+            case EffectType.Copy:
+                return new CopyEffect { from = effectData.from, to = effectData.to, position = effectData.position, subject = resolvedSubject, amount = effectData.amount, amountFormula = effectData.amountFormula, cardIdList = effectData.formulaCardIdFilter == null ? null : new List<int>(effectData.formulaCardIdFilter) };
             case EffectType.Buff:
                 return new BuffEffect { stat = effectData.stat, buffId = effectData.buffId, amount = effectData.amount, amountFormula = effectData.amountFormula, duration = effectData.duration, target = effectData.target };
             case EffectType.Energy:
