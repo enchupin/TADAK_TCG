@@ -10,7 +10,7 @@
                 {
                     "type": "Attack",
                     "amount": 6,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -171,7 +171,7 @@
                 {
                     "type": "Attack",
                     "amount": 24,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ],
             "enforceGroup": "enforce_201040"
@@ -189,7 +189,7 @@
                 {
                     "type": "Attack",
                     "amount": 32,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -206,7 +206,7 @@
                     "onAction": {
                         "type": "Damage",
                         "amountFormula": "discarded * 8",
-                        "target": "Enemy"
+                        "target": "SingleEnemy"
                     },
                     "subject": "DiscardedCount"
                 }
@@ -225,7 +225,7 @@
                     "onAction": {
                         "type": "Damage",
                         "amountFormula": "exhausted * 12",
-                        "target": "Enemy"
+                        "target": "SingleEnemy"
                     },
                     "subject": "ExhaustedCount"
                 }
@@ -274,7 +274,7 @@
                             {
                                 "type": "Damage",
                                 "amount": 40,
-                                "target": "Enemy"
+                                "target": "SingleEnemy"
                             }
                         ]
                     }

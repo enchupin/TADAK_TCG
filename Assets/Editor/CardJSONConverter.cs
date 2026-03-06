@@ -661,16 +661,6 @@ public class CardJSONConverter : EditorWindow
             case "Repeat": return EffectType.Repeat; // 추후 삭제 or 수정 예정
             case "ReduceCost": return EffectType.Repeat; // 추후 삭제 or 수정 예정
 
-            case "Energy":
-            case "DamagePerCardPlayed":
-            case "Execute":
-            case "MultiplyDefense":
-            case "MultimediaDefense":
-            case "ConsumeDefense":
-            case "ChoiceDiscard":
-            case "RandomGenerate":
-                throw new ArgumentException($"[CardJSONConverter] Legacy effect type is no longer supported: {type}");
-            
             case "Move": return EffectType.Move;
             case "Copy": return EffectType.Copy;
             case "RandGenerate": return EffectType.Repeat; // 추후 삭제 or 수정 예정
@@ -722,7 +712,6 @@ public class CardJSONConverter : EditorWindow
         {
             case "AllEnemies": return TargetType.AllEnemies;
             case "SingleEnemy":
-            case "Enemy":
             case "RandomEnemy":
             case "RandEnemy": return TargetType.SingleEnemy;
             case "Self": return TargetType.Self;

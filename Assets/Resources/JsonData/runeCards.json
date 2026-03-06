@@ -10,7 +10,7 @@
                 {
                     "type": "Attack",
                     "amount": 5,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ]
         },

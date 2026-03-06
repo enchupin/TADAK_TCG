@@ -2547,7 +2547,8 @@ MonoBehaviour:
   battleResultTransitionDelay: 0.8
   spawnedMonsters: []
   isDebugMode: 1
-  debugTargetEffect: 9
+  debugTargetEffect: 34
+  debugOnlyCorrosionBuffs: 0
   debugEnergyAmount: 1000
   currentTarget: {fileID: 0}
 --- !u!1 &1579719169

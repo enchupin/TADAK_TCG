@@ -10,7 +10,7 @@
                 {
                     "type": "Attack",
                     "amount": 4,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -38,13 +38,13 @@
                 {
                     "type": "Attack",
                     "amount": 6,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 },
                 {
                     "type": "Buff",
                     "buffId": 4001,
                     "amount": 1,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ],
             "enforceGroup": "enforce_202030"
@@ -62,13 +62,13 @@
                 {
                     "type": "Attack",
                     "amount": 4,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 },
                 {
                     "type": "Buff",
                     "buffId": 4001,
                     "amount": 2,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -96,7 +96,7 @@
                 {
                     "type": "Attack",
                     "amount": 10,
-                    "target": "Enemy",
+                    "target": "SingleEnemy",
                     "ampMultiplier": 2
                 }
             ]
@@ -111,7 +111,7 @@
                 {
                     "type": "Attack",
                     "amount": 14,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 },
                 {
                     "type": "RemoveBuff",
@@ -136,7 +136,7 @@
                 {
                     "type": "Attack",
                     "amount": 14,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -402,14 +402,14 @@
                                 "type": "Attack",
                                 "amount": 3,
                                 "amountFormula": "*3",
-                                "target": "Enemy"
+                                "target": "SingleEnemy"
                             }
                         ],
                         "elseEffects": [
                             {
                                 "type": "Attack",
                                 "amount": 3,
-                                "target": "Enemy"
+                                "target": "SingleEnemy"
                             }
                         ]
                     }
@@ -438,14 +438,14 @@
                                 "type": "Attack",
                                 "amount": 6,
                                 "amountFormula": "*2",
-                                "target": "Enemy"
+                                "target": "SingleEnemy"
                             }
                         ],
                         "elseEffects": [
                             {
                                 "type": "Attack",
                                 "amount": 6,
-                                "target": "Enemy"
+                                "target": "SingleEnemy"
                             }
                         ]
                     }
@@ -465,7 +465,7 @@
                     "onAction": {
                         "type": "Attack",
                         "amount": 4,
-                        "target": "Enemy"
+                        "target": "SingleEnemy"
                     },
                     "subject": "RepeatCount"
                 }
@@ -485,7 +485,7 @@
                     "onAction": {
                         "type": "Attack",
                         "amount": 1,
-                        "target": "Enemy"
+                        "target": "SingleEnemy"
                     },
                     "subject": "RepeatCount"
                 }
@@ -507,7 +507,7 @@
                     "onAction": {
                         "type": "Attack",
                         "amount": 4,
-                        "target": "Enemy"
+                        "target": "SingleEnemy"
                     },
                     "subject": "RepeatCount"
                 }
@@ -526,7 +526,7 @@
                 {
                     "type": "Attack",
                     "amount": 4,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 },
                 {
                     "type": "Copy",
@@ -582,7 +582,7 @@
                 {
                     "type": "Attack",
                     "amount": 1,
-                    "target": "Enemy",
+                    "target": "SingleEnemy",
                     "onAction": {
                         "type": "Buff",
                         "buffId": 3002,
@@ -607,7 +607,7 @@
                 {
                     "type": "Attack",
                     "amount": 1,
-                    "target": "Enemy",
+                    "target": "SingleEnemy",
                     "onAction": {
                         "type": "Buff",
                         "buffId": 3002,
@@ -631,7 +631,7 @@
                 {
                     "type": "Attack",
                     "amount": 2,
-                    "target": "Enemy",
+                    "target": "SingleEnemy",
                     "onAction": {
                         "type": "Buff",
                         "buffId": 3002,
@@ -672,7 +672,7 @@
                 {
                     "type": "Attack",
                     "amount": 0,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 },
                 {
                     "type": "Keep",
@@ -697,7 +697,7 @@
                 {
                     "type": "Attack",
                     "amount": 2,
-                    "target": "Enemy",
+                    "target": "SingleEnemy",
                     "onAction": {
                         "type": "Buff",
                         "buffId": 3021,

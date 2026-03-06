@@ -10,7 +10,7 @@
                 {
                     "type": "Attack",
                     "amount": 6,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -300,7 +300,7 @@
                     "type": "Attack",
                     "amountFormula": "UseCardInCombat * 3",
                     "cardIdGroup": "isla_potion_all",
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ],
             "enforceGroup": "enforce_101050"
@@ -319,7 +319,7 @@
                     "type": "Attack",
                     "amountFormula": "UseCardInCombat * 3",
                     "cardIdGroup": "isla_potion_all",
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 },
                 {
                     "type": "Keep",
@@ -410,7 +410,7 @@
                     "type": "Buff",
                     "buffId": 4001,
                     "amount": 2,
-                    "target": "Self"
+                    "target": "SingleEnemy"
                 }
             ],
             "enforceGroup": "enforce_101060"
@@ -433,7 +433,7 @@
                     "type": "Buff",
                     "buffId": 4001,
                     "amount": 2,
-                    "target": "Self"
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -470,7 +470,7 @@
                     "type": "Buff",
                     "buffId": 4001,
                     "amount": 2,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -506,7 +506,7 @@
                     "type": "Buff",
                     "buffId": 4001,
                     "amount": 2,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -521,7 +521,7 @@
                     "type": "Buff",
                     "buffId": 4001,
                     "amount": 2,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 },
                 {
                     "type": "Buff",
@@ -654,7 +654,7 @@
                 {
                     "type": "Damage",
                     "amount": 3,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ],
             "enforceGroup": "enforce_101080"
@@ -672,7 +672,7 @@
                 {
                     "type": "Damage",
                     "amount": 6,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -758,7 +758,7 @@
                     "type": "Buff",
                     "buffId": 4001,
                     "amount": 1,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ],
             "enforceGroup": "enforce_101086"
@@ -777,7 +777,7 @@
                     "type": "Buff",
                     "buffId": 4001,
                     "amount": 2,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ]
         }
