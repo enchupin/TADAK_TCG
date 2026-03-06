@@ -33,5 +33,6 @@ public enum EffectType
     Cancel,
     Pickup,
     DrawBasic,
-    Move
+    Move,
+    DrawCharacter
 }

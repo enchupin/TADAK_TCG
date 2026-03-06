@@ -647,9 +647,9 @@ public class CardJSONConverter : EditorWindow
             case "Attack": return EffectType.Attack;
             case "Damage": return EffectType.Damage;
             case "Barrier": return EffectType.Barrier;
-            case "Draw": return EffectType.Draw;
+            case "Draw": return EffectType.Draw; // 추후 삭제 or 수정 예정
             case "DrawBasic": return EffectType.DrawBasic;
-            case "DrawSpecific": return EffectType.Draw; // 추후 삭제 or 수정 예정
+            case "DrawCharacter": return EffectType.DrawCharacter;
             case "Buff": return EffectType.Buff; 
             case "Heal": return EffectType.Heal; 
             case "GenerateCard": return EffectType.GenerateCard; // 추후 삭제 or 수정 예정

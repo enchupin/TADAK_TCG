@@ -310,8 +310,27 @@ public class TrainingBattleManager : MonoBehaviour
         UpdateAllUI();
     }
 
+    public void DrawCharacterCards(int count, Character? characterFilter = null)
+    {
+        if (count <= 0 || usableDeckManager == null || handManager == null)
+        {
+            return;
+        }
+
+        List<Card> drawnCards = usableDeckManager.DrawCharacterCards(count, characterFilter);
+        handManager.AddCard(drawnCards);
+
+        if (battleContext != null)
+        {
+            battleContext.OnCardsDrawn(drawnCards.Count);
+        }
+
+        RefreshHandPlayableState();
+        UpdateAllUI();
+    }
+
     [ContextMenu("Debug Draw Cards By Effect")]
-    public void DebugDrawSpecificEffectCard()
+    public void DebugDrawCardsByEffect()
     {
         if (!isDebugMode || handManager == null) {
             return;
@@ -441,6 +460,9 @@ public class TrainingBattleManager : MonoBehaviour
                 break;
             case EffectType.Draw:
                 if (effect is DrawEffect) return true;
+                break;
+            case EffectType.DrawCharacter:
+                if (effect is DrawCharacterEffect) return true;
                 break;
             case EffectType.DrawBasic:
                 if (effect is DrawBasicEffect) return true;

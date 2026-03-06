@@ -111,6 +111,25 @@ public class UsableDeckManager : MonoBehaviour
         return drawnCards;
     }
 
+    public List<Card> DrawCharacterCards(int count, Character? characterFilter = null)
+    {
+        List<Card> drawnCards = new List<Card>();
+        if (count <= 0 || !characterFilter.HasValue) {
+            return drawnCards;
+        }
+
+        for (int i = 0; i < count; i++) {
+            Card card = DrawCharacterCard(characterFilter.Value);
+            if (card == null) {
+                break;
+            }
+
+            drawnCards.Add(card);
+        }
+
+        return drawnCards;
+    }
+
     /// <summary>
     /// 덱에서 기본카드 1장을 찾아 드로우 (없으면 null)
     /// </summary>
@@ -135,6 +154,42 @@ public class UsableDeckManager : MonoBehaviour
         for (int i = 0; i < drawPile.Count; i++) {
             Card candidate = drawPile[i];
             if (candidate != null && IsBasicCardId(candidate.cardId) && (!characterFilter.HasValue || candidate.character == characterFilter.Value)) {
+                foundIndex = i;
+                break;
+            }
+        }
+
+        if (foundIndex < 0) {
+            return null;
+        }
+
+        Card drawnCard = drawPile[foundIndex];
+        drawPile.RemoveAt(foundIndex);
+        usableDeck = new Queue<Card>(drawPile);
+        return drawnCard;
+    }
+
+    private Card DrawCharacterCard(Character characterFilter)
+    {
+        if (usableDeck == null || usableDeck.Count == 0) {
+            if (discardPile.Count > 0) {
+                ReshuffleDiscardToDeck();
+            }
+            else {
+                return null;
+            }
+        }
+
+        if (usableDeck == null || usableDeck.Count == 0) {
+            return null;
+        }
+
+        List<Card> drawPile = new List<Card>(usableDeck);
+        int foundIndex = -1;
+
+        for (int i = 0; i < drawPile.Count; i++) {
+            Card candidate = drawPile[i];
+            if (candidate != null && candidate.character == characterFilter) {
                 foundIndex = i;
                 break;
             }

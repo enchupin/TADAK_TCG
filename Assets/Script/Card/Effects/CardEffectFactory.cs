@@ -77,6 +77,8 @@ public static class CardEffectFactory
                 return new DamageEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, target = effectData.target, onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject) };
             case EffectType.Draw:
                 return new DrawEffect { amount = effectData.amount, amountFormula = effectData.amountFormula };
+            case EffectType.DrawCharacter:
+                return new DrawCharacterEffect { amount = effectData.amount, amountFormula = effectData.amountFormula };
             case EffectType.DrawBasic:
                 return new DrawBasicEffect { amount = effectData.amount, amountFormula = effectData.amountFormula };
             case EffectType.Move:
