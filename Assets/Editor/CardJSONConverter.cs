@@ -647,25 +647,20 @@ public class CardJSONConverter : EditorWindow
             case "Attack": return EffectType.Attack;
             case "Damage": return EffectType.Damage;
             case "Barrier": return EffectType.Barrier;
-            case "Draw": return EffectType.Draw;
+            case "Draw": return EffectType.Draw; // 추후 삭제 or 수정 예정
             case "DrawBasic": return EffectType.DrawBasic;
-            case "DrawSpecific": return EffectType.Draw; // 추후 삭제 or 수정 예정
+            case "DrawCharacter": return EffectType.DrawCharacter;
             case "Buff": return EffectType.Buff; 
-            case "Energy": return EffectType.Energy; 
             case "Heal": return EffectType.Heal; 
-            case "MultiplyDefense":
-            case "MultimediaDefense": return EffectType.MultiplyDefense; // 추후 삭제 or 수정 예정
-            case "ConsumeDefense": return EffectType.ConsumeDefense; // 추후 삭제 or 수정 예정
             case "GenerateCard": return EffectType.GenerateCard; // 추후 삭제 or 수정 예정
             case "Keyword": return EffectType.Keyword; // 추후 삭제 or 수정 예정
             case "DiscardHand": return EffectType.DiscardHand; // 추후 삭제 or 수정 예정
-            case "ChoiceDiscard": return EffectType.ChoiceDiscard; // 추후 삭제 or 수정 예정
             case "Pickup": return EffectType.Pickup; // 추후 삭제 or 수정 예정
             case "ExhaustHand": return EffectType.ExhaustHand; // 추후 삭제 or 수정 예정
             case "Conditional": return EffectType.Conditional; // 추후 삭제 or 수정 예정
             case "Repeat": return EffectType.Repeat; // 추후 삭제 or 수정 예정
             case "ReduceCost": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            
+
             case "Move": return EffectType.Move;
             case "Copy": return EffectType.Copy;
             case "RandGenerate": return EffectType.Repeat; // 추후 삭제 or 수정 예정
@@ -717,7 +712,6 @@ public class CardJSONConverter : EditorWindow
         {
             case "AllEnemies": return TargetType.AllEnemies;
             case "SingleEnemy":
-            case "Enemy":
             case "RandomEnemy":
             case "RandEnemy": return TargetType.SingleEnemy;
             case "Self": return TargetType.Self;

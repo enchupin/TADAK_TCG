@@ -490,7 +490,7 @@
                 "effects": [
                     {
                         "type": "Damage",
-                        "target": "Enemy"
+                        "target": "SingleEnemy"
                     }
                 ]
             },

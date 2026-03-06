@@ -10,7 +10,7 @@
                 {
                     "type": "Attack",
                     "amount": 6,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -189,7 +189,7 @@
                 {
                     "type": "Attack",
                     "amount": 12,
-                    "target": "Enemy",
+                    "target": "SingleEnemy",
                     "onAction": {
                         "type": "Barrier",
                         "amountFormula": "finalDamage",
@@ -243,13 +243,13 @@
                 {
                     "type": "Attack",
                     "amount": 4,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 },
                 {
                     "type": "Buff",
                     "buffId": 4004,
                     "amount": 2,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ],
             "enforceGroup": "enforce_301050"
@@ -264,13 +264,13 @@
                 {
                     "type": "Attack",
                     "amount": 6,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 },
                 {
                     "type": "Buff",
                     "buffId": 4004,
                     "amount": 3,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -654,7 +654,7 @@
                     "type": "Buff",
                     "buffId": 4004,
                     "amount": 1,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -672,7 +672,7 @@
                     "type": "Buff",
                     "buffId": 4004,
                     "amount": 2,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ]
         }

@@ -127,11 +127,6 @@ public class CardInteractionHandler : UIHoverEffect,
     {
         if (effect == null) return;
 
-        if (effect is ExecuteDamageEffect) {
-            hasSingleEnemyTarget = true;
-            return;
-        }
-
         if (effect is DamageEffect damageEffect) {
             if (damageEffect.target == TargetType.SingleEnemy) {
                 hasSingleEnemyTarget = true;
@@ -171,15 +166,6 @@ public class CardInteractionHandler : UIHoverEffect,
         if (effect is RepeatEffect repeatEffect) {
             CollectTargetingFlags(repeatEffect.effectsToRepeat, ref hasSingleEnemyTarget);
             return;
-        }
-
-        if (effect is ConsumeDefenseEffect consumeDefenseEffect) {
-            CollectTargetingFlags(consumeDefenseEffect.nestedEffects, ref hasSingleEnemyTarget);
-            return;
-        }
-
-        if (effect is ChoiceDiscardEffect choiceDiscardEffect) {
-            CollectTargetingFlags(choiceDiscardEffect.effects, ref hasSingleEnemyTarget);
         }
     }
     public void OnBeginDrag(PointerEventData eventData)

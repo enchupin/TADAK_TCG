@@ -10,7 +10,7 @@
                 {
                     "type": "Attack",
                     "amount": 4,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -292,7 +292,7 @@
                 {
                     "type": "Buff",
                     "buffId": 3030,
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ],
             "enforceGroup": "enforce_102050"
@@ -319,7 +319,7 @@
             "effects": [
                 {
                     "type": "MixBuff",
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -384,7 +384,7 @@
                 },
                 {
                     "type": "Kill",
-                    "target": "Enemy",
+                    "target": "SingleEnemy",
                     "silent": false
                 }
             ]
@@ -400,7 +400,7 @@
                     "type": "ChangeStat",
                     "stat": "Shield",
                     "change": "Remove",
-                    "target": "Enemy"
+                    "target": "SingleEnemy"
                 }
             ],
             "enforceGroup": "enforce_102060"
@@ -419,7 +419,7 @@
                     "type": "ChangeStat",
                     "stat": "Buff",
                     "change": "Remove",
-                    "target": "Enemy",
+                    "target": "SingleEnemy",
                     "buffType": [
                         1,
                         3

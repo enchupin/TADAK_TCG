@@ -87,7 +87,7 @@ public class TurnSystem
 
         if (battleManager.isDebugMode && turnNumber == 1)
         {
-            battleManager.DebugDrawSpecificEffectCard();
+            battleManager.DebugDrawCardsByEffect();
         }
         else
         {

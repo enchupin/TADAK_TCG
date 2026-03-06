@@ -77,6 +77,8 @@ public static class CardEffectFactory
                 return new DamageEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, target = effectData.target, onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject) };
             case EffectType.Draw:
                 return new DrawEffect { amount = effectData.amount, amountFormula = effectData.amountFormula };
+            case EffectType.DrawCharacter:
+                return new DrawCharacterEffect { amount = effectData.amount, amountFormula = effectData.amountFormula };
             case EffectType.DrawBasic:
                 return new DrawBasicEffect { amount = effectData.amount, amountFormula = effectData.amountFormula };
             case EffectType.Move:
@@ -85,29 +87,14 @@ public static class CardEffectFactory
                 return new CopyEffect { from = effectData.from, to = effectData.to, position = effectData.position, subject = resolvedSubject, amount = effectData.amount, amountFormula = effectData.amountFormula, cardIdList = effectData.formulaCardIdFilter == null ? null : new List<int>(effectData.formulaCardIdFilter) };
             case EffectType.Buff:
                 return new BuffEffect { stat = effectData.stat, buffId = effectData.buffId, amount = effectData.amount, amountFormula = effectData.amountFormula, duration = effectData.duration, target = effectData.target };
-            case EffectType.Energy:
-                return new EnergyEffect { amount = effectData.amount, amountFormula = effectData.amountFormula };
-            case EffectType.DamagePerCardPlayed:
-                return new DamagePerCardPlayedEffect { baseDamage = effectData.baseDamage, bonusPerCard = effectData.bonusPerCard };
-            case EffectType.Execute:
-                return new ExecuteDamageEffect { baseDamage = effectData.baseDamage, hpThreshold = effectData.hpThreshold, multiplier = effectData.multiplier };
             case EffectType.Heal:
                 return new HealEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, cardIdList = effectData.formulaCardIdFilter, target = effectData.target };
-            case EffectType.MultiplyDefense:
-                return new MultiplyDefenseEffect { amount = effectData.amount, amountFormula = effectData.amountFormula };
-            case EffectType.ConsumeDefense:
-                return new ConsumeDefenseEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, nestedEffects = BuildRuntimeEffects(effectData.subEffects, resolvedSubject) };
             case EffectType.GenerateCard:
                 return new GenerateCardEffect { RandomCard = effectData.RandomCard, target = effectData.target };
             case EffectType.Keyword:
                 return new KeywordEffect { keyword = effectData.keyword, amount = effectData.amount, amountFormula = effectData.amountFormula };
-            case EffectType.ChoiceDiscard:
-                return new ChoiceDiscardEffect { amount = effectData.count, effects = BuildRuntimeEffects(effectData.subEffects, resolvedSubject) };
             case EffectType.Pickup:
                 return new PickupEffect();
-            case EffectType.RandomGenerate:
-                Debug.LogWarning($"[CardData] Not implemented effect type: {effectData.type}");
-                return null;
             default:
                 Debug.LogWarning($"[CardData] Unknown effect type: {effectData.type}");
                 return null;

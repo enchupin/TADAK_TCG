@@ -3,20 +3,13 @@ public enum EffectType
     Damage,
     Draw,
     Buff,
-    Energy,
-    DamagePerCardPlayed,
-    Execute,
     Heal,
-    MultiplyDefense,
-    ConsumeDefense,
     GenerateCard,
     Keyword,
     Attack,
     Barrier,
     ChoiceHand,
-    ChoiceDiscard,
     Conditional,
-    RandomGenerate,
     DiscardHand,
     ExhaustHand,
     SelectCard,
@@ -33,5 +26,6 @@ public enum EffectType
     Cancel,
     Pickup,
     DrawBasic,
-    Move
+    Move,
+    DrawCharacter
 }
