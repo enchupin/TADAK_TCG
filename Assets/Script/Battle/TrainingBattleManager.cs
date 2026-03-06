@@ -451,9 +451,6 @@ public class TrainingBattleManager : MonoBehaviour
             case EffectType.Attack:
                 if (effect is AttackEffect) return true;
                 break;
-            case EffectType.Execute:
-                if (effect is ExecuteDamageEffect) return true;
-                break;
             case EffectType.Heal:
                 if (effect is HealEffect) return true;
                 break;
@@ -481,14 +478,6 @@ public class TrainingBattleManager : MonoBehaviour
         if (effect is BarrierEffect barrier && barrier.onActions != null)
         {
             foreach (ICardEffect nested in barrier.onActions)
-            {
-                if (EffectMatchesDebugTarget(nested))
-                    return true;
-            }
-        }
-        if (effect is ConsumeDefenseEffect consume && consume.nestedEffects != null)
-        {
-            foreach (ICardEffect nested in consume.nestedEffects)
             {
                 if (EffectMatchesDebugTarget(nested))
                     return true;

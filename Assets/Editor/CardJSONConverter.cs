@@ -651,20 +651,25 @@ public class CardJSONConverter : EditorWindow
             case "DrawBasic": return EffectType.DrawBasic;
             case "DrawSpecific": return EffectType.Draw; // 추후 삭제 or 수정 예정
             case "Buff": return EffectType.Buff; 
-            case "Energy": return EffectType.Energy; 
             case "Heal": return EffectType.Heal; 
-            case "MultiplyDefense":
-            case "MultimediaDefense": return EffectType.MultiplyDefense; // 추후 삭제 or 수정 예정
-            case "ConsumeDefense": return EffectType.ConsumeDefense; // 추후 삭제 or 수정 예정
             case "GenerateCard": return EffectType.GenerateCard; // 추후 삭제 or 수정 예정
             case "Keyword": return EffectType.Keyword; // 추후 삭제 or 수정 예정
             case "DiscardHand": return EffectType.DiscardHand; // 추후 삭제 or 수정 예정
-            case "ChoiceDiscard": return EffectType.ChoiceDiscard; // 추후 삭제 or 수정 예정
             case "Pickup": return EffectType.Pickup; // 추후 삭제 or 수정 예정
             case "ExhaustHand": return EffectType.ExhaustHand; // 추후 삭제 or 수정 예정
             case "Conditional": return EffectType.Conditional; // 추후 삭제 or 수정 예정
             case "Repeat": return EffectType.Repeat; // 추후 삭제 or 수정 예정
             case "ReduceCost": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+
+            case "Energy":
+            case "DamagePerCardPlayed":
+            case "Execute":
+            case "MultiplyDefense":
+            case "MultimediaDefense":
+            case "ConsumeDefense":
+            case "ChoiceDiscard":
+            case "RandomGenerate":
+                throw new ArgumentException($"[CardJSONConverter] Legacy effect type is no longer supported: {type}");
             
             case "Move": return EffectType.Move;
             case "Copy": return EffectType.Copy;
