@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -53,6 +53,39 @@ public class CardJSONConverter : EditorWindow
         }
     }
 
+    private static string ResolveMoveZoneStringForParser(string zone, EffectType effectType)
+    {
+        if (effectType != EffectType.RandGenerate || string.IsNullOrWhiteSpace(zone)) {
+            return zone;
+        }
+
+        return IsMoveZoneString(zone) ? zone : string.Empty;
+    }
+
+    private static bool IsMoveZoneString(string zone)
+    {
+        if (string.IsNullOrWhiteSpace(zone)) {
+            return false;
+        }
+
+        switch (zone)
+        {
+            case "Source":
+            case "Hand":
+            case "Deck":
+            case "DrawPile":
+            case "Discard":
+            case "DiscardPile":
+            case "AllCards":
+            case "CardId":
+            case "Basic":
+            case "Unique":
+                return true;
+            default:
+                return false;
+        }
+    }
+
     private static MovePositionType ParseMovePositionType(string position)
     {
         if (string.IsNullOrWhiteSpace(position)) {
@@ -70,7 +103,7 @@ public class CardJSONConverter : EditorWindow
     }
 
     /// <summary>
-    /// CI에서 Unity없이 커맨드라인에서 자동으로 실행할 수 있는 진입점
+    /// CI?먯꽌 Unity?놁씠 而ㅻ㎤?쒕씪?몄뿉???먮룞?쇰줈 ?ㅽ뻾?????덈뒗 吏꾩엯??
     /// Usage: Unity.exe -batchmode -quit -projectPath <path> -executeMethod CardJSONConverter.ConvertAllDefaultJsons
     /// </summary>
     public static void ConvertAllDefaultJsons() {
@@ -83,7 +116,7 @@ public class CardJSONConverter : EditorWindow
 
     /// <summary>
     /// Draw Card JSON Converter Tool's Editor UI
-    /// 경로 입력값을 받고 버튼 클릭 시 변환 로직(ConvertJSONToScriptableObjects)을 호출
+    /// 寃쎈줈 ?낅젰媛믪쓣 諛쏄퀬 踰꾪듉 ?대┃ ??蹂??濡쒖쭅(ConvertJSONToScriptableObjects)???몄텧
     /// </summary>
     private void OnGUI() {
         GUILayout.Label("Card JSON Batch Converter", EditorStyles.boldLabel);
@@ -104,11 +137,11 @@ public class CardJSONConverter : EditorWindow
     }
 
     /// <summary>
-    /// JSON 데이터를 SO로 변환
+    /// JSON ?곗씠?곕? SO濡?蹂??
     /// </summary>
     private void ConvertJSONToScriptableObjects()
     {
-        // 입력 폴더 검증
+        // ?낅젰 ?대뜑 寃利?
         if (!Directory.Exists(jsonFolderPath))
         {
             Debug.LogError($"[CardJSONConverter] Folder not found: {jsonFolderPath}");
@@ -116,7 +149,7 @@ public class CardJSONConverter : EditorWindow
             return;
         }
 
-        // 입력 파일 검증
+        // ?낅젰 ?뚯씪 寃利?
         string[] jsonFiles = Directory.GetFiles(jsonFolderPath, "*Cards.json");
         if (jsonFiles.Length == 0)
         {
@@ -124,28 +157,28 @@ public class CardJSONConverter : EditorWindow
             return;
         }
 
-        // 카드 그룹(cardGroups) 로드
+        // 移대뱶 洹몃９(cardGroups) 濡쒕뱶
         if (!Directory.Exists(outputPath)) {
             Directory.CreateDirectory(outputPath);
         }
         cardGroups = LoadCardGroups();
 
-        // CardData를 인덱싱하여 콜렉션 SO에 저장
+        // CardData瑜??몃뜳?깊븯??肄쒕젆??SO?????
         CardCollection collection = GetOrCreateCardCollection();
 
-        // 기존에 존재하던 CardCollection SO 파일 로드
+        // 湲곗〈??議댁옱?섎뜕 CardCollection SO ?뚯씪 濡쒕뱶
         Dictionary<int, CardData> existingById = BuildCardIndexById();
 
-        // 새로운 CardCollection SO 파일 로드를 위한 객체 생성
+        // ?덈줈??CardCollection SO ?뚯씪 濡쒕뱶瑜??꾪븳 媛앹껜 ?앹꽦
         Dictionary<int, CardData> updatedById = new();
 
-        // 각 *Cards.json 파일 변환
+        // 媛?*Cards.json ?뚯씪 蹂??
         int converted = 0;
         foreach (string filePath in jsonFiles) {
             converted += ConvertFileInternal(filePath, existingById, updatedById);
         }
 
-        // CardCollection 재구성/정렬/저장
+        // CardCollection ?ш뎄???뺣젹/???
         List<CardData> normalized = new(updatedById.Values);
         normalized.Sort((a, b) => a.cardId.CompareTo(b.cardId));
         collection.allCards = normalized;
@@ -161,11 +194,11 @@ public class CardJSONConverter : EditorWindow
     }
 
     /// <summary>
-    /// *Cards.json 파일(모든 캐릭터의 카드 데이터를 담고 있는 json 파일)을 읽어 CardData 에셋으로 반영
+    /// *Cards.json ?뚯씪(紐⑤뱺 罹먮┃?곗쓽 移대뱶 ?곗씠?곕? ?닿퀬 ?덈뒗 json ?뚯씪)???쎌뼱 CardData ?먯뀑?쇰줈 諛섏쁺
     /// </summary>
     /// <param name="path">  </param>
-    /// <param name="existingById"> 기존 에셋 재사용을 위한 인덱스 </param>
-    /// <param name="updatedById"> 이번 변환 사이클에서 실제 갱신된 카드 집합 </param>
+    /// <param name="existingById"> 湲곗〈 ?먯뀑 ?ъ궗?⑹쓣 ?꾪븳 ?몃뜳??</param>
+    /// <param name="updatedById"> ?대쾲 蹂???ъ씠?댁뿉???ㅼ젣 媛깆떊??移대뱶 吏묓빀 </param>
     /// <returns></returns>
     private int ConvertFileInternal(string path, Dictionary<int, CardData> existingById, Dictionary<int, CardData> updatedById)
     {
@@ -227,29 +260,29 @@ public class CardJSONConverter : EditorWindow
 
 
     /// <summary>
-    /// 카드 SO 반환 (기존 파일이 없다면 생성하여 반환)
+    /// 移대뱶 SO 諛섑솚 (湲곗〈 ?뚯씪???녿떎硫??앹꽦?섏뿬 諛섑솚)
     /// </summary>
     private CardData GetOrCreateCardData(JObject cardObject, int cardId, Dictionary<int, CardData> existingById)
     {
-        // 메모리 인덱스(existingById)에서 우선 검색
+        // 硫붾え由??몃뜳??existingById)?먯꽌 ?곗꽑 寃??
         if (existingById.TryGetValue(cardId, out CardData existing) && existing != null) {
             return existing;
         }
 
-        // 예상 경로(candidatePath)에서 에셋 로드 시도
+        // ?덉긽 寃쎈줈(candidatePath)?먯꽌 ?먯뀑 濡쒕뱶 ?쒕룄
         string candidatePath = BuildCardAssetPath(cardId, ReadJsonString(cardObject, "name"));
         CardData loaded = AssetDatabase.LoadAssetAtPath<CardData>(candidatePath);
         if (loaded != null) {
             return loaded;
         }
 
-        // 없으면 새 ScriptableObject 인스턴스 반환
+        // ?놁쑝硫???ScriptableObject ?몄뒪?댁뒪 諛섑솚
         return ScriptableObject.CreateInstance<CardData>();
     }
 
 
     /// <summary>
-    /// Json 데이터를 CardData 클래스에 매핑
+    /// Json ?곗씠?곕? CardData ?대옒?ㅼ뿉 留ㅽ븨
     /// </summary>
     private void UpdateCardData(CardData cardData, JObject cardObject)
     {
@@ -291,7 +324,7 @@ public class CardJSONConverter : EditorWindow
 
 
     /// <summary>
-    /// Json 파일의 effects 키워드를 CardEffectData 타입으로 반환
+    /// Json ?뚯씪??effects ?ㅼ썙?쒕? CardEffectData ??낆쑝濡?諛섑솚
     /// </summary>
     private CardEffectData ReadEffect(JObject effectObject, bool isOnActionContext = false)
     {
@@ -308,14 +341,15 @@ public class CardJSONConverter : EditorWindow
         string fromRaw = ReadJsonString(effectObject, "from");
         string toRaw = ReadJsonString(effectObject, "to");
         string targetRaw = ReadJsonString(effectObject, "target");
+        string resolvedFromRaw = ResolveMoveZoneStringForParser(fromRaw, effectType);
         bool hasOnAction = effectObject["onAction"] is JObject || effectObject["onAction"] is JArray;
 
-        // SelectCard Effect는 from 키워드를 소유하도록 강제
+        // SelectCard Effect??from ?ㅼ썙?쒕? ?뚯쑀?섎룄濡?媛뺤젣
         if (effectType == EffectType.SelectCard && !isOnActionContext && string.IsNullOrWhiteSpace(fromRaw)) {
             throw new ArgumentException("[CardJSONConverter] SelectCard effect requires 'from' outside onAction context.");
         }
 
-        // onACtion은 Subject 키워드를 소유하도록 강제
+        // onACtion? Subject ?ㅼ썙?쒕? ?뚯쑀?섎룄濡?媛뺤젣
         if (hasOnAction && string.IsNullOrWhiteSpace(ReadJsonString(effectObject, "subject"))) {
             throw new ArgumentException("[CardJSONConverter] Effect with onAction requires outer 'subject'.");
         }
@@ -329,7 +363,7 @@ public class CardJSONConverter : EditorWindow
         {
             type = effectType,
             target = ParseTargetType(targetRaw),
-            from = ParseMoveZoneType(fromRaw, fromDefault),
+            from = ParseMoveZoneType(resolvedFromRaw, fromDefault),
             to = ParseMoveZoneType(toRaw, MoveZoneType.None),
             position = ParseMovePositionType(ReadJsonString(effectObject, "position")),
             amount = ReadJsonInt(effectObject, "amount"),
@@ -338,6 +372,7 @@ public class CardJSONConverter : EditorWindow
             stat = ReadJsonString(effectObject, "stat"),
             buffId = ReadJsonInt(effectObject, "buffId"),
             duration = ReadJsonInt(effectObject, "duration"),
+            cardId = ReadJsonString(effectObject, "cardId"),
             subject = ReadJsonString(effectObject, "subject")
         };
 
@@ -365,6 +400,16 @@ public class CardJSONConverter : EditorWindow
             }
             else {
                 Debug.LogWarning($"[CardJSONConverter] cardIdGroup not found: {cardIdGroup}");
+            }
+        }
+
+        if (effectType == EffectType.RandGenerate && string.IsNullOrWhiteSpace(cardIdGroup) && !string.IsNullOrWhiteSpace(fromRaw)) {
+            if (cardGroups.TryGetValue(fromRaw, out List<int> fromCardIds)) {
+                effect.formulaCardIdFilter = new List<int>(fromCardIds);
+            }
+            else if (!IsMoveZoneString(fromRaw))
+            {
+                Debug.LogWarning($"[CardJSONConverter] from card group not found: {fromRaw}");
             }
         }
 
@@ -419,7 +464,7 @@ public class CardJSONConverter : EditorWindow
 
 
     /// <summary>
-    /// Json파일의 effects 키워드를 List<CardEffectData> 타입으로 반환
+    /// Json?뚯씪??effects ?ㅼ썙?쒕? List<CardEffectData> ??낆쑝濡?諛섑솚
     /// </summary>
     private List<CardEffectData> ReadEffectList(JArray effectsArray, bool isOnActionContext = false) {
         List<CardEffectData> result = new List<CardEffectData>();
@@ -443,7 +488,7 @@ public class CardJSONConverter : EditorWindow
 
 
     /// <summary>
-    /// Json파일의 condtion 키워드를 CoditinoData Class로 변환
+    /// Json?뚯씪??condtion ?ㅼ썙?쒕? CoditinoData Class濡?蹂??
     /// </summary>
     private ConditionData ReadCondition(JObject conditionObject, bool isOnActionContext = false)
     {
@@ -488,28 +533,28 @@ public class CardJSONConverter : EditorWindow
 
 
     /// <summary>
-    /// 카드 그룹 로드
+    /// 移대뱶 洹몃９ 濡쒕뱶
     /// </summary>
     private Dictionary<string, List<int>> LoadCardGroups()
     {
-        // cardGroups.json을 읽어 <groupName, cardIds> 맵을 구성
+        // cardGroups.json???쎌뼱 <groupName, cardIds> 留듭쓣 援ъ꽦
         Dictionary<string, List<int>> groups = new Dictionary<string, List<int>>();
         string filePath = Path.Combine(jsonFolderPath, CardGroupsFileName).Replace("\\", "/");
 
-        // json파일 존재 확인
+        // json?뚯씪 議댁옱 ?뺤씤
         if (!File.Exists(filePath)) {
             Debug.LogError($"[CardJSONConverter] cardGroups file not found: {filePath}");
             return groups;
         }
 
-        // jsonFile을 Unity Editor Text 타입으로 로드
+        // jsonFile??Unity Editor Text ??낆쑝濡?濡쒕뱶
         TextAsset jsonFile = AssetDatabase.LoadAssetAtPath<TextAsset>(filePath);
         if (jsonFile == null) {
             Debug.LogWarning($"[CardJSONConverter] Failed to load group file asset: {filePath}");
             return groups;
         }
 
-        // Text를 다시 JObject로 변환
+        // Text瑜??ㅼ떆 JObject濡?蹂??
         JObject root;
         try {
             root = JObject.Parse(jsonFile.text);
@@ -518,7 +563,7 @@ public class CardJSONConverter : EditorWindow
             return groups;
         }
 
-        // 최상위 루트의 "groups" 속성이 JArray 타입인지 확인
+        // 理쒖긽??猷⑦듃??"groups" ?띿꽦??JArray ??낆씤吏 ?뺤씤
         if (root["groups"] is not JArray groupsArray) {
             Debug.LogWarning($"[CardJSONConverter] Missing 'groups' array in {filePath}");
             return groups;
@@ -527,33 +572,33 @@ public class CardJSONConverter : EditorWindow
 
         foreach (JToken token in groupsArray)
         {
-            // token이 JObject 타입인지 확인
+            // token??JObject ??낆씤吏 ?뺤씤
             if ((token is not JObject groupObject)) {
                 continue;
             }
 
-            // 그룹 식별자(groupName)를 확인
+            // 洹몃９ ?앸퀎??groupName)瑜??뺤씤
             string groupName = ReadJsonString(groupObject, "groupName");
-            // groupName이 비어 있으면 딕셔너리 키로 사용할 수 없으므로 제외
+            // groupName??鍮꾩뼱 ?덉쑝硫??뺤뀛?덈━ ?ㅻ줈 ?ъ슜?????놁쑝誘濡??쒖쇅
             if (string.IsNullOrWhiteSpace(groupName)) {
                 continue;
             }
 
-            // 현재 그룹에 매핑될 카드 ID 목록을 담을 리스트
+            // ?꾩옱 洹몃９??留ㅽ븨??移대뱶 ID 紐⑸줉???댁쓣 由ъ뒪??
             List<int> cardIds = new();
 
-            // cardIds 키가 배열인지 확인한 뒤에만 순회
+            // cardIds ?ㅺ? 諛곗뿴?몄? ?뺤씤???ㅼ뿉留??쒗쉶
             if (groupObject["cardIds"] is JArray cardIdsArray) {
-                foreach (JToken cardIdToken in cardIdsArray) { // cardIds 배열의 각 항목(카드 ID 후보)을 순회
-                    int cardId = ReadJsonInt(cardIdToken); // 숫자/문자열 형태 입력을 안전하게 int로 변환
-                    if (cardId != 0 && !cardIds.Contains(cardId)) { // 0은 무효 값으로 취급하고, 중복 ID는 한 번만 추가
-                        cardIds.Add(cardId); // 검증을 통과한 카드 ID를 리스트에 추가
+                foreach (JToken cardIdToken in cardIdsArray) { // cardIds 諛곗뿴??媛???ぉ(移대뱶 ID ?꾨낫)???쒗쉶
+                    int cardId = ReadJsonInt(cardIdToken); // ?レ옄/臾몄옄???뺥깭 ?낅젰???덉쟾?섍쾶 int濡?蹂??
+                    if (cardId != 0 && !cardIds.Contains(cardId)) { // 0? 臾댄슚 媛믪쑝濡?痍④툒?섍퀬, 以묐났 ID????踰덈쭔 異붽?
+                        cardIds.Add(cardId); // 寃利앹쓣 ?듦낵??移대뱶 ID瑜?由ъ뒪?몄뿉 異붽?
                     }
                 }
             }
 
-            // 최종적으로 groups 딕셔너리에 <groupName, cardIds> 매핑을 저장
-            // 동일 groupName이 이미 있으면 최신 값으로 업데이트
+            // 理쒖쥌?곸쑝濡?groups ?뺤뀛?덈━??<groupName, cardIds> 留ㅽ븨?????
+            // ?숈씪 groupName???대? ?덉쑝硫?理쒖떊 媛믪쑝濡??낅뜲?댄듃
             groups[groupName] = cardIds;
         }
 
@@ -563,8 +608,8 @@ public class CardJSONConverter : EditorWindow
 
 
 
-    // 카드 ID+이름으로 저장 경로를 생성
-    // 파일명 불가 문자는 SanitizeFileName에서 치환
+    // 移대뱶 ID+?대쫫?쇰줈 ???寃쎈줈瑜??앹꽦
+    // ?뚯씪紐?遺덇? 臾몄옄??SanitizeFileName?먯꽌 移섑솚
     private string BuildCardAssetPath(int cardId, string cardName)
     {
         string rawName = $"{cardId}_{cardName}.asset";
@@ -574,7 +619,7 @@ public class CardJSONConverter : EditorWindow
 
     private static string SanitizeFileName(string fileName)
     {
-        // 운영체제 파일명 금지 문자를 '_'로 치환해 에셋 생성 실패를 방지
+        // ?댁쁺泥댁젣 ?뚯씪紐?湲덉? 臾몄옄瑜?'_'濡?移섑솚???먯뀑 ?앹꽦 ?ㅽ뙣瑜?諛⑹?
         foreach (char invalid in Path.GetInvalidFileNameChars())
         {
             fileName = fileName.Replace(invalid.ToString(), "_");
@@ -585,7 +630,7 @@ public class CardJSONConverter : EditorWindow
 
 
     /// <summary>
-    /// CardData SO파일을 모아서 Dictionary를 반환
+    /// CardData SO?뚯씪??紐⑥븘??Dictionary瑜?諛섑솚
     /// </summary>
     /// <returns> CardData Dictionary </returns>
     private Dictionary<int, CardData> BuildCardIndexById()
@@ -593,10 +638,10 @@ public class CardJSONConverter : EditorWindow
         // Key:cardId, Value:CardData Asset
         Dictionary<int, CardData> map = new();
 
-        // map을 생성하여 outputPath 아래에서 CardData 타입의 GUID(SO파일의 주소) 목록 조회
+        // map???앹꽦?섏뿬 outputPath ?꾨옒?먯꽌 CardData ??낆쓽 GUID(SO?뚯씪??二쇱냼) 紐⑸줉 議고쉶
         string[] guids = AssetDatabase.FindAssets("t:CardData", new[] { outputPath });
 
-        // 주소를 string으로 변환하여 로드 후 map에 추가
+        // 二쇱냼瑜?string?쇰줈 蹂?섑븯??濡쒕뱶 ??map??異붽?
         foreach (string guid in guids) {
             string path = AssetDatabase.GUIDToAssetPath(guid);
             CardData cardData = AssetDatabase.LoadAssetAtPath<CardData>(path);
@@ -610,7 +655,7 @@ public class CardJSONConverter : EditorWindow
 
 
     /// <summary>
-    /// CardCollection.asset를 보장(없으면 생성)하여 반환
+    /// CardCollection.asset瑜?蹂댁옣(?놁쑝硫??앹꽦)?섏뿬 諛섑솚
     /// </summary>
     private CardCollection GetOrCreateCardCollection()
     {
@@ -633,9 +678,9 @@ public class CardJSONConverter : EditorWindow
     /// <summary>
     /// Parsing EffectType
     /// </summary>
-    /// <param name="type"> 이펙트 이름 </param>
-    /// <returns> 이펙트 이름에 해당하는 EffectType </returns>
-    /// <exception cref="ArgumentException"> type이 null이거나 비어있을 경우 예외를 발생 </exception>
+    /// <param name="type"> ?댄럺???대쫫 </param>
+    /// <returns> ?댄럺???대쫫???대떦?섎뒗 EffectType </returns>
+    /// <exception cref="ArgumentException"> type??null?닿굅??鍮꾩뼱?덉쓣 寃쎌슦 ?덉쇅瑜?諛쒖깮 </exception>
     private static EffectType ParseEffectType(string type)
     {
         if (string.IsNullOrWhiteSpace(type)) {
@@ -647,46 +692,45 @@ public class CardJSONConverter : EditorWindow
             case "Attack": return EffectType.Attack;
             case "Damage": return EffectType.Damage;
             case "Barrier": return EffectType.Barrier;
-            case "Draw": return EffectType.Draw; // 추후 삭제 or 수정 예정
+            case "Draw": return EffectType.Draw; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
             case "DrawBasic": return EffectType.DrawBasic;
             case "DrawCharacter": return EffectType.DrawCharacter;
             case "Buff": return EffectType.Buff; 
             case "Heal": return EffectType.Heal; 
-            case "GenerateCard": return EffectType.GenerateCard; // 추후 삭제 or 수정 예정
-            case "Keyword": return EffectType.Keyword; // 추후 삭제 or 수정 예정
-            case "DiscardHand": return EffectType.DiscardHand; // 추후 삭제 or 수정 예정
-            case "Pickup": return EffectType.Pickup; // 추후 삭제 or 수정 예정
-            case "ExhaustHand": return EffectType.ExhaustHand; // 추후 삭제 or 수정 예정
-            case "Conditional": return EffectType.Conditional; // 추후 삭제 or 수정 예정
-            case "Repeat": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "ReduceCost": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "GenerateCard": return EffectType.GenerateCard; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "Keyword": return EffectType.Keyword; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "DiscardHand": return EffectType.DiscardHand; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "Pickup": return EffectType.Pickup; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "ExhaustHand": return EffectType.ExhaustHand; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "Conditional": return EffectType.Conditional; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "Repeat": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "ReduceCost": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
 
             case "Move": return EffectType.Move;
             case "Copy": return EffectType.Copy;
-            case "RandGenerate": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "ChoiceGenerate": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "ChoiceHand": return EffectType.ChoiceHand;
-            case "Discard": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "Keep": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "Cost": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "CreateCard": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "RandGenerate": return EffectType.RandGenerate;
+                        case "ChoiceHand": return EffectType.ChoiceHand;
+            case "Discard": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "Keep": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "Cost": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "CreateCard": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
             case "ChoiceCard":
             case "SelectCard": return EffectType.SelectCard;
-            case "Upgrade": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "MixBuff": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "ModifyCards": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "ModifyCard": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "Kill": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "ChangeStat": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "ExtraTurn": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "Stamina": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "SelectEnemy": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "TransferStats": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "MultiplyBarrier": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "Trigger": return EffectType.Repeat; // 추후 삭제 or 수정 예정
-            case "RemoveBuff": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "Upgrade": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "MixBuff": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "ModifyCards": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "ModifyCard": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "Kill": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "ChangeStat": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "ExtraTurn": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "Stamina": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "SelectEnemy": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "TransferStats": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "MultiplyBarrier": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "Trigger": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "RemoveBuff": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
             case "Scry": return EffectType.Scry;
-            case "DrawnCard": return EffectType.Repeat; // 추후 삭제 or 수정 예정
+            case "DrawnCard": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
 
             default:
                 Debug.LogWarning($"[CardJSONConverter] Unknown effect type: {type}. Fallback to Repeat.");
@@ -699,9 +743,9 @@ public class CardJSONConverter : EditorWindow
     /// <summary>
     /// Parsing TargetType
     /// </summary>
-    /// <param name="target"> 타겟 이름 </param>
-    /// <returns> 타겟 이름에 해당하는 TargetType 반환 </returns>
-    /// <exception cref="ArgumentException"> target이 null이거나 비어있으면 예외 발생 </exception>
+    /// <param name="target"> ?寃??대쫫 </param>
+    /// <returns> ?寃??대쫫???대떦?섎뒗 TargetType 諛섑솚 </returns>
+    /// <exception cref="ArgumentException"> target??null?닿굅??鍮꾩뼱?덉쑝硫??덉쇅 諛쒖깮 </exception>
     private static TargetType ParseTargetType(string target)
     {
         if (string.IsNullOrWhiteSpace(target)) {
@@ -771,7 +815,7 @@ public class CardJSONConverter : EditorWindow
 
 
     /// <summary>
-    /// JObject key 접근용 래퍼
+    /// JObject key ?묎렐???섑띁
     /// </summary>
     private static string ReadJsonString(JObject obj, string key, string defaultValue = "")
     {
@@ -782,8 +826,8 @@ public class CardJSONConverter : EditorWindow
     }
 
     /// <summary>
-    /// JToken을 안전하게 문자열로 변환
-    /// String 타입이 아니면 ToString() 결과를 사용
+    /// JToken???덉쟾?섍쾶 臾몄옄?대줈 蹂??
+    /// String ??낆씠 ?꾨땲硫?ToString() 寃곌낵瑜??ъ슜
     /// </summary>
     private static string ReadJsonString(JToken token, string defaultValue = "")
     {
@@ -801,7 +845,7 @@ public class CardJSONConverter : EditorWindow
     }
 
     /// <summary>
-    /// JObject key 접근용 래퍼
+    /// JObject key ?묎렐???섑띁
     /// </summary>
     private static int ReadJsonInt(JObject obj, string key, int defaultValue = 0)
     {
@@ -814,9 +858,9 @@ public class CardJSONConverter : EditorWindow
     }
 
     /// <summary>
-    /// JToken을 안전하게 정수로 변환
-    /// 정수/실수/문자열 숫자를 모두 허용해 int로 변환
-    /// 문자열 숫자는 InvariantCulture 기준으로 파싱
+    /// JToken???덉쟾?섍쾶 ?뺤닔濡?蹂??
+    /// ?뺤닔/?ㅼ닔/臾몄옄???レ옄瑜?紐⑤몢 ?덉슜??int濡?蹂??
+    /// 臾몄옄???レ옄??InvariantCulture 湲곗??쇰줈 ?뚯떛
     /// </summary>
     private static int ReadJsonInt(JToken token, int defaultValue = 0)
     {
@@ -882,7 +926,7 @@ public class CardJSONConverter : EditorWindow
     }
 
     /// <summary>
-    /// JObject key 접근용 래퍼
+    /// JObject key ?묎렐???섑띁
     /// </summary>
     private static float ReadJsonFloat(JObject obj, string key, float defaultValue = 0f)
     {
@@ -895,8 +939,8 @@ public class CardJSONConverter : EditorWindow
     }
 
     /// <summary>
-    /// JToken을 안전하게 실수로 변환
-    /// 실수/정수/문자열 숫자를 float으로 변환
+    /// JToken???덉쟾?섍쾶 ?ㅼ닔濡?蹂??
+    /// ?ㅼ닔/?뺤닔/臾몄옄???レ옄瑜?float?쇰줈 蹂??
     /// </summary>
     private static float ReadJsonFloat(JToken token, float defaultValue = 0f)
     {
@@ -929,4 +973,5 @@ public class CardJSONConverter : EditorWindow
 
 
 }
+
 

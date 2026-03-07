@@ -197,8 +197,8 @@
                 {
                     "type": "RandGenerate",
                     "amount": 1,
-                    "cardIdGroup": "isla_potion_enhanced_even_pool",
-                    "target": "Hand"
+                    "from": "isla_potion_enhanced_even_pool",
+                    "to": "Hand"
                 }
             ],
             "enforceGroup": "enforce_101040"
@@ -213,8 +213,8 @@
                 {
                     "type": "RandGenerate",
                     "amount": 2,
-                    "cardIdGroup": "isla_potion_enhanced_even_pool",
-                    "target": "Hand"
+                    "from": "isla_potion_enhanced_even_pool",
+                    "to": "Hand"
                 }
             ]
         },
@@ -226,10 +226,16 @@
             "description": "포션 카드를 1장 선택해서 제작합니다.",
             "effects": [
                 {
-                    "type": "ChoiceGenerate",
+                    "type": "ChoiceCard",
+                    "from": "CardId",
                     "amount": 1,
                     "cardIdGroup": "isla_potion_enhanced_even_pool",
-                    "target": "Hand"
+                    "onAction": {
+                        "type": "GenerateCard",
+                        "cardId": "SelectedCard",
+                        "to": "Hand"
+                    },
+                    "subject": "SelectedCard"
                 }
             ]
         },
@@ -242,8 +248,9 @@
             "effects": [
                 {
                     "type": "RandGenerate",
-                    "cardIdGroup": "isla_potion_enhanced_odd_pool",
-                    "target": "Hand"
+                    "amount": 1,
+                    "from": "isla_potion_enhanced_odd_pool",
+                    "to": "Hand"
                 }
             ]
         },
@@ -266,8 +273,8 @@
                 {
                     "type": "RandGenerate",
                     "amount": 2,
-                    "cardIdGroup": "isla_potion_enhanced_odd_pool",
-                    "target": "Hand"
+                    "from": "isla_potion_enhanced_odd_pool",
+                    "to": "Hand"
                 }
             ]
         },

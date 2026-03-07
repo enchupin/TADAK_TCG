@@ -89,8 +89,18 @@ public static class CardEffectFactory
                 return new BuffEffect { stat = effectData.stat, buffId = effectData.buffId, amount = effectData.amount, amountFormula = effectData.amountFormula, duration = effectData.duration, target = effectData.target };
             case EffectType.Heal:
                 return new HealEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, cardIdList = effectData.formulaCardIdFilter, target = effectData.target };
-            case EffectType.GenerateCard:
-                return new GenerateCardEffect { RandomCard = effectData.RandomCard, target = effectData.target };
+        case EffectType.GenerateCard:
+                return new GenerateCardEffect { RandomCard = effectData.RandomCard, cardId = effectData.cardId, cardIdList = effectData.formulaCardIdFilter, target = effectData.target, position = effectData.position };
+            case EffectType.RandGenerate:
+                return new RandGenerateEffect
+                {
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula,
+                    RandomCard = effectData.RandomCard,
+                    cardIdList = effectData.formulaCardIdFilter,
+                    to = ResolveRandGenerateToZone(effectData.to, effectData.target),
+                    position = effectData.position
+                };
             case EffectType.Keyword:
                 return new KeywordEffect { keyword = effectData.keyword, amount = effectData.amount, amountFormula = effectData.amountFormula };
             case EffectType.Pickup:
@@ -98,6 +108,26 @@ public static class CardEffectFactory
             default:
                 Debug.LogWarning($"[CardData] Unknown effect type: {effectData.type}");
                 return null;
+        }
+    }
+
+    private static MoveZoneType ResolveRandGenerateToZone(MoveZoneType to, TargetType fallbackTarget)
+    {
+        if (to != MoveZoneType.None)
+        {
+            return to;
+        }
+
+        switch (fallbackTarget)
+        {
+            case TargetType.Hand:
+                return MoveZoneType.Hand;
+            case TargetType.Discard:
+                return MoveZoneType.DiscardPile;
+            case TargetType.Deck:
+                return MoveZoneType.DrawPile;
+            default:
+                return MoveZoneType.None;
         }
     }
 

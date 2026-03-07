@@ -467,6 +467,9 @@ public class TrainingBattleManager : MonoBehaviour
             case EffectType.DrawBasic:
                 if (effect is DrawBasicEffect) return true;
                 break;
+            case EffectType.RandGenerate:
+                if (effect is RandGenerateEffect) return true;
+                break;
             case EffectType.Move:
                 if (effect is MoveEffect) return true;
                 break;

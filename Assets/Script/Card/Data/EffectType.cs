@@ -27,5 +27,6 @@ public enum EffectType
     Pickup,
     DrawBasic,
     Move,
-    DrawCharacter
+    DrawCharacter,
+    RandGenerate
 }

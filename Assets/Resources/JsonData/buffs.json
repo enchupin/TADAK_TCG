@@ -404,27 +404,11 @@
                 "source": "Self"
             },
             "effects": [
-                {
+            {
                     "type": "RandGenerate",
-                    "RandomCard": [
-                        {
-                            "cardId": 101050,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 101052,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 101054,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 101056,
-                            "weight": 1
-                        }
-                    ],
-                    "target": "Hand"
+                    "amount": 1,
+                    "from": "isla_potion_enhanced_even_pool",
+                    "to": "Hand"
                 }
             ],
             "remove": {
@@ -535,27 +519,11 @@
                     "type": "Repeat",
                     "count": "stack",
                     "effects": [
-                        {
-                            "type": "RandGenerate",
-                            "RandomCard": [
-                                {
-                                    "cardId": 101050,
-                                    "weight": 1
-                                },
-                                {
-                                    "cardId": 101052,
-                                    "weight": 1
-                                },
-                                {
-                                    "cardId": 101054,
-                                    "weight": 1
-                                },
-                                {
-                                    "cardId": 101056,
-                                    "weight": 1
-                                }
-                            ],
-                            "target": "Hand"
+        {
+                        "type": "RandGenerate",
+                            "amount": 1,
+                            "from": "isla_potion_enhanced_even_pool",
+                            "to": "Hand"
                         }
                     ]
                 }
@@ -960,29 +928,9 @@
             "effects": [
                 {
                     "type": "RandGenerate",
-                    "RandomCard": [
-                        {
-                            "cardId": 102041,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 102042,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 102043,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 102044,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 102045,
-                            "weight": 1
-                        }
-                    ],
-                    "target": "Hand"
+                    "amount": 1,
+                    "from": "enforce_102040",
+                    "to": "Hand"
                 }
             ],
             "description": "매 턴 시작 시 무작위 고유 카드 강화본을 {stack}장 획득합니다."
