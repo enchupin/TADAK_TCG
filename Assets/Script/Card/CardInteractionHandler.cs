@@ -137,6 +137,13 @@ public class CardInteractionHandler : UIHoverEffect,
             return;
         }
 
+        if (effect is KillEffect killEffect) {
+            if (killEffect.target == TargetType.SingleEnemy) {
+                hasSingleEnemyTarget = true;
+            }
+            return;
+        }
+
         if (effect is AttackEffect attackEffect) {
             if (attackEffect.target == TargetType.SingleEnemy) {
                 hasSingleEnemyTarget = true;
@@ -180,7 +187,7 @@ public class CardInteractionHandler : UIHoverEffect,
         }
 
         if (effect is RepeatEffect repeatEffect) {
-            CollectTargetingFlags(repeatEffect.effectsToRepeat, ref hasSingleEnemyTarget);
+            CollectTargetingFlags(repeatEffect.effectToRepeat, ref hasSingleEnemyTarget);
             return;
         }
     }

@@ -150,6 +150,20 @@ public class Monster : MonoBehaviour
         return damageAfterDefense;
     }
 
+    public void Kill()
+    {
+        if (IsDead())
+            return;
+
+        hp = 0;
+        defense = 0;
+        plannedIntentType = MonsterIntentType.None;
+        plannedIntentValue = 0;
+
+        Debug.Log($"[Monster] {name} 처치");
+        UpdateUI();
+    }
+
     public void AddDefense(int amount)
     {
         defense += amount;

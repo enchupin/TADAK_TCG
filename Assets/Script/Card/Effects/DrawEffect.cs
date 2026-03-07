@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>
 /// 드로우 효과
@@ -9,6 +10,7 @@ public class DrawEffect : ICardEffect
 {
     public int amount;
     public string amountFormula;
+    public List<ICardEffect> onActions;
 
     public void Execute(TrainingBattleManager battleManager)
     {
@@ -18,7 +20,8 @@ public class DrawEffect : ICardEffect
     public void Execute(TrainingBattleManager battleManager, int amount)
     {
         int finalAmount = ResolveDrawAmount(battleManager, amount);
-        battleManager.DrawCards(finalAmount);
+        List<Card> drawnCards = battleManager.DrawCardsAndGet(finalAmount);
+        ExecuteOnDrawnCards(battleManager, drawnCards);
     }
 
     private int ResolveDrawAmount(TrainingBattleManager battleManager, int forwardedAmount)
@@ -34,5 +37,26 @@ public class DrawEffect : ICardEffect
         }
 
         return Mathf.Max(0, forwardedAmount);
+    }
+
+    private void ExecuteOnDrawnCards(TrainingBattleManager battleManager, List<Card> drawnCards)
+    {
+        if (battleManager?.battleContext == null || onActions == null || drawnCards == null || drawnCards.Count == 0) {
+            return;
+        }
+
+        foreach (Card drawnCard in drawnCards) {
+            if (drawnCard == null) {
+                continue;
+            }
+
+            battleManager.battleContext.SetContextCards("DrawnCard", new List<Card> { drawnCard });
+
+            foreach (ICardEffect onAction in onActions) {
+                onAction?.Execute(battleManager, 1);
+            }
+
+            battleManager.battleContext.ClearContextCards("DrawnCard");
+        }
     }
 }

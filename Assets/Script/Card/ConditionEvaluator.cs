@@ -61,6 +61,13 @@ public static class ConditionEvaluator
 
     private static object GetSubject(string subjectType, TrainingBattleManager bm)
     {
+        if (bm?.battleContext != null && !string.IsNullOrWhiteSpace(subjectType)) {
+            Card contextCard = bm.battleContext.GetContextCard(subjectType);
+            if (contextCard != null) {
+                return contextCard;
+            }
+        }
+
         switch (subjectType)
         {
             case "Source":
@@ -85,6 +92,16 @@ public static class ConditionEvaluator
 
     private static float GetPropertyValue(object subject, string property, string param)
     {
+        if (subject is Card card)
+        {
+            switch (property)
+            {
+                case "CardId": return card.cardId;
+                case "Cost": return card.cost;
+                case "CharacterId": return (int)card.character;
+            }
+        }
+
         if (subject is PlayerData player)
         {
             switch (property)

@@ -37,12 +37,7 @@ public class CardData : ScriptableObject
         };
         
         // 효과 변환
-        foreach (var effectData in effects)
-        {
-            ICardEffect effect = CardEffectFactory.CreateEffect(effectData);
-            if (effect != null)
-                card.effects.Add(effect);
-        }
+        card.effects = CardEffectFactory.CreateEffects(effects);
         
         return card;
     }

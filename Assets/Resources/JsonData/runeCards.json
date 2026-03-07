@@ -298,13 +298,11 @@
             "effects": [
                 {
                     "type": "Repeat",
-                    "count": 2,
-                    "effects": [
-                        {
-                            "type": "Trigger",
-                            "timing": "OnTurnEnd"
-                        }
-                    ]
+                    "amount": 2
+                },
+                {
+                    "type": "Trigger",
+                    "timing": "OnTurnEnd"
                 }
             ]
         },

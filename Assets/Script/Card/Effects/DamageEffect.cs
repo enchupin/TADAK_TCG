@@ -26,7 +26,7 @@ public class DamageEffect : ICardEffect
 
     private void ExecuteInternal(TrainingBattleManager battleManager, int forwardedAmount)
     {
-        int finalAmount = BuildFinalDamageAmount(battleManager, forwardedAmount);
+        int finalAmount = ResolveDamageAmount(battleManager, forwardedAmount);
         int totalDamageDealt = 0;
 
         switch (target)
@@ -88,9 +88,8 @@ public class DamageEffect : ICardEffect
         battleManager.UpdateAllUI();
     }
 
-    private int BuildFinalDamageAmount(TrainingBattleManager battleManager, int forwardedAmount)
+    private int ResolveDamageAmount(TrainingBattleManager battleManager, int forwardedAmount)
     {
-        float cardMultiplier = 1f;
         int baseAmount = amount > 0 ? amount : Mathf.Max(0, forwardedAmount);
         int formulaBaseValue = forwardedAmount > 0 ? forwardedAmount : amount;
 
@@ -98,20 +97,24 @@ public class DamageEffect : ICardEffect
         {
             if (TryParseMultiplierFormula(amountFormula, out float parsedMultiplier))
             {
-                cardMultiplier = parsedMultiplier;
+                return Mathf.Max(0, Mathf.FloorToInt(baseAmount * parsedMultiplier));
             }
-            else
+
+            if (IsTargetHpFormula(amountFormula))
             {
-                baseAmount = FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, null, formulaBaseValue);
+                Monster targetMonster = ResolveCurrentTarget(battleManager);
+                return targetMonster != null ? Mathf.Max(0, targetMonster.hp) : 0;
             }
+
+            return Mathf.Max(0, FormulaEvaluator.Evaluate(
+                amountFormula,
+                battleManager.battleContext,
+                battleManager.playerData,
+                null,
+                formulaBaseValue));
         }
 
-        if (battleManager.playerData == null)
-        {
-            return Mathf.Max(0, baseAmount);
-        }
-
-        return battleManager.playerData.CalculateFinalDamage(baseAmount, cardMultiplier);
+        return Mathf.Max(0, baseAmount);
     }
 
     private bool TryParseMultiplierFormula(string formula, out float multiplier)
@@ -126,6 +129,26 @@ public class DamageEffect : ICardEffect
 
         string numeric = trimmed.Substring(1);
         return float.TryParse(numeric, NumberStyles.Float, CultureInfo.InvariantCulture, out multiplier);
+    }
+
+    private static bool IsTargetHpFormula(string formula)
+    {
+        return string.Equals(formula, "Target.Hp", System.StringComparison.OrdinalIgnoreCase)
+            || string.Equals(formula, "TargetHp", System.StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static Monster ResolveCurrentTarget(TrainingBattleManager battleManager)
+    {
+        if (battleManager.currentTarget != null && !battleManager.currentTarget.IsDead()) {
+            return battleManager.currentTarget;
+        }
+
+        List<Monster> livingMonsters = battleManager.GetLivingMonsters();
+        if (livingMonsters != null && livingMonsters.Count == 1) {
+            return livingMonsters[0];
+        }
+
+        return null;
     }
 }
 

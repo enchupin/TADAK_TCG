@@ -380,13 +380,11 @@
             "effects": [
                 {
                     "type": "Damage",
-                    "amountFormula": "Target.Hp",
-                    "target": "Self"
+                    "amountFormula": "Target.Hp"
                 },
                 {
                     "type": "Kill",
-                    "target": "SingleEnemy",
-                    "silent": false
+                    "target": "SingleEnemy"
                 }
             ]
         },

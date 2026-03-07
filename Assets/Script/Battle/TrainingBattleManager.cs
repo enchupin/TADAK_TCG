@@ -278,8 +278,13 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void DrawCards(int count)
     {
+        DrawCardsAndGet(count);
+    }
+
+    public List<Card> DrawCardsAndGet(int count)
+    {
         if (count <= 0 || usableDeckManager == null || handManager == null)
-            return;
+            return new List<Card>();
 
         List<Card> drawnCards = usableDeckManager.DrawCard(count);
         handManager.AddCard(drawnCards);
@@ -291,12 +296,18 @@ public class TrainingBattleManager : MonoBehaviour
 
         RefreshHandPlayableState();
         UpdateAllUI();
+        return drawnCards;
     }
 
     public void DrawBasicCards(int count, Character? characterFilter = null)
     {
+        DrawBasicCardsAndGet(count, characterFilter);
+    }
+
+    public List<Card> DrawBasicCardsAndGet(int count, Character? characterFilter = null)
+    {
         if (count <= 0 || usableDeckManager == null || handManager == null) {
-            return;
+            return new List<Card>();
         }
 
         List<Card> drawnCards = usableDeckManager.DrawBasicCards(count, characterFilter);
@@ -308,13 +319,19 @@ public class TrainingBattleManager : MonoBehaviour
 
         RefreshHandPlayableState();
         UpdateAllUI();
+        return drawnCards;
     }
 
     public void DrawCharacterCards(int count, Character? characterFilter = null)
     {
+        DrawCharacterCardsAndGet(count, characterFilter);
+    }
+
+    public List<Card> DrawCharacterCardsAndGet(int count, Character? characterFilter = null)
+    {
         if (count <= 0 || usableDeckManager == null || handManager == null)
         {
-            return;
+            return new List<Card>();
         }
 
         List<Card> drawnCards = usableDeckManager.DrawCharacterCards(count, characterFilter);
@@ -327,6 +344,7 @@ public class TrainingBattleManager : MonoBehaviour
 
         RefreshHandPlayableState();
         UpdateAllUI();
+        return drawnCards;
     }
 
     [ContextMenu("Debug Draw Cards By Effect")]
@@ -343,12 +361,12 @@ public class TrainingBattleManager : MonoBehaviour
                 continue;
             }
 
-            if (!CardDataHasDebugTargetEffect(cardData)) {
+            Card card = cardData.ToCard();
+            if (card == null) {
                 continue;
             }
 
-            Card card = cardData.ToCard();
-            if (card == null) {
+            if (!CardHasDebugTargetEffect(card)) {
                 continue;
             }
 
@@ -368,67 +386,6 @@ public class TrainingBattleManager : MonoBehaviour
 
         RefreshHandPlayableState();
         UpdateAllUI();
-    }
-
-    private bool CardDataHasDebugTargetEffect(CardData cardData)
-    {
-        if (cardData == null || cardData.effects == null) {
-            return false;
-        }
-
-        foreach (CardEffectData effectData in cardData.effects) {
-            if (EffectDataMatchesDebugTarget(effectData)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private bool EffectDataMatchesDebugTarget(CardEffectData effectData)
-    {
-        if (effectData == null) {
-            return false;
-        }
-
-        if (effectData.type == debugTargetEffect) {
-            return true;
-        }
-
-        if (effectData.onAction != null) {
-            foreach (CardEffectData nested in effectData.onAction) {
-                if (EffectDataMatchesDebugTarget(nested)) {
-                    return true;
-                }
-            }
-        }
-
-        if (effectData.subEffects != null) {
-            foreach (CardEffectData nested in effectData.subEffects) {
-                if (EffectDataMatchesDebugTarget(nested)) {
-                    return true;
-                }
-            }
-        }
-
-        if (effectData.conditionData != null) {
-            if (effectData.conditionData.successEffects != null) {
-                foreach (CardEffectData nested in effectData.conditionData.successEffects) {
-                    if (EffectDataMatchesDebugTarget(nested)) {
-                        return true;
-                    }
-                }
-            }
-            if (effectData.conditionData.elseEffects != null) {
-                foreach (CardEffectData nested in effectData.conditionData.elseEffects) {
-                    if (EffectDataMatchesDebugTarget(nested)) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
     }
 
     private bool CardHasDebugTargetEffect(Card card)
@@ -476,6 +433,15 @@ public class TrainingBattleManager : MonoBehaviour
             case EffectType.ExhaustCard:
                 if (effect is ExhaustCardEffect) return true;
                 break;
+            case EffectType.Repeat:
+                if (effect is RepeatEffect) return true;
+                break;
+            case EffectType.Trigger:
+                if (effect is TriggerEffect) return true;
+                break;
+            case EffectType.Kill:
+                if (effect is KillEffect) return true;
+                break;
             case EffectType.Attack:
                 if (effect is AttackEffect) return true;
                 break;
@@ -519,13 +485,10 @@ public class TrainingBattleManager : MonoBehaviour
                     return true;
             }
         }
-        if (effect is RepeatEffect repeat && repeat.effectsToRepeat != null)
+        if (effect is RepeatEffect repeat && repeat.effectToRepeat != null)
         {
-            foreach (ICardEffect nested in repeat.effectsToRepeat)
-            {
-                if (EffectMatchesDebugTarget(nested))
-                    return true;
-            }
+            if (EffectMatchesDebugTarget(repeat.effectToRepeat))
+                return true;
         }
         if (effect is ConditionalEffect conditional)
         {

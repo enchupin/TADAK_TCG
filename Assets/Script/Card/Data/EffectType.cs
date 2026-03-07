@@ -15,16 +15,11 @@ public enum EffectType
     Repeat = 14,
     Scry = 15,
     RemoveBuff = 16,
-    ConsumeBarrier = 17,
     MultiplyBarrier = 18,
-    UseCard = 19,
-    Evade = 20,
-    Multiply = 21,
-    Increase = 22,
-    Cancel = 23,
-    Pickup = 24,
     DrawBasic = 25,
     Move = 26,
     DrawCharacter = 27,
-    RandGenerate = 28
+    RandGenerate = 28,
+    Trigger = 29,
+    Kill = 30
 }
