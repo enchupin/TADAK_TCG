@@ -114,7 +114,7 @@ public class CardInteractionHandler : UIHoverEffect,
         return hasSingleEnemyTarget;
     }
 
-    // 카드 효과 전체를 순회해 단일 대상/광역 대상 포함 여부를 수집한다.
+    // 카드 효과 전체를 순회하며 단일 적 타겟 포함 여부를 수집합니다
     private void CollectTargetingFlags(System.Collections.Generic.List<ICardEffect> effects, ref bool hasSingleEnemyTarget)
     {
         if (effects == null) return;
@@ -123,6 +123,7 @@ public class CardInteractionHandler : UIHoverEffect,
         }
     }
 
+    // singleEnemy를 가지고 있는 모든 이펙트에 대해서 동작하도록 추후 수정
     private void CollectTargetingFlags(ICardEffect effect, ref bool hasSingleEnemyTarget)
     {
         if (effect == null) return;
@@ -154,6 +155,21 @@ public class CardInteractionHandler : UIHoverEffect,
 
         if (effect is BarrierEffect barrierEffect) {
             CollectTargetingFlags(barrierEffect.onActions, ref hasSingleEnemyTarget);
+            return;
+        }
+
+        if (effect is MoveEffect moveEffect) {
+            CollectTargetingFlags(moveEffect.onActions, ref hasSingleEnemyTarget);
+            return;
+        }
+
+        if (effect is ExhaustCardEffect exhaustCardEffect) {
+            CollectTargetingFlags(exhaustCardEffect.onActions, ref hasSingleEnemyTarget);
+            return;
+        }
+
+        if (effect is SelectCardEffect selectCardEffect) {
+            CollectTargetingFlags(selectCardEffect.onActions, ref hasSingleEnemyTarget);
             return;
         }
 

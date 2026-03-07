@@ -197,8 +197,8 @@
                 {
                     "type": "RandGenerate",
                     "amount": 1,
-                    "cardIdGroup": "isla_potion_enhanced_even_pool",
-                    "target": "Hand"
+                    "from": "isla_potion_enhanced_even_pool",
+                    "to": "Hand"
                 }
             ],
             "enforceGroup": "enforce_101040"
@@ -213,8 +213,8 @@
                 {
                     "type": "RandGenerate",
                     "amount": 2,
-                    "cardIdGroup": "isla_potion_enhanced_even_pool",
-                    "target": "Hand"
+                    "from": "isla_potion_enhanced_even_pool",
+                    "to": "Hand"
                 }
             ]
         },
@@ -226,10 +226,15 @@
             "description": "포션 카드를 1장 선택해서 제작합니다.",
             "effects": [
                 {
-                    "type": "ChoiceGenerate",
+                    "type": "ChoiceCard",
+                    "from": "isla_potion_enhanced_even_pool",
                     "amount": 1,
-                    "cardIdGroup": "isla_potion_enhanced_even_pool",
-                    "target": "Hand"
+                    "onAction": {
+                        "type": "GenerateCard",
+                        "cardId": "SelectedCard",
+                        "to": "Hand"
+                    },
+                    "subject": "SelectedCard"
                 }
             ]
         },
@@ -242,8 +247,9 @@
             "effects": [
                 {
                     "type": "RandGenerate",
-                    "cardIdGroup": "isla_potion_enhanced_odd_pool",
-                    "target": "Hand"
+                    "amount": 1,
+                    "from": "isla_potion_enhanced_odd_pool",
+                    "to": "Hand"
                 }
             ]
         },
@@ -255,19 +261,21 @@
             "description": "손에 든 카드 한 장을 선택해 버립니다. 무작위 강화된 포션 카드를 2장 제작합니다.",
             "effects": [
                 {
-                    "type": "ChoiceHand",
+                    "type": "SelectCard",
+                    "from": "Hand",
                     "amount": 1,
                     "onAction": {
-                        "type": "Discard",
-                        "amount": 1
+                        "type": "Move",
+                        "from": "Source",
+                        "to": "DiscardPile"
                     },
                     "subject": "SelectedCard"
                 },
                 {
                     "type": "RandGenerate",
                     "amount": 2,
-                    "cardIdGroup": "isla_potion_enhanced_odd_pool",
-                    "target": "Hand"
+                    "from": "isla_potion_enhanced_odd_pool",
+                    "to": "Hand"
                 }
             ]
         },

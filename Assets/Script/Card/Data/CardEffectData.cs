@@ -50,5 +50,6 @@ public class CardEffectData
     public string keyword;
 
     [Header("GenerateCard")]
+    public string cardId;
     public List<RandomCardData> RandomCard;
 }

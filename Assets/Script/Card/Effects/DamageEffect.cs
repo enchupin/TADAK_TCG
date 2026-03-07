@@ -1,10 +1,10 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Globalization;
 
 /// <summary>
 /// 피해 효과
-/// 대상을 지정해 피해를 가합니다.
+/// 대상을 지정해 피해를 가합니다
 /// </summary>
 [System.Serializable]
 public class DamageEffect : ICardEffect
@@ -16,7 +16,17 @@ public class DamageEffect : ICardEffect
 
     public void Execute(TrainingBattleManager battleManager)
     {
-        int finalAmount = BuildFinalDamageAmount(battleManager);
+        ExecuteInternal(battleManager, amount);
+    }
+
+    public void Execute(TrainingBattleManager battleManager, int amount)
+    {
+        ExecuteInternal(battleManager, amount);
+    }
+
+    private void ExecuteInternal(TrainingBattleManager battleManager, int forwardedAmount)
+    {
+        int finalAmount = BuildFinalDamageAmount(battleManager, forwardedAmount);
         int totalDamageDealt = 0;
 
         switch (target)
@@ -78,10 +88,11 @@ public class DamageEffect : ICardEffect
         battleManager.UpdateAllUI();
     }
 
-    private int BuildFinalDamageAmount(TrainingBattleManager battleManager)
+    private int BuildFinalDamageAmount(TrainingBattleManager battleManager, int forwardedAmount)
     {
         float cardMultiplier = 1f;
-        int baseAmount = amount;
+        int baseAmount = amount > 0 ? amount : Mathf.Max(0, forwardedAmount);
+        int formulaBaseValue = forwardedAmount > 0 ? forwardedAmount : amount;
 
         if (!string.IsNullOrWhiteSpace(amountFormula))
         {
@@ -91,7 +102,7 @@ public class DamageEffect : ICardEffect
             }
             else
             {
-                baseAmount = FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, null, amount);
+                baseAmount = FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, null, formulaBaseValue);
             }
         }
 
@@ -119,7 +130,7 @@ public class DamageEffect : ICardEffect
 }
 
 /// <summary>
-/// 효과 대상 열거형
+/// 효과 대상 구분값
 /// </summary>
 public enum TargetType
 {

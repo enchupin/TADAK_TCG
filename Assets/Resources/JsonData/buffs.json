@@ -294,12 +294,14 @@
                 },
                 {
                     "type": "SelectCard",
-                    "source": "Hand",
+                    "from": "Hand",
                     "amount": 1,
                     "onAction": {
-                        "type": "Discard",
-                        "target": "Selected"
-                    }
+                        "type": "Move",
+                        "from": "Source",
+                        "to": "DiscardPile"
+                    },
+                    "subject": "Selected"
                 }
             ],
             "description": "매 턴 시작 시 카드를 2장 더 뽑고 1장 버립니다."
@@ -404,27 +406,11 @@
                 "source": "Self"
             },
             "effects": [
-                {
+            {
                     "type": "RandGenerate",
-                    "RandomCard": [
-                        {
-                            "cardId": 101050,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 101052,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 101054,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 101056,
-                            "weight": 1
-                        }
-                    ],
-                    "target": "Hand"
+                    "amount": 1,
+                    "from": "isla_potion_enhanced_even_pool",
+                    "to": "Hand"
                 }
             ],
             "remove": {
@@ -535,27 +521,11 @@
                     "type": "Repeat",
                     "count": "stack",
                     "effects": [
-                        {
-                            "type": "RandGenerate",
-                            "RandomCard": [
-                                {
-                                    "cardId": 101050,
-                                    "weight": 1
-                                },
-                                {
-                                    "cardId": 101052,
-                                    "weight": 1
-                                },
-                                {
-                                    "cardId": 101054,
-                                    "weight": 1
-                                },
-                                {
-                                    "cardId": 101056,
-                                    "weight": 1
-                                }
-                            ],
-                            "target": "Hand"
+        {
+                        "type": "RandGenerate",
+                            "amount": 1,
+                            "from": "isla_potion_enhanced_even_pool",
+                            "to": "Hand"
                         }
                     ]
                 }
@@ -936,15 +906,16 @@
             },
             "effects": [
                 {
-                    "type": "ChoiceHand",
-                    "effects": [
-                        {
-                            "type": "Move",
-                            "subject": "Selected",
-                            "from": "Hand",
-                            "to": "Hand"
-                        }
-                    ]
+                    "type": "SelectCard",
+                    "from": "Hand",
+                    "amount": 1,
+                    "onAction": {
+                        "type": "Move",
+                        "subject": "Selected",
+                        "from": "Hand",
+                        "to": "Hand"
+                    },
+                    "subject": "Selected"
                 }
             ],
             "description": "매 턴 종료 시 손에서 카드를 {stack}장 선택하여 버리지 않습니다."
@@ -960,29 +931,9 @@
             "effects": [
                 {
                     "type": "RandGenerate",
-                    "RandomCard": [
-                        {
-                            "cardId": 102041,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 102042,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 102043,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 102044,
-                            "weight": 1
-                        },
-                        {
-                            "cardId": 102045,
-                            "weight": 1
-                        }
-                    ],
-                    "target": "Hand"
+                    "amount": 1,
+                    "from": "enforce_102040",
+                    "to": "Hand"
                 }
             ],
             "description": "매 턴 시작 시 무작위 고유 카드 강화본을 {stack}장 획득합니다."
