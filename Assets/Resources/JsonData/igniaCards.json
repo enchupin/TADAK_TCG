@@ -201,7 +201,9 @@
             "description": "내 손의 다른 카드를 모두 버립니다. 버린 카드 1장 당 피해를 8 입힙니다.",
             "effects": [
                 {
-                    "type": "DiscardHand",
+                    "type": "Move",
+                    "from": "Hand",
+                    "to": "DiscardPile",
                     "amountFormula": "all",
                     "onAction": {
                         "type": "Damage",
@@ -243,7 +245,9 @@
             "description": "내 손의 다른 카드를 모두 버립니다. 버린 카드 수 만큼 카드를 뽑습니다.",
             "effects": [
                 {
-                    "type": "DiscardHand",
+                    "type": "Move",
+                    "from": "Hand",
+                    "to": "DiscardPile",
                     "amountFormula": "all",
                     "onAction": {
                         "type": "Draw",

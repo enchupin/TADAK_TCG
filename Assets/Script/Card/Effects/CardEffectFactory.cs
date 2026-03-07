@@ -57,8 +57,6 @@ public static class CardEffectFactory
                 return new AttackEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, cardIdList = effectData.formulaCardIdFilter, target = effectData.target, onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject) };
             case EffectType.Barrier:
                 return new BarrierEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, target = effectData.target, onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject) };
-            case EffectType.DiscardHand:
-                return new DiscardHandEffect { count = effectData.count, amountFormula = effectData.amountFormula, target = effectData.target };
             case EffectType.ExhaustHand:
                 return new ExhaustHandEffect { amountFormula = effectData.amountFormula };
             case EffectType.Scry:
@@ -80,7 +78,7 @@ public static class CardEffectFactory
             case EffectType.DrawBasic:
                 return new DrawBasicEffect { amount = effectData.amount, amountFormula = effectData.amountFormula };
             case EffectType.Move:
-                return new MoveEffect { from = effectData.from, to = effectData.to, position = effectData.position, subject = resolvedSubject, amount = effectData.amount, amountFormula = effectData.amountFormula };
+                return new MoveEffect { from = effectData.from, to = effectData.to, position = effectData.position, subject = resolvedSubject, amount = effectData.amount, amountFormula = effectData.amountFormula, onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject) };
             case EffectType.Copy:
                 return new CopyEffect { from = effectData.from, to = effectData.to, position = effectData.position, subject = resolvedSubject, amount = effectData.amount, amountFormula = effectData.amountFormula, cardIdList = effectData.formulaCardIdFilter == null ? null : new List<int>(effectData.formulaCardIdFilter) };
             case EffectType.Buff:

@@ -716,7 +716,8 @@ public class CardJSONConverter : EditorWindow
             case "Heal": return EffectType.Heal; 
             case "GenerateCard": return EffectType.GenerateCard; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
             case "Keyword": return EffectType.Keyword; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
-            case "DiscardHand": return EffectType.DiscardHand; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "DiscardHand":
+                throw new ArgumentException("[CardJSONConverter] DiscardHand effect is no longer supported. Use Move with from=\"Hand\" and to=\"DiscardPile\".");
             case "Pickup": return EffectType.Pickup; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
             case "ExhaustHand": return EffectType.ExhaustHand; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
             case "Conditional": return EffectType.Conditional; // 異뷀썑 ??젣 or ?섏젙 ?덉젙

@@ -14,6 +14,7 @@ public class MoveEffect : ICardEffect
     public string subject;
     public int amount;
     public string amountFormula;
+    public List<ICardEffect> onActions;
 
     public void Execute(TrainingBattleManager battleManager)
     {
@@ -46,6 +47,16 @@ public class MoveEffect : ICardEffect
         }
 
         if (movedCount > 0) {
+            if (to == MoveZoneType.DiscardPile) {
+                battleManager.battleContext?.OnCardsDiscarded(movedCount);
+            }
+
+            if (onActions != null) {
+                foreach (ICardEffect onAction in onActions) {
+                    onAction?.Execute(battleManager, movedCount);
+                }
+            }
+
             battleManager.UpdateAllUI();
         }
     }
