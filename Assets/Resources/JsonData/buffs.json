@@ -519,15 +519,13 @@
             "effects": [
                 {
                     "type": "Repeat",
-                    "count": "stack",
-                    "effects": [
-        {
-                        "type": "RandGenerate",
-                            "amount": 1,
-                            "from": "isla_potion_enhanced_even_pool",
-                            "to": "Hand"
-                        }
-                    ]
+                    "amountFormula": "stack"
+                },
+                {
+                    "type": "RandGenerate",
+                    "amount": 1,
+                    "from": "isla_potion_enhanced_even_pool",
+                    "to": "Hand"
                 }
             ],
             "description": "매 턴 무작위 포션을 {stack}개 제조합니다."

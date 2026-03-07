@@ -173,29 +173,28 @@
             "effects": [
                 {
                     "type": "Repeat",
-                    "amount": 4,
+                    "amount": 4
+                },
+                {
+                    "type": "Draw",
+                    "amount": 1,
                     "onAction": {
-                        "type": "Draw",
-                        "amount": 1,
-                        "onAction": {
-                            "condition": {
-                                "checks": [
-                                    {
-                                        "subject": "DrawnCard",
-                                        "property": "Cost",
-                                        "operator": "Neq",
-                                        "value": 0
-                                    }
-                                ]
-                            },
-                            "effects": [
+                        "condition": {
+                            "checks": [
                                 {
-                                    "type": "Discard",
-                                    "target": "DrawnCard"
+                                    "subject": "DrawnCard",
+                                    "property": "Cost",
+                                    "operator": "Neq",
+                                    "value": 0
                                 }
                             ]
                         },
-                        "subject": "DrawnCard"
+                        "effects": [
+                            {
+                                "type": "Discard",
+                                "target": "DrawnCard"
+                            }
+                        ]
                     },
                     "subject": "DrawnCard"
                 }
@@ -237,31 +236,30 @@
             "effects": [
                 {
                     "type": "Repeat",
-                    "amount": 3,
+                    "amount": 3
+                },
+                {
+                    "type": "Draw",
+                    "amount": 1,
                     "onAction": {
-                        "type": "Draw",
-                        "amount": 1,
-                        "onAction": {
-                            "condition": {
-                                "checks": [
-                                    {
-                                        "subject": "DrawnCard",
-                                        "property": "CharacterId",
-                                        "operator": "Eq",
-                                        "value": 202
-                                    }
-                                ]
-                            },
-                            "effects": [
+                        "condition": {
+                            "checks": [
                                 {
-                                    "type": "Buff",
-                                    "buffId": 3002,
-                                    "amount": 1,
-                                    "target": "Self"
+                                    "subject": "DrawnCard",
+                                    "property": "CharacterId",
+                                    "operator": "Eq",
+                                    "value": 202
                                 }
                             ]
                         },
-                        "subject": "DrawnCard"
+                        "effects": [
+                            {
+                                "type": "Buff",
+                                "buffId": 3002,
+                                "amount": 1,
+                                "target": "Self"
+                            }
+                        ]
                     },
                     "subject": "DrawnCard"
                 }
@@ -462,13 +460,12 @@
             "effects": [
                 {
                     "type": "Repeat",
-                    "amount": 5,
-                    "onAction": {
-                        "type": "Attack",
-                        "amount": 4,
-                        "target": "SingleEnemy"
-                    },
-                    "subject": "RepeatCount"
+                    "amount": 5
+                },
+                {
+                    "type": "Attack",
+                    "amount": 4,
+                    "target": "SingleEnemy"
                 }
             ],
             "enforceGroup": "enforce_202060"
@@ -482,13 +479,12 @@
             "effects": [
                 {
                     "type": "Repeat",
-                    "amount": 5,
-                    "onAction": {
-                        "type": "Attack",
-                        "amount": 1,
-                        "target": "SingleEnemy"
-                    },
-                    "subject": "RepeatCount"
+                    "amount": 5
+                },
+                {
+                    "type": "Attack",
+                    "amount": 1,
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -504,13 +500,12 @@
             "effects": [
                 {
                     "type": "Repeat",
-                    "amount": 3,
-                    "onAction": {
-                        "type": "Attack",
-                        "amount": 4,
-                        "target": "SingleEnemy"
-                    },
-                    "subject": "RepeatCount"
+                    "amount": 3
+                },
+                {
+                    "type": "Attack",
+                    "amount": 4,
+                    "target": "SingleEnemy"
                 }
             ]
         },

@@ -180,7 +180,7 @@ public class CardInteractionHandler : UIHoverEffect,
         }
 
         if (effect is RepeatEffect repeatEffect) {
-            CollectTargetingFlags(repeatEffect.effectsToRepeat, ref hasSingleEnemyTarget);
+            CollectTargetingFlags(repeatEffect.effectToRepeat, ref hasSingleEnemyTarget);
             return;
         }
     }

@@ -350,6 +350,7 @@ public class CardJSONConverter : EditorWindow
         string toRaw = ReadJsonString(effectObject, "to");
         string targetRaw = ReadJsonString(effectObject, "target");
         string resolvedFromRaw = ResolveMoveZoneStringForParser(fromRaw, effectType);
+        ValidateRepeatEffectSchema(effectObject, effectTypeRaw);
         bool hasOnAction = effectObject["onAction"] is JObject || effectObject["onAction"] is JArray;
 
         // SelectCard는 onAction 밖에서 from을 반드시 가져야 함
@@ -381,7 +382,9 @@ public class CardJSONConverter : EditorWindow
             buffId = ReadJsonInt(effectObject, "buffId"),
             duration = ReadJsonInt(effectObject, "duration"),
             cardId = ReadJsonString(effectObject, "cardId"),
-            subject = ReadJsonString(effectObject, "subject")
+            subject = ReadJsonString(effectObject, "subject"),
+            timing = ReadJsonString(effectObject, "timing"),
+            repeatNextEffect = string.Equals(effectTypeRaw, "Repeat", StringComparison.OrdinalIgnoreCase)
         };
 
         ValidateCopyEffectSchema(effectObject, effectType, fromRaw, toRaw, targetRaw);
@@ -710,49 +713,49 @@ public class CardJSONConverter : EditorWindow
             case "Attack": return EffectType.Attack;
             case "Damage": return EffectType.Damage;
             case "Barrier": return EffectType.Barrier;
-            case "Draw": return EffectType.Draw; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "Draw": return EffectType.Draw; // 추후 삭제 또는 수정 예정
             case "DrawBasic": return EffectType.DrawBasic;
             case "DrawCharacter": return EffectType.DrawCharacter;
-            case "Buff": return EffectType.Buff; 
-            case "Heal": return EffectType.Heal; 
-            case "GenerateCard": return EffectType.GenerateCard; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
-            case "Keyword": return EffectType.Keyword; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "Buff": return EffectType.Buff;
+            case "Heal": return EffectType.Heal;
+            case "GenerateCard": return EffectType.GenerateCard; // 추후 삭제 또는 수정 예정
+            case "Keyword": return EffectType.Keyword; // 추후 삭제 또는 수정 예정
             case "DiscardHand":
                 throw new ArgumentException("[CardJSONConverter] DiscardHand effect is no longer supported. Use Move with from=\"Hand\" and to=\"DiscardPile\".");
-            case "Pickup": return EffectType.Pickup; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "Pickup": return EffectType.Pickup; // 추후 삭제 또는 수정 예정
             case "ExhaustHand":
                 throw new ArgumentException("[CardJSONConverter] ExhaustHand effect is no longer supported. Use ExhaustCard with from.");
             case "ExhaustCard": return EffectType.ExhaustCard;
-            case "Conditional": return EffectType.Conditional; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
-            case "Repeat": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
-            case "ReduceCost": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "Conditional": return EffectType.Conditional; // 추후 삭제 또는 수정 예정
+            case "Repeat": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "ReduceCost": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
 
             case "Move": return EffectType.Move;
             case "Copy": return EffectType.Copy;
             case "RandGenerate": return EffectType.RandGenerate;
             case "ChoiceHand":
                 throw new ArgumentException("[CardJSONConverter] ChoiceHand effect is no longer supported. Use SelectCard with from=\"Hand\".");
-            case "Discard": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
-            case "Keep": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
-            case "Cost": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
-            case "CreateCard": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "Discard": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "Keep": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "Cost": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "CreateCard": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "ChoiceCard":
             case "SelectCard": return EffectType.SelectCard;
-            case "Upgrade": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
-            case "MixBuff": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
-            case "ModifyCards": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
-            case "ModifyCard": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
-            case "Kill": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
-            case "ChangeStat": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
-            case "ExtraTurn": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
-            case "Stamina": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
-            case "SelectEnemy": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
-            case "TransferStats": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
-            case "MultiplyBarrier": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
-            case "Trigger": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
-            case "RemoveBuff": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "Upgrade": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "MixBuff": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "ModifyCards": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "ModifyCard": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "Kill": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "ChangeStat": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "ExtraTurn": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "Stamina": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "SelectEnemy": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "TransferStats": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "MultiplyBarrier": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "Trigger": return EffectType.Trigger;
+            case "RemoveBuff": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "Scry": return EffectType.Scry;
-            case "DrawnCard": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
+            case "DrawnCard": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
 
             default:
                 Debug.LogWarning($"[CardJSONConverter] Unknown effect type: {type}. Fallback to Repeat.");
@@ -807,6 +810,35 @@ public class CardJSONConverter : EditorWindow
 
         if (string.Equals(effect.subject, "DiscardedCount", StringComparison.OrdinalIgnoreCase)) {
             throw new ArgumentException("[CardJSONConverter] 'DiscardedCount' subject is no longer supported. Use 'MovedCount'.");
+        }
+    }
+
+    private static void ValidateRepeatEffectSchema(JObject effectObject, string effectTypeRaw)
+    {
+        if (!string.Equals(effectTypeRaw, "Repeat", StringComparison.OrdinalIgnoreCase)) {
+            return;
+        }
+
+        bool hasAmount = HasJsonValue(effectObject, "amount");
+        bool hasAmountFormula = !string.IsNullOrWhiteSpace(ReadJsonString(effectObject, "amountFormula"));
+        if (!hasAmount && !hasAmountFormula) {
+            throw new ArgumentException("[CardJSONConverter] Repeat effect requires 'amount' or 'amountFormula'.");
+        }
+
+        if (HasJsonValue(effectObject, "count")) {
+            throw new ArgumentException("[CardJSONConverter] Repeat effect no longer supports 'count'. Use 'amount' or 'amountFormula'.");
+        }
+
+        if (effectObject["effects"] is JArray) {
+            throw new ArgumentException("[CardJSONConverter] Repeat effect no longer supports nested 'effects'. Flatten it so Repeat is followed by the next effect.");
+        }
+
+        if (effectObject["onAction"] is JObject || effectObject["onAction"] is JArray) {
+            throw new ArgumentException("[CardJSONConverter] Repeat effect no longer supports 'onAction'. Flatten it so Repeat is followed by the next effect.");
+        }
+
+        if (HasJsonValue(effectObject, "subject")) {
+            throw new ArgumentException("[CardJSONConverter] Repeat effect no longer supports 'subject'. Flatten it so Repeat is followed by the next effect.");
         }
     }
 

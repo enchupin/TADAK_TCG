@@ -52,4 +52,8 @@ public class CardEffectData
     [Header("GenerateCard")]
     public string cardId;
     public List<RandomCardData> RandomCard;
+
+    [Header("Control")]
+    public string timing;
+    public bool repeatNextEffect;
 }
