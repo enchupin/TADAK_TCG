@@ -714,15 +714,15 @@ public class CardJSONConverter : EditorWindow
             case "Attack": return EffectType.Attack;
             case "Damage": return EffectType.Damage;
             case "Barrier": return EffectType.Barrier;
-            case "Draw": return EffectType.Draw; // 추후 삭제 또는 수정 예정
+            case "Draw": return EffectType.Draw;
             case "DrawBasic": return EffectType.DrawBasic;
             case "DrawCharacter": return EffectType.DrawCharacter;
             case "Buff": return EffectType.Buff;
             case "Heal": return EffectType.Heal;
-            case "GenerateCard": return EffectType.GenerateCard; // 추후 삭제 또는 수정 예정
+            case "GenerateCard": return EffectType.GenerateCard;
             case "ExhaustCard": return EffectType.ExhaustCard;
-            case "Conditional": return EffectType.Conditional; // 추후 삭제 또는 수정 예정
-            case "Repeat": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "Conditional": return EffectType.Conditional;
+            case "Repeat": return EffectType.Repeat;
             case "ReduceCost": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
 
             case "Move": return EffectType.Move;
@@ -731,14 +731,14 @@ public class CardJSONConverter : EditorWindow
             case "Keep": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "Cost": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "CreateCard": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
-            case "ChoiceCard":
             case "SelectCard": return EffectType.SelectCard;
             case "Upgrade": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "MixBuff": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "ModifyCards": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "ModifyCard": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "Kill": return EffectType.Kill;
-            case "TakeDamage": return EffectType.TakeDamage;
+            case "TakeDamage":
+                throw new ArgumentException("[CardJSONConverter] TakeDamage effect is no longer supported. Use Damage.");
             case "ChangeStat": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "ExtraTurn": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "Stamina": return EffectType.Repeat; // 추후 삭제 또는 수정 예정

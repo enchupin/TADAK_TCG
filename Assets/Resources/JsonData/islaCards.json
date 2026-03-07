@@ -94,7 +94,7 @@
             "description": "버린 카드 더미에서 카드를 1장 선택해 손으로 가져옵니다.",
             "effects": [
                 {
-                    "type": "ChoiceCard",
+                    "type": "SelectCard",
                     "from": "Discard",
                     "amount": 1,
                     "onAction": {
@@ -113,7 +113,7 @@
             "description": "손에 든 카드 1장을 선택해 복제합니다. 그 카드가 포션일 경우, 모든 적에게 부식을 2 부여합니다.",
             "effects": [
                 {
-                    "type": "ChoiceCard",
+                    "type": "SelectCard",
                     "from": "Hand",
                     "amount": 1,
                     "onAction": {
@@ -152,7 +152,7 @@
             "description": "손의 카드 1장을 선택해 복제합니다. 그 카드가 포션일 경우, 1장 더 복제합니다.",
             "effects": [
                 {
-                    "type": "ChoiceCard",
+                    "type": "SelectCard",
                     "from": "Hand",
                     "amount": 1,
                     "onAction": {
@@ -226,7 +226,7 @@
             "description": "포션 카드를 1장 선택해서 제작합니다.",
             "effects": [
                 {
-                    "type": "ChoiceCard",
+                    "type": "SelectCard",
                     "from": "isla_potion_enhanced_even_pool",
                     "amount": 1,
                     "onAction": {

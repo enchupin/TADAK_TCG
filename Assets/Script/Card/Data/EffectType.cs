@@ -21,6 +21,5 @@ public enum EffectType
     DrawCharacter = 27,
     RandGenerate = 28,
     Trigger = 29,
-    Kill = 30,
-    TakeDamage = 31
+    Kill = 30
 }
