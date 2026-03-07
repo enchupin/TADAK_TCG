@@ -26,18 +26,70 @@ public class BattleContext
 
     // 선택된 카드 (Choice -> Effect 연계용)
     private List<Card> selectedCards = new List<Card>();
+    private readonly Dictionary<string, List<Card>> contextCardsBySubject = new Dictionary<string, List<Card>>(System.StringComparer.OrdinalIgnoreCase);
+
     public void SetSelectedCards(List<Card> cards)
     {
         selectedCards = new List<Card>(cards);
     }
+
     public List<Card> GetSelectedCards()
     {
         return new List<Card>(selectedCards);
     }
+
     private void ClearSelectedCards()
     {
         selectedCards.Clear();
     }
+
+    public void SetContextCards(string subject, List<Card> cards)
+    {
+        if (string.IsNullOrWhiteSpace(subject)) {
+            return;
+        }
+
+        if (cards == null || cards.Count == 0) {
+            contextCardsBySubject.Remove(subject);
+            return;
+        }
+
+        contextCardsBySubject[subject] = new List<Card>(cards);
+    }
+
+    public List<Card> GetContextCards(string subject)
+    {
+        if (string.IsNullOrWhiteSpace(subject)) {
+            return new List<Card>();
+        }
+
+        if (contextCardsBySubject.TryGetValue(subject, out List<Card> cards) && cards != null) {
+            return new List<Card>(cards);
+        }
+
+        return new List<Card>();
+    }
+
+    public Card GetContextCard(string subject)
+    {
+        List<Card> cards = GetContextCards(subject);
+        return cards.Count > 0 ? cards[0] : null;
+    }
+
+    public void ClearContextCards(string subject)
+    {
+        if (string.IsNullOrWhiteSpace(subject)) {
+            return;
+        }
+
+        contextCardsBySubject.Remove(subject);
+    }
+
+    private void ClearAllContextCards()
+    {
+        contextCardsBySubject.Clear();
+    }
+
     /// <summary>
     /// 턴 시작 시 호출
     /// </summary>
@@ -51,6 +103,7 @@ public class BattleContext
         totalDamageDealt = 0;
         defenseConsumed = 0;
         ClearSelectedCards();
+        ClearAllContextCards();
     }
     
     /// <summary>

@@ -83,6 +83,7 @@ public class MoveEffect : ICardEffect
                 sourceCards.AddRange(battleManager.usableDeckManager.GetDiscardPile());
                 break;
             case MoveZoneType.Source:
+                AddUnique(sourceCards, battleManager.battleContext?.GetContextCards(subject));
                 AddUnique(sourceCards, battleManager.battleContext?.GetSelectedCards());
                 break;
         }

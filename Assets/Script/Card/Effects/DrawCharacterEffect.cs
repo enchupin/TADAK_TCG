@@ -1,10 +1,12 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 [System.Serializable]
 public class DrawCharacterEffect : ICardEffect
 {
     public int amount;
     public string amountFormula;
+    public List<ICardEffect> onActions;
 
     public void Execute(TrainingBattleManager battleManager)
     {
@@ -37,6 +39,28 @@ public class DrawCharacterEffect : ICardEffect
             return;
         }
 
-        battleManager.DrawCharacterCards(finalAmount, sourceCharacter);
+        List<Card> drawnCards = battleManager.DrawCharacterCardsAndGet(finalAmount, sourceCharacter);
+        ExecuteOnDrawnCards(battleManager, drawnCards);
+    }
+
+    private void ExecuteOnDrawnCards(TrainingBattleManager battleManager, List<Card> drawnCards)
+    {
+        if (battleManager?.battleContext == null || onActions == null || drawnCards == null || drawnCards.Count == 0) {
+            return;
+        }
+
+        foreach (Card drawnCard in drawnCards) {
+            if (drawnCard == null) {
+                continue;
+            }
+
+            battleManager.battleContext.SetContextCards("DrawnCard", new List<Card> { drawnCard });
+
+            foreach (ICardEffect onAction in onActions) {
+                onAction?.Execute(battleManager, 1);
+            }
+
+            battleManager.battleContext.ClearContextCards("DrawnCard");
+        }
     }
 }

@@ -278,8 +278,13 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void DrawCards(int count)
     {
+        DrawCardsAndGet(count);
+    }
+
+    public List<Card> DrawCardsAndGet(int count)
+    {
         if (count <= 0 || usableDeckManager == null || handManager == null)
-            return;
+            return new List<Card>();
 
         List<Card> drawnCards = usableDeckManager.DrawCard(count);
         handManager.AddCard(drawnCards);
@@ -291,12 +296,18 @@ public class TrainingBattleManager : MonoBehaviour
 
         RefreshHandPlayableState();
         UpdateAllUI();
+        return drawnCards;
     }
 
     public void DrawBasicCards(int count, Character? characterFilter = null)
     {
+        DrawBasicCardsAndGet(count, characterFilter);
+    }
+
+    public List<Card> DrawBasicCardsAndGet(int count, Character? characterFilter = null)
+    {
         if (count <= 0 || usableDeckManager == null || handManager == null) {
-            return;
+            return new List<Card>();
         }
 
         List<Card> drawnCards = usableDeckManager.DrawBasicCards(count, characterFilter);
@@ -308,13 +319,19 @@ public class TrainingBattleManager : MonoBehaviour
 
         RefreshHandPlayableState();
         UpdateAllUI();
+        return drawnCards;
     }
 
     public void DrawCharacterCards(int count, Character? characterFilter = null)
     {
+        DrawCharacterCardsAndGet(count, characterFilter);
+    }
+
+    public List<Card> DrawCharacterCardsAndGet(int count, Character? characterFilter = null)
+    {
         if (count <= 0 || usableDeckManager == null || handManager == null)
         {
-            return;
+            return new List<Card>();
         }
 
         List<Card> drawnCards = usableDeckManager.DrawCharacterCards(count, characterFilter);
@@ -327,6 +344,7 @@ public class TrainingBattleManager : MonoBehaviour
 
         RefreshHandPlayableState();
         UpdateAllUI();
+        return drawnCards;
     }
 
     [ContextMenu("Debug Draw Cards By Effect")]

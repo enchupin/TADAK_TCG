@@ -191,8 +191,9 @@
                         },
                         "effects": [
                             {
-                                "type": "Discard",
-                                "target": "DrawnCard"
+                                "type": "Move",
+                                "from": "Source",
+                                "to": "DiscardPile"
                             }
                         ]
                     },

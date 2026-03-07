@@ -95,11 +95,26 @@ public static class CardEffectFactory
                     onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
                 };
             case EffectType.Draw:
-                return new DrawEffect { amount = effectData.amount, amountFormula = effectData.amountFormula };
+                return new DrawEffect
+                {
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula,
+                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
+                };
             case EffectType.DrawCharacter:
-                return new DrawCharacterEffect { amount = effectData.amount, amountFormula = effectData.amountFormula };
+                return new DrawCharacterEffect
+                {
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula,
+                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
+                };
             case EffectType.DrawBasic:
-                return new DrawBasicEffect { amount = effectData.amount, amountFormula = effectData.amountFormula };
+                return new DrawBasicEffect
+                {
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula,
+                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
+                };
             case EffectType.Move:
                 return new MoveEffect
                 {
