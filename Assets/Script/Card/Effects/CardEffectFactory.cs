@@ -63,8 +63,6 @@ public static class CardEffectFactory
                 return new ExhaustHandEffect { amountFormula = effectData.amountFormula };
             case EffectType.Scry:
                 return new ScryEffect { count = effectData.count };
-            case EffectType.ChoiceHand:
-                return new ChoiceHandEffect { count = effectData.count };
             case EffectType.SelectCard:
                 return new SelectCardEffect
                 {

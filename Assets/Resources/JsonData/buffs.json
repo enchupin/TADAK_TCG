@@ -294,12 +294,14 @@
                 },
                 {
                     "type": "SelectCard",
-                    "source": "Hand",
+                    "from": "Hand",
                     "amount": 1,
                     "onAction": {
-                        "type": "Discard",
-                        "target": "Selected"
-                    }
+                        "type": "Move",
+                        "from": "Source",
+                        "to": "DiscardPile"
+                    },
+                    "subject": "Selected"
                 }
             ],
             "description": "매 턴 시작 시 카드를 2장 더 뽑고 1장 버립니다."
@@ -904,15 +906,16 @@
             },
             "effects": [
                 {
-                    "type": "ChoiceHand",
-                    "effects": [
-                        {
-                            "type": "Move",
-                            "subject": "Selected",
-                            "from": "Hand",
-                            "to": "Hand"
-                        }
-                    ]
+                    "type": "SelectCard",
+                    "from": "Hand",
+                    "amount": 1,
+                    "onAction": {
+                        "type": "Move",
+                        "subject": "Selected",
+                        "from": "Hand",
+                        "to": "Hand"
+                    },
+                    "subject": "Selected"
                 }
             ],
             "description": "매 턴 종료 시 손에서 카드를 {stack}장 선택하여 버리지 않습니다."

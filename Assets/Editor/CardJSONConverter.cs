@@ -55,11 +55,19 @@ public class CardJSONConverter : EditorWindow
 
     private static string ResolveMoveZoneStringForParser(string zone, EffectType effectType)
     {
-        if (effectType != EffectType.RandGenerate || string.IsNullOrWhiteSpace(zone)) {
+        if (string.IsNullOrWhiteSpace(zone)) {
             return zone;
         }
 
-        return IsMoveZoneString(zone) ? zone : string.Empty;
+        if (effectType == EffectType.RandGenerate) {
+            return IsMoveZoneString(zone) ? zone : string.Empty;
+        }
+
+        if (effectType == EffectType.SelectCard && !IsMoveZoneString(zone)) {
+            return "CardId";
+        }
+
+        return zone;
     }
 
     private static bool IsMoveZoneString(string zone)
@@ -413,6 +421,15 @@ public class CardJSONConverter : EditorWindow
             }
         }
 
+        if (effectType == EffectType.SelectCard && string.IsNullOrWhiteSpace(cardIdGroup) && !string.IsNullOrWhiteSpace(fromRaw) && !IsMoveZoneString(fromRaw)) {
+            if (cardGroups.TryGetValue(fromRaw, out List<int> fromCardIds)) {
+                effect.formulaCardIdFilter = new List<int>(fromCardIds);
+            }
+            else {
+                Debug.LogWarning($"[CardJSONConverter] from card group not found: {fromRaw}");
+            }
+        }
+
         if (effectObject["cardIds"] is JArray cardIdsArray) {
             if (effect.formulaCardIdFilter == null) {
                 effect.formulaCardIdFilter = new List<int>();
@@ -709,7 +726,8 @@ public class CardJSONConverter : EditorWindow
             case "Move": return EffectType.Move;
             case "Copy": return EffectType.Copy;
             case "RandGenerate": return EffectType.RandGenerate;
-                        case "ChoiceHand": return EffectType.ChoiceHand;
+            case "ChoiceHand":
+                throw new ArgumentException("[CardJSONConverter] ChoiceHand effect is no longer supported. Use SelectCard with from=\"Hand\".");
             case "Discard": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
             case "Keep": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙
             case "Cost": return EffectType.Repeat; // 異뷀썑 ??젣 or ?섏젙 ?덉젙

@@ -213,8 +213,9 @@
                     "from": "Hand",
                     "amount": 2,
                     "onAction": {
-                        "type": "Discard",
-                        "target": "Selected"
+                        "type": "Move",
+                        "from": "Source",
+                        "to": "DiscardPile"
                     },
                     "subject": "SelectedCard"
                 },
