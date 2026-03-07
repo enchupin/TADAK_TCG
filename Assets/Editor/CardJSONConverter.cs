@@ -720,12 +720,6 @@ public class CardJSONConverter : EditorWindow
             case "Buff": return EffectType.Buff;
             case "Heal": return EffectType.Heal;
             case "GenerateCard": return EffectType.GenerateCard; // 추후 삭제 또는 수정 예정
-            case "Keyword": return EffectType.Keyword; // 추후 삭제 또는 수정 예정
-            case "DiscardHand":
-                throw new ArgumentException("[CardJSONConverter] DiscardHand effect is no longer supported. Use Move with from=\"Hand\" and to=\"DiscardPile\".");
-            case "Pickup": return EffectType.Pickup; // 추후 삭제 또는 수정 예정
-            case "ExhaustHand":
-                throw new ArgumentException("[CardJSONConverter] ExhaustHand effect is no longer supported. Use ExhaustCard with from.");
             case "ExhaustCard": return EffectType.ExhaustCard;
             case "Conditional": return EffectType.Conditional; // 추후 삭제 또는 수정 예정
             case "Repeat": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
@@ -734,9 +728,6 @@ public class CardJSONConverter : EditorWindow
             case "Move": return EffectType.Move;
             case "Copy": return EffectType.Copy;
             case "RandGenerate": return EffectType.RandGenerate;
-            case "ChoiceHand":
-                throw new ArgumentException("[CardJSONConverter] ChoiceHand effect is no longer supported. Use SelectCard with from=\"Hand\".");
-            case "Discard": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "Keep": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "Cost": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "CreateCard": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
@@ -751,17 +742,13 @@ public class CardJSONConverter : EditorWindow
             case "ChangeStat": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "ExtraTurn": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "Stamina": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
-            case "SelectEnemy": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
-            case "TransferStats": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "MultiplyBarrier": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "Trigger": return EffectType.Trigger;
             case "RemoveBuff": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "Scry": return EffectType.Scry;
-            case "DrawnCard": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
 
             default:
-                Debug.LogWarning($"[CardJSONConverter] Unknown effect type: {type}. Fallback to Repeat.");
-                return EffectType.Repeat;
+                throw new ArgumentException($"[CardJSONConverter] Unsupported effect type: {type}");
         }
     }
 

@@ -187,8 +187,6 @@ public static class CardEffectFactory
                 };
             case EffectType.Keyword:
                 return new KeywordEffect { keyword = effectData.keyword, amount = effectData.amount, amountFormula = effectData.amountFormula };
-            case EffectType.Pickup:
-                return new PickupEffect();
             case EffectType.Trigger:
                 return new TriggerEffect { timing = effectData.timing };
             default:
