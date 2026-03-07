@@ -9,7 +9,7 @@ public enum EffectType
     Attack = 6,
     Barrier = 7,
     Conditional = 9,
-    ExhaustHand = 11,
+    ExhaustCard = 11,
     SelectCard = 12,
     Copy = 13,
     Repeat = 14,

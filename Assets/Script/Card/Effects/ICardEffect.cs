@@ -4,14 +4,12 @@
 public interface ICardEffect
 {
     /// <summary>
-    /// 효과를 실행합니다.
+    /// 효과를 실행합니다
     /// </summary>
     void Execute(TrainingBattleManager battlemanager);
 
-
-    void Execute(TrainingBattleManager battlemanager, int amount) {
+    void Execute(TrainingBattleManager battlemanager, int amount)
+    {
         Execute(battlemanager);
     }
-
-
 }

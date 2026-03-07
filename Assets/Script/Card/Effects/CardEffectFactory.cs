@@ -57,8 +57,15 @@ public static class CardEffectFactory
                 return new AttackEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, cardIdList = effectData.formulaCardIdFilter, target = effectData.target, onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject) };
             case EffectType.Barrier:
                 return new BarrierEffect { amount = effectData.amount, amountFormula = effectData.amountFormula, target = effectData.target, onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject) };
-            case EffectType.ExhaustHand:
-                return new ExhaustHandEffect { amountFormula = effectData.amountFormula };
+            case EffectType.ExhaustCard:
+                return new ExhaustCardEffect
+                {
+                    from = effectData.from,
+                    subject = resolvedSubject,
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula,
+                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
+                };
             case EffectType.Scry:
                 return new ScryEffect { count = effectData.count };
             case EffectType.SelectCard:

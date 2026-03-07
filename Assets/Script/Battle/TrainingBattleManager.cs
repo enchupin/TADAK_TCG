@@ -473,6 +473,9 @@ public class TrainingBattleManager : MonoBehaviour
             case EffectType.Move:
                 if (effect is MoveEffect) return true;
                 break;
+            case EffectType.ExhaustCard:
+                if (effect is ExhaustCardEffect) return true;
+                break;
             case EffectType.Attack:
                 if (effect is AttackEffect) return true;
                 break;
@@ -503,6 +506,14 @@ public class TrainingBattleManager : MonoBehaviour
         if (effect is BarrierEffect barrier && barrier.onActions != null)
         {
             foreach (ICardEffect nested in barrier.onActions)
+            {
+                if (EffectMatchesDebugTarget(nested))
+                    return true;
+            }
+        }
+        if (effect is ExhaustCardEffect exhaust && exhaust.onActions != null)
+        {
+            foreach (ICardEffect nested in exhaust.onActions)
             {
                 if (EffectMatchesDebugTarget(nested))
                     return true;

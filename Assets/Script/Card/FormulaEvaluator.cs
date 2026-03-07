@@ -40,6 +40,12 @@ public static class FormulaEvaluator
 
         formula = formula.Replace(" ", "");
 
+        if (formula.IndexOf("discarded", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            Debug.LogError("[FormulaEvaluator] 'discarded' 수식 키워드는 더 이상 지원하지 않습니다. 'moved'를 사용하세요");
+            return 0;
+        }
+
         int cardsPlayedInCombat = context != null
             ? context.GetCardsPlayedThisCombatCount(cardIdFilter)
             : 0;
@@ -62,8 +68,8 @@ public static class FormulaEvaluator
             case "consumed":
                 return context != null ? context.defenseConsumed : 0;
 
-            case "discarded":
-                return context != null ? context.cardsDiscardedThisTurn : 0;
+            case "moved":
+                return Mathf.Max(0, baseValue);
 
             case "exhausted":
                 return context != null ? context.cardsExhaustedThisTurn : 0;
@@ -91,7 +97,7 @@ public static class FormulaEvaluator
             expression = expression.Replace("UseCardInCombat", cardsPlayedInCombat.ToString());
             expression = expression.Replace("UseCardInTurn", cardsPlayedInTurn.ToString());
             expression = expression.Replace("consumed", (context != null ? context.defenseConsumed : 0).ToString());
-            expression = expression.Replace("discarded", (context != null ? context.cardsDiscardedThisTurn : 0).ToString());
+            expression = expression.Replace("moved", Mathf.Max(0, baseValue).ToString());
             expression = expression.Replace("exhausted", (context != null ? context.cardsExhaustedThisTurn : 0).ToString());
             expression = expression.Replace("cardsDrawnThisTurn", (context != null ? context.cardsDrawnThisTurn : 0).ToString());
             expression = expression.Replace("finalDamage", (context != null ? context.lastDamageDealt : 0).ToString());

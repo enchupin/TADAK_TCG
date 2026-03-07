@@ -207,10 +207,10 @@
                     "amountFormula": "all",
                     "onAction": {
                         "type": "Damage",
-                        "amountFormula": "discarded * 8",
+                        "amountFormula": "moved * 8",
                         "target": "SingleEnemy"
                     },
-                    "subject": "DiscardedCount"
+                    "subject": "MovedCount"
                 }
             ]
         },
@@ -222,7 +222,8 @@
             "description": "내 손의 다른 카드를 모두 소멸시킵니다. 소멸시킨 카드 1장 당 피해를 12 입힙니다.",
             "effects": [
                 {
-                    "type": "ExhaustHand",
+                    "type": "ExhaustCard",
+                    "from": "Hand",
                     "amountFormula": "all",
                     "onAction": {
                         "type": "Damage",
@@ -250,10 +251,9 @@
                     "to": "DiscardPile",
                     "amountFormula": "all",
                     "onAction": {
-                        "type": "Draw",
-                        "amountFormula": "discarded"
+                        "type": "Draw"
                     },
-                    "subject": "DiscardedCount"
+                    "subject": "MovedCount"
                 }
             ]
         },
