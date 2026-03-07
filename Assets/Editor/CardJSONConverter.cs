@@ -388,6 +388,7 @@ public class CardJSONConverter : EditorWindow
         };
 
         ValidateCopyEffectSchema(effectObject, effectType, fromRaw, toRaw, targetRaw);
+        ValidateKillEffectSchema(effectObject, effectType);
         ValidateLegacyMoveKeywords(effect);
 
         /*
@@ -745,7 +746,8 @@ public class CardJSONConverter : EditorWindow
             case "MixBuff": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "ModifyCards": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "ModifyCard": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
-            case "Kill": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "Kill": return EffectType.Kill;
+            case "TakeDamage": return EffectType.TakeDamage;
             case "ChangeStat": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "ExtraTurn": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "Stamina": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
@@ -866,6 +868,19 @@ public class CardJSONConverter : EditorWindow
             if (effectObject["cardIds"] is not JArray cardIds || cardIds.Count == 0) {
                 throw new ArgumentException("[CardJSONConverter] Copy effect with from=\"CardId\" requires non-empty 'cardIds'.");
             }
+        }
+    }
+
+    private static void ValidateKillEffectSchema(JObject effectObject, EffectType effectType)
+    {
+        if (effectType != EffectType.Kill) {
+            return;
+        }
+
+        bool hasAmount = HasJsonValue(effectObject, "amount");
+        bool hasAmountFormula = !string.IsNullOrWhiteSpace(ReadJsonString(effectObject, "amountFormula"));
+        if (hasAmount || hasAmountFormula) {
+            throw new ArgumentException("[CardJSONConverter] Kill effect no longer supports amount or amountFormula. Use TakeDamage before Kill if you need self damage.");
         }
     }
 

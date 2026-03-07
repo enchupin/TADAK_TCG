@@ -137,6 +137,13 @@ public class CardInteractionHandler : UIHoverEffect,
             return;
         }
 
+        if (effect is KillEffect killEffect) {
+            if (killEffect.target == TargetType.SingleEnemy) {
+                hasSingleEnemyTarget = true;
+            }
+            return;
+        }
+
         if (effect is AttackEffect attackEffect) {
             if (attackEffect.target == TargetType.SingleEnemy) {
                 hasSingleEnemyTarget = true;

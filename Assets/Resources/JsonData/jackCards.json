@@ -379,14 +379,12 @@
             "description": "적 하나를 선택합니다. 적의 남은 체력만큼 피해를 입고 처치합니다.",
             "effects": [
                 {
-                    "type": "Damage",
-                    "amountFormula": "Target.Hp",
-                    "target": "Self"
+                    "type": "TakeDamage",
+                    "amountFormula": "Target.Hp"
                 },
                 {
                     "type": "Kill",
-                    "target": "SingleEnemy",
-                    "silent": false
+                    "target": "SingleEnemy"
                 }
             ]
         },

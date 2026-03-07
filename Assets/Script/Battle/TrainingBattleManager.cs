@@ -439,6 +439,12 @@ public class TrainingBattleManager : MonoBehaviour
             case EffectType.Trigger:
                 if (effect is TriggerEffect) return true;
                 break;
+            case EffectType.Kill:
+                if (effect is KillEffect) return true;
+                break;
+            case EffectType.TakeDamage:
+                if (effect is TakeDamageEffect) return true;
+                break;
             case EffectType.Attack:
                 if (effect is AttackEffect) return true;
                 break;

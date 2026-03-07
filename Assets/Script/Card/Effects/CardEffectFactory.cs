@@ -108,6 +108,17 @@ public static class CardEffectFactory
                     amountFormula = effectData.amountFormula,
                     onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
                 };
+            case EffectType.Kill:
+                return new KillEffect
+                {
+                    target = effectData.target
+                };
+            case EffectType.TakeDamage:
+                return new TakeDamageEffect
+                {
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula
+                };
             case EffectType.DrawBasic:
                 return new DrawBasicEffect
                 {
