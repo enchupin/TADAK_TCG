@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30ceac27afe41c54eac3f4b122eda671, type: 3}
+  m_Name: "Character_202_\uBC14\uB124\uC0AC"
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  characterId: 202
+  characterName: "\uBC14\uB124\uC0AC"
+  maxHp: 40
+  cost: 0
+  characterColor: bee
+  identity:
+    cost: 6
+    description: "\uBC18\uACA9\uC744 3 \uC5BB\uC2B5\uB2C8\uB2E4."
+    effects:
+    - type: 0
+      amount: 3
+      target: 0
+      buffType: 
+      cardId: 0
+  artworkAddress: Characters/Vanessa/Artwork
+  effectAddress: Effects/Vanessa
+  soundAddress: Sounds/Vanessa
+  startDeckCardIds: 1a150300241503002e15030038150300421503004c15030056150300

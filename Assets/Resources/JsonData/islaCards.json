@@ -1,0 +1,793 @@
+{
+    "cards": [
+        {
+            "cardId": 101010,
+            "name": "폭발 실험",
+            "characterId": 101,
+            "cost": 1,
+            "description": "피해를 6 입힙니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amount": 6,
+                    "target": "SingleEnemy"
+                }
+            ]
+        },
+        {
+            "cardId": 101020,
+            "name": "몸에 좋은 약",
+            "characterId": 101,
+            "cost": 1,
+            "description": "체력을 4 회복합니다.",
+            "effects": [
+                {
+                    "type": "Heal",
+                    "amount": 4,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 101030,
+            "name": "실험 재료 준비",
+            "characterId": 101,
+            "cost": 1,
+            "description": "카드를 2장 뽑습니다.",
+            "effects": [
+                {
+                    "type": "Draw",
+                    "amount": 2
+                }
+            ],
+            "enforceGroup": "enforce_101030"
+        },
+        {
+            "cardId": 101031,
+            "name": "실험 재료 준비 +",
+            "characterId": 101,
+            "cost": 0,
+            "description": "카드를 1장 뽑습니다.",
+            "effects": [
+                {
+                    "type": "Draw",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "cardId": 101032,
+            "name": "실험 재료 준비 +",
+            "characterId": 101,
+            "cost": 1,
+            "description": "카드를 2장 뽑고, 내 손패가 4장 이하라면 1장 더 뽑습니다.",
+            "effects": [
+                {
+                    "type": "Draw",
+                    "amount": 2
+                },
+                {
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "Hand",
+                                "property": "Count",
+                                "operator": "Lte",
+                                "value": 4
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "Draw",
+                                "amount": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "cardId": 101033,
+            "name": "실험 재료 준비 +",
+            "characterId": 101,
+            "cost": 1,
+            "description": "버린 카드 더미에서 카드를 1장 선택해 손으로 가져옵니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "Discard",
+                    "amount": 1,
+                    "onAction": {
+                        "type": "Move",
+                        "to": "Hand"
+                    },
+                    "subject": "SelectedCard"
+                }
+            ]
+        },
+        {
+            "cardId": 101034,
+            "name": "실험 재료 준비 +",
+            "characterId": 101,
+            "cost": 1,
+            "description": "손에 든 카드 1장을 선택해 복제합니다. 그 카드가 포션일 경우, 모든 적에게 부식을 2 부여합니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "Hand",
+                    "amount": 1,
+                    "onAction": {
+                        "type": "Copy",
+                        "from": "Source",
+                        "amount": 1,
+                        "to": "Hand",
+                        "condition": {
+                            "checks": [
+                                {
+                                    "subject": "SelectedCard",
+                                    "property": "IsPotion",
+                                    "operator": "Eq",
+                                    "value": true
+                                }
+                            ],
+                            "effects": [
+                                {
+                                    "type": "Buff",
+                                    "buffId": 4001,
+                                    "amount": 2,
+                                    "target": "AllEnemies"
+                                }
+                            ]
+                        }
+                    },
+                    "subject": "SelectedCard"
+                }
+            ]
+        },
+        {
+            "cardId": 101035,
+            "name": "실험 재료 준비 +",
+            "characterId": 101,
+            "cost": 1,
+            "description": "손의 카드 1장을 선택해 복제합니다. 그 카드가 포션일 경우, 1장 더 복제합니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "Hand",
+                    "amount": 1,
+                    "onAction": {
+                        "condition": {
+                            "checks": [
+                                {
+                                    "subject": "SelectedCard",
+                                    "property": "IsPotion",
+                                    "operator": "Eq",
+                                    "value": true
+                                }
+                            ],
+                            "effects": [
+                                {
+                                    "type": "Copy",
+                                    "from": "Source",
+                                    "amount": 2,
+                                    "to": "Hand"
+                                }
+                            ],
+                            "elseEffects": [
+                                {
+                                    "type": "Copy",
+                                    "from": "Source",
+                                    "amount": 2,
+                                    "to": "Hand"
+                                }
+                            ]
+                        }
+                    },
+                    "subject": "SelectedCard"
+                }
+            ]
+        },
+        {
+            "cardId": 101040,
+            "name": "보글보글",
+            "characterId": 101,
+            "cost": 0,
+            "description": "무작위 포션 카드를 1장 제작합니다.",
+            "effects": [
+                {
+                    "type": "RandGenerate",
+                    "amount": 1,
+                    "from": "isla_potion_enhanced_even_pool",
+                    "to": "Hand"
+                }
+            ],
+            "enforceGroup": "enforce_101040"
+        },
+        {
+            "cardId": 101041,
+            "name": "보글보글 +",
+            "characterId": 101,
+            "cost": 0,
+            "description": "무작위 포션 카드를 2장 제작합니다.",
+            "effects": [
+                {
+                    "type": "RandGenerate",
+                    "amount": 2,
+                    "from": "isla_potion_enhanced_even_pool",
+                    "to": "Hand"
+                }
+            ]
+        },
+        {
+            "cardId": 101042,
+            "name": "보글보글 +",
+            "characterId": 101,
+            "cost": 0,
+            "description": "포션 카드를 1장 선택해서 제작합니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "isla_potion_enhanced_even_pool",
+                    "amount": 1,
+                    "onAction": {
+                        "type": "GenerateCard",
+                        "cardId": "SelectedCard",
+                        "to": "Hand"
+                    },
+                    "subject": "SelectedCard"
+                }
+            ]
+        },
+        {
+            "cardId": 101043,
+            "name": "보글보글 +",
+            "characterId": 101,
+            "cost": 0,
+            "description": "무작위 강화된 포션 카드를 1장 제작합니다.",
+            "effects": [
+                {
+                    "type": "RandGenerate",
+                    "amount": 1,
+                    "from": "isla_potion_enhanced_odd_pool",
+                    "to": "Hand"
+                }
+            ]
+        },
+        {
+            "cardId": 101044,
+            "name": "보글보글 +",
+            "characterId": 101,
+            "cost": 0,
+            "description": "손에 든 카드 한 장을 선택해 버립니다. 무작위 강화된 포션 카드를 2장 제작합니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "Hand",
+                    "amount": 1,
+                    "onAction": {
+                        "type": "Move",
+                        "from": "Source",
+                        "to": "DiscardPile"
+                    },
+                    "subject": "SelectedCard"
+                },
+                {
+                    "type": "RandGenerate",
+                    "amount": 2,
+                    "from": "isla_potion_enhanced_odd_pool",
+                    "to": "Hand"
+                }
+            ]
+        },
+        {
+            "cardId": 101045,
+            "name": "보글보글 +",
+            "characterId": 101,
+            "cost": 1,
+            "keywords": [
+                4
+            ],
+            "description": "매 턴 시작 시 무작위 포션 카드를 1장 제작합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 1001,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 101050,
+            "name": "실험 끝!",
+            "characterId": 101,
+            "cost": 2,
+            "description": "이번 전투에 사용한 포션의 개수 X 3 만큼 피해를 입힙니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amountFormula": "UseCardInCombat * 3",
+                    "cardIdGroup": "isla_potion_all",
+                    "target": "SingleEnemy"
+                }
+            ],
+            "enforceGroup": "enforce_101050"
+        },
+        {
+            "cardId": 101051,
+            "name": "실험 끝! +",
+            "characterId": 101,
+            "cost": 2,
+            "keywords": [
+                1
+            ],
+            "description": "이번 전투에 사용한 포션의 개수 X 3 만큼 피해를 입힙니다. 보존: 비용이 1 감소합니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amountFormula": "UseCardInCombat * 3",
+                    "cardIdGroup": "isla_potion_all",
+                    "target": "SingleEnemy"
+                },
+                {
+                    "type": "Keep",
+                    "effects": [
+                        {
+                            "type": "Cost",
+                            "amount": -1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cardId": 101052,
+            "name": "실험 끝! +",
+            "characterId": 101,
+            "cost": 1,
+            "description": "이번 전투에 사용한 포션 카드 수 만큼 체력을 회복합니다.",
+            "effects": [
+                {
+                    "type": "Heal",
+                    "amountFormula": "UseCardInCombat",
+                    "cardIdGroup": "isla_potion_all",
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 101053,
+            "name": "실험 끝! +",
+            "characterId": 101,
+            "cost": 1,
+            "description": "모든 적에게 이번 전투에 사용한 포션의 개수 X 3 만큼 피해를 입힙니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amountFormula": "UseCardInCombat * 3",
+                    "cardIdGroup": "isla_potion_all",
+                    "target": "AllEnemies"
+                }
+            ]
+        },
+        {
+            "cardId": 101054,
+            "name": "실험 끝 +",
+            "characterId": 101,
+            "cost": 1,
+            "keywords": [
+                4
+            ],
+            "description": "앞으로 획득하는 모든 포션 카드가 강화됩니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 1002,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 101055,
+            "name": "실험 끝 +",
+            "characterId": 101,
+            "cost": 1,
+            "keywords": [
+                4
+            ],
+            "description": "이번 전투 동안 포션 카드가 소멸되는 대신 카드를 1장 뽑습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3003,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 101060,
+            "name": "실험 폐기물",
+            "characterId": 101,
+            "cost": 0,
+            "keywords": [
+                3
+            ],
+            "description": "부식을 2 부여합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 4001,
+                    "amount": 2,
+                    "target": "SingleEnemy"
+                }
+            ],
+            "enforceGroup": "enforce_101060"
+        },
+        {
+            "cardId": 101061,
+            "name": "실험 폐기물 +",
+            "characterId": 101,
+            "cost": 0,
+            "keywords": [
+                3
+            ],
+            "description": "카드를 2장 뽑습니다. 부식을 2 부여합니다.",
+            "effects": [
+                {
+                    "type": "Draw",
+                    "amount": 2
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 4001,
+                    "amount": 2,
+                    "target": "SingleEnemy"
+                }
+            ]
+        },
+        {
+            "cardId": 101062,
+            "name": "실험 폐기물 +",
+            "characterId": 101,
+            "cost": 0,
+            "keywords": [
+                3
+            ],
+            "description": "부식을 2 부여합니다. 대상이 이미 부식 상태라면, 무작위 포션 카드를 1장 제작합니다.",
+            "effects": [
+                {
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "Target",
+                                "property": "HasBuff",
+                                "param": 4001,
+                                "operator": "Eq",
+                                "value": true
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "GenerateCard",
+                                "cardIdGroup": "isla_potion_even_base_pool"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 4001,
+                    "amount": 2,
+                    "target": "SingleEnemy"
+                }
+            ]
+        },
+        {
+            "cardId": 101063,
+            "name": "실험 폐기물 +",
+            "characterId": 101,
+            "cost": 1,
+            "keywords": [
+                4
+            ],
+            "description": "포션을 사용할 때마다 무작위 적에게 부식을 1 부여합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3004,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 101064,
+            "name": "실험 폐기물 +",
+            "characterId": 101,
+            "cost": 0,
+            "keywords": [
+                5
+            ],
+            "description": "부식을 2 부여합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 4001,
+                    "amount": 2,
+                    "target": "SingleEnemy"
+                }
+            ]
+        },
+        {
+            "cardId": 101065,
+            "name": "실험 폐기물 +",
+            "characterId": 101,
+            "cost": 1,
+            "description": "부식을 2 부여합니다. 피해 증폭을 1 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 4001,
+                    "amount": 2,
+                    "target": "SingleEnemy"
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3002,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 101070,
+            "name": "생체 실험",
+            "characterId": 101,
+            "cost": 2,
+            "keywords": [
+                4
+            ],
+            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 2 입힙니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3005,
+                    "amount": 2,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 101071,
+            "name": "생체 실험 +",
+            "characterId": 101,
+            "cost": 2,
+            "keywords": [
+                4,
+                5
+            ],
+            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 2 입힙니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3005,
+                    "amount": 2,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 101072,
+            "name": "생체 실험 +",
+            "characterId": 101,
+            "cost": 1,
+            "keywords": [
+                4
+            ],
+            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 2 입힙니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3005,
+                    "amount": 2,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 101073,
+            "name": "생체 실험 +",
+            "characterId": 101,
+            "cost": 2,
+            "keywords": [
+                4
+            ],
+            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 4 입힙니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3005,
+                    "amount": 4,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 101074,
+            "name": "생체 실험 +",
+            "characterId": 101,
+            "cost": 2,
+            "keywords": [
+                4
+            ],
+            "description": "적에게 부정적인 효과를 입힐 때마다 모든 적에게 피해를 2 입힙니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3006,
+                    "amount": 2,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 101075,
+            "name": "생체 실험 +",
+            "characterId": 101,
+            "cost": 1,
+            "keywords": [
+                4,
+                6
+            ],
+            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 1 입힙니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3005,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 101080,
+            "name": "고통 포션",
+            "characterId": 101,
+            "cost": 0,
+            "keywords": [
+                3
+            ],
+            "description": "피해를 3 입힙니다.",
+            "effects": [
+                {
+                    "type": "Damage",
+                    "amount": 3,
+                    "target": "SingleEnemy"
+                }
+            ],
+            "enforceGroup": "enforce_101080"
+        },
+        {
+            "cardId": 101081,
+            "name": "고통 포션 +",
+            "characterId": 101,
+            "cost": 0,
+            "keywords": [
+                3
+            ],
+            "description": "피해를 6 입힙니다.",
+            "effects": [
+                {
+                    "type": "Damage",
+                    "amount": 6,
+                    "target": "SingleEnemy"
+                }
+            ]
+        },
+        {
+            "cardId": 101082,
+            "name": "순환 포션",
+            "characterId": 101,
+            "cost": 0,
+            "keywords": [
+                3
+            ],
+            "description": "카드를 1장 뽑습니다.",
+            "effects": [
+                {
+                    "type": "Draw",
+                    "amount": 1
+                }
+            ],
+            "enforceGroup": "enforce_101082"
+        },
+        {
+            "cardId": 101083,
+            "name": "순환 포션 +",
+            "characterId": 101,
+            "cost": 0,
+            "keywords": [
+                3
+            ],
+            "description": "카드를 2장 뽑습니다.",
+            "effects": [
+                {
+                    "type": "Draw",
+                    "amount": 2
+                }
+            ]
+        },
+        {
+            "cardId": 101084,
+            "name": "튼튼 포션",
+            "characterId": 101,
+            "cost": 0,
+            "keywords": [
+                3
+            ],
+            "description": "체력을 3 회복합니다.",
+            "effects": [
+                {
+                    "type": "Heal",
+                    "amount": 3,
+                    "target": "Self"
+                }
+            ],
+            "enforceGroup": "enforce_101084"
+        },
+        {
+            "cardId": 101085,
+            "name": "튼튼 포션 +",
+            "characterId": 101,
+            "cost": 0,
+            "keywords": [
+                3
+            ],
+            "description": "체력을 6 회복합니다.",
+            "effects": [
+                {
+                    "type": "Heal",
+                    "amount": 6,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 101086,
+            "name": "부글부글 포션",
+            "characterId": 101,
+            "cost": 0,
+            "keywords": [
+                3
+            ],
+            "description": "부식을 1 부여합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 4001,
+                    "amount": 1,
+                    "target": "SingleEnemy"
+                }
+            ],
+            "enforceGroup": "enforce_101086"
+        },
+        {
+            "cardId": 101087,
+            "name": "부글부글 포션 +",
+            "characterId": 101,
+            "cost": 0,
+            "keywords": [
+                3
+            ],
+            "description": "부식을 2 부여합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 4001,
+                    "amount": 2,
+                    "target": "SingleEnemy"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30ceac27afe41c54eac3f4b122eda671, type: 3}
+  m_Name: "Character_302_\uB8EC"
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  characterId: 302
+  characterName: "\uB8EC"
+  maxHp: 80
+  cost: 0
+  characterColor: brown
+  identity:
+    cost: 5
+    description: "\uB8EC\uC744 5 \uC5BB\uC2B5\uB2C8\uB2E4. \uB0B4 \uD134 \uC885\uB8CC
+      \uC2DC \uD6A8\uACFC\uB4E4\uC744 1\uD68C \uBC1C\uB3D9\uD569\uB2C8\uB2E4."
+    effects:
+    - type: 0
+      amount: 5
+      target: 0
+      buffType: 
+      cardId: 0
+    - type: 0
+      amount: 0
+      target: 0
+      buffType: 
+      cardId: 0
+  artworkAddress: Characters/Rune/Artwork
+  effectAddress: Effects/Rune
+  soundAddress: Sounds/Rune
+  startDeckCardIds: ba9b0400c49b0400ce9b0400d89b0400e29b0400ec9b0400f69b0400

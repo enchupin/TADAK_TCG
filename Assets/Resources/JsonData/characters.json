@@ -1,0 +1,185 @@
+{
+    "characters": [
+        {
+            "characterId": 101,
+            "name": "아일라",
+            "maxHp": 30,
+            "cost": 0,
+            "identity": {
+                "cost": 8,
+                "effects": [
+                    {
+                        "type": "Draw",
+                        "amount": 2
+                    },
+                    {
+                        "type": "Buff",
+                        "buffId": 4001,
+                        "amount": 3,
+                        "target": "AllEnemies"
+                    }
+                ],
+                "description": "카드를 2장 뽑습니다. 모든 적에게 부식을 3 부여합니다."
+            },
+            "characterColor": "green",
+            "startDeck": [
+                101010,
+                101020,
+                101030,
+                101040,
+                101050,
+                101060,
+                101070
+            ]
+        },
+        {
+            "characterId": 102,
+            "name": "잭",
+            "maxHp": 30,
+            "cost": 0,
+            "identity": {
+                "cost": 6,
+                "effects": [
+                        {
+                            "type": "RandGenerate",
+                            "amount": 1,
+                            "from": "enforce_102040",
+                            "to": "Hand"
+                        }
+                ],
+                "description": "무작위 강화된 조커 카드를 1장 생성합니다."
+            },
+            "characterColor": "trump",
+            "startDeck": [
+                102010,
+                102020,
+                102030,
+                102040,
+                102050,
+                102060,
+                102070
+            ]
+        },
+        {
+            "characterId": 201,
+            "name": "이그니아",
+            "maxHp": 40,
+            "cost": 0,
+            "identity": {
+                "cost": 5,
+                "effects": [
+                    {
+                        "type": "Buff",
+                        "buffId": 3009,
+                        "amount": 20,
+                        "target": "Self"
+                    }
+                ],
+                "description": "다음 공격이 20의 추가 피해를 입힙니다."
+            },
+            "characterColor": "red",
+            "startDeck": [
+                201010,
+                201020,
+                201030,
+                201040,
+                201050,
+                201060,
+                201070
+            ]
+        },
+        {
+            "characterId": 202,
+            "name": "바네사",
+            "maxHp": 40,
+            "cost": 0,
+            "identity": {
+                "cost": 6,
+                "effects": [
+                    {
+                        "type": "Buff",
+                        "buffId": 3021,
+                        "amount": 3,
+                        "target": "Self"
+                    }
+                ],
+                "description": "반격을 3 얻습니다."
+            },
+            "characterColor": "bee",
+            "startDeck": [
+                202010,
+                202020,
+                202030,
+                202040,
+                202050,
+                202060,
+                202070
+            ]
+        },
+        {
+            "characterId": 301,
+            "name": "폴라",
+            "maxHp": 80,
+            "cost": 0,
+            "identity": {
+                "cost": 5,
+                "effects": [
+                    {
+                        "type": "Barrier",
+                        "amount": 10,
+                        "target": "Self"
+                    },
+                    {
+                        "type": "Buff",
+                        "buffId": 4004,
+                        "amount": 2,
+                        "target": "AllEnemies"
+                    }
+                ],
+                "description": "방어도를 10 얻습니다. 모든 적에게 빙결을 2 부여합니다."
+            },
+            "characterColor": "white",
+            "startDeck": [
+                301010,
+                301020,
+                301030,
+                301040,
+                301050,
+                301060,
+                301070
+            ]
+        },
+        {
+            "characterId": 302,
+            "name": "룬",
+            "maxHp": 80,
+            "cost": 0,
+            "identity": {
+                "cost": 5,
+                "effects": [
+                    {
+                        "type": "Buff",
+                        "buffId": 3031,
+                        "amount": 5,
+                        "target": "Self"
+                    },
+                    {
+                        "type": "Trigger",
+                        "timing": "OnTurnEnd"
+                    }
+                ],
+                "description": "룬을 5 얻습니다. 내 턴 종료 시 효과들을 1회 발동합니다."
+            },
+            "characterColor": "brown",
+            "startDeck": [
+                302010,
+                302020,
+                302030,
+                302040,
+                302050,
+                302060,
+                302070
+            ]
+        }
+    ]
+}

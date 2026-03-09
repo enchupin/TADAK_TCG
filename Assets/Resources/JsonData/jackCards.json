@@ -1,0 +1,593 @@
+{
+    "cards": [
+        {
+            "cardId": 102010,
+            "name": "코인 토스",
+            "characterId": 102,
+            "cost": 1,
+            "description": "피해를 4 입힙니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amount": 4,
+                    "target": "SingleEnemy"
+                }
+            ]
+        },
+        {
+            "cardId": 102020,
+            "name": "속임수",
+            "characterId": 102,
+            "cost": 1,
+            "description": "체력을 5 회복합니다.",
+            "effects": [
+                {
+                    "type": "Heal",
+                    "amount": 5,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 102030,
+            "name": "셔플",
+            "characterId": 102,
+            "cost": 0,
+            "description": "손에서 카드를 1장 선택합니다. 그 카드를 뽑을 카드 더미 제일 위에 놓습니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "Hand",
+                    "amount": 1,
+                    "onAction": {
+                        "type": "Move",
+                        "from": "Hand",
+                        "to": "DrawPile",
+                        "position": "Top"
+                    },
+                    "subject": "Selected"
+                }
+            ],
+            "enforceGroup": "enforce_102030"
+        },
+        {
+            "cardId": 102031,
+            "name": "셔플 +",
+            "characterId": 102,
+            "cost": 0,
+            "keywords": [
+                3
+            ],
+            "description": "모든 카드를 뽑을 카드 더미에 넣고 섞습니다. 카드를 5장 드로우합니다.",
+            "effects": [
+                {
+                    "type": "Move",
+                    "amountFormula": "all",
+                    "from": "Hand",
+                    "to": "DrawPile",
+                    "position": "Random"
+                },
+                {
+                    "type": "Move",
+                    "from": "DiscardPile",
+                    "amountFormula": "all",
+                    "to": "DrawPile",
+                    "position": "Random"
+                },
+                {
+                    "type": "Draw",
+                    "amount": 5
+                }
+            ]
+        },
+        {
+            "cardId": 102032,
+            "name": "셔플 +",
+            "characterId": 102,
+            "cost": 1,
+            "description": "버린 카드 더미를 뽑을 카드 더미에 넣고 섞습니다. 카드를 3장 드로우합니다.",
+            "effects": [
+                {
+                    "type": "Move",
+                    "from": "DiscardPile",
+                    "amountFormula": "all",
+                    "to": "DrawPile",
+                    "position": "Random"
+                },
+                {
+                    "type": "Draw",
+                    "amount": 3
+                }
+            ]
+        },
+        {
+            "cardId": 102033,
+            "name": "셔플 +",
+            "characterId": 102,
+            "cost": 0,
+            "description": "모든 카드 중 1장을 선택합니다. 그 카드를 뽑을 카드 더미 제일 위에 놓습니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "AllCards",
+                    "amount": 1,
+                    "onAction": {
+                        "type": "Move",
+                        "from": "Source",
+                        "to": "DrawPile",
+                        "position": "Top"
+                    },
+                    "subject": "Selected"
+                }
+            ]
+        },
+        {
+            "cardId": 102034,
+            "name": "셔플 +",
+            "characterId": 102,
+            "cost": 1,
+            "description": "카드를 2장 뽑습니다. 덱을 섞을 때마다 1씩 증가합니다.",
+            "effects": [
+                {
+                    "type": "Draw",
+                    "amountFormula": "ShuffleCount + 2"
+                }
+            ]
+        },
+        {
+            "cardId": 102035,
+            "name": "셔플 +",
+            "characterId": 102,
+            "cost": 1,
+            "keywords": [
+                4
+            ],
+            "description": "매 턴 카드를 1장 더 드로우합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3008,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 102040,
+            "name": "조커",
+            "characterId": 102,
+            "cost": 0,
+            "keywords": [
+                3
+            ],
+            "description": "잭의 고유 카드를 1장 선택해서 획득합니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "Unique",
+                    "amount": 1,
+                    "onAction": {
+                        "type": "Copy",
+                        "from": "Source",
+                        "amount": 1,
+                        "to": "Hand"
+                    },
+                    "subject": "Selected"
+                }
+            ],
+            "enforceGroup": "enforce_102040"
+        },
+        {
+            "cardId": 102041,
+            "name": "조커 +",
+            "characterId": 102,
+            "cost": 0,
+            "keywords": [
+                3
+            ],
+            "description": "잭의 고유 카드를 1장 선택합니다. 그 카드의 무작위 강화본을 1장 획득합니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "Unique",
+                    "amount": 1,
+                    "onAction": {
+                        "type": "Upgrade",
+                        "upgrade": "Random",
+                        "target": "Selected"
+                    },
+                    "subject": "Selected"
+                }
+            ]
+        },
+        {
+            "cardId": 102042,
+            "name": "조커 +",
+            "characterId": 102,
+            "cost": 1,
+            "keywords": [
+                3
+            ],
+            "description": "모든 카드 중 1장을 선택해서 획득합니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "AllCards",
+                    "amount": 1,
+                    "onAction": {
+                        "type": "Copy",
+                        "from": "Source",
+                        "amount": 1,
+                        "to": "Hand"
+                    },
+                    "subject": "Selected"
+                }
+            ]
+        },
+        {
+            "cardId": 102043,
+            "name": "조커 +",
+            "characterId": 102,
+            "cost": 3,
+            "keywords": [
+                3
+            ],
+            "description": "손에서 카드를 1장 선택합니다. 그 카드의 복사본을 3장 획득합니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "Hand",
+                    "amount": 1,
+                    "onAction": {
+                        "type": "Copy",
+                        "from": "Source",
+                        "amount": 3,
+                        "to": "Hand"
+                    },
+                    "subject": "Selected"
+                }
+            ]
+        },
+        {
+            "cardId": 102044,
+            "name": "조커 +",
+            "characterId": 102,
+            "cost": 3,
+            "keywords": [
+                4
+            ],
+            "description": "매 턴 시작 시 무작위 고유 카드 강화본을 1장 획득합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3029,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 102045,
+            "name": "조커 +",
+            "characterId": 102,
+            "cost": 2,
+            "keywords": [
+                8
+            ],
+            "description": "이번 턴에 받는 피해가 1로 고정됩니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3026,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 102050,
+            "name": "일대일 교환",
+            "characterId": 102,
+            "cost": 1,
+            "description": "적 하나를 선택합니다. 이번 턴 동안 적이 체력을 잃는 만큼 내 체력이 회복됩니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3030,
+                    "target": "SingleEnemy"
+                }
+            ],
+            "enforceGroup": "enforce_102050"
+        },
+        {
+            "cardId": 102051,
+            "name": "일대일 교환 +",
+            "characterId": 102,
+            "cost": 1,
+            "description": "내 버프 수치를 무작위로 재조정합니다.",
+            "effects": [
+                {
+                    "type": "MixBuff",
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 102052,
+            "name": "일대일 교환 +",
+            "characterId": 102,
+            "cost": 1,
+            "description": "적 하나를 선택합니다. 적의 버프 수치를 무작위로 재조정합니다.",
+            "effects": [
+                {
+                    "type": "MixBuff",
+                    "target": "SingleEnemy"
+                }
+            ]
+        },
+        {
+            "cardId": 102053,
+            "name": "일대일 교환 +",
+            "characterId": 102,
+            "cost": 1,
+            "description": "손에서 카드를 2장 선택해서 버립니다. 카드를 2장 뽑습니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "Hand",
+                    "amount": 2,
+                    "onAction": {
+                        "type": "Move",
+                        "from": "Source",
+                        "to": "DiscardPile"
+                    },
+                    "subject": "Selected"
+                },
+                {
+                    "type": "Draw",
+                    "amount": 2
+                }
+            ]
+        },
+        {
+            "cardId": 102054,
+            "name": "일대일 교환 +",
+            "characterId": 102,
+            "cost": 3,
+            "description": "이번 턴에 카드를 더 뽑거나 얻을 수 없습니다. 손에 있는 모든 카드의 비용이 0이 됩니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 2001,
+                    "target": "Self"
+                },
+                {
+                    "type": "ModifyCards",
+                    "source": "Hand",
+                    "param": "Cost",
+                    "amount": 0,
+                    "operation": "Set",
+                    "duration": "Turn"
+                }
+            ]
+        },
+        {
+            "cardId": 102055,
+            "name": "일대일 교환 +",
+            "characterId": 102,
+            "cost": 1,
+            "keywords": [
+                3
+            ],
+            "description": "적 하나를 선택합니다. 적의 남은 체력만큼 피해를 입고 처치합니다.",
+            "effects": [
+                {
+                    "type": "Damage",
+                    "amountFormula": "Target.Hp",
+                    "target": "Self"
+                },
+                {
+                    "type": "Kill",
+                    "target": "SingleEnemy"
+                }
+            ]
+        },
+        {
+            "cardId": 102060,
+            "name": "밑장 빼기",
+            "characterId": 102,
+            "cost": 1,
+            "description": "적의 보호막을 제거합니다.",
+            "effects": [
+                {
+                    "type": "ChangeStat",
+                    "stat": "Shield",
+                    "change": "Remove",
+                    "target": "SingleEnemy"
+                }
+            ],
+            "enforceGroup": "enforce_102060"
+        },
+        {
+            "cardId": 102061,
+            "name": "밑장 빼기 +",
+            "characterId": 102,
+            "cost": 1,
+            "keywords": [
+                3
+            ],
+            "description": "적의 이로운 효과 중 하나를 제거합니다.",
+            "effects": [
+                {
+                    "type": "ChangeStat",
+                    "stat": "Buff",
+                    "change": "Remove",
+                    "target": "SingleEnemy",
+                    "buffType": [
+                        1,
+                        3
+                    ],
+                    "amount": 1,
+                    "random": true
+                }
+            ]
+        },
+        {
+            "cardId": 102062,
+            "name": "밑장 빼기 +",
+            "characterId": 102,
+            "cost": 1,
+            "keywords": [
+                4
+            ],
+            "description": "매 턴 종료 시 손에서 카드를 1장 선택하여 버리지 않습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3028,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 102063,
+            "name": "밑장 빼기 +",
+            "characterId": 102,
+            "cost": 3,
+            "keywords": [
+                7
+            ],
+            "description": "이 다음 턴이 내 턴이 됩니다.",
+            "effects": [
+                {
+                    "type": "ExtraTurn"
+                }
+            ]
+        },
+        {
+            "cardId": 102064,
+            "name": "밑장 빼기 +",
+            "characterId": 102,
+            "cost": 2,
+            "keywords": [
+                1
+            ],
+            "description": "이 다음 카드의 비용이 0이 됩니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3027,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 102065,
+            "name": "밑장 빼기 +",
+            "characterId": 102,
+            "cost": 3,
+            "keywords": [
+                4
+            ],
+            "description": "카드를 생성할 때마다 그 카드를 복제합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 1008,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 102070,
+            "name": "블랙 잭",
+            "characterId": 102,
+            "cost": 1,
+            "keywords": [
+                4,
+                9
+            ],
+            "description": "카드를 2장 낼 때마다 체력을 1 회복합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 1007,
+                    "target": "Self"
+                }
+            ],
+            "enforceGroup": "enforce_102070"
+        },
+        {
+            "cardId": 102071,
+            "name": "블랙 잭 +",
+            "characterId": 102,
+            "cost": 0,
+            "keywords": [
+                4,
+                9
+            ],
+            "description": "카드를 2장 낼 때마다 체력을 1 회복합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 1007,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 102072,
+            "name": "블랙 잭 +",
+            "characterId": 102,
+            "cost": 2,
+            "keywords": [
+                4,
+                9
+            ],
+            "description": "매 턴 처음으로 쓰는 비용이 2 이상인 카드를 1번 더 발동합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 1009,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 102073,
+            "name": "블랙 잭 +",
+            "characterId": 102,
+            "cost": 1,
+            "keywords": [
+                4
+            ],
+            "description": "매 턴 시작 시 카드를 2장 더 뽑고 1장 버립니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 1010,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 102074,
+            "name": "블랙 잭 +",
+            "characterId": 102,
+            "cost": 0,
+            "keywords": [
+                3,
+                9
+            ],
+            "description": "스테미나를 2 얻습니다. 카드를  1장 뽑습니다.",
+            "effects": [
+                {
+                    "type": "Stamina",
+                    "amount": 2
+                },
+                {
+                    "type": "Draw",
+                    "amount": 1
+                }
+            ]
+        }
+    ]
+}
