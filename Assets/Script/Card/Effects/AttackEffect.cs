@@ -4,20 +4,24 @@ using System.Globalization;
 
 public class AttackEffect : ICardEffect
 {
+    private const int DamageAmplifyBuffId = 3002;
+    private const int OverheatBuffId = 3017;
+
     public int amount;
     public string amountFormula;
     public List<int> cardIdList;
     public TargetType target;
+    public float ampMultiplier = 1f;
     public List<ICardEffect> onActions;
 
     public void Execute(TrainingBattleManager battleManager)
     {
-        // 유닛 당 데미지
+        // 최종 공격 피해
         int finalAmount = BuildFinalDamageAmount(battleManager);
-        int totalDamageDealt = 0; // 총 누적 데미지
+        int totalDamageDealt = 0; // 총 누적 피해
 
         switch (target) {
-            case TargetType.AllEnemies: // 모든 적에게 데미지
+            case TargetType.AllEnemies: // 모든 적에게 피해
                 if (battleManager.spawnedMonsters.Count <= 0) {
                     Debug.LogWarning("[AttackEffect] No enemies available for AllEnemies target. Effect cancelled.");
                     break;
@@ -29,12 +33,12 @@ public class AttackEffect : ICardEffect
                     return;
                 }
 
-                foreach (var monster in targets) {
+                foreach (Monster monster in targets) {
                     totalDamageDealt += monster.TakeDamage(finalAmount, 0);
                 }
                 break;
 
-            case TargetType.SingleEnemy: // 단일 적에게 데미지
+            case TargetType.SingleEnemy: // 단일 적에게 피해
                 if (battleManager.spawnedMonsters.Count <= 0) {
                     Debug.LogWarning("[AttackEffect] No enemies available for SingleEnemy target. Effect cancelled.");
                     break;
@@ -56,7 +60,7 @@ public class AttackEffect : ICardEffect
                 totalDamageDealt += targetMonster.TakeDamage(finalAmount, 0);
                 break;
 
-            case TargetType.Self: // 자신에게 데미지
+            case TargetType.Self: // 자신에게 피해
                 if (battleManager.playerData == null) {
                     Debug.LogWarning("[AttackEffect] PlayerData is missing. Self target effect cancelled.");
                     return;
@@ -81,27 +85,38 @@ public class AttackEffect : ICardEffect
 
     private int BuildFinalDamageAmount(TrainingBattleManager battleManager)
     {
-        float cardMultiplier = 1f;
-        int baseAmount = amount;
+        ResolveAttackAmount(battleManager, out int baseAmount, out float cardMultiplier);
 
-        if (!string.IsNullOrWhiteSpace(amountFormula))
-        {
-            if (TryParseMultiplierFormula(amountFormula, out float parsedMultiplier))
-            {
-                cardMultiplier = parsedMultiplier;
-            }
-            else
-            {
-                baseAmount = FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, cardIdList, amount);
-            }
-        }
-
+        int scaledBaseDamage = Mathf.Max(0, Mathf.FloorToInt(baseAmount * Mathf.Max(0f, cardMultiplier)));
         if (battleManager.playerData == null)
         {
-            return Mathf.Max(0, baseAmount);
+            return scaledBaseDamage;
         }
 
-        return battleManager.playerData.CalculateFinalDamage(baseAmount, cardMultiplier);
+        int damageAmplify = Mathf.Max(0, Mathf.FloorToInt(
+            battleManager.playerData.GetBuffStack(DamageAmplifyBuffId) * Mathf.Max(0f, ampMultiplier)));
+
+        float overheatMultiplier = 1f + Mathf.Max(0, battleManager.playerData.GetBuffStack(OverheatBuffId)) * 0.1f;
+        return Mathf.Max(0, Mathf.FloorToInt((scaledBaseDamage + damageAmplify) * overheatMultiplier));
+    }
+
+    private void ResolveAttackAmount(TrainingBattleManager battleManager, out int baseAmount, out float cardMultiplier)
+    {
+        cardMultiplier = 1f;
+        baseAmount = amount;
+
+        if (string.IsNullOrWhiteSpace(amountFormula))
+        {
+            return;
+        }
+
+        if (TryParseMultiplierFormula(amountFormula, out float parsedMultiplier))
+        {
+            cardMultiplier = parsedMultiplier;
+            return;
+        }
+
+        baseAmount = FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, cardIdList, amount);
     }
 
     private bool TryParseMultiplierFormula(string formula, out float multiplier)

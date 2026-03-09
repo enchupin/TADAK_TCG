@@ -89,6 +89,7 @@ public static class CardEffectFactory
                     amountFormula = effectData.amountFormula,
                     cardIdList = effectData.formulaCardIdFilter,
                     target = effectData.target,
+                    ampMultiplier = effectData.ampMultiplier > 0f ? effectData.ampMultiplier : 1f,
                     onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
                 };
 

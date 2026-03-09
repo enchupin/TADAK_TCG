@@ -19,6 +19,7 @@ public class CardEffectData
     public string upgrade;
     public string durationText;
     public int effectIndex;
+    public float ampMultiplier = 1f;
 
     [Header("Buff")]
     public string stat;
