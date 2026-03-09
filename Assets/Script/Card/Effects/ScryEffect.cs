@@ -1,38 +1,58 @@
+﻿using System.Collections.Generic;
 using UnityEngine;
-using System.Collections.Generic;
 
+/// <summary>
+/// 덱 위 카드를 확인하고 그중 한 장을 뽑는 이펙트
+/// </summary>
 public class ScryEffect : ICardEffect
 {
     public int count;
 
     public void Execute(TrainingBattleManager battleManager)
     {
-        // TODO: This effect requires a specific UI to show cards and let player select which to discard.
-        // For now, as a placeholder, we can just look at top cards and log them.
-        
-        if (battleManager.usableDeckManager == null) return;
-        
-        List<Card> deck = battleManager.usableDeckManager.GetDrawPile();
-        int scryCount = Mathf.Min(count, deck.Count);
-        
-        Debug.Log($"[ScryEffect] Looking at top {scryCount} cards.");
-        
-        // In a real implementation:
-        // 1. Open Scry UI with these cards.
-        // 2. Wait for user input (this is async in game loop, but Execute is void). 
-        //    This implies Effects might need to be Coroutines or have callbacks.
-        //    However, current structure is synchronous.
-        
-        // Temporary: Just log top cards.
-        for (int i = 0; i < scryCount; i++)
+        if (battleManager?.usableDeckManager == null || battleManager.handManager == null)
         {
-             // Deck is usually a Stack or List where index 0 or Count-1 is top. 
-             // UsableDeckManager implementation needed to confirm.
-             // Assuming DrawCard uses index 0 as top.
-             Debug.Log($"[Scry] Top Card {i+1}: {deck[i].cardName}");
+            return;
         }
-        
-        // Currently cannot implement full interactive Scry without UI and async flow support.
-        // Marking as implemented (Placeholder).
+
+        List<Card> drawPile = battleManager.usableDeckManager.GetDrawPile();
+        int scryCount = Mathf.Min(count, drawPile.Count);
+        if (scryCount <= 0)
+        {
+            return;
+        }
+
+        List<Card> viewedCards = drawPile.GetRange(0, scryCount);
+        if (battleManager.OpenSelectCardPanel(viewedCards, 1, selectedCards => ApplySelection(battleManager, selectedCards)))
+        {
+            return;
+        }
+
+        ApplySelection(battleManager, new List<Card> { viewedCards[0] });
+    }
+
+    private void ApplySelection(TrainingBattleManager battleManager, List<Card> selectedCards)
+    {
+        if (battleManager?.usableDeckManager == null || battleManager.handManager == null)
+        {
+            return;
+        }
+
+        Card selectedCard = selectedCards != null && selectedCards.Count > 0 ? selectedCards[0] : null;
+        if (selectedCard == null)
+        {
+            return;
+        }
+
+        if (!battleManager.usableDeckManager.RemoveFromDrawPile(selectedCard))
+        {
+            Debug.LogWarning("[ScryEffect] 선택한 카드를 덱에서 찾지 못했습니다");
+            return;
+        }
+
+        battleManager.handManager.AddCard(selectedCard);
+        battleManager.battleContext?.OnCardsDrawn(1);
+        battleManager.RefreshHandPlayableState();
+        battleManager.UpdateAllUI();
     }
 }

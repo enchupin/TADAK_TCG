@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -9,12 +9,15 @@ public class UsableDeckManager : MonoBehaviour
     public Queue<Card> usableDeck;
     public List<Card> discardPile = new List<Card>(); // 버린 카드 더미
 
-
     /// <summary>
     /// 버리기 더미에 카드 추가
     /// </summary>
     public void AddToDiscard(Card card)
     {
+        if (card == null) {
+            return;
+        }
+
         discardPile.Add(card);
     }
 
@@ -23,11 +26,15 @@ public class UsableDeckManager : MonoBehaviour
     /// </summary>
     public void AddToDiscard(List<Card> cards)
     {
+        if (cards == null || cards.Count == 0) {
+            return;
+        }
+
         discardPile.AddRange(cards);
     }
 
     /// <summary>
-    /// 버린 카드 더미 리스트 반환 (복사본)
+    /// 버린 카드 더미 리스트 반환
     /// </summary>
     public List<Card> GetDiscardPile()
     {
@@ -39,28 +46,30 @@ public class UsableDeckManager : MonoBehaviour
     /// </summary>
     public void RemoveFromDiscard(Card card)
     {
+        if (card == null) {
+            return;
+        }
+
         if (discardPile.Contains(card))
         {
             discardPile.Remove(card);
         }
     }
 
-
-
-
     /// <summary>
     /// 덱에서 카드 1장을 드로우
     /// </summary>
-    public Card DrawCard() {
+    public Card DrawCard()
+    {
         if (usableDeck == null || usableDeck.Count == 0) {
-            // 덱이 비었으면 버린 카드 섞어서 다시 덱으로
+            // 덱이 비었으면 버린 카드를 섞어 다시 덱으로
             if (discardPile.Count > 0)
             {
                 ReshuffleDiscardToDeck();
             }
             else
             {
-                Debug.LogWarning("덱과 버린 카드 더미가 모두 비었습니다!");
+                Debug.LogWarning("덱과 버린 카드 더미가 모두 비었습니다");
                 return null;
             }
         }
@@ -69,9 +78,10 @@ public class UsableDeckManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 덱에서 지정된 수만큼 카드를 드로우
+    /// 덱에서 지정한 수만큼 카드를 드로우
     /// </summary>
-    public List<Card> DrawCard(int count) {
+    public List<Card> DrawCard(int count)
+    {
         List<Card> drawnCards = new List<Card>();
 
         for (int i = 0; i < count; i++) {
@@ -90,7 +100,7 @@ public class UsableDeckManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 덱에서 "기본카드"(카드ID 끝자리 010/020)만 지정한 수만큼 드로우
+    /// 덱에서 기본 카드만 지정한 수만큼 드로우
     /// </summary>
     public List<Card> DrawBasicCards(int count, Character? characterFilter = null)
     {
@@ -111,6 +121,9 @@ public class UsableDeckManager : MonoBehaviour
         return drawnCards;
     }
 
+    /// <summary>
+    /// 덱에서 같은 캐릭터 카드만 지정한 수만큼 드로우
+    /// </summary>
     public List<Card> DrawCharacterCards(int count, Character? characterFilter = null)
     {
         List<Card> drawnCards = new List<Card>();
@@ -131,7 +144,7 @@ public class UsableDeckManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 덱에서 기본카드 1장을 찾아 드로우 (없으면 null)
+    /// 덱에서 기본 카드 1장을 찾아 드로우
     /// </summary>
     private Card DrawBasicCard(Character? characterFilter)
     {
@@ -169,6 +182,9 @@ public class UsableDeckManager : MonoBehaviour
         return drawnCard;
     }
 
+    /// <summary>
+    /// 덱에서 같은 캐릭터 카드 1장을 찾아 드로우
+    /// </summary>
     private Card DrawCharacterCard(Character characterFilter)
     {
         if (usableDeck == null || usableDeck.Count == 0) {
@@ -251,23 +267,22 @@ public class UsableDeckManager : MonoBehaviour
         usableDeck = new Queue<Card>(drawPile);
     }
 
-
     /// <summary>
     /// 버린 카드를 덱으로 되돌리고 셔플
     /// </summary>
     private void ReshuffleDiscardToDeck()
     {
-        Debug.Log("덱이 비었습니다. 버린 카드를 섞어서 덱으로 만듭니다.");
+        Debug.Log("덱이 비었습니다. 버린 카드를 섞어서 덱으로 만듭니다");
         usableDeck = new Queue<Card>(discardPile);
         discardPile.Clear();
         ShuffleDeck();
     }
 
-
     /// <summary>
     /// 덱 셔플
     /// </summary>
-    public void ShuffleDeck() {
+    public void ShuffleDeck()
+    {
         if (usableDeck == null || usableDeck.Count == 0) {
             return;
         }
@@ -285,40 +300,46 @@ public class UsableDeckManager : MonoBehaviour
 
         // 다시 Queue로 변환
         usableDeck = new Queue<Card>(tempList);
-        Debug.Log("덱을 섞었습니다.");
+        TrainingBattleManager.Instance?.battleContext?.OnDeckShuffled();
+        Debug.Log("덱을 섞었습니다");
     }
 
     /// <summary>
-    /// 남은 카드 수를 반환
+    /// 남은 카드 수 반환
     /// </summary>
-    public int GetRemainingCardCount() {
+    public int GetRemainingCardCount()
+    {
         return usableDeck != null ? usableDeck.Count : 0;
     }
 
-    public int GetDiscardPileCount() {
+    public int GetDiscardPileCount()
+    {
         return discardPile != null ? discardPile.Count : 0;
     }
 
     /// <summary>
-    /// 외부에서 덱을 설정 (전투 시작 시 호출)
+    /// 외부에서 덱을 설정
     /// </summary>
-    public void SetDeck(List<Card> cards) {
+    public void SetDeck(List<Card> cards)
+    {
         usableDeck = new Queue<Card>();
-        
-        foreach (Card card in cards) {
-            usableDeck.Enqueue(card);
+
+        if (cards != null) {
+            foreach (Card card in cards) {
+                usableDeck.Enqueue(card);
+            }
         }
-        
+
         discardPile.Clear();
-        
+
         Debug.Log($"[UsableDeckManager] 덱 설정 완료: 총 {usableDeck.Count}장");
     }
 
     /// <summary>
-    /// 현재 덱(드로우 파일)의 카드 리스트 반환 (복사본)
+    /// 현재 드로우 더미 리스트 반환
     /// </summary>
     public List<Card> GetDrawPile()
     {
-        return new List<Card>(usableDeck);
+        return usableDeck != null ? new List<Card>(usableDeck) : new List<Card>();
     }
 }

@@ -1,9 +1,9 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 
 /// <summary>
 /// 카드 데이터를 저장하는 ScriptableObject
-/// JSON에서 변환되어 .asset 파일로 저장
+/// JSON에서 변환된 .asset 파일로 저장
 /// </summary>
 [CreateAssetMenu(fileName = "New Card", menuName = "TCG/Card Data")]
 public class CardData : ScriptableObject
@@ -22,7 +22,7 @@ public class CardData : ScriptableObject
     public List<CardEffectData> effects = new();
     
     /// <summary>
-    /// ScriptableObject → Card 객체 변환
+    /// ScriptableObject를 Card 객체로 변환
     /// </summary>
     public Card ToCard()
     {
@@ -33,11 +33,14 @@ public class CardData : ScriptableObject
             cost = this.cost,
             description = this.description,
             enforceCardIds = new List<int>(this.enforceCardIds),
-            effects = new List<ICardEffect>()
+            effects = new List<ICardEffect>(),
+            keepEffects = new List<ICardEffect>()
         };
         
         // 효과 변환
         card.effects = CardEffectFactory.CreateEffects(effects);
+        card.keepEffects = CardEffectFactory.CreateKeepEffects(effects);
+        card.InitializeRuntimeState();
         
         return card;
     }

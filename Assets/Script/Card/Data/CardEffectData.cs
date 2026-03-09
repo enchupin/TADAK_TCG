@@ -13,11 +13,20 @@ public class CardEffectData
     public int amount;
     public string amountFormula;
     public TargetType target;
+    public string source;
+    public string param;
+    public string operation;
+    public string upgrade;
+    public string durationText;
+    public int effectIndex;
 
     [Header("Buff")]
     public string stat;
     public int buffId;
     public int duration;
+    public List<int> buffTypes;
+    public bool random;
+    public string change;
 
     [Header("DamagePerCardPlayed")]
     public int baseDamage;

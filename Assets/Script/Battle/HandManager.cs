@@ -195,6 +195,29 @@ public class HandManager : MonoBehaviour
         return null;
     }
 
+    public void RefreshCardDisplay(Card card)
+    {
+        if (card == null)
+            return;
+
+        CardUI cardUI = GetCardUI(card);
+        if (cardUI != null)
+        {
+            cardUI.UpdateDisplay(card);
+        }
+    }
+
+    public void RefreshCardDisplays(List<Card> cards)
+    {
+        if (cards == null || cards.Count == 0)
+            return;
+
+        foreach (Card card in cards)
+        {
+            RefreshCardDisplay(card);
+        }
+    }
+
     /// <summary>
     /// Updates every hand card's playable state.
     /// </summary>

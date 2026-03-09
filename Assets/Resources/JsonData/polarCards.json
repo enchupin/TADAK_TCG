@@ -430,7 +430,7 @@
                         "checks": [
                             {
                                 "subject": "Barrier",
-                                "operator": "Lte",
+                                "operator": "Gte",
                                 "value": 10
                             }
                         ],
@@ -466,7 +466,7 @@
                         "checks": [
                             {
                                 "subject": "Barrier",
-                                "operator": "Lte",
+                                "operator": "Gte",
                                 "value": 10
                             }
                         ],
@@ -505,7 +505,7 @@
                         "checks": [
                             {
                                 "subject": "Barrier",
-                                "operator": "Lte",
+                                "operator": "Gte",
                                 "value": 10
                             }
                         ],

@@ -468,7 +468,7 @@
                         ],
                         "effects": [
                             {
-                                "type": "CreateCard",
+                                "type": "GenerateCard",
                                 "cardIdGroup": "isla_potion_even_base_pool"
                             }
                         ]

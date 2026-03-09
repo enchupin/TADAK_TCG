@@ -12,6 +12,7 @@ public class CopyEffect : ICardEffect
     public MovePositionType position;
     public string subject;
     public List<int> cardIdList;
+    public List<ICardEffect> onActions;
 
     public void Execute(TrainingBattleManager battleManager)
     {
@@ -45,6 +46,7 @@ public class CopyEffect : ICardEffect
         }
 
         AttachCopies(copiedCards, battleManager);
+        ExecuteOnCopiedCards(copiedCards, battleManager);
         battleManager.RefreshHandPlayableState();
         battleManager.UpdateAllUI();
     }
@@ -106,7 +108,7 @@ public class CopyEffect : ICardEffect
         }
 
         if (!string.IsNullOrWhiteSpace(amountFormula)) {
-            int evaluated = FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData);
+            int evaluated = FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, amountOverride);
             if (evaluated <= 0) {
                 return 0;
             }
@@ -168,19 +170,28 @@ public class CopyEffect : ICardEffect
                 cardName = source.cardName,
                 character = source.character,
                 cost = source.cost,
+                baseCost = source.baseCost,
                 description = source.description,
                 enforceCardIds = source.enforceCardIds != null ? new List<int>(source.enforceCardIds) : new List<int>(),
-                effects = source.effects != null ? new List<ICardEffect>(source.effects) : new List<ICardEffect>()
+                effects = source.effects != null ? new List<ICardEffect>(source.effects) : new List<ICardEffect>(),
+                keepEffects = source.keepEffects != null ? new List<ICardEffect>(source.keepEffects) : new List<ICardEffect>()
             };
         }
 
         copiedCard.cardName = source.cardName;
         copiedCard.character = source.character;
         copiedCard.cost = source.cost;
+        copiedCard.baseCost = source.baseCost;
         copiedCard.description = source.description;
         copiedCard.enforceCardIds = source.enforceCardIds != null
             ? new List<int>(source.enforceCardIds)
             : new List<int>();
+        copiedCard.effects = source.effects != null
+            ? new List<ICardEffect>(source.effects)
+            : new List<ICardEffect>();
+        copiedCard.keepEffects = source.keepEffects != null
+            ? new List<ICardEffect>(source.keepEffects)
+            : new List<ICardEffect>();
         return copiedCard;
     }
 
@@ -211,6 +222,22 @@ public class CopyEffect : ICardEffect
                 battleManager.handManager.AddCard(copiedCards);
                 return;
         }
+    }
+
+    private void ExecuteOnCopiedCards(List<Card> copiedCards, TrainingBattleManager battleManager)
+    {
+        if (battleManager?.battleContext == null || copiedCards == null || copiedCards.Count == 0 || onActions == null) {
+            return;
+        }
+
+        string contextSubject = string.IsNullOrWhiteSpace(subject) ? "GeneratedCard" : subject;
+        battleManager.battleContext.SetContextCards(contextSubject, copiedCards);
+
+        foreach (ICardEffect onAction in onActions) {
+            onAction?.Execute(battleManager, copiedCards.Count);
+        }
+
+        battleManager.battleContext.ClearContextCards(contextSubject);
     }
 
     private bool IsSelectedSubject()
