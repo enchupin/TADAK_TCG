@@ -233,9 +233,10 @@ public class TrainingBattleManager : MonoBehaviour
             go.AddComponent<BuffManager>();
         }
 
-        if (buildingDeck == null)
+        bool shouldRebuildDeck = buildingDeck == null || !TrainingRunState.IsRunActive;
+        if (shouldRebuildDeck)
         {
-            Debug.Log("[BattleManager] New run started. Creating BuildingDeck.");
+            Debug.Log("[BattleManager] Rebuilding BuildingDeck from current character selection.");
             buildingDeck = new BuildingDeck();
             buildingDeck.Initialize(SelectedButtonControl.selectedCharacterList);
         }
@@ -250,7 +251,9 @@ public class TrainingBattleManager : MonoBehaviour
             return;
         }
 
-        List<Card> battleDeck = buildingDeck.CopyDeck();
+        List<Card> battleDeck = isDebugMode
+            ? BuildDebugBattleDeck()
+            : buildingDeck.CopyDeck();
         usableDeckManager.SetDeck(battleDeck);
 
         UpdateAllUI();
@@ -822,6 +825,43 @@ public class TrainingBattleManager : MonoBehaviour
 
         playerData.maxEnergy = debugEnergyAmount;
         playerData.energy = debugEnergyAmount;
+    }
+
+    private List<Card> BuildDebugBattleDeck()
+    {
+        List<Card> debugDeck = new List<Card>();
+        HashSet<int> addedCardIds = new HashSet<int>();
+
+        if (SelectedButtonControl.selectedCharacterList == null)
+        {
+            return debugDeck;
+        }
+
+        foreach (Character character in SelectedButtonControl.selectedCharacterList)
+        {
+            List<CardData> cardsByCharacter = CardManager.GetCardsByCharacter(character);
+            if (cardsByCharacter == null)
+            {
+                continue;
+            }
+
+            foreach (CardData cardData in cardsByCharacter)
+            {
+                if (cardData == null || !addedCardIds.Add(cardData.cardId))
+                {
+                    continue;
+                }
+
+                Card card = cardData.ToCard();
+                if (card != null)
+                {
+                    debugDeck.Add(card);
+                }
+            }
+        }
+
+        Debug.Log($"[BattleManager] \uB514\uBC84\uADF8 \uB371 \uAD6C\uC131 \uC644\uB8CC: {debugDeck.Count}\uC7A5");
+        return debugDeck;
     }
 
     private System.Collections.IEnumerator HandleTrainingRunBattleResult(bool isVictory)
