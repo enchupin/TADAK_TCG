@@ -517,6 +517,30 @@ public class TrainingBattleManager : MonoBehaviour
                     return true;
             }
         }
+        if (effect is DrawEffect draw && draw.onActions != null)
+        {
+            foreach (ICardEffect nested in draw.onActions)
+            {
+                if (EffectMatchesDebugTarget(nested))
+                    return true;
+            }
+        }
+        if (effect is DrawBasicEffect drawBasic && drawBasic.onActions != null)
+        {
+            foreach (ICardEffect nested in drawBasic.onActions)
+            {
+                if (EffectMatchesDebugTarget(nested))
+                    return true;
+            }
+        }
+        if (effect is DrawCharacterEffect drawCharacter && drawCharacter.onActions != null)
+        {
+            foreach (ICardEffect nested in drawCharacter.onActions)
+            {
+                if (EffectMatchesDebugTarget(nested))
+                    return true;
+            }
+        }
         if (effect is BarrierEffect barrier && barrier.onActions != null)
         {
             foreach (ICardEffect nested in barrier.onActions)
@@ -528,6 +552,30 @@ public class TrainingBattleManager : MonoBehaviour
         if (effect is ExhaustCardEffect exhaust && exhaust.onActions != null)
         {
             foreach (ICardEffect nested in exhaust.onActions)
+            {
+                if (EffectMatchesDebugTarget(nested))
+                    return true;
+            }
+        }
+        if (effect is CopyEffect copy && copy.onActions != null)
+        {
+            foreach (ICardEffect nested in copy.onActions)
+            {
+                if (EffectMatchesDebugTarget(nested))
+                    return true;
+            }
+        }
+        if (effect is MoveEffect move && move.onActions != null)
+        {
+            foreach (ICardEffect nested in move.onActions)
+            {
+                if (EffectMatchesDebugTarget(nested))
+                    return true;
+            }
+        }
+        if (effect is SelectCardEffect selectCard && selectCard.onActions != null)
+        {
+            foreach (ICardEffect nested in selectCard.onActions)
             {
                 if (EffectMatchesDebugTarget(nested))
                     return true;

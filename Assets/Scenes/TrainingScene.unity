@@ -2547,7 +2547,7 @@ MonoBehaviour:
   battleResultTransitionDelay: 0.8
   spawnedMonsters: []
   isDebugMode: 1
-  debugTargetEffect: 0
+  debugTargetEffect: 33
   debugEnergyAmount: 1000
   currentTarget: {fileID: 0}
 --- !u!1 &1579719169
@@ -2702,6 +2702,10 @@ PrefabInstance:
     - target: {fileID: 3335616966604027709, guid: 8cdacd6ed082ab344b76e5de172c1152, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5117845243066827922, guid: 8cdacd6ed082ab344b76e5de172c1152, type: 3}
+      propertyPath: m_Volume
+      value: 0.022
       objectReference: {fileID: 0}
     - target: {fileID: 7303900433841315575, guid: 8cdacd6ed082ab344b76e5de172c1152, type: 3}
       propertyPath: m_LocalPosition.x
