@@ -1,10 +1,24 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
 /// 카드 클래스
 /// 순수 C# 객체로 카드의 런타임 상태를 관리
 /// </summary>
+[System.Serializable]
+public static class CardKeywordIds
+{
+    public const int Keep = 1;
+    public const int Unplayable = 2;
+    public const int Exhaust = 3;
+    public const int Power = 4;
+    public const int Opening = 5;
+    public const int Shadow = 6;
+    public const int Finale = 7;
+    public const int Ghost = 8;
+    public const int Unique = 9;
+}
+
 [System.Serializable]
 public class Card
 {
@@ -18,6 +32,7 @@ public class Card
 
     // 강화 가능한 카드 ID 목록
     public List<int> enforceCardIds = new();
+    public List<int> keywords = new();
 
     // 실행 효과 목록
     public List<ICardEffect> effects = new();
@@ -57,6 +72,80 @@ public class Card
     public bool HasKeepEffect()
     {
         return keepEffects != null && keepEffects.Count > 0;
+    }
+
+    public bool HasKeyword(int keywordId)
+    {
+        return keywords != null && keywords.Contains(keywordId);
+    }
+
+    public void AddKeyword(int keywordId)
+    {
+        if (keywordId <= 0) {
+            return;
+        }
+
+        keywords ??= new List<int>();
+        if (!keywords.Contains(keywordId)) {
+            keywords.Add(keywordId);
+        }
+    }
+
+    public bool CanBePlayed()
+    {
+        return !HasKeyword(CardKeywordIds.Unplayable);
+    }
+
+    public bool ShouldRetainAtTurnEnd()
+    {
+        return HasKeyword(CardKeywordIds.Keep) || HasKeepEffect();
+    }
+
+    public bool ShouldExhaustWhenPlayed()
+    {
+        return HasKeyword(CardKeywordIds.Exhaust) || HasKeyword(CardKeywordIds.Ghost);
+    }
+
+    public bool ShouldLeaveCombatWhenPlayed()
+    {
+        return HasKeyword(CardKeywordIds.Power);
+    }
+
+    public bool ShouldExhaustAtTurnEnd()
+    {
+        return HasKeyword(CardKeywordIds.Ghost);
+    }
+
+    public Card CloneForRuntimeCopy()
+    {
+        Card clonedCard = CardManager.GetCardAsCard(cardId);
+        if (clonedCard == null) {
+            clonedCard = new Card();
+        }
+
+        clonedCard.cardId = cardId;
+        clonedCard.cardName = cardName;
+        clonedCard.character = character;
+        clonedCard.description = description;
+        clonedCard.enforceCardIds = enforceCardIds != null
+            ? new List<int>(enforceCardIds)
+            : new List<int>();
+        clonedCard.keywords = keywords != null
+            ? new List<int>(keywords)
+            : new List<int>();
+        clonedCard.effects = effects != null
+            ? new List<ICardEffect>(effects)
+            : new List<ICardEffect>();
+        clonedCard.keepEffects = keepEffects != null
+            ? new List<ICardEffect>(keepEffects)
+            : new List<ICardEffect>();
+        clonedCard.baseCost = Mathf.Max(0, baseCost);
+        clonedCard.cost = Mathf.Max(0, cost);
+        clonedCard.turnCostDelta = turnCostDelta;
+        clonedCard.hasTurnCostOverride = hasTurnCostOverride;
+        clonedCard.turnCostOverride = turnCostOverride;
+        clonedCard.RecalculateCost();
+        return clonedCard;
     }
 
     public void ExecuteKeepEffects(TrainingBattleManager battleManager)
@@ -128,6 +217,9 @@ public class Card
         description = templateCard.description;
         enforceCardIds = templateCard.enforceCardIds != null
             ? new List<int>(templateCard.enforceCardIds)
+            : new List<int>();
+        keywords = templateCard.keywords != null
+            ? new List<int>(templateCard.keywords)
             : new List<int>();
         effects = templateCard.effects != null
             ? new List<ICardEffect>(templateCard.effects)

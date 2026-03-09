@@ -158,41 +158,7 @@ public class CopyEffect : ICardEffect
 
     private static Card CloneCard(Card source)
     {
-        if (source == null) {
-            return null;
-        }
-
-        Card copiedCard = CardManager.GetCardAsCard(source.cardId);
-        if (copiedCard == null) {
-            return new Card
-            {
-                cardId = source.cardId,
-                cardName = source.cardName,
-                character = source.character,
-                cost = source.cost,
-                baseCost = source.baseCost,
-                description = source.description,
-                enforceCardIds = source.enforceCardIds != null ? new List<int>(source.enforceCardIds) : new List<int>(),
-                effects = source.effects != null ? new List<ICardEffect>(source.effects) : new List<ICardEffect>(),
-                keepEffects = source.keepEffects != null ? new List<ICardEffect>(source.keepEffects) : new List<ICardEffect>()
-            };
-        }
-
-        copiedCard.cardName = source.cardName;
-        copiedCard.character = source.character;
-        copiedCard.cost = source.cost;
-        copiedCard.baseCost = source.baseCost;
-        copiedCard.description = source.description;
-        copiedCard.enforceCardIds = source.enforceCardIds != null
-            ? new List<int>(source.enforceCardIds)
-            : new List<int>();
-        copiedCard.effects = source.effects != null
-            ? new List<ICardEffect>(source.effects)
-            : new List<ICardEffect>();
-        copiedCard.keepEffects = source.keepEffects != null
-            ? new List<ICardEffect>(source.keepEffects)
-            : new List<ICardEffect>();
-        return copiedCard;
+        return source?.CloneForRuntimeCopy();
     }
 
     private void AttachCopies(List<Card> copiedCards, TrainingBattleManager battleManager)

@@ -216,30 +216,32 @@ public class TurnSystem
     {
         if (battleManager.handManager == null || battleManager.usableDeckManager == null)
             return;
-
         List<Card> remainingCards = battleManager.handManager.GetHandCards();
         if (remainingCards.Count == 0)
         {
             return;
         }
-
         List<Card> retainedCards = new List<Card>();
         List<Card> discardedCards = new List<Card>();
-
+        List<Card> exhaustedCards = new List<Card>();
         foreach (Card card in remainingCards)
         {
-            if (card != null && card.HasKeepEffect())
+            if (card == null)
+            {
+                continue;
+            }
+            if (card.ShouldExhaustAtTurnEnd())
+            {
+                exhaustedCards.Add(card);
+                continue;
+            }
+            if (card.ShouldRetainAtTurnEnd())
             {
                 retainedCards.Add(card);
                 continue;
             }
-
-            if (card != null)
-            {
-                discardedCards.Add(card);
-            }
+            discardedCards.Add(card);
         }
-
         if (discardedCards.Count > 0)
         {
             battleManager.usableDeckManager.AddToDiscard(discardedCards);
@@ -247,13 +249,22 @@ public class TurnSystem
             {
                 battleManager.battleContext.OnCardsDiscarded(discardedCards.Count);
             }
-
             foreach (Card discardedCard in discardedCards)
             {
                 battleManager.handManager.RemoveCard(discardedCard);
             }
         }
-
+        if (exhaustedCards.Count > 0)
+        {
+            if (battleManager.battleContext != null)
+            {
+                battleManager.battleContext.OnCardsExhausted(exhaustedCards.Count);
+            }
+            foreach (Card exhaustedCard in exhaustedCards)
+            {
+                battleManager.handManager.RemoveCard(exhaustedCard);
+            }
+        }
         foreach (Card retainedCard in retainedCards)
         {
             retainedCard.ExecuteKeepEffects(battleManager);
@@ -286,3 +297,4 @@ public class TurnSystem
         }
     }
 }
+

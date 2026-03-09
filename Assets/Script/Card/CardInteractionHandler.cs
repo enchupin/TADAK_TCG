@@ -368,6 +368,9 @@ public class CardInteractionHandler : UIHoverEffect,
         if (cardUI == null)
             return false;
 
+        if (!cardUI.IsPlayable)
+            return false;
+
         TrainingBattleManager manager = TrainingBattleManager.Instance;
         if (manager != null && !manager.CanUseIdentityAbility())
             return false;

@@ -17,6 +17,9 @@ public class CardData : ScriptableObject
     
     [Header("강화")]
     public List<int> enforceCardIds = new();  // 강화 가능한 카드 ID 목록
+
+    [Header("키워드")]
+    public List<int> keywords = new();
     
     [Header("효과")]
     public List<CardEffectData> effects = new();
@@ -33,6 +36,7 @@ public class CardData : ScriptableObject
             cost = this.cost,
             description = this.description,
             enforceCardIds = new List<int>(this.enforceCardIds),
+            keywords = this.keywords != null ? new List<int>(this.keywords) : new List<int>(),
             effects = new List<ICardEffect>(),
             keepEffects = new List<ICardEffect>()
         };

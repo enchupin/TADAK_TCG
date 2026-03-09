@@ -23,10 +23,18 @@ public class BuildingDeck
                 foreach (int cardId in data.startDeckCardIds)
                 {
                     Card newCard = CardManager.GetCardAsCard(cardId);
-                    if (newCard != null)
+                    if (newCard == null)
                     {
-                        deckList.Add(newCard);
+                        continue;
                     }
+
+                    if (ViolatesUniqueRule(newCard))
+                    {
+                        Debug.LogWarning($"[BuildingDeck] 유일 키워드로 인해 중복 카드를 건너뜁니다: {newCard.cardName}");
+                        continue;
+                    }
+
+                    deckList.Add(newCard);
                 }
             }
         }
@@ -40,11 +48,19 @@ public class BuildingDeck
     public void AddCard(int cardId)
     {
         Card newCard = CardManager.GetCardAsCard(cardId);
-        if (newCard != null)
+        if (newCard == null)
         {
-            deckList.Add(newCard);
-            Debug.Log($"[BuildingDeck] card added: {newCard.cardName} (total {deckList.Count})");
+            return;
         }
+
+        if (ViolatesUniqueRule(newCard))
+        {
+            Debug.LogWarning($"[BuildingDeck] 유일 키워드로 인해 카드를 추가할 수 없습니다: {newCard.cardName}");
+            return;
+        }
+
+        deckList.Add(newCard);
+        Debug.Log($"[BuildingDeck] card added: {newCard.cardName} (total {deckList.Count})");
     }
 
     /// <summary>
@@ -88,14 +104,46 @@ public class BuildingDeck
             clonedCard.cardName = sourceCard.cardName;
             clonedCard.character = sourceCard.character;
             clonedCard.cost = sourceCard.cost;
+            clonedCard.baseCost = sourceCard.baseCost;
             clonedCard.description = sourceCard.description;
             clonedCard.enforceCardIds = sourceCard.enforceCardIds != null
                 ? new List<int>(sourceCard.enforceCardIds)
+                : new List<int>();
+            clonedCard.keywords = sourceCard.keywords != null
+                ? new List<int>(sourceCard.keywords)
                 : new List<int>();
 
             copiedDeck.Add(clonedCard);
         }
 
         return copiedDeck;
+    }
+
+    private bool ViolatesUniqueRule(Card newCard)
+    {
+        if (newCard == null)
+        {
+            return false;
+        }
+
+        foreach (Card existingCard in deckList)
+        {
+            if (existingCard == null)
+            {
+                continue;
+            }
+
+            if (!string.Equals(existingCard.cardName, newCard.cardName))
+            {
+                continue;
+            }
+
+            if (existingCard.HasKeyword(CardKeywordIds.Unique) || newCard.HasKeyword(CardKeywordIds.Unique))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

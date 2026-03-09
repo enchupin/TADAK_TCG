@@ -14,7 +14,7 @@ public class CardJsonData
     public int characterId;
     public int cost;
     public string description;
-    public List<string> keywords; // 삭제 예정
+    public List<int> keywords; // 삭제 예정
     public string enforceGroup; // 연결 예정
     public AddressablesData addressables; // 삭제 예정
     public List<EffectJsonData> effects;
@@ -92,3 +92,4 @@ public class RandomCardData
     public int cardId;
     public int weight;
 }
+

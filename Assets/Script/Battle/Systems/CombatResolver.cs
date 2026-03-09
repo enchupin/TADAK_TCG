@@ -33,6 +33,14 @@ public class CombatResolver
         if (battleManager.playerData == null)
             return;
 
+        if (!playedCard.CanBePlayed())
+        {
+            Debug.LogWarning($"[CombatResolver] {playedCard.cardName} 카드는 현재 사용할 수 없습니다");
+            battleManager.RefreshHandPlayableState();
+            battleManager.UpdateAllUI();
+            return;
+        }
+
         if (battleManager.playerData.energy < playedCard.cost)
         {
             Debug.LogWarning($"[CombatResolver] Not enough energy for {playedCard.cardName}. Needed: {playedCard.cost}, Current: {battleManager.playerData.energy}");
@@ -62,13 +70,75 @@ public class CombatResolver
             battleManager.handManager.RemoveCardFromHand(controller.cardUI);
         }
 
-        if (battleManager.usableDeckManager != null)
+        ResolvePlayedCardDestination(playedCard);
+        if (battleManager.TryHandleCombatEnd())
         {
-            battleManager.usableDeckManager.AddToDiscard(playedCard);
+            battleManager.RefreshHandPlayableState();
+            battleManager.UpdateAllUI();
+            return;
         }
+
+        ApplyPostPlayKeywords(playedCard);
 
         battleManager.RefreshHandPlayableState();
         battleManager.UpdateAllUI();
         battleManager.TryHandleCombatEnd();
+    }
+
+    private void ResolvePlayedCardDestination(Card playedCard)
+    {
+        if (playedCard == null)
+        {
+            return;
+        }
+
+        if (playedCard.ShouldExhaustWhenPlayed())
+        {
+            battleManager.battleContext?.OnCardsExhausted(1);
+            return;
+        }
+
+        if (playedCard.ShouldLeaveCombatWhenPlayed())
+        {
+            return;
+        }
+
+        battleManager.usableDeckManager?.AddToDiscard(playedCard);
+    }
+
+    private void ApplyPostPlayKeywords(Card playedCard)
+    {
+        if (playedCard == null)
+        {
+            return;
+        }
+
+        if (playedCard.HasKeyword(CardKeywordIds.Shadow))
+        {
+            CreateShadowCopy(playedCard);
+        }
+
+        if (playedCard.HasKeyword(CardKeywordIds.Finale))
+        {
+            battleManager.ForceEndPlayerTurn();
+        }
+    }
+
+    private void CreateShadowCopy(Card sourceCard)
+    {
+        if (sourceCard == null || battleManager.handManager == null)
+        {
+            return;
+        }
+
+        Card shadowCopy = sourceCard.CloneForRuntimeCopy();
+        if (shadowCopy == null)
+        {
+            return;
+        }
+
+        shadowCopy.AddKeyword(CardKeywordIds.Ghost);
+        shadowCopy.SetCost(Mathf.Max(1, sourceCard.cost - 1), false);
+        battleManager.handManager.AddCard(shadowCopy);
     }
 }

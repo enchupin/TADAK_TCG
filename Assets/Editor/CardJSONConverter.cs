@@ -315,6 +315,14 @@ public class CardJSONConverter : EditorWindow
             }
         }
 
+        cardData.keywords.Clear();
+        List<int> keywords = ReadJsonIntList(cardObject, "keywords");
+        foreach (int keywordId in keywords) {
+            if (keywordId > 0 && !cardData.keywords.Contains(keywordId)) {
+                cardData.keywords.Add(keywordId);
+            }
+        }
+
         cardData.effects.Clear();
         if (cardObject["effects"] is JArray effectsArray) {
             foreach (JToken token in effectsArray) {

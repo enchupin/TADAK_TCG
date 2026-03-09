@@ -654,7 +654,31 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void ApplyCombatStartEffects()
     {
-        // Placeholder: start-of-combat buffs/debuffs can be resolved here.
+        if (usableDeckManager == null || handManager == null)
+        {
+            return;
+        }
+        List<Card> openingCards = new List<Card>();
+        List<Card> drawPile = usableDeckManager.GetDrawPile();
+        foreach (Card card in drawPile)
+        {
+            if (card == null || !card.HasKeyword(CardKeywordIds.Opening))
+            {
+                continue;
+            }
+            if (usableDeckManager.RemoveFromDrawPile(card))
+            {
+                openingCards.Add(card);
+            }
+        }
+        if (openingCards.Count <= 0)
+        {
+            return;
+        }
+        handManager.AddCard(openingCards);
+        battleContext?.OnCardsDrawn(openingCards.Count);
+        RefreshHandPlayableState();
+        UpdateAllUI();
     }
 
     public void ApplyPlayerTurnStartEffects()
@@ -736,7 +760,7 @@ public class TrainingBattleManager : MonoBehaviour
         bool canInteract = CanPlayerPlayCard();
 
         handManager.RefreshCardPlayability(
-            card => playerData != null && playerData.energy >= card.cost,
+            card => playerData != null && card != null && card.CanBePlayed() && playerData.energy >= card.cost,
             canInteract);
     }
 
@@ -810,3 +834,4 @@ public class TrainingBattleManager : MonoBehaviour
         TrainingRunSceneActions.HandleBattleFinished(isVictory);
     }
 }
+
