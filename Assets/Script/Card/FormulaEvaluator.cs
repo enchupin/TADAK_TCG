@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using UnityEngine;
+
 /// <summary>
 /// 수식 문자열을 평가하는 클래스
 /// JSON의 "amount": "UseCardInCombat * 3" 같은 수식을 계산
@@ -14,10 +16,10 @@ public static class FormulaEvaluator
     public static bool IsFormula(string value)
     {
         if (string.IsNullOrEmpty(value)) return false;
-        // 숫자만 있으면 수식이 아님
         if (int.TryParse(value, out _)) return false;
         return true;
     }
+
     /// <summary>
     /// 수식 문자열을 평가하여 정수 반환
     /// </summary>
@@ -38,7 +40,7 @@ public static class FormulaEvaluator
             return result;
         }
 
-        formula = formula.Replace(" ", "");
+        formula = formula.Replace(" ", string.Empty);
 
         if (formula.IndexOf("discarded", StringComparison.OrdinalIgnoreCase) >= 0)
         {
@@ -46,43 +48,33 @@ public static class FormulaEvaluator
             return 0;
         }
 
-        int cardsPlayedInCombat = context != null
-            ? context.GetCardsPlayedThisCombatCount(cardIdFilter)
-            : 0;
-        int cardsPlayedInTurn = context != null
-            ? context.GetCardsPlayedThisTurnCount(cardIdFilter)
-            : 0;
+        int cardsPlayedInCombat = context != null ? context.GetCardsPlayedThisCombatCount(cardIdFilter) : 0;
+        int cardsPlayedInTurn = context != null ? context.GetCardsPlayedThisTurnCount(cardIdFilter) : 0;
         int hasLostHpThisTurn = player != null && player.hasLostHpThisTurn ? 1 : 0;
 
-        switch (formula.ToLower())
+        switch (formula.ToLowerInvariant())
         {
             case "all":
                 return player != null ? player.defense : 0;
-
             case "usecardincombat":
                 return cardsPlayedInCombat;
-
             case "usecardinturn":
                 return cardsPlayedInTurn;
-
             case "consumed":
                 return context != null ? context.defenseConsumed : 0;
-
+            case "shufflecount":
+                return context != null ? context.deckShuffleCountThisCombat : 0;
             case "moved":
+            case "value":
+            case "eventvalue":
+            case "unblockeddamage":
                 return Mathf.Max(0, baseValue);
-
             case "exhausted":
                 return context != null ? context.cardsExhaustedThisTurn : 0;
-
             case "cardsdrawnthisturn":
                 return context != null ? context.cardsDrawnThisTurn : 0;
-
             case "finaldamage":
                 return context != null ? context.lastDamageDealt : 0;
-
-            case "value":
-                return baseValue;
-
             case "haslosthpthisturn":
                 return hasLostHpThisTurn;
         }
@@ -94,15 +86,10 @@ public static class FormulaEvaluator
             {
                 expression = baseValue + expression;
             }
-            expression = expression.Replace("UseCardInCombat", cardsPlayedInCombat.ToString());
-            expression = expression.Replace("UseCardInTurn", cardsPlayedInTurn.ToString());
-            expression = expression.Replace("consumed", (context != null ? context.defenseConsumed : 0).ToString());
-            expression = expression.Replace("moved", Mathf.Max(0, baseValue).ToString());
-            expression = expression.Replace("exhausted", (context != null ? context.cardsExhaustedThisTurn : 0).ToString());
-            expression = expression.Replace("cardsDrawnThisTurn", (context != null ? context.cardsDrawnThisTurn : 0).ToString());
-            expression = expression.Replace("finalDamage", (context != null ? context.lastDamageDealt : 0).ToString());
-            expression = expression.Replace("value", baseValue.ToString());
-            expression = expression.Replace("HasLostHpThisTurn", hasLostHpThisTurn.ToString());
+
+            expression = ReplaceFunctionCalls(expression, player);
+            expression = ReplaceKnownKeywords(expression, context, cardsPlayedInCombat, cardsPlayedInTurn, hasLostHpThisTurn, baseValue);
+            expression = EvaluateMinFunctions(expression);
 
             return EvaluateSimpleExpression(expression);
         }
@@ -111,6 +98,69 @@ public static class FormulaEvaluator
             Debug.LogError($"[FormulaEvaluator] Failed to evaluate formula: {formula}, Error: {e.Message}");
             return 0;
         }
+    }
+
+    private static string ReplaceKnownKeywords(string expression, BattleContext context, int cardsPlayedInCombat, int cardsPlayedInTurn, int hasLostHpThisTurn, int baseValue)
+    {
+        expression = expression.Replace("UseCardInCombat", cardsPlayedInCombat.ToString());
+        expression = expression.Replace("UseCardInTurn", cardsPlayedInTurn.ToString());
+        expression = expression.Replace("consumed", (context != null ? context.defenseConsumed : 0).ToString());
+        expression = expression.Replace("ShuffleCount", (context != null ? context.deckShuffleCountThisCombat : 0).ToString());
+        expression = expression.Replace("moved", Mathf.Max(0, baseValue).ToString());
+        expression = expression.Replace("exhausted", (context != null ? context.cardsExhaustedThisTurn : 0).ToString());
+        expression = expression.Replace("cardsDrawnThisTurn", (context != null ? context.cardsDrawnThisTurn : 0).ToString());
+        expression = expression.Replace("finalDamage", (context != null ? context.lastDamageDealt : 0).ToString());
+        expression = expression.Replace("value", baseValue.ToString());
+        expression = expression.Replace("eventValue", baseValue.ToString());
+        expression = expression.Replace("UnblockedDamage", baseValue.ToString());
+        expression = expression.Replace("HasLostHpThisTurn", hasLostHpThisTurn.ToString());
+        return expression;
+    }
+
+    private static string ReplaceFunctionCalls(string expression, PlayerData player)
+    {
+        expression = ReplaceBuffStackFunction(expression, "GetBuffStack", player);
+        expression = ReplaceBuffStackFunction(expression, "Stack", player);
+        return expression;
+    }
+
+    private static string ReplaceBuffStackFunction(string expression, string functionName, PlayerData player)
+    {
+        string pattern = $@"{functionName}\((\d+)\)";
+        while (Regex.IsMatch(expression, pattern))
+        {
+            Match match = Regex.Match(expression, pattern);
+            if (!match.Success)
+            {
+                break;
+            }
+
+            int buffId = int.Parse(match.Groups[1].Value);
+            int stack = player != null ? player.GetBuffStack(buffId) : 0;
+            expression = expression.Replace(match.Value, stack.ToString());
+        }
+
+        return expression;
+    }
+
+    private static string EvaluateMinFunctions(string expression)
+    {
+        string pattern = @"Min\(([^(),]+),([^(),]+)\)";
+        while (Regex.IsMatch(expression, pattern))
+        {
+            Match match = Regex.Match(expression, pattern);
+            if (!match.Success)
+            {
+                break;
+            }
+
+            int left = EvaluateSimpleExpression(match.Groups[1].Value);
+            int right = EvaluateSimpleExpression(match.Groups[2].Value);
+            int result = Mathf.Min(left, right);
+            expression = expression.Replace(match.Value, result.ToString());
+        }
+
+        return expression;
     }
 
     private static int EvaluateSimpleExpression(string expression)
@@ -154,8 +204,10 @@ public static class FormulaEvaluator
         {
             Match match = Regex.Match(expression, pattern);
 
-            float left, right;
-            string leftStr, rightStr;
+            float left;
+            float right;
+            string leftStr;
+            string rightStr;
 
             if (op == '+' || op == '-')
             {
@@ -168,7 +220,8 @@ public static class FormulaEvaluator
                 rightStr = match.Groups[2].Value;
             }
 
-            if (!float.TryParse(leftStr, out left) || !float.TryParse(rightStr, out right))
+            if (!float.TryParse(leftStr, NumberStyles.Float, CultureInfo.InvariantCulture, out left) ||
+                !float.TryParse(rightStr, NumberStyles.Float, CultureInfo.InvariantCulture, out right))
             {
                 break;
             }
@@ -182,7 +235,7 @@ public static class FormulaEvaluator
                 _ => 0
             };
 
-            expression = expression.Replace(match.Value, result.ToString());
+            expression = expression.Replace(match.Value, result.ToString(CultureInfo.InvariantCulture));
         }
 
         return expression;

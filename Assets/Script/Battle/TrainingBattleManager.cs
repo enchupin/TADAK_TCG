@@ -390,13 +390,25 @@ public class TrainingBattleManager : MonoBehaviour
 
     private bool CardHasDebugTargetEffect(Card card)
     {
-        if (card == null || card.effects == null)
+        if (card == null)
             return false;
 
-        foreach (ICardEffect effect in card.effects)
+        if (card.effects != null)
         {
-            if (EffectMatchesDebugTarget(effect))
-                return true;
+            foreach (ICardEffect effect in card.effects)
+            {
+                if (EffectMatchesDebugTarget(effect))
+                    return true;
+            }
+        }
+
+        if (card.keepEffects != null)
+        {
+            foreach (ICardEffect effect in card.keepEffects)
+            {
+                if (EffectMatchesDebugTarget(effect))
+                    return true;
+            }
         }
 
         return false;
@@ -442,6 +454,39 @@ public class TrainingBattleManager : MonoBehaviour
             case EffectType.Kill:
                 if (effect is KillEffect) return true;
                 break;
+            case EffectType.ChangeStat:
+                if (effect is ChangeStatEffect) return true;
+                break;
+            case EffectType.ReduceCost:
+                if (effect is ReduceCostEffect) return true;
+                break;
+            case EffectType.Cost:
+                if (effect is CostEffect) return true;
+                break;
+            case EffectType.ModifyCard:
+                if (effect is ModifyCardEffect) return true;
+                break;
+            case EffectType.ModifyCards:
+                if (effect is ModifyCardsEffect) return true;
+                break;
+            case EffectType.Upgrade:
+                if (effect is UpgradeEffect) return true;
+                break;
+            case EffectType.ExtraTurn:
+                if (effect is ExtraTurnEffect) return true;
+                break;
+            case EffectType.MixBuff:
+                if (effect is MixBuffEffect) return true;
+                break;
+            case EffectType.RemoveBuff:
+                if (effect is RemoveBuffEffect) return true;
+                break;
+            case EffectType.MultiplyBarrier:
+                if (effect is MultiplyBarrierEffect) return true;
+                break;
+            case EffectType.Stamina:
+                if (effect is StaminaEffect) return true;
+                break;
             case EffectType.Attack:
                 if (effect is AttackEffect) return true;
                 break;
@@ -450,6 +495,9 @@ public class TrainingBattleManager : MonoBehaviour
                 break;
             case EffectType.Buff:
                 if (effect is BuffEffect) return true;
+                break;
+            case EffectType.Scry:
+                if (effect is ScryEffect) return true;
                 break;
         }
 
@@ -469,6 +517,30 @@ public class TrainingBattleManager : MonoBehaviour
                     return true;
             }
         }
+        if (effect is DrawEffect draw && draw.onActions != null)
+        {
+            foreach (ICardEffect nested in draw.onActions)
+            {
+                if (EffectMatchesDebugTarget(nested))
+                    return true;
+            }
+        }
+        if (effect is DrawBasicEffect drawBasic && drawBasic.onActions != null)
+        {
+            foreach (ICardEffect nested in drawBasic.onActions)
+            {
+                if (EffectMatchesDebugTarget(nested))
+                    return true;
+            }
+        }
+        if (effect is DrawCharacterEffect drawCharacter && drawCharacter.onActions != null)
+        {
+            foreach (ICardEffect nested in drawCharacter.onActions)
+            {
+                if (EffectMatchesDebugTarget(nested))
+                    return true;
+            }
+        }
         if (effect is BarrierEffect barrier && barrier.onActions != null)
         {
             foreach (ICardEffect nested in barrier.onActions)
@@ -480,6 +552,30 @@ public class TrainingBattleManager : MonoBehaviour
         if (effect is ExhaustCardEffect exhaust && exhaust.onActions != null)
         {
             foreach (ICardEffect nested in exhaust.onActions)
+            {
+                if (EffectMatchesDebugTarget(nested))
+                    return true;
+            }
+        }
+        if (effect is CopyEffect copy && copy.onActions != null)
+        {
+            foreach (ICardEffect nested in copy.onActions)
+            {
+                if (EffectMatchesDebugTarget(nested))
+                    return true;
+            }
+        }
+        if (effect is MoveEffect move && move.onActions != null)
+        {
+            foreach (ICardEffect nested in move.onActions)
+            {
+                if (EffectMatchesDebugTarget(nested))
+                    return true;
+            }
+        }
+        if (effect is SelectCardEffect selectCard && selectCard.onActions != null)
+        {
+            foreach (ICardEffect nested in selectCard.onActions)
             {
                 if (EffectMatchesDebugTarget(nested))
                     return true;
@@ -508,6 +604,14 @@ public class TrainingBattleManager : MonoBehaviour
                     if (EffectMatchesDebugTarget(nested))
                         return true;
                 }
+            }
+        }
+        if (effect is ChangeStatEffect changeStat && changeStat.onActions != null)
+        {
+            foreach (ICardEffect nested in changeStat.onActions)
+            {
+                if (EffectMatchesDebugTarget(nested))
+                    return true;
             }
         }
 
@@ -543,9 +647,38 @@ public class TrainingBattleManager : MonoBehaviour
         turnSystem.AddTurnStartDrawModifier(amount);
     }
 
+    public void AddExtraTurn(int amount)
+    {
+        turnSystem.AddExtraTurn(amount);
+    }
+
     public void ApplyCombatStartEffects()
     {
-        // Placeholder: start-of-combat buffs/debuffs can be resolved here.
+        if (usableDeckManager == null || handManager == null)
+        {
+            return;
+        }
+        List<Card> openingCards = new List<Card>();
+        List<Card> drawPile = usableDeckManager.GetDrawPile();
+        foreach (Card card in drawPile)
+        {
+            if (card == null || !card.HasKeyword(CardKeywordIds.Opening))
+            {
+                continue;
+            }
+            if (usableDeckManager.RemoveFromDrawPile(card))
+            {
+                openingCards.Add(card);
+            }
+        }
+        if (openingCards.Count <= 0)
+        {
+            return;
+        }
+        handManager.AddCard(openingCards);
+        battleContext?.OnCardsDrawn(openingCards.Count);
+        RefreshHandPlayableState();
+        UpdateAllUI();
     }
 
     public void ApplyPlayerTurnStartEffects()
@@ -627,7 +760,7 @@ public class TrainingBattleManager : MonoBehaviour
         bool canInteract = CanPlayerPlayCard();
 
         handManager.RefreshCardPlayability(
-            card => playerData != null && playerData.energy >= card.cost,
+            card => playerData != null && card != null && card.CanBePlayed() && playerData.energy >= card.cost,
             canInteract);
     }
 
@@ -701,3 +834,4 @@ public class TrainingBattleManager : MonoBehaviour
         TrainingRunSceneActions.HandleBattleFinished(isVictory);
     }
 }
+

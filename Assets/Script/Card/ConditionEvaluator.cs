@@ -52,6 +52,12 @@ public static class ConditionEvaluator
             return Compare(enemyCount, op, check.value);
         }
 
+        if (check.subject == "Barrier" && string.IsNullOrWhiteSpace(check.property))
+        {
+            int barrier = battleManager.playerData != null ? battleManager.playerData.defense : 0;
+            return Compare(barrier, op, check.value);
+        }
+
         object subjectObj = GetSubject(check.subject, battleManager);
         if (subjectObj == null) return false;
 
@@ -70,6 +76,12 @@ public static class ConditionEvaluator
 
         switch (subjectType)
         {
+            case "Self":
+                Card selfCard = bm?.battleContext?.GetLastPlayedCard();
+                if (selfCard != null) {
+                    return selfCard;
+                }
+                return bm?.playerData;
             case "Source":
                 return bm.playerData;
             case "Target":
@@ -99,6 +111,7 @@ public static class ConditionEvaluator
                 case "CardId": return card.cardId;
                 case "Cost": return card.cost;
                 case "CharacterId": return (int)card.character;
+                case "IsPotion": return IsPotionCard(card) ? 1f : 0f;
             }
         }
 
@@ -147,6 +160,15 @@ public static class ConditionEvaluator
         }
 
         return 0f;
+    }
+
+    private static bool IsPotionCard(Card card)
+    {
+        if (card == null) return false;
+        if (card.character != Character.Isla) return false;
+
+        return (card.cardId >= 101050 && card.cardId <= 101055)
+            || (card.cardId >= 101080 && card.cardId <= 101087);
     }
 
     private static bool Compare(float actual, string op, string targetStr)

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -8,11 +8,46 @@ public static class CardEffectFactory
 {
     public static List<ICardEffect> CreateEffects(List<CardEffectData> effectDataList)
     {
-        return BuildRuntimeEffects(effectDataList, null);
+        List<CardEffectData> playableEffects = new List<CardEffectData>();
+        if (effectDataList != null)
+        {
+            foreach (CardEffectData effectData in effectDataList)
+            {
+                if (effectData == null || effectData.type == EffectType.Keep)
+                {
+                    continue;
+                }
+
+                playableEffects.Add(effectData);
+            }
+        }
+
+        return BuildRuntimeEffects(playableEffects, null);
+    }
+
+    public static List<ICardEffect> CreateKeepEffects(List<CardEffectData> effectDataList)
+    {
+        List<ICardEffect> keepEffects = new List<ICardEffect>();
+        if (effectDataList == null)
+        {
+            return keepEffects;
+        }
+
+        foreach (CardEffectData effectData in effectDataList)
+        {
+            if (effectData == null || effectData.type != EffectType.Keep)
+            {
+                continue;
+            }
+
+            keepEffects.AddRange(BuildRuntimeEffects(effectData.subEffects, "ThisCard"));
+        }
+
+        return keepEffects;
     }
 
     /// <summary>
-    /// Converts CardEffectData to runtime ICardEffect.
+    /// CardEffectData를 단일 런타임 이펙트로 변환
     /// </summary>
     public static ICardEffect CreateEffect(CardEffectData effectData)
     {
@@ -28,17 +63,14 @@ public static class CardEffectFactory
 
         string resolvedSubject = ResolveSubject(effectData.subject, inheritedSubject);
 
-        // 핵심 역할:
-        // - 직렬화된 데이터(CardEffectData)를 런타임 실행 객체(ICardEffect)로 변환한다.
-        // - type에 따라 필요한 필드만 골라 각 Effect 생성자 형태로 전달한다.
-        // 주의:
-        // - JSON/에셋에는 다양한 필드가 공존하지만, 실제 실행 시에는 각 효과가 사용하는 필드만 의미가 있다.
-        // - onAction은 재귀적으로 BuildRuntimeEffects()를 호출해 체인 형태로 런타임 효과를 구성한다.
+        // 직렬화된 CardEffectData를 실제 실행 객체로 변환
+        // onAction은 BuildRuntimeEffects로 재귀 변환해서 실행 체인으로 연결
         switch (effectData.type)
         {
             case EffectType.Repeat:
-                if (effectData.repeatNextEffect) {
-                    Debug.LogWarning("[CardEffectFactory] Repeat 효과는 리스트 빌드 경로에서만 생성할 수 있습니다");
+                if (effectData.repeatNextEffect)
+                {
+                    Debug.LogWarning("[CardEffectFactory] Repeat 이펙트는 리스트 빌드 경로에서만 생성됩니다");
                 }
                 return null;
 
@@ -59,6 +91,7 @@ public static class CardEffectFactory
                     target = effectData.target,
                     onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
                 };
+
             case EffectType.Barrier:
                 return new BarrierEffect
                 {
@@ -67,6 +100,87 @@ public static class CardEffectFactory
                     target = effectData.target,
                     onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
                 };
+
+            case EffectType.Buff:
+                return new BuffEffect
+                {
+                    stat = effectData.stat,
+                    buffId = effectData.buffId,
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula,
+                    duration = effectData.duration,
+                    target = effectData.target
+                };
+
+            case EffectType.ChangeStat:
+                return new ChangeStatEffect
+                {
+                    stat = effectData.stat,
+                    change = effectData.change,
+                    subject = resolvedSubject,
+                    buffId = effectData.buffId,
+                    buffTypes = effectData.buffTypes == null ? null : new List<int>(effectData.buffTypes),
+                    random = effectData.random,
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula,
+                    target = effectData.target,
+                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
+                };
+
+            case EffectType.Copy:
+                return new CopyEffect
+                {
+                    from = effectData.from,
+                    to = effectData.to,
+                    position = effectData.position,
+                    subject = resolvedSubject,
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula,
+                    cardIdList = effectData.formulaCardIdFilter == null ? null : new List<int>(effectData.formulaCardIdFilter),
+                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
+                };
+
+            case EffectType.Cost:
+                return new CostEffect
+                {
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula,
+                    subject = resolvedSubject
+                };
+
+            case EffectType.Damage:
+                return new DamageEffect
+                {
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula,
+                    target = effectData.target,
+                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
+                };
+
+            case EffectType.Draw:
+                return new DrawEffect
+                {
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula,
+                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
+                };
+
+            case EffectType.DrawBasic:
+                return new DrawBasicEffect
+                {
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula,
+                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
+                };
+
+            case EffectType.DrawCharacter:
+                return new DrawCharacterEffect
+                {
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula,
+                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
+                };
+
             case EffectType.ExhaustCard:
                 return new ExhaustCardEffect
                 {
@@ -76,50 +190,56 @@ public static class CardEffectFactory
                     amountFormula = effectData.amountFormula,
                     onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
                 };
-            case EffectType.Scry:
-                return new ScryEffect { count = effectData.count > 0 ? effectData.count : effectData.amount };
-            case EffectType.SelectCard:
-                return new SelectCardEffect
+
+            case EffectType.GenerateCard:
+                return new GenerateCardEffect
                 {
-                    count = effectData.count > 0 ? effectData.count : effectData.amount,
-                    from = effectData.from,
-                    cardIdFilter = effectData.formulaCardIdFilter == null ? null : new List<int>(effectData.formulaCardIdFilter),
-                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
-                };
-            case EffectType.Damage:
-                return new DamageEffect
-                {
-                    amount = effectData.amount,
-                    amountFormula = effectData.amountFormula,
+                    RandomCard = effectData.RandomCard,
+                    cardId = effectData.cardId,
+                    cardIdList = effectData.formulaCardIdFilter,
                     target = effectData.target,
-                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
+                    position = effectData.position
                 };
-            case EffectType.Draw:
-                return new DrawEffect
+
+            case EffectType.Heal:
+                return new HealEffect
                 {
                     amount = effectData.amount,
                     amountFormula = effectData.amountFormula,
-                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
+                    cardIdList = effectData.formulaCardIdFilter,
+                    target = effectData.target
                 };
-            case EffectType.DrawCharacter:
-                return new DrawCharacterEffect
+
+            case EffectType.Keyword:
+                return new KeywordEffect
                 {
+                    keyword = effectData.keyword,
                     amount = effectData.amount,
-                    amountFormula = effectData.amountFormula,
-                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
+                    amountFormula = effectData.amountFormula
                 };
+
             case EffectType.Kill:
                 return new KillEffect
                 {
                     target = effectData.target
                 };
-            case EffectType.DrawBasic:
-                return new DrawBasicEffect
+
+            case EffectType.Keep:
+                return null;
+
+            case EffectType.ExtraTurn:
+                return new ExtraTurnEffect
                 {
                     amount = effectData.amount,
-                    amountFormula = effectData.amountFormula,
-                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
+                    amountFormula = effectData.amountFormula
                 };
+
+            case EffectType.MixBuff:
+                return new MixBuffEffect
+                {
+                    target = effectData.target
+                };
+
             case EffectType.Move:
                 return new MoveEffect
                 {
@@ -131,44 +251,15 @@ public static class CardEffectFactory
                     amountFormula = effectData.amountFormula,
                     onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
                 };
-            case EffectType.Copy:
-                return new CopyEffect
+
+            case EffectType.MultiplyBarrier:
+                return new MultiplyBarrierEffect
                 {
-                    from = effectData.from,
-                    to = effectData.to,
-                    position = effectData.position,
-                    subject = resolvedSubject,
                     amount = effectData.amount,
                     amountFormula = effectData.amountFormula,
-                    cardIdList = effectData.formulaCardIdFilter == null ? null : new List<int>(effectData.formulaCardIdFilter)
-                };
-            case EffectType.Buff:
-                return new BuffEffect
-                {
-                    stat = effectData.stat,
-                    buffId = effectData.buffId,
-                    amount = effectData.amount,
-                    amountFormula = effectData.amountFormula,
-                    duration = effectData.duration,
                     target = effectData.target
                 };
-            case EffectType.Heal:
-                return new HealEffect
-                {
-                    amount = effectData.amount,
-                    amountFormula = effectData.amountFormula,
-                    cardIdList = effectData.formulaCardIdFilter,
-                    target = effectData.target
-                };
-            case EffectType.GenerateCard:
-                return new GenerateCardEffect
-                {
-                    RandomCard = effectData.RandomCard,
-                    cardId = effectData.cardId,
-                    cardIdList = effectData.formulaCardIdFilter,
-                    target = effectData.target,
-                    position = effectData.position
-                };
+
             case EffectType.RandGenerate:
                 return new RandGenerateEffect
                 {
@@ -179,10 +270,86 @@ public static class CardEffectFactory
                     to = ResolveRandGenerateToZone(effectData.to, effectData.target),
                     position = effectData.position
                 };
-            case EffectType.Keyword:
-                return new KeywordEffect { keyword = effectData.keyword, amount = effectData.amount, amountFormula = effectData.amountFormula };
+
+            case EffectType.ReduceCost:
+                return new ReduceCostEffect
+                {
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula,
+                    durationText = effectData.durationText,
+                    subject = resolvedSubject
+                };
+
+            case EffectType.RemoveBuff:
+                return new RemoveBuffEffect
+                {
+                    buffId = effectData.buffId,
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula,
+                    target = effectData.target
+                };
+
+            case EffectType.Scry:
+                return new ScryEffect
+                {
+                    count = effectData.count > 0 ? effectData.count : effectData.amount
+                };
+
+            case EffectType.SelectCard:
+                return new SelectCardEffect
+                {
+                    count = effectData.count > 0 ? effectData.count : effectData.amount,
+                    from = effectData.from,
+                    cardIdFilter = effectData.formulaCardIdFilter == null ? null : new List<int>(effectData.formulaCardIdFilter),
+                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
+                };
+
+            case EffectType.ModifyCard:
+                return new ModifyCardEffect
+                {
+                    source = effectData.source,
+                    subject = resolvedSubject,
+                    param = effectData.param,
+                    operation = effectData.operation,
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula,
+                    effectIndex = effectData.effectIndex,
+                    durationText = effectData.durationText
+                };
+
+            case EffectType.ModifyCards:
+                return new ModifyCardsEffect
+                {
+                    source = effectData.source,
+                    subject = resolvedSubject,
+                    param = effectData.param,
+                    operation = effectData.operation,
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula,
+                    effectIndex = effectData.effectIndex,
+                    durationText = effectData.durationText
+                };
+
+            case EffectType.Stamina:
+                return new StaminaEffect
+                {
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula
+                };
+
+            case EffectType.Upgrade:
+                return new UpgradeEffect
+                {
+                    subject = resolvedSubject,
+                    upgrade = effectData.upgrade
+                };
+
             case EffectType.Trigger:
-                return new TriggerEffect { timing = effectData.timing };
+                return new TriggerEffect
+                {
+                    timing = effectData.timing
+                };
+
             default:
                 Debug.LogWarning($"[CardData] Unknown effect type: {effectData.type}");
                 return null;
@@ -246,7 +413,7 @@ public static class CardEffectFactory
         {
             if (index + 1 >= sourceEffects.Count)
             {
-                Debug.LogWarning("[CardEffectFactory] Repeat 효과 뒤에는 반복할 다음 이펙트가 필요합니다");
+                Debug.LogWarning("[CardEffectFactory] Repeat 이펙트 뒤에는 반복할 다음 이펙트가 필요합니다");
                 return false;
             }
 
@@ -257,7 +424,7 @@ public static class CardEffectFactory
 
             if (!built || repeatedEffect == null)
             {
-                Debug.LogWarning("[CardEffectFactory] Repeat 효과의 다음 이펙트를 생성하지 못했습니다");
+                Debug.LogWarning("[CardEffectFactory] Repeat 이펙트의 다음 이펙트를 생성하지 못했습니다");
                 return false;
             }
 
@@ -276,11 +443,10 @@ public static class CardEffectFactory
 
     private static List<ICardEffect> BuildConditionalSuccessEffects(CardEffectData effectData, string inheritedSubject)
     {
-        // 조건 성공 시 실행할 효과 리스트를 구성한다.
-        // 우선순위:
-        // 1) conditionData.successEffects (다중)
-        // 2) 레거시 subEffects (다중)
-        // 즉, 신규 구조를 우선 사용하고, 없으면 레거시 필드로 폴백한다.
+        // 조건 성공 시 실행할 이펙트 목록
+        // 우선순위
+        // 1) conditionData.successEffects
+        // 2) 기존 subEffects
         if (effectData.conditionData != null
             && effectData.conditionData.successEffects != null
             && effectData.conditionData.successEffects.Count > 0)
@@ -293,10 +459,8 @@ public static class CardEffectFactory
 
     private static List<ICardEffect> BuildConditionalFailEffects(CardEffectData effectData, string inheritedSubject)
     {
-        // 조건 실패 시 실행할 효과 리스트를 구성한다.
-        // 우선순위:
-        // 1) conditionData.elseEffects (다중)
-        // 성공/실패 모두 동일한 패턴으로 구성해 데이터 스키마 변화에 유연하게 대응한다.
+        // 조건 실패 시 실행할 이펙트 목록
+        // 우선순위는 conditionData.elseEffects
         if (effectData.conditionData != null
             && effectData.conditionData.elseEffects != null
             && effectData.conditionData.elseEffects.Count > 0)
@@ -309,7 +473,8 @@ public static class CardEffectFactory
 
     private static string ResolveSubject(string effectSubject, string inheritedSubject)
     {
-        if (!string.IsNullOrWhiteSpace(effectSubject)) {
+        if (!string.IsNullOrWhiteSpace(effectSubject))
+        {
             return effectSubject;
         }
 

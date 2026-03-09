@@ -8,8 +8,22 @@ using System.Linq;
 /// </summary>
 public static class CardManager
 {
+    [System.Serializable]
+    private class CardKeywordJsonRoot
+    {
+        public List<CardKeywordJsonData> cards = null;
+    }
+
+    [System.Serializable]
+    private class CardKeywordJsonData
+    {
+        public int cardId = 0;
+        public List<int> keywords = null;
+    }
+
     private static Dictionary<int, CardData> cardCache;
     private static Dictionary<Character, List<CardData>> characterCache;
+    private static Dictionary<int, List<int>> keywordCache;
     private static bool isInitialized = false;
     
     /// <summary>
@@ -28,6 +42,8 @@ public static class CardManager
             Debug.LogError("[CardManager] CardCollection not found in Resources folder!");
             return;
         }
+
+        ApplyRuntimeKeywords(collection.allCards);
         
         // Dictionary 캐싱 (cardId로 조회)
         cardCache = new Dictionary<int, CardData>();
@@ -55,6 +71,85 @@ public static class CardManager
         {
             Debug.Log($"[CardManager] {kvp.Key}: {kvp.Value.Count}장");
         }
+    }
+
+    private static void ApplyRuntimeKeywords(List<CardData> cards)
+    {
+        if (cards == null || cards.Count == 0)
+        {
+            return;
+        }
+
+        Dictionary<int, List<int>> runtimeKeywords = LoadRuntimeKeywords();
+        if (runtimeKeywords.Count == 0)
+        {
+            return;
+        }
+
+        foreach (CardData card in cards)
+        {
+            if (card == null)
+            {
+                continue;
+            }
+
+            if (runtimeKeywords.TryGetValue(card.cardId, out List<int> keywords))
+            {
+                card.keywords = keywords != null ? new List<int>(keywords) : new List<int>();
+            }
+        }
+    }
+
+    private static Dictionary<int, List<int>> LoadRuntimeKeywords()
+    {
+        if (keywordCache != null)
+        {
+            return keywordCache;
+        }
+
+        keywordCache = new Dictionary<int, List<int>>();
+        TextAsset[] jsonFiles = Resources.LoadAll<TextAsset>("JsonData");
+        foreach (TextAsset jsonFile in jsonFiles)
+        {
+            if (jsonFile == null || string.IsNullOrWhiteSpace(jsonFile.name))
+            {
+                continue;
+            }
+
+            if (!jsonFile.name.EndsWith("Cards"))
+            {
+                continue;
+            }
+
+            CardKeywordJsonRoot root;
+            try
+            {
+                root = JsonUtility.FromJson<CardKeywordJsonRoot>(jsonFile.text);
+            }
+            catch
+            {
+                continue;
+            }
+
+            if (root?.cards == null)
+            {
+                continue;
+            }
+
+            foreach (CardKeywordJsonData jsonCard in root.cards)
+            {
+                if (jsonCard == null || jsonCard.cardId <= 0)
+                {
+                    continue;
+                }
+
+                keywordCache[jsonCard.cardId] = jsonCard.keywords != null
+                    ? new List<int>(jsonCard.keywords)
+                    : new List<int>();
+            }
+        }
+
+        return keywordCache;
     }
     
     /// <summary>
@@ -123,3 +218,4 @@ public static class CardManager
         return isInitialized;
     }
 }
+

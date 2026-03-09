@@ -16,6 +16,7 @@ public class BattleContext
     public int cardsDiscardedThisTurn;
     public int cardsExhaustedThisTurn;
     public int cardsDrawnThisTurn;
+    public int deckShuffleCountThisCombat;
 
     // 데미지 관련
     public int lastDamageDealt;
@@ -113,6 +114,7 @@ public class BattleContext
     {
         cardsPlayedThisCombat = 0;
         cardsPlayedThisCombatList.Clear();
+        deckShuffleCountThisCombat = 0;
         totalDamageDealt = 0;
         OnTurnStart();
     }
@@ -195,6 +197,11 @@ public class BattleContext
             return;
 
         cardsExhaustedThisTurn += count;
+    }
+
+    public void OnDeckShuffled()
+    {
+        deckShuffleCountThisCombat++;
     }
 
     public void OnDamageDealt(int amount)

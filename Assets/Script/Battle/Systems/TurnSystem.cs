@@ -11,6 +11,7 @@ public class TurnSystem
 
     private int turnNumber;
     private int pendingExtraDrawAtTurnStart;
+    private int pendingExtraTurns;
 
     public bool IsTurnTransitioning { get; private set; }
 
@@ -23,12 +24,23 @@ public class TurnSystem
     {
         turnNumber = 0;
         pendingExtraDrawAtTurnStart = 0;
+        pendingExtraTurns = 0;
         IsTurnTransitioning = false;
     }
 
     public void AddTurnStartDrawModifier(int amount)
     {
         pendingExtraDrawAtTurnStart += amount;
+    }
+
+    public void AddExtraTurn(int amount)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        pendingExtraTurns += amount;
     }
 
     public bool CanPlayerPlayCard()
@@ -63,7 +75,7 @@ public class TurnSystem
         }
     }
 
-    public void BeginPlayerTurn()
+    public void BeginPlayerTurn(bool replanEnemyActions = true)
     {
         if (battleManager.CurrentTurnState == BattleTurnState.CombatEnd)
             return;
@@ -83,7 +95,10 @@ public class TurnSystem
         }
 
         battleManager.ApplyPlayerTurnStartEffects();
-        PlanEnemyNextActions();
+        if (replanEnemyActions)
+        {
+            PlanEnemyNextActions();
+        }
 
         if (battleManager.isDebugMode && turnNumber == 1)
         {
@@ -114,6 +129,7 @@ public class TurnSystem
         battleManager.RefreshHandPlayableState();
 
         battleManager.ApplyPlayerTurnEndEffects();
+        ExpireTurnCardModifiers();
         DiscardRemainingHandCards();
 
         battleManager.UpdateAllUI();
@@ -121,6 +137,14 @@ public class TurnSystem
         if (battleManager.TryHandleCombatEnd())
         {
             IsTurnTransitioning = false;
+            yield break;
+        }
+
+        if (pendingExtraTurns > 0)
+        {
+            pendingExtraTurns--;
+            IsTurnTransitioning = false;
+            BeginPlayerTurn(false);
             yield break;
         }
 
@@ -192,17 +216,85 @@ public class TurnSystem
     {
         if (battleManager.handManager == null || battleManager.usableDeckManager == null)
             return;
-
         List<Card> remainingCards = battleManager.handManager.GetHandCards();
-        if (remainingCards.Count > 0)
+        if (remainingCards.Count == 0)
         {
-            battleManager.usableDeckManager.AddToDiscard(remainingCards);
+            return;
+        }
+        List<Card> retainedCards = new List<Card>();
+        List<Card> discardedCards = new List<Card>();
+        List<Card> exhaustedCards = new List<Card>();
+        foreach (Card card in remainingCards)
+        {
+            if (card == null)
+            {
+                continue;
+            }
+            if (card.ShouldExhaustAtTurnEnd())
+            {
+                exhaustedCards.Add(card);
+                continue;
+            }
+            if (card.ShouldRetainAtTurnEnd())
+            {
+                retainedCards.Add(card);
+                continue;
+            }
+            discardedCards.Add(card);
+        }
+        if (discardedCards.Count > 0)
+        {
+            battleManager.usableDeckManager.AddToDiscard(discardedCards);
             if (battleManager.battleContext != null)
             {
-                battleManager.battleContext.OnCardsDiscarded(remainingCards.Count);
+                battleManager.battleContext.OnCardsDiscarded(discardedCards.Count);
+            }
+            foreach (Card discardedCard in discardedCards)
+            {
+                battleManager.handManager.RemoveCard(discardedCard);
             }
         }
+        if (exhaustedCards.Count > 0)
+        {
+            if (battleManager.battleContext != null)
+            {
+                battleManager.battleContext.OnCardsExhausted(exhaustedCards.Count);
+            }
+            foreach (Card exhaustedCard in exhaustedCards)
+            {
+                battleManager.handManager.RemoveCard(exhaustedCard);
+            }
+        }
+        foreach (Card retainedCard in retainedCards)
+        {
+            retainedCard.ExecuteKeepEffects(battleManager);
+            battleManager.handManager.RefreshCardDisplay(retainedCard);
+        }
+    }
 
-        battleManager.handManager.ClearHand();
+    private void ExpireTurnCardModifiers()
+    {
+        if (battleManager == null)
+        {
+            return;
+        }
+
+        ClearTurnModifiers(battleManager.handManager?.GetHandCards());
+        ClearTurnModifiers(battleManager.usableDeckManager?.GetDrawPile());
+        ClearTurnModifiers(battleManager.usableDeckManager?.GetDiscardPile());
+    }
+
+    private static void ClearTurnModifiers(List<Card> cards)
+    {
+        if (cards == null)
+        {
+            return;
+        }
+
+        foreach (Card card in cards)
+        {
+            card?.ClearTurnModifiers();
+        }
     }
 }
+

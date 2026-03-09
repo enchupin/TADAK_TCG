@@ -364,7 +364,8 @@
                     "source": "Hand",
                     "param": "Cost",
                     "amount": 0,
-                    "operation": "Set"
+                    "operation": "Set",
+                    "duration": "Turn"
                 }
             ]
         },
@@ -380,7 +381,8 @@
             "effects": [
                 {
                     "type": "Damage",
-                    "amountFormula": "Target.Hp"
+                    "amountFormula": "Target.Hp",
+                    "target": "Self"
                 },
                 {
                     "type": "Kill",

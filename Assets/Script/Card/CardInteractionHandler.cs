@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -114,7 +114,7 @@ public class CardInteractionHandler : UIHoverEffect,
         return hasSingleEnemyTarget;
     }
 
-    // 카드 효과 전체를 순회하며 단일 적 타겟 포함 여부를 수집합니다
+    // 카드 이펙트 전체를 순회하고 단일 적 타겟 포함 여부를 수집합니다
     private void CollectTargetingFlags(System.Collections.Generic.List<ICardEffect> effects, ref bool hasSingleEnemyTarget)
     {
         if (effects == null) return;
@@ -123,7 +123,7 @@ public class CardInteractionHandler : UIHoverEffect,
         }
     }
 
-    // singleEnemy를 가지고 있는 모든 이펙트에 대해서 동작하도록 추후 수정
+    // SingleEnemy를 가지는 모든 이펙트에 대해 타겟팅이 동작하도록 처리
     private void CollectTargetingFlags(ICardEffect effect, ref bool hasSingleEnemyTarget)
     {
         if (effect == null) return;
@@ -141,6 +141,29 @@ public class CardInteractionHandler : UIHoverEffect,
             if (killEffect.target == TargetType.SingleEnemy) {
                 hasSingleEnemyTarget = true;
             }
+            return;
+        }
+
+        if (effect is RemoveBuffEffect removeBuffEffect) {
+            if (removeBuffEffect.target == TargetType.SingleEnemy) {
+                hasSingleEnemyTarget = true;
+            }
+            return;
+        }
+
+        if (effect is MixBuffEffect mixBuffEffect) {
+            if (mixBuffEffect.target == TargetType.SingleEnemy) {
+                hasSingleEnemyTarget = true;
+            }
+            return;
+        }
+
+        if (effect is ChangeStatEffect changeStatEffect) {
+            if (changeStatEffect.target == TargetType.SingleEnemy) {
+                hasSingleEnemyTarget = true;
+            }
+
+            CollectTargetingFlags(changeStatEffect.onActions, ref hasSingleEnemyTarget);
             return;
         }
 
@@ -343,6 +366,9 @@ public class CardInteractionHandler : UIHoverEffect,
     private bool CanStartDrag()
     {
         if (cardUI == null)
+            return false;
+
+        if (!cardUI.IsPlayable)
             return false;
 
         TrainingBattleManager manager = TrainingBattleManager.Instance;

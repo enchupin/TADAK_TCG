@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 
 public class SelectCardEffect : ICardEffect
@@ -28,6 +28,8 @@ public class SelectCardEffect : ICardEffect
         List<Card> sourceCards = ResolveSourceCards(battleManager);
         if (sourceCards.Count == 0) {
             battleManager.battleContext.SetSelectedCards(new List<Card>());
+            battleManager.battleContext.ClearContextCards("Selected");
+            battleManager.battleContext.ClearContextCards("SelectedCard");
             return;
         }
 
@@ -51,15 +53,24 @@ public class SelectCardEffect : ICardEffect
     {
         List<Card> safeSelectedCards = selectedCards ?? new List<Card>();
         battleManager.battleContext.SetSelectedCards(safeSelectedCards);
+        battleManager.battleContext.SetContextCards("Selected", safeSelectedCards);
+        battleManager.battleContext.SetContextCards("SelectedCard", safeSelectedCards);
         Debug.Log($"[SelectCard] {from}에서 {safeSelectedCards.Count}장 선택");
 
         if (safeSelectedCards.Count == 0 || onActions == null) {
+            battleManager.battleContext.ClearContextCards("Selected");
+            battleManager.battleContext.ClearContextCards("SelectedCard");
+            battleManager.battleContext.SetSelectedCards(new List<Card>());
             return;
         }
 
         foreach (ICardEffect onAction in onActions) {
             onAction?.Execute(battleManager, safeSelectedCards.Count);
         }
+
+        battleManager.battleContext.ClearContextCards("Selected");
+        battleManager.battleContext.ClearContextCards("SelectedCard");
+        battleManager.battleContext.SetSelectedCards(new List<Card>());
     }
 
     private List<Card> ResolveSourceCards(TrainingBattleManager battleManager)

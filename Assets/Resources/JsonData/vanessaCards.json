@@ -149,17 +149,7 @@
             "effects": [
                 {
                     "type": "Scry",
-                    "amount": 2,
-                    "onAction": {
-                        "type": "SelectCard",
-                        "amount": 1,
-                        "onAction": {
-                            "type": "Draw",
-                            "target": "Selected"
-                        },
-                        "subject": "ScryCard"
-                    },
-                    "subject": "ScryCard"
+                    "amount": 2
                 }
             ],
             "enforceGroup": "enforce_202040"

@@ -315,6 +315,14 @@ public class CardJSONConverter : EditorWindow
             }
         }
 
+        cardData.keywords.Clear();
+        List<int> keywords = ReadJsonIntList(cardObject, "keywords");
+        foreach (int keywordId in keywords) {
+            if (keywordId > 0 && !cardData.keywords.Contains(keywordId)) {
+                cardData.keywords.Add(keywordId);
+            }
+        }
+
         cardData.effects.Clear();
         if (cardObject["effects"] is JArray effectsArray) {
             foreach (JToken token in effectsArray) {
@@ -377,9 +385,18 @@ public class CardJSONConverter : EditorWindow
             position = ParseMovePositionType(ReadJsonString(effectObject, "position")),
             amount = ReadJsonInt(effectObject, "amount"),
             amountFormula = ReadJsonString(effectObject, "amountFormula"),
+            source = ReadJsonString(effectObject, "source"),
+            param = ReadJsonString(effectObject, "param"),
+            operation = ReadJsonString(effectObject, "operation"),
+            upgrade = ReadJsonString(effectObject, "upgrade"),
+            durationText = ReadJsonString(effectObject, "duration"),
+            effectIndex = ReadJsonInt(effectObject, "effectIndex", -1),
             count = ReadJsonInt(effectObject, "count"),
             stat = ReadJsonString(effectObject, "stat"),
+            change = ReadJsonString(effectObject, "change"),
             buffId = ReadJsonInt(effectObject, "buffId"),
+            buffTypes = ReadJsonIntList(effectObject, "buffType"),
+            random = ReadJsonBool(effectObject, "random"),
             duration = ReadJsonInt(effectObject, "duration"),
             cardId = ReadJsonString(effectObject, "cardId"),
             subject = ReadJsonString(effectObject, "subject"),
@@ -723,28 +740,28 @@ public class CardJSONConverter : EditorWindow
             case "ExhaustCard": return EffectType.ExhaustCard;
             case "Conditional": return EffectType.Conditional;
             case "Repeat": return EffectType.Repeat;
-            case "ReduceCost": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "ReduceCost": return EffectType.ReduceCost;
 
             case "Move": return EffectType.Move;
             case "Copy": return EffectType.Copy;
             case "RandGenerate": return EffectType.RandGenerate;
-            case "Keep": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
-            case "Cost": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "Keep": return EffectType.Keep;
+            case "Cost": return EffectType.Cost;
             case "CreateCard": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "SelectCard": return EffectType.SelectCard;
-            case "Upgrade": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
-            case "MixBuff": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
-            case "ModifyCards": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
-            case "ModifyCard": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "Upgrade": return EffectType.Upgrade;
+            case "MixBuff": return EffectType.MixBuff;
+            case "ModifyCards": return EffectType.ModifyCards;
+            case "ModifyCard": return EffectType.ModifyCard;
             case "Kill": return EffectType.Kill;
             case "TakeDamage":
                 throw new ArgumentException("[CardJSONConverter] TakeDamage effect is no longer supported. Use Damage.");
-            case "ChangeStat": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
-            case "ExtraTurn": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
-            case "Stamina": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
-            case "MultiplyBarrier": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "ChangeStat": return EffectType.ChangeStat;
+            case "ExtraTurn": return EffectType.ExtraTurn;
+            case "Stamina": return EffectType.Stamina;
+            case "MultiplyBarrier": return EffectType.MultiplyBarrier;
             case "Trigger": return EffectType.Trigger;
-            case "RemoveBuff": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
+            case "RemoveBuff": return EffectType.RemoveBuff;
             case "Scry": return EffectType.Scry;
 
             default:
@@ -773,6 +790,7 @@ public class CardJSONConverter : EditorWindow
             case "RandomEnemy":
             case "RandEnemy": return TargetType.SingleEnemy;
             case "Self": return TargetType.Self;
+            case "ThisCard": return TargetType.None;
             case "Hand": return TargetType.Hand;
             case "Discard":
             case "DiscardPile": return TargetType.Discard;
@@ -867,7 +885,7 @@ public class CardJSONConverter : EditorWindow
         bool hasAmount = HasJsonValue(effectObject, "amount");
         bool hasAmountFormula = !string.IsNullOrWhiteSpace(ReadJsonString(effectObject, "amountFormula"));
         if (hasAmount || hasAmountFormula) {
-            throw new ArgumentException("[CardJSONConverter] Kill effect no longer supports amount or amountFormula. Use TakeDamage before Kill if you need self damage.");
+            throw new ArgumentException("[CardJSONConverter] Kill effect no longer supports amount or amountFormula. Use Damage before Kill if you need self damage.");
         }
     }
 
@@ -971,6 +989,56 @@ public class CardJSONConverter : EditorWindow
         }
 
         return defaultValue;
+    }
+
+    private static bool ReadJsonBool(JObject obj, string key, bool defaultValue = false)
+    {
+        if (obj == null)
+        {
+            return defaultValue;
+        }
+
+        JToken token = obj[key];
+        if (token == null || token.Type == JTokenType.Null || token.Type == JTokenType.Undefined)
+        {
+            return defaultValue;
+        }
+
+        if (token.Type == JTokenType.Boolean)
+        {
+            return token.Value<bool>();
+        }
+
+        if (token.Type == JTokenType.String)
+        {
+            string raw = token.Value<string>();
+            if (bool.TryParse(raw, out bool boolValue))
+            {
+                return boolValue;
+            }
+        }
+
+        return defaultValue;
+    }
+
+    private static List<int> ReadJsonIntList(JObject obj, string key)
+    {
+        List<int> values = new List<int>();
+        if (obj == null || obj[key] is not JArray array)
+        {
+            return values;
+        }
+
+        foreach (JToken token in array)
+        {
+            int parsed = ReadJsonInt(token, int.MinValue);
+            if (parsed != int.MinValue)
+            {
+                values.Add(parsed);
+            }
+        }
+
+        return values;
     }
 
     private static string ReadRequiredJsonString(JObject obj, string key)

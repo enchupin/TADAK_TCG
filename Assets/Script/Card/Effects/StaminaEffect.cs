@@ -1,15 +1,14 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 
 /// <summary>
-/// 체력 회복 이펙트
+/// 스태미나 회복 이펙트
+/// 현재 전투에서는 에너지 회복으로 처리
 /// </summary>
-public class HealEffect : ICardEffect
+[System.Serializable]
+public class StaminaEffect : ICardEffect
 {
     public int amount;
     public string amountFormula;
-    public List<int> cardIdList;
-    public TargetType target;
 
     public void Execute(TrainingBattleManager battleManager)
     {
@@ -23,22 +22,26 @@ public class HealEffect : ICardEffect
 
     private void ExecuteInternal(TrainingBattleManager battleManager, int forwardedAmount)
     {
-        int healAmount = ResolveHealAmount(battleManager, forwardedAmount);
-
-        if (target == TargetType.Self)
+        if (battleManager?.playerData == null)
         {
-            battleManager.playerData.Heal(healAmount);
-            Debug.Log($"[HealEffect] 플레이어 체력 +{healAmount} 회복");
+            return;
         }
 
+        int staminaAmount = ResolveAmount(battleManager, forwardedAmount);
+        if (staminaAmount <= 0)
+        {
+            return;
+        }
+
+        battleManager.playerData.AddEnergy(staminaAmount);
         battleManager.UpdateAllUI();
     }
 
-    private int ResolveHealAmount(TrainingBattleManager battleManager, int forwardedAmount)
+    private int ResolveAmount(TrainingBattleManager battleManager, int forwardedAmount)
     {
         if (!string.IsNullOrWhiteSpace(amountFormula))
         {
-            return Mathf.Max(0, FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, cardIdList, forwardedAmount > 0 ? forwardedAmount : amount));
+            return Mathf.Max(0, FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, forwardedAmount));
         }
 
         if (amount > 0)

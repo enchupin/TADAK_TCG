@@ -21,5 +21,15 @@ public enum EffectType
     DrawCharacter = 27,
     RandGenerate = 28,
     Trigger = 29,
-    Kill = 30
+    Kill = 30,
+    ChangeStat = 31,
+    Stamina = 32,
+    ReduceCost = 33,
+    Keep = 34,
+    Cost = 35,
+    ModifyCard = 36,
+    ModifyCards = 37,
+    Upgrade = 38,
+    ExtraTurn = 39,
+    MixBuff = 40
 }

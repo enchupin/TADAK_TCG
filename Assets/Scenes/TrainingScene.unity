@@ -297,7 +297,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -383, y: -34.95999}
+  m_AnchoredPosition: {x: -1168, y: -640.96}
   m_SizeDelta: {x: 107.04138, y: 48.083405}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &172971187
@@ -472,7 +472,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -76.64563, y: -170.7916}
+  m_AnchoredPosition: {x: -86.861, y: -554}
   m_SizeDelta: {x: 117.721924, y: 56.874603}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &348479877
@@ -1392,8 +1392,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -138, y: 72}
-  m_SizeDelta: {x: 220, y: 80}
+  m_AnchoredPosition: {x: -86.86096, y: 58.76938}
+  m_SizeDelta: {x: 117.72, y: 53.5388}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1007523897
 MonoBehaviour:
@@ -2543,11 +2543,11 @@ MonoBehaviour:
   enemyActionDelay: 0.2
   endTurnButton: {fileID: 1007523897}
   enableKeyboardEndTurn: 1
-  enableTrainingRunFlow: 1
+  enableTrainingRunFlow: 0
   battleResultTransitionDelay: 0.8
   spawnedMonsters: []
   isDebugMode: 1
-  debugTargetEffect: 0
+  debugTargetEffect: 33
   debugEnergyAmount: 1000
   currentTarget: {fileID: 0}
 --- !u!1 &1579719169
@@ -2702,6 +2702,10 @@ PrefabInstance:
     - target: {fileID: 3335616966604027709, guid: 8cdacd6ed082ab344b76e5de172c1152, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5117845243066827922, guid: 8cdacd6ed082ab344b76e5de172c1152, type: 3}
+      propertyPath: m_Volume
+      value: 0.022
       objectReference: {fileID: 0}
     - target: {fileID: 7303900433841315575, guid: 8cdacd6ed082ab344b76e5de172c1152, type: 3}
       propertyPath: m_LocalPosition.x
