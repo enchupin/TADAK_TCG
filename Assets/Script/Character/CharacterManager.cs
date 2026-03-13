@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
 
 /// <summary>
 /// 캐릭터 데이터를 관리하는 Static 클래스
@@ -9,7 +8,6 @@ using System.Linq;
 public static class CharacterManager
 {
     private static Dictionary<int, CharacterData> characterCache;
-    private static Dictionary<string, CharacterData> nameCache;
     private static bool isInitialized = false;
     
     /// <summary>
@@ -34,7 +32,6 @@ public static class CharacterManager
         {
             Debug.LogWarning("[CharacterManager] CharacterCollection is empty!");
             characterCache = new Dictionary<int, CharacterData>();
-            nameCache = new Dictionary<string, CharacterData>();
             isInitialized = true;
             return;
         }
@@ -50,20 +47,6 @@ public static class CharacterManager
             else
             {
                 Debug.LogWarning($"[CharacterManager] Duplicate characterId found: {character.characterId}");
-            }
-        }
-        
-        // 이름별 캐싱 (빠른 조회용)
-        nameCache = new Dictionary<string, CharacterData>();
-        foreach (var character in collection.allCharacters)
-        {
-            if (!nameCache.ContainsKey(character.characterName))
-            {
-                nameCache[character.characterName] = character;
-            }
-            else
-            {
-                Debug.LogWarning($"[CharacterManager] Duplicate character name found: {character.characterName}");
             }
         }
         
@@ -85,22 +68,6 @@ public static class CharacterManager
         }
         
         Debug.LogWarning($"[CharacterManager] Character not found: {characterId}");
-        return null;
-    }
-    
-    /// <summary>
-    /// 캐릭터 이름으로 CharacterData 조회
-    /// </summary>
-    public static CharacterData GetCharacterByName(string name)
-    {
-        if (!isInitialized) Initialize();
-        
-        if (nameCache.ContainsKey(name))
-        {
-            return nameCache[name];
-        }
-        
-        Debug.LogWarning($"[CharacterManager] Character not found: {name}");
         return null;
     }
     
@@ -131,28 +98,6 @@ public static class CharacterManager
             return new List<int>(characterData.startDeckCardIds);
         }
         return new List<int>();
-    }
-
-
-
-    /// <summary>
-    /// 모든 캐릭터 조회
-    /// </summary>
-    public static List<CharacterData> GetAllCharacters()
-    {
-        if (!isInitialized) Initialize();
-        
-        return characterCache.Values.ToList();
-    }
-    
-    /// <summary>
-    /// 로드된 캐릭터 수 반환
-    /// </summary>
-    public static int GetCharacterCount()
-    {
-        if (!isInitialized) Initialize();
-        
-        return characterCache.Count;
     }
     
     /// <summary>

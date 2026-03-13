@@ -3406,6 +3406,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterSpawner
   monsterPrefab: {fileID: 5506351440769215535, guid: 456ed1c64d7c6cb4f9e47eff964eb7f1, type: 3}
+  monsterPrefabs:
+  - {fileID: 5506351440769215535, guid: 456ed1c64d7c6cb4f9e47eff964eb7f1, type: 3}
+  - {fileID: 5506351440769215535, guid: b9b223d43f2f4c3eaeb7d4c17d0d7f41, type: 3}
+  - {fileID: 5506351440769215535, guid: 0dcf70d4a2a34984b4a4e7d45b567e89, type: 3}
+  spawnRandomMonster: 1
+  fixedMonsterId: 0
   spawnPoint: {fileID: 2130608857}
 --- !u!4 &2073456889
 Transform:

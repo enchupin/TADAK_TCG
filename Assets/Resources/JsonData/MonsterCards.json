@@ -1,0 +1,22 @@
+{
+    "cards": [
+        {
+            "cardId": 10,
+            "name": "자상",
+            "characterId": "000",
+            "cost": 1,
+            "keywords": [
+                3
+            ],
+            "description": "턴 종료 시 피해를 2 받습니다.",
+            "effects": [],
+            "endTurnInHandEffects": [
+                {
+                    "type": "Damage",
+                    "amount": 2,
+                    "target": "Self"
+                }
+            ]
+        }
+    ]
+}

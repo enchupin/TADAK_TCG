@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using Mono.Cecil.Cil;
 using Newtonsoft.Json.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -333,6 +332,21 @@ public class CardJSONConverter : EditorWindow
                 CardEffectData effect = ReadEffect(effectObject);
                 if (effect != null) {
                     cardData.effects.Add(effect);
+                }
+            }
+        }
+
+        cardData.endTurnInHandEffects ??= new List<CardEffectData>();
+        cardData.endTurnInHandEffects.Clear();
+        if (cardObject["endTurnInHandEffects"] is JArray endTurnInHandEffectsArray) {
+            foreach (JToken token in endTurnInHandEffectsArray) {
+                if (token is not JObject effectObject) {
+                    continue;
+                }
+
+                CardEffectData effect = ReadEffect(effectObject);
+                if (effect != null) {
+                    cardData.endTurnInHandEffects.Add(effect);
                 }
             }
         }

@@ -32,7 +32,7 @@ MonoBehaviour:
       target: 0
       buffType: 
       cardId: 0
-  artworkAddress: Characters/Rune/Artwork
-  effectAddress: Effects/Rune
-  soundAddress: Sounds/Rune
+  artworkAddress: 
+  effectAddress: 
+  soundAddress: 
   startDeckCardIds: ba9b0400c49b0400ce9b0400d89b0400e29b0400ec9b0400f69b0400

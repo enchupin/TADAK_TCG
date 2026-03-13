@@ -97,7 +97,8 @@ public class AttackEffect : ICardEffect
             battleManager.playerData.GetBuffStack(DamageAmplifyBuffId) * Mathf.Max(0f, ampMultiplier)));
 
         float overheatMultiplier = 1f + Mathf.Max(0, battleManager.playerData.GetBuffStack(OverheatBuffId)) * 0.1f;
-        return Mathf.Max(0, Mathf.FloorToInt((scaledBaseDamage + damageAmplify) * overheatMultiplier));
+        float outgoingMultiplier = battleManager.playerData.GetOutgoingDamageMultiplier();
+        return Mathf.Max(0, Mathf.FloorToInt((scaledBaseDamage + damageAmplify) * overheatMultiplier * outgoingMultiplier));
     }
 
     private void ResolveAttackAmount(TrainingBattleManager battleManager, out int baseAmount, out float cardMultiplier)

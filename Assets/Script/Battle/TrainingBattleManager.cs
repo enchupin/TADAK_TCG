@@ -205,6 +205,13 @@ public class TrainingBattleManager : MonoBehaviour
 
         ApplyDebugEnergy();
 
+        if (BuffManager.Instance == null)
+        {
+            Debug.Log("[BattleManager] BuffManager missing. Creating runtime instance.");
+            GameObject go = new GameObject("BuffManager");
+            go.AddComponent<BuffManager>();
+        }
+
         if (monsterSpawner != null)
         {
             Monster spawned = monsterSpawner.SpawnMonster();
@@ -224,13 +231,6 @@ public class TrainingBattleManager : MonoBehaviour
         {
             Debug.LogError("[BattleManager] CardManager is not initialized.");
             return;
-        }
-
-        if (BuffManager.Instance == null)
-        {
-            Debug.Log("[BattleManager] BuffManager missing. Creating runtime instance.");
-            GameObject go = new GameObject("BuffManager");
-            go.AddComponent<BuffManager>();
         }
 
         bool shouldRebuildDeck = buildingDeck == null || !TrainingRunState.IsRunActive;
