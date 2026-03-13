@@ -23,6 +23,9 @@ public class CardData : ScriptableObject
     
     [Header("효과")]
     public List<CardEffectData> effects = new();
+
+    [Header("턴 종료 손패 효과")]
+    public List<CardEffectData> endTurnInHandEffects = new();
     
     /// <summary>
     /// ScriptableObject를 Card 객체로 변환
@@ -38,12 +41,14 @@ public class CardData : ScriptableObject
             enforceCardIds = new List<int>(this.enforceCardIds),
             keywords = this.keywords != null ? new List<int>(this.keywords) : new List<int>(),
             effects = new List<ICardEffect>(),
-            keepEffects = new List<ICardEffect>()
+            keepEffects = new List<ICardEffect>(),
+            endTurnInHandEffects = new List<ICardEffect>()
         };
         
         // 효과 변환
         card.effects = CardEffectFactory.CreateEffects(effects);
         card.keepEffects = CardEffectFactory.CreateKeepEffects(effects);
+        card.endTurnInHandEffects = CardEffectFactory.CreateEffects(endTurnInHandEffects);
         card.InitializeRuntimeState();
         
         return card;

@@ -105,7 +105,6 @@ public static class CardEffectFactory
             case EffectType.Buff:
                 return new BuffEffect
                 {
-                    stat = effectData.stat,
                     buffId = effectData.buffId,
                     amount = effectData.amount,
                     amountFormula = effectData.amountFormula,

@@ -10,20 +10,4 @@ public class CharacterCollection : ScriptableObject
 {
     [Header("모든 캐릭터 데이터")]
     public List<CharacterData> allCharacters = new List<CharacterData>();
-    
-    /// <summary>
-    /// ID로 캐릭터 찾기
-    /// </summary>
-    public CharacterData GetCharacterById(int characterId)
-    {
-        return allCharacters.Find(c => c.characterId == characterId);
-    }
-    
-    /// <summary>
-    /// 이름으로 캐릭터 찾기
-    /// </summary>
-    public CharacterData GetCharacterByName(string name)
-    {
-        return allCharacters.Find(c => c.characterName == name);
-    }
 }

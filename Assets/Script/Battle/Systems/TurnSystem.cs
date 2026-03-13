@@ -221,6 +221,17 @@ public class TurnSystem
         {
             return;
         }
+
+        foreach (Card card in remainingCards)
+        {
+            card?.ExecuteEndTurnInHandEffects(battleManager);
+
+            if (battleManager.playerData != null && battleManager.playerData.IsDead())
+            {
+                return;
+            }
+        }
+
         List<Card> retainedCards = new List<Card>();
         List<Card> discardedCards = new List<Card>();
         List<Card> exhaustedCards = new List<Card>();

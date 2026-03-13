@@ -47,6 +47,8 @@ public class BuffManager : MonoBehaviour
                 continue;
             }
 
+            buff.buffType = BuffData.GetPolarityBuffType(buff.buffId);
+
             if (buffDatabase.ContainsKey(buff.buffId))
             {
                 Debug.LogWarning($"[BuffManager] Duplicate buffId detected: {buff.buffId}. Later entry ignored.");
@@ -67,5 +69,16 @@ public class BuffManager : MonoBehaviour
         }
         Debug.LogWarning($"[BuffManager] Buff ID {buffId} not found.");
         return null;
+    }
+
+    public void RegisterRuntimeBuffData(BuffData data)
+    {
+        if (data == null || data.buffId <= 0)
+        {
+            return;
+        }
+
+        data.buffType = BuffData.GetPolarityBuffType(data.buffId);
+        buffDatabase[data.buffId] = data;
     }
 }
