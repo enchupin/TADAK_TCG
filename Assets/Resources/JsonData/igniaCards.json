@@ -19,7 +19,7 @@
             "name": "드래곤 스케일",
             "characterId": 201,
             "cost": 1,
-            "description": "방어도를 6 얻습니다.",
+            "description": "보호막을 6 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",
@@ -584,7 +584,7 @@
             "keywords": [
                 4
             ],
-            "description": "방어도를 6 얻습니다. 공격받을 때마다 공격한 적에게 피해를 3 줍니다.",
+            "description": "보호막을 6 얻습니다. 공격받을 때마다 공격한 적에게 피해를 3 줍니다.",
             "effects": [
                 {
                     "type": "Barrier",
@@ -623,7 +623,7 @@
             "name": "뜨거운 피부 +",
             "characterId": 201,
             "cost": 2,
-            "description": "방어도를 16 얻습니다.",
+            "description": "보호막을 16 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",

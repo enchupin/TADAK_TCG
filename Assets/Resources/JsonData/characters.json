@@ -136,7 +136,7 @@
                         "target": "AllEnemies"
                     }
                 ],
-                "description": "방어도를 10 얻습니다. 모든 적에게 빙결을 2 부여합니다."
+                "description": "보호막을 10 얻습니다. 모든 적에게 빙결을 2 부여합니다."
             },
             "characterColor": "white",
             "startDeck": [

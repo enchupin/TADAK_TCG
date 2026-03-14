@@ -577,7 +577,7 @@
                 3,
                 9
             ],
-            "description": "스테미나를 2 얻습니다. 카드를  1장 뽑습니다.",
+            "description": "에너지를 2 얻습니다. 카드를 1장 뽑습니다.",
             "effects": [
                 {
                     "type": "Stamina",

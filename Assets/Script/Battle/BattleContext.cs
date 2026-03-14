@@ -22,7 +22,7 @@ public class BattleContext
     public int lastDamageDealt;
     public int totalDamageDealt;
 
-    // 방어도 관련
+    // 보호막 관련
     public int defenseConsumed;
 
     // 선택된 카드 (Choice -> Effect 연계용)
