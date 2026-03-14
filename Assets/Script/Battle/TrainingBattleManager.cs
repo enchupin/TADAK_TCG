@@ -19,6 +19,26 @@ public enum BattleTurnState
     CombatEnd
 }
 
+public enum DebugCardFilterType
+{
+    Effect,
+    Keyword,
+    Buff
+}
+
+public enum DebugCardKeyword
+{
+    Keep = CardKeywordIds.Keep,
+    Unplayable = CardKeywordIds.Unplayable,
+    Exhaust = CardKeywordIds.Exhaust,
+    Power = CardKeywordIds.Power,
+    Opening = CardKeywordIds.Opening,
+    Shadow = CardKeywordIds.Shadow,
+    Finale = CardKeywordIds.Finale,
+    Ghost = CardKeywordIds.Ghost,
+    Unique = CardKeywordIds.Unique
+}
+
 /// <summary>
 /// Training mode battle orchestrator.
 /// Responsible for wiring references and delegating combat flow to subsystems.
@@ -54,7 +74,10 @@ public class TrainingBattleManager : MonoBehaviour
 
     [Header("Debug")]
     public bool isDebugMode = false;
+    [SerializeField] private DebugCardFilterType debugCardFilterType = DebugCardFilterType.Effect;
     public EffectType debugTargetEffect = EffectType.Barrier;
+    [SerializeField] private DebugCardKeyword debugTargetKeyword = DebugCardKeyword.Keep;
+    [SerializeField] private int debugTargetBuffId = 3002;
     [SerializeField] private int debugEnergyAmount = 1000;
 
     // Temporary target used while card effects are executing.
@@ -353,275 +376,263 @@ public class TrainingBattleManager : MonoBehaviour
         return drawnCards;
     }
 
-    [ContextMenu("Debug Draw Cards By Effect")]
-    public void DebugDrawCardsByEffect()
+    [ContextMenu("Debug Draw Matching Cards")]
+    public void DebugDrawMatchingCards()
     {
         if (!isDebugMode || handManager == null) {
             return;
         }
 
-        List<Card> matchingCards = new List<Card>();
-        List<CardData> allCardData = CardManager.GetAllCards();
-        foreach (CardData cardData in allCardData) {
-            if (cardData == null) {
-                continue;
-            }
-
-            Card card = cardData.ToCard();
-            if (card == null) {
-                continue;
-            }
-
-            if (!CardHasDebugTargetEffect(card)) {
-                continue;
-            }
-
-            matchingCards.Add(card);
-        }
+        List<Card> matchingCards = CollectDebugMatchingCards();
 
         if (matchingCards.Count > 0) {
-            Debug.Log($"[Debug] Added {matchingCards.Count} cards with {debugTargetEffect} effect from CardManager.");
+            Debug.Log($"[Debug] 디버그 시작 카드 {matchingCards.Count}장을 추가했습니다. 기준: {GetDebugTargetSummary()}");
             handManager.AddCard(matchingCards);
             if (battleContext != null) {
                 battleContext.OnCardsDrawn(matchingCards.Count);
             }
         }
         else {
-            Debug.LogWarning($"[Debug] No cards with {debugTargetEffect} effect found in CardManager cache. 카드 JSON 변환/카드 컬렉션 갱신 여부를 확인하세요.");
+            Debug.LogWarning($"[Debug] 디버그 기준에 맞는 카드를 찾지 못했습니다. 기준: {GetDebugTargetSummary()}");
         }
 
         RefreshHandPlayableState();
         UpdateAllUI();
     }
 
-    private bool CardHasDebugTargetEffect(Card card)
+    public void DebugDrawCardsByEffect()
+    {
+        DebugDrawMatchingCards();
+    }
+
+    private List<Card> CollectDebugMatchingCards()
+    {
+        List<Card> matchingCards = new List<Card>();
+        List<CardData> allCardData = CardManager.GetAllCards();
+        foreach (CardData cardData in allCardData)
+        {
+            if (cardData == null)
+            {
+                continue;
+            }
+
+            Card card = cardData.ToCard();
+            if (card == null || !CardMatchesDebugTarget(card))
+            {
+                continue;
+            }
+
+            matchingCards.Add(card);
+        }
+
+        return matchingCards;
+    }
+
+    private bool CardMatchesDebugTarget(Card card)
     {
         if (card == null)
             return false;
 
-        if (card.effects != null)
+        return debugCardFilterType switch
         {
-            foreach (ICardEffect effect in card.effects)
-            {
-                if (EffectMatchesDebugTarget(effect))
-                    return true;
-            }
+            DebugCardFilterType.Keyword => card.HasKeyword((int)debugTargetKeyword),
+            DebugCardFilterType.Buff => CardHasDebugTargetBuff(card),
+            _ => CardHasDebugTargetEffect(card)
+        };
+    }
+
+    private bool CardHasDebugTargetEffect(Card card)
+    {
+        return CardEffectListMatches(card?.effects, IsDebugTargetEffect)
+            || CardEffectListMatches(card?.keepEffects, IsDebugTargetEffect)
+            || CardEffectListMatches(card?.endTurnInHandEffects, IsDebugTargetEffect);
+    }
+
+    private bool CardHasDebugTargetBuff(Card card)
+    {
+        if (debugTargetBuffId <= 0)
+        {
+            return false;
         }
 
-        if (card.keepEffects != null)
+        return CardEffectListMatches(card?.effects, IsDebugTargetBuffEffect)
+            || CardEffectListMatches(card?.keepEffects, IsDebugTargetBuffEffect)
+            || CardEffectListMatches(card?.endTurnInHandEffects, IsDebugTargetBuffEffect);
+    }
+
+    private bool CardEffectListMatches(List<ICardEffect> effects, Func<ICardEffect, bool> matchPredicate)
+    {
+        if (effects == null || matchPredicate == null)
         {
-            foreach (ICardEffect effect in card.keepEffects)
+            return false;
+        }
+
+        foreach (ICardEffect effect in effects)
+        {
+            if (EffectMatches(effect, matchPredicate))
             {
-                if (EffectMatchesDebugTarget(effect))
-                    return true;
+                return true;
             }
         }
 
         return false;
     }
 
-    private bool EffectMatchesDebugTarget(ICardEffect effect)
+    private bool EffectMatches(ICardEffect effect, Func<ICardEffect, bool> matchPredicate)
+    {
+        if (effect == null || matchPredicate == null)
+        {
+            return false;
+        }
+
+        if (matchPredicate(effect))
+        {
+            return true;
+        }
+
+        if (effect is AttackEffect attack && CardEffectListMatches(attack.onActions, matchPredicate))
+        {
+            return true;
+        }
+        if (effect is DamageEffect damage && CardEffectListMatches(damage.onActions, matchPredicate))
+        {
+            return true;
+        }
+        if (effect is DrawEffect draw && CardEffectListMatches(draw.onActions, matchPredicate))
+        {
+            return true;
+        }
+        if (effect is DrawBasicEffect drawBasic && CardEffectListMatches(drawBasic.onActions, matchPredicate))
+        {
+            return true;
+        }
+        if (effect is DrawCharacterEffect drawCharacter && CardEffectListMatches(drawCharacter.onActions, matchPredicate))
+        {
+            return true;
+        }
+        if (effect is BarrierEffect barrier && CardEffectListMatches(barrier.onActions, matchPredicate))
+        {
+            return true;
+        }
+        if (effect is ExhaustCardEffect exhaust && CardEffectListMatches(exhaust.onActions, matchPredicate))
+        {
+            return true;
+        }
+        if (effect is CopyEffect copy && CardEffectListMatches(copy.onActions, matchPredicate))
+        {
+            return true;
+        }
+        if (effect is MoveEffect move && CardEffectListMatches(move.onActions, matchPredicate))
+        {
+            return true;
+        }
+        if (effect is SelectCardEffect selectCard && CardEffectListMatches(selectCard.onActions, matchPredicate))
+        {
+            return true;
+        }
+        if (effect is ChangeStatEffect changeStat && CardEffectListMatches(changeStat.onActions, matchPredicate))
+        {
+            return true;
+        }
+        if (effect is ConditionalEffect conditional)
+        {
+            if (CardEffectListMatches(conditional.successEffects, matchPredicate))
+            {
+                return true;
+            }
+
+            if (CardEffectListMatches(conditional.failEffects, matchPredicate))
+            {
+                return true;
+            }
+        }
+        if (effect is RepeatEffect repeat && EffectMatches(repeat.effectToRepeat, matchPredicate))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool IsDebugTargetEffect(ICardEffect effect)
     {
         if (effect == null)
+        {
             return false;
+        }
 
         switch (debugTargetEffect)
         {
             case EffectType.Barrier:
-                if (effect is BarrierEffect) return true;
-                break;
+                return effect is BarrierEffect;
             case EffectType.Damage:
-                if (effect is DamageEffect) return true;
-                break;
+                return effect is DamageEffect;
             case EffectType.Draw:
-                if (effect is DrawEffect) return true;
-                break;
+                return effect is DrawEffect;
             case EffectType.DrawCharacter:
-                if (effect is DrawCharacterEffect) return true;
-                break;
+                return effect is DrawCharacterEffect;
             case EffectType.DrawBasic:
-                if (effect is DrawBasicEffect) return true;
-                break;
+                return effect is DrawBasicEffect;
             case EffectType.RandGenerate:
-                if (effect is RandGenerateEffect) return true;
-                break;
+                return effect is RandGenerateEffect;
             case EffectType.Move:
-                if (effect is MoveEffect) return true;
-                break;
+                return effect is MoveEffect;
             case EffectType.ExhaustCard:
-                if (effect is ExhaustCardEffect) return true;
-                break;
+                return effect is ExhaustCardEffect;
             case EffectType.Repeat:
-                if (effect is RepeatEffect) return true;
-                break;
+                return effect is RepeatEffect;
             case EffectType.Trigger:
-                if (effect is TriggerEffect) return true;
-                break;
+                return effect is TriggerEffect;
             case EffectType.Kill:
-                if (effect is KillEffect) return true;
-                break;
+                return effect is KillEffect;
             case EffectType.ChangeStat:
-                if (effect is ChangeStatEffect) return true;
-                break;
+                return effect is ChangeStatEffect;
             case EffectType.ReduceCost:
-                if (effect is ReduceCostEffect) return true;
-                break;
+                return effect is ReduceCostEffect;
             case EffectType.Cost:
-                if (effect is CostEffect) return true;
-                break;
+                return effect is CostEffect;
             case EffectType.ModifyCard:
-                if (effect is ModifyCardEffect) return true;
-                break;
+                return effect is ModifyCardEffect;
             case EffectType.ModifyCards:
-                if (effect is ModifyCardsEffect) return true;
-                break;
+                return effect is ModifyCardsEffect;
             case EffectType.Upgrade:
-                if (effect is UpgradeEffect) return true;
-                break;
+                return effect is UpgradeEffect;
             case EffectType.ExtraTurn:
-                if (effect is ExtraTurnEffect) return true;
-                break;
+                return effect is ExtraTurnEffect;
             case EffectType.MixBuff:
-                if (effect is MixBuffEffect) return true;
-                break;
+                return effect is MixBuffEffect;
             case EffectType.RemoveBuff:
-                if (effect is RemoveBuffEffect) return true;
-                break;
+                return effect is RemoveBuffEffect;
             case EffectType.MultiplyBarrier:
-                if (effect is MultiplyBarrierEffect) return true;
-                break;
+                return effect is MultiplyBarrierEffect;
             case EffectType.Stamina:
-                if (effect is StaminaEffect) return true;
-                break;
+                return effect is StaminaEffect;
             case EffectType.Attack:
-                if (effect is AttackEffect) return true;
-                break;
+                return effect is AttackEffect;
             case EffectType.Heal:
-                if (effect is HealEffect) return true;
-                break;
+                return effect is HealEffect;
             case EffectType.Buff:
-                if (effect is BuffEffect) return true;
-                break;
+                return effect is BuffEffect;
             case EffectType.Scry:
-                if (effect is ScryEffect) return true;
-                break;
+                return effect is ScryEffect;
+            default:
+                return false;
         }
+    }
 
-        if (effect is AttackEffect attack && attack.onActions != null)
-        {
-            foreach (ICardEffect nested in attack.onActions)
-            {
-                if (EffectMatchesDebugTarget(nested))
-                    return true;
-            }
-        }
-        if (effect is DamageEffect damage && damage.onActions != null)
-        {
-            foreach (ICardEffect nested in damage.onActions)
-            {
-                if (EffectMatchesDebugTarget(nested))
-                    return true;
-            }
-        }
-        if (effect is DrawEffect draw && draw.onActions != null)
-        {
-            foreach (ICardEffect nested in draw.onActions)
-            {
-                if (EffectMatchesDebugTarget(nested))
-                    return true;
-            }
-        }
-        if (effect is DrawBasicEffect drawBasic && drawBasic.onActions != null)
-        {
-            foreach (ICardEffect nested in drawBasic.onActions)
-            {
-                if (EffectMatchesDebugTarget(nested))
-                    return true;
-            }
-        }
-        if (effect is DrawCharacterEffect drawCharacter && drawCharacter.onActions != null)
-        {
-            foreach (ICardEffect nested in drawCharacter.onActions)
-            {
-                if (EffectMatchesDebugTarget(nested))
-                    return true;
-            }
-        }
-        if (effect is BarrierEffect barrier && barrier.onActions != null)
-        {
-            foreach (ICardEffect nested in barrier.onActions)
-            {
-                if (EffectMatchesDebugTarget(nested))
-                    return true;
-            }
-        }
-        if (effect is ExhaustCardEffect exhaust && exhaust.onActions != null)
-        {
-            foreach (ICardEffect nested in exhaust.onActions)
-            {
-                if (EffectMatchesDebugTarget(nested))
-                    return true;
-            }
-        }
-        if (effect is CopyEffect copy && copy.onActions != null)
-        {
-            foreach (ICardEffect nested in copy.onActions)
-            {
-                if (EffectMatchesDebugTarget(nested))
-                    return true;
-            }
-        }
-        if (effect is MoveEffect move && move.onActions != null)
-        {
-            foreach (ICardEffect nested in move.onActions)
-            {
-                if (EffectMatchesDebugTarget(nested))
-                    return true;
-            }
-        }
-        if (effect is SelectCardEffect selectCard && selectCard.onActions != null)
-        {
-            foreach (ICardEffect nested in selectCard.onActions)
-            {
-                if (EffectMatchesDebugTarget(nested))
-                    return true;
-            }
-        }
-        if (effect is RepeatEffect repeat && repeat.effectToRepeat != null)
-        {
-            if (EffectMatchesDebugTarget(repeat.effectToRepeat))
-                return true;
-        }
-        if (effect is ConditionalEffect conditional)
-        {
-            if (conditional.successEffects != null)
-            {
-                foreach (ICardEffect nested in conditional.successEffects)
-                {
-                    if (EffectMatchesDebugTarget(nested))
-                        return true;
-                }
-            }
+    private bool IsDebugTargetBuffEffect(ICardEffect effect)
+    {
+        return effect is BuffEffect buffEffect && buffEffect.buffId == debugTargetBuffId;
+    }
 
-            if (conditional.failEffects != null)
-            {
-                foreach (ICardEffect nested in conditional.failEffects)
-                {
-                    if (EffectMatchesDebugTarget(nested))
-                        return true;
-                }
-            }
-        }
-        if (effect is ChangeStatEffect changeStat && changeStat.onActions != null)
+    private string GetDebugTargetSummary()
+    {
+        return debugCardFilterType switch
         {
-            foreach (ICardEffect nested in changeStat.onActions)
-            {
-                if (EffectMatchesDebugTarget(nested))
-                    return true;
-            }
-        }
-
-        return false;
+            DebugCardFilterType.Keyword => $"Keyword / {debugTargetKeyword}",
+            DebugCardFilterType.Buff => $"Buff / {debugTargetBuffId}",
+            _ => $"Effect / {debugTargetEffect}"
+        };
     }
 
     private void HandleCardClicked(CardPlayEventData eventData)

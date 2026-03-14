@@ -102,7 +102,7 @@ public class TurnSystem
 
         if (battleManager.isDebugMode && turnNumber == 1)
         {
-            battleManager.DebugDrawCardsByEffect();
+            battleManager.DebugDrawMatchingCards();
         }
         else
         {
