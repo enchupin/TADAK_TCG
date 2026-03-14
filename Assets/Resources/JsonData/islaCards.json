@@ -547,13 +547,13 @@
             "keywords": [
                 4
             ],
-            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 2 입힙니다.",
+            "description": "적에게 잔혹을 2 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3005,
+                    "buffId": 4009,
                     "amount": 2,
-                    "target": "Self"
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -566,13 +566,13 @@
                 4,
                 5
             ],
-            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 2 입힙니다.",
+            "description": "적에게 잔혹을 2 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3005,
+                    "buffId": 4009,
                     "amount": 2,
-                    "target": "Self"
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -584,13 +584,13 @@
             "keywords": [
                 4
             ],
-            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 2 입힙니다.",
+            "description": "적에게 잔혹을 2 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3005,
+                    "buffId": 4009,
                     "amount": 2,
-                    "target": "Self"
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -602,13 +602,13 @@
             "keywords": [
                 4
             ],
-            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 4 입힙니다.",
+            "description": "적에게 잔혹을 4 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3005,
+                    "buffId": 4009,
                     "amount": 4,
-                    "target": "Self"
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -639,13 +639,13 @@
                 4,
                 6
             ],
-            "description": "적에게 부정적인 효과를 입힐 때마다 피해를 1 입힙니다.",
+            "description": "적에게 잔혹을 1 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3005,
+                    "buffId": 4009,
                     "amount": 1,
-                    "target": "Self"
+                    "target": "SingleEnemy"
                 }
             ]
         },

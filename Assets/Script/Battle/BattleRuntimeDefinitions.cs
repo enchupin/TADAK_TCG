@@ -13,6 +13,7 @@ public static class BattleRuntimeDefinitions
     public const int PermanentBarrierRetentionBuffId = 1013;
     public const int RegenerationBuffId = 3001;
     public const int DamageAmplifyBuffId = 3002;
+    public const int BioExperimentAllBuffId = 3006;
     public const int PotionFactoryBuffId = 3007;
     public const int ExtraDrawBuffId = 3008;
     public const int ThornBuffId = 3010;
@@ -39,6 +40,7 @@ public static class BattleRuntimeDefinitions
     public const int DamageAmplifyDecayBuffId = 4006;
     public const int OverheatDecayBuffId = 4007;
     public const int WeakBuffId = 4008;
+    public const int CrueltyDebuffId = 4009;
     public const int PoisonousMushroomBuffId = 10001;
     public const int WoundCardId = 10;
 }

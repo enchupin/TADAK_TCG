@@ -471,9 +471,9 @@
             "description": "포션을 사용할 때마다 무작위 적에게 부식을 {stack} 부여합니다."
         },
         {
-            "buffId": 3005,
-            "name": "잔혹함",
-            "buffType": 3,
+            "buffId": 4009,
+            "name": "잔혹",
+            "buffType": 4,
             "trigger": {
                 "event": "OnStatChange",
                 "stat": "Buff",
@@ -491,11 +491,11 @@
                 "effects": [
                     {
                         "type": "Damage",
-                        "target": "SingleEnemy"
+                        "target": "Self"
                     }
                 ]
             },
-            "description": "적에게 부정적인 효과를 부여할 때마다 피해를 {stack} 줍니다."
+            "description": "부정적인 효과를 얻을 때마다 피해를 {stack} 받습니다."
         },
         {
             "buffId": 3006,

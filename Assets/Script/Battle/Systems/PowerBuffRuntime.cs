@@ -242,18 +242,19 @@ public class PowerBuffRuntime
             return;
         }
 
+        // 버프 ID 앞자리 홀짝 규칙으로 해로운 효과 여부를 판정
         if (BuffData.IsBeneficialBuffId(buffId))
         {
             return;
         }
 
-        int cruelty = GetPlayerBuffStack(3005);
+        int cruelty = targetMonster.GetBuffStack(CrueltyDebuffId);
         if (cruelty > 0)
         {
             targetMonster.TakeDamage(cruelty, 0);
         }
 
-        int brutality = GetPlayerBuffStack(3006);
+        int brutality = GetPlayerBuffStack(BioExperimentAllBuffId);
         if (brutality > 0)
         {
             List<Monster> targets = battleManager.GetLivingMonsters();
