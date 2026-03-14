@@ -176,68 +176,189 @@ public static class FormulaEvaluator
             expression = expression.Substring(0, start) + subResult + expression.Substring(end + 1);
         }
 
-        expression = EvaluateOperator(expression, '*');
-        expression = EvaluateOperator(expression, '/');
-        expression = EvaluateOperator(expression, '+');
-        expression = EvaluateOperator(expression, '-');
-
-        if (int.TryParse(expression, out int result))
+        if (TryEvaluateFlatExpression(expression, out float result))
         {
-            return result;
-        }
-
-        if (float.TryParse(expression, out float floatResult))
-        {
-            return Mathf.RoundToInt(floatResult);
+            return Mathf.RoundToInt(result);
         }
 
         return 0;
     }
 
-    private static string EvaluateOperator(string expression, char op)
+    private static bool TryEvaluateFlatExpression(string expression, out float result)
     {
-        string pattern = op == '*' || op == '/'
-            ? @"([\d.]+)\s*\" + op + @"\s*([\d.]+)"
-            : @"(^|[^.\d])([\d.]+)\s*\" + op + @"\s*([\d.]+)";
-
-        while (Regex.IsMatch(expression, pattern))
+        result = 0f;
+        if (!TryTokenizeExpression(expression, out List<string> tokens))
         {
-            Match match = Regex.Match(expression, pattern);
+            return false;
+        }
 
-            float left;
-            float right;
-            string leftStr;
-            string rightStr;
+        if (!float.TryParse(tokens[0], NumberStyles.Float, CultureInfo.InvariantCulture, out float currentValue))
+        {
+            return false;
+        }
 
-            if (op == '+' || op == '-')
+        List<string> reducedTokens = new List<string>
+        {
+            currentValue.ToString(CultureInfo.InvariantCulture)
+        };
+
+        for (int index = 1; index < tokens.Count; index += 2)
+        {
+            if (index + 1 >= tokens.Count)
             {
-                leftStr = match.Groups[2].Value;
-                rightStr = match.Groups[3].Value;
+                return false;
+            }
+
+            string op = tokens[index];
+            if (!float.TryParse(tokens[index + 1], NumberStyles.Float, CultureInfo.InvariantCulture, out float nextValue))
+            {
+                return false;
+            }
+
+            if (op == "*" || op == "/")
+            {
+                currentValue = op == "*"
+                    ? currentValue * nextValue
+                    : (Mathf.Approximately(nextValue, 0f) ? 0f : currentValue / nextValue);
+                reducedTokens[reducedTokens.Count - 1] = currentValue.ToString(CultureInfo.InvariantCulture);
+            }
+            else if (op == "+" || op == "-")
+            {
+                reducedTokens.Add(op);
+                reducedTokens.Add(tokens[index + 1]);
+                currentValue = nextValue;
             }
             else
             {
-                leftStr = match.Groups[1].Value;
-                rightStr = match.Groups[2].Value;
+                return false;
             }
-
-            if (!float.TryParse(leftStr, NumberStyles.Float, CultureInfo.InvariantCulture, out left) ||
-                !float.TryParse(rightStr, NumberStyles.Float, CultureInfo.InvariantCulture, out right))
-            {
-                break;
-            }
-
-            float result = op switch
-            {
-                '*' => left * right,
-                '/' => right != 0 ? left / right : 0,
-                '+' => left + right,
-                '-' => left - right,
-                _ => 0
-            };
-
-            expression = expression.Replace(match.Value, result.ToString(CultureInfo.InvariantCulture));
         }
 
-        return expression;
+        if (!float.TryParse(reducedTokens[0], NumberStyles.Float, CultureInfo.InvariantCulture, out result))
+        {
+            return false;
+        }
+
+        for (int index = 1; index < reducedTokens.Count; index += 2)
+        {
+            if (index + 1 >= reducedTokens.Count)
+            {
+                return false;
+            }
+
+            if (!float.TryParse(reducedTokens[index + 1], NumberStyles.Float, CultureInfo.InvariantCulture, out float nextValue))
+            {
+                return false;
+            }
+
+            result = reducedTokens[index] == "+"
+                ? result + nextValue
+                : result - nextValue;
+        }
+
+        return true;
+    }
+
+    private static bool TryTokenizeExpression(string expression, out List<string> tokens)
+    {
+        tokens = new List<string>();
+        if (string.IsNullOrWhiteSpace(expression))
+        {
+            return false;
+        }
+
+        int index = 0;
+        while (index < expression.Length)
+        {
+            char current = expression[index];
+            if (char.IsWhiteSpace(current))
+            {
+                index++;
+                continue;
+            }
+
+            if (current == '+' || current == '-')
+            {
+                bool isUnary = tokens.Count == 0 || IsOperatorToken(tokens[tokens.Count - 1]);
+                if (isUnary)
+                {
+                    if (!TryReadNumber(expression, ref index, out string signedNumber))
+                    {
+                        return false;
+                    }
+
+                    tokens.Add(signedNumber);
+                    continue;
+                }
+            }
+
+            if (current == '*' || current == '/' || current == '+' || current == '-')
+            {
+                tokens.Add(current.ToString());
+                index++;
+                continue;
+            }
+
+            if (char.IsDigit(current) || current == '.')
+            {
+                if (!TryReadNumber(expression, ref index, out string number))
+                {
+                    return false;
+                }
+
+                tokens.Add(number);
+                continue;
+            }
+
+            return false;
+        }
+
+        return tokens.Count > 0;
+    }
+
+    private static bool TryReadNumber(string expression, ref int index, out string numberToken)
+    {
+        int start = index;
+        if (expression[index] == '+' || expression[index] == '-')
+        {
+            index++;
+        }
+
+        bool hasDigit = false;
+        bool hasDecimalPoint = false;
+
+        while (index < expression.Length)
+        {
+            char current = expression[index];
+            if (char.IsDigit(current))
+            {
+                hasDigit = true;
+                index++;
+                continue;
+            }
+
+            if (current == '.' && !hasDecimalPoint)
+            {
+                hasDecimalPoint = true;
+                index++;
+                continue;
+            }
+
+            break;
+        }
+
+        if (!hasDigit)
+        {
+            numberToken = string.Empty;
+            return false;
+        }
+
+        numberToken = expression.Substring(start, index - start);
+        return true;
+    }
+
+    private static bool IsOperatorToken(string token)
+    {
+        return token == "+" || token == "-" || token == "*" || token == "/";
     }
 }
