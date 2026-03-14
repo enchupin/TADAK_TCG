@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>
 /// 플레이어의 전투 관련 데이터를 관리하는 클래스
@@ -6,6 +7,7 @@ using UnityEngine;
 public class PlayerData : MonoBehaviour
 {
     private const int BarrierRetentionBuffId = 3011;
+    private const float WeakenDamageMultiplier = 0.75f;
 
     /// <summary>싱글톤 인스턴스 (TrainingBattleManager.InitializeBattle()에서 생성)</summary>
     public static PlayerData Instance { get; private set; }
@@ -65,8 +67,7 @@ public class PlayerData : MonoBehaviour
     public int maxEnergy;
 
     // 버프/디버프
-    public int strength; // 힘 버프 (Legacy support for now)
-    public System.Collections.Generic.List<Buff> currentBuffs = new System.Collections.Generic.List<Buff>();
+    public List<Buff> currentBuffs = new List<Buff>();
 
     /// <summary>
     /// 플레이어의 전투 시작 스탯을 초기화
@@ -94,27 +95,18 @@ public class PlayerData : MonoBehaviour
     }
 
     /// <summary>
-    /// 힘 버프 추가
-    /// </summary>
-    public void AddStrength(int amount)
-    {
-        strength += amount;
-        Debug.Log($"힘 +{amount} (현재: {strength})");
-    }
-
-    /// <summary>
     /// 버프 추가
     /// </summary>
     public void AddBuff(int buffId, int amount)
     {
-        BuffData data = BuffManager.Instance.GetBuffData(buffId);
+        BuffData data = BuffManager.Instance != null ? BuffManager.Instance.GetBuffData(buffId) : null;
         if (data == null)
         {
             data = new BuffData
             {
                 buffId = buffId,
                 name = $"버프 {buffId}",
-                buffType = 0,
+                buffType = BuffData.GetPolarityBuffType(buffId),
                 description = string.Empty
             };
         }
@@ -159,18 +151,20 @@ public class PlayerData : MonoBehaviour
     /// <summary>
     /// 피격 (방어력 적용)
     /// </summary>
-    public void TakeDamage(int amount)
+    public int TakeDamage(int amount)
     {
-        int damageAfterDefense = Mathf.Max(0, amount - defense);
+        int finalDamage = ApplyIncomingDamageMultiplier(amount);
+        int damageAfterDefense = Mathf.Max(0, finalDamage - defense);
         hp -= damageAfterDefense;
         hpLostThisTurn += damageAfterDefense;
         if (damageAfterDefense > 0)
         {
             hasLostHpThisTurn = true;
         }
-        defense = Mathf.Max(0, defense - amount);
+        defense = Mathf.Max(0, defense - finalDamage);
 
         Debug.Log($"플레이어가 {damageAfterDefense} 데미지를 받았습니다! (HP: {hp}/{maxHP})");
+        return damageAfterDefense;
     }
 
     /// <summary>
@@ -215,6 +209,10 @@ public class PlayerData : MonoBehaviour
             DecreaseBuffStack(3017, overheatDecay);
             RemoveBuff(4007);
         }
+
+        DecreaseBuffStack(BattleRuntimeDefinitions.CorrosionBuffId, 1);
+        DecreaseBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1);
+        DecreaseBuffStack(BattleRuntimeDefinitions.WeakBuffId, 1);
     }
 
     public int GetBuffStack(int buffId)
@@ -234,20 +232,34 @@ public class PlayerData : MonoBehaviour
         return true;
     }
 
-    public float GetOverheatBonusMultiplier()
+    public float GetOutgoingDamageMultiplier()
     {
-        // 과열(3017) 1 스택 = 최종 데미지 10%
-        return GetBuffStack(3017) * 0.1f;
+        if (GetBuffStack(BattleRuntimeDefinitions.WeakBuffId) > 0)
+        {
+            return WeakenDamageMultiplier;
+        }
+
+        return 1f;
     }
 
-    public int CalculateFinalDamage(int baseAmount, float cardMultiplier = 1f)
+    private int ApplyIncomingDamageMultiplier(int incomingDamage)
     {
-        // 합연산 먼저: 기본 피해 + 고정 증가량(힘)
-        int additiveResult = Mathf.Max(0, baseAmount + strength);
+        if (incomingDamage <= 0)
+        {
+            return 0;
+        }
 
-        // 곱연산은 마지막: 카드 배수 + 과열 배수(소수점 버림)
-        float totalMultiplier = Mathf.Max(0f, cardMultiplier + GetOverheatBonusMultiplier());
-        return Mathf.FloorToInt(additiveResult * totalMultiplier);
+        float multiplier = 1f;
+        if (GetBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId) > 0)
+        {
+            multiplier = 1.5f;
+        }
+        else if (GetBuffStack(BattleRuntimeDefinitions.CorrosionBuffId) > 0)
+        {
+            multiplier = 1.25f;
+        }
+
+        return Mathf.FloorToInt(incomingDamage * multiplier);
     }
 
     private void DecreaseBuffStack(int buffId, int amount)

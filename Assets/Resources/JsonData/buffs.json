@@ -1186,6 +1186,18 @@
                 "timing": "OffTrigger"
             },
             "description": "턴 종료 시 과열 수치가 {stack}만큼 감소합니다."
+        },
+        {
+            "buffId": 4008,
+            "name": "약화",
+            "buffType": 4,
+            "description": "가하는 피해가 25% 감소합니다."
+        },
+        {
+            "buffId": 10001,
+            "name": "독버섯",
+            "buffType": 1,
+            "description": "사망 시 적에게 강화된 부식을 2 부여합니다."
         }
     ]
 }

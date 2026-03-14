@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>
 /// 버프 효과
@@ -7,32 +8,28 @@ using UnityEngine;
 [System.Serializable]
 public class BuffEffect : ICardEffect
 {
-    public string stat; // Deprecated but kept for legacy
     public int buffId;
     public int amount;
     public string amountFormula;
     public int duration;
     public TargetType target;
-    
+
     public void Execute(TrainingBattleManager battleManager)
     {
         int finalAmount = string.IsNullOrWhiteSpace(amountFormula)
             ? amount : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData);
-        
-        if (buffId > 0)
+
+        if (buffId <= 0)
         {
-            // Apply by BuffID using BuffManager
-            ApplyBuff(battleManager, finalAmount);
+            Debug.LogWarning("[BuffEffect] buffId가 없는 Buff 이펙트는 지원하지 않습니다");
+            return;
         }
-        else
-        {
-            // Fallback to legacy string-based stat
-            ApplyLegacyBuff(battleManager, finalAmount);
-        }
-        
+
+        // Apply by BuffID using BuffManager
+        ApplyBuff(battleManager, finalAmount);
         battleManager.UpdateAllUI();
     }
-    
+
     private void ApplyBuff(TrainingBattleManager manager, int finalAmount)
     {
         if (target == TargetType.Self)
@@ -44,7 +41,7 @@ public class BuffEffect : ICardEffect
             Monster targetMonster = manager.currentTarget;
             if (targetMonster == null)
             {
-                System.Collections.Generic.List<Monster> livingMonsters = manager.GetLivingMonsters();
+                List<Monster> livingMonsters = manager.GetLivingMonsters();
                 if (livingMonsters != null && livingMonsters.Count == 1)
                 {
                     targetMonster = livingMonsters[0];
@@ -58,7 +55,7 @@ public class BuffEffect : ICardEffect
         }
         else if (target == TargetType.AllEnemies)
         {
-            System.Collections.Generic.List<Monster> livingMonsters = manager.GetLivingMonsters();
+            List<Monster> livingMonsters = manager.GetLivingMonsters();
             if (livingMonsters == null)
                 return;
 
@@ -71,19 +68,4 @@ public class BuffEffect : ICardEffect
             }
         }
     }
-    
-    private void ApplyLegacyBuff(TrainingBattleManager manager, int finalAmount)
-    {
-        switch (stat?.ToLower())
-        {
-            case "strength":
-            case "힘":
-                manager.playerData.AddStrength(finalAmount);
-                break;
-            default:
-                Debug.LogWarning($"[BuffEffect] Unknown stat: {stat}");
-                break;
-        }
-    }
-    
 }
