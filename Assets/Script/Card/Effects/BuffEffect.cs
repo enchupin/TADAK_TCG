@@ -19,6 +19,11 @@ public class BuffEffect : ICardEffect
         int finalAmount = string.IsNullOrWhiteSpace(amountFormula)
             ? amount : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData);
 
+        if (buffId > 0 && string.IsNullOrWhiteSpace(amountFormula) && finalAmount <= 0)
+        {
+            finalAmount = 1;
+        }
+
         if (buffId <= 0)
         {
             Debug.LogWarning("[BuffEffect] buffId가 없는 Buff 이펙트는 지원하지 않습니다");
@@ -34,7 +39,7 @@ public class BuffEffect : ICardEffect
     {
         if (target == TargetType.Self)
         {
-            manager.playerData.AddBuff(buffId, finalAmount);
+            manager.ApplyBuffToPlayer(buffId, finalAmount);
         }
         else if (target == TargetType.SingleEnemy)
         {
@@ -50,7 +55,7 @@ public class BuffEffect : ICardEffect
 
             if (targetMonster != null && !targetMonster.IsDead())
             {
-                targetMonster.AddBuff(buffId, finalAmount);
+                manager.ApplyBuffToMonster(targetMonster, buffId, finalAmount);
             }
         }
         else if (target == TargetType.AllEnemies)
@@ -63,7 +68,7 @@ public class BuffEffect : ICardEffect
             {
                 if (monster != null && !monster.IsDead())
                 {
-                    monster.AddBuff(buffId, finalAmount);
+                    manager.ApplyBuffToMonster(monster, buffId, finalAmount);
                 }
             }
         }

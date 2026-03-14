@@ -11,6 +11,7 @@ public class DamageEffect : ICardEffect
 {
     public int amount;
     public string amountFormula;
+    public float ampMultiplier = 1f;
     public TargetType target = TargetType.SingleEnemy;
     public List<ICardEffect> onActions;
 
@@ -26,7 +27,8 @@ public class DamageEffect : ICardEffect
 
     private void ExecuteInternal(TrainingBattleManager battleManager, int forwardedAmount)
     {
-        int finalAmount = ResolveDamageAmount(battleManager, forwardedAmount);
+        ResolveDamageAmount(battleManager, forwardedAmount, out int baseAmount, out float cardMultiplier);
+        int finalAmount = BuildFinalDamageAmount(battleManager, baseAmount, cardMultiplier);
         int totalDamageDealt = 0;
 
         switch (target)
@@ -88,33 +90,45 @@ public class DamageEffect : ICardEffect
         battleManager.UpdateAllUI();
     }
 
-    private int ResolveDamageAmount(TrainingBattleManager battleManager, int forwardedAmount)
+    private int BuildFinalDamageAmount(TrainingBattleManager battleManager, int baseAmount, float cardMultiplier)
     {
-        int baseAmount = amount > 0 ? amount : Mathf.Max(0, forwardedAmount);
+        if (battleManager.playerData == null)
+        {
+            return Mathf.Max(0, Mathf.FloorToInt(baseAmount * Mathf.Max(0f, cardMultiplier)));
+        }
+
+        return battleManager.playerData.CalculateCardDamage(baseAmount, ampMultiplier, cardMultiplier);
+    }
+
+    private void ResolveDamageAmount(TrainingBattleManager battleManager, int forwardedAmount, out int baseAmount, out float cardMultiplier)
+    {
+        cardMultiplier = 1f;
+        baseAmount = amount > 0 ? amount : Mathf.Max(0, forwardedAmount);
         int formulaBaseValue = forwardedAmount > 0 ? forwardedAmount : amount;
 
         if (!string.IsNullOrWhiteSpace(amountFormula))
         {
             if (TryParseMultiplierFormula(amountFormula, out float parsedMultiplier))
             {
-                return Mathf.Max(0, Mathf.FloorToInt(baseAmount * parsedMultiplier));
+                cardMultiplier = parsedMultiplier;
+                return;
             }
 
             if (IsTargetHpFormula(amountFormula))
             {
                 Monster targetMonster = ResolveCurrentTarget(battleManager);
-                return targetMonster != null ? Mathf.Max(0, targetMonster.hp) : 0;
+                baseAmount = targetMonster != null ? Mathf.Max(0, targetMonster.hp) : 0;
+                return;
             }
 
-            return Mathf.Max(0, FormulaEvaluator.Evaluate(
+            baseAmount = Mathf.Max(0, FormulaEvaluator.Evaluate(
                 amountFormula,
                 battleManager.battleContext,
                 battleManager.playerData,
                 null,
                 formulaBaseValue));
+            return;
         }
-
-        return Mathf.Max(0, baseAmount);
     }
 
     private bool TryParseMultiplierFormula(string formula, out float multiplier)

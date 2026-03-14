@@ -51,6 +51,10 @@ public class MoveEffect : ICardEffect
                 battleManager.battleContext?.OnCardsDiscarded(movedCount);
             }
 
+            if (ShouldCountAsShuffle()) {
+                battleManager.battleContext?.OnDeckShuffled();
+            }
+
             if (onActions != null) {
                 foreach (ICardEffect onAction in onActions) {
                     onAction?.Execute(battleManager, movedCount);
@@ -207,6 +211,11 @@ public class MoveEffect : ICardEffect
     private bool IsAllFormula()
     {
         return string.Equals(amountFormula, "all", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private bool ShouldCountAsShuffle()
+    {
+        return to == MoveZoneType.DrawPile && position != MovePositionType.Top;
     }
 
     private static void AddUnique(List<Card> target, List<Card> source)

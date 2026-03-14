@@ -51,10 +51,10 @@
                         "property": "CardId",
                         "operator": "In",
                         "value": [
-                            101050,
-                            101052,
-                            101054,
-                            101056
+                            101080,
+                            101082,
+                            101084,
+                            101086
                         ]
                     }
                 ],
@@ -68,7 +68,7 @@
                     }
                 ]
             },
-            "description": "앞으로 획득하는 모든 포션 카드가 강화됩니다."
+            "description": "이번 전투 동안 모든 포션 카드가 강화됩니다."
         },
         {
             "buffId": 1003,
@@ -85,14 +85,14 @@
                         "property": "CardId",
                         "operator": "In",
                         "value": [
-                            101050,
-                            101051,
-                            101052,
-                            101053,
-                            101054,
-                            101055,
-                            101056,
-                            101057
+                            101080,
+                            101081,
+                            101082,
+                            101083,
+                            101084,
+                            101085,
+                            101086,
+                            101087
                         ]
                     }
                 ],
@@ -103,7 +103,7 @@
                     }
                 ]
             },
-            "description": "지금부터 제작하는 포션 카드가 소멸되지 않습니다. 포션 카드를 사용할 때마다 카드를 1장 뽑습니다."
+            "description": "이번 전투 동안 포션 카드가 소멸되는 대신 버린 카드 더미로 가며, 포션 카드를 사용할 때마다 카드를 1장 뽑습니다."
         },
         {
             "buffId": 1004,
@@ -119,7 +119,7 @@
                         "subject": "EventValue",
                         "property": "CardId",
                         "operator": "Eq",
-                        "value": 401080
+                        "value": 301080
                     }
                 ],
                 "effects": [
@@ -132,7 +132,7 @@
                     }
                 ]
             },
-            "description": "지금부터 생성하는 빙하 조형 카드가 강화됩니다."
+            "description": "이번 전투 동안 빙하 조형 카드가 강화됩니다."
         },
         {
             "buffId": 1005,
@@ -345,6 +345,21 @@
             "description": "매 턴 시작 시 보호막을 모두 잃는 대신 15만 잃습니다."
         },
         {
+            "buffId": 1013,
+            "name": "영구 보호막 유지",
+            "buffType": 1,
+            "trigger": {
+                "event": "OnTurnStart"
+            },
+            "effects": [
+                {
+                    "type": "Cancel",
+                    "cancel": "ReduceBarrier"
+                }
+            ],
+            "description": "이번 전투 동안 턴 시작 시 보호막이 사라지지 않습니다."
+        },
+        {
             "buffId": 2001,
             "name": "드로우 불가",
             "buffType": 2,
@@ -456,9 +471,9 @@
             "description": "포션을 사용할 때마다 무작위 적에게 부식을 {stack} 부여합니다."
         },
         {
-            "buffId": 3005,
-            "name": "잔혹함",
-            "buffType": 3,
+            "buffId": 4009,
+            "name": "잔혹",
+            "buffType": 4,
             "trigger": {
                 "event": "OnStatChange",
                 "stat": "Buff",
@@ -476,11 +491,11 @@
                 "effects": [
                     {
                         "type": "Damage",
-                        "target": "SingleEnemy"
+                        "target": "Self"
                     }
                 ]
             },
-            "description": "적에게 부정적인 효과를 부여할 때마다 피해를 {stack} 줍니다."
+            "description": "부정적인 효과를 얻을 때마다 피해를 {stack} 받습니다."
         },
         {
             "buffId": 3006,
@@ -688,11 +703,11 @@
             "effects": [
                 {
                     "type": "Multiply",
-                    "amountFormula": "1 + (stack * 0.2)",
+                    "amountFormula": "1 + (stack * 0.1)",
                     "target": "Damage"
                 }
             ],
-            "description": "피해량이 {stack * 20}% 증가합니다."
+            "description": "피해량이 {stack * 10}% 증가합니다."
         },
         {
             "buffId": 3018,
@@ -986,35 +1001,12 @@
             "trigger": {
                 "event": "OnDamaged"
             },
-            "condition": [
-                {
-                    "check": [
-                        {
-                            "subject": "Defense",
-                            "operator": "Gt",
-                            "value": 0
-                        },
-                        {
-                            "subject": "Defense",
-                            "operator": "Lt",
-                            "value": "EventValue"
-                        }
-                    ],
-                    "effect": [
-                        {
-                            "type": "ChangeStat",
-                            "stat": "EventValue",
-                            "operation": "Set",
-                            "amount": 0
-                        }
-                    ]
-                }
-            ],
+            "effects": [],
             "decrease": {
                 "timing": "OffTrigger",
                 "amount": 1
             },
-            "description": "보호막이 파괴될 때, 보호막을 초과하는 피해를 1회 막아냅니다."
+            "description": "피해를 {stack}회 받지 않습니다."
         },
         {
             "buffId": 4001,
@@ -1191,6 +1183,17 @@
             "buffId": 4008,
             "name": "약화",
             "buffType": 4,
+            "trigger": {
+                "event": "OnAttack"
+            },
+            "effects": [
+                {
+                    "type": "ChangeStat",
+                    "stat": "Damage",
+                    "change": "Multiply",
+                    "amount": 0.75
+                }
+            ],
             "description": "가하는 피해가 25% 감소합니다."
         },
         {

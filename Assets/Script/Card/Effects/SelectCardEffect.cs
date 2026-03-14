@@ -99,6 +99,9 @@ public class SelectCardEffect : ICardEffect
             case MoveZoneType.Unique:
                 AddCardsByCardType(sourceCards, battleManager, false);
                 break;
+            case MoveZoneType.AllUnique:
+                AddAllUniqueCards(sourceCards);
+                break;
             case MoveZoneType.Source:
             case MoveZoneType.None:
                 AddUnique(sourceCards, battleManager.battleContext.GetSelectedCards());
@@ -142,6 +145,9 @@ public class SelectCardEffect : ICardEffect
             return;
         }
 
+        Card sourceCard = battleManager?.battleContext?.GetLastPlayedCard();
+        int excludedUniqueCardId = ResolveExcludedUniqueCardId(sourceCard);
+
         List<CardData> characterCards = CardManager.GetCardsByCharacter(sourceCharacter.Value);
         if (characterCards == null) {
             return;
@@ -161,6 +167,29 @@ public class SelectCardEffect : ICardEffect
                 if (!IsUniqueCardId(cardData.cardId)) {
                     continue;
                 }
+
+                if (excludedUniqueCardId > 0 && cardData.cardId == excludedUniqueCardId) {
+                    continue;
+                }
+            }
+
+            Card card = cardData.ToCard();
+            if (card != null) {
+                AddUnique(target, card);
+            }
+        }
+    }
+
+    private static void AddAllUniqueCards(List<Card> target)
+    {
+        List<CardData> allCards = CardManager.GetAllCards();
+        if (allCards == null) {
+            return;
+        }
+
+        foreach (CardData cardData in allCards) {
+            if (cardData == null || cardData.character == Character.Monster || !IsUniqueCardId(cardData.cardId)) {
+                continue;
             }
 
             Card card = cardData.ToCard();
@@ -182,6 +211,26 @@ public class SelectCardEffect : ICardEffect
         }
 
         return lastPlayedCard.character;
+    }
+
+    private static int ResolveExcludedUniqueCardId(Card sourceCard)
+    {
+        if (sourceCard == null) {
+            return 0;
+        }
+
+        int familyBaseId = ResolveCardFamilyBaseId(sourceCard.cardId);
+        if (familyBaseId != 302070 && familyBaseId != 102040) {
+            return 0;
+        }
+
+        return familyBaseId;
+    }
+
+    private static int ResolveCardFamilyBaseId(int cardId)
+    {
+        int suffix = Mathf.Abs(cardId) % 10;
+        return suffix == 0 ? cardId : cardId - suffix;
     }
 
     private void AddCardsByIdFilter(List<Card> target)

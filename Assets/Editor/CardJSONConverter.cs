@@ -46,6 +46,7 @@ public class CardJSONConverter : EditorWindow
             case "CardId": return MoveZoneType.CardId;
             case "Basic": return MoveZoneType.Basic;
             case "Unique": return MoveZoneType.Unique;
+            case "AllUnique": return MoveZoneType.AllUnique;
             default:
                 Debug.LogWarning($"[CardJSONConverter] Unknown move zone: {zone}. Fallback to {defaultZone}.");
                 return defaultZone;
@@ -87,6 +88,7 @@ public class CardJSONConverter : EditorWindow
             case "CardId":
             case "Basic":
             case "Unique":
+            case "AllUnique":
                 return true;
             default:
                 return false;

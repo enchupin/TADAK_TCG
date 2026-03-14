@@ -12,6 +12,7 @@ public class TurnSystem
     private int turnNumber;
     private int pendingExtraDrawAtTurnStart;
     private int pendingExtraTurns;
+    private int pendingExtraTurnEndTriggers;
 
     public bool IsTurnTransitioning { get; private set; }
 
@@ -25,6 +26,7 @@ public class TurnSystem
         turnNumber = 0;
         pendingExtraDrawAtTurnStart = 0;
         pendingExtraTurns = 0;
+        pendingExtraTurnEndTriggers = 0;
         IsTurnTransitioning = false;
     }
 
@@ -41,6 +43,16 @@ public class TurnSystem
         }
 
         pendingExtraTurns += amount;
+    }
+
+    public void AddTurnEndTriggerRepeat(int amount)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        pendingExtraTurnEndTriggers += amount;
     }
 
     public bool CanPlayerPlayCard()
@@ -102,7 +114,7 @@ public class TurnSystem
 
         if (battleManager.isDebugMode && turnNumber == 1)
         {
-            battleManager.DebugDrawCardsByEffect();
+            battleManager.DebugDrawMatchingCards();
         }
         else
         {
@@ -110,6 +122,7 @@ public class TurnSystem
         }
 
         battleManager.SetState(BattleTurnState.PlayerAction);
+        battleManager.ResolveDeferredTurnStartPowerEffects();
         battleManager.UpdateEndTurnButtonState();
         battleManager.RefreshHandPlayableState();
         battleManager.UpdateAllUI();
@@ -130,7 +143,7 @@ public class TurnSystem
 
         battleManager.ApplyPlayerTurnEndEffects();
         ExpireTurnCardModifiers();
-        DiscardRemainingHandCards();
+        yield return DiscardRemainingHandCards();
 
         battleManager.UpdateAllUI();
 
@@ -212,14 +225,14 @@ public class TurnSystem
         }
     }
 
-    private void DiscardRemainingHandCards()
+    private IEnumerator DiscardRemainingHandCards()
     {
         if (battleManager.handManager == null || battleManager.usableDeckManager == null)
-            return;
+            yield break;
         List<Card> remainingCards = battleManager.handManager.GetHandCards();
         if (remainingCards.Count == 0)
         {
-            return;
+            yield break;
         }
 
         foreach (Card card in remainingCards)
@@ -228,8 +241,26 @@ public class TurnSystem
 
             if (battleManager.playerData != null && battleManager.playerData.IsDead())
             {
-                return;
+                yield break;
             }
+        }
+
+        List<Card> bonusRetainedCards = new List<Card>();
+        int bonusRetainCount = battleManager.GetTurnEndRetainCount();
+        if (bonusRetainCount > 0)
+        {
+            List<Card> selectableCards = new List<Card>();
+            foreach (Card card in remainingCards)
+            {
+                if (card == null || card.ShouldExhaustAtTurnEnd() || card.ShouldRetainAtTurnEnd())
+                {
+                    continue;
+                }
+
+                selectableCards.Add(card);
+            }
+
+            yield return SelectTurnEndRetainCards(selectableCards, bonusRetainCount, bonusRetainedCards);
         }
 
         List<Card> retainedCards = new List<Card>();
@@ -246,12 +277,17 @@ public class TurnSystem
                 exhaustedCards.Add(card);
                 continue;
             }
-            if (card.ShouldRetainAtTurnEnd())
+            if (card.ShouldRetainAtTurnEnd() || bonusRetainedCards.Contains(card))
             {
                 retainedCards.Add(card);
                 continue;
             }
             discardedCards.Add(card);
+        }
+        ExecuteAdditionalTurnEndTriggers(remainingCards, retainedCards);
+        if (battleManager.playerData != null && battleManager.playerData.IsDead())
+        {
+            yield break;
         }
         if (discardedCards.Count > 0)
         {
@@ -280,6 +316,105 @@ public class TurnSystem
         {
             retainedCard.ExecuteKeepEffects(battleManager);
             battleManager.handManager.RefreshCardDisplay(retainedCard);
+        }
+    }
+
+    private void ExecuteAdditionalTurnEndTriggers(List<Card> remainingCards, List<Card> retainedCards)
+    {
+        if (pendingExtraTurnEndTriggers <= 0)
+        {
+            return;
+        }
+
+        int repeatCount = pendingExtraTurnEndTriggers;
+        pendingExtraTurnEndTriggers = 0;
+
+        for (int i = 0; i < repeatCount; i++)
+        {
+            battleManager.ResolveAdditionalTurnEndTriggers();
+            if (battleManager.playerData != null && battleManager.playerData.IsDead())
+            {
+                return;
+            }
+
+            if (remainingCards != null)
+            {
+                foreach (Card card in remainingCards)
+                {
+                    card?.ExecuteEndTurnInHandEffects(battleManager);
+                    if (battleManager.playerData != null && battleManager.playerData.IsDead())
+                    {
+                        return;
+                    }
+                }
+            }
+
+            if (retainedCards == null)
+            {
+                continue;
+            }
+
+            foreach (Card retainedCard in retainedCards)
+            {
+                retainedCard?.ExecuteKeepEffects(battleManager);
+                battleManager.handManager?.RefreshCardDisplay(retainedCard);
+                if (battleManager.playerData != null && battleManager.playerData.IsDead())
+                {
+                    return;
+                }
+            }
+        }
+    }
+
+    private IEnumerator SelectTurnEndRetainCards(List<Card> selectableCards, int selectCount, List<Card> selectedCards)
+    {
+        if (selectedCards == null || selectableCards == null || selectableCards.Count == 0 || selectCount <= 0)
+        {
+            yield break;
+        }
+
+        int resolvedCount = Mathf.Min(selectCount, selectableCards.Count);
+        bool selectionCompleted = false;
+        List<Card> resolvedSelection = new List<Card>();
+
+        bool opened = battleManager.OpenSelectCardPanel(selectableCards, resolvedCount, cards =>
+        {
+            if (cards != null)
+            {
+                foreach (Card card in cards)
+                {
+                    if (card != null && selectableCards.Contains(card) && !resolvedSelection.Contains(card))
+                    {
+                        resolvedSelection.Add(card);
+                    }
+                }
+            }
+
+            selectionCompleted = true;
+        });
+
+        if (opened)
+        {
+            yield return new WaitUntil(() => selectionCompleted);
+        }
+        else
+        {
+            for (int i = 0; i < resolvedCount; i++)
+            {
+                Card card = selectableCards[i];
+                if (card != null && !resolvedSelection.Contains(card))
+                {
+                    resolvedSelection.Add(card);
+                }
+            }
+        }
+
+        foreach (Card card in resolvedSelection)
+        {
+            if (!selectedCards.Contains(card))
+            {
+                selectedCards.Add(card);
+            }
         }
     }
 

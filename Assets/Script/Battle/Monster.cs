@@ -41,6 +41,7 @@ public abstract class Monster : MonoBehaviour
     protected abstract int BaseMaxHp { get; }
     protected virtual int BaseAttackPower => 0;
     protected virtual int BaseDefense => 0;
+    protected virtual bool IsBossMonster => false;
 
     protected virtual void Awake()
     {
@@ -135,6 +136,10 @@ public abstract class Monster : MonoBehaviour
         defense = Mathf.Max(0, defense - finalDamage);
 
         Debug.Log($"{name} took {damageAfterDefense} damage. (HP: {hp}/{maxHP})");
+        if (damageAfterDefense > 0)
+        {
+            TrainingBattleManager.Instance?.HandleMonsterHpLost(this, damageAfterDefense);
+        }
         HandleDeathIfNeeded();
         UpdateUI();
         return damageAfterDefense;
@@ -199,12 +204,20 @@ public abstract class Monster : MonoBehaviour
         }
 
         // 디버프/버프 스택 변경 즉시 UI 반영
+        if (buffId == BattleRuntimeDefinitions.FreezeBuffId)
+        {
+            ResolveFreezeThresholdIfNeeded();
+        }
+
         UpdateUI();
     }
 
     public void OnTurnStart()
     {
+        ResolveFreezeThresholdIfNeeded();
+        UpdateUI();
         int freezeStack = GetBuffStack(BattleRuntimeDefinitions.FreezeBuffId);
+        freezeStack = Mathf.Min(freezeStack, 6);
         if (freezeStack >= 7)
         {
             DecreaseBuffStack(BattleRuntimeDefinitions.FreezeBuffId, 7);
@@ -218,6 +231,19 @@ public abstract class Monster : MonoBehaviour
 
     public void OnTurnEnd()
     {
+        int regeneration = GetBuffStack(3001);
+        if (regeneration > 0)
+        {
+            Heal(regeneration);
+            DecreaseBuffStack(3001, 1);
+        }
+
+        int burn = GetBuffStack(4003);
+        if (burn > 0)
+        {
+            TakeDamage(burn, 0);
+        }
+
         // 부식(4001), 강화부식(4002)은 턴 종료 시 지속 턴 1 감소
         DecreaseBuffStack(BattleRuntimeDefinitions.CorrosionBuffId, 1);
         DecreaseBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1);
@@ -243,6 +269,12 @@ public abstract class Monster : MonoBehaviour
         return buff != null ? buff.stack : 0;
     }
 
+    public void ConsumeBuffStack(int buffId, int amount)
+    {
+        DecreaseBuffStack(buffId, amount);
+        UpdateUI();
+    }
+
     protected void SetAttackIntent(int intentValue, string intentDescription)
     {
         plannedIntentType = MonsterIntentType.Attack;
@@ -266,7 +298,7 @@ public abstract class Monster : MonoBehaviour
 
         int finalDamage = ApplyOutgoingDamageModifier(baseDamage);
         Debug.Log($"[Enemy Turn] {name} attacks for {finalDamage}");
-        return target.TakeDamage(finalDamage);
+        return target.TakeDamage(finalDamage, this);
     }
 
     protected void AddCardToPlayerDiscard(Card card)
@@ -343,11 +375,15 @@ public abstract class Monster : MonoBehaviour
         // 강화부식이 있으면 50%, 아니면 부식 25%
         if (GetBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId) > 0)
         {
-            multiplier = 1.5f;
+            multiplier = BuffManager.Instance != null
+                ? BuffManager.Instance.GetIncomingDamageMultiplier(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1.5f)
+                : 1.5f;
         }
         else if (GetBuffStack(BattleRuntimeDefinitions.CorrosionBuffId) > 0)
         {
-            multiplier = 1.25f;
+            multiplier = BuffManager.Instance != null
+                ? BuffManager.Instance.GetIncomingDamageMultiplier(BattleRuntimeDefinitions.CorrosionBuffId, 1.25f)
+                : 1.25f;
         }
 
         return Mathf.FloorToInt(incomingDamage * multiplier);
@@ -366,6 +402,33 @@ public abstract class Monster : MonoBehaviour
         if (buff.stack <= 0)
         {
             currentBuffs.Remove(buff);
+        }
+    }
+
+    private void ResolveFreezeThresholdIfNeeded()
+    {
+        int freezeStack = GetBuffStack(BattleRuntimeDefinitions.FreezeBuffId);
+        if (freezeStack < 7)
+        {
+            return;
+        }
+
+        while (freezeStack >= 7 && !IsDead())
+        {
+            DecreaseBuffStack(BattleRuntimeDefinitions.FreezeBuffId, 7);
+            freezeStack -= 7;
+
+            if (IsBossMonster)
+            {
+                Debug.Log($"[Monster] {name}은 빙결 7스택으로 대신 20 피해를 받습니다.");
+                TakeDamage(20, 0);
+                continue;
+            }
+
+            skipCurrentTurnAction = true;
+            ClearPlannedAction();
+            Debug.Log($"[Monster] {name} 빙결 7스택으로 기절 상태가 되어 이번 턴 행동을 쉽니다.");
+            break;
         }
     }
 
@@ -396,6 +459,7 @@ public abstract class Monster : MonoBehaviour
         defense = 0;
         ClearPlannedAction();
         OnDeathTriggered();
+        TrainingBattleManager.Instance?.HandleMonsterDeath(this);
         Debug.Log($"[Monster] {name} 처치");
     }
 

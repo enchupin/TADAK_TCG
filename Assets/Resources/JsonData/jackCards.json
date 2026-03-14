@@ -160,7 +160,7 @@
             "keywords": [
                 3
             ],
-            "description": "잭의 고유 카드를 1장 선택해서 획득합니다.",
+            "description": "잭의 다른 고유 카드를 1장 선택해서 획득합니다.",
             "effects": [
                 {
                     "type": "SelectCard",
@@ -208,11 +208,11 @@
             "keywords": [
                 3
             ],
-            "description": "모든 카드 중 1장을 선택해서 획득합니다.",
+            "description": "아군의 모든 고유 카드 중 1장을 선택해서 획득합니다.",
             "effects": [
                 {
                     "type": "SelectCard",
-                    "from": "AllCards",
+                    "from": "AllUnique",
                     "amount": 1,
                     "onAction": {
                         "type": "Copy",
@@ -577,7 +577,7 @@
                 3,
                 9
             ],
-            "description": "스테미나를 2 얻습니다. 카드를  1장 뽑습니다.",
+            "description": "에너지를 2 얻습니다. 카드를 1장 뽑습니다.",
             "effects": [
                 {
                     "type": "Stamina",

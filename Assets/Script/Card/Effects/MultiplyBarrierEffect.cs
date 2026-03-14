@@ -2,7 +2,7 @@
 using UnityEngine;
 
 /// <summary>
-/// 방어도 배율 이펙트
+/// 보호막 배율 이펙트
 /// </summary>
 [System.Serializable]
 public class MultiplyBarrierEffect : ICardEffect

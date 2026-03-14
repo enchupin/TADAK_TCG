@@ -561,9 +561,6 @@
             "name": "뚜셰",
             "characterId": 202,
             "cost": 1,
-            "keywords": [
-                9
-            ],
             "description": "피해를 1 입힙니다. 보호막에 막히지 않은 피해만큼 피해 증폭을 얻습니다.",
             "effects": [
                 {
@@ -586,9 +583,6 @@
             "name": "뚜셰 +",
             "characterId": 202,
             "cost": 0,
-            "keywords": [
-                9
-            ],
             "description": "피해를 1 입힙니다. 보호막에 막히지 않은 피해만큼 피해 증폭을 얻습니다.",
             "effects": [
                 {
@@ -610,9 +604,6 @@
             "name": "뚜셰 +",
             "characterId": 202,
             "cost": 1,
-            "keywords": [
-                9
-            ],
             "description": "피해를 2 입힙니다. 보호막에 막히지 않은 피해만큼 피해 증폭을 얻습니다.",
             "effects": [
                 {
@@ -667,7 +658,7 @@
                         {
                             "type": "ModifyCard",
                             "param": "Damage",
-                            "amountFormula": "Stack(2002)",
+                            "amountFormula": "Stack(3002)",
                             "target": "Self"
                         }
                     ]

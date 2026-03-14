@@ -1,12 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Globalization;
+using static BattleRuntimeDefinitions;
 
 public class AttackEffect : ICardEffect
 {
-    private const int DamageAmplifyBuffId = 3002;
-    private const int OverheatBuffId = 3017;
-
     public int amount;
     public string amountFormula;
     public List<int> cardIdList;
@@ -16,8 +14,12 @@ public class AttackEffect : ICardEffect
 
     public void Execute(TrainingBattleManager battleManager)
     {
+        int attackBoost = battleManager?.playerData != null
+            ? battleManager.playerData.GetBuffStack(AttackBoostBuffId)
+            : 0;
+
         // 최종 공격 피해
-        int finalAmount = BuildFinalDamageAmount(battleManager);
+        int finalAmount = BuildFinalDamageAmount(battleManager, attackBoost);
         int totalDamageDealt = 0; // 총 누적 피해
 
         switch (target) {
@@ -34,7 +36,13 @@ public class AttackEffect : ICardEffect
                 }
 
                 foreach (Monster monster in targets) {
+                    if (monster == null || monster.IsDead()) {
+                        continue;
+                    }
+
+                    int barrierBefore = monster.defense;
                     totalDamageDealt += monster.TakeDamage(finalAmount, 0);
+                    battleManager.HandlePlayerAttackResolved(monster, barrierBefore, monster.defense);
                 }
                 break;
 
@@ -57,7 +65,9 @@ public class AttackEffect : ICardEffect
                     return;
                 }
 
+                int targetBarrierBefore = targetMonster.defense;
                 totalDamageDealt += targetMonster.TakeDamage(finalAmount, 0);
+                battleManager.HandlePlayerAttackResolved(targetMonster, targetBarrierBefore, targetMonster.defense);
                 break;
 
             case TargetType.Self: // 자신에게 피해
@@ -71,6 +81,10 @@ public class AttackEffect : ICardEffect
         }
 
         battleManager.battleContext?.OnDamageDealt(totalDamageDealt);
+        if (attackBoost > 0)
+        {
+            battleManager.playerData?.ConsumeBuffStack(AttackBoostBuffId, attackBoost);
+        }
         if (totalDamageDealt > 0 && battleManager.battleContext != null)
         {
             Debug.Log($"[AttackEffect] Damage dealt: {totalDamageDealt}, LastDamage: {battleManager.battleContext.lastDamageDealt}, ThisTurnTotal: {battleManager.battleContext.totalDamageDealt}");
@@ -83,22 +97,17 @@ public class AttackEffect : ICardEffect
         }
     }
 
-    private int BuildFinalDamageAmount(TrainingBattleManager battleManager)
+    private int BuildFinalDamageAmount(TrainingBattleManager battleManager, int attackBoost)
     {
         ResolveAttackAmount(battleManager, out int baseAmount, out float cardMultiplier);
+        baseAmount += Mathf.Max(0, attackBoost);
 
-        int scaledBaseDamage = Mathf.Max(0, Mathf.FloorToInt(baseAmount * Mathf.Max(0f, cardMultiplier)));
         if (battleManager.playerData == null)
         {
-            return scaledBaseDamage;
+            return Mathf.Max(0, Mathf.FloorToInt(baseAmount * Mathf.Max(0f, cardMultiplier)));
         }
 
-        int damageAmplify = Mathf.Max(0, Mathf.FloorToInt(
-            battleManager.playerData.GetBuffStack(DamageAmplifyBuffId) * Mathf.Max(0f, ampMultiplier)));
-
-        float overheatMultiplier = 1f + Mathf.Max(0, battleManager.playerData.GetBuffStack(OverheatBuffId)) * 0.1f;
-        float outgoingMultiplier = battleManager.playerData.GetOutgoingDamageMultiplier();
-        return Mathf.Max(0, Mathf.FloorToInt((scaledBaseDamage + damageAmplify) * overheatMultiplier * outgoingMultiplier));
+        return battleManager.playerData.CalculateCardDamage(baseAmount, ampMultiplier, cardMultiplier);
     }
 
     private void ResolveAttackAmount(TrainingBattleManager battleManager, out int baseAmount, out float cardMultiplier)
