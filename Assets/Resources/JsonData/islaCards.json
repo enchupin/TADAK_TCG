@@ -359,7 +359,7 @@
             "cardId": 101053,
             "name": "실험 끝! +",
             "characterId": 101,
-            "cost": 1,
+            "cost": 2,
             "description": "모든 적에게 이번 전투에 사용한 포션의 개수 X 3 만큼 피해를 입힙니다.",
             "effects": [
                 {

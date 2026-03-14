@@ -99,6 +99,9 @@ public class SelectCardEffect : ICardEffect
             case MoveZoneType.Unique:
                 AddCardsByCardType(sourceCards, battleManager, false);
                 break;
+            case MoveZoneType.AllUnique:
+                AddAllUniqueCards(sourceCards);
+                break;
             case MoveZoneType.Source:
             case MoveZoneType.None:
                 AddUnique(sourceCards, battleManager.battleContext.GetSelectedCards());
@@ -177,6 +180,25 @@ public class SelectCardEffect : ICardEffect
         }
     }
 
+    private static void AddAllUniqueCards(List<Card> target)
+    {
+        List<CardData> allCards = CardManager.GetAllCards();
+        if (allCards == null) {
+            return;
+        }
+
+        foreach (CardData cardData in allCards) {
+            if (cardData == null || cardData.character == Character.Monster || !IsUniqueCardId(cardData.cardId)) {
+                continue;
+            }
+
+            Card card = cardData.ToCard();
+            if (card != null) {
+                AddUnique(target, card);
+            }
+        }
+    }
+
     private static Character? ResolveSourceCharacter(TrainingBattleManager battleManager)
     {
         if (battleManager?.battleContext == null) {
@@ -198,7 +220,7 @@ public class SelectCardEffect : ICardEffect
         }
 
         int familyBaseId = ResolveCardFamilyBaseId(sourceCard.cardId);
-        if (familyBaseId != 302070) {
+        if (familyBaseId != 302070 && familyBaseId != 102040) {
             return 0;
         }
 

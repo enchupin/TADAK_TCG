@@ -557,13 +557,23 @@
             "keywords": [
                 1
             ],
-            "description": "보존: 보호막 유지 1을 얻습니다.",
+            "description": "다음 턴 시작 시 보호막이 사라지지 않습니다. 보존: 보호막을 5 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 1013,
+                    "buffId": 3011,
                     "amount": 1,
                     "target": "Self"
+                },
+                {
+                    "type": "Keep",
+                    "effects": [
+                        {
+                            "type": "Barrier",
+                            "amount": 5,
+                            "target": "Self"
+                        }
+                    ]
                 }
             ]
         },
