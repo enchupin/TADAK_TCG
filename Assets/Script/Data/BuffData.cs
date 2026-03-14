@@ -9,7 +9,7 @@ public class BuffData
     public string name;
     public int buffType; // 1: Buff, 2: Debuff (Example)
     public string description;
-    // We can add triggers and effects parsing later or store them as raw data for now
+    public List<BuffEffectData> effects = new();
 
     public bool IsBeneficialEffect()
     {
@@ -47,6 +47,70 @@ public class BuffData
 
         return Math.Max(0, value);
     }
+
+    public float GetIncomingDamageMultiplier(float fallbackValue = 1f)
+    {
+        return TryGetMultiplier("EventValue", null, out float multiplier)
+            ? multiplier
+            : fallbackValue;
+    }
+
+    public float GetOutgoingDamageMultiplier(float fallbackValue = 1f)
+    {
+        return TryGetMultiplier("Damage", "Damage", out float multiplier)
+            ? multiplier
+            : fallbackValue;
+    }
+
+    private bool TryGetMultiplier(string statName, string targetName, out float multiplier)
+    {
+        multiplier = 1f;
+        if (effects == null || effects.Count == 0)
+        {
+            return false;
+        }
+
+        foreach (BuffEffectData effect in effects)
+        {
+            if (effect == null)
+            {
+                continue;
+            }
+
+            bool isMultiplyEffect =
+                string.Equals(effect.change, "Multiply", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(effect.type, "Multiply", StringComparison.OrdinalIgnoreCase);
+            if (!isMultiplyEffect || effect.amount <= 0f)
+            {
+                continue;
+            }
+
+            bool statMatches = !string.IsNullOrWhiteSpace(statName) &&
+                string.Equals(effect.stat, statName, StringComparison.OrdinalIgnoreCase);
+            bool targetMatches = !string.IsNullOrWhiteSpace(targetName) &&
+                string.Equals(effect.target, targetName, StringComparison.OrdinalIgnoreCase);
+
+            if (!statMatches && !targetMatches)
+            {
+                continue;
+            }
+
+            multiplier = effect.amount;
+            return true;
+        }
+
+        return false;
+    }
+}
+
+[System.Serializable]
+public class BuffEffectData
+{
+    public string type;
+    public string stat;
+    public string change;
+    public string target;
+    public float amount;
 }
 
 [System.Serializable]

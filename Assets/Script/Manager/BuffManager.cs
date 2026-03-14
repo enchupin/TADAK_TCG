@@ -71,6 +71,31 @@ public class BuffManager : MonoBehaviour
         return null;
     }
 
+    public bool TryGetBuffData(int buffId, out BuffData data)
+    {
+        return buffDatabase.TryGetValue(buffId, out data);
+    }
+
+    public float GetIncomingDamageMultiplier(int buffId, float fallbackValue = 1f)
+    {
+        if (TryGetBuffData(buffId, out BuffData data) && data != null)
+        {
+            return data.GetIncomingDamageMultiplier(fallbackValue);
+        }
+
+        return fallbackValue;
+    }
+
+    public float GetOutgoingDamageMultiplier(int buffId, float fallbackValue = 1f)
+    {
+        if (TryGetBuffData(buffId, out BuffData data) && data != null)
+        {
+            return data.GetOutgoingDamageMultiplier(fallbackValue);
+        }
+
+        return fallbackValue;
+    }
+
     public void RegisterRuntimeBuffData(BuffData data)
     {
         if (data == null || data.buffId <= 0)

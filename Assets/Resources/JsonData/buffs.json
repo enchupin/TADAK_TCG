@@ -1206,6 +1206,17 @@
             "buffId": 4008,
             "name": "약화",
             "buffType": 4,
+            "trigger": {
+                "event": "OnAttack"
+            },
+            "effects": [
+                {
+                    "type": "ChangeStat",
+                    "stat": "Damage",
+                    "change": "Multiply",
+                    "amount": 0.75
+                }
+            ],
             "description": "가하는 피해가 25% 감소합니다."
         },
         {

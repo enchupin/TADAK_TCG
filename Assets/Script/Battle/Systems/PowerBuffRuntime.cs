@@ -1,43 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static BattleRuntimeDefinitions;
 
 public class PowerBuffRuntime
 {
-    private const int PotionEnhanceBuffId = 1002;
-    private const int PotionCycleBuffId = 1003;
-    private const int GlacierShapeEnhanceBuffId = 1004;
-    private const int UnplayableUnlockBuffId = 1006;
-    private const int DoubleJackBuffId = 1007;
-    private const int DuplicateGenerateBuffId = 1008;
-    private const int HighCostRepeatBuffId = 1009;
-    private const int StraightBuffId = 1010;
-    private const int RuneBarrierBuffId = 1011;
-    private const int PermanentBarrierRetentionBuffId = 1013;
-
-    private const int DamageAmplifyBuffId = 3002;
-    private const int PotionFactoryBuffId = 3007;
-    private const int ExtraDrawBuffId = 3008;
-    private const int ThornBuffId = 3010;
-    private const int GlacierBondBuffId = 3012;
-    private const int AbsoluteZeroBuffId = 3013;
-    private const int GlacierShapeOnHitBuffId = 3014;
-    private const int ColdAirBuffId = 3015;
-    private const int OverheatBuffId = 3017;
-    private const int OverheatGrowthBuffId = 3018;
-    private const int FlameConductionBuffId = 3019;
-    private const int LavaSkinBuffId = 3020;
-    private const int CounterattackBuffId = 3021;
-    private const int IntimidationBuffId = 3022;
-    private const int RetainChoiceBuffId = 3028;
-    private const int JokerPowerBuffId = 3029;
-    private const int RuneGenerationBuffId = 3032;
-
-    private const int BurnBuffId = 4003;
-    private const int FreezeBuffId = 4004;
-    private const int CorrosionBuffId = 4001;
-
-    private static readonly int[] BasePotionCardIds = { 101080, 101082, 101084, 101086 };
-    private static readonly int[] JokerUpgradeCardIds = { 102041, 102042, 102043, 102044, 102045 };
+    private const string BasePotionGroupName = "isla_potion_even_base_pool";
+    private const string JokerUpgradeGroupName = "enforce_102040";
 
     private static readonly Dictionary<int, int> GeneratedUpgradeMap = new()
     {
@@ -125,13 +93,13 @@ public class PowerBuffRuntime
         int potionFactory = GetPlayerBuffStack(PotionFactoryBuffId);
         if (potionFactory > 0)
         {
-            AddGeneratedCardsToHand(CreateRandomCards(BasePotionCardIds, potionFactory));
+            AddGeneratedCardsToHand(CreateRandomCardsFromGroup(BasePotionGroupName, potionFactory));
         }
 
         int jokerPower = GetPlayerBuffStack(JokerPowerBuffId);
         if (jokerPower > 0)
         {
-            AddGeneratedCardsToHand(CreateRandomCards(JokerUpgradeCardIds, jokerPower));
+            AddGeneratedCardsToHand(CreateRandomCardsFromGroup(JokerUpgradeGroupName, jokerPower));
         }
 
         int straightStack = GetPlayerBuffStack(StraightBuffId);
@@ -433,17 +401,23 @@ public class PowerBuffRuntime
         }
     }
 
-    private List<Card> CreateRandomCards(int[] pool, int count)
+    private List<Card> CreateRandomCardsFromGroup(string groupName, int count)
     {
         List<Card> generatedCards = new();
-        if (pool == null || pool.Length == 0 || count <= 0)
+        if (count <= 0)
+        {
+            return generatedCards;
+        }
+
+        List<int> pool = CardManager.GetCardIdsByGroup(groupName);
+        if (pool == null || pool.Count == 0)
         {
             return generatedCards;
         }
 
         for (int i = 0; i < count; i++)
         {
-            int index = Random.Range(0, pool.Length);
+            int index = Random.Range(0, pool.Count);
             Card generatedCard = CardManager.GetCardAsCard(pool[index]);
             if (generatedCard != null)
             {

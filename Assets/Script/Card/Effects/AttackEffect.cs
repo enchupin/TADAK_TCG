@@ -1,12 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Globalization;
+using static BattleRuntimeDefinitions;
 
 public class AttackEffect : ICardEffect
 {
-    private const int DamageAmplifyBuffId = 3002;
-    private const int OverheatBuffId = 3017;
-
     public int amount;
     public string amountFormula;
     public List<int> cardIdList;

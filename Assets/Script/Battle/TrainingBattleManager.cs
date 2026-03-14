@@ -627,9 +627,10 @@ public class TrainingBattleManager : MonoBehaviour
 
     private string GetDebugTargetSummary()
     {
+        string keywordName = KeywordDatabase.GetKeywordName((int)debugTargetKeyword);
         return debugCardFilterType switch
         {
-            DebugCardFilterType.Keyword => $"Keyword / {debugTargetKeyword}",
+            DebugCardFilterType.Keyword => $"Keyword / {(string.IsNullOrWhiteSpace(keywordName) ? debugTargetKeyword.ToString() : keywordName)}",
             DebugCardFilterType.Buff => $"Buff / {debugTargetBuffId}",
             _ => $"Effect / {debugTargetEffect}"
         };

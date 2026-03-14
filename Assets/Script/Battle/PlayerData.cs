@@ -6,15 +6,6 @@ using System.Collections.Generic;
 /// </summary>
 public class PlayerData : MonoBehaviour
 {
-    private const int BarrierRetentionBuffId = 3011;
-    private const int EfficientBarrierBuffId = 1012;
-    private const int PermanentBarrierRetentionBuffId = 1013;
-    private const int BurnBuffId = 4003;
-    private const int RegenerationBuffId = 3001;
-    private const int CounterattackDecayBuffId = 4005;
-    private const int DamageAmplifyDecayBuffId = 4006;
-    private const float WeakenDamageMultiplier = 0.75f;
-
     /// <summary>싱글톤 인스턴스 (TrainingBattleManager.InitializeBattle()에서 생성)</summary>
     public static PlayerData Instance { get; private set; }
     
@@ -234,7 +225,7 @@ public class PlayerData : MonoBehaviour
         bool keepBarrier = ConsumeBarrierRetentionOnTurnStart();
         if (!keepBarrier)
         {
-            if (GetBuffStack(EfficientBarrierBuffId) > 0)
+            if (GetBuffStack(BattleRuntimeDefinitions.EfficientBarrierBuffId) > 0)
             {
                 RemoveDefense(15, false);
             }
@@ -254,14 +245,14 @@ public class PlayerData : MonoBehaviour
     /// </summary>
     public void OnTurnEnd()
     {
-        int regeneration = GetBuffStack(RegenerationBuffId);
+        int regeneration = GetBuffStack(BattleRuntimeDefinitions.RegenerationBuffId);
         if (regeneration > 0)
         {
             Heal(regeneration);
-            DecreaseBuffStack(RegenerationBuffId, 1);
+            DecreaseBuffStack(BattleRuntimeDefinitions.RegenerationBuffId, 1);
         }
 
-        int burn = GetBuffStack(BurnBuffId);
+        int burn = GetBuffStack(BattleRuntimeDefinitions.BurnBuffId);
         if (burn > 0)
         {
             TakeDamage(burn);
@@ -274,18 +265,18 @@ public class PlayerData : MonoBehaviour
             RemoveBuff(4007);
         }
 
-        int counterattackDecay = GetBuffStack(CounterattackDecayBuffId);
+        int counterattackDecay = GetBuffStack(BattleRuntimeDefinitions.CounterattackDecayBuffId);
         if (counterattackDecay > 0)
         {
             DecreaseBuffStack(3021, counterattackDecay);
-            RemoveBuff(CounterattackDecayBuffId);
+            RemoveBuff(BattleRuntimeDefinitions.CounterattackDecayBuffId);
         }
 
-        int damageAmplifyDecay = GetBuffStack(DamageAmplifyDecayBuffId);
+        int damageAmplifyDecay = GetBuffStack(BattleRuntimeDefinitions.DamageAmplifyDecayBuffId);
         if (damageAmplifyDecay > 0)
         {
             DecreaseBuffStack(3002, damageAmplifyDecay);
-            RemoveBuff(DamageAmplifyDecayBuffId);
+            RemoveBuff(BattleRuntimeDefinitions.DamageAmplifyDecayBuffId);
         }
 
         DecreaseBuffStack(BattleRuntimeDefinitions.CorrosionBuffId, 1);
@@ -306,12 +297,12 @@ public class PlayerData : MonoBehaviour
             return true;
         }
 
-        if (GetBuffStack(BarrierRetentionBuffId) <= 0)
+        if (GetBuffStack(BattleRuntimeDefinitions.BarrierRetentionBuffId) <= 0)
         {
             return false;
         }
 
-        DecreaseBuffStack(BarrierRetentionBuffId, 1);
+        DecreaseBuffStack(BattleRuntimeDefinitions.BarrierRetentionBuffId, 1);
         return true;
     }
 
@@ -319,7 +310,9 @@ public class PlayerData : MonoBehaviour
     {
         if (GetBuffStack(BattleRuntimeDefinitions.WeakBuffId) > 0)
         {
-            return WeakenDamageMultiplier;
+            return BuffManager.Instance != null
+                ? BuffManager.Instance.GetOutgoingDamageMultiplier(BattleRuntimeDefinitions.WeakBuffId, 0.75f)
+                : 0.75f;
         }
 
         return 1f;
@@ -335,11 +328,15 @@ public class PlayerData : MonoBehaviour
         float multiplier = 1f;
         if (GetBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId) > 0)
         {
-            multiplier = 1.5f;
+            multiplier = BuffManager.Instance != null
+                ? BuffManager.Instance.GetIncomingDamageMultiplier(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1.5f)
+                : 1.5f;
         }
         else if (GetBuffStack(BattleRuntimeDefinitions.CorrosionBuffId) > 0)
         {
-            multiplier = 1.25f;
+            multiplier = BuffManager.Instance != null
+                ? BuffManager.Instance.GetIncomingDamageMultiplier(BattleRuntimeDefinitions.CorrosionBuffId, 1.25f)
+                : 1.25f;
         }
 
         return Mathf.FloorToInt(incomingDamage * multiplier);

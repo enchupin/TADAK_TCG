@@ -90,6 +90,12 @@ public class CardUI : MonoBehaviour
 
     private static string GetKeywordDisplayName(int keywordId)
     {
+        string keywordName = KeywordDatabase.GetKeywordName(keywordId);
+        if (!string.IsNullOrWhiteSpace(keywordName))
+        {
+            return keywordName;
+        }
+
         return keywordId switch
         {
             CardKeywordIds.Keep => "\uBCF4\uC874",

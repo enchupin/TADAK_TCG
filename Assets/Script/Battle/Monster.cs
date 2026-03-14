@@ -356,11 +356,15 @@ public abstract class Monster : MonoBehaviour
         // 강화부식이 있으면 50%, 아니면 부식 25%
         if (GetBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId) > 0)
         {
-            multiplier = 1.5f;
+            multiplier = BuffManager.Instance != null
+                ? BuffManager.Instance.GetIncomingDamageMultiplier(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1.5f)
+                : 1.5f;
         }
         else if (GetBuffStack(BattleRuntimeDefinitions.CorrosionBuffId) > 0)
         {
-            multiplier = 1.25f;
+            multiplier = BuffManager.Instance != null
+                ? BuffManager.Instance.GetIncomingDamageMultiplier(BattleRuntimeDefinitions.CorrosionBuffId, 1.25f)
+                : 1.25f;
         }
 
         return Mathf.FloorToInt(incomingDamage * multiplier);

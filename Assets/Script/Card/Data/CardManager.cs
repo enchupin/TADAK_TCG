@@ -21,9 +21,23 @@ public static class CardManager
         public List<int> keywords = null;
     }
 
+    [System.Serializable]
+    private class CardGroupJsonRoot
+    {
+        public List<CardGroupJsonData> groups = null;
+    }
+
+    [System.Serializable]
+    private class CardGroupJsonData
+    {
+        public string groupName = string.Empty;
+        public List<int> cardIds = null;
+    }
+
     private static Dictionary<int, CardData> cardCache;
     private static Dictionary<Character, List<CardData>> characterCache;
     private static Dictionary<int, List<int>> keywordCache;
+    private static Dictionary<string, List<int>> groupCache;
     private static bool isInitialized = false;
     
     /// <summary>
@@ -209,6 +223,23 @@ public static class CardManager
         
         return cardCache.Values.ToList();
     }
+
+    public static List<int> GetCardIdsByGroup(string groupName)
+    {
+        if (string.IsNullOrWhiteSpace(groupName))
+        {
+            return new List<int>();
+        }
+
+        EnsureGroupCacheLoaded();
+        if (groupCache != null && groupCache.TryGetValue(groupName, out List<int> cardIds))
+        {
+            return new List<int>(cardIds);
+        }
+
+        Debug.LogWarning($"[CardManager] Card group not found: {groupName}");
+        return new List<int>();
+    }
     
     /// <summary>
     /// 초기화 여부 확인
@@ -216,6 +247,41 @@ public static class CardManager
     public static bool IsInitialized()
     {
         return isInitialized;
+    }
+
+    private static void EnsureGroupCacheLoaded()
+    {
+        if (groupCache != null)
+        {
+            return;
+        }
+
+        groupCache = new Dictionary<string, List<int>>();
+        TextAsset jsonFile = Resources.Load<TextAsset>("JsonData/cardGroups");
+        if (jsonFile == null)
+        {
+            Debug.LogWarning("[CardManager] cardGroups.json을 불러오지 못했습니다");
+            return;
+        }
+
+        CardGroupJsonRoot root = JsonUtility.FromJson<CardGroupJsonRoot>(jsonFile.text);
+        if (root?.groups == null)
+        {
+            Debug.LogWarning("[CardManager] cardGroups.json 형식이 올바르지 않습니다");
+            return;
+        }
+
+        foreach (CardGroupJsonData groupData in root.groups)
+        {
+            if (groupData == null || string.IsNullOrWhiteSpace(groupData.groupName))
+            {
+                continue;
+            }
+
+            groupCache[groupData.groupName] = groupData.cardIds != null
+                ? new List<int>(groupData.cardIds)
+                : new List<int>();
+        }
     }
 }
 
