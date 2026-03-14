@@ -51,10 +51,10 @@
                         "property": "CardId",
                         "operator": "In",
                         "value": [
-                            101050,
-                            101052,
-                            101054,
-                            101056
+                            101080,
+                            101082,
+                            101084,
+                            101086
                         ]
                     }
                 ],
@@ -68,7 +68,7 @@
                     }
                 ]
             },
-            "description": "앞으로 획득하는 모든 포션 카드가 강화됩니다."
+            "description": "이번 전투 동안 모든 포션 카드가 강화됩니다."
         },
         {
             "buffId": 1003,
@@ -85,14 +85,14 @@
                         "property": "CardId",
                         "operator": "In",
                         "value": [
-                            101050,
-                            101051,
-                            101052,
-                            101053,
-                            101054,
-                            101055,
-                            101056,
-                            101057
+                            101080,
+                            101081,
+                            101082,
+                            101083,
+                            101084,
+                            101085,
+                            101086,
+                            101087
                         ]
                     }
                 ],
@@ -103,7 +103,7 @@
                     }
                 ]
             },
-            "description": "지금부터 제작하는 포션 카드가 소멸되지 않습니다. 포션 카드를 사용할 때마다 카드를 1장 뽑습니다."
+            "description": "이번 전투 동안 포션 카드가 소멸되는 대신 버린 카드 더미로 가며, 포션 카드를 사용할 때마다 카드를 1장 뽑습니다."
         },
         {
             "buffId": 1004,
@@ -119,7 +119,7 @@
                         "subject": "EventValue",
                         "property": "CardId",
                         "operator": "Eq",
-                        "value": 401080
+                        "value": 301080
                     }
                 ],
                 "effects": [
@@ -132,7 +132,7 @@
                     }
                 ]
             },
-            "description": "지금부터 생성하는 빙하 조형 카드가 강화됩니다."
+            "description": "이번 전투 동안 빙하 조형 카드가 강화됩니다."
         },
         {
             "buffId": 1005,
@@ -343,6 +343,21 @@
                 }
             ],
             "description": "매 턴 시작 시 보호막을 모두 잃는 대신 15만 잃습니다."
+        },
+        {
+            "buffId": 1013,
+            "name": "영구 보호막 유지",
+            "buffType": 1,
+            "trigger": {
+                "event": "OnTurnStart"
+            },
+            "effects": [
+                {
+                    "type": "Cancel",
+                    "cancel": "ReduceBarrier"
+                }
+            ],
+            "description": "이번 전투 동안 턴 시작 시 보호막이 사라지지 않습니다."
         },
         {
             "buffId": 2001,
@@ -688,11 +703,11 @@
             "effects": [
                 {
                     "type": "Multiply",
-                    "amountFormula": "1 + (stack * 0.2)",
+                    "amountFormula": "1 + (stack * 0.1)",
                     "target": "Damage"
                 }
             ],
-            "description": "피해량이 {stack * 20}% 증가합니다."
+            "description": "피해량이 {stack * 10}% 증가합니다."
         },
         {
             "buffId": 3018,

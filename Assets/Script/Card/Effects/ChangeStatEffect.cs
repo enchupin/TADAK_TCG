@@ -121,9 +121,7 @@ public class ChangeStatEffect : ICardEffect
             return 0;
         }
 
-        battleManager.playerData.defense = Mathf.Max(0, currentBarrier - changedAmount);
-        battleManager.battleContext?.OnDefenseConsumed(changedAmount);
-        return changedAmount;
+        return battleManager.playerData.RemoveDefense(changedAmount);
     }
 
     private int ApplyBarrierChangeToMonster(TrainingBattleManager battleManager, Monster monster, string normalizedChange, int forwardedAmount)

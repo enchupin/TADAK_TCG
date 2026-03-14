@@ -34,7 +34,13 @@ public class AttackEffect : ICardEffect
                 }
 
                 foreach (Monster monster in targets) {
+                    if (monster == null || monster.IsDead()) {
+                        continue;
+                    }
+
+                    int barrierBefore = monster.defense;
                     totalDamageDealt += monster.TakeDamage(finalAmount, 0);
+                    battleManager.HandlePlayerAttackResolved(monster, barrierBefore, monster.defense);
                 }
                 break;
 
@@ -57,7 +63,9 @@ public class AttackEffect : ICardEffect
                     return;
                 }
 
+                int targetBarrierBefore = targetMonster.defense;
                 totalDamageDealt += targetMonster.TakeDamage(finalAmount, 0);
+                battleManager.HandlePlayerAttackResolved(targetMonster, targetBarrierBefore, targetMonster.defense);
                 break;
 
             case TargetType.Self: // 자신에게 피해

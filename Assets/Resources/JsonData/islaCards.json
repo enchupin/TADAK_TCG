@@ -291,7 +291,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 1001,
+                    "buffId": 3007,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -399,7 +399,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3003,
+                    "buffId": 1003,
                     "target": "Self"
                 }
             ]

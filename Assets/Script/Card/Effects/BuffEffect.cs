@@ -34,7 +34,7 @@ public class BuffEffect : ICardEffect
     {
         if (target == TargetType.Self)
         {
-            manager.playerData.AddBuff(buffId, finalAmount);
+            manager.ApplyBuffToPlayer(buffId, finalAmount);
         }
         else if (target == TargetType.SingleEnemy)
         {
@@ -50,7 +50,7 @@ public class BuffEffect : ICardEffect
 
             if (targetMonster != null && !targetMonster.IsDead())
             {
-                targetMonster.AddBuff(buffId, finalAmount);
+                manager.ApplyBuffToMonster(targetMonster, buffId, finalAmount);
             }
         }
         else if (target == TargetType.AllEnemies)
@@ -63,7 +63,7 @@ public class BuffEffect : ICardEffect
             {
                 if (monster != null && !monster.IsDead())
                 {
-                    monster.AddBuff(buffId, finalAmount);
+                    manager.ApplyBuffToMonster(monster, buffId, finalAmount);
                 }
             }
         }

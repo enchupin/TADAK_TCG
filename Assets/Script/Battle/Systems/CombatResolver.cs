@@ -33,7 +33,7 @@ public class CombatResolver
         if (battleManager.playerData == null)
             return;
 
-        if (!playedCard.CanBePlayed())
+        if (!battleManager.CanPlayCard(playedCard))
         {
             Debug.LogWarning($"[CombatResolver] {playedCard.cardName} 카드는 현재 사용할 수 없습니다");
             battleManager.RefreshHandPlayableState();
@@ -61,9 +61,12 @@ public class CombatResolver
 
         battleManager.battleContext?.OnCardPlayed(playedCard);
 
-        battleManager.currentTarget = eventData.targetMonster;
+        Monster originalTarget = eventData.targetMonster;
+        battleManager.currentTarget = originalTarget;
         playedCard.Play(battleManager);
         battleManager.currentTarget = null;
+        battleManager.HandlePlayedCardPowerEffects(playedCard, originalTarget, false);
+        ReplayCardEffectsIfNeeded(playedCard, originalTarget);
 
         if (battleManager.handManager != null)
         {
@@ -92,7 +95,19 @@ public class CombatResolver
             return;
         }
 
+        if (battleManager.ShouldPotionGoToDiscardInsteadOfExhaust(playedCard))
+        {
+            battleManager.usableDeckManager?.AddToDiscard(playedCard);
+            return;
+        }
+
         if (playedCard.ShouldExhaustWhenPlayed())
+        {
+            battleManager.battleContext?.OnCardsExhausted(1);
+            return;
+        }
+
+        if (battleManager.ShouldExhaustUnlockedUnplayableCard(playedCard))
         {
             battleManager.battleContext?.OnCardsExhausted(1);
             return;
@@ -140,5 +155,17 @@ public class CombatResolver
         shadowCopy.AddKeyword(CardKeywordIds.Ghost);
         shadowCopy.SetCost(Mathf.Max(1, sourceCard.cost - 1), false);
         battleManager.handManager.AddCard(shadowCopy);
+    }
+
+    private void ReplayCardEffectsIfNeeded(Card playedCard, Monster originalTarget)
+    {
+        int repeatCount = battleManager.ConsumeRepeatedPlayCount(playedCard, false);
+        for (int i = 0; i < repeatCount; i++)
+        {
+            battleManager.currentTarget = originalTarget;
+            playedCard.Play(battleManager);
+            battleManager.currentTarget = null;
+            battleManager.HandlePlayedCardPowerEffects(playedCard, originalTarget, true);
+        }
     }
 }

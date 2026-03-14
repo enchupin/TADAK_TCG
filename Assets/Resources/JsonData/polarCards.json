@@ -300,7 +300,7 @@
             "keywords": [
                 4
             ],
-            "description": "이번 게임 동안 빙하 조형 카드가 강화됩니다.",
+            "description": "이번 전투 동안 빙하 조형 카드가 강화됩니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -561,7 +561,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3011,
+                    "buffId": 1013,
                     "amount": 1,
                     "target": "Self"
                 }

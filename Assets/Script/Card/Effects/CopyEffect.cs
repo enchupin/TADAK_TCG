@@ -45,6 +45,7 @@ public class CopyEffect : ICardEffect
             return;
         }
 
+        copiedCards = battleManager.ProcessGeneratedCards(copiedCards);
         AttachCopies(copiedCards, battleManager);
         ExecuteOnCopiedCards(copiedCards, battleManager);
         battleManager.RefreshHandPlayableState();

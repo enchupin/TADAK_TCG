@@ -218,6 +218,19 @@ public abstract class Monster : MonoBehaviour
 
     public void OnTurnEnd()
     {
+        int regeneration = GetBuffStack(3001);
+        if (regeneration > 0)
+        {
+            Heal(regeneration);
+            DecreaseBuffStack(3001, 1);
+        }
+
+        int burn = GetBuffStack(4003);
+        if (burn > 0)
+        {
+            TakeDamage(burn, 0);
+        }
+
         // 부식(4001), 강화부식(4002)은 턴 종료 시 지속 턴 1 감소
         DecreaseBuffStack(BattleRuntimeDefinitions.CorrosionBuffId, 1);
         DecreaseBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1);
@@ -266,7 +279,7 @@ public abstract class Monster : MonoBehaviour
 
         int finalDamage = ApplyOutgoingDamageModifier(baseDamage);
         Debug.Log($"[Enemy Turn] {name} attacks for {finalDamage}");
-        return target.TakeDamage(finalDamage);
+        return target.TakeDamage(finalDamage, this);
     }
 
     protected void AddCardToPlayerDiscard(Card card)

@@ -68,6 +68,7 @@ public class TrainingBattleManager : MonoBehaviour
     private TurnSystem turnSystem;
     private CombatResolver combatResolver;
     private EncounterSystem encounterSystem;
+    private PowerBuffRuntime powerBuffRuntime;
     private bool hasResolvedBattleResult;
 
     public float EnemyActionDelay => enemyActionDelay;
@@ -87,6 +88,7 @@ public class TrainingBattleManager : MonoBehaviour
         encounterSystem = new EncounterSystem(this);
         turnSystem = new TurnSystem(this);
         combatResolver = new CombatResolver(this);
+        powerBuffRuntime = new PowerBuffRuntime(this);
 
         if (battleDeckViewer == null)
         {
@@ -271,6 +273,7 @@ public class TrainingBattleManager : MonoBehaviour
         usableDeckManager.ShuffleDeck();
 
         turnSystem.ResetForCombat();
+        powerBuffRuntime?.ResetForCombat();
         ApplyCombatStartEffects();
 
         if (TryHandleCombatEnd())
@@ -687,7 +690,7 @@ public class TrainingBattleManager : MonoBehaviour
     public void ApplyPlayerTurnStartEffects()
     {
         ApplyDebugEnergy();
-        // Placeholder: player turn-start trigger effects.
+        powerBuffRuntime?.OnTurnStart();
     }
 
     public void ApplyPlayerTurnEndEffects()
@@ -697,7 +700,7 @@ public class TrainingBattleManager : MonoBehaviour
             playerData.OnTurnEnd();
         }
 
-        // Placeholder: player turn-end trigger effects.
+        powerBuffRuntime?.OnTurnEnd();
     }
 
     public bool TryHandleCombatEnd()
@@ -763,8 +766,187 @@ public class TrainingBattleManager : MonoBehaviour
         bool canInteract = CanPlayerPlayCard();
 
         handManager.RefreshCardPlayability(
-            card => playerData != null && card != null && card.CanBePlayed() && playerData.energy >= card.cost,
+            card => playerData != null && card != null && CanPlayCard(card) && playerData.energy >= card.cost,
             canInteract);
+    }
+
+    public bool CanPlayCard(Card card)
+    {
+        if (card == null)
+        {
+            return false;
+        }
+
+        if (powerBuffRuntime != null)
+        {
+            return powerBuffRuntime.CanPlayCard(card);
+        }
+
+        return card.CanBePlayed();
+    }
+
+    public bool ShouldPotionGoToDiscardInsteadOfExhaust(Card card)
+    {
+        return powerBuffRuntime != null && powerBuffRuntime.ShouldPotionGoToDiscardInsteadOfExhaust(card);
+    }
+
+    public bool ShouldExhaustUnlockedUnplayableCard(Card card)
+    {
+        return powerBuffRuntime != null && powerBuffRuntime.ShouldExhaustUnlockedUnplayableCard(card);
+    }
+
+    public int GetAdditionalBarrierGain()
+    {
+        return powerBuffRuntime != null ? powerBuffRuntime.GetAdditionalBarrierGain() : 0;
+    }
+
+    public int GetTurnEndRetainCount()
+    {
+        return powerBuffRuntime != null ? powerBuffRuntime.GetTurnEndRetainCount() : 0;
+    }
+
+    public bool HasPermanentBarrierRetention()
+    {
+        return powerBuffRuntime != null && powerBuffRuntime.HasPermanentBarrierRetention();
+    }
+
+    public void HandlePlayedCardPowerEffects(Card playedCard, Monster originalTarget, bool isRepeatedEffect)
+    {
+        powerBuffRuntime?.OnCardPlayed(playedCard, originalTarget, isRepeatedEffect);
+    }
+
+    public int ConsumeRepeatedPlayCount(Card playedCard, bool isRepeatedEffect)
+    {
+        return powerBuffRuntime != null ? powerBuffRuntime.ConsumeRepeatCount(playedCard, isRepeatedEffect) : 0;
+    }
+
+    public void HandlePlayerAttackResolved(Monster targetMonster, int barrierBefore, int barrierAfter)
+    {
+        powerBuffRuntime?.OnAttackResolved(targetMonster, barrierBefore, barrierAfter);
+    }
+
+    public void HandlePlayerHit(Monster attacker, int blockedDamage, int hpDamage)
+    {
+        powerBuffRuntime?.OnPlayerHit(attacker, blockedDamage, hpDamage);
+    }
+
+    public void HandlePlayerBarrierReduced(int reducedAmount)
+    {
+        powerBuffRuntime?.OnPlayerBarrierReduced(reducedAmount);
+    }
+
+    public List<Card> ProcessGeneratedCards(List<Card> generatedCards, bool allowDuplicateGeneration = true)
+    {
+        if (generatedCards == null)
+        {
+            return new List<Card>();
+        }
+
+        return powerBuffRuntime != null
+            ? powerBuffRuntime.ProcessGeneratedCards(generatedCards, allowDuplicateGeneration)
+            : new List<Card>(generatedCards);
+    }
+
+    public void ApplyBuffToPlayer(int buffId, int amount)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        playerData?.AddBuff(buffId, amount);
+        ApplyPersistentCardBuffChanges(buffId);
+    }
+
+    public void ApplyBuffToMonster(Monster monster, int buffId, int amount)
+    {
+        if (monster == null || monster.IsDead() || amount <= 0)
+        {
+            return;
+        }
+
+        monster.AddBuff(buffId, amount);
+        if (!BuffData.IsBeneficialBuffId(buffId))
+        {
+            powerBuffRuntime?.OnEnemyDebuffApplied(monster, buffId, amount);
+        }
+    }
+
+    public void ApplyBuffToAllEnemies(int buffId, int amount)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        List<Monster> targets = GetLivingMonsters();
+        foreach (Monster monster in targets)
+        {
+            ApplyBuffToMonster(monster, buffId, amount);
+        }
+    }
+
+    private void ApplyPersistentCardBuffChanges(int buffId)
+    {
+        if (powerBuffRuntime == null || (buffId != 1002 && buffId != 1004))
+        {
+            return;
+        }
+
+        List<Card> changedHandCards = new List<Card>();
+        bool hasChanges = false;
+
+        hasChanges |= ApplyPersistentCardBuffChanges(handManager?.GetHandCards(), changedHandCards);
+        hasChanges |= ApplyPersistentCardBuffChanges(usableDeckManager?.GetDrawPile(), null);
+        hasChanges |= ApplyPersistentCardBuffChanges(usableDeckManager?.GetDiscardPile(), null);
+
+        if (!hasChanges)
+        {
+            return;
+        }
+
+        if (handManager != null && changedHandCards.Count > 0)
+        {
+            handManager.RefreshCardDisplays(changedHandCards);
+            RefreshHandPlayableState();
+        }
+
+        UpdateAllUI();
+    }
+
+    private bool ApplyPersistentCardBuffChanges(List<Card> cards, List<Card> changedCards)
+    {
+        if (cards == null || cards.Count == 0 || powerBuffRuntime == null)
+        {
+            return false;
+        }
+
+        bool hasChanges = false;
+        foreach (Card card in cards)
+        {
+            if (card == null)
+            {
+                continue;
+            }
+
+            int upgradedCardId = powerBuffRuntime.ResolvePersistentUpgradeCardId(card.cardId);
+            if (upgradedCardId == card.cardId)
+            {
+                continue;
+            }
+
+            Card upgradedTemplate = CardManager.GetCardAsCard(upgradedCardId);
+            if (upgradedTemplate == null)
+            {
+                continue;
+            }
+
+            card.ApplyTemplate(upgradedTemplate);
+            hasChanges = true;
+            changedCards?.Add(card);
+        }
+
+        return hasChanges;
     }
 
     private bool ValidateRuntimeReferences()

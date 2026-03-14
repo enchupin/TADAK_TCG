@@ -7,6 +7,12 @@ using System.Collections.Generic;
 public class PlayerData : MonoBehaviour
 {
     private const int BarrierRetentionBuffId = 3011;
+    private const int EfficientBarrierBuffId = 1012;
+    private const int PermanentBarrierRetentionBuffId = 1013;
+    private const int BurnBuffId = 4003;
+    private const int RegenerationBuffId = 3001;
+    private const int CounterattackDecayBuffId = 4005;
+    private const int DamageAmplifyDecayBuffId = 4006;
     private const float WeakenDamageMultiplier = 0.75f;
 
     /// <summary>싱글톤 인스턴스 (TrainingBattleManager.InitializeBattle()에서 생성)</summary>
@@ -81,6 +87,7 @@ public class PlayerData : MonoBehaviour
         defense = startDefense;
         maxEnergy = startMaxEnergy;
         energy = maxEnergy;
+        currentBuffs.Clear();
         
         Debug.Log($"플레이어 초기화 완료 - HP: {hp}/{maxHP}, 방어력: {defense}, 에너지: {energy}/{maxEnergy}");
     }
@@ -88,10 +95,41 @@ public class PlayerData : MonoBehaviour
     /// <summary>
     /// 방어력 추가
     /// </summary>
-    public void AddDefense(int amount)
+    public int AddDefense(int amount)
     {
-        defense += amount;
-        Debug.Log($"방어력 +{amount} (현재: {defense})");
+        int finalAmount = Mathf.Max(0, amount);
+        if (finalAmount <= 0)
+        {
+            return 0;
+        }
+
+        TrainingBattleManager battleManager = TrainingBattleManager.Instance;
+        if (battleManager != null)
+        {
+            finalAmount += battleManager.GetAdditionalBarrierGain();
+        }
+
+        defense += finalAmount;
+        Debug.Log($"방어력 +{finalAmount} (현재: {defense})");
+        return finalAmount;
+    }
+
+    public int RemoveDefense(int amount, bool countAsConsumed = true)
+    {
+        int removedAmount = Mathf.Clamp(amount, 0, defense);
+        if (removedAmount <= 0)
+        {
+            return 0;
+        }
+
+        defense -= removedAmount;
+        if (countAsConsumed)
+        {
+            TrainingBattleManager.Instance?.battleContext?.OnDefenseConsumed(removedAmount);
+        }
+
+        TrainingBattleManager.Instance?.HandlePlayerBarrierReduced(removedAmount);
+        return removedAmount;
     }
 
     /// <summary>
@@ -151,9 +189,10 @@ public class PlayerData : MonoBehaviour
     /// <summary>
     /// 피격 (방어력 적용)
     /// </summary>
-    public int TakeDamage(int amount)
+    public int TakeDamage(int amount, Monster attacker = null)
     {
         int finalDamage = ApplyIncomingDamageMultiplier(amount);
+        int blockedDamage = Mathf.Min(defense, Mathf.Max(0, finalDamage));
         int damageAfterDefense = Mathf.Max(0, finalDamage - defense);
         hp -= damageAfterDefense;
         hpLostThisTurn += damageAfterDefense;
@@ -161,9 +200,17 @@ public class PlayerData : MonoBehaviour
         {
             hasLostHpThisTurn = true;
         }
-        defense = Mathf.Max(0, defense - finalDamage);
+        if (blockedDamage > 0)
+        {
+            RemoveDefense(blockedDamage);
+        }
 
         Debug.Log($"플레이어가 {damageAfterDefense} 데미지를 받았습니다! (HP: {hp}/{maxHP})");
+        if (attacker != null && finalDamage > 0)
+        {
+            TrainingBattleManager.Instance?.HandlePlayerHit(attacker, blockedDamage, damageAfterDefense);
+        }
+
         return damageAfterDefense;
     }
 
@@ -187,14 +234,19 @@ public class PlayerData : MonoBehaviour
         bool keepBarrier = ConsumeBarrierRetentionOnTurnStart();
         if (!keepBarrier)
         {
-            defense = 0; // 방어력 리셋
+            if (GetBuffStack(EfficientBarrierBuffId) > 0)
+            {
+                RemoveDefense(15, false);
+            }
+            else if (defense > 0)
+            {
+                RemoveDefense(defense, false);
+            }
         }
         energy = maxEnergy; // 에너지 회복
         Debug.Log(keepBarrier
             ? "턴 시작: 보호막 유지 발동, 에너지 회복"
             : "턴 시작: 방어력 리셋, 에너지 회복");
-
-        // Buff trigger processing would go here
     }
 
     /// <summary>
@@ -202,12 +254,38 @@ public class PlayerData : MonoBehaviour
     /// </summary>
     public void OnTurnEnd()
     {
-        // 턴 종료 시 필요한 처리 (예: 턴 지속 버프 감소 등)
+        int regeneration = GetBuffStack(RegenerationBuffId);
+        if (regeneration > 0)
+        {
+            Heal(regeneration);
+            DecreaseBuffStack(RegenerationBuffId, 1);
+        }
+
+        int burn = GetBuffStack(BurnBuffId);
+        if (burn > 0)
+        {
+            TakeDamage(burn);
+        }
+
         int overheatDecay = GetBuffStack(4007);
         if (overheatDecay > 0)
         {
             DecreaseBuffStack(3017, overheatDecay);
             RemoveBuff(4007);
+        }
+
+        int counterattackDecay = GetBuffStack(CounterattackDecayBuffId);
+        if (counterattackDecay > 0)
+        {
+            DecreaseBuffStack(3021, counterattackDecay);
+            RemoveBuff(CounterattackDecayBuffId);
+        }
+
+        int damageAmplifyDecay = GetBuffStack(DamageAmplifyDecayBuffId);
+        if (damageAmplifyDecay > 0)
+        {
+            DecreaseBuffStack(3002, damageAmplifyDecay);
+            RemoveBuff(DamageAmplifyDecayBuffId);
         }
 
         DecreaseBuffStack(BattleRuntimeDefinitions.CorrosionBuffId, 1);
@@ -223,6 +301,11 @@ public class PlayerData : MonoBehaviour
 
     private bool ConsumeBarrierRetentionOnTurnStart()
     {
+        if (TrainingBattleManager.Instance != null && TrainingBattleManager.Instance.HasPermanentBarrierRetention())
+        {
+            return true;
+        }
+
         if (GetBuffStack(BarrierRetentionBuffId) <= 0)
         {
             return false;
