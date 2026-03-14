@@ -26,7 +26,7 @@ MonoBehaviour:
       target: 0
       buffType: 
       cardId: 0
-  artworkAddress: Characters/Vanessa/Artwork
-  effectAddress: Effects/Vanessa
-  soundAddress: Sounds/Vanessa
+  artworkAddress: 
+  effectAddress: 
+  soundAddress: 
   startDeckCardIds: 1a150300241503002e15030038150300421503004c15030056150300

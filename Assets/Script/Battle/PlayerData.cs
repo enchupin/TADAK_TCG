@@ -5,6 +5,8 @@ using UnityEngine;
 /// </summary>
 public class PlayerData : MonoBehaviour
 {
+    private const int BarrierRetentionBuffId = 3011;
+
     /// <summary>싱글톤 인스턴스 (TrainingBattleManager.InitializeBattle()에서 생성)</summary>
     public static PlayerData Instance { get; private set; }
     
@@ -188,9 +190,15 @@ public class PlayerData : MonoBehaviour
     {
         hpLostThisTurn = 0;
         hasLostHpThisTurn = false;
-        defense = 0; // 방어력 리셋
+        bool keepBarrier = ConsumeBarrierRetentionOnTurnStart();
+        if (!keepBarrier)
+        {
+            defense = 0; // 방어력 리셋
+        }
         energy = maxEnergy; // 에너지 회복
-        Debug.Log("턴 시작: 방어력 리셋, 에너지 회복");
+        Debug.Log(keepBarrier
+            ? "턴 시작: 보호막 유지 발동, 에너지 회복"
+            : "턴 시작: 방어력 리셋, 에너지 회복");
 
         // Buff trigger processing would go here
     }
@@ -213,6 +221,17 @@ public class PlayerData : MonoBehaviour
     {
         Buff buff = currentBuffs.Find(b => b.data != null && b.data.buffId == buffId);
         return buff != null ? buff.stack : 0;
+    }
+
+    private bool ConsumeBarrierRetentionOnTurnStart()
+    {
+        if (GetBuffStack(BarrierRetentionBuffId) <= 0)
+        {
+            return false;
+        }
+
+        DecreaseBuffStack(BarrierRetentionBuffId, 1);
+        return true;
     }
 
     public float GetOverheatBonusMultiplier()

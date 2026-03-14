@@ -139,7 +139,7 @@
             "name": "프로토콜 : 보호",
             "characterId": 302,
             "cost": 1,
-            "description": "룬 중첩만큼 보호막을 얻습니다. 다음 턴 시작 시 보호막이 사라지지 않습니다.",
+            "description": "룬 중첩만큼 보호막을 얻습니다. 보호막 유지 1을 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",
@@ -160,7 +160,7 @@
             "name": "프로토콜 : 보호 +",
             "characterId": 302,
             "cost": 1,
-            "description": "룬을 1 얻고, 룬 중첩만큼 보호막을 얻습니다. 다음 턴 시작 시 보호막이 사라지지 않습니다.",
+            "description": "룬을 1 얻고, 룬 중첩만큼 보호막을 얻습니다. 보호막 유지 1을 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",

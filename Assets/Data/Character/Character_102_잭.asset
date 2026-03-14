@@ -23,11 +23,11 @@ MonoBehaviour:
       1\uC7A5 \uC0DD\uC131\uD569\uB2C8\uB2E4."
     effects:
     - type: 0
-      amount: 0
+      amount: 1
       target: 0
       buffType: 
       cardId: 0
-  artworkAddress: Characters/Jack/Artwork
-  effectAddress: Effects/Jack
-  soundAddress: Sounds/Jack
+  artworkAddress: 
+  effectAddress: 
+  soundAddress: 
   startDeckCardIds: 7a8e0100848e01008e8e0100988e0100a28e0100ac8e0100b68e0100

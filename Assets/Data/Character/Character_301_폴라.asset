@@ -32,7 +32,7 @@ MonoBehaviour:
       target: 1
       buffType: 
       cardId: 0
-  artworkAddress: Characters/Pola/Artwork
-  effectAddress: Effects/Pola
-  soundAddress: Sounds/Pola
+  artworkAddress: 
+  effectAddress: 
+  soundAddress: 
   startDeckCardIds: d2970400dc970400e6970400f0970400fa970400049804000e980400

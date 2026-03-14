@@ -591,7 +591,7 @@
                 "timing": "OffTrigger",
                 "amount": 1
             },
-            "description": "{stack} 턴 동안 턴 시작 시 보호막이 사라지지 않습니다."
+            "description": "{stack}턴 동안 턴 시작 시 보호막이 사라지지 않으며, 발동 시 1 감소합니다."
         },
         {
             "buffId": 3012,

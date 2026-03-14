@@ -533,11 +533,11 @@
             "name": "보호 동결",
             "characterId": 301,
             "cost": 1,
-            "description": "다음 턴 시작 시 보호막이 사라지지 않습니다. 보호막을 5 얻습니다.",
+            "description": "보호막 유지 1을 얻습니다. 보호막을 5 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3012,
+                    "buffId": 3011,
                     "amount": 1,
                     "target": "Self"
                 },
@@ -557,11 +557,11 @@
             "keywords": [
                 1
             ],
-            "description": "다음 턴 시작 시 보호막이 사라지지 않습니다. 보존: 보호막을 5 얻습니다.",
+            "description": "보존: 보호막 유지 1을 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3012,
+                    "buffId": 3011,
                     "amount": 1,
                     "target": "Self"
                 }
@@ -572,7 +572,7 @@
             "name": "보호 동결 +",
             "characterId": 301,
             "cost": 1,
-            "description": "다음 2턴 시작 시 보호막이 사라지지 않습니다. 보호막을 7 얻습니다.",
+            "description": "보호막 유지 2를 얻습니다. 보호막을 7 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -613,7 +613,7 @@
             "keywords": [
                 4
             ],
-            "description": "턴 시작 시 보호막이 사라지지 않습니다.",
+            "description": "보호막 유지 1을 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
