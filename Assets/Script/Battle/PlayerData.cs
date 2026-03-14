@@ -340,6 +340,19 @@ public class PlayerData : MonoBehaviour
         return 1f;
     }
 
+    public int CalculateCardDamage(int baseDamage, float damageAmplifyMultiplier = 1f, float cardBaseDamageMultiplier = 1f)
+    {
+        int safeBaseDamage = Mathf.Max(0, baseDamage);
+        float safeDamageAmplifyMultiplier = Mathf.Max(0f, damageAmplifyMultiplier);
+        float safeCardBaseDamageMultiplier = Mathf.Max(0f, cardBaseDamageMultiplier);
+        int damageAmplifyBonus = Mathf.Max(0, Mathf.FloorToInt(
+            GetBuffStack(BattleRuntimeDefinitions.DamageAmplifyBuffId) * safeDamageAmplifyMultiplier));
+        float overheatMultiplier = Mathf.Max(0, GetBuffStack(BattleRuntimeDefinitions.OverheatBuffId)) * 0.1f;
+        float totalMultiplier = safeCardBaseDamageMultiplier + overheatMultiplier;
+        int amplifiedDamage = Mathf.Max(0, Mathf.FloorToInt((safeBaseDamage + damageAmplifyBonus) * totalMultiplier));
+        return Mathf.Max(0, Mathf.FloorToInt(amplifiedDamage * GetOutgoingDamageMultiplier()));
+    }
+
     private int ApplyIncomingDamageMultiplier(int incomingDamage)
     {
         if (incomingDamage <= 0)

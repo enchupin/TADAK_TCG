@@ -153,6 +153,7 @@ public static class CardEffectFactory
                 {
                     amount = effectData.amount,
                     amountFormula = effectData.amountFormula,
+                    ampMultiplier = effectData.ampMultiplier > 0f ? effectData.ampMultiplier : 1f,
                     target = effectData.target,
                     onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
                 };

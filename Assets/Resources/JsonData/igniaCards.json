@@ -423,7 +423,7 @@
             "name": "지옥불",
             "characterId": 201,
             "cost": 1,
-            "description": "모든 적에게 피해를 4 입힙니다. 적이 혼자인 경우, 대신 피해를 12 입힙니다.",
+            "description": "모든 적에게 피해를 4 입힙니다. 적이 혼자인 경우, 피해량이 3배가 됩니다.",
             "effects": [
                 {
                     "condition": {
@@ -437,7 +437,8 @@
                         "effects": [
                             {
                                 "type": "Attack",
-                                "amount": 12,
+                                "amount": 4,
+                                "amountFormula": "*3",
                                 "target": "AllEnemies"
                             }
                         ],
@@ -458,7 +459,7 @@
             "name": "지옥불 +",
             "characterId": 201,
             "cost": 1,
-            "description": "모든 적에게 피해를 4 입힙니다. 적이 혼자인 경우, 대신 피해를 20입힙니다.",
+            "description": "모든 적에게 피해를 4 입힙니다. 적이 혼자인 경우, 피해량이 5배가 됩니다.",
             "effects": [
                 {
                     "condition": {
@@ -472,7 +473,8 @@
                         "effects": [
                             {
                                 "type": "Attack",
-                                "amount": 20,
+                                "amount": 4,
+                                "amountFormula": "*5",
                                 "target": "AllEnemies"
                             }
                         ],

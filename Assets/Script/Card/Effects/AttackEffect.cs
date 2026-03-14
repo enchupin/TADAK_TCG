@@ -93,18 +93,12 @@ public class AttackEffect : ICardEffect
     {
         ResolveAttackAmount(battleManager, out int baseAmount, out float cardMultiplier);
 
-        int scaledBaseDamage = Mathf.Max(0, Mathf.FloorToInt(baseAmount * Mathf.Max(0f, cardMultiplier)));
         if (battleManager.playerData == null)
         {
-            return scaledBaseDamage;
+            return Mathf.Max(0, Mathf.FloorToInt(baseAmount * Mathf.Max(0f, cardMultiplier)));
         }
 
-        int damageAmplify = Mathf.Max(0, Mathf.FloorToInt(
-            battleManager.playerData.GetBuffStack(DamageAmplifyBuffId) * Mathf.Max(0f, ampMultiplier)));
-
-        float overheatMultiplier = 1f + Mathf.Max(0, battleManager.playerData.GetBuffStack(OverheatBuffId)) * 0.1f;
-        float outgoingMultiplier = battleManager.playerData.GetOutgoingDamageMultiplier();
-        return Mathf.Max(0, Mathf.FloorToInt((scaledBaseDamage + damageAmplify) * overheatMultiplier * outgoingMultiplier));
+        return battleManager.playerData.CalculateCardDamage(baseAmount, ampMultiplier, cardMultiplier);
     }
 
     private void ResolveAttackAmount(TrainingBattleManager battleManager, out int baseAmount, out float cardMultiplier)
