@@ -1001,35 +1001,12 @@
             "trigger": {
                 "event": "OnDamaged"
             },
-            "condition": [
-                {
-                    "check": [
-                        {
-                            "subject": "Defense",
-                            "operator": "Gt",
-                            "value": 0
-                        },
-                        {
-                            "subject": "Defense",
-                            "operator": "Lt",
-                            "value": "EventValue"
-                        }
-                    ],
-                    "effect": [
-                        {
-                            "type": "ChangeStat",
-                            "stat": "EventValue",
-                            "operation": "Set",
-                            "amount": 0
-                        }
-                    ]
-                }
-            ],
+            "effects": [],
             "decrease": {
                 "timing": "OffTrigger",
                 "amount": 1
             },
-            "description": "보호막이 파괴될 때, 보호막을 초과하는 피해를 1회 막아냅니다."
+            "description": "피해를 {stack}회 받지 않습니다."
         },
         {
             "buffId": 4001,

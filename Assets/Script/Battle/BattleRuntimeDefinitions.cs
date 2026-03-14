@@ -30,6 +30,7 @@ public static class BattleRuntimeDefinitions
     public const int RetainChoiceBuffId = 3028;
     public const int JokerPowerBuffId = 3029;
     public const int RuneGenerationBuffId = 3032;
+    public const int LavaBarrierBuffId = 3033;
     public const int CorrosionBuffId = 4001;
     public const int EnhancedCorrosionBuffId = 4002;
     public const int BurnBuffId = 4003;

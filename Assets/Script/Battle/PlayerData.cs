@@ -183,6 +183,11 @@ public class PlayerData : MonoBehaviour
     public int TakeDamage(int amount, Monster attacker = null)
     {
         int finalDamage = ApplyIncomingDamageMultiplier(amount);
+        if (TryConsumeLavaBarrier(finalDamage, attacker))
+        {
+            return 0;
+        }
+
         int blockedDamage = Mathf.Min(defense, Mathf.Max(0, finalDamage));
         int damageAfterDefense = Mathf.Max(0, finalDamage - defense);
         hp -= damageAfterDefense;
@@ -203,6 +208,23 @@ public class PlayerData : MonoBehaviour
         }
 
         return damageAfterDefense;
+    }
+
+    private bool TryConsumeLavaBarrier(int finalDamage, Monster attacker)
+    {
+        if (finalDamage <= 0 || GetBuffStack(BattleRuntimeDefinitions.LavaBarrierBuffId) <= 0)
+        {
+            return false;
+        }
+
+        DecreaseBuffStack(BattleRuntimeDefinitions.LavaBarrierBuffId, 1);
+        Debug.Log("용암 보호막이 발동해 피해를 받지 않았습니다");
+        if (attacker != null)
+        {
+            TrainingBattleManager.Instance?.HandlePlayerHit(attacker, 0, 0);
+        }
+
+        return true;
     }
 
     /// <summary>
