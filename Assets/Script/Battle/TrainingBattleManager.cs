@@ -315,6 +315,11 @@ public class TrainingBattleManager : MonoBehaviour
         if (count <= 0 || usableDeckManager == null || handManager == null)
             return new List<Card>();
 
+        if (!CanDrawCards())
+        {
+            return new List<Card>();
+        }
+
         List<Card> drawnCards = usableDeckManager.DrawCard(count);
         handManager.AddCard(drawnCards);
 
@@ -339,6 +344,10 @@ public class TrainingBattleManager : MonoBehaviour
             return new List<Card>();
         }
 
+        if (!CanDrawCards()) {
+            return new List<Card>();
+        }
+
         List<Card> drawnCards = usableDeckManager.DrawBasicCards(count, characterFilter);
         handManager.AddCard(drawnCards);
 
@@ -359,6 +368,11 @@ public class TrainingBattleManager : MonoBehaviour
     public List<Card> DrawCharacterCardsAndGet(int count, Character? characterFilter = null)
     {
         if (count <= 0 || usableDeckManager == null || handManager == null)
+        {
+            return new List<Card>();
+        }
+
+        if (!CanDrawCards())
         {
             return new List<Card>();
         }
@@ -778,7 +792,7 @@ public class TrainingBattleManager : MonoBehaviour
         bool canInteract = CanPlayerPlayCard();
 
         handManager.RefreshCardPlayability(
-            card => playerData != null && card != null && CanPlayCard(card) && playerData.energy >= card.cost,
+            card => playerData != null && card != null && CanPlayCard(card) && playerData.energy >= GetEffectiveCardCost(card),
             canInteract);
     }
 
@@ -807,6 +821,36 @@ public class TrainingBattleManager : MonoBehaviour
         return powerBuffRuntime != null && powerBuffRuntime.ShouldExhaustUnlockedUnplayableCard(card);
     }
 
+    public bool CanDrawCards()
+    {
+        return powerBuffRuntime == null || powerBuffRuntime.CanDrawCards();
+    }
+
+    public bool CanGainCardsToHand()
+    {
+        return powerBuffRuntime == null || powerBuffRuntime.CanGainCardsToHand();
+    }
+
+    public int GetEffectiveCardCost(Card card)
+    {
+        if (card == null)
+        {
+            return 0;
+        }
+
+        return powerBuffRuntime != null ? powerBuffRuntime.GetEffectiveCardCost(card) : card.cost;
+    }
+
+    public int GetCardUseAllEnemiesDamage()
+    {
+        return powerBuffRuntime != null ? powerBuffRuntime.GetCardUseAllEnemiesDamage() : 0;
+    }
+
+    public void ApplyCardUseAllEnemiesDamage(int damage)
+    {
+        powerBuffRuntime?.ApplyCardUseAllEnemiesDamage(damage);
+    }
+
     public int GetAdditionalBarrierGain()
     {
         return powerBuffRuntime != null ? powerBuffRuntime.GetAdditionalBarrierGain() : 0;
@@ -827,6 +871,11 @@ public class TrainingBattleManager : MonoBehaviour
         powerBuffRuntime?.OnCardPlayed(playedCard, originalTarget, isRepeatedEffect);
     }
 
+    public void ResolveDeferredTurnStartPowerEffects()
+    {
+        powerBuffRuntime?.ResolveDeferredTurnStartEffects();
+    }
+
     public int ConsumeRepeatedPlayCount(Card playedCard, bool isRepeatedEffect)
     {
         return powerBuffRuntime != null ? powerBuffRuntime.ConsumeRepeatCount(playedCard, isRepeatedEffect) : 0;
@@ -845,6 +894,16 @@ public class TrainingBattleManager : MonoBehaviour
     public void HandlePlayerBarrierReduced(int reducedAmount)
     {
         powerBuffRuntime?.OnPlayerBarrierReduced(reducedAmount);
+    }
+
+    public void HandleMonsterHpLost(Monster monster, int hpLoss)
+    {
+        powerBuffRuntime?.OnMonsterHpLost(monster, hpLoss);
+    }
+
+    public void HandleMonsterDeath(Monster monster)
+    {
+        powerBuffRuntime?.OnMonsterDeath(monster);
     }
 
     public List<Card> ProcessGeneratedCards(List<Card> generatedCards, bool allowDuplicateGeneration = true)
@@ -875,6 +934,13 @@ public class TrainingBattleManager : MonoBehaviour
         if (monster == null || monster.IsDead() || amount <= 0)
         {
             return;
+        }
+
+        if (buffId == BattleRuntimeDefinitions.CorrosionBuffId
+            && playerData != null
+            && playerData.GetBuffStack(BattleRuntimeDefinitions.CorrosionEnhanceBuffId) > 0)
+        {
+            buffId = BattleRuntimeDefinitions.EnhancedCorrosionBuffId;
         }
 
         monster.AddBuff(buffId, amount);

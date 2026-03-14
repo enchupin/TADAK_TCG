@@ -110,6 +110,7 @@ public class TurnSystem
         }
 
         battleManager.SetState(BattleTurnState.PlayerAction);
+        battleManager.ResolveDeferredTurnStartPowerEffects();
         battleManager.UpdateEndTurnButtonState();
         battleManager.RefreshHandPlayableState();
         battleManager.UpdateAllUI();

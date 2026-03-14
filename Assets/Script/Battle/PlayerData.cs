@@ -183,6 +183,11 @@ public class PlayerData : MonoBehaviour
     public int TakeDamage(int amount, Monster attacker = null)
     {
         int finalDamage = ApplyIncomingDamageMultiplier(amount);
+        finalDamage = ApplyDamageClamp(finalDamage);
+        if (TryConsumeEvade(finalDamage, attacker))
+        {
+            return 0;
+        }
         if (TryConsumeLavaBarrier(finalDamage, attacker))
         {
             return 0;
@@ -208,6 +213,29 @@ public class PlayerData : MonoBehaviour
         }
 
         return damageAfterDefense;
+    }
+
+    private int ApplyDamageClamp(int finalDamage)
+    {
+        if (finalDamage <= 0 || GetBuffStack(BattleRuntimeDefinitions.DamageClampToOneBuffId) <= 0)
+        {
+            return finalDamage;
+        }
+
+        return 1;
+    }
+
+    private bool TryConsumeEvade(int finalDamage, Monster attacker)
+    {
+        if (attacker == null || finalDamage <= 0 || GetBuffStack(BattleRuntimeDefinitions.EvadeBuffId) <= 0)
+        {
+            return false;
+        }
+
+        DecreaseBuffStack(BattleRuntimeDefinitions.EvadeBuffId, 1);
+        Debug.Log("회피가 발동해 공격을 피했습니다");
+        TrainingBattleManager.Instance?.HandlePlayerHit(attacker, 0, 0);
+        return true;
     }
 
     private bool TryConsumeLavaBarrier(int finalDamage, Monster attacker)
@@ -301,6 +329,11 @@ public class PlayerData : MonoBehaviour
             RemoveBuff(BattleRuntimeDefinitions.DamageAmplifyDecayBuffId);
         }
 
+        DecreaseBuffStack(BattleRuntimeDefinitions.CardUseAllEnemiesDamageBuffId, 1);
+        DecreaseBuffStack(BattleRuntimeDefinitions.BlessingPulseBuffId, 1);
+        DecreaseBuffStack(BattleRuntimeDefinitions.DamageClampToOneBuffId, 1);
+        RemoveBuff(BattleRuntimeDefinitions.DrawLockBuffId);
+
         DecreaseBuffStack(BattleRuntimeDefinitions.CorrosionBuffId, 1);
         DecreaseBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1);
         DecreaseBuffStack(BattleRuntimeDefinitions.WeakBuffId, 1);
@@ -391,6 +424,16 @@ public class PlayerData : MonoBehaviour
         {
             currentBuffs.Remove(buff);
         }
+    }
+
+    public void ConsumeBuffStack(int buffId, int amount)
+    {
+        DecreaseBuffStack(buffId, amount);
+    }
+
+    public void RemoveBuffStack(int buffId)
+    {
+        RemoveBuff(buffId);
     }
 
     private void RemoveBuff(int buffId)

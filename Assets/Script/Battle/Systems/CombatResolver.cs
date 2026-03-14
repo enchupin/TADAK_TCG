@@ -33,6 +33,8 @@ public class CombatResolver
         if (battleManager.playerData == null)
             return;
 
+        int effectiveCost = battleManager.GetEffectiveCardCost(playedCard);
+
         if (!battleManager.CanPlayCard(playedCard))
         {
             Debug.LogWarning($"[CombatResolver] {playedCard.cardName} 카드는 현재 사용할 수 없습니다");
@@ -41,21 +43,25 @@ public class CombatResolver
             return;
         }
 
-        if (battleManager.playerData.energy < playedCard.cost)
+        if (battleManager.playerData.energy < effectiveCost)
         {
-            Debug.LogWarning($"[CombatResolver] Not enough energy for {playedCard.cardName}. Needed: {playedCard.cost}, Current: {battleManager.playerData.energy}");
+            Debug.LogWarning($"[CombatResolver] Not enough energy for {playedCard.cardName}. Needed: {effectiveCost}, Current: {battleManager.playerData.energy}");
             battleManager.RefreshHandPlayableState();
             battleManager.UpdateAllUI();
             return;
         }
 
-        bool spent = battleManager.playerData.UseEnergy(playedCard.cost);
+        bool spent = battleManager.playerData.UseEnergy(effectiveCost);
         if (!spent)
         {
             battleManager.RefreshHandPlayableState();
             battleManager.UpdateAllUI();
             return;
         }
+
+        int repeatCount = battleManager.ConsumeRepeatedPlayCount(playedCard, false);
+        int cardUseAllEnemiesDamage = battleManager.GetCardUseAllEnemiesDamage();
+        bool shouldConsumeFreeCost = battleManager.playerData.GetBuffStack(BattleRuntimeDefinitions.NextCardFreeBuffId) > 0;
 
         Debug.Log($"[Player] Used card: {playedCard.cardName} (Energy now: {battleManager.playerData.energy})");
 
@@ -66,7 +72,16 @@ public class CombatResolver
         playedCard.Play(battleManager);
         battleManager.currentTarget = null;
         battleManager.HandlePlayedCardPowerEffects(playedCard, originalTarget, false);
-        ReplayCardEffectsIfNeeded(playedCard, originalTarget);
+        if (cardUseAllEnemiesDamage > 0)
+        {
+            battleManager.ApplyCardUseAllEnemiesDamage(cardUseAllEnemiesDamage);
+        }
+        ReplayCardEffectsIfNeeded(playedCard, originalTarget, repeatCount);
+
+        if (shouldConsumeFreeCost)
+        {
+            battleManager.playerData.ConsumeBuffStack(BattleRuntimeDefinitions.NextCardFreeBuffId, 1);
+        }
 
         if (battleManager.handManager != null)
         {
@@ -157,9 +172,8 @@ public class CombatResolver
         battleManager.handManager.AddCard(shadowCopy);
     }
 
-    private void ReplayCardEffectsIfNeeded(Card playedCard, Monster originalTarget)
+    private void ReplayCardEffectsIfNeeded(Card playedCard, Monster originalTarget, int repeatCount)
     {
-        int repeatCount = battleManager.ConsumeRepeatedPlayCount(playedCard, false);
         for (int i = 0; i < repeatCount; i++)
         {
             battleManager.currentTarget = originalTarget;

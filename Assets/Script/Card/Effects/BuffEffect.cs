@@ -19,6 +19,11 @@ public class BuffEffect : ICardEffect
         int finalAmount = string.IsNullOrWhiteSpace(amountFormula)
             ? amount : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData);
 
+        if (buffId > 0 && string.IsNullOrWhiteSpace(amountFormula) && finalAmount <= 0)
+        {
+            finalAmount = 1;
+        }
+
         if (buffId <= 0)
         {
             Debug.LogWarning("[BuffEffect] buffId가 없는 Buff 이펙트는 지원하지 않습니다");

@@ -14,8 +14,12 @@ public class AttackEffect : ICardEffect
 
     public void Execute(TrainingBattleManager battleManager)
     {
+        int attackBoost = battleManager?.playerData != null
+            ? battleManager.playerData.GetBuffStack(AttackBoostBuffId)
+            : 0;
+
         // 최종 공격 피해
-        int finalAmount = BuildFinalDamageAmount(battleManager);
+        int finalAmount = BuildFinalDamageAmount(battleManager, attackBoost);
         int totalDamageDealt = 0; // 총 누적 피해
 
         switch (target) {
@@ -77,6 +81,10 @@ public class AttackEffect : ICardEffect
         }
 
         battleManager.battleContext?.OnDamageDealt(totalDamageDealt);
+        if (attackBoost > 0)
+        {
+            battleManager.playerData?.ConsumeBuffStack(AttackBoostBuffId, attackBoost);
+        }
         if (totalDamageDealt > 0 && battleManager.battleContext != null)
         {
             Debug.Log($"[AttackEffect] Damage dealt: {totalDamageDealt}, LastDamage: {battleManager.battleContext.lastDamageDealt}, ThisTurnTotal: {battleManager.battleContext.totalDamageDealt}");
@@ -89,9 +97,10 @@ public class AttackEffect : ICardEffect
         }
     }
 
-    private int BuildFinalDamageAmount(TrainingBattleManager battleManager)
+    private int BuildFinalDamageAmount(TrainingBattleManager battleManager, int attackBoost)
     {
         ResolveAttackAmount(battleManager, out int baseAmount, out float cardMultiplier);
+        baseAmount += Mathf.Max(0, attackBoost);
 
         if (battleManager.playerData == null)
         {

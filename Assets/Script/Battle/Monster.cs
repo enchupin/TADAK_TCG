@@ -41,6 +41,7 @@ public abstract class Monster : MonoBehaviour
     protected abstract int BaseMaxHp { get; }
     protected virtual int BaseAttackPower => 0;
     protected virtual int BaseDefense => 0;
+    protected virtual bool IsBossMonster => false;
 
     protected virtual void Awake()
     {
@@ -135,6 +136,10 @@ public abstract class Monster : MonoBehaviour
         defense = Mathf.Max(0, defense - finalDamage);
 
         Debug.Log($"{name} took {damageAfterDefense} damage. (HP: {hp}/{maxHP})");
+        if (damageAfterDefense > 0)
+        {
+            TrainingBattleManager.Instance?.HandleMonsterHpLost(this, damageAfterDefense);
+        }
         HandleDeathIfNeeded();
         UpdateUI();
         return damageAfterDefense;
@@ -199,12 +204,20 @@ public abstract class Monster : MonoBehaviour
         }
 
         // 디버프/버프 스택 변경 즉시 UI 반영
+        if (buffId == BattleRuntimeDefinitions.FreezeBuffId)
+        {
+            ResolveFreezeThresholdIfNeeded();
+        }
+
         UpdateUI();
     }
 
     public void OnTurnStart()
     {
+        ResolveFreezeThresholdIfNeeded();
+        UpdateUI();
         int freezeStack = GetBuffStack(BattleRuntimeDefinitions.FreezeBuffId);
+        freezeStack = Mathf.Min(freezeStack, 6);
         if (freezeStack >= 7)
         {
             DecreaseBuffStack(BattleRuntimeDefinitions.FreezeBuffId, 7);
@@ -254,6 +267,12 @@ public abstract class Monster : MonoBehaviour
     {
         Buff buff = currentBuffs.Find(b => b.data != null && b.data.buffId == buffId);
         return buff != null ? buff.stack : 0;
+    }
+
+    public void ConsumeBuffStack(int buffId, int amount)
+    {
+        DecreaseBuffStack(buffId, amount);
+        UpdateUI();
     }
 
     protected void SetAttackIntent(int intentValue, string intentDescription)
@@ -386,6 +405,33 @@ public abstract class Monster : MonoBehaviour
         }
     }
 
+    private void ResolveFreezeThresholdIfNeeded()
+    {
+        int freezeStack = GetBuffStack(BattleRuntimeDefinitions.FreezeBuffId);
+        if (freezeStack < 7)
+        {
+            return;
+        }
+
+        while (freezeStack >= 7 && !IsDead())
+        {
+            DecreaseBuffStack(BattleRuntimeDefinitions.FreezeBuffId, 7);
+            freezeStack -= 7;
+
+            if (IsBossMonster)
+            {
+                Debug.Log($"[Monster] {name}은 빙결 7스택으로 대신 20 피해를 받습니다.");
+                TakeDamage(20, 0);
+                continue;
+            }
+
+            skipCurrentTurnAction = true;
+            ClearPlannedAction();
+            Debug.Log($"[Monster] {name} 빙결 7스택으로 기절 상태가 되어 이번 턴 행동을 쉽니다.");
+            break;
+        }
+    }
+
     private void InitializeMonsterState()
     {
         currentBuffs ??= new List<Buff>();
@@ -413,6 +459,7 @@ public abstract class Monster : MonoBehaviour
         defense = 0;
         ClearPlannedAction();
         OnDeathTriggered();
+        TrainingBattleManager.Instance?.HandleMonsterDeath(this);
         Debug.Log($"[Monster] {name} 처치");
     }
 

@@ -71,7 +71,7 @@
                 },
                 {
                     "type": "Buff",
-                    "buffId": 3025,
+                    "buffId": 4007,
                     "amount": 4,
                     "target": "Self"
                 }
@@ -95,7 +95,7 @@
                 },
                 {
                     "type": "Buff",
-                    "buffId": 3025,
+                    "buffId": 4007,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -555,7 +555,7 @@
                     "type": "Buff",
                     "buffId": 1005,
                     "amount": 1,
-                    "target": "AllEnemies"
+                    "target": "SingleEnemy"
                 }
             ]
         },

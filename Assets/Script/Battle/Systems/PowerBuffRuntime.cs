@@ -20,6 +20,7 @@ public class PowerBuffRuntime
 
     private int playedCardCounterForDoubleJack;
     private int remainingHighCostRepeatCount;
+    private int pendingStraightDiscardCount;
 
     public PowerBuffRuntime(TrainingBattleManager battleManager)
     {
@@ -30,6 +31,7 @@ public class PowerBuffRuntime
     {
         playedCardCounterForDoubleJack = 0;
         remainingHighCostRepeatCount = 0;
+        pendingStraightDiscardCount = 0;
     }
 
     public bool CanPlayCard(Card card)
@@ -64,6 +66,31 @@ public class PowerBuffRuntime
         return GetPlayerBuffStack(PermanentBarrierRetentionBuffId) > 0;
     }
 
+    public bool CanDrawCards()
+    {
+        return GetPlayerBuffStack(DrawLockBuffId) <= 0;
+    }
+
+    public bool CanGainCardsToHand()
+    {
+        return GetPlayerBuffStack(DrawLockBuffId) <= 0;
+    }
+
+    public int GetEffectiveCardCost(Card card)
+    {
+        if (card == null)
+        {
+            return 0;
+        }
+
+        return GetPlayerBuffStack(NextCardFreeBuffId) > 0 ? 0 : card.cost;
+    }
+
+    public int GetCardUseAllEnemiesDamage()
+    {
+        return GetPlayerBuffStack(CardUseAllEnemiesDamageBuffId) + GetPlayerBuffStack(BlessingPulseBuffId);
+    }
+
     public int GetAdditionalBarrierGain()
     {
         return GetPlayerBuffStack(GlacierBondBuffId);
@@ -96,16 +123,24 @@ public class PowerBuffRuntime
             AddGeneratedCardsToHand(CreateRandomCardsFromGroup(BasePotionGroupName, potionFactory));
         }
 
+        int delayedPotionFactory = GetPlayerBuffStack(DelayedPotionFactoryBuffId);
+        if (delayedPotionFactory > 0)
+        {
+            AddGeneratedCardsToHand(CreateRandomCardsFromGroup(BasePotionGroupName, delayedPotionFactory));
+            battleManager.playerData?.ConsumeBuffStack(DelayedPotionFactoryBuffId, delayedPotionFactory);
+        }
+
         int jokerPower = GetPlayerBuffStack(JokerPowerBuffId);
         if (jokerPower > 0)
         {
-            AddGeneratedCardsToHand(CreateRandomCardsFromGroup(JokerUpgradeGroupName, jokerPower));
+            AddGeneratedCardsToHand(CreateRandomUniqueUpgradeCards(jokerPower));
         }
 
         int straightStack = GetPlayerBuffStack(StraightBuffId);
         if (straightStack > 0)
         {
-            ApplyStraightEffect(straightStack);
+            battleManager.AddTurnStartDrawModifier(straightStack * 2);
+            pendingStraightDiscardCount += straightStack;
         }
 
         int absoluteZero = GetPlayerBuffStack(AbsoluteZeroBuffId);
@@ -132,6 +167,21 @@ public class PowerBuffRuntime
                 battleManager.playerData.AddDefense(runeStack * runeBarrier);
             }
         }
+
+        foreach (Monster monster in battleManager.GetLivingMonsters())
+        {
+            if (monster == null)
+            {
+                continue;
+            }
+
+            monster.ConsumeBuffStack(LifeLinkBuffId, 1);
+        }
+    }
+
+    public void ResolveDeferredTurnStartEffects()
+    {
+        ResolveStraightDiscardSelection();
     }
 
     public void OnCardPlayed(Card playedCard, Monster originalTarget, bool isRepeatedEffect)
@@ -150,13 +200,27 @@ public class PowerBuffRuntime
 
     public int ConsumeRepeatCount(Card playedCard, bool isRepeatedEffect)
     {
-        if (isRepeatedEffect || playedCard == null || playedCard.cost < 2 || remainingHighCostRepeatCount <= 0)
+        if (isRepeatedEffect || playedCard == null)
         {
             return 0;
         }
 
-        remainingHighCostRepeatCount--;
-        return 1;
+        int repeatCount = 0;
+
+        if (playedCard.cost >= 2 && remainingHighCostRepeatCount > 0)
+        {
+            remainingHighCostRepeatCount--;
+            repeatCount++;
+        }
+
+        int repeatNextCard = GetPlayerBuffStack(RepeatNextCardBuffId);
+        if (repeatNextCard > 0)
+        {
+            battleManager.playerData?.ConsumeBuffStack(RepeatNextCardBuffId, repeatNextCard);
+            repeatCount += repeatNextCard;
+        }
+
+        return repeatCount;
     }
 
     public void OnAttackResolved(Monster targetMonster, int barrierBefore, int barrierAfter)
@@ -263,6 +327,52 @@ public class PowerBuffRuntime
                 monster.TakeDamage(brutality, 0);
             }
         }
+    }
+
+    public void OnMonsterHpLost(Monster targetMonster, int hpLoss)
+    {
+        if (targetMonster == null || hpLoss <= 0 || battleManager.playerData == null)
+        {
+            return;
+        }
+
+        int lifeLink = targetMonster.GetBuffStack(LifeLinkBuffId);
+        if (lifeLink > 0)
+        {
+            battleManager.playerData.Heal(hpLoss * lifeLink);
+        }
+    }
+
+    public void OnMonsterDeath(Monster deadMonster)
+    {
+        if (deadMonster == null || deadMonster.GetBuffStack(FlameTransferBuffId) <= 0)
+        {
+            return;
+        }
+
+        int burnStack = deadMonster.GetBuffStack(BurnBuffId);
+        if (burnStack <= 0)
+        {
+            return;
+        }
+
+        battleManager.ApplyBuffToAllEnemies(BurnBuffId, burnStack);
+    }
+
+    public void ApplyCardUseAllEnemiesDamage(int damage)
+    {
+        if (damage <= 0)
+        {
+            return;
+        }
+
+        List<Monster> targets = battleManager.GetLivingMonsters();
+        foreach (Monster monster in targets)
+        {
+            monster.TakeDamage(damage, 0);
+        }
+
+        battleManager.battleContext?.OnDamageDealt(damage * targets.Count);
     }
 
     public List<Card> ProcessGeneratedCards(List<Card> generatedCards, bool allowDuplicateGeneration)
@@ -379,27 +489,67 @@ public class PowerBuffRuntime
         }
     }
 
-    private void ApplyStraightEffect(int stack)
+    private void ResolveStraightDiscardSelection()
     {
-        int drawCount = stack * 2;
-        List<Card> drawnCards = battleManager.DrawCardsAndGet(drawCount);
-        if (drawnCards.Count <= 0 || battleManager.handManager == null || battleManager.usableDeckManager == null)
+        if (pendingStraightDiscardCount <= 0 || battleManager.handManager == null || battleManager.usableDeckManager == null)
         {
             return;
         }
 
-        int discardCount = Mathf.Min(stack, drawnCards.Count);
+        List<Card> selectableCards = battleManager.handManager.GetHandCards();
+        int discardCount = Mathf.Min(pendingStraightDiscardCount, selectableCards.Count);
+        pendingStraightDiscardCount = 0;
+        if (discardCount <= 0)
+        {
+            return;
+        }
+
+        bool opened = battleManager.OpenSelectCardPanel(selectableCards, discardCount, DiscardStraightCards);
+        if (opened)
+        {
+            return;
+        }
+
+        List<Card> fallbackSelection = new();
         for (int i = 0; i < discardCount; i++)
         {
-            Card cardToDiscard = drawnCards[drawnCards.Count - 1 - i];
-            if (cardToDiscard == null || !battleManager.handManager.RemoveCard(cardToDiscard))
+            Card card = selectableCards[i];
+            if (card != null)
+            {
+                fallbackSelection.Add(card);
+            }
+        }
+
+        DiscardStraightCards(fallbackSelection);
+    }
+
+    private void DiscardStraightCards(List<Card> selectedCards)
+    {
+        if (battleManager.handManager == null || battleManager.usableDeckManager == null)
+        {
+            return;
+        }
+
+        int discardedCount = 0;
+        List<Card> safeSelectedCards = selectedCards ?? new List<Card>();
+        foreach (Card card in safeSelectedCards)
+        {
+            if (card == null || !battleManager.handManager.RemoveCard(card))
             {
                 continue;
             }
 
-            battleManager.usableDeckManager.AddToDiscard(cardToDiscard);
-            battleManager.battleContext?.OnCardsDiscarded(1);
+            battleManager.usableDeckManager.AddToDiscard(card);
+            discardedCount++;
         }
+
+        if (discardedCount > 0)
+        {
+            battleManager.battleContext?.OnCardsDiscarded(discardedCount);
+        }
+
+        battleManager.RefreshHandPlayableState();
+        battleManager.UpdateAllUI();
     }
 
     private List<Card> CreateRandomCardsFromGroup(string groupName, int count)
@@ -427,6 +577,74 @@ public class PowerBuffRuntime
         }
 
         return generatedCards;
+    }
+
+    private List<Card> CreateRandomUniqueUpgradeCards(int count)
+    {
+        List<int> pool = GetUniqueUpgradeCardPool();
+        if (pool.Count == 0)
+        {
+            return CreateRandomCardsFromGroup(JokerUpgradeGroupName, count);
+        }
+
+        List<Card> generatedCards = new();
+        for (int i = 0; i < count; i++)
+        {
+            int index = Random.Range(0, pool.Count);
+            Card generatedCard = CardManager.GetCardAsCard(pool[index]);
+            if (generatedCard != null)
+            {
+                generatedCards.Add(generatedCard);
+            }
+        }
+
+        return generatedCards;
+    }
+
+    private List<int> GetUniqueUpgradeCardPool()
+    {
+        List<int> pool = new();
+        HashSet<Character> selectedCharacters = null;
+        if (SelectedButtonControl.selectedCharacterList != null && SelectedButtonControl.selectedCharacterList.Count > 0)
+        {
+            selectedCharacters = new HashSet<Character>(SelectedButtonControl.selectedCharacterList);
+        }
+
+        List<CardData> allCards = CardManager.GetAllCards();
+        foreach (CardData cardData in allCards)
+        {
+            if (!IsUniqueUpgradeCard(cardData, selectedCharacters))
+            {
+                continue;
+            }
+
+            if (!pool.Contains(cardData.cardId))
+            {
+                pool.Add(cardData.cardId);
+            }
+        }
+
+        return pool;
+    }
+
+    private static bool IsUniqueUpgradeCard(CardData cardData, HashSet<Character> selectedCharacters)
+    {
+        if (cardData == null)
+        {
+            return false;
+        }
+
+        if (selectedCharacters != null && !selectedCharacters.Contains(cardData.character))
+        {
+            return false;
+        }
+
+        if (Mathf.Abs(cardData.cardId) % 10 == 0)
+        {
+            return false;
+        }
+
+        return cardData.keywords != null && cardData.keywords.Contains(CardKeywordIds.Unique);
     }
 
     private void AddGeneratedCardsToHand(List<Card> generatedCards)
