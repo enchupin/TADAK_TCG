@@ -667,7 +667,7 @@
                         {
                             "type": "ModifyCard",
                             "param": "Damage",
-                            "amountFormula": "Stack(2002)",
+                            "amountFormula": "Stack(3002)",
                             "target": "Self"
                         }
                     ]

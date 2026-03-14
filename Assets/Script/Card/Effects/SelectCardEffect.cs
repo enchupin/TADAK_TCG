@@ -142,6 +142,9 @@ public class SelectCardEffect : ICardEffect
             return;
         }
 
+        Card sourceCard = battleManager?.battleContext?.GetLastPlayedCard();
+        int excludedUniqueCardId = ResolveExcludedUniqueCardId(sourceCard);
+
         List<CardData> characterCards = CardManager.GetCardsByCharacter(sourceCharacter.Value);
         if (characterCards == null) {
             return;
@@ -159,6 +162,10 @@ public class SelectCardEffect : ICardEffect
                 }
             } else {
                 if (!IsUniqueCardId(cardData.cardId)) {
+                    continue;
+                }
+
+                if (excludedUniqueCardId > 0 && cardData.cardId == excludedUniqueCardId) {
                     continue;
                 }
             }
@@ -182,6 +189,26 @@ public class SelectCardEffect : ICardEffect
         }
 
         return lastPlayedCard.character;
+    }
+
+    private static int ResolveExcludedUniqueCardId(Card sourceCard)
+    {
+        if (sourceCard == null) {
+            return 0;
+        }
+
+        int familyBaseId = ResolveCardFamilyBaseId(sourceCard.cardId);
+        if (familyBaseId != 302070) {
+            return 0;
+        }
+
+        return familyBaseId;
+    }
+
+    private static int ResolveCardFamilyBaseId(int cardId)
+    {
+        int suffix = Mathf.Abs(cardId) % 10;
+        return suffix == 0 ? cardId : cardId - suffix;
     }
 
     private void AddCardsByIdFilter(List<Card> target)

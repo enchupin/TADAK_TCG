@@ -152,6 +152,12 @@ public class PowerBuffRuntime
 
     public void OnTurnEnd()
     {
+        ReplayTurnEndTriggeredEffects();
+        ExpireTurnEndCleanupEffects();
+    }
+
+    public void ReplayTurnEndTriggeredEffects()
+    {
         int runeGeneration = GetPlayerBuffStack(RuneGenerationBuffId);
         if (runeGeneration > 0)
         {
@@ -167,7 +173,10 @@ public class PowerBuffRuntime
                 battleManager.playerData.AddDefense(runeStack * runeBarrier);
             }
         }
+    }
 
+    private void ExpireTurnEndCleanupEffects()
+    {
         foreach (Monster monster in battleManager.GetLivingMonsters())
         {
             if (monster == null)

@@ -12,6 +12,7 @@ public class TurnSystem
     private int turnNumber;
     private int pendingExtraDrawAtTurnStart;
     private int pendingExtraTurns;
+    private int pendingExtraTurnEndTriggers;
 
     public bool IsTurnTransitioning { get; private set; }
 
@@ -25,6 +26,7 @@ public class TurnSystem
         turnNumber = 0;
         pendingExtraDrawAtTurnStart = 0;
         pendingExtraTurns = 0;
+        pendingExtraTurnEndTriggers = 0;
         IsTurnTransitioning = false;
     }
 
@@ -41,6 +43,16 @@ public class TurnSystem
         }
 
         pendingExtraTurns += amount;
+    }
+
+    public void AddTurnEndTriggerRepeat(int amount)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        pendingExtraTurnEndTriggers += amount;
     }
 
     public bool CanPlayerPlayCard()
@@ -272,6 +284,11 @@ public class TurnSystem
             }
             discardedCards.Add(card);
         }
+        ExecuteAdditionalTurnEndTriggers(remainingCards, retainedCards);
+        if (battleManager.playerData != null && battleManager.playerData.IsDead())
+        {
+            yield break;
+        }
         if (discardedCards.Count > 0)
         {
             battleManager.usableDeckManager.AddToDiscard(discardedCards);
@@ -299,6 +316,53 @@ public class TurnSystem
         {
             retainedCard.ExecuteKeepEffects(battleManager);
             battleManager.handManager.RefreshCardDisplay(retainedCard);
+        }
+    }
+
+    private void ExecuteAdditionalTurnEndTriggers(List<Card> remainingCards, List<Card> retainedCards)
+    {
+        if (pendingExtraTurnEndTriggers <= 0)
+        {
+            return;
+        }
+
+        int repeatCount = pendingExtraTurnEndTriggers;
+        pendingExtraTurnEndTriggers = 0;
+
+        for (int i = 0; i < repeatCount; i++)
+        {
+            battleManager.ResolveAdditionalTurnEndTriggers();
+            if (battleManager.playerData != null && battleManager.playerData.IsDead())
+            {
+                return;
+            }
+
+            if (remainingCards != null)
+            {
+                foreach (Card card in remainingCards)
+                {
+                    card?.ExecuteEndTurnInHandEffects(battleManager);
+                    if (battleManager.playerData != null && battleManager.playerData.IsDead())
+                    {
+                        return;
+                    }
+                }
+            }
+
+            if (retainedCards == null)
+            {
+                continue;
+            }
+
+            foreach (Card retainedCard in retainedCards)
+            {
+                retainedCard?.ExecuteKeepEffects(battleManager);
+                battleManager.handManager?.RefreshCardDisplay(retainedCard);
+                if (battleManager.playerData != null && battleManager.playerData.IsDead())
+                {
+                    return;
+                }
+            }
         }
     }
 

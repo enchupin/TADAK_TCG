@@ -684,6 +684,11 @@ public class TrainingBattleManager : MonoBehaviour
         turnSystem.AddExtraTurn(amount);
     }
 
+    public void AddTurnEndTriggerRepeat(int amount)
+    {
+        turnSystem.AddTurnEndTriggerRepeat(amount);
+    }
+
     public void ApplyCombatStartEffects()
     {
         if (usableDeckManager == null || handManager == null)
@@ -727,6 +732,11 @@ public class TrainingBattleManager : MonoBehaviour
         }
 
         powerBuffRuntime?.OnTurnEnd();
+    }
+
+    public void ResolveAdditionalTurnEndTriggers()
+    {
+        powerBuffRuntime?.ReplayTurnEndTriggeredEffects();
     }
 
     public bool TryHandleCombatEnd()

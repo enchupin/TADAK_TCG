@@ -183,6 +183,8 @@ public class CopyEffect : ICardEffect
                     foreach (Card copiedCard in copiedCards) {
                         battleManager.usableDeckManager.AddToDrawPileRandom(copiedCard);
                     }
+
+                    battleManager.battleContext?.OnDeckShuffled();
                 }
                 return;
             default:
