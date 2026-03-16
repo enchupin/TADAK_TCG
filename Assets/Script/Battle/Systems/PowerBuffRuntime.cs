@@ -88,7 +88,7 @@ public class PowerBuffRuntime
 
     public int GetCardUseAllEnemiesDamage()
     {
-        return GetPlayerBuffStack(CardUseAllEnemiesDamageBuffId) + GetPlayerBuffStack(BlessingPulseBuffId);
+        return GetPlayerBuffStack(CardUseAllEnemiesDamageBuffId);
     }
 
     public int GetAdditionalBarrierGain()

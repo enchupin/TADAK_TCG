@@ -330,7 +330,6 @@ public class PlayerData : MonoBehaviour
         }
 
         DecreaseBuffStack(BattleRuntimeDefinitions.CardUseAllEnemiesDamageBuffId, 1);
-        DecreaseBuffStack(BattleRuntimeDefinitions.BlessingPulseBuffId, 1);
         DecreaseBuffStack(BattleRuntimeDefinitions.DamageClampToOneBuffId, 1);
         RemoveBuff(BattleRuntimeDefinitions.DrawLockBuffId);
 

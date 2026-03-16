@@ -36,7 +36,6 @@ public static class BattleRuntimeDefinitions
     public const int IntimidationBuffId = 3022;
     public const int RepeatNextCardBuffId = 3023;
     public const int CardUseAllEnemiesDamageBuffId = 3024;
-    public const int BlessingPulseBuffId = 3025;
     public const int DamageClampToOneBuffId = 3026;
     public const int NextCardFreeBuffId = 3027;
     public const int RetainChoiceBuffId = 3028;
