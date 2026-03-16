@@ -308,7 +308,7 @@ public class PowerBuffRuntime
         }
     }
 
-    public void OnEnemyDebuffApplied(Monster targetMonster, int buffId, int amount)
+    public void OnEnemyDebuffApplied(Monster targetMonster, int buffId, int amount, int crueltyStackBeforeApply = -1)
     {
         if (targetMonster == null || targetMonster.IsDead() || amount <= 0)
         {
@@ -321,7 +321,10 @@ public class PowerBuffRuntime
             return;
         }
 
-        int cruelty = targetMonster.GetBuffStack(CrueltyDebuffId);
+        // 새로 추가된 잔혹 스택은 이번 디버프 반응 피해에 포함하지 않음
+        int cruelty = crueltyStackBeforeApply >= 0
+            ? crueltyStackBeforeApply
+            : targetMonster.GetBuffStack(CrueltyDebuffId);
         if (cruelty > 0)
         {
             targetMonster.TakeDamage(cruelty, 0);

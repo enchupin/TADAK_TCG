@@ -953,10 +953,11 @@ public class TrainingBattleManager : MonoBehaviour
             buffId = BattleRuntimeDefinitions.EnhancedCorrosionBuffId;
         }
 
+        int crueltyStackBeforeApply = monster.GetBuffStack(BattleRuntimeDefinitions.CrueltyDebuffId);
         monster.AddBuff(buffId, amount);
         if (!BuffData.IsBeneficialBuffId(buffId))
         {
-            powerBuffRuntime?.OnEnemyDebuffApplied(monster, buffId, amount);
+            powerBuffRuntime?.OnEnemyDebuffApplied(monster, buffId, amount, crueltyStackBeforeApply);
         }
     }
 
