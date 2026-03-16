@@ -846,26 +846,6 @@
             "description": "이번 턴에 카드를 사용할 때마다 모든 적에게 피해를 1 입힙니다."
         },
         {
-            "buffId": 3025,
-            "name": "21:축복",
-            "buffType": 3,
-            "trigger": {
-                "event": "OnCardUse"
-            },
-            "effects": [
-                {
-                    "type": "Damage",
-                    "amount": 1,
-                    "target": "AllEnemies"
-                }
-            ],
-            "decrease": {
-                "timing": "OnTurnEnd",
-                "amount": 1
-            },
-            "description": "이번 턴에 카드를 사용할 때마다 모든 적에게 피해를 1 입힙니다."
-        },
-        {
             "buffId": 3026,
             "name": "아슬아슬",
             "buffType": 3,
