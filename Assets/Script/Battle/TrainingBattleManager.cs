@@ -60,6 +60,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     [Header("Turn Settings")]
     public int drawCardCount = 6;
+    [SerializeField] private int maxHandCardCount = 10;
     [SerializeField] private int playerBaseEnergyPerTurn = 3;
     [SerializeField] private float enemyActionDelay = 0.2f;
     [SerializeField] private Button endTurnButton;
@@ -95,6 +96,7 @@ public class TrainingBattleManager : MonoBehaviour
     private bool hasResolvedBattleResult;
 
     public float EnemyActionDelay => enemyActionDelay;
+    public int MaxHandCardCount => Mathf.Max(0, maxHandCardCount);
 
     private void Awake()
     {
@@ -691,31 +693,68 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void ApplyCombatStartEffects()
     {
-        if (usableDeckManager == null || handManager == null)
+        if (usableDeckManager == null)
         {
             return;
         }
-        List<Card> openingCards = new List<Card>();
+
         List<Card> drawPile = usableDeckManager.GetDrawPile();
+        if (drawPile.Count <= 0)
+        {
+            return;
+        }
+
+        List<Card> openingCards = new List<Card>();
+        List<Card> remainingCards = new List<Card>();
         foreach (Card card in drawPile)
         {
-            if (card == null || !card.HasKeyword(CardKeywordIds.Opening))
-            {
-                continue;
-            }
-            if (usableDeckManager.RemoveFromDrawPile(card))
+            if (card != null && card.HasKeyword(CardKeywordIds.Opening))
             {
                 openingCards.Add(card);
+                continue;
             }
+
+            remainingCards.Add(card);
         }
+
         if (openingCards.Count <= 0)
         {
             return;
         }
-        handManager.AddCard(openingCards);
-        battleContext?.OnCardsDrawn(openingCards.Count);
-        RefreshHandPlayableState();
+
+        ShuffleCards(openingCards);
+
+        List<Card> reorderedDrawPile = new List<Card>(openingCards.Count + remainingCards.Count);
+        reorderedDrawPile.AddRange(openingCards);
+        reorderedDrawPile.AddRange(remainingCards);
+        usableDeckManager.SetDrawPile(reorderedDrawPile);
+
+        int currentHandCount = handManager != null ? handManager.GetHandCount() : 0;
+        int availableHandSpace = Mathf.Max(0, MaxHandCardCount - currentHandCount);
+        int targetStartDrawCount = Mathf.Min(availableHandSpace, Mathf.Max(drawCardCount, openingCards.Count));
+        int drawModifier = targetStartDrawCount - drawCardCount;
+        if (drawModifier != 0)
+        {
+            turnSystem.AddTurnStartDrawModifier(drawModifier);
+        }
+
         UpdateAllUI();
+    }
+
+    private static void ShuffleCards(List<Card> cards)
+    {
+        if (cards == null || cards.Count <= 1)
+        {
+            return;
+        }
+
+        for (int i = cards.Count - 1; i > 0; i--)
+        {
+            int randomIndex = UnityEngine.Random.Range(0, i + 1);
+            Card temp = cards[i];
+            cards[i] = cards[randomIndex];
+            cards[randomIndex] = temp;
+        }
     }
 
     public void ApplyPlayerTurnStartEffects()
