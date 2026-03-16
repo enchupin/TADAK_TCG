@@ -290,7 +290,7 @@
             "name": "화염 고리",
             "characterId": 201,
             "cost": 1,
-            "description": "내 기본 카드를 1장 뽑습니다. 이번 턴에 그 카드의 비용이 1 감소합니다.",
+            "description": "이그니아의 기본 카드를 1장 뽑습니다. 이번 턴에 그 카드의 비용이 1 감소합니다.",
             "effects": [
                 {
                     "type": "DrawBasic",
@@ -310,7 +310,7 @@
             "name": "화염 고리 +",
             "characterId": 201,
             "cost": 1,
-            "description": "내 기본 카드를 2장 뽑습니다. 이번 턴에 그 카드들의 비용이 1 감소합니다.",
+            "description": "이그니아의 기본 카드를 2장 뽑습니다. 이번 턴에 그 카드들의 비용이 1 감소합니다.",
             "effects": [
                 {
                     "type": "DrawBasic",
@@ -351,7 +351,7 @@
             "name": "화염 고리 +",
             "characterId": 201,
             "cost": 1,
-            "description": "내 카드를 1장 뽑습니다. 이번 턴에 그 카드의 비용이 1 감소합니다.",
+            "description": "이그니아의 카드를 1장 뽑습니다. 이번 턴에 그 카드의 비용이 1 감소합니다.",
             "effects": [
                 {
                     "type": "DrawCharacter",
@@ -370,7 +370,7 @@
             "name": "화염 고리 +",
             "characterId": 201,
             "cost": 0,
-            "description": "카드를 1장 뽑습니다. 뽑은 카드가 내 카드면, 화염 낙인을 3 부여합니다.",
+            "description": "카드를 1장 뽑습니다. 뽑은 카드가 이그니아의 카드면, 화염 낙인을 3 부여합니다.",
             "effects": [
                 {
                     "type": "Draw",
@@ -404,10 +404,10 @@
             "name": "화염 고리 +",
             "characterId": 201,
             "cost": 1,
-            "description": "내 카드를 1장 뽑습니다. 이번 게임 동안 그 카드의 비용이 1 감소합니다.",
+            "description": "이그니아의 카드를 1장 뽑습니다. 이번 게임 동안 그 카드의 비용이 1 감소합니다.",
             "effects": [
                 {
-                    "type": "Draw",
+                    "type": "DrawCharacter",
                     "amount": 1,
                     "onAction": {
                         "type": "ReduceCost",
@@ -549,7 +549,7 @@
                 3,
                 9
             ],
-            "description": "대상이 죽으면 화염 낙인 수치만큼 모든 적에게 화염 낙인을 부여됩니다.",
+            "description": "대상 적이 죽을 때 보유한 화염 낙인 수치만큼 모든 적에게 화염 낙인을 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",

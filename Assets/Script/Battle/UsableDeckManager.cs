@@ -318,6 +318,14 @@ public class UsableDeckManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 현재 드로우 더미 순서를 그대로 설정
+    /// </summary>
+    public void SetDrawPile(List<Card> cards)
+    {
+        usableDeck = cards != null ? new Queue<Card>(cards) : new Queue<Card>();
+    }
+
+    /// <summary>
     /// 외부에서 덱을 설정
     /// </summary>
     public void SetDeck(List<Card> cards)

@@ -2678,6 +2678,7 @@ MonoBehaviour:
   monsterSpawner: {fileID: 2073456888}
   battleDeckViewer: {fileID: 0}
   drawCardCount: 6
+  maxHandCardCount: 10
   playerBaseEnergyPerTurn: 3
   enemyActionDelay: 0.2
   endTurnButton: {fileID: 1007523897}
@@ -2685,7 +2686,7 @@ MonoBehaviour:
   enableTrainingRunFlow: 0
   battleResultTransitionDelay: 0.8
   spawnedMonsters: []
-  isDebugMode: 1
+  isDebugMode: 0
   debugCardFilterType: 1
   debugTargetEffect: 7
   debugTargetKeyword: 4
