@@ -12,7 +12,7 @@ public class SFXControl : MonoBehaviour
 
     // PlayerPrefs 키
     private const string SFX_VOLUME_KEY = "SFXVolume";
-    private const float DEFAULT_SFX_VOLUME = 1.0f;
+    private const float DEFAULT_SFX_VOLUME = 0.15f;
 
     // 현재 SFX 볼륨
     private float currentSFXVolume;
@@ -20,38 +20,34 @@ public class SFXControl : MonoBehaviour
     private void Awake()
     {
         // 싱글톤 패턴 구현
-        if (Instance == null)
-        {
+        if (Instance == null) {
             Instance = this;
             DontDestroyOnLoad(gameObject); // 씬 전환 시에도 유지
-        }
-        else
-        {
+        } else {
             Destroy(gameObject);
             return;
         }
 
         // AudioSource가 할당되지 않았다면 자동으로 추가
-        if (sfxAudioSource == null)
-        {
+        if (sfxAudioSource == null) {
             sfxAudioSource = GetComponent<AudioSource>();
-            if (sfxAudioSource == null)
-            {
+            if (sfxAudioSource == null) {
                 Debug.LogWarning("SFX AudioSource가 없어서 자동으로 추가합니다.");
                 sfxAudioSource = gameObject.AddComponent<AudioSource>();
             }
         }
 
         // PlayerPrefs에서 SFX 볼륨 로드
-        LoadSFXVolume();
+        currentSFXVolume = PlayerPrefs.GetFloat(SFX_VOLUME_KEY, DEFAULT_SFX_VOLUME);
+        ApplysfxVolume();
     }
 
-    /// <summary>
-    /// PlayerPrefs에서 SFX 볼륨 설정을 로드
-    /// </summary>
-    private void LoadSFXVolume()
-    {
-        currentSFXVolume = PlayerPrefs.GetFloat(SFX_VOLUME_KEY, DEFAULT_SFX_VOLUME);
+
+    private void ApplysfxVolume() {
+        if (sfxAudioSource == null) {
+            return;
+        }
+        sfxAudioSource.volume = currentSFXVolume;
     }
 
     /// <summary>
@@ -62,6 +58,7 @@ public class SFXControl : MonoBehaviour
         currentSFXVolume = Mathf.Clamp01(volume);
         PlayerPrefs.SetFloat(SFX_VOLUME_KEY, currentSFXVolume);
         PlayerPrefs.Save();
+        ApplysfxVolume();
     }
 
     /// <summary>

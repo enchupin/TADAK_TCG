@@ -7,71 +7,78 @@ public class BGMControl : MonoBehaviour
     [Header("Audio Source")]
     [SerializeField] private AudioSource bgmAudioSource;
 
-    // PlayerPrefs Å°
+    // PlayerPrefs í‚¤
     private const string BGM_VOLUME_KEY = "bgmVolume";
-    private const float DEFAULT_BGM_VOLUME = 1.0f;
+    private const float DEFAULT_BGM_VOLUME = 0.15f;
 
-    // ÇöÀç BGM º¼·ı
+    // í˜„ì¬ BGM ë³¼ë¥¨
     private float currentBGMVolume;
 
-
-    private void Awake() {
-        // ½Ì±ÛÅæ ÆĞÅÏ ±¸Çö
-        if (Instance == null) {
+    private void Awake()
+    {
+        // ì‹±ê¸€í†¤ íŒ¨í„´ êµ¬í˜„
+        if (Instance == null)
+        {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // ¾À ÀüÈ¯ ½Ã¿¡µµ À¯Áö
-        } else {
+            DontDestroyOnLoad(gameObject); // ì”¬ ì „í™˜ ì‹œì—ë„ ìœ ì§€
+        }
+        else
+        {
             Destroy(gameObject);
             return;
         }
 
-        // AudioSource°¡ ÇÒ´çµÇÁö ¾Ê¾Ò´Ù¸é ÀÚµ¿À¸·Î Ãß°¡
-        if (bgmAudioSource == null) {
+        // AudioSourceê°€ í• ë‹¹ë˜ì§€ ì•Šì•˜ë‹¤ë©´ ìë™ìœ¼ë¡œ ì¶”ê°€
+        if (bgmAudioSource == null)
+        {
             bgmAudioSource = GetComponent<AudioSource>();
-            if (bgmAudioSource == null) {
-                Debug.LogWarning("bgm AudioSource°¡ ¾ø¾î¼­ ÀÚµ¿À¸·Î Ãß°¡ÇÕ´Ï´Ù.");
+            if (bgmAudioSource == null)
+            {
+                Debug.LogWarning("bgm AudioSourceê°€ ì—†ì–´ì„œ ìë™ìœ¼ë¡œ ì¶”ê°€í•©ë‹ˆë‹¤.");
                 bgmAudioSource = gameObject.AddComponent<AudioSource>();
             }
         }
 
-        // PlayerPrefs¿¡¼­ bgm º¼·ı ·Îµå
-        LoadbgmVolume();
-
-        // Å×½ºÆ® ¿ë (¼Ò¸®°¡ ³Ê¹« Ä¿¼­ ÁÙ¿©³õÀ½)
-        currentBGMVolume = 0.15f;
-    }
-
-    /// <summary>
-    /// PlayerPrefs¿¡¼­ bgm º¼·ı ¼³Á¤À» ·Îµå
-    /// </summary>
-    private void LoadbgmVolume() {
+        // PlayerPrefsì—ì„œ bgm ë³¼ë¥¨ ë¡œë“œ
         currentBGMVolume = PlayerPrefs.GetFloat(BGM_VOLUME_KEY, DEFAULT_BGM_VOLUME);
+        ApplybgmVolume();
+    }
+
+    private void ApplybgmVolume()
+    {
+        if (bgmAudioSource == null) {
+            return;
+        }
+        bgmAudioSource.volume = currentBGMVolume;
     }
 
     /// <summary>
-    /// bgm º¼·ı ¼³Á¤
+    /// bgm ë³¼ë¥¨ ì„¤ì •
     /// </summary>
-    public void SetbgmVolume(float volume) {
+    public void SetbgmVolume(float volume)
+    {
         currentBGMVolume = Mathf.Clamp01(volume);
         PlayerPrefs.SetFloat(BGM_VOLUME_KEY, currentBGMVolume);
         PlayerPrefs.Save();
+        ApplybgmVolume();
     }
 
     /// <summary>
-    /// ÇöÀç bgm º¼·ı °¡Á®¿À±â
+    /// í˜„ì¬ bgm ë³¼ë¥¨ ê°€ì ¸ì˜¤ê¸°
     /// </summary>
-    public float GetbgmVolume() {
+    public float GetbgmVolume()
+    {
         return currentBGMVolume;
     }
 
-
     /// <summary>
-    /// Æ¯Á¤ BGMÀ» Àç»ı (¼³Á¤µÈ º¼·ı Àû¿ë)
+    /// íŠ¹ì • BGMì„ ì¬ìƒ (ì„¤ì •ëœ ë³¼ë¥¨ ì ìš©)
     /// </summary>
-    public void Playbgm(AudioClip clip) {
-        if (clip != null && bgmAudioSource != null) {
+    public void Playbgm(AudioClip clip)
+    {
+        if (clip != null && bgmAudioSource != null)
+        {
             bgmAudioSource.PlayOneShot(clip, currentBGMVolume);
         }
     }
-
 }
