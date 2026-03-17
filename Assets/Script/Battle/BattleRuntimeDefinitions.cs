@@ -53,8 +53,14 @@ public static class BattleRuntimeDefinitions
     public const int WeakBuffId = 4008;
     public const int CrueltyDebuffId = 4009;
     public const int FrailBuffId = 4011;
+    public const int DrawInterferenceBuffId = 4012;
     public const int MonsterLifeStealBuffId = 5001;
     public const int VoidShellBuffId = 5002;
+    public const int FaithfulPrayerBuffId = 5003;
+    public const int ParasiticMushroomBuffId = 5004;
+    public const int PoisonUpgradeBuffId = 5005;
     public const int PoisonousMushroomBuffId = 1014;
     public const int WoundCardId = 10;
+    public const int PoisonCardId = 20;
+    public const int PoisonPlusCardId = 21;
 }

@@ -105,6 +105,13 @@ public class PowerBuffRuntime
     {
         remainingHighCostRepeatCount = GetPlayerBuffStack(HighCostRepeatBuffId);
 
+        int drawInterference = GetPlayerBuffStack(DrawInterferenceBuffId);
+        if (drawInterference > 0)
+        {
+            battleManager.AddTurnStartDrawModifier(-drawInterference);
+            battleManager.playerData?.ConsumeBuffStack(DrawInterferenceBuffId, drawInterference);
+        }
+
         int extraDraw = GetPlayerBuffStack(ExtraDrawBuffId);
         if (extraDraw > 0)
         {

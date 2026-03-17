@@ -11,7 +11,9 @@ public enum MonsterIntentIconType
     HarmfulEffect,
     Summon,
     Bomb,
-    DisruptCard
+    DisruptCard,
+    Heal,
+    Stun
 }
 
 /// <summary>
@@ -267,6 +269,7 @@ public abstract class Monster : MonoBehaviour
         // 부식(4001), 강화부식(4002)은 턴 종료 시 지속 턴 1 감소
         DecreaseBuffStack(BattleRuntimeDefinitions.CorrosionBuffId, 1);
         DecreaseBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1);
+        OnTurnEnded();
         UpdateUI();
     }
 
@@ -571,6 +574,10 @@ public abstract class Monster : MonoBehaviour
     }
 
     protected virtual void OnBeforeTakeDamage(int incomingDamage)
+    {
+    }
+
+    protected virtual void OnTurnEnded()
     {
     }
 
