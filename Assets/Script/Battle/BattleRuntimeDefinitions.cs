@@ -52,6 +52,6 @@ public static class BattleRuntimeDefinitions
     public const int OverheatDecayBuffId = 4007;
     public const int WeakBuffId = 4008;
     public const int CrueltyDebuffId = 4009;
-    public const int PoisonousMushroomBuffId = 10001;
+    public const int PoisonousMushroomBuffId = 1014;
     public const int WoundCardId = 10;
 }
