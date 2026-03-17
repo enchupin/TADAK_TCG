@@ -5,7 +5,7 @@
             "name": "화염탄",
             "characterId": 201,
             "cost": 1,
-            "description": "피해를 6 입힙니다.",
+            "description": "피해를 {amount} 입힙니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -19,7 +19,7 @@
             "name": "드래곤 스케일",
             "characterId": 201,
             "cost": 1,
-            "description": "보호막을 6 얻습니다.",
+            "description": "보호막을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",
@@ -166,7 +166,7 @@
             "keywords": [
                 7
             ],
-            "description": "피해를 24 입힙니다.",
+            "description": "피해를 {amount} 입힙니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -184,7 +184,7 @@
             "keywords": [
                 7
             ],
-            "description": "피해를 32 입힙니다.",
+            "description": "피해를 {amount} 입힙니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -423,7 +423,7 @@
             "name": "지옥불",
             "characterId": 201,
             "cost": 1,
-            "description": "모든 적에게 피해를 4 입힙니다. 적이 혼자인 경우, 피해량이 3배가 됩니다.",
+            "description": "모든 적에게 피해를 {amount} 입힙니다. 적이 혼자인 경우, 피해량이 3배가 됩니다.",
             "effects": [
                 {
                     "condition": {
@@ -459,7 +459,7 @@
             "name": "지옥불 +",
             "characterId": 201,
             "cost": 1,
-            "description": "모든 적에게 피해를 4 입힙니다. 적이 혼자인 경우, 피해량이 5배가 됩니다.",
+            "description": "모든 적에게 피해를 {amount} 입힙니다. 적이 혼자인 경우, 피해량이 5배가 됩니다.",
             "effects": [
                 {
                     "condition": {
@@ -586,7 +586,7 @@
             "keywords": [
                 4
             ],
-            "description": "보호막을 6 얻습니다. 공격받을 때마다 공격한 적에게 피해를 3 줍니다.",
+            "description": "보호막을 {amount} 얻습니다. 공격받을 때마다 공격한 적에게 피해를 3 줍니다.",
             "effects": [
                 {
                     "type": "Barrier",
@@ -625,7 +625,7 @@
             "name": "뜨거운 피부 +",
             "characterId": 201,
             "cost": 2,
-            "description": "보호막을 16 얻습니다.",
+            "description": "보호막을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",

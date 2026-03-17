@@ -5,7 +5,7 @@
             "name": "방패 강타",
             "characterId": 301,
             "cost": 1,
-            "description": "피해를 6 입힙니다.",
+            "description": "피해를 {amount} 입힙니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -19,7 +19,7 @@
             "name": "얼음 보호막",
             "characterId": 301,
             "cost": 1,
-            "description": "보호막을 6 얻습니다.",
+            "description": "보호막을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",
@@ -136,7 +136,7 @@
             "name": "빙하 장막",
             "characterId": 301,
             "cost": 1,
-            "description": "보호막을 10 얻습니다.",
+            "description": "보호막을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",
@@ -151,7 +151,7 @@
             "name": "빙하 장막 +",
             "characterId": 301,
             "cost": 1,
-            "description": "보호막을 16 얻습니다.",
+            "description": "보호막을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",
@@ -165,7 +165,7 @@
             "name": "빙하 장막 +",
             "characterId": 301,
             "cost": 1,
-            "description": "보호막을 5만큼 2번 얻습니다.",
+            "description": "보호막을 {amount}만큼 2번 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",
@@ -184,7 +184,7 @@
             "name": "빙하 장막 +",
             "characterId": 301,
             "cost": 2,
-            "description": "피해를 12 입힙니다. 입힌 피해량만큼 보호막을 얻습니다.",
+            "description": "피해를 {amount} 입힙니다. 입힌 피해량만큼 보호막을 얻습니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -220,7 +220,7 @@
             "name": "빙하 장막 +",
             "characterId": 301,
             "cost": 1,
-            "description": "카드를 2장 뽑습니다. 보호막을 10 얻습니다.",
+            "description": "카드를 2장 뽑습니다. 보호막을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Draw",
@@ -238,7 +238,7 @@
             "name": "냉기",
             "characterId": 301,
             "cost": 1,
-            "description": "피해를 4 입힙니다. 빙결을 2 부여합니다.",
+            "description": "피해를 {amount} 입힙니다. 빙결을 2 부여합니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -259,7 +259,7 @@
             "name": "냉기 +",
             "characterId": 301,
             "cost": 1,
-            "description": "피해를 6 입힙니다. 빙결을 3 부여합니다.",
+            "description": "피해를 {amount} 입힙니다. 빙결을 3 부여합니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -279,7 +279,7 @@
             "name": "냉기 +",
             "characterId": 301,
             "cost": 1,
-            "description": "카드를 1장 뽑습니다. 보호막을 6 얻습니다.",
+            "description": "카드를 1장 뽑습니다. 보호막을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Draw",
@@ -533,7 +533,7 @@
             "name": "보호 동결",
             "characterId": 301,
             "cost": 1,
-            "description": "보호막 유지 1을 얻습니다. 보호막을 5 얻습니다.",
+            "description": "보호막 유지 1을 얻습니다. 보호막을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -582,7 +582,7 @@
             "name": "보호 동결 +",
             "characterId": 301,
             "cost": 1,
-            "description": "보호막 유지 2를 얻습니다. 보호막을 7 얻습니다.",
+            "description": "보호막 유지 2를 얻습니다. 보호막을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -606,7 +606,7 @@
                 3,
                 7
             ],
-            "description": "보호막을 20 얻습니다.",
+            "description": "보호막을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",
