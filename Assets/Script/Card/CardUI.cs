@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -18,13 +19,27 @@ public class CardUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private Image backgroundImage;
     [SerializeField] private Image cardArtwork;
+    [SerializeField] private GameObject tooltipPanel;
+    [SerializeField] private TextMeshProUGUI tooltipText;
 
     [Header("Visual Settings")]
     [SerializeField] private Color normalColor = Color.white;
     [SerializeField] private Color unplayableColor = Color.gray;
 
     private bool isPlayable = true;
+    private Card currentCard;
     public bool IsPlayable => isPlayable;
+
+    private void Awake()
+    {
+        CacheTooltipReferences();
+        HideBuffTooltip();
+    }
+
+    private void OnDisable()
+    {
+        HideBuffTooltip();
+    }
 
     /// <summary>
     /// Updates text/icon fields from card data.
@@ -36,6 +51,10 @@ public class CardUI : MonoBehaviour
             Debug.LogWarning("[CardUI] Card is null!");
             return;
         }
+
+        currentCard = card;
+        CacheTooltipReferences();
+        HideBuffTooltip();
 
         if (cardNameText != null)
             cardNameText.text = card.cardName;
@@ -54,6 +73,35 @@ public class CardUI : MonoBehaviour
             descriptionText.text = CardDescriptionFormatter.Format(card, TrainingBattleManager.Instance);
 
         ApplyPlayableVisual();
+    }
+
+    public void ShowBuffTooltip()
+    {
+        CacheTooltipReferences();
+
+        if (tooltipPanel == null || tooltipText == null || currentCard == null || BuffManager.Instance == null)
+        {
+            HideBuffTooltip();
+            return;
+        }
+
+        string buffTooltipText = BuildBuffTooltipText(currentCard);
+        if (string.IsNullOrWhiteSpace(buffTooltipText))
+        {
+            HideBuffTooltip();
+            return;
+        }
+
+        tooltipText.text = buffTooltipText;
+        tooltipPanel.SetActive(true);
+    }
+
+    public void HideBuffTooltip()
+    {
+        if (tooltipPanel != null)
+        {
+            tooltipPanel.SetActive(false);
+        }
     }
 
     public void SetPlayable(bool playable)
@@ -111,6 +159,206 @@ public class CardUI : MonoBehaviour
             CardKeywordIds.Unique => "\uC720\uC77C",
             _ => string.Empty
         };
+    }
+
+    private string BuildBuffTooltipText(Card card)
+    {
+        if (card == null || BuffManager.Instance == null)
+        {
+            return string.Empty;
+        }
+
+        List<int> buffIds = new();
+        CollectBuffIds(card.keywords, buffIds);
+        CollectBuffIds(card.effects, buffIds);
+        CollectBuffIds(card.keepEffects, buffIds);
+        CollectBuffIds(card.endTurnInHandEffects, buffIds);
+
+        if (buffIds.Count == 0)
+        {
+            return string.Empty;
+        }
+
+        StringBuilder builder = new();
+        foreach (int buffId in buffIds)
+        {
+            BuffData buffData = BuffManager.Instance.GetBuffData(buffId);
+            if (buffData == null)
+            {
+                continue;
+            }
+
+            if (builder.Length > 0)
+            {
+                builder.AppendLine();
+                builder.AppendLine();
+            }
+
+            if (!string.IsNullOrWhiteSpace(buffData.name))
+            {
+                builder.Append(buffData.name);
+            }
+
+            if (!string.IsNullOrWhiteSpace(buffData.description))
+            {
+                if (!string.IsNullOrWhiteSpace(buffData.name))
+                {
+                    builder.AppendLine();
+                }
+
+                builder.Append(buffData.description);
+            }
+        }
+
+        return builder.ToString();
+    }
+
+    private void CollectBuffIds(List<int> sourceIds, List<int> buffIds)
+    {
+        if (sourceIds == null || buffIds == null)
+        {
+            return;
+        }
+
+        foreach (int buffId in sourceIds)
+        {
+            AddBuffId(buffIds, buffId);
+        }
+    }
+
+    private void CollectBuffIds(List<ICardEffect> effects, List<int> buffIds)
+    {
+        if (effects == null || buffIds == null)
+        {
+            return;
+        }
+
+        foreach (ICardEffect effect in effects)
+        {
+            CollectBuffIds(effect, buffIds);
+        }
+    }
+
+    private void CollectBuffIds(ICardEffect effect, List<int> buffIds)
+    {
+        if (effect == null || buffIds == null)
+        {
+            return;
+        }
+
+        switch (effect)
+        {
+            case BuffEffect buffEffect:
+                AddBuffId(buffIds, buffEffect.buffId);
+                return;
+
+            case RemoveBuffEffect removeBuffEffect:
+                AddBuffId(buffIds, removeBuffEffect.buffId);
+                return;
+
+            case AttackEffect attackEffect:
+                CollectBuffIds(attackEffect.onActions, buffIds);
+                return;
+
+            case DamageEffect damageEffect:
+                CollectBuffIds(damageEffect.onActions, buffIds);
+                return;
+
+            case ChangeStatEffect changeStatEffect:
+                CollectBuffIds(changeStatEffect.onActions, buffIds);
+                return;
+
+            case BarrierEffect barrierEffect:
+                CollectBuffIds(barrierEffect.onActions, buffIds);
+                return;
+
+            case MoveEffect moveEffect:
+                CollectBuffIds(moveEffect.onActions, buffIds);
+                return;
+
+            case ExhaustCardEffect exhaustCardEffect:
+                CollectBuffIds(exhaustCardEffect.onActions, buffIds);
+                return;
+
+            case SelectCardEffect selectCardEffect:
+                CollectBuffIds(selectCardEffect.onActions, buffIds);
+                return;
+
+            case ConditionalEffect conditionalEffect:
+                CollectBuffIds(conditionalEffect.successEffects, buffIds);
+                CollectBuffIds(conditionalEffect.failEffects, buffIds);
+                return;
+
+            case RepeatEffect repeatEffect:
+                CollectBuffIds(repeatEffect.effectToRepeat, buffIds);
+                return;
+        }
+    }
+
+    private void AddBuffId(List<int> buffIds, int buffId)
+    {
+        if (buffIds == null || buffId <= 0 || buffIds.Contains(buffId) || BuffManager.Instance == null)
+        {
+            return;
+        }
+
+        if (BuffManager.Instance.GetBuffData(buffId) == null)
+        {
+            return;
+        }
+
+        buffIds.Add(buffId);
+    }
+
+    private void CacheTooltipReferences()
+    {
+        if (tooltipPanel == null)
+        {
+            Transform tooltipPanelTransform = FindChildTransform(transform, "TooltipPanel");
+            if (tooltipPanelTransform != null)
+            {
+                tooltipPanel = tooltipPanelTransform.gameObject;
+            }
+        }
+
+        if (tooltipText == null)
+        {
+            Transform tooltipTextTransform = FindChildTransform(transform, "TooltipText");
+            if (tooltipTextTransform != null)
+            {
+                tooltipText = tooltipTextTransform.GetComponent<TextMeshProUGUI>();
+            }
+        }
+
+        if (tooltipText != null && cardNameText != null && tooltipText.font != cardNameText.font)
+        {
+            tooltipText.font = cardNameText.font;
+            tooltipText.fontSharedMaterial = cardNameText.fontSharedMaterial;
+        }
+    }
+
+    private Transform FindChildTransform(Transform parent, string childName)
+    {
+        if (parent == null || string.IsNullOrWhiteSpace(childName))
+        {
+            return null;
+        }
+
+        foreach (Transform child in parent)
+        {
+            if (child.name == childName)
+            {
+                return child;
+            }
+
+            Transform foundChild = FindChildTransform(child, childName);
+            if (foundChild != null)
+            {
+                return foundChild;
+            }
+        }
+
+        return null;
     }
 }
 
