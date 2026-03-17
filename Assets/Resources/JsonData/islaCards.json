@@ -5,7 +5,7 @@
             "name": "폭발 실험",
             "characterId": 101,
             "cost": 1,
-            "description": "피해를 6 입힙니다.",
+            "description": "피해를 {amount} 입힙니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -657,7 +657,7 @@
             "keywords": [
                 3
             ],
-            "description": "피해를 3 입힙니다.",
+            "description": "피해를 {amount} 입힙니다.",
             "effects": [
                 {
                     "type": "Damage",
@@ -675,7 +675,7 @@
             "keywords": [
                 3
             ],
-            "description": "피해를 6 입힙니다.",
+            "description": "피해를 {amount} 입힙니다.",
             "effects": [
                 {
                     "type": "Damage",

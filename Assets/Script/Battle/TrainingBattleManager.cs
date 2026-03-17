@@ -1113,6 +1113,11 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void UpdateAllUI()
     {
+        if (handManager != null)
+        {
+            handManager.RefreshCardDisplays(handManager.GetHandCards());
+        }
+
         if (battleUI != null)
             battleUI.UpdateAllUI();
     }

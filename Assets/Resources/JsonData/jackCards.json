@@ -5,7 +5,7 @@
             "name": "코인 토스",
             "characterId": 102,
             "cost": 1,
-            "description": "피해를 4 입힙니다.",
+            "description": "피해를 {amount} 입힙니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -126,7 +126,7 @@
             "name": "셔플 +",
             "characterId": 102,
             "cost": 1,
-            "description": "카드를 2장 뽑습니다. 덱을 섞을 때마다 1씩 증가합니다.",
+            "description": "카드를 {amount} 장 뽑습니다. 덱을 섞을 때마다 1씩 증가합니다.",
             "effects": [
                 {
                     "type": "Draw",
