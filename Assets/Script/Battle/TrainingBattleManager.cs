@@ -83,6 +83,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     // Temporary target used while card effects are executing.
     public Monster currentTarget;
+    private Monster previewDescriptionTarget;
 
     [Header("Run Data")]
     public static BuildingDeck buildingDeck;
@@ -654,6 +655,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     private void HandleCardClicked(CardPlayEventData eventData)
     {
+        ClearPreviewDescriptionTarget();
         combatResolver.TryPlayCard(eventData);
     }
 
@@ -955,6 +957,59 @@ public class TrainingBattleManager : MonoBehaviour
         powerBuffRuntime?.OnMonsterDeath(monster);
     }
 
+    public Monster GetDescriptionTarget(bool previewOnly = false)
+    {
+        if (previewDescriptionTarget != null && !previewDescriptionTarget.IsDead())
+        {
+            return previewDescriptionTarget;
+        }
+
+        if (previewOnly)
+        {
+            return null;
+        }
+
+        if (currentTarget != null && !currentTarget.IsDead())
+        {
+            return currentTarget;
+        }
+
+        List<Monster> livingMonsters = GetLivingMonsters();
+        if (livingMonsters != null && livingMonsters.Count == 1)
+        {
+            return livingMonsters[0];
+        }
+
+        return null;
+    }
+
+    public void SetPreviewDescriptionTarget(Monster target)
+    {
+        Monster nextTarget = target != null && !target.IsDead() ? target : null;
+        Monster currentPreviewTarget = previewDescriptionTarget != null && !previewDescriptionTarget.IsDead()
+            ? previewDescriptionTarget
+            : null;
+
+        if (currentPreviewTarget == nextTarget)
+        {
+            return;
+        }
+
+        previewDescriptionTarget = nextTarget;
+        RefreshHandDescriptions();
+    }
+
+    public void ClearPreviewDescriptionTarget()
+    {
+        if (previewDescriptionTarget == null)
+        {
+            return;
+        }
+
+        previewDescriptionTarget = null;
+        RefreshHandDescriptions();
+    }
+
     public List<Card> ProcessGeneratedCards(List<Card> generatedCards, bool allowDuplicateGeneration = true)
     {
         if (generatedCards == null)
@@ -1113,13 +1168,20 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void UpdateAllUI()
     {
-        if (handManager != null)
-        {
-            handManager.RefreshCardDisplays(handManager.GetHandCards());
-        }
+        RefreshHandDescriptions();
 
         if (battleUI != null)
             battleUI.UpdateAllUI();
+    }
+
+    private void RefreshHandDescriptions()
+    {
+        if (handManager == null)
+        {
+            return;
+        }
+
+        handManager.RefreshCardDisplays(handManager.GetHandCards());
     }
 
     public bool OpenSelectCardPanel(List<Card> selectableCards, int selectCount, Action<List<Card>> onSelected)

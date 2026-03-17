@@ -192,7 +192,7 @@ public static class CardDescriptionFormatter
             return false;
         }
 
-        // 조건 분기 결과는 카드 설명 표기에 반영하지 않음
+        // 조건 분기 결과를 카드 설명 수치에 반영하지 않음
         List<ICardEffect> primaryEffects = conditionalEffect.failEffects;
         List<ICardEffect> secondaryEffects = conditionalEffect.successEffects;
         if (primaryEffects == null || primaryEffects.Count == 0)
@@ -231,10 +231,12 @@ public static class CardDescriptionFormatter
 
         if (battleManager?.playerData == null)
         {
-            return Mathf.Max(0, Mathf.FloorToInt(baseAmount * Mathf.Max(0f, cardMultiplier)));
+            int fallbackAmount = Mathf.Max(0, Mathf.FloorToInt(baseAmount * Mathf.Max(0f, cardMultiplier)));
+            return ApplyPreviewTargetDamageMultiplier(fallbackAmount, effect?.target ?? TargetType.None, battleManager);
         }
 
-        return battleManager.playerData.CalculateCardDamage(baseAmount, effect.ampMultiplier, cardMultiplier);
+        int resolvedAmount = battleManager.playerData.CalculateCardDamage(baseAmount, effect.ampMultiplier, cardMultiplier);
+        return ApplyPreviewTargetDamageMultiplier(resolvedAmount, effect?.target ?? TargetType.None, battleManager);
     }
 
     private static void ResolveAttackBaseAmount(AttackEffect effect, TrainingBattleManager battleManager, out int baseAmount, out float cardMultiplier)
@@ -266,10 +268,12 @@ public static class CardDescriptionFormatter
         ResolveDamageBaseAmount(effect, battleManager, out int baseAmount, out float cardMultiplier);
         if (battleManager?.playerData == null)
         {
-            return Mathf.Max(0, Mathf.FloorToInt(baseAmount * Mathf.Max(0f, cardMultiplier)));
+            int fallbackAmount = Mathf.Max(0, Mathf.FloorToInt(baseAmount * Mathf.Max(0f, cardMultiplier)));
+            return ApplyPreviewTargetDamageMultiplier(fallbackAmount, effect?.target ?? TargetType.None, battleManager);
         }
 
-        return battleManager.playerData.CalculateCardDamage(baseAmount, effect.ampMultiplier, cardMultiplier);
+        int resolvedAmount = battleManager.playerData.CalculateCardDamage(baseAmount, effect.ampMultiplier, cardMultiplier);
+        return ApplyPreviewTargetDamageMultiplier(resolvedAmount, effect?.target ?? TargetType.None, battleManager);
     }
 
     private static void ResolveDamageBaseAmount(DamageEffect effect, TrainingBattleManager battleManager, out int baseAmount, out float cardMultiplier)
@@ -361,22 +365,36 @@ public static class CardDescriptionFormatter
 
     private static Monster ResolveCurrentTarget(TrainingBattleManager battleManager)
     {
-        if (battleManager == null)
+        return battleManager?.GetDescriptionTarget();
+    }
+
+    private static int ApplyPreviewTargetDamageMultiplier(int amount, TargetType targetType, TrainingBattleManager battleManager)
+    {
+        if (amount <= 0 || targetType != TargetType.SingleEnemy || battleManager == null)
         {
-            return null;
+            return Mathf.Max(0, amount);
         }
 
-        if (battleManager.currentTarget != null && !battleManager.currentTarget.IsDead())
+        Monster previewTarget = battleManager.GetDescriptionTarget(true);
+        if (previewTarget == null)
         {
-            return battleManager.currentTarget;
+            return Mathf.Max(0, amount);
         }
 
-        List<Monster> livingMonsters = battleManager.GetLivingMonsters();
-        if (livingMonsters != null && livingMonsters.Count == 1)
+        float multiplier = 1f;
+        if (previewTarget.GetBuffStack(EnhancedCorrosionBuffId) > 0)
         {
-            return livingMonsters[0];
+            multiplier = BuffManager.Instance != null
+                ? BuffManager.Instance.GetIncomingDamageMultiplier(EnhancedCorrosionBuffId, 1.5f)
+                : 1.5f;
+        }
+        else if (previewTarget.GetBuffStack(CorrosionBuffId) > 0)
+        {
+            multiplier = BuffManager.Instance != null
+                ? BuffManager.Instance.GetIncomingDamageMultiplier(CorrosionBuffId, 1.25f)
+                : 1.25f;
         }
 
-        return null;
+        return Mathf.Max(0, Mathf.FloorToInt(amount * multiplier));
     }
 }
