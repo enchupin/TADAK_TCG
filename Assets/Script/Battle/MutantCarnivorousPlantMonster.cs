@@ -12,12 +12,15 @@ public class MutantCarnivorousPlantMonster : Monster
         {
             case 0:
                 SetAttackIntent(7, "Deal 7 damage");
+                SetPlannedPattern(10202, MonsterIntentIconType.Attack);
                 break;
             case 1:
                 SetIntent("Gain 2 Damage Amplify");
+                SetPlannedPattern(10201, MonsterIntentIconType.BeneficialEffect);
                 break;
             default:
                 SetAttackIntent(9, "Deal 3 damage 3 times. If unblocked damage is dealt, add Wound to discard pile");
+                SetPlannedPattern(10203, MonsterIntentIconType.Attack, MonsterIntentIconType.DisruptCard);
                 break;
         }
     }

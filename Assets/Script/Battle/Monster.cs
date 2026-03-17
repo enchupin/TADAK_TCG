@@ -2,10 +2,16 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public enum MonsterIntentType
+public enum MonsterIntentIconType
 {
     None,
-    Attack
+    Attack,
+    Protection,
+    BeneficialEffect,
+    HarmfulEffect,
+    Summon,
+    Bomb,
+    DisruptCard
 }
 
 /// <summary>
@@ -28,14 +34,18 @@ public abstract class Monster : MonoBehaviour
     public new string name;
     public List<Buff> currentBuffs = new();
 
-    private MonsterIntentType plannedIntentType = MonsterIntentType.None;
+    private bool hasAttackIntent = false;
     private int plannedIntentValue = 0;
     private string plannedIntentDescription = string.Empty;
+    private readonly List<MonsterIntentIconType> plannedIntentIcons = new();
+    private int plannedPatternId = 0;
     private bool skipCurrentTurnAction = false;
     private bool hasTriggeredDeath = false;
 
-    public MonsterIntentType PlannedIntentType => plannedIntentType;
+    public bool HasAttackIntent => hasAttackIntent;
     public int PlannedIntentValue => plannedIntentValue;
+    public int PlannedPatternId => plannedPatternId;
+    public IReadOnlyList<MonsterIntentIconType> PlannedIntentIcons => plannedIntentIcons;
     public abstract int MonsterId { get; }
     protected abstract string MonsterName { get; }
     protected abstract int BaseMaxHp { get; }
@@ -130,6 +140,10 @@ public abstract class Monster : MonoBehaviour
     {
         int finalDamage = amount + playerStrength;
         finalDamage = ApplyIncomingDamageMultiplier(finalDamage);
+        if (finalDamage > 0)
+        {
+            OnBeforeTakeDamage(finalDamage);
+        }
         int damageAfterDefense = Mathf.Max(0, finalDamage - defense);
 
         hp -= damageAfterDefense;
@@ -219,6 +233,7 @@ public abstract class Monster : MonoBehaviour
 
     public void OnTurnStart()
     {
+        OnTurnStarted();
         ResolveFreezeThresholdIfNeeded();
         UpdateUI();
         int freezeStack = GetBuffStack(BattleRuntimeDefinitions.FreezeBuffId);
@@ -282,16 +297,37 @@ public abstract class Monster : MonoBehaviour
 
     protected void SetAttackIntent(int intentValue, string intentDescription)
     {
-        plannedIntentType = MonsterIntentType.Attack;
+        hasAttackIntent = true;
         plannedIntentValue = Mathf.Max(0, intentValue);
         plannedIntentDescription = intentDescription;
     }
 
     protected void SetIntent(string intentDescription)
     {
-        plannedIntentType = MonsterIntentType.None;
+        hasAttackIntent = false;
         plannedIntentValue = 0;
         plannedIntentDescription = intentDescription;
+    }
+
+    protected void SetPlannedPattern(int patternId, params MonsterIntentIconType[] iconTypes)
+    {
+        plannedPatternId = Mathf.Max(0, patternId);
+        plannedIntentIcons.Clear();
+
+        if (iconTypes == null)
+        {
+            return;
+        }
+
+        foreach (MonsterIntentIconType iconType in iconTypes)
+        {
+            if (iconType == MonsterIntentIconType.None)
+            {
+                continue;
+            }
+
+            plannedIntentIcons.Add(iconType);
+        }
     }
 
     protected int DealDamage(PlayerData target, int baseDamage)
@@ -334,7 +370,7 @@ public abstract class Monster : MonoBehaviour
         {
             intentText.text = plannedIntentDescription;
         }
-        else if (plannedIntentType == MonsterIntentType.Attack)
+        else if (hasAttackIntent)
         {
             intentText.text = $"Intent: Attack {plannedIntentValue}";
         }
@@ -470,9 +506,11 @@ public abstract class Monster : MonoBehaviour
 
     private void ClearPlannedAction()
     {
-        plannedIntentType = MonsterIntentType.None;
+        hasAttackIntent = false;
         plannedIntentValue = 0;
         plannedIntentDescription = string.Empty;
+        plannedPatternId = 0;
+        plannedIntentIcons.Clear();
     }
 
     private int ApplyOutgoingDamageModifier(int baseDamage)
@@ -525,6 +563,14 @@ public abstract class Monster : MonoBehaviour
     }
 
     protected virtual void OnDeathTriggered()
+    {
+    }
+
+    protected virtual void OnTurnStarted()
+    {
+    }
+
+    protected virtual void OnBeforeTakeDamage(int incomingDamage)
     {
     }
 

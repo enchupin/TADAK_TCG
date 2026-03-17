@@ -31,10 +31,12 @@ public class MutantMushroomMonster : Monster
         if (useDrainAttack)
         {
             SetAttackIntent(7, "Deal 7 damage. Heal equal to unblocked damage dealt");
+            SetPlannedPattern(10301, MonsterIntentIconType.Attack);
             return;
         }
 
         SetIntent("Gain 12 Barrier. Apply 2 Weak | Buff");
+        SetPlannedPattern(10302, MonsterIntentIconType.Attack, MonsterIntentIconType.BeneficialEffect);
     }
 
     protected override void ExecuteAction(PlayerData target)

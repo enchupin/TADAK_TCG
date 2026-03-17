@@ -52,6 +52,9 @@ public static class BattleRuntimeDefinitions
     public const int OverheatDecayBuffId = 4007;
     public const int WeakBuffId = 4008;
     public const int CrueltyDebuffId = 4009;
+    public const int FrailBuffId = 4011;
+    public const int MonsterLifeStealBuffId = 5001;
+    public const int VoidShellBuffId = 5002;
     public const int PoisonousMushroomBuffId = 1014;
     public const int WoundCardId = 10;
 }
