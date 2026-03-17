@@ -94,11 +94,13 @@ public class CardInteractionHandler : UIHoverEffect,
         if (!isDragging && !isAnyCardDragging)
         {
             base.OnPointerEnter(eventData);
+            cardUI?.ShowBuffTooltip();
         }
     }
 
     public override void OnPointerExit(PointerEventData eventData)
     {
+        cardUI?.HideBuffTooltip();
         base.OnPointerExit(eventData);
     }
 
@@ -218,6 +220,7 @@ public class CardInteractionHandler : UIHoverEffect,
     {
         if (!CanStartDrag()) return;
 
+        cardUI?.HideBuffTooltip();
         isDragging = true;
         isAnyCardDragging = true;
         originalParent = rectTransform.parent;
