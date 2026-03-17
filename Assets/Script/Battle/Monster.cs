@@ -150,8 +150,13 @@ public abstract class Monster : MonoBehaviour
         if (IsDead())
             return;
 
+        int lostHp = Mathf.Max(0, hp);
         hp = 0;
         defense = 0;
+        if (lostHp > 0)
+        {
+            TrainingBattleManager.Instance?.HandleMonsterHpLost(this, lostHp);
+        }
         HandleDeathIfNeeded();
         UpdateUI();
     }
