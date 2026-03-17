@@ -38,7 +38,21 @@ public class SettingsManager : MonoBehaviour
         if (settingsPanel == null) {
             return;
         }
-        settingsPanel.SetActive(!settingsPanel.activeSelf);
+        bool shouldOpen = !settingsPanel.activeSelf;
+        if (shouldOpen) {
+            SyncSoundSliders();
+        }
+        settingsPanel.SetActive(shouldOpen);
+    }
+
+    private void SyncSoundSliders() {
+        if (bgmSlider != null && BGMControl.Instance != null) {
+            bgmSlider.SetValueWithoutNotify(BGMControl.Instance.GetbgmVolume());
+        }
+
+        if (sfxSlider != null && SFXControl.Instance != null) {
+            sfxSlider.SetValueWithoutNotify(SFXControl.Instance.GetSFXVolume());
+        }
     }
 
     public void BGMOnChanged() {
