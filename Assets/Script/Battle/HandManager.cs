@@ -21,11 +21,6 @@ public class HandManager : MonoBehaviour
         if (card == null)
             return;
 
-        if (TrainingBattleManager.Instance != null && !TrainingBattleManager.Instance.CanGainCardsToHand())
-        {
-            return;
-        }
-
         if (cardUIPrefab == null || handContainer == null)
         {
             Debug.LogError("[HandManager] CardUI prefab or hand container is missing.");
@@ -51,11 +46,6 @@ public class HandManager : MonoBehaviour
         {
             if (card == null)
                 continue;
-
-            if (TrainingBattleManager.Instance != null && !TrainingBattleManager.Instance.CanGainCardsToHand())
-            {
-                continue;
-            }
 
             handCardList.Add(card);
             InstantiateCardUI(card);

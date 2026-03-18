@@ -42,6 +42,14 @@ public static class KeywordDatabase
         return keywordIdByName.TryGetValue(keywordName.Trim(), out keywordId);
     }
 
+    public static string GetKeywordDescription(int keywordId)
+    {
+        EnsureLoaded();
+        return keywordById.TryGetValue(keywordId, out KeywordData keywordData) && !string.IsNullOrWhiteSpace(keywordData?.description)
+            ? keywordData.description
+            : string.Empty;
+    }
+
     private static void EnsureLoaded()
     {
         if (isLoaded)

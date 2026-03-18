@@ -168,61 +168,31 @@ public class CardUI : MonoBehaviour
             return string.Empty;
         }
 
+        StringBuilder builder = new();
+
+        List<int> keywordIds = new();
+        CollectKeywordIds(card.keywords, keywordIds);
+        AppendKeywordTooltipText(builder, keywordIds);
+
         List<int> buffIds = new();
-        CollectBuffIds(card.keywords, buffIds);
         CollectBuffIds(card.effects, buffIds);
         CollectBuffIds(card.keepEffects, buffIds);
         CollectBuffIds(card.endTurnInHandEffects, buffIds);
-
-        if (buffIds.Count == 0)
-        {
-            return string.Empty;
-        }
-
-        StringBuilder builder = new();
-        foreach (int buffId in buffIds)
-        {
-            BuffData buffData = BuffManager.Instance.GetBuffData(buffId);
-            if (buffData == null)
-            {
-                continue;
-            }
-
-            if (builder.Length > 0)
-            {
-                builder.AppendLine();
-                builder.AppendLine();
-            }
-
-            if (!string.IsNullOrWhiteSpace(buffData.name))
-            {
-                builder.Append(buffData.name);
-            }
-
-            if (!string.IsNullOrWhiteSpace(buffData.description))
-            {
-                if (!string.IsNullOrWhiteSpace(buffData.name))
-                {
-                    builder.AppendLine();
-                }
-
-                builder.Append(buffData.description);
-            }
-        }
+        AppendBuffTooltipText(builder, buffIds);
 
         return builder.ToString();
     }
 
-    private void CollectBuffIds(List<int> sourceIds, List<int> buffIds)
+    private void CollectKeywordIds(List<int> sourceIds, List<int> keywordIds)
     {
-        if (sourceIds == null || buffIds == null)
+        if (sourceIds == null || keywordIds == null)
         {
             return;
         }
 
-        foreach (int buffId in sourceIds)
+        foreach (int keywordId in sourceIds)
         {
-            AddBuffId(buffIds, buffId);
+            AddKeywordId(keywordIds, keywordId);
         }
     }
 
@@ -302,12 +272,89 @@ public class CardUI : MonoBehaviour
             return;
         }
 
-        if (BuffManager.Instance.GetBuffData(buffId) == null)
+        if (!BuffManager.Instance.TryGetBuffData(buffId, out _))
         {
             return;
         }
 
         buffIds.Add(buffId);
+    }
+
+    private void AddKeywordId(List<int> keywordIds, int keywordId)
+    {
+        if (keywordIds == null || keywordId <= 0 || keywordIds.Contains(keywordId))
+        {
+            return;
+        }
+
+        keywordIds.Add(keywordId);
+    }
+
+    private void AppendKeywordTooltipText(StringBuilder builder, List<int> keywordIds)
+    {
+        if (builder == null || keywordIds == null)
+        {
+            return;
+        }
+
+        foreach (int keywordId in keywordIds)
+        {
+            string keywordName = GetKeywordDisplayName(keywordId);
+            string keywordDescription = KeywordDatabase.GetKeywordDescription(keywordId);
+            AppendTooltipEntry(builder, keywordName, keywordDescription);
+        }
+    }
+
+    private void AppendBuffTooltipText(StringBuilder builder, List<int> buffIds)
+    {
+        if (builder == null || buffIds == null || BuffManager.Instance == null)
+        {
+            return;
+        }
+
+        foreach (int buffId in buffIds)
+        {
+            if (!BuffManager.Instance.TryGetBuffData(buffId, out BuffData buffData) || buffData == null)
+            {
+                continue;
+            }
+
+            AppendTooltipEntry(builder, buffData.name, buffData.description);
+        }
+    }
+
+    private void AppendTooltipEntry(StringBuilder builder, string title, string description)
+    {
+        if (builder == null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(title) && string.IsNullOrWhiteSpace(description))
+        {
+            return;
+        }
+
+        if (builder.Length > 0)
+        {
+            builder.AppendLine();
+            builder.AppendLine();
+        }
+
+        if (!string.IsNullOrWhiteSpace(title))
+        {
+            builder.Append(title);
+        }
+
+        if (!string.IsNullOrWhiteSpace(description))
+        {
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                builder.AppendLine();
+            }
+
+            builder.Append(description);
+        }
     }
 
     private void CacheTooltipReferences()

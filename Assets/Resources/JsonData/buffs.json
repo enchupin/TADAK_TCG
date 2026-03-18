@@ -843,7 +843,7 @@
                 "timing": "OnTurnEnd",
                 "amount": 1
             },
-            "description": "이번 턴에 카드를 사용할 때마다 모든 적에게 피해를 1 입힙니다."
+            "description": "이번 턴에 카드를 사용할 때마다 모든 적에게 피해를 {stack} 입힙니다."
         },
         {
             "buffId": 3026,
@@ -864,7 +864,7 @@
                 "timing": "OnTurnEnd",
                 "amount": 1
             },
-            "description": "이번 턴에 받는 피해가 1로 고정됩니다."
+            "description": "{stack} 턴 동안 피해가 1로 고정됩니다."
         },
         {
             "buffId": 3027,
