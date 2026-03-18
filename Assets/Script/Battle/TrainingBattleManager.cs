@@ -882,6 +882,11 @@ public class TrainingBattleManager : MonoBehaviour
         return powerBuffRuntime == null || powerBuffRuntime.CanGainCardsToHand();
     }
 
+    public bool CanGainCardsToHandFrom(MoveZoneType from, string subject = null)
+    {
+        return powerBuffRuntime == null || powerBuffRuntime.CanGainCardsToHandFrom(from, subject);
+    }
+
     public int GetEffectiveCardCost(Card card)
     {
         if (card == null)

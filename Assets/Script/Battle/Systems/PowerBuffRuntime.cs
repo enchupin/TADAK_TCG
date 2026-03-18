@@ -76,6 +76,25 @@ public class PowerBuffRuntime
         return GetPlayerBuffStack(DrawLockBuffId) <= 0;
     }
 
+    public bool CanGainCardsToHandFrom(MoveZoneType from, string subject = null)
+    {
+        if (GetPlayerBuffStack(DrawLockBuffId) <= 0)
+        {
+            return true;
+        }
+
+        switch (from)
+        {
+            case MoveZoneType.DrawPile:
+            case MoveZoneType.DiscardPile:
+                return false;
+            case MoveZoneType.Source:
+                return !IsSelectedHandGainSubject(subject);
+            default:
+                return true;
+        }
+    }
+
     public int GetEffectiveCardCost(Card card)
     {
         if (card == null)
@@ -84,6 +103,12 @@ public class PowerBuffRuntime
         }
 
         return GetPlayerBuffStack(NextCardFreeBuffId) > 0 ? 0 : card.cost;
+    }
+
+    private static bool IsSelectedHandGainSubject(string subject)
+    {
+        return string.Equals(subject, "Selected", System.StringComparison.OrdinalIgnoreCase)
+            || string.Equals(subject, "SelectedCard", System.StringComparison.OrdinalIgnoreCase);
     }
 
     public int GetCardUseAllEnemiesDamage()
