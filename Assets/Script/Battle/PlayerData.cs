@@ -89,15 +89,20 @@ public class PlayerData : MonoBehaviour
     public int AddDefense(int amount)
     {
         int finalAmount = Mathf.Max(0, amount);
-        if (finalAmount <= 0)
-        {
-            return 0;
-        }
-
         TrainingBattleManager battleManager = TrainingBattleManager.Instance;
         if (battleManager != null)
         {
             finalAmount += battleManager.GetAdditionalBarrierGain();
+        }
+
+        if (GetBuffStack(BattleRuntimeDefinitions.FrailBuffId) > 0)
+        {
+            finalAmount = Mathf.FloorToInt(finalAmount * 0.5f);
+        }
+
+        if (finalAmount <= 0)
+        {
+            return 0;
         }
 
         defense += finalAmount;
@@ -336,6 +341,7 @@ public class PlayerData : MonoBehaviour
         DecreaseBuffStack(BattleRuntimeDefinitions.CorrosionBuffId, 1);
         DecreaseBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1);
         DecreaseBuffStack(BattleRuntimeDefinitions.WeakBuffId, 1);
+        DecreaseBuffStack(BattleRuntimeDefinitions.FrailBuffId, 1);
     }
 
     public int GetBuffStack(int buffId)
@@ -395,15 +401,19 @@ public class PlayerData : MonoBehaviour
         float multiplier = 1f;
         if (GetBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId) > 0)
         {
-            multiplier = BuffManager.Instance != null
-                ? BuffManager.Instance.GetIncomingDamageMultiplier(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1.5f)
-                : 1.5f;
+            multiplier = Mathf.Max(
+                multiplier,
+                BuffManager.Instance != null
+                    ? BuffManager.Instance.GetIncomingDamageMultiplier(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1.5f)
+                    : 1.5f);
         }
         else if (GetBuffStack(BattleRuntimeDefinitions.CorrosionBuffId) > 0)
         {
-            multiplier = BuffManager.Instance != null
-                ? BuffManager.Instance.GetIncomingDamageMultiplier(BattleRuntimeDefinitions.CorrosionBuffId, 1.25f)
-                : 1.25f;
+            multiplier = Mathf.Max(
+                multiplier,
+                BuffManager.Instance != null
+                    ? BuffManager.Instance.GetIncomingDamageMultiplier(BattleRuntimeDefinitions.CorrosionBuffId, 1.25f)
+                    : 1.25f);
         }
 
         return Mathf.FloorToInt(incomingDamage * multiplier);

@@ -12,12 +12,15 @@ public class MutantFlowerMonster : Monster
         {
             case 0:
                 SetAttackIntent(9, "Deal 9 damage");
+                SetPlannedPattern(10101, MonsterIntentIconType.Attack);
                 break;
             case 1:
                 SetAttackIntent(6, "Deal 6 damage. Gain 7 Barrier");
+                SetPlannedPattern(10102, MonsterIntentIconType.Protection);
                 break;
             default:
                 SetIntent("Apply 2 Corrosion to player");
+                SetPlannedPattern(10103, MonsterIntentIconType.HarmfulEffect);
                 break;
         }
     }

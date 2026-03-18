@@ -1181,6 +1181,49 @@
             "name": "독버섯",
             "buffType": 1,
             "description": "사망 시 적에게 강화된 부식을 2 부여합니다."
+        },
+        {
+            "buffId": 4011,
+            "name": "빈약",
+            "buffType": 4,
+            "description": "보호막 획득량이 50% 감소합니다."
+        },
+        {
+            "buffId": 5001,
+            "name": "체력 강탈",
+            "buffType": 3,
+            "description": "막히지 않은 피해를 입히면 최대 체력을 1 빼앗습니다."
+        },
+        {
+            "buffId": 5002,
+            "name": "공허 껍질",
+            "buffType": 3,
+            "description": "매 턴 처음 피해를 입을 때 보호막을 {stack}만큼 얻습니다."
+        }
+        ,
+        {
+            "buffId": 4012,
+            "name": "드로우 방해",
+            "buffType": 4,
+            "description": "다음 턴에 카드를 {stack}장 덜 뽑습니다."
+        },
+        {
+            "buffId": 5003,
+            "name": "신실한 기도",
+            "buffType": 3,
+            "description": "턴을 종료할 때마다 피해 증폭, 빙하 결속을 각각 1씩 얻습니다."
+        },
+        {
+            "buffId": 5004,
+            "name": "기생하는 버섯",
+            "buffType": 3,
+            "description": "적에게 막히지 않은 피해를 입힐 때마다 적의 최대 체력을 2 감소시킵니다."
+        },
+        {
+            "buffId": 5005,
+            "name": "중독 강화",
+            "buffType": 3,
+            "description": "중독 카드를 생성할 때 강화된 중독으로 생성하며, 존재하는 모든 중독 카드가 강화됩니다."
         }
     ]
 }
