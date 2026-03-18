@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public static class TrainingRunSceneActions
 {
-    public static void StartTrainingRunAndLoadMap(string mapSceneName, string battleSceneName, int stageCount = 6, int laneCount = 3)
+    public static void StartTrainingRunAndLoadMap(string mapSceneName, string battleSceneName, int stageCount = 15, int laneCount = 4)
     {
         TrainingBattleManager.buildingDeck = null;
         PlayerData.Reset();

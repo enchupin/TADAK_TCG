@@ -327,8 +327,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TrainingMapController
   battleSceneName: TrainingScene
   autoStartRunIfMissing: 1
-  defaultStageCount: 6
-  defaultLaneCount: 3
+  defaultStageCount: 15
+  defaultLaneCount: 4
   nodeRoot: {fileID: 307117296}
   nodeButtonPrefab: {fileID: 0}
   nodeSpacing: {x: 260, y: 170}
