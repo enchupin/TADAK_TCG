@@ -1,3 +1,4 @@
+// ReSharper disable CheckNamespace
 using System;
 using System.Collections.Generic;
 
@@ -15,9 +16,8 @@ public class CharacterDeckLibrarySave
             return null;
         }
 
-        for (int i = 0; i < decks.Count; i++)
+        foreach (CharacterDeckSave deck in decks)
         {
-            CharacterDeckSave deck = decks[i];
             if (deck == null)
             {
                 continue;
