@@ -216,12 +216,13 @@ public static class TrainingRunState
             float centeredOffset = (nodeCount - 1) * 0.5f;
             for (int lane = 0; lane < nodeCount; lane++)
             {
+                TrainingNodeType nodeType = DetermineNodeType(stage, lane, stageCount, nodeCount);
                 TrainingMapNodeData node = new TrainingMapNodeData
                 {
                     nodeId = nextId++,
                     stageIndex = stage,
                     laneIndex = lane,
-                    nodeType = DetermineNodeType(stage, lane, stageCount, nodeCount),
+                    nodeType = nodeType,
                     gridPosition = new Vector2(lane - centeredOffset, stage)
                 };
 
@@ -451,7 +452,7 @@ public static class TrainingRunState
     private static TrainingNodeType DetermineNodeType(int stage, int lane, int stageCount, int nodeCountInStage)
     {
         if (stage == stageCount - 1)
-            return TrainingNodeType.Named;
+            return TrainingNodeType.Boss;
 
         if (stage > 0 && stage % 3 == 0 && lane == nodeCountInStage - 1)
             return TrainingNodeType.Rest;

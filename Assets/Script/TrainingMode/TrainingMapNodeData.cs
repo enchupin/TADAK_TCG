@@ -6,7 +6,8 @@ public enum TrainingNodeType
 {
     Monster,
     Named,
-    Rest
+    Rest,
+    Boss
 }
 
 [Serializable]
@@ -29,6 +30,8 @@ public class TrainingMapNodeData
                 return "N";
             case TrainingNodeType.Rest:
                 return "R";
+            case TrainingNodeType.Boss:
+                return "B";
             default:
                 return "M";
         }

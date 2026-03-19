@@ -10,7 +10,6 @@ using TMPro;
 /// </summary>
 public class TrainingMapController : MonoBehaviour
 {
-    private static Font fallbackLegacyFont;
     private static readonly Vector2 defaultNodeSize = new Vector2(110f, 56f);
 
     [Header("Run Setup")]
@@ -23,7 +22,10 @@ public class TrainingMapController : MonoBehaviour
     [Header("Node UI")]
     [SerializeField] private RectTransform nodeRoot;
     [SerializeField] private RectTransform connectionRoot;
-    [SerializeField] private Button nodeButtonPrefab;
+    [SerializeField] private Button monsterNodeButtonPrefab;
+    [SerializeField] private Button namedNodeButtonPrefab;
+    [SerializeField] private Button restNodeButtonPrefab;
+    [SerializeField] private Button bossNodeButtonPrefab;
     [SerializeField] private Vector2 nodeSpacing = new Vector2(260f, 170f);
     [SerializeField] private Vector2 mapOrigin = new Vector2(0f, -320f);
     [SerializeField] private bool autoFitMapToViewport = true;
@@ -179,7 +181,7 @@ public class TrainingMapController : MonoBehaviour
 
     private void SpawnNodeButton(TrainingMapNodeData node, Vector2 anchoredPosition)
     {
-        Button button = CreateNodeButtonInstance();
+        Button button = CreateNodeButtonInstance(node);
         if (button == null)
             return;
 
@@ -293,37 +295,19 @@ public class TrainingMapController : MonoBehaviour
         return lockedConnectionColor;
     }
 
-    private Button CreateNodeButtonInstance()
+    private Button CreateNodeButtonInstance(TrainingMapNodeData node)
     {
         if (nodeRoot == null)
             return null;
 
-        if (nodeButtonPrefab != null)
+        Button nodeButtonPrefab = ResolveNodeButtonPrefab(node);
+        if (nodeButtonPrefab == null)
         {
-            return Instantiate(nodeButtonPrefab, nodeRoot);
+            Debug.LogError($"[TrainingMapController] 노드 프리팹이 설정되지 않았습니다. type={node.nodeType}");
+            return null;
         }
 
-        // Fallback runtime button when no prefab is assigned.
-        GameObject nodeGo = new GameObject("NodeButton", typeof(RectTransform), typeof(Image), typeof(Button));
-        nodeGo.transform.SetParent(nodeRoot, false);
-
-        RectTransform rect = nodeGo.GetComponent<RectTransform>();
-        rect.sizeDelta = runtimeNodeSize;
-
-        GameObject labelGo = new GameObject("Label", typeof(RectTransform), typeof(Text));
-        labelGo.transform.SetParent(nodeGo.transform, false);
-        RectTransform labelRect = labelGo.GetComponent<RectTransform>();
-        labelRect.anchorMin = Vector2.zero;
-        labelRect.anchorMax = Vector2.one;
-        labelRect.offsetMin = Vector2.zero;
-        labelRect.offsetMax = Vector2.zero;
-
-        Text label = labelGo.GetComponent<Text>();
-        label.alignment = TextAnchor.MiddleCenter;
-        label.color = Color.white;
-        label.font = GetLegacyRuntimeFont();
-
-        return nodeGo.GetComponent<Button>();
+        return Instantiate(nodeButtonPrefab, nodeRoot);
     }
 
     private void ApplyNodeVisual(Button button, TrainingMapNodeData node, bool isSelectable, bool isCleared, bool isCurrent)
@@ -342,25 +326,55 @@ public class TrainingMapController : MonoBehaviour
             targetColor = selectableNodeColor;
         }
 
-        Image image = button.GetComponent<Image>();
-        if (image != null)
+        Graphic targetGraphic = button.targetGraphic;
+        if (targetGraphic != null)
         {
-            image.color = targetColor;
-            image.raycastTarget = isSelectable;
+            targetGraphic.color = targetColor;
+            targetGraphic.raycastTarget = isSelectable;
+        }
+
+        Graphic[] childGraphics = button.GetComponentsInChildren<Graphic>(true);
+        for (int i = 0; i < childGraphics.Length; i++)
+        {
+            if (childGraphics[i] == targetGraphic)
+                continue;
+
+            childGraphics[i].raycastTarget = false;
         }
 
         TMP_Text tmpLabel = button.GetComponentInChildren<TMP_Text>();
         if (tmpLabel != null)
         {
-            tmpLabel.text = node.GetShortLabel();
-            tmpLabel.raycastTarget = false;
+            if (string.IsNullOrEmpty(tmpLabel.text))
+            {
+                tmpLabel.text = node.GetShortLabel();
+            }
         }
 
         Text legacyLabel = button.GetComponentInChildren<Text>();
         if (legacyLabel != null)
         {
-            legacyLabel.text = node.GetShortLabel();
-            legacyLabel.raycastTarget = false;
+            if (string.IsNullOrEmpty(legacyLabel.text))
+            {
+                legacyLabel.text = node.GetShortLabel();
+            }
+        }
+    }
+
+    private Button ResolveNodeButtonPrefab(TrainingMapNodeData node)
+    {
+        switch (node.nodeType)
+        {
+            case TrainingNodeType.Monster:
+                return monsterNodeButtonPrefab;
+            case TrainingNodeType.Named:
+                return namedNodeButtonPrefab;
+            case TrainingNodeType.Rest:
+                return restNodeButtonPrefab;
+            case TrainingNodeType.Boss:
+                return bossNodeButtonPrefab;
+            default:
+                return null;
         }
     }
 
@@ -471,15 +485,8 @@ public class TrainingMapController : MonoBehaviour
 
     private static bool NodeRequiresBattle(TrainingNodeType nodeType)
     {
-        return nodeType == TrainingNodeType.Monster || nodeType == TrainingNodeType.Named;
-    }
-
-    private static Font GetLegacyRuntimeFont()
-    {
-        if (fallbackLegacyFont != null)
-            return fallbackLegacyFont;
-
-        fallbackLegacyFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        return fallbackLegacyFont;
+        return nodeType == TrainingNodeType.Monster
+               || nodeType == TrainingNodeType.Named
+               || nodeType == TrainingNodeType.Boss;
     }
 }
