@@ -99,6 +99,18 @@ public static class CharacterManager
         }
         return new List<int>();
     }
+
+    /// <summary>
+    /// 모든 캐릭터 데이터를 리스트로 반환
+    /// </summary>
+    public static List<CharacterData> GetAllCharacters()
+    {
+        if (!isInitialized) Initialize();
+
+        return characterCache != null
+            ? new List<CharacterData>(characterCache.Values)
+            : new List<CharacterData>();
+    }
     
     /// <summary>
     /// 초기화 여부 확인
