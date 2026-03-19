@@ -91,8 +91,7 @@ public static class ProfileSaveManager
             return library;
         }
 
-        CharacterData characterData = CharacterManager.GetCharacter(characterId);
-        if (characterData == null)
+        if (!IsSupportedCharacterId(characterId))
         {
             Debug.LogWarning($"[ProfileSaveManager] 존재하지 않는 characterId로 라이브러리를 만들 수 없습니다: {characterId}");
             return null;
@@ -224,6 +223,13 @@ public static class ProfileSaveManager
                 continue;
             }
 
+            if (!IsSupportedCharacterId(library.characterId))
+            {
+                libraries.RemoveAt(i);
+                hasChanges = true;
+                continue;
+            }
+
             if (RepairDecks(library))
             {
                 hasChanges = true;
@@ -292,26 +298,21 @@ public static class ProfileSaveManager
     private static bool EnsureCharacterLibraries(PlayerProfileSave profile)
     {
         bool hasChanges = false;
-        List<CharacterData> allCharacters = CharacterManager.GetAllCharacters();
-        if (allCharacters == null)
+        Array allCharacters = Enum.GetValues(typeof(Character));
+        for (int i = 0; i < allCharacters.Length; i++)
         {
-            return false;
-        }
-
-        for (int i = 0; i < allCharacters.Count; i++)
-        {
-            CharacterData characterData = allCharacters[i];
-            if (characterData == null)
+            int characterId = (int)allCharacters.GetValue(i);
+            if (!IsSupportedCharacterId(characterId))
             {
                 continue;
             }
 
-            if (profile.FindLibrary(characterData.characterId) != null)
+            if (profile.FindLibrary(characterId) != null)
             {
                 continue;
             }
 
-            profile.characters.Add(CreateLibrary(characterData.characterId));
+            profile.characters.Add(CreateLibrary(characterId));
             hasChanges = true;
         }
 
@@ -326,5 +327,15 @@ public static class ProfileSaveManager
             selectedDeckId = string.Empty,
             decks = new List<CharacterDeckSave>()
         };
+    }
+
+    private static bool IsSupportedCharacterId(int characterId)
+    {
+        if (!Enum.IsDefined(typeof(Character), characterId))
+        {
+            return false;
+        }
+
+        return characterId != (int)Character.Monster;
     }
 }

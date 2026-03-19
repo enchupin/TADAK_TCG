@@ -37,7 +37,7 @@ public class BuffData
         return Mathf.Abs(targetBuffType) % 2 == 1;
     }
 
-    private static int GetLeadingDigit(int value)
+    private static int GetLeadingDigit(int value)      
     {
         value = Mathf.Abs(value);
         while (value >= 10)
