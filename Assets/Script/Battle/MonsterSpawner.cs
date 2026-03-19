@@ -68,7 +68,7 @@ public class MonsterSpawner : MonoBehaviour
                 continue;
             }
 
-            Monster spawnedMonster = SpawnMonster(monsterPrefab, i);
+            Monster spawnedMonster = SpawnMonsterToAvailableSlot(monsterPrefab);
             if (spawnedMonster != null)
             {
                 spawnedMonsters.Add(spawnedMonster);
@@ -76,6 +76,17 @@ public class MonsterSpawner : MonoBehaviour
         }
 
         return spawnedMonsters;
+    }
+
+    public Monster SpawnSummonedMonster(GameObject monsterPrefab)
+    {
+        if (monsterPrefab == null)
+        {
+            Debug.LogError("[MonsterSpawner] 소환할 몬스터 프리팹이 비어 있습니다");
+            return null;
+        }
+
+        return SpawnMonsterToAvailableSlot(monsterPrefab);
     }
 
     private SpawnMonsterType[] ResolveEncounter(TrainingNodeType nodeType)
@@ -92,22 +103,29 @@ public class MonsterSpawner : MonoBehaviour
         }
     }
 
-    private Monster SpawnMonster(GameObject monsterPrefab, int spawnIndex)
+    private Monster SpawnMonsterToAvailableSlot(GameObject monsterPrefab)
     {
-        Transform spawnPoint = GetSpawnPoint(spawnIndex);
-        GameObject spawnedObject;
+        if (!TryGetAvailableSpawnPoint(out Transform spawnPoint))
+        {
+            Debug.LogWarning($"[MonsterSpawner] 남은 스폰 위치가 없어 '{monsterPrefab.name}' 소환을 생략합니다");
+            return null;
+        }
 
-        if (spawnPoint != null)
+        return SpawnMonster(monsterPrefab, spawnPoint);
+    }
+
+    private Monster SpawnMonster(GameObject monsterPrefab, Transform spawnPoint)
+    {
+        if (spawnPoint == null)
         {
-            spawnedObject = Instantiate(monsterPrefab, spawnPoint, false);
-            spawnedObject.transform.localPosition = Vector3.zero;
-            spawnedObject.transform.localRotation = Quaternion.identity;
-            spawnedObject.transform.localScale = Vector3.one;
+            Debug.LogWarning($"[MonsterSpawner] 유효한 스폰 위치가 없어 '{monsterPrefab.name}' 생성에 실패했습니다");
+            return null;
         }
-        else
-        {
-            spawnedObject = Instantiate(monsterPrefab);
-        }
+
+        GameObject spawnedObject = Instantiate(monsterPrefab, spawnPoint, false);
+        spawnedObject.transform.localPosition = Vector3.zero;
+        spawnedObject.transform.localRotation = Quaternion.identity;
+        spawnedObject.transform.localScale = Vector3.one;
 
         if (!spawnedObject.TryGetComponent(out Monster monster))
         {
@@ -118,15 +136,49 @@ public class MonsterSpawner : MonoBehaviour
         return monster;
     }
 
-    private Transform GetSpawnPoint(int spawnIndex)
+    private bool TryGetAvailableSpawnPoint(out Transform availableSpawnPoint)
     {
+        availableSpawnPoint = null;
+
         if (spawnPoints == null || spawnPoints.Count == 0)
-            return null;
+        {
+            Debug.LogWarning("[MonsterSpawner] 스폰 위치가 설정되지 않았습니다");
+            return false;
+        }
 
-        if (spawnIndex < 0 || spawnIndex >= spawnPoints.Count)
-            return spawnPoints[spawnPoints.Count - 1];
+        for (int i = 0; i < spawnPoints.Count; i++)
+        {
+            Transform spawnPoint = spawnPoints[i];
+            if (spawnPoint == null || IsSpawnPointOccupied(spawnPoint))
+            {
+                continue;
+            }
 
-        return spawnPoints[spawnIndex];
+            availableSpawnPoint = spawnPoint;
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool IsSpawnPointOccupied(Transform spawnPoint)
+    {
+        if (spawnPoint == null)
+        {
+            return false;
+        }
+
+        Monster[] monsters = spawnPoint.GetComponentsInChildren<Monster>(true);
+        for (int i = 0; i < monsters.Length; i++)
+        {
+            Monster monster = monsters[i];
+            if (monster != null && !monster.IsDead())
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private GameObject ResolveMonsterPrefab(SpawnMonsterType monsterType)

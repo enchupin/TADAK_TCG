@@ -950,6 +950,30 @@ public class TrainingBattleManager : MonoBehaviour
     public void HandleMonsterDeath(Monster monster)
     {
         powerBuffRuntime?.OnMonsterDeath(monster);
+
+        if (monster == null)
+        {
+            return;
+        }
+
+        if (currentTarget == monster)
+        {
+            currentTarget = null;
+        }
+
+        if (previewDescriptionTarget == monster)
+        {
+            previewDescriptionTarget = null;
+        }
+
+        UnregisterMonster(monster);
+
+        if (monster.gameObject.activeSelf)
+        {
+            monster.gameObject.SetActive(false);
+        }
+
+        UpdateAllUI();
     }
 
     public Monster GetDescriptionTarget(bool previewOnly = false)
