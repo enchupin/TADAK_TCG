@@ -26,9 +26,6 @@ public static class TrainingRunState
     public static string MapSceneName { get; private set; } = string.Empty;
     public static string BattleSceneName { get; private set; } = string.Empty;
 
-    public static int StageCount { get; private set; }
-    public static int LaneCount { get; private set; }
-
     public static int? CurrentNodeId { get; private set; }
     public static int? PendingNodeId { get; private set; }
 
@@ -83,10 +80,10 @@ public static class TrainingRunState
         MapSceneName = mapSceneName;
         BattleSceneName = battleSceneName;
 
-        StageCount = Mathf.Max(2, stageCount);
-        LaneCount = Mathf.Clamp(laneCount, 2, DefaultMaxNodesPerFloor);
+        int resolvedStageCount = Mathf.Max(2, stageCount);
+        int resolvedLaneCount = Mathf.Clamp(laneCount, 2, DefaultMaxNodesPerFloor);
 
-        BuildSimpleMap(StageCount, LaneCount);
+        BuildSimpleMap(resolvedStageCount, resolvedLaneCount);
 
         selectableNodeIds.Clear();
         clearedNodeIds.Clear();
@@ -111,93 +108,7 @@ public static class TrainingRunState
         IsRunFailed = false;
         IsRunActive = true;
 
-        Debug.Log($"[TrainingRunState] New run started. StageCount={StageCount}, LaneCount={LaneCount}");
-    }
-
-    public static bool TrySelectNode(int nodeId, out TrainingMapNodeData selectedNode)
-    {
-        selectedNode = null;
-
-        if (!IsRunActive)
-            return false;
-
-        if (!selectableNodeIds.Contains(nodeId))
-            return false;
-
-        if (!nodesById.TryGetValue(nodeId, out selectedNode))
-            return false;
-
-        PendingNodeId = nodeId;
-        return true;
-    }
-
-    public static void CompletePendingNode(bool isVictory)
-    {
-        if (!PendingNodeId.HasValue)
-        {
-            Debug.LogWarning("[TrainingRunState] No pending node to resolve.");
-            return;
-        }
-
-        int resolvedNodeId = PendingNodeId.Value;
-        PendingNodeId = null;
-
-        if (!nodesById.TryGetValue(resolvedNodeId, out TrainingMapNodeData resolvedNode))
-        {
-            Debug.LogWarning($"[TrainingRunState] Pending node {resolvedNodeId} is invalid.");
-            return;
-        }
-
-        if (!isVictory)
-        {
-            IsRunFailed = true;
-            IsRunActive = false;
-            Debug.Log("[TrainingRunState] Run failed.");
-            return;
-        }
-
-        clearedNodeIds.Add(resolvedNodeId);
-        CurrentNodeId = resolvedNodeId;
-
-        selectableNodeIds.Clear();
-        foreach (int nextNodeId in resolvedNode.nextNodeIds)
-        {
-            selectableNodeIds.Add(nextNodeId);
-        }
-
-        if (selectableNodeIds.Count == 0)
-        {
-            IsRunCompleted = true;
-            IsRunActive = false;
-            Debug.Log("[TrainingRunState] Run completed.");
-        }
-    }
-
-    public static void EndRun(bool clearMap = false)
-    {
-        IsRunActive = false;
-        PendingNodeId = null;
-
-        if (!clearMap)
-            return;
-
-        MapSceneName = string.Empty;
-        BattleSceneName = string.Empty;
-        StageCount = 0;
-        LaneCount = 0;
-        CurrentNodeId = null;
-
-        nodesById.Clear();
-        orderedNodes.Clear();
-        selectableNodeIds.Clear();
-        clearedNodeIds.Clear();
-
-        IsRunCompleted = false;
-        IsRunFailed = false;
-
-        HasPlayerHealthState = false;
-        PlayerCurrentHp = 0;
-        PlayerMaxHp = 0;
+        Debug.Log($"[TrainingRunState] New run started. StageCount={resolvedStageCount}, LaneCount={resolvedLaneCount}");
     }
 
     private static void BuildSimpleMap(int stageCount, int laneCount)
@@ -460,9 +371,65 @@ public static class TrainingRunState
         if (stage > 0 && (stage + lane) % 4 == 0)
             return TrainingNodeType.Named;
 
-        if (stage == 0)
-            return TrainingNodeType.Monster;
-
         return TrainingNodeType.Monster;
+    }
+
+    public static bool TrySelectNode(int nodeId, out TrainingMapNodeData selectedNode)
+    {
+        selectedNode = null;
+
+        if (!IsRunActive)
+            return false;
+
+        if (!selectableNodeIds.Contains(nodeId))
+            return false;
+
+        if (!nodesById.TryGetValue(nodeId, out selectedNode))
+            return false;
+
+        PendingNodeId = nodeId;
+        return true;
+    }
+
+    public static void CompletePendingNode(bool isVictory)
+    {
+        if (!PendingNodeId.HasValue)
+        {
+            Debug.LogWarning("[TrainingRunState] No pending node to resolve.");
+            return;
+        }
+
+        int resolvedNodeId = PendingNodeId.Value;
+        PendingNodeId = null;
+
+        if (!nodesById.TryGetValue(resolvedNodeId, out TrainingMapNodeData resolvedNode))
+        {
+            Debug.LogWarning($"[TrainingRunState] Pending node {resolvedNodeId} is invalid.");
+            return;
+        }
+
+        if (!isVictory)
+        {
+            IsRunFailed = true;
+            IsRunActive = false;
+            Debug.Log("[TrainingRunState] Run failed.");
+            return;
+        }
+
+        clearedNodeIds.Add(resolvedNodeId);
+        CurrentNodeId = resolvedNodeId;
+
+        selectableNodeIds.Clear();
+        foreach (int nextNodeId in resolvedNode.nextNodeIds)
+        {
+            selectableNodeIds.Add(nextNodeId);
+        }
+
+        if (selectableNodeIds.Count == 0)
+        {
+            IsRunCompleted = true;
+            IsRunActive = false;
+            Debug.Log("[TrainingRunState] Run completed.");
+        }
     }
 }

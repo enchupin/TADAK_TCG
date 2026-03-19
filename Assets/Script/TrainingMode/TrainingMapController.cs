@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
 
 /// <summary>
 /// Runtime map presenter for training mode.
@@ -11,6 +11,7 @@ using TMPro;
 public class TrainingMapController : MonoBehaviour
 {
     private static readonly Vector2 defaultNodeSize = new Vector2(110f, 56f);
+    private static readonly Vector2 defaultNodeSpacing = new Vector2(260f, 170f);
 
     [Header("Run Setup")]
     [SerializeField] private string battleSceneName = "TrainingScene";
@@ -27,9 +28,10 @@ public class TrainingMapController : MonoBehaviour
     [SerializeField] private Button restNodeButtonPrefab;
     [SerializeField] private Button bossNodeButtonPrefab;
     [SerializeField] private Vector2 nodeSpacing = new Vector2(260f, 170f);
-    [SerializeField] private Vector2 mapOrigin = new Vector2(0f, -320f);
-    [SerializeField] private bool autoFitMapToViewport = true;
-    [SerializeField] private float viewportPadding = 80f;
+    [SerializeField] private Vector2 nodeSize = new Vector2(110f, 56f);
+    [SerializeField] private Vector2 mapPadding = new Vector2(80f, 80f);
+    [SerializeField] private float startNodeOffset = 1f;
+    [SerializeField] private float laneSpacingScale = 0.9f;
 
     [Header("Visuals")]
     [SerializeField] private Color selectableNodeColor = new Color(0.26f, 0.73f, 0.29f);
@@ -46,7 +48,9 @@ public class TrainingMapController : MonoBehaviour
 
     private readonly List<GameObject> spawnedNodeObjects = new List<GameObject>();
     private readonly List<GameObject> spawnedConnectionObjects = new List<GameObject>();
-    private Vector2 runtimeNodeSize = defaultNodeSize;
+    private Vector2 layoutOrigin;
+    private Vector2 layoutNodeSize = defaultNodeSize;
+    private Vector2 effectiveNodeSpacing = defaultNodeSpacing;
 
     private void Start()
     {
@@ -59,39 +63,19 @@ public class TrainingMapController : MonoBehaviour
     {
         EnsureNodeRoot();
         EnsureConnectionRoot();
-        EnsureNodeLayoutDefaults();
-        ApplyAdaptiveLayout();
-        ClearSpawnedConnections();
         ClearSpawnedNodes();
+        ClearSpawnedConnections();
 
         IReadOnlyList<TrainingMapNodeData> nodes = TrainingRunState.GetAllNodes();
+        Canvas.ForceUpdateCanvases();
+        UpdateLayoutMetrics(nodes);
+
         Dictionary<int, Vector2> nodePositions = BuildNodePositions(nodes);
-        int selectableCount = 0;
-        int firstSelectableStage = -1;
-        for (int i = 0; i < nodes.Count; i++)
-        {
-            if (!TrainingRunState.IsNodeSelectable(nodes[i].nodeId))
-                continue;
-
-            selectableCount++;
-            if (firstSelectableStage < 0 || nodes[i].stageIndex < firstSelectableStage)
-            {
-                firstSelectableStage = nodes[i].stageIndex;
-            }
-        }
-
-        Debug.Log(
-            $"[TrainingMapController] BuildMapUI nodes={nodes.Count}, selectable={selectableCount}, firstSelectableStage={firstSelectableStage}, spacing={nodeSpacing}, origin={mapOrigin}");
-
         SpawnConnectionLines(nodes, nodePositions);
-
-        for (int i = 0; i < nodes.Count; i++)
-        {
-            TrainingMapNodeData node = nodes[i];
-            SpawnNodeButton(node, nodePositions[node.nodeId]);
-        }
+        SpawnNodeButtons(nodes, nodePositions);
 
         UpdateStatusText();
+        ResetScrollPosition();
     }
 
     public void OnNodeSelected(int nodeId)
@@ -106,8 +90,7 @@ public class TrainingMapController : MonoBehaviour
             if (string.IsNullOrEmpty(restSceneName))
             {
                 Debug.LogWarning("[TrainingMapController] Rest scene is empty. Resolving rest node immediately.");
-                TrainingRunState.CompletePendingNode(true);
-                BuildMapUI();
+                CompleteNodeOnMap();
                 return;
             }
 
@@ -115,21 +98,19 @@ public class TrainingMapController : MonoBehaviour
             return;
         }
 
-        if (NodeRequiresBattle(node.nodeType))
+        if (!NodeRequiresBattle(node.nodeType))
         {
-            if (string.IsNullOrEmpty(TrainingRunState.BattleSceneName))
-            {
-                Debug.LogError("[TrainingMapController] Battle scene name is empty.");
-                return;
-            }
-
-            SceneManager.LoadScene(TrainingRunState.BattleSceneName);
+            CompleteNodeOnMap();
             return;
         }
 
-        // Non-battle node: resolve immediately on map.
-        TrainingRunState.CompletePendingNode(true);
-        BuildMapUI();
+        if (string.IsNullOrEmpty(TrainingRunState.BattleSceneName))
+        {
+            Debug.LogError("[TrainingMapController] Battle scene name is empty.");
+            return;
+        }
+
+        SceneManager.LoadScene(TrainingRunState.BattleSceneName);
     }
 
     private void EnsureRunState()
@@ -146,18 +127,20 @@ public class TrainingMapController : MonoBehaviour
 
     private void EnsureNodeRoot()
     {
-        if (nodeRoot != null)
+        if (nodeRoot == null)
         {
-            Image rootImage = nodeRoot.GetComponent<Image>();
-            if (rootImage != null)
-            {
-                // Root panel is visual-only; do not block child button clicks.
-                rootImage.raycastTarget = false;
-            }
-            return;
+            nodeRoot = transform as RectTransform;
         }
 
-        nodeRoot = transform as RectTransform;
+        if (nodeRoot == null)
+            return;
+
+        Image rootImage = nodeRoot.GetComponent<Image>();
+        if (rootImage != null)
+        {
+            // Root panel is visual-only; do not block child button clicks.
+            rootImage.raycastTarget = false;
+        }
     }
 
     private void EnsureConnectionRoot()
@@ -179,6 +162,14 @@ public class TrainingMapController : MonoBehaviour
         connectionRoot.SetAsFirstSibling();
     }
 
+    private void SpawnNodeButtons(IReadOnlyList<TrainingMapNodeData> nodes, IReadOnlyDictionary<int, Vector2> nodePositions)
+    {
+        foreach (TrainingMapNodeData node in nodes)
+        {
+            SpawnNodeButton(node, nodePositions[node.nodeId]);
+        }
+    }
+
     private void SpawnNodeButton(TrainingMapNodeData node, Vector2 anchoredPosition)
     {
         Button button = CreateNodeButtonInstance(node);
@@ -190,7 +181,10 @@ public class TrainingMapController : MonoBehaviour
         RectTransform rect = button.GetComponent<RectTransform>();
         if (rect != null)
         {
-            rect.sizeDelta = runtimeNodeSize;
+            rect.anchorMin = new Vector2(0f, 1f);
+            rect.anchorMax = new Vector2(0f, 1f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = layoutNodeSize;
             rect.anchoredPosition = anchoredPosition;
         }
 
@@ -204,16 +198,15 @@ public class TrainingMapController : MonoBehaviour
         int capturedNodeId = node.nodeId;
         button.onClick.AddListener(() => OnNodeSelected(capturedNodeId));
 
-        ApplyNodeVisual(button, node, isSelectable, isCleared, isCurrent);
+        ApplyNodeVisual(button, isSelectable, isCleared, isCurrent);
         spawnedNodeObjects.Add(button.gameObject);
     }
 
     private Dictionary<int, Vector2> BuildNodePositions(IReadOnlyList<TrainingMapNodeData> nodes)
     {
         Dictionary<int, Vector2> nodePositions = new Dictionary<int, Vector2>(nodes.Count);
-        for (int i = 0; i < nodes.Count; i++)
+        foreach (TrainingMapNodeData node in nodes)
         {
-            TrainingMapNodeData node = nodes[i];
             nodePositions[node.nodeId] = GridToAnchoredPosition(node.gridPosition);
         }
 
@@ -225,21 +218,15 @@ public class TrainingMapController : MonoBehaviour
         if (connectionRoot == null)
             return;
 
-        for (int i = 0; i < nodes.Count; i++)
+        foreach (TrainingMapNodeData node in nodes)
         {
-            TrainingMapNodeData node = nodes[i];
             if (!nodePositions.TryGetValue(node.nodeId, out Vector2 fromPosition))
-            {
                 continue;
-            }
 
-            for (int nextIndex = 0; nextIndex < node.nextNodeIds.Count; nextIndex++)
+            foreach (int nextNodeId in node.nextNodeIds)
             {
-                int nextNodeId = node.nextNodeIds[nextIndex];
                 if (!nodePositions.TryGetValue(nextNodeId, out Vector2 toPosition))
-                {
                     continue;
-                }
 
                 CreateConnectionLine(node.nodeId, nextNodeId, fromPosition, toPosition);
             }
@@ -260,8 +247,8 @@ public class TrainingMapController : MonoBehaviour
             return;
         }
 
-        rect.anchorMin = new Vector2(0.5f, 0.5f);
-        rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.anchorMin = new Vector2(0f, 1f);
+        rect.anchorMax = new Vector2(0f, 1f);
         rect.pivot = new Vector2(0.5f, 0.5f);
         rect.sizeDelta = new Vector2(length, Mathf.Max(2f, connectionThickness));
         rect.anchoredPosition = (fromPosition + toPosition) * 0.5f;
@@ -283,14 +270,10 @@ public class TrainingMapController : MonoBehaviour
         bool isToSelectable = TrainingRunState.IsNodeSelectable(toNodeId);
 
         if (isFromCleared && isToCleared)
-        {
             return clearedConnectionColor;
-        }
 
         if (isFromCurrent || isFromSelectable || isToSelectable)
-        {
             return selectableConnectionColor;
-        }
 
         return lockedConnectionColor;
     }
@@ -310,7 +293,7 @@ public class TrainingMapController : MonoBehaviour
         return Instantiate(nodeButtonPrefab, nodeRoot);
     }
 
-    private void ApplyNodeVisual(Button button, TrainingMapNodeData node, bool isSelectable, bool isCleared, bool isCurrent)
+    private void ApplyNodeVisual(Button button, bool isSelectable, bool isCleared, bool isCurrent)
     {
         Color targetColor = lockedNodeColor;
         if (isCurrent)
@@ -341,24 +324,6 @@ public class TrainingMapController : MonoBehaviour
 
             childGraphics[i].raycastTarget = false;
         }
-
-        TMP_Text tmpLabel = button.GetComponentInChildren<TMP_Text>();
-        if (tmpLabel != null)
-        {
-            if (string.IsNullOrEmpty(tmpLabel.text))
-            {
-                tmpLabel.text = node.GetShortLabel();
-            }
-        }
-
-        Text legacyLabel = button.GetComponentInChildren<Text>();
-        if (legacyLabel != null)
-        {
-            if (string.IsNullOrEmpty(legacyLabel.text))
-            {
-                legacyLabel.text = node.GetShortLabel();
-            }
-        }
     }
 
     private Button ResolveNodeButtonPrefab(TrainingMapNodeData node)
@@ -381,8 +346,8 @@ public class TrainingMapController : MonoBehaviour
     private Vector2 GridToAnchoredPosition(Vector2 gridPosition)
     {
         return new Vector2(
-            mapOrigin.x + gridPosition.x * nodeSpacing.x,
-            mapOrigin.y + gridPosition.y * nodeSpacing.y);
+            layoutOrigin.x + gridPosition.x * effectiveNodeSpacing.x,
+            layoutOrigin.y - gridPosition.y * effectiveNodeSpacing.y);
     }
 
     private void ClearSpawnedNodes()
@@ -437,50 +402,93 @@ public class TrainingMapController : MonoBehaviour
         statusText.text = "다음 노드를 선택하세요";
     }
 
-    private void EnsureNodeLayoutDefaults()
+    private void UpdateLayoutMetrics(IReadOnlyList<TrainingMapNodeData> nodes)
     {
-        if (Mathf.Abs(nodeSpacing.x) < 1f && Mathf.Abs(nodeSpacing.y) < 1f)
-        {
-            nodeSpacing = new Vector2(260f, 170f);
-            Debug.LogWarning("[TrainingMapController] nodeSpacing was near zero. Reset to default (260, 170).");
-        }
+        Rect layoutRect = ResolveLayoutRect();
+        float layoutWidth = Mathf.Max(0f, layoutRect.width);
+        float layoutHeight = Mathf.Max(0f, layoutRect.height);
 
-        runtimeNodeSize = defaultNodeSize;
+        Vector2 sanitizedSpacing = new Vector2(
+            Mathf.Max(1f, nodeSpacing.x),
+            Mathf.Max(0f, nodeSpacing.y));
+        Vector2 sanitizedNodeSize = new Vector2(
+            Mathf.Max(1f, nodeSize.x),
+            Mathf.Max(1f, nodeSize.y));
+        Vector2 sanitizedPadding = new Vector2(
+            Mathf.Max(0f, mapPadding.x),
+            Mathf.Max(0f, mapPadding.y));
+
+        layoutNodeSize = sanitizedNodeSize;
+
+        GetGridBounds(nodes, out float maxStage, out float minLane, out float maxLane);
+
+        float scaledSpacingY = sanitizedSpacing.y * Mathf.Max(0f, laneSpacingScale);
+        float stageSpan = Mathf.Max(0f, Mathf.Max(0f, startNodeOffset) + maxStage);
+        float laneSpan = Mathf.Max(0f, maxLane - minLane);
+        float availableWidth = Mathf.Max(0f, layoutWidth - sanitizedPadding.x * 2f - sanitizedNodeSize.x);
+        float availableHeight = Mathf.Max(0f, layoutHeight - sanitizedPadding.y * 2f - sanitizedNodeSize.y);
+
+        float fittedSpacingX = stageSpan > 0f
+            ? Mathf.Max(0f, availableWidth / stageSpan)
+            : sanitizedSpacing.x;
+        float fittedSpacingY = laneSpan > 0f
+            ? Mathf.Max(0f, availableHeight / laneSpan)
+            : scaledSpacingY;
+
+        effectiveNodeSpacing = new Vector2(
+            stageSpan > 0f ? Mathf.Min(sanitizedSpacing.x, fittedSpacingX) : sanitizedSpacing.x,
+            laneSpan > 0f ? Mathf.Min(scaledSpacingY, fittedSpacingY) : scaledSpacingY);
+
+        layoutOrigin = new Vector2(
+            sanitizedPadding.x + sanitizedNodeSize.x * 0.5f + Mathf.Max(0f, startNodeOffset) * effectiveNodeSpacing.x,
+            -layoutHeight * 0.5f);
     }
 
-    private void ApplyAdaptiveLayout()
+    private void GetGridBounds(IReadOnlyList<TrainingMapNodeData> nodes, out float maxStage, out float minLane, out float maxLane)
     {
-        if (!autoFitMapToViewport || nodeRoot == null || !TrainingRunState.HasMapData)
+        maxStage = 0f;
+        minLane = 0f;
+        maxLane = 0f;
+
+        if (nodes == null || nodes.Count == 0)
             return;
 
-        Rect viewportRect = nodeRoot.rect;
-        if (viewportRect.width < 10f || viewportRect.height < 10f)
+        maxStage = nodes[0].gridPosition.x;
+        minLane = nodes[0].gridPosition.y;
+        maxLane = nodes[0].gridPosition.y;
+
+        for (int i = 1; i < nodes.Count; i++)
+        {
+            Vector2 gridPosition = nodes[i].gridPosition;
+            maxStage = Mathf.Max(maxStage, gridPosition.x);
+            minLane = Mathf.Min(minLane, gridPosition.y);
+            maxLane = Mathf.Max(maxLane, gridPosition.y);
+        }
+    }
+
+    private Rect ResolveLayoutRect()
+    {
+        return nodeRoot != null ? nodeRoot.rect : default;
+    }
+
+    private void ResetScrollPosition()
+    {
+        if (nodeRoot == null)
             return;
 
-        float clampedPadding = Mathf.Clamp(viewportPadding, 20f, Mathf.Min(viewportRect.width, viewportRect.height) * 0.45f);
+        ScrollRect scrollRect = nodeRoot.GetComponentInParent<ScrollRect>();
+        if (scrollRect == null)
+            return;
 
-        int stageCount = Mathf.Max(2, TrainingRunState.StageCount);
-        int laneCount = Mathf.Max(2, TrainingRunState.LaneCount);
+        Canvas.ForceUpdateCanvases();
+        scrollRect.horizontalNormalizedPosition = 0f;
+        scrollRect.verticalNormalizedPosition = 1f;
+    }
 
-        float availableWidth = Mathf.Max(120f, viewportRect.width - clampedPadding * 2f);
-        float availableHeight = Mathf.Max(120f, viewportRect.height - clampedPadding * 2f);
-
-        float stageSpan = Mathf.Max(1f, stageCount - 1f);
-        float laneSpan = Mathf.Max(1f, laneCount - 1f);
-
-        float suggestedX = availableWidth / stageSpan;
-        float suggestedY = availableHeight / laneSpan;
-
-        nodeSpacing.x = Mathf.Min(260f, suggestedX);
-        nodeSpacing.y = Mathf.Min(170f, suggestedY);
-
-        // Keep stage 0 visible at the left viewport area and spread lanes vertically.
-        mapOrigin.x = -viewportRect.width * 0.5f + clampedPadding;
-        mapOrigin.y = 0f;
-
-        runtimeNodeSize = new Vector2(
-            Mathf.Clamp(nodeSpacing.x * 0.72f, 32f, defaultNodeSize.x),
-            Mathf.Clamp(nodeSpacing.y * 0.4f, 24f, defaultNodeSize.y));
+    private void CompleteNodeOnMap()
+    {
+        TrainingRunState.CompletePendingNode(true);
+        BuildMapUI();
     }
 
     private static bool NodeRequiresBattle(TrainingNodeType nodeType)

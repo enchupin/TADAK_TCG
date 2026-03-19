@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SceneChanger : MonoBehaviour
 {
@@ -10,10 +11,13 @@ public class SceneChanger : MonoBehaviour
 
     public void StartTrainingRun()
     {
-        TrainingRunSceneActions.StartTrainingRunAndLoadMap(
+        TrainingBattleManager.buildingDeck = null;
+        PlayerData.Reset();
+        TrainingRunState.StartNewRun(
             trainingMapSceneName,
             trainingBattleSceneName,
             trainingStageCount,
             trainingLaneCount);
+        SceneManager.LoadScene(trainingMapSceneName);
     }
 }

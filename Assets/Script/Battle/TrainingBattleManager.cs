@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -1253,7 +1254,20 @@ public class TrainingBattleManager : MonoBehaviour
             yield return new WaitForSeconds(battleResultTransitionDelay);
         }
 
-        TrainingRunSceneActions.HandleBattleFinished(isVictory);
+        if (!TrainingRunState.HasMapData)
+            yield break;
+
+        if (PlayerData.Instance != null)
+        {
+            TrainingRunState.SetPlayerHealthState(PlayerData.Instance.hp, PlayerData.Instance.maxHP);
+        }
+
+        TrainingRunState.CompletePendingNode(isVictory);
+
+        if (!string.IsNullOrEmpty(TrainingRunState.MapSceneName))
+        {
+            SceneManager.LoadScene(TrainingRunState.MapSceneName);
+        }
     }
 }
 
