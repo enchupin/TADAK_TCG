@@ -241,18 +241,7 @@ public class TrainingBattleManager : MonoBehaviour
             go.AddComponent<BuffManager>();
         }
 
-        if (monsterSpawner != null)
-        {
-            Monster spawned = monsterSpawner.SpawnMonster();
-            if (spawned != null)
-            {
-                RegisterMonster(spawned);
-            }
-        }
-        else
-        {
-            Debug.LogWarning("[BattleManager] MonsterSpawner is not assigned.");
-        }
+        SpawnEncounterMonsters();
 
         battleContext = new BattleContext();
 
@@ -1208,6 +1197,32 @@ public class TrainingBattleManager : MonoBehaviour
 
         playerData.maxEnergy = debugEnergyAmount;
         playerData.energy = debugEnergyAmount;
+    }
+
+    private void SpawnEncounterMonsters()
+    {
+        if (monsterSpawner == null)
+        {
+            Debug.LogWarning("[BattleManager] MonsterSpawner is not assigned.");
+            return;
+        }
+
+        List<Monster> encounterMonsters = monsterSpawner.SpawnEncounter(ResolveCurrentEncounterNodeType());
+        foreach (Monster monster in encounterMonsters)
+        {
+            RegisterMonster(monster);
+        }
+    }
+
+    private TrainingNodeType ResolveCurrentEncounterNodeType()
+    {
+        if (TrainingRunState.PendingNodeId.HasValue
+            && TrainingRunState.TryGetNode(TrainingRunState.PendingNodeId.Value, out TrainingMapNodeData pendingNode))
+        {
+            return pendingNode.nodeType;
+        }
+
+        return TrainingNodeType.Monster;
     }
 
     private List<Card> BuildDebugBattleDeck()
