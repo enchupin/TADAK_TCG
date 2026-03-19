@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class MonsterSpawner : MonoBehaviour
 {
+    private const int MaxMonsterCount = 5;
+
     private enum SpawnMonsterType
     {
         MutantFlower,
@@ -22,7 +24,6 @@ public class MonsterSpawner : MonoBehaviour
         new[] { SpawnMonsterType.MutantFlower, SpawnMonsterType.MutantCarnivorousPlant },
         new[] { SpawnMonsterType.MutantFlower, SpawnMonsterType.MutantMushroom },
         new[] { SpawnMonsterType.MutantCarnivorousPlant, SpawnMonsterType.MutantMushroom },
-        new[] { SpawnMonsterType.JackORipper },
         new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneThrowGolem, SpawnMonsterType.StoneStealGolem },
         new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneThrowGolem, SpawnMonsterType.StoneThrowGolem },
         new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem },
@@ -34,7 +35,8 @@ public class MonsterSpawner : MonoBehaviour
         new[] { SpawnMonsterType.RotwoodWarden },
         new[] { SpawnMonsterType.Priestess },
         new[] { SpawnMonsterType.MutantMushroom },
-        new[] { SpawnMonsterType.MushroomHost }
+        new[] { SpawnMonsterType.MushroomHost },
+        new[] { SpawnMonsterType.JackORipper }
     };
 
     [Header("일반 몬스터 프리팹")]
@@ -53,6 +55,8 @@ public class MonsterSpawner : MonoBehaviour
 
     [Header("스폰 위치")]
     [SerializeField] private List<Transform> spawnPoints = new List<Transform>();
+
+    private int reservedSummonCount;
 
     public List<Monster> SpawnEncounter(TrainingNodeType nodeType)
     {
@@ -89,6 +93,22 @@ public class MonsterSpawner : MonoBehaviour
         return SpawnMonsterToAvailableSlot(monsterPrefab);
     }
 
+    public bool TryReserveSummonSlot()
+    {
+        if (GetRemainingSummonCapacity() <= 0)
+        {
+            return false;
+        }
+
+        reservedSummonCount++;
+        return true;
+    }
+
+    public void ResetSummonReservations()
+    {
+        reservedSummonCount = 0;
+    }
+
     private SpawnMonsterType[] ResolveEncounter(TrainingNodeType nodeType)
     {
         switch (nodeType)
@@ -107,18 +127,7 @@ public class MonsterSpawner : MonoBehaviour
     {
         if (!TryGetAvailableSpawnPoint(out Transform spawnPoint))
         {
-            Debug.LogWarning($"[MonsterSpawner] 남은 스폰 위치가 없어 '{monsterPrefab.name}' 소환을 생략합니다");
-            return null;
-        }
-
-        return SpawnMonster(monsterPrefab, spawnPoint);
-    }
-
-    private Monster SpawnMonster(GameObject monsterPrefab, Transform spawnPoint)
-    {
-        if (spawnPoint == null)
-        {
-            Debug.LogWarning($"[MonsterSpawner] 유효한 스폰 위치가 없어 '{monsterPrefab.name}' 생성에 실패했습니다");
+            Debug.LogWarning($"[MonsterSpawner] 남은 스폰 위치가 없어 '{monsterPrefab.name}' 생성이 취소되었습니다");
             return null;
         }
 
@@ -130,6 +139,7 @@ public class MonsterSpawner : MonoBehaviour
         if (!spawnedObject.TryGetComponent(out Monster monster))
         {
             Debug.LogError($"[MonsterSpawner] 생성된 프리팹 '{spawnedObject.name}'에 Monster 컴포넌트가 없습니다");
+            Destroy(spawnedObject);
             return null;
         }
 
@@ -146,7 +156,8 @@ public class MonsterSpawner : MonoBehaviour
             return false;
         }
 
-        for (int i = 0; i < spawnPoints.Count; i++)
+        int spawnPointCount = Mathf.Min(spawnPoints.Count, MaxMonsterCount);
+        for (int i = 0; i < spawnPointCount; i++)
         {
             Transform spawnPoint = spawnPoints[i];
             if (spawnPoint == null || IsSpawnPointOccupied(spawnPoint))
@@ -159,6 +170,26 @@ public class MonsterSpawner : MonoBehaviour
         }
 
         return false;
+    }
+
+    private int GetRemainingSummonCapacity()
+    {
+        if (spawnPoints == null || spawnPoints.Count == 0)
+        {
+            return 0;
+        }
+
+        int occupiedCount = 0;
+        int spawnPointCount = Mathf.Min(spawnPoints.Count, MaxMonsterCount);
+        for (int i = 0; i < spawnPointCount; i++)
+        {
+            if (IsSpawnPointOccupied(spawnPoints[i]))
+            {
+                occupiedCount++;
+            }
+        }
+
+        return Mathf.Max(0, spawnPointCount - occupiedCount - reservedSummonCount);
     }
 
     private bool IsSpawnPointOccupied(Transform spawnPoint)
