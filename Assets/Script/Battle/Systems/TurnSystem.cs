@@ -219,6 +219,8 @@ public class TurnSystem
 
     private void PlanEnemyNextActions()
     {
+        battleManager.monsterSpawner?.ResetSummonReservations();
+
         foreach (Monster monster in battleManager.GetLivingMonsters())
         {
             monster.PlanNextAction();

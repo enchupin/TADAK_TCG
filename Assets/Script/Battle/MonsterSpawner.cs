@@ -1,125 +1,243 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// 몬스터 프리팹을 전투 씬에 스폰하는 클래스.
-/// 임시로 TrainingBattleManager가 호출하여 몬스터를 생성합니다.
-/// </summary>
 public class MonsterSpawner : MonoBehaviour
 {
-    [Header("Spawn Settings")]
-    [Tooltip("스폰할 몬스터 프리팹")]
-    [SerializeField] private GameObject monsterPrefab;
+    private const int MaxMonsterCount = 5;
 
-    [Tooltip("랜덤 또는 ID 선택에 사용할 몬스터 프리팹 목록")]
-    [SerializeField] private List<GameObject> monsterPrefabs = new();
-
-    [Tooltip("활성화되면 목록에서 랜덤으로 몬스터를 선택")]
-    [SerializeField] private bool spawnRandomMonster = true;
-
-    [Tooltip("랜덤이 꺼져 있을 때 스폰할 몬스터 ID")]
-    [SerializeField] private int fixedMonsterId;
-    
-    [Tooltip("몬스터가 생성될 위치")]
-    [SerializeField] private Transform spawnPoint;
-
-    /// <summary>
-    /// 몬스터 프리팹을 지정된 위치에 스폰
-    /// </summary>
-    /// <returns>생성된 몬스터 객체 (없으면 null)</returns>
-    public Monster SpawnMonster()
+    private enum SpawnMonsterType
     {
-        GameObject selectedPrefab = ResolveMonsterPrefab();
-        if (selectedPrefab == null)
+        MutantFlower,
+        MutantCarnivorousPlant,
+        MutantMushroom,
+        JackORipper,
+        StoneShieldGolem,
+        StoneThrowGolem,
+        StoneStealGolem,
+        RotwoodWarden,
+        Priestess,
+        MushroomHost
+    }
+
+    private static readonly SpawnMonsterType[][] normalNodeEncounterTable =
+    {
+        new[] { SpawnMonsterType.MutantFlower, SpawnMonsterType.MutantCarnivorousPlant },
+        new[] { SpawnMonsterType.MutantFlower, SpawnMonsterType.MutantMushroom },
+        new[] { SpawnMonsterType.MutantCarnivorousPlant, SpawnMonsterType.MutantMushroom },
+        new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneThrowGolem, SpawnMonsterType.StoneStealGolem },
+        new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneThrowGolem, SpawnMonsterType.StoneThrowGolem },
+        new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem },
+        new[] { SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem }
+    };
+
+    private static readonly SpawnMonsterType[][] namedNodeEncounterTable =
+    {
+        new[] { SpawnMonsterType.RotwoodWarden },
+        new[] { SpawnMonsterType.Priestess },
+        new[] { SpawnMonsterType.MutantMushroom },
+        new[] { SpawnMonsterType.MushroomHost },
+        new[] { SpawnMonsterType.JackORipper }
+    };
+
+    [Header("일반 몬스터 프리팹")]
+    [SerializeField] private GameObject mutantFlowerPrefab;
+    [SerializeField] private GameObject mutantCarnivorousPlantPrefab;
+    [SerializeField] private GameObject mutantMushroomPrefab;
+    [SerializeField] private GameObject jackORipperPrefab;
+    [SerializeField] private GameObject stoneShieldGolemPrefab;
+    [SerializeField] private GameObject stoneThrowGolemPrefab;
+    [SerializeField] private GameObject stoneStealGolemPrefab;
+
+    [Header("네임드 몬스터 프리팹")]
+    [SerializeField] private GameObject rotwoodWardenPrefab;
+    [SerializeField] private GameObject priestessPrefab;
+    [SerializeField] private GameObject mushroomHostPrefab;
+
+    [Header("스폰 위치")]
+    [SerializeField] private List<Transform> spawnPoints = new List<Transform>();
+
+    private int reservedSummonCount;
+
+    public List<Monster> SpawnEncounter(TrainingNodeType nodeType)
+    {
+        SpawnMonsterType[] encounter = ResolveEncounter(nodeType);
+        List<Monster> spawnedMonsters = new List<Monster>(encounter.Length);
+
+        for (int i = 0; i < encounter.Length; i++)
         {
-            Debug.LogError("[MonsterSpawner] 스폰할 몬스터 프리팹이 설정되지 않았습니다!");
+            GameObject monsterPrefab = ResolveMonsterPrefab(encounter[i]);
+            if (monsterPrefab == null)
+            {
+                Debug.LogError($"[MonsterSpawner] 몬스터 프리팹이 설정되지 않았습니다. type={encounter[i]}");
+                continue;
+            }
+
+            Monster spawnedMonster = SpawnMonsterToAvailableSlot(monsterPrefab);
+            if (spawnedMonster != null)
+            {
+                spawnedMonsters.Add(spawnedMonster);
+            }
+        }
+
+        return spawnedMonsters;
+    }
+
+    public Monster SpawnSummonedMonster(GameObject monsterPrefab)
+    {
+        if (monsterPrefab == null)
+        {
+            Debug.LogError("[MonsterSpawner] 소환할 몬스터 프리팹이 비어 있습니다");
             return null;
         }
 
-        Vector3 spawnPosition = spawnPoint != null ? spawnPoint.position : Vector3.zero;
-        Quaternion spawnRotation = spawnPoint != null ? spawnPoint.rotation : Quaternion.identity;
-
-        GameObject spawnedObj;
-        if (spawnPoint != null) {
-            // spawnPoint를 부모로 설정
-            spawnedObj = Instantiate(selectedPrefab, spawnPosition, spawnRotation, spawnPoint);
-        }
-        else {
-            spawnedObj = Instantiate(selectedPrefab, spawnPosition, spawnRotation);
-        }
-        if (!spawnedObj.TryGetComponent<Monster>(out var monsterComponent)) {
-            Debug.LogError($"[MonsterSpawner] 생성된 프리팹 '{spawnedObj.name}'에 Monster 컴포넌트가 없습니다!");
-        }
-
-        return monsterComponent;
+        return SpawnMonsterToAvailableSlot(monsterPrefab);
     }
 
-    private GameObject ResolveMonsterPrefab()
+    public bool TryReserveSummonSlot()
     {
-        if (!spawnRandomMonster && fixedMonsterId > 0)
+        if (GetRemainingSummonCapacity() <= 0)
         {
-            GameObject fixedPrefab = FindMonsterPrefabById(fixedMonsterId);
-            if (fixedPrefab != null)
-            {
-                return fixedPrefab;
-            }
-
-            Debug.LogWarning($"[MonsterSpawner] ID {fixedMonsterId}에 해당하는 몬스터 프리팹을 찾지 못했습니다.");
+            return false;
         }
 
-        List<GameObject> candidates = GetConfiguredPrefabs();
-        if (candidates.Count > 0)
-        {
-            if (spawnRandomMonster)
-            {
-                int randomIndex = Random.Range(0, candidates.Count);
-                return candidates[randomIndex];
-            }
-
-            return candidates[0];
-        }
-
-        return monsterPrefab;
+        reservedSummonCount++;
+        return true;
     }
 
-    private GameObject FindMonsterPrefabById(int targetMonsterId)
+    public void ResetSummonReservations()
     {
-        foreach (GameObject candidate in GetConfiguredPrefabs())
+        reservedSummonCount = 0;
+    }
+
+    private SpawnMonsterType[] ResolveEncounter(TrainingNodeType nodeType)
+    {
+        switch (nodeType)
         {
-            if (candidate == null)
+            case TrainingNodeType.Named:
+                return namedNodeEncounterTable[Random.Range(0, namedNodeEncounterTable.Length)];
+            case TrainingNodeType.Boss:
+                return new[] { SpawnMonsterType.JackORipper };
+            case TrainingNodeType.Monster:
+            default:
+                return normalNodeEncounterTable[Random.Range(0, normalNodeEncounterTable.Length)];
+        }
+    }
+
+    private Monster SpawnMonsterToAvailableSlot(GameObject monsterPrefab)
+    {
+        if (!TryGetAvailableSpawnPoint(out Transform spawnPoint))
+        {
+            Debug.LogWarning($"[MonsterSpawner] 남은 스폰 위치가 없어 '{monsterPrefab.name}' 생성이 취소되었습니다");
+            return null;
+        }
+
+        GameObject spawnedObject = Instantiate(monsterPrefab, spawnPoint, false);
+        spawnedObject.transform.localPosition = Vector3.zero;
+        spawnedObject.transform.localRotation = Quaternion.identity;
+        spawnedObject.transform.localScale = Vector3.one;
+
+        if (!spawnedObject.TryGetComponent(out Monster monster))
+        {
+            Debug.LogError($"[MonsterSpawner] 생성된 프리팹 '{spawnedObject.name}'에 Monster 컴포넌트가 없습니다");
+            Destroy(spawnedObject);
+            return null;
+        }
+
+        return monster;
+    }
+
+    private bool TryGetAvailableSpawnPoint(out Transform availableSpawnPoint)
+    {
+        availableSpawnPoint = null;
+
+        if (spawnPoints == null || spawnPoints.Count == 0)
+        {
+            Debug.LogWarning("[MonsterSpawner] 스폰 위치가 설정되지 않았습니다");
+            return false;
+        }
+
+        int spawnPointCount = Mathf.Min(spawnPoints.Count, MaxMonsterCount);
+        for (int i = 0; i < spawnPointCount; i++)
+        {
+            Transform spawnPoint = spawnPoints[i];
+            if (spawnPoint == null || IsSpawnPointOccupied(spawnPoint))
             {
                 continue;
             }
 
-            Monster candidateMonster = candidate.GetComponent<Monster>();
-            if (candidateMonster != null && candidateMonster.MonsterId == targetMonsterId)
-            {
-                return candidate;
-            }
+            availableSpawnPoint = spawnPoint;
+            return true;
         }
 
-        return null;
+        return false;
     }
 
-    private List<GameObject> GetConfiguredPrefabs()
+    private int GetRemainingSummonCapacity()
     {
-        List<GameObject> candidates = new List<GameObject>();
-        if (monsterPrefabs != null)
+        if (spawnPoints == null || spawnPoints.Count == 0)
         {
-            foreach (GameObject candidate in monsterPrefabs)
+            return 0;
+        }
+
+        int occupiedCount = 0;
+        int spawnPointCount = Mathf.Min(spawnPoints.Count, MaxMonsterCount);
+        for (int i = 0; i < spawnPointCount; i++)
+        {
+            if (IsSpawnPointOccupied(spawnPoints[i]))
             {
-                if (candidate != null)
-                {
-                    candidates.Add(candidate);
-                }
+                occupiedCount++;
             }
         }
 
-        if (monsterPrefab != null && !candidates.Contains(monsterPrefab))
+        return Mathf.Max(0, spawnPointCount - occupiedCount - reservedSummonCount);
+    }
+
+    private bool IsSpawnPointOccupied(Transform spawnPoint)
+    {
+        if (spawnPoint == null)
         {
-            candidates.Add(monsterPrefab);
+            return false;
         }
 
-        return candidates;
+        Monster[] monsters = spawnPoint.GetComponentsInChildren<Monster>(true);
+        for (int i = 0; i < monsters.Length; i++)
+        {
+            Monster monster = monsters[i];
+            if (monster != null && !monster.IsDead())
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private GameObject ResolveMonsterPrefab(SpawnMonsterType monsterType)
+    {
+        switch (monsterType)
+        {
+            case SpawnMonsterType.MutantFlower:
+                return mutantFlowerPrefab;
+            case SpawnMonsterType.MutantCarnivorousPlant:
+                return mutantCarnivorousPlantPrefab;
+            case SpawnMonsterType.MutantMushroom:
+                return mutantMushroomPrefab;
+            case SpawnMonsterType.JackORipper:
+                return jackORipperPrefab;
+            case SpawnMonsterType.StoneShieldGolem:
+                return stoneShieldGolemPrefab;
+            case SpawnMonsterType.StoneThrowGolem:
+                return stoneThrowGolemPrefab;
+            case SpawnMonsterType.StoneStealGolem:
+                return stoneStealGolemPrefab;
+            case SpawnMonsterType.RotwoodWarden:
+                return rotwoodWardenPrefab;
+            case SpawnMonsterType.Priestess:
+                return priestessPrefab;
+            case SpawnMonsterType.MushroomHost:
+                return mushroomHostPrefab;
+            default:
+                return null;
+        }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -240,18 +241,7 @@ public class TrainingBattleManager : MonoBehaviour
             go.AddComponent<BuffManager>();
         }
 
-        if (monsterSpawner != null)
-        {
-            Monster spawned = monsterSpawner.SpawnMonster();
-            if (spawned != null)
-            {
-                RegisterMonster(spawned);
-            }
-        }
-        else
-        {
-            Debug.LogWarning("[BattleManager] MonsterSpawner is not assigned.");
-        }
+        SpawnEncounterMonsters();
 
         battleContext = new BattleContext();
 
@@ -960,6 +950,30 @@ public class TrainingBattleManager : MonoBehaviour
     public void HandleMonsterDeath(Monster monster)
     {
         powerBuffRuntime?.OnMonsterDeath(monster);
+
+        if (monster == null)
+        {
+            return;
+        }
+
+        if (currentTarget == monster)
+        {
+            currentTarget = null;
+        }
+
+        if (previewDescriptionTarget == monster)
+        {
+            previewDescriptionTarget = null;
+        }
+
+        UnregisterMonster(monster);
+
+        if (monster.gameObject.activeSelf)
+        {
+            monster.gameObject.SetActive(false);
+        }
+
+        UpdateAllUI();
     }
 
     public Monster GetDescriptionTarget(bool previewOnly = false)
@@ -1209,6 +1223,32 @@ public class TrainingBattleManager : MonoBehaviour
         playerData.energy = debugEnergyAmount;
     }
 
+    private void SpawnEncounterMonsters()
+    {
+        if (monsterSpawner == null)
+        {
+            Debug.LogWarning("[BattleManager] MonsterSpawner is not assigned.");
+            return;
+        }
+
+        List<Monster> encounterMonsters = monsterSpawner.SpawnEncounter(ResolveCurrentEncounterNodeType());
+        foreach (Monster monster in encounterMonsters)
+        {
+            RegisterMonster(monster);
+        }
+    }
+
+    private TrainingNodeType ResolveCurrentEncounterNodeType()
+    {
+        if (TrainingRunState.PendingNodeId.HasValue
+            && TrainingRunState.TryGetNode(TrainingRunState.PendingNodeId.Value, out TrainingMapNodeData pendingNode))
+        {
+            return pendingNode.nodeType;
+        }
+
+        return TrainingNodeType.Monster;
+    }
+
     private List<Card> BuildDebugBattleDeck()
     {
         List<Card> debugDeck = new List<Card>();
@@ -1253,7 +1293,20 @@ public class TrainingBattleManager : MonoBehaviour
             yield return new WaitForSeconds(battleResultTransitionDelay);
         }
 
-        TrainingRunSceneActions.HandleBattleFinished(isVictory);
+        if (!TrainingRunState.HasMapData)
+            yield break;
+
+        if (PlayerData.Instance != null)
+        {
+            TrainingRunState.SetPlayerHealthState(PlayerData.Instance.hp, PlayerData.Instance.maxHP);
+        }
+
+        TrainingRunState.CompletePendingNode(isVictory);
+
+        if (!string.IsNullOrEmpty(TrainingRunState.MapSceneName))
+        {
+            SceneManager.LoadScene(TrainingRunState.MapSceneName);
+        }
     }
 }
 

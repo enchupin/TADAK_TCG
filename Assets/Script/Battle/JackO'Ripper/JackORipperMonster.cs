@@ -3,10 +3,9 @@ using UnityEngine;
 public class JackORipperMonster : Monster
 {
     [SerializeField] private GameObject flashyScythePrefab;
-    [SerializeField] private Vector2 summonOffsetMin = new Vector2(220f, -120f);
-    [SerializeField] private Vector2 summonOffsetMax = new Vector2(420f, 120f);
 
     private bool useMultiHitAttack = true;
+    private bool willUseSummonPattern;
 
     public override int MonsterId => 104;
     protected override string MonsterName => "잭 오 리퍼";
@@ -14,32 +13,50 @@ public class JackORipperMonster : Monster
 
     protected override void BuildNextAction()
     {
-        if (useMultiHitAttack)
+        willUseSummonPattern = !useMultiHitAttack && TryReserveSummonPattern();
+
+        if (willUseSummonPattern)
         {
-            SetAttackIntent(6, "피해를 1 x 6 입힙니다.");
-            SetPlannedPattern(10401, MonsterIntentIconType.Attack);
+            SetIntent("현란한 낫을 1개 소환합니다.");
+            SetPlannedPattern(10402, MonsterIntentIconType.Summon);
             return;
         }
 
-        SetIntent("현란한 낫을 1개 소환합니다.");
-        SetPlannedPattern(10402, MonsterIntentIconType.Summon);
+        SetAttackIntent(6, "피해를 1 x 6 입힙니다.");
+        SetPlannedPattern(10401, MonsterIntentIconType.Attack);
     }
 
     protected override void ExecuteAction(PlayerData target)
     {
-        if (useMultiHitAttack)
-        {
-            for (int hitIndex = 0; hitIndex < 6; hitIndex++)
-            {
-                DealDamage(target, 1);
-            }
-        }
-        else
+        if (willUseSummonPattern)
         {
             SummonFlashyScythe();
+            useMultiHitAttack = true;
+            return;
         }
 
-        useMultiHitAttack = !useMultiHitAttack;
+        for (int hitIndex = 0; hitIndex < 6; hitIndex++)
+        {
+            DealDamage(target, 1);
+        }
+
+        if (useMultiHitAttack)
+        {
+            useMultiHitAttack = false;
+        }
+    }
+
+    private bool TryReserveSummonPattern()
+    {
+        if (flashyScythePrefab == null)
+        {
+            return false;
+        }
+
+        MonsterSpawner monsterSpawner = TrainingBattleManager.Instance != null
+            ? TrainingBattleManager.Instance.monsterSpawner
+            : null;
+        return monsterSpawner != null && monsterSpawner.TryReserveSummonSlot();
     }
 
     private void SummonFlashyScythe() // 추후 수정 필요
@@ -49,43 +66,21 @@ public class JackORipperMonster : Monster
             return;
         }
 
-        Transform parentTransform = transform.parent;
-        GameObject summonedObject = parentTransform != null
-            ? Instantiate(flashyScythePrefab, parentTransform)
-            : Instantiate(flashyScythePrefab);
-
-        if (summonedObject == null)
+        TrainingBattleManager battleManager = TrainingBattleManager.Instance;
+        MonsterSpawner monsterSpawner = battleManager != null ? battleManager.monsterSpawner : null;
+        if (monsterSpawner == null)
         {
             return;
         }
 
-        Vector2 summonOffset = GetRandomSummonOffset();
-        RectTransform sourceRectTransform = transform as RectTransform;
-        RectTransform summonedRectTransform = summonedObject.transform as RectTransform;
-        if (sourceRectTransform != null && summonedRectTransform != null)
+        Monster summonedMonster = monsterSpawner.SpawnSummonedMonster(flashyScythePrefab);
+        if (summonedMonster == null)
         {
-            summonedRectTransform.anchoredPosition = sourceRectTransform.anchoredPosition + summonOffset;
-            summonedRectTransform.localScale = sourceRectTransform.localScale;
-        }
-        else
-        {
-            summonedObject.transform.localPosition = transform.localPosition + new Vector3(summonOffset.x, summonOffset.y, 0f);
+            return;
         }
 
-        Monster summonedMonster = summonedObject.GetComponent<Monster>();
-        if (summonedMonster != null)
-        {
-            TrainingBattleManager.Instance?.RegisterMonster(summonedMonster);
-            summonedMonster.UpdateUI();
-        }
-
-        TrainingBattleManager.Instance?.UpdateAllUI();
-    }
-
-    private Vector2 GetRandomSummonOffset()
-    {
-        float offsetX = Random.Range(summonOffsetMin.x, summonOffsetMax.x);
-        float offsetY = Random.Range(summonOffsetMin.y, summonOffsetMax.y);
-        return new Vector2(offsetX, offsetY);
+        battleManager.RegisterMonster(summonedMonster);
+        summonedMonster.UpdateUI();
+        battleManager.UpdateAllUI();
     }
 }
