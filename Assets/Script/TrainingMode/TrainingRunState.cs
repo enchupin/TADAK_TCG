@@ -223,7 +223,7 @@ public static class TrainingRunState
                     stageIndex = stage,
                     laneIndex = lane,
                     nodeType = nodeType,
-                    gridPosition = new Vector2(lane - centeredOffset, stage)
+                    gridPosition = new Vector2(stage, lane - centeredOffset)
                 };
 
                 nodesById[node.nodeId] = node;

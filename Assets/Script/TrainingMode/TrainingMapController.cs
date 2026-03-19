@@ -465,22 +465,22 @@ public class TrainingMapController : MonoBehaviour
         float availableWidth = Mathf.Max(120f, viewportRect.width - clampedPadding * 2f);
         float availableHeight = Mathf.Max(120f, viewportRect.height - clampedPadding * 2f);
 
-        float laneSpan = Mathf.Max(1f, laneCount - 1f);
         float stageSpan = Mathf.Max(1f, stageCount - 1f);
+        float laneSpan = Mathf.Max(1f, laneCount - 1f);
 
-        float suggestedX = availableWidth / laneSpan;
-        float suggestedY = availableHeight / stageSpan;
+        float suggestedX = availableWidth / stageSpan;
+        float suggestedY = availableHeight / laneSpan;
 
         nodeSpacing.x = Mathf.Min(260f, suggestedX);
-        nodeSpacing.y = suggestedY;
+        nodeSpacing.y = Mathf.Min(170f, suggestedY);
 
-        // Keep stage 0 visible at the lower viewport area and scale upward.
-        mapOrigin.x = 0f;
-        mapOrigin.y = -viewportRect.height * 0.5f + clampedPadding;
+        // Keep stage 0 visible at the left viewport area and spread lanes vertically.
+        mapOrigin.x = -viewportRect.width * 0.5f + clampedPadding;
+        mapOrigin.y = 0f;
 
         runtimeNodeSize = new Vector2(
-            Mathf.Clamp(nodeSpacing.x * 0.4f, 72f, defaultNodeSize.x),
-            Mathf.Clamp(nodeSpacing.y * 0.68f, 24f, defaultNodeSize.y));
+            Mathf.Clamp(nodeSpacing.x * 0.72f, 32f, defaultNodeSize.x),
+            Mathf.Clamp(nodeSpacing.y * 0.4f, 24f, defaultNodeSize.y));
     }
 
     private static bool NodeRequiresBattle(TrainingNodeType nodeType)
