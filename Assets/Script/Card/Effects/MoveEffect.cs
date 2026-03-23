@@ -32,6 +32,10 @@ public class MoveEffect : ICardEffect
             return;
         }
 
+        if (IsHandGainBlocked(battleManager)) {
+            return;
+        }
+
         int movedCount = 0;
         foreach (Card card in cardsToMove) {
             if (card == null) {
@@ -49,6 +53,10 @@ public class MoveEffect : ICardEffect
         if (movedCount > 0) {
             if (to == MoveZoneType.DiscardPile) {
                 battleManager.battleContext?.OnCardsDiscarded(movedCount);
+            }
+
+            if (ShouldCountAsShuffle()) {
+                battleManager.battleContext?.OnDeckShuffled();
             }
 
             if (onActions != null) {
@@ -207,6 +215,21 @@ public class MoveEffect : ICardEffect
     private bool IsAllFormula()
     {
         return string.Equals(amountFormula, "all", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private bool ShouldCountAsShuffle()
+    {
+        return to == MoveZoneType.DrawPile && position != MovePositionType.Top;
+    }
+
+    private bool IsHandGainBlocked(TrainingBattleManager battleManager)
+    {
+        if (battleManager == null || to != MoveZoneType.Hand) {
+            return false;
+        }
+
+        MoveZoneType resolvedFrom = from == MoveZoneType.None ? MoveZoneType.Source : from;
+        return !battleManager.CanGainCardsToHandFrom(resolvedFrom, subject);
     }
 
     private static void AddUnique(List<Card> target, List<Card> source)

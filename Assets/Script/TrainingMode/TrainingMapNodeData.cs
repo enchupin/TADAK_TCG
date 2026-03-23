@@ -7,7 +7,7 @@ public enum TrainingNodeType
     Monster,
     Named,
     Rest,
-    Escape
+    Boss
 }
 
 [Serializable]
@@ -19,21 +19,4 @@ public class TrainingMapNodeData
     public TrainingNodeType nodeType;
     public Vector2 gridPosition;
     public List<int> nextNodeIds = new List<int>();
-
-    public string GetShortLabel()
-    {
-        switch (nodeType)
-        {
-            case TrainingNodeType.Monster:
-                return "M";
-            case TrainingNodeType.Named:
-                return "N";
-            case TrainingNodeType.Rest:
-                return "R";
-            case TrainingNodeType.Escape:
-                return "X";
-            default:
-                return "M";
-        }
-    }
 }

@@ -46,6 +46,7 @@ public class RandGenerateEffect : ICardEffect
             return;
         }
 
+        generatedCards = battleManager.ProcessGeneratedCards(generatedCards);
         if (generator.target == TargetType.Hand || generator.target == TargetType.None)
         {
             if (battleManager.handManager != null)

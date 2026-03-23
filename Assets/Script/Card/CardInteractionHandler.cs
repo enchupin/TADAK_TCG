@@ -94,11 +94,13 @@ public class CardInteractionHandler : UIHoverEffect,
         if (!isDragging && !isAnyCardDragging)
         {
             base.OnPointerEnter(eventData);
+            cardUI?.ShowBuffTooltip();
         }
     }
 
     public override void OnPointerExit(PointerEventData eventData)
     {
+        cardUI?.HideBuffTooltip();
         base.OnPointerExit(eventData);
     }
 
@@ -218,6 +220,7 @@ public class CardInteractionHandler : UIHoverEffect,
     {
         if (!CanStartDrag()) return;
 
+        cardUI?.HideBuffTooltip();
         isDragging = true;
         isAnyCardDragging = true;
         originalParent = rectTransform.parent;
@@ -229,15 +232,19 @@ public class CardInteractionHandler : UIHoverEffect,
         transform.localScale = originalScale;
 
         isTargetingMode = RequiresTargeting();
+        ClearPreviewTarget();
 
         if (isTargetingMode)
         {
+            canvasGroup.blocksRaycasts = false;
             if (targetingArrow != null)
             {
                 targetingArrow.transform.SetAsLastSibling();
                 targetingArrow.gameObject.SetActive(true);
                 targetingArrow.UpdateArrow(rectTransform.position, eventData.position);
             }
+
+            UpdatePreviewTarget(eventData);
         }
         else
         {
@@ -261,6 +268,8 @@ public class CardInteractionHandler : UIHoverEffect,
             {
                 targetingArrow.UpdateArrow(rectTransform.position, eventData.position);
             }
+
+            UpdatePreviewTarget(eventData);
         }
         else
         {
@@ -284,24 +293,14 @@ public class CardInteractionHandler : UIHoverEffect,
 
         if (isTargetingMode)
         {
+            canvasGroup.blocksRaycasts = true;
             if (targetingArrow != null)
             {
                 targetingArrow.gameObject.SetActive(false);
             }
 
-            Monster targetMonster = null;
-            if (eventData.hovered != null)
-            {
-                foreach (GameObject go in eventData.hovered)
-                {
-                    Monster m = go.GetComponentInParent<Monster>();
-                    if (m != null)
-                    {
-                        targetMonster = m;
-                        break;
-                    }
-                }
-            }
+            Monster targetMonster = ResolveHoveredMonster(eventData);
+            ClearPreviewTarget();
 
             if (targetMonster != null)
             {
@@ -340,6 +339,114 @@ public class CardInteractionHandler : UIHoverEffect,
 
         StopAnimation();
         StartCoroutine(AnimateScale(originalScale));
+    }
+
+    private void UpdatePreviewTarget(PointerEventData eventData)
+    {
+        TrainingBattleManager manager = TrainingBattleManager.Instance;
+        if (manager == null)
+        {
+            return;
+        }
+
+        manager.SetPreviewDescriptionTarget(ResolveHoveredMonster(eventData));
+    }
+
+    private void ClearPreviewTarget()
+    {
+        TrainingBattleManager.Instance?.ClearPreviewDescriptionTarget();
+    }
+
+    private Monster ResolveHoveredMonster(PointerEventData eventData)
+    {
+        Monster hoveredMonster = ResolveHoveredMonsterFromUI(eventData);
+        if (hoveredMonster != null)
+        {
+            return hoveredMonster;
+        }
+
+        return ResolveHoveredMonsterFromPhysics(eventData);
+    }
+
+    private Monster ResolveHoveredMonsterFromUI(PointerEventData eventData)
+    {
+        if (eventData == null)
+        {
+            return null;
+        }
+
+        if (eventData.pointerCurrentRaycast.gameObject != null)
+        {
+            Monster currentRaycastMonster = eventData.pointerCurrentRaycast.gameObject.GetComponentInParent<Monster>();
+            if (currentRaycastMonster != null && !currentRaycastMonster.IsDead())
+            {
+                return currentRaycastMonster;
+            }
+        }
+
+        if (eventData.hovered == null)
+        {
+            return null;
+        }
+
+        foreach (GameObject go in eventData.hovered)
+        {
+            Monster monster = go != null ? go.GetComponentInParent<Monster>() : null;
+            if (monster != null && !monster.IsDead())
+            {
+                return monster;
+            }
+        }
+
+        return null;
+    }
+
+    private Monster ResolveHoveredMonsterFromPhysics(PointerEventData eventData)
+    {
+        if (eventData == null)
+        {
+            return null;
+        }
+
+        Camera targetCamera = null;
+        if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
+        {
+            targetCamera = canvas.worldCamera;
+        }
+
+        if (targetCamera == null)
+        {
+            targetCamera = Camera.main;
+        }
+
+        if (targetCamera == null)
+        {
+            return null;
+        }
+
+        Vector3 worldPoint = targetCamera.ScreenToWorldPoint(eventData.position);
+        Collider2D[] hitColliders = Physics2D.OverlapPointAll(new Vector2(worldPoint.x, worldPoint.y));
+        foreach (Collider2D hitCollider in hitColliders)
+        {
+            Monster monster = hitCollider != null ? hitCollider.GetComponentInParent<Monster>() : null;
+            if (monster != null && !monster.IsDead())
+            {
+                return monster;
+            }
+        }
+
+        Ray pointerRay = targetCamera.ScreenPointToRay(eventData.position);
+        RaycastHit[] hitResults = Physics.RaycastAll(pointerRay);
+        foreach (RaycastHit hitResult in hitResults)
+        {
+            Monster monster = hitResult.collider != null ? hitResult.collider.GetComponentInParent<Monster>() : null;
+            if (monster != null && !monster.IsDead())
+            {
+                return monster;
+            }
+        }
+
+        return null;
     }
 
     private void ReturnToHand()

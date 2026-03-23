@@ -6,20 +6,6 @@ using UnityEngine;
 /// 순수 C# 객체로 카드의 런타임 상태를 관리
 /// </summary>
 [System.Serializable]
-public static class CardKeywordIds
-{
-    public const int Keep = 1;
-    public const int Unplayable = 2;
-    public const int Exhaust = 3;
-    public const int Power = 4;
-    public const int Opening = 5;
-    public const int Shadow = 6;
-    public const int Finale = 7;
-    public const int Ghost = 8;
-    public const int Unique = 9;
-}
-
-[System.Serializable]
 public class Card
 {
     // 기본 정보
@@ -39,6 +25,9 @@ public class Card
 
     // 보존 시 실행 효과 목록
     public List<ICardEffect> keepEffects = new();
+
+    // 손에 남았을 때 턴 종료 시 실행 효과 목록
+    public List<ICardEffect> endTurnInHandEffects = new();
 
     private int turnCostDelta;
     private bool hasTurnCostOverride;
@@ -72,6 +61,11 @@ public class Card
     public bool HasKeepEffect()
     {
         return keepEffects != null && keepEffects.Count > 0;
+    }
+
+    public bool HasEndTurnInHandEffect()
+    {
+        return endTurnInHandEffects != null && endTurnInHandEffects.Count > 0;
     }
 
     public bool HasKeyword(int keywordId)
@@ -139,6 +133,9 @@ public class Card
         clonedCard.keepEffects = keepEffects != null
             ? new List<ICardEffect>(keepEffects)
             : new List<ICardEffect>();
+        clonedCard.endTurnInHandEffects = endTurnInHandEffects != null
+            ? new List<ICardEffect>(endTurnInHandEffects)
+            : new List<ICardEffect>();
         clonedCard.baseCost = Mathf.Max(0, baseCost);
         clonedCard.cost = Mathf.Max(0, cost);
         clonedCard.turnCostDelta = turnCostDelta;
@@ -159,6 +156,24 @@ public class Card
         battleManager.battleContext.SetContextCards("Self", contextCards);
 
         foreach (ICardEffect effect in keepEffects) {
+            effect?.Execute(battleManager);
+        }
+
+        battleManager.battleContext.ClearContextCards("ThisCard");
+        battleManager.battleContext.ClearContextCards("Self");
+    }
+
+    public void ExecuteEndTurnInHandEffects(TrainingBattleManager battleManager)
+    {
+        if (battleManager?.battleContext == null || !HasEndTurnInHandEffect()) {
+            return;
+        }
+
+        List<Card> contextCards = new List<Card> { this };
+        battleManager.battleContext.SetContextCards("ThisCard", contextCards);
+        battleManager.battleContext.SetContextCards("Self", contextCards);
+
+        foreach (ICardEffect effect in endTurnInHandEffects) {
             effect?.Execute(battleManager);
         }
 
@@ -226,6 +241,9 @@ public class Card
             : new List<ICardEffect>();
         keepEffects = templateCard.keepEffects != null
             ? new List<ICardEffect>(templateCard.keepEffects)
+            : new List<ICardEffect>();
+        endTurnInHandEffects = templateCard.endTurnInHandEffects != null
+            ? new List<ICardEffect>(templateCard.endTurnInHandEffects)
             : new List<ICardEffect>();
 
         baseCost = Mathf.Max(0, templateCard.baseCost);

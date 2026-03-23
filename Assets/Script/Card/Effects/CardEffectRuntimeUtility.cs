@@ -237,7 +237,7 @@ public static class CardEffectRuntimeUtility
             buff != null &&
             buff.data != null &&
             buff.stack > 0 &&
-            allowedBuffTypes.Contains(buff.data.buffType));
+            allowedBuffTypes.Exists(buff.data.MatchesAllowedType));
 
         if (candidates.Count == 0)
         {

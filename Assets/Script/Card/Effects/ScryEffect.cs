@@ -44,6 +44,11 @@ public class ScryEffect : ICardEffect
             return;
         }
 
+        if (!battleManager.CanGainCardsToHandFrom(MoveZoneType.DrawPile))
+        {
+            return;
+        }
+
         if (!battleManager.usableDeckManager.RemoveFromDrawPile(selectedCard))
         {
             Debug.LogWarning("[ScryEffect] 선택한 카드를 덱에서 찾지 못했습니다");

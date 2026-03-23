@@ -9,5 +9,6 @@ public enum MoveZoneType
     AllCards,
     CardId,
     Basic,
-    Unique
+    Unique,
+    AllUnique
 }

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using static BattleRuntimeDefinitions;
 
 /// <summary>
 /// 전투 UI 관리
@@ -9,8 +10,6 @@ using TMPro;
 /// </summary>
 public class BattleUI : MonoBehaviour
 {
-    private const int DamageAmplifyBuffId = 3002;
-
     [Header("플레이어 UI")]
     [SerializeField] private TextMeshProUGUI playerHPText;
     [SerializeField] private TextMeshProUGUI playerEnergyText;
@@ -64,7 +63,7 @@ public class BattleUI : MonoBehaviour
     {
         if (PlayerData.Instance == null || overheatText == null) return;
 
-        int overheat = PlayerData.Instance.GetBuffStack(3017);
+        int overheat = PlayerData.Instance.GetBuffStack(OverheatBuffId);
         int overheatPercent = overheat * 10;
         overheatText.text = $"OverHeat : {overheatPercent}%";
     }

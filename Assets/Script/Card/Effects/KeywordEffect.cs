@@ -43,6 +43,11 @@ public class KeywordEffect : ICardEffect
 
     private static int ResolveKeywordId(string keywordName)
     {
+        if (KeywordDatabase.TryGetKeywordId(keywordName, out int keywordId))
+        {
+            return keywordId;
+        }
+
         switch (keywordName)
         {
             case "보존": return CardKeywordIds.Keep;

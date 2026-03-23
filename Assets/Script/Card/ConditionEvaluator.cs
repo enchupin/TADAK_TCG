@@ -140,7 +140,7 @@ public static class ConditionEvaluator
             {
                 case "Hp": return monster.hp;
                 case "Defense": return monster.defense;
-                case "HasAttackIntent": return monster.PlannedIntentType == MonsterIntentType.Attack ? 1f : 0f;
+                case "HasAttackIntent": return monster.HasAttackIntent ? 1f : 0f;
                 case "Buff":
                     int monsterBuffId = int.Parse(param);
                     Buff monsterBuff = monster.currentBuffs.Find(b => b.data.buffId == monsterBuffId);

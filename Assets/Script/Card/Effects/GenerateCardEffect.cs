@@ -19,7 +19,12 @@ public class GenerateCardEffect : ICardEffect
             return;
         }
 
-        AddGeneratedCardToTarget(battleManager, generatedCard);
+        List<Card> generatedCards = battleManager.ProcessGeneratedCards(new List<Card> { generatedCard });
+        foreach (Card card in generatedCards)
+        {
+            AddGeneratedCardToTarget(battleManager, card);
+        }
+
         if (battleManager != null)
         {
             battleManager.UpdateAllUI();
@@ -73,6 +78,13 @@ public class GenerateCardEffect : ICardEffect
 
         // 3. 카드 인스턴스 생성
         generatedCard = cardData.ToCard();
+        if (generatedCard == null)
+        {
+            return false;
+        }
+
+        List<Card> processedCards = battleManager.ProcessGeneratedCards(new List<Card> { generatedCard }, false);
+        generatedCard = processedCards.Count > 0 ? processedCards[0] : null;
         return generatedCard != null;
     }
 

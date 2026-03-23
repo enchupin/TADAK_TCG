@@ -45,6 +45,7 @@ public class CopyEffect : ICardEffect
             return;
         }
 
+        copiedCards = battleManager.ProcessGeneratedCards(copiedCards);
         AttachCopies(copiedCards, battleManager);
         ExecuteOnCopiedCards(copiedCards, battleManager);
         battleManager.RefreshHandPlayableState();
@@ -182,6 +183,8 @@ public class CopyEffect : ICardEffect
                     foreach (Card copiedCard in copiedCards) {
                         battleManager.usableDeckManager.AddToDrawPileRandom(copiedCard);
                     }
+
+                    battleManager.battleContext?.OnDeckShuffled();
                 }
                 return;
             default:

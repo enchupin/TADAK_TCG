@@ -5,7 +5,7 @@
             "name": "화염탄",
             "characterId": 201,
             "cost": 1,
-            "description": "피해를 6 입힙니다.",
+            "description": "피해를 {amount} 입힙니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -19,7 +19,7 @@
             "name": "드래곤 스케일",
             "characterId": 201,
             "cost": 1,
-            "description": "방어도를 6 얻습니다.",
+            "description": "보호막을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",
@@ -71,7 +71,7 @@
                 },
                 {
                     "type": "Buff",
-                    "buffId": 3025,
+                    "buffId": 4007,
                     "amount": 4,
                     "target": "Self"
                 }
@@ -95,7 +95,7 @@
                 },
                 {
                     "type": "Buff",
-                    "buffId": 3025,
+                    "buffId": 4007,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -153,7 +153,7 @@
                 {
                     "type": "Buff",
                     "buffId": 3018,
-                    "amount": 1,
+                    "amount": 2,
                     "target": "Self"
                 }
             ]
@@ -166,7 +166,7 @@
             "keywords": [
                 7
             ],
-            "description": "피해를 24 입힙니다.",
+            "description": "피해를 {amount} 입힙니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -184,7 +184,7 @@
             "keywords": [
                 7
             ],
-            "description": "피해를 32 입힙니다.",
+            "description": "피해를 {amount} 입힙니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -290,7 +290,7 @@
             "name": "화염 고리",
             "characterId": 201,
             "cost": 1,
-            "description": "내 기본 카드를 1장 뽑습니다. 이번 턴에 그 카드의 비용이 1 감소합니다.",
+            "description": "이그니아의 기본 카드를 1장 뽑습니다. 이번 턴에 그 카드의 비용이 1 감소합니다.",
             "effects": [
                 {
                     "type": "DrawBasic",
@@ -310,7 +310,7 @@
             "name": "화염 고리 +",
             "characterId": 201,
             "cost": 1,
-            "description": "내 기본 카드를 2장 뽑습니다. 이번 턴에 그 카드들의 비용이 1 감소합니다.",
+            "description": "이그니아의 기본 카드를 2장 뽑습니다. 이번 턴에 그 카드들의 비용이 1 감소합니다.",
             "effects": [
                 {
                     "type": "DrawBasic",
@@ -351,7 +351,7 @@
             "name": "화염 고리 +",
             "characterId": 201,
             "cost": 1,
-            "description": "내 카드를 1장 뽑습니다. 이번 턴에 그 카드의 비용이 1 감소합니다.",
+            "description": "이그니아의 카드를 1장 뽑습니다. 이번 턴에 그 카드의 비용이 1 감소합니다.",
             "effects": [
                 {
                     "type": "DrawCharacter",
@@ -370,7 +370,7 @@
             "name": "화염 고리 +",
             "characterId": 201,
             "cost": 0,
-            "description": "카드를 1장 뽑습니다. 뽑은 카드가 내 카드면, 화염 낙인을 3 부여합니다.",
+            "description": "카드를 1장 뽑습니다. 뽑은 카드가 이그니아의 카드면, 화염 낙인을 3 부여합니다.",
             "effects": [
                 {
                     "type": "Draw",
@@ -404,10 +404,10 @@
             "name": "화염 고리 +",
             "characterId": 201,
             "cost": 1,
-            "description": "내 카드를 1장 뽑습니다. 이번 게임 동안 그 카드의 비용이 1 감소합니다.",
+            "description": "이그니아의 카드를 1장 뽑습니다. 이번 게임 동안 그 카드의 비용이 1 감소합니다.",
             "effects": [
                 {
-                    "type": "Draw",
+                    "type": "DrawCharacter",
                     "amount": 1,
                     "onAction": {
                         "type": "ReduceCost",
@@ -423,7 +423,7 @@
             "name": "지옥불",
             "characterId": 201,
             "cost": 1,
-            "description": "모든 적에게 피해를 4 입힙니다. 적이 혼자인 경우, 대신 피해를 12 입힙니다.",
+            "description": "모든 적에게 피해를 {amount} 입힙니다. 적이 혼자인 경우, 피해량이 3배가 됩니다.",
             "effects": [
                 {
                     "condition": {
@@ -437,7 +437,8 @@
                         "effects": [
                             {
                                 "type": "Attack",
-                                "amount": 12,
+                                "amount": 4,
+                                "amountFormula": "*3",
                                 "target": "AllEnemies"
                             }
                         ],
@@ -458,7 +459,7 @@
             "name": "지옥불 +",
             "characterId": 201,
             "cost": 1,
-            "description": "모든 적에게 피해를 4 입힙니다. 적이 혼자인 경우, 대신 피해를 20입힙니다.",
+            "description": "모든 적에게 피해를 {amount} 입힙니다. 적이 혼자인 경우, 피해량이 5배가 됩니다.",
             "effects": [
                 {
                     "condition": {
@@ -472,7 +473,8 @@
                         "effects": [
                             {
                                 "type": "Attack",
-                                "amount": 20,
+                                "amount": 4,
+                                "amountFormula": "*5",
                                 "target": "AllEnemies"
                             }
                         ],
@@ -547,13 +549,13 @@
                 3,
                 9
             ],
-            "description": "대상이 죽으면 화염 낙인 수치만큼 모든 적에게 화염 낙인을 부여됩니다.",
+            "description": "대상 적이 죽을 때 보유한 화염 낙인 수치만큼 모든 적에게 화염 낙인을 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 1005,
                     "amount": 1,
-                    "target": "AllEnemies"
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -584,7 +586,7 @@
             "keywords": [
                 4
             ],
-            "description": "방어도를 6 얻습니다. 공격받을 때마다 공격한 적에게 피해를 3 줍니다.",
+            "description": "보호막을 {amount} 얻습니다. 공격받을 때마다 공격한 적에게 피해를 3 줍니다.",
             "effects": [
                 {
                     "type": "Barrier",
@@ -623,7 +625,7 @@
             "name": "뜨거운 피부 +",
             "characterId": 201,
             "cost": 2,
-            "description": "방어도를 16 얻습니다.",
+            "description": "보호막을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",
@@ -658,11 +660,12 @@
             "keywords": [
                 3
             ],
-            "description": "보호막이 파괴될 때, 보호막을 초과하는 피해를 1회 막아냅니다.",
+            "description": "피해를 1회 막습니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 3033,
+                    "amount": 1,
                     "target": "Self"
                 }
             ]

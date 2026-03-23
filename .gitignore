@@ -126,5 +126,9 @@ httpRequests/
 # ScriptableObject assets (generated card data)
 Assets/Data/Cards/*.asset
 Assets/Data/Cards/*.asset.meta
+Assets/Data/Character/Character_*.asset
+Assets/Data/Character/Character_*.asset.meta
 Assets/Resources/CardCollection.asset
 Assets/Resources/CardCollection.asset.meta
+Assets/Resources/CharacterCollection.asset
+Assets/Resources/CharacterCollection.asset.meta

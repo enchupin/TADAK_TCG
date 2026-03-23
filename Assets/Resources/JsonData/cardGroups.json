@@ -383,17 +383,19 @@
         },
         {
             "cardIds": [
-                101050,
-                101052,
-                101054
+                101080,
+                101082,
+                101084,
+                101086
             ],
             "groupName": "isla_potion_enhanced_even_pool"
         },
         {
             "cardIds": [
-                101051,
-                101053,
-                101055
+                101081,
+                101083,
+                101085,
+                101087
             ],
             "groupName": "isla_potion_enhanced_odd_pool"
         },

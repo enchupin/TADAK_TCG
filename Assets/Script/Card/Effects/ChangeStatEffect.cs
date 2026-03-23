@@ -3,7 +3,7 @@ using UnityEngine;
 
 /// <summary>
 /// 능력치 변경 이펙트
-/// 현재는 방어도와 버프 스택 변경만 처리
+/// 현재는 보호막과 버프 스택 변경만 처리
 /// </summary>
 [System.Serializable]
 public class ChangeStatEffect : ICardEffect
@@ -121,9 +121,7 @@ public class ChangeStatEffect : ICardEffect
             return 0;
         }
 
-        battleManager.playerData.defense = Mathf.Max(0, currentBarrier - changedAmount);
-        battleManager.battleContext?.OnDefenseConsumed(changedAmount);
-        return changedAmount;
+        return battleManager.playerData.RemoveDefense(changedAmount);
     }
 
     private int ApplyBarrierChangeToMonster(TrainingBattleManager battleManager, Monster monster, string normalizedChange, int forwardedAmount)
@@ -157,7 +155,7 @@ public class ChangeStatEffect : ICardEffect
                 return Mathf.Clamp(decreaseAmount, 0, currentBarrier);
 
             default:
-                Debug.LogWarning($"[ChangeStatEffect] 지원하지 않는 방어도 변경 타입입니다: {change}");
+                Debug.LogWarning($"[ChangeStatEffect] 지원하지 않는 보호막 변경 타입입니다: {change}");
                 return 0;
         }
     }

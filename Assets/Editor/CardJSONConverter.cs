@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using Mono.Cecil.Cil;
 using Newtonsoft.Json.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -47,6 +46,7 @@ public class CardJSONConverter : EditorWindow
             case "CardId": return MoveZoneType.CardId;
             case "Basic": return MoveZoneType.Basic;
             case "Unique": return MoveZoneType.Unique;
+            case "AllUnique": return MoveZoneType.AllUnique;
             default:
                 Debug.LogWarning($"[CardJSONConverter] Unknown move zone: {zone}. Fallback to {defaultZone}.");
                 return defaultZone;
@@ -88,6 +88,7 @@ public class CardJSONConverter : EditorWindow
             case "CardId":
             case "Basic":
             case "Unique":
+            case "AllUnique":
                 return true;
             default:
                 return false;
@@ -333,6 +334,21 @@ public class CardJSONConverter : EditorWindow
                 CardEffectData effect = ReadEffect(effectObject);
                 if (effect != null) {
                     cardData.effects.Add(effect);
+                }
+            }
+        }
+
+        cardData.endTurnInHandEffects ??= new List<CardEffectData>();
+        cardData.endTurnInHandEffects.Clear();
+        if (cardObject["endTurnInHandEffects"] is JArray endTurnInHandEffectsArray) {
+            foreach (JToken token in endTurnInHandEffectsArray) {
+                if (token is not JObject effectObject) {
+                    continue;
+                }
+
+                CardEffectData effect = ReadEffect(effectObject);
+                if (effect != null) {
+                    cardData.endTurnInHandEffects.Add(effect);
                 }
             }
         }
