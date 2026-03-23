@@ -424,7 +424,7 @@ GameObject:
   - component: {fileID: 2113793905883819493}
   - component: {fileID: 8113176476185616848}
   m_Layer: 5
-  m_Name: Priestess
+  m_Name: FireSpirit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -482,7 +482,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1455096403836856330, guid: 1e5c8c57b9268fb45bc27f743a23068c, type: 3}
+  m_Sprite: {fileID: 4980393042394730227, guid: 21674e7f1ee8fe34d89614202bad4ec4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -501,19 +501,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 5506351440769215535}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1be897350588477f8c5b342b86ffb9a5, type: 3}
+  m_Script: {fileID: 11500000, guid: 82d1b121ad004651956b84b9fa3958f1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PriestessMonster
+  m_EditorClassIdentifier: Assembly-CSharp::FireSpiritMonster
   hpText: {fileID: 2532405729148732153}
   defenseText: {fileID: 1137208144515008067}
   intentText: {fileID: 3636331439371411414}
   corrosionText: {fileID: 2362869318795743923}
   freezeText: {fileID: 1264098914889122572}
-  hp: 160
-  maxHP: 160
+  hp: 34
+  maxHP: 34
   defense: 0
   attackPower: 0
-  name: "\uC5EC\uC0AC\uC81C"
+  name: "\uBD88\uAF43 \uC815\uB839"
 --- !u!1 &6768735362962587451
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,6 +14,8 @@ public class MonsterSpawner : MonoBehaviour
         StoneShieldGolem,
         StoneThrowGolem,
         StoneStealGolem,
+        HauntedCloth,
+        FireSpirit,
         RotwoodWarden,
         Priestess,
         MushroomHost,
@@ -28,7 +30,9 @@ public class MonsterSpawner : MonoBehaviour
         new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneThrowGolem, SpawnMonsterType.StoneStealGolem },
         new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneThrowGolem, SpawnMonsterType.StoneThrowGolem },
         new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem },
-        new[] { SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem }
+        new[] { SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem },
+        new[] { SpawnMonsterType.HauntedCloth },
+        new[] { SpawnMonsterType.FireSpirit, SpawnMonsterType.FireSpirit }
     };
 
     private static readonly SpawnMonsterType[][] namedNodeEncounterTable =
@@ -47,6 +51,8 @@ public class MonsterSpawner : MonoBehaviour
     [SerializeField] private GameObject stoneShieldGolemPrefab;
     [SerializeField] private GameObject stoneThrowGolemPrefab;
     [SerializeField] private GameObject stoneStealGolemPrefab;
+    [SerializeField] private GameObject hauntedClothPrefab;
+    [SerializeField] private GameObject fireSpiritPrefab;
 
     [Header("네임드 몬스터 프리팹")]
     [SerializeField] private GameObject rotwoodWardenPrefab;
@@ -204,7 +210,7 @@ public class MonsterSpawner : MonoBehaviour
         for (int i = 0; i < monsters.Length; i++)
         {
             Monster monster = monsters[i];
-            if (monster != null && !monster.IsDead())
+            if (monster != null && monster.gameObject.activeSelf && !monster.IsDead())
             {
                 return true;
             }
@@ -231,6 +237,10 @@ public class MonsterSpawner : MonoBehaviour
                 return stoneThrowGolemPrefab;
             case SpawnMonsterType.StoneStealGolem:
                 return stoneStealGolemPrefab;
+            case SpawnMonsterType.HauntedCloth:
+                return hauntedClothPrefab;
+            case SpawnMonsterType.FireSpirit:
+                return fireSpiritPrefab;
             case SpawnMonsterType.RotwoodWarden:
                 return rotwoodWardenPrefab;
             case SpawnMonsterType.Priestess:

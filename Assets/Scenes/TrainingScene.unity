@@ -3489,6 +3489,8 @@ MonoBehaviour:
   stoneShieldGolemPrefab: {fileID: 5506351440769215535, guid: 1e3186626ac4403498767e6910a4ac2b, type: 3}
   stoneThrowGolemPrefab: {fileID: 5506351440769215535, guid: e5b1ab556cc846618015100713dc0921, type: 3}
   stoneStealGolemPrefab: {fileID: 5506351440769215535, guid: da84d7cb182d44f09bd0848263415cb6, type: 3}
+  hauntedClothPrefab: {fileID: 5506351440769215535, guid: a3d7ac6b3f7c4e9b8ff0b7f49d3b51a1, type: 3}
+  fireSpiritPrefab: {fileID: 5506351440769215535, guid: e65c889ef51d46e4846e74feb65ecded, type: 3}
   rotwoodWardenPrefab: {fileID: 5506351440769215535, guid: 581e4fd5a1fb3b545ac60c7e59fcdf81, type: 3}
   priestessPrefab: {fileID: 5506351440769215535, guid: f340cc2a574eae64c9c2e9859721f69f, type: 3}
   mushroomHostPrefab: {fileID: 5506351440769215535, guid: d6aac48a633d75a4094e298385a9c55d, type: 3}

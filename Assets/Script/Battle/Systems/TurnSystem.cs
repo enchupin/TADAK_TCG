@@ -107,6 +107,7 @@ public class TurnSystem
         }
 
         battleManager.ApplyPlayerTurnStartEffects();
+        battleManager.ProcessPendingMonsterRevives();
         if (replanEnemyActions)
         {
             PlanEnemyNextActions();

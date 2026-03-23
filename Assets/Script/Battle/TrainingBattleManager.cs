@@ -46,6 +46,12 @@ public enum DebugCardKeyword
 /// </summary>
 public class TrainingBattleManager : MonoBehaviour
 {
+    private sealed class PendingMonsterRevive
+    {
+        public Monster monster;
+        public int remainingTurns;
+    }
+
     public static TrainingBattleManager Instance { get; private set; }
 
     [Header("Battle Data")]
@@ -96,6 +102,7 @@ public class TrainingBattleManager : MonoBehaviour
     private EncounterSystem encounterSystem;
     private PowerBuffRuntime powerBuffRuntime;
     private bool hasResolvedBattleResult;
+    private readonly List<PendingMonsterRevive> pendingMonsterRevives = new List<PendingMonsterRevive>();
 
     public float EnemyActionDelay => enemyActionDelay;
     public int MaxHandCardCount => Mathf.Max(0, maxHandCardCount);
@@ -971,6 +978,88 @@ public class TrainingBattleManager : MonoBehaviour
         if (monster.gameObject.activeSelf)
         {
             monster.gameObject.SetActive(false);
+        }
+
+        UpdateAllUI();
+    }
+
+    public void HandleMonsterLeaveCombat(Monster monster)
+    {
+        if (monster == null)
+        {
+            return;
+        }
+
+        if (currentTarget == monster)
+        {
+            currentTarget = null;
+        }
+
+        if (previewDescriptionTarget == monster)
+        {
+            previewDescriptionTarget = null;
+        }
+
+        UnregisterMonster(monster);
+
+        if (monster.gameObject.activeSelf)
+        {
+            monster.gameObject.SetActive(false);
+        }
+
+        UpdateAllUI();
+    }
+
+    public void ScheduleMonsterRevive(Monster monster, int turns)
+    {
+        if (monster == null || turns <= 0)
+        {
+            return;
+        }
+
+        for (int i = 0; i < pendingMonsterRevives.Count; i++)
+        {
+            PendingMonsterRevive pendingRevive = pendingMonsterRevives[i];
+            if (pendingRevive == null || pendingRevive.monster != monster)
+            {
+                continue;
+            }
+
+            pendingRevive.remainingTurns = turns;
+            return;
+        }
+
+        pendingMonsterRevives.Add(new PendingMonsterRevive
+        {
+            monster = monster,
+            remainingTurns = turns
+        });
+    }
+
+    public void ProcessPendingMonsterRevives()
+    {
+        if (pendingMonsterRevives.Count <= 0)
+        {
+            return;
+        }
+
+        for (int i = pendingMonsterRevives.Count - 1; i >= 0; i--)
+        {
+            PendingMonsterRevive pendingRevive = pendingMonsterRevives[i];
+            if (pendingRevive == null || pendingRevive.monster == null)
+            {
+                pendingMonsterRevives.RemoveAt(i);
+                continue;
+            }
+
+            pendingRevive.remainingTurns--;
+            if (pendingRevive.remainingTurns > 0)
+            {
+                continue;
+            }
+
+            pendingMonsterRevives.RemoveAt(i);
+            pendingRevive.monster.ReviveFromRespawn();
         }
 
         UpdateAllUI();
