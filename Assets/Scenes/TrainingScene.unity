@@ -3486,6 +3486,8 @@ MonoBehaviour:
   mutantCarnivorousPlantPrefab: {fileID: 5506351440769215535, guid: b9b223d43f2f4c3eaeb7d4c17d0d7f41, type: 3}
   mutantMushroomPrefab: {fileID: 5506351440769215535, guid: 0dcf70d4a2a34984b4a4e7d45b567e89, type: 3}
   jackORipperPrefab: {fileID: 5506351440769215535, guid: daaa8abfc9ff4507b17464a40d1ab0e7, type: 3}
+  giantFlowerSpiderPrefab: {fileID: 5506351440769215535, guid: 47ddd5f6ef944d22ae66b3e793b358c6, type: 3}
+  prophetPrefab: {fileID: 5506351440769215535, guid: 8ca66e8c908d4e65beb5ae1e53eeda22, type: 3}
   stoneShieldGolemPrefab: {fileID: 5506351440769215535, guid: 1e3186626ac4403498767e6910a4ac2b, type: 3}
   stoneThrowGolemPrefab: {fileID: 5506351440769215535, guid: e5b1ab556cc846618015100713dc0921, type: 3}
   stoneStealGolemPrefab: {fileID: 5506351440769215535, guid: da84d7cb182d44f09bd0848263415cb6, type: 3}

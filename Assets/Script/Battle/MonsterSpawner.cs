@@ -11,6 +11,8 @@ public class MonsterSpawner : MonoBehaviour
         MutantCarnivorousPlant,
         MutantMushroom,
         JackORipper,
+        GiantFlowerSpider,
+        Prophet,
         StoneShieldGolem,
         StoneThrowGolem,
         StoneStealGolem,
@@ -43,11 +45,20 @@ public class MonsterSpawner : MonoBehaviour
         new[] { SpawnMonsterType.VoidBeast }
     };
 
+    private static readonly SpawnMonsterType[][] bossNodeEncounterTable =
+    {
+        new[] { SpawnMonsterType.JackORipper },
+        new[] { SpawnMonsterType.GiantFlowerSpider },
+        new[] { SpawnMonsterType.Prophet }
+    };
+
     [Header("일반 몬스터 프리팹")]
     [SerializeField] private GameObject mutantFlowerPrefab;
     [SerializeField] private GameObject mutantCarnivorousPlantPrefab;
     [SerializeField] private GameObject mutantMushroomPrefab;
     [SerializeField] private GameObject jackORipperPrefab;
+    [SerializeField] private GameObject giantFlowerSpiderPrefab;
+    [SerializeField] private GameObject prophetPrefab;
     [SerializeField] private GameObject stoneShieldGolemPrefab;
     [SerializeField] private GameObject stoneThrowGolemPrefab;
     [SerializeField] private GameObject stoneStealGolemPrefab;
@@ -123,7 +134,7 @@ public class MonsterSpawner : MonoBehaviour
             case TrainingNodeType.Named:
                 return namedNodeEncounterTable[Random.Range(0, namedNodeEncounterTable.Length)];
             case TrainingNodeType.Boss:
-                return new[] { SpawnMonsterType.JackORipper };
+                return bossNodeEncounterTable[Random.Range(0, bossNodeEncounterTable.Length)];
             case TrainingNodeType.Monster:
             default:
                 return normalNodeEncounterTable[Random.Range(0, normalNodeEncounterTable.Length)];
@@ -231,6 +242,10 @@ public class MonsterSpawner : MonoBehaviour
                 return mutantMushroomPrefab;
             case SpawnMonsterType.JackORipper:
                 return jackORipperPrefab;
+            case SpawnMonsterType.GiantFlowerSpider:
+                return giantFlowerSpiderPrefab;
+            case SpawnMonsterType.Prophet:
+                return prophetPrefab;
             case SpawnMonsterType.StoneShieldGolem:
                 return stoneShieldGolemPrefab;
             case SpawnMonsterType.StoneThrowGolem:

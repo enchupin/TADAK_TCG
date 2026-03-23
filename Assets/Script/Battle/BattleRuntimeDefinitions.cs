@@ -62,6 +62,8 @@ public static class BattleRuntimeDefinitions
     public const int PranksterGhostBuffId = 5006;
     public const int ThiefBuffId = 5007;
     public const int BurningFlameBuffId = 5008;
+    public const int EightLegsBuffId = 5009;
+    public const int FuturePredationBuffId = 5010;
     public const int PoisonousMushroomBuffId = 1014;
     public const int WoundCardId = 10;
     public const int PoisonCardId = 20;
