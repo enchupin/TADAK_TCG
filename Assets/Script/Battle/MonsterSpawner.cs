@@ -16,7 +16,8 @@ public class MonsterSpawner : MonoBehaviour
         StoneStealGolem,
         RotwoodWarden,
         Priestess,
-        MushroomHost
+        MushroomHost,
+        VoidBeast
     }
 
     private static readonly SpawnMonsterType[][] normalNodeEncounterTable =
@@ -34,9 +35,8 @@ public class MonsterSpawner : MonoBehaviour
     {
         new[] { SpawnMonsterType.RotwoodWarden },
         new[] { SpawnMonsterType.Priestess },
-        new[] { SpawnMonsterType.MutantMushroom },
         new[] { SpawnMonsterType.MushroomHost },
-        new[] { SpawnMonsterType.JackORipper }
+        new[] { SpawnMonsterType.VoidBeast }
     };
 
     [Header("일반 몬스터 프리팹")]
@@ -52,6 +52,7 @@ public class MonsterSpawner : MonoBehaviour
     [SerializeField] private GameObject rotwoodWardenPrefab;
     [SerializeField] private GameObject priestessPrefab;
     [SerializeField] private GameObject mushroomHostPrefab;
+    [SerializeField] private GameObject voidBeastPrefab;
 
     [Header("스폰 위치")]
     [SerializeField] private List<Transform> spawnPoints = new List<Transform>();
@@ -236,6 +237,8 @@ public class MonsterSpawner : MonoBehaviour
                 return priestessPrefab;
             case SpawnMonsterType.MushroomHost:
                 return mushroomHostPrefab;
+            case SpawnMonsterType.VoidBeast:
+                return voidBeastPrefab;
             default:
                 return null;
         }

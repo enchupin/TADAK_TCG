@@ -156,6 +156,8 @@ public abstract class Monster : MonoBehaviour
         {
             TrainingBattleManager.Instance?.HandleMonsterHpLost(this, damageAfterDefense);
         }
+
+        OnAfterTakeDamage(finalDamage, damageAfterDefense);
         HandleDeathIfNeeded();
         UpdateUI();
         return damageAfterDefense;
@@ -574,6 +576,10 @@ public abstract class Monster : MonoBehaviour
     }
 
     protected virtual void OnBeforeTakeDamage(int incomingDamage)
+    {
+    }
+
+    protected virtual void OnAfterTakeDamage(int incomingDamage, int damageAfterDefense)
     {
     }
 

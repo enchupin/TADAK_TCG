@@ -424,7 +424,7 @@ GameObject:
   - component: {fileID: 2113793905883819493}
   - component: {fileID: 8113176476185616848}
   m_Layer: 5
-  m_Name: MushroomHost
+  m_Name: VoidBeast
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -501,19 +501,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 5506351440769215535}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3640bb12c414ceb93bbfd8070dc6889, type: 3}
+  m_Script: {fileID: 11500000, guid: 85e481bf3bc84f9f9335d1d1ab881a9e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MushroomHostMonster
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBeastMonster
   hpText: {fileID: 2532405729148732153}
   defenseText: {fileID: 1137208144515008067}
   intentText: {fileID: 3636331439371411414}
   corrosionText: {fileID: 2362869318795743923}
   freezeText: {fileID: 1264098914889122572}
-  hp: 180
-  maxHP: 180
+  hp: 200
+  maxHP: 200
   defense: 0
   attackPower: 0
-  name: "\uBC84\uC12F \uC219\uC8FC"
+  name: "\uACF5\uD5C8 \uAD34\uC218"
 --- !u!1 &6768735362962587451
 GameObject:
   m_ObjectHideFlags: 0
