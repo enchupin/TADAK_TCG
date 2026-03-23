@@ -20,7 +20,7 @@ public class EncounterSystem
         List<Monster> alive = new List<Monster>();
         foreach (Monster monster in battleManager.spawnedMonsters)
         {
-            if (monster != null && !monster.IsDead())
+            if (monster != null && monster.gameObject.activeSelf && !monster.IsDead())
             {
                 alive.Add(monster);
             }

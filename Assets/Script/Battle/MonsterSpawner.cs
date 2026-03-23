@@ -11,12 +11,17 @@ public class MonsterSpawner : MonoBehaviour
         MutantCarnivorousPlant,
         MutantMushroom,
         JackORipper,
+        GiantFlowerSpider,
+        Prophet,
         StoneShieldGolem,
         StoneThrowGolem,
         StoneStealGolem,
+        HauntedCloth,
+        FireSpirit,
         RotwoodWarden,
         Priestess,
-        MushroomHost
+        MushroomHost,
+        VoidBeast
     }
 
     private static readonly SpawnMonsterType[][] normalNodeEncounterTable =
@@ -27,16 +32,24 @@ public class MonsterSpawner : MonoBehaviour
         new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneThrowGolem, SpawnMonsterType.StoneStealGolem },
         new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneThrowGolem, SpawnMonsterType.StoneThrowGolem },
         new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem },
-        new[] { SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem }
+        new[] { SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem },
+        new[] { SpawnMonsterType.HauntedCloth },
+        new[] { SpawnMonsterType.FireSpirit, SpawnMonsterType.FireSpirit }
     };
 
     private static readonly SpawnMonsterType[][] namedNodeEncounterTable =
     {
         new[] { SpawnMonsterType.RotwoodWarden },
         new[] { SpawnMonsterType.Priestess },
-        new[] { SpawnMonsterType.MutantMushroom },
         new[] { SpawnMonsterType.MushroomHost },
-        new[] { SpawnMonsterType.JackORipper }
+        new[] { SpawnMonsterType.VoidBeast }
+    };
+
+    private static readonly SpawnMonsterType[][] bossNodeEncounterTable =
+    {
+        new[] { SpawnMonsterType.JackORipper },
+        new[] { SpawnMonsterType.GiantFlowerSpider },
+        new[] { SpawnMonsterType.Prophet }
     };
 
     [Header("일반 몬스터 프리팹")]
@@ -44,14 +57,19 @@ public class MonsterSpawner : MonoBehaviour
     [SerializeField] private GameObject mutantCarnivorousPlantPrefab;
     [SerializeField] private GameObject mutantMushroomPrefab;
     [SerializeField] private GameObject jackORipperPrefab;
+    [SerializeField] private GameObject giantFlowerSpiderPrefab;
+    [SerializeField] private GameObject prophetPrefab;
     [SerializeField] private GameObject stoneShieldGolemPrefab;
     [SerializeField] private GameObject stoneThrowGolemPrefab;
     [SerializeField] private GameObject stoneStealGolemPrefab;
+    [SerializeField] private GameObject hauntedClothPrefab;
+    [SerializeField] private GameObject fireSpiritPrefab;
 
     [Header("네임드 몬스터 프리팹")]
     [SerializeField] private GameObject rotwoodWardenPrefab;
     [SerializeField] private GameObject priestessPrefab;
     [SerializeField] private GameObject mushroomHostPrefab;
+    [SerializeField] private GameObject voidBeastPrefab;
 
     [Header("스폰 위치")]
     [SerializeField] private List<Transform> spawnPoints = new List<Transform>();
@@ -116,7 +134,7 @@ public class MonsterSpawner : MonoBehaviour
             case TrainingNodeType.Named:
                 return namedNodeEncounterTable[Random.Range(0, namedNodeEncounterTable.Length)];
             case TrainingNodeType.Boss:
-                return new[] { SpawnMonsterType.JackORipper };
+                return bossNodeEncounterTable[Random.Range(0, bossNodeEncounterTable.Length)];
             case TrainingNodeType.Monster:
             default:
                 return normalNodeEncounterTable[Random.Range(0, normalNodeEncounterTable.Length)];
@@ -203,7 +221,7 @@ public class MonsterSpawner : MonoBehaviour
         for (int i = 0; i < monsters.Length; i++)
         {
             Monster monster = monsters[i];
-            if (monster != null && !monster.IsDead())
+            if (monster != null && monster.gameObject.activeSelf && !monster.IsDead())
             {
                 return true;
             }
@@ -224,18 +242,28 @@ public class MonsterSpawner : MonoBehaviour
                 return mutantMushroomPrefab;
             case SpawnMonsterType.JackORipper:
                 return jackORipperPrefab;
+            case SpawnMonsterType.GiantFlowerSpider:
+                return giantFlowerSpiderPrefab;
+            case SpawnMonsterType.Prophet:
+                return prophetPrefab;
             case SpawnMonsterType.StoneShieldGolem:
                 return stoneShieldGolemPrefab;
             case SpawnMonsterType.StoneThrowGolem:
                 return stoneThrowGolemPrefab;
             case SpawnMonsterType.StoneStealGolem:
                 return stoneStealGolemPrefab;
+            case SpawnMonsterType.HauntedCloth:
+                return hauntedClothPrefab;
+            case SpawnMonsterType.FireSpirit:
+                return fireSpiritPrefab;
             case SpawnMonsterType.RotwoodWarden:
                 return rotwoodWardenPrefab;
             case SpawnMonsterType.Priestess:
                 return priestessPrefab;
             case SpawnMonsterType.MushroomHost:
                 return mushroomHostPrefab;
+            case SpawnMonsterType.VoidBeast:
+                return voidBeastPrefab;
             default:
                 return null;
         }

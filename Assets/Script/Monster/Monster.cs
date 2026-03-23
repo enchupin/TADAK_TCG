@@ -13,7 +13,8 @@ public enum MonsterIntentIconType
     Bomb,
     DisruptCard,
     Heal,
-    Stun
+    Stun,
+    Leave
 }
 
 /// <summary>
@@ -43,6 +44,7 @@ public abstract class Monster : MonoBehaviour
     private int plannedPatternId = 0;
     private bool skipCurrentTurnAction = false;
     private bool hasTriggeredDeath = false;
+    private bool hasLeftCombat = false;
 
     public bool HasAttackIntent => hasAttackIntent;
     public int PlannedIntentValue => plannedIntentValue;
@@ -156,6 +158,8 @@ public abstract class Monster : MonoBehaviour
         {
             TrainingBattleManager.Instance?.HandleMonsterHpLost(this, damageAfterDefense);
         }
+
+        OnAfterTakeDamage(finalDamage, damageAfterDefense);
         HandleDeathIfNeeded();
         UpdateUI();
         return damageAfterDefense;
@@ -174,6 +178,39 @@ public abstract class Monster : MonoBehaviour
             TrainingBattleManager.Instance?.HandleMonsterHpLost(this, lostHp);
         }
         HandleDeathIfNeeded();
+        UpdateUI();
+    }
+
+    public void LeaveCombat()
+    {
+        if (hasTriggeredDeath || hasLeftCombat)
+        {
+            return;
+        }
+
+        hasLeftCombat = true;
+        defense = 0;
+        ClearPlannedAction();
+        OnLeaveCombatTriggered();
+        TrainingBattleManager.Instance?.HandleMonsterLeaveCombat(this);
+        Debug.Log($"[Monster] {name} 전투 이탈");
+    }
+
+    public void ReviveFromRespawn()
+    {
+        if (hasLeftCombat)
+        {
+            return;
+        }
+
+        InitializeMonsterState();
+        if (!gameObject.activeSelf)
+        {
+            gameObject.SetActive(true);
+        }
+
+        TrainingBattleManager.Instance?.RegisterMonster(this);
+        OnRevivedTriggered();
         UpdateUI();
     }
 
@@ -489,6 +526,7 @@ public abstract class Monster : MonoBehaviour
 
         skipCurrentTurnAction = false;
         hasTriggeredDeath = false;
+        hasLeftCombat = false;
         ClearPlannedAction();
     }
 
@@ -569,6 +607,10 @@ public abstract class Monster : MonoBehaviour
     {
     }
 
+    protected virtual void OnLeaveCombatTriggered()
+    {
+    }
+
     protected virtual void OnTurnStarted()
     {
     }
@@ -577,7 +619,15 @@ public abstract class Monster : MonoBehaviour
     {
     }
 
+    protected virtual void OnAfterTakeDamage(int incomingDamage, int damageAfterDefense)
+    {
+    }
+
     protected virtual void OnTurnEnded()
+    {
+    }
+
+    protected virtual void OnRevivedTriggered()
     {
     }
 
