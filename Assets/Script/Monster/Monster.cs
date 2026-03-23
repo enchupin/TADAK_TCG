@@ -45,6 +45,7 @@ public abstract class Monster : MonoBehaviour
     private bool skipCurrentTurnAction = false;
     private bool hasTriggeredDeath = false;
     private bool hasLeftCombat = false;
+    private bool hasInitializedBattleStart = false;
 
     public bool HasAttackIntent => hasAttackIntent;
     public int PlannedIntentValue => plannedIntentValue;
@@ -71,7 +72,7 @@ public abstract class Monster : MonoBehaviour
             TrainingBattleManager.Instance.RegisterMonster(this);
         }
 
-        OnBattleStart();
+        EnsureBattleStartInitialized();
         UpdateUI();
     }
 
@@ -96,8 +97,21 @@ public abstract class Monster : MonoBehaviour
         UpdateFreezeUI();
     }
 
+    public void EnsureBattleStartInitialized()
+    {
+        if (hasInitializedBattleStart)
+        {
+            return;
+        }
+
+        hasInitializedBattleStart = true;
+        OnBattleStart();
+    }
+
     public void PlanNextAction()
     {
+        EnsureBattleStartInitialized();
+
         if (IsDead())
         {
             ClearPlannedAction();
@@ -122,6 +136,8 @@ public abstract class Monster : MonoBehaviour
 
     public void ExecutePlannedAction(PlayerData target)
     {
+        EnsureBattleStartInitialized();
+
         if (target == null || IsDead())
             return;
 

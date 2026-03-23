@@ -261,9 +261,8 @@ public class TrainingBattleManager : MonoBehaviour
         bool shouldRebuildDeck = buildingDeck == null || !TrainingRunState.IsRunActive;
         if (shouldRebuildDeck)
         {
-            Debug.Log("[BattleManager] Rebuilding BuildingDeck from current character selection.");
-            buildingDeck = new BuildingDeck();
-            buildingDeck.Initialize(SelectedButtonControl.selectedCharacterList);
+            Debug.Log("[BattleManager] 현재 캐릭터 선택 기준으로 런 덱을 다시 구성합니다");
+            buildingDeck = TrainingRunDeckPersistence.CreateRunDeck(SelectedButtonControl.selectedCharacterList);
         }
         else
         {
@@ -1385,12 +1384,30 @@ public class TrainingBattleManager : MonoBehaviour
         if (!TrainingRunState.HasMapData)
             yield break;
 
+        bool shouldPersistRunDeck = false;
+        if (isVictory
+            && TrainingRunState.PendingNodeId.HasValue
+            && TrainingRunState.TryGetNode(TrainingRunState.PendingNodeId.Value, out TrainingMapNodeData pendingNode))
+        {
+            shouldPersistRunDeck = pendingNode.nodeType == TrainingNodeType.Boss;
+        }
+
         if (PlayerData.Instance != null)
         {
             TrainingRunState.SetPlayerHealthState(PlayerData.Instance.hp, PlayerData.Instance.maxHP);
         }
 
+        if (shouldPersistRunDeck)
+        {
+            TrainingRunDeckPersistence.SaveRunDeckAsPermanentDeck(buildingDeck, SelectedButtonControl.selectedCharacterList);
+        }
+
         TrainingRunState.CompletePendingNode(isVictory);
+
+        if (!isVictory || TrainingRunState.IsRunCompleted || TrainingRunState.IsRunFailed)
+        {
+            buildingDeck = null;
+        }
 
         if (!string.IsNullOrEmpty(TrainingRunState.MapSceneName))
         {
