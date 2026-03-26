@@ -164,10 +164,11 @@ public abstract class Monster : MonoBehaviour
         {
             OnBeforeTakeDamage(finalDamage);
         }
-        int damageAfterDefense = Mathf.Max(0, finalDamage - defense);
+        int defenseBeforeHit = defense;
+        int damageAfterDefense = Mathf.Max(0, finalDamage - defenseBeforeHit);
 
         hp -= damageAfterDefense;
-        defense = Mathf.Max(0, defense - finalDamage);
+        SetDefenseValue(defenseBeforeHit - finalDamage);
 
         Debug.Log($"{name} took {damageAfterDefense} damage. (HP: {hp}/{maxHP})");
         if (damageAfterDefense > 0)
@@ -234,6 +235,25 @@ public abstract class Monster : MonoBehaviour
     {
         defense += amount;
         Debug.Log($"{name} defense +{amount} (now: {defense})");
+        UpdateUI();
+    }
+
+    public int RemoveDefense(int amount)
+    {
+        int removedAmount = Mathf.Clamp(amount, 0, defense);
+        if (removedAmount <= 0)
+        {
+            return 0;
+        }
+
+        SetDefenseValue(defense - removedAmount);
+        UpdateUI();
+        return removedAmount;
+    }
+
+    public void SetDefense(int amount)
+    {
+        SetDefenseValue(amount);
         UpdateUI();
     }
 
@@ -502,6 +522,11 @@ public abstract class Monster : MonoBehaviour
         }
     }
 
+    private void RemoveBuff(int buffId)
+    {
+        currentBuffs.RemoveAll(buff => buff.data != null && buff.data.buffId == buffId);
+    }
+
     private void ResolveFreezeThresholdIfNeeded()
     {
         int freezeStack = GetBuffStack(BattleRuntimeDefinitions.FreezeBuffId);
@@ -568,6 +593,32 @@ public abstract class Monster : MonoBehaviour
         plannedIntentDescription = string.Empty;
         plannedPatternId = 0;
         plannedIntentIcons.Clear();
+    }
+
+    private void SetDefenseValue(int amount)
+    {
+        int previousDefense = defense;
+        defense = Mathf.Max(0, amount);
+        HandleRootedBarrierBreak(previousDefense);
+    }
+
+    private void HandleRootedBarrierBreak(int previousDefense)
+    {
+        if (previousDefense <= 0 || defense > 0 || hp <= 0)
+        {
+            return;
+        }
+
+        if (GetBuffStack(BattleRuntimeDefinitions.RootedBuffId) <= 0)
+        {
+            return;
+        }
+
+        RemoveBuff(BattleRuntimeDefinitions.RootedBuffId);
+        skipCurrentTurnAction = true;
+        SetIntent("기절합니다.");
+        SetPlannedPattern(0, MonsterIntentIconType.Stun);
+        Debug.Log($"[Monster] {name} 뿌리내림을 잃고 기절합니다.");
     }
 
     private int ApplyOutgoingDamageModifier(int baseDamage)

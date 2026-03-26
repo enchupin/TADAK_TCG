@@ -10,6 +10,12 @@ public class MonsterSpawner : MonoBehaviour
         MutantFlower,
         MutantCarnivorousPlant,
         MutantMushroom,
+        MutantSweetPotato,
+        MutantCarrot,
+        Mirror,
+        Cactus,
+        WoodenPuppet,
+        VoidBug,
         JackORipper,
         GiantFlowerSpider,
         Prophet,
@@ -24,18 +30,33 @@ public class MonsterSpawner : MonoBehaviour
         VoidBeast
     }
 
-    private static readonly SpawnMonsterType[][] normalNodeEncounterTable =
+    private static readonly SpawnMonsterType[][] earlyNormalNodeEncounterTable =
     {
         new[] { SpawnMonsterType.MutantFlower, SpawnMonsterType.MutantCarnivorousPlant },
         new[] { SpawnMonsterType.MutantFlower, SpawnMonsterType.MutantMushroom },
         new[] { SpawnMonsterType.MutantCarnivorousPlant, SpawnMonsterType.MutantMushroom },
-        new[] { SpawnMonsterType.JackORipper },
         new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneThrowGolem, SpawnMonsterType.StoneStealGolem },
         new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneThrowGolem, SpawnMonsterType.StoneThrowGolem },
         new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem },
         new[] { SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem },
+        new[] { SpawnMonsterType.VoidBug, SpawnMonsterType.VoidBug },
+        new[] { SpawnMonsterType.MutantSweetPotato, SpawnMonsterType.MutantCarrot },
+        new[] { SpawnMonsterType.FireSpirit, SpawnMonsterType.FireSpirit },
+        new[] { SpawnMonsterType.Mirror },
+        new[] { SpawnMonsterType.WoodenPuppet, SpawnMonsterType.WoodenPuppet }
+    };
+
+    private static readonly SpawnMonsterType[][] lateNormalNodeEncounterTable =
+    {
+        new[] { SpawnMonsterType.MutantFlower, SpawnMonsterType.MutantCarnivorousPlant, SpawnMonsterType.MutantMushroom },
+        new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneThrowGolem, SpawnMonsterType.StoneThrowGolem, SpawnMonsterType.StoneStealGolem },
+        new[] { SpawnMonsterType.VoidBug, SpawnMonsterType.VoidBug, SpawnMonsterType.VoidBug },
+        new[] { SpawnMonsterType.MutantSweetPotato, SpawnMonsterType.MutantSweetPotato, SpawnMonsterType.MutantCarrot },
+        new[] { SpawnMonsterType.MutantSweetPotato, SpawnMonsterType.MutantCarrot, SpawnMonsterType.MutantCarrot },
+        new[] { SpawnMonsterType.JackORipper },
         new[] { SpawnMonsterType.HauntedCloth },
-        new[] { SpawnMonsterType.FireSpirit, SpawnMonsterType.FireSpirit }
+        new[] { SpawnMonsterType.FireSpirit, SpawnMonsterType.FireSpirit, SpawnMonsterType.FireSpirit },
+        new[] { SpawnMonsterType.Cactus, SpawnMonsterType.Cactus }
     };
 
     private static readonly SpawnMonsterType[][] namedNodeEncounterTable =
@@ -57,6 +78,12 @@ public class MonsterSpawner : MonoBehaviour
     [SerializeField] private GameObject mutantFlowerPrefab;
     [SerializeField] private GameObject mutantCarnivorousPlantPrefab;
     [SerializeField] private GameObject mutantMushroomPrefab;
+    [SerializeField] private GameObject mutantSweetPotatoPrefab;
+    [SerializeField] private GameObject mutantCarrotPrefab;
+    [SerializeField] private GameObject mirrorPrefab;
+    [SerializeField] private GameObject cactusPrefab;
+    [SerializeField] private GameObject woodenPuppetPrefab;
+    [SerializeField] private GameObject voidBugPrefab;
     [SerializeField] private GameObject jackORipperPrefab;
     [SerializeField] private GameObject giantFlowerSpiderPrefab;
     [SerializeField] private GameObject prophetPrefab;
@@ -138,8 +165,33 @@ public class MonsterSpawner : MonoBehaviour
                 return bossNodeEncounterTable[Random.Range(0, bossNodeEncounterTable.Length)];
             case TrainingNodeType.Monster:
             default:
-                return normalNodeEncounterTable[Random.Range(0, normalNodeEncounterTable.Length)];
+                SpawnMonsterType[][] encounterTable = IsLateGameEncounterFloor()
+                    ? lateNormalNodeEncounterTable
+                    : earlyNormalNodeEncounterTable;
+                return encounterTable[Random.Range(0, encounterTable.Length)];
         }
+    }
+
+    private static bool IsLateGameEncounterFloor()
+    {
+        return ResolveCurrentFloorNumber() >= 9;
+    }
+
+    private static int ResolveCurrentFloorNumber()
+    {
+        if (TrainingRunState.PendingNodeId.HasValue
+            && TrainingRunState.TryGetNode(TrainingRunState.PendingNodeId.Value, out TrainingMapNodeData pendingNode))
+        {
+            return pendingNode.stageIndex + 1;
+        }
+
+        if (TrainingRunState.CurrentNodeId.HasValue
+            && TrainingRunState.TryGetNode(TrainingRunState.CurrentNodeId.Value, out TrainingMapNodeData currentNode))
+        {
+            return currentNode.stageIndex + 1;
+        }
+
+        return 1;
     }
 
     private Monster SpawnMonsterToAvailableSlot(GameObject monsterPrefab)
@@ -241,6 +293,18 @@ public class MonsterSpawner : MonoBehaviour
                 return mutantCarnivorousPlantPrefab;
             case SpawnMonsterType.MutantMushroom:
                 return mutantMushroomPrefab;
+            case SpawnMonsterType.MutantSweetPotato:
+                return mutantSweetPotatoPrefab;
+            case SpawnMonsterType.MutantCarrot:
+                return mutantCarrotPrefab;
+            case SpawnMonsterType.Mirror:
+                return mirrorPrefab;
+            case SpawnMonsterType.Cactus:
+                return cactusPrefab;
+            case SpawnMonsterType.WoodenPuppet:
+                return woodenPuppetPrefab;
+            case SpawnMonsterType.VoidBug:
+                return voidBugPrefab;
             case SpawnMonsterType.JackORipper:
                 return jackORipperPrefab;
             case SpawnMonsterType.GiantFlowerSpider:

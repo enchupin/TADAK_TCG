@@ -60,7 +60,7 @@ public class CardUI : MonoBehaviour
             cardNameText.text = card.cardName;
 
         if (costText != null)
-            costText.text = card.cost.ToString();
+            costText.text = card.HasKeyword(CardKeywordIds.Unplayable) ? "-" : card.cost.ToString();
 
         if (keywordText != null)
         {
@@ -148,15 +148,15 @@ public class CardUI : MonoBehaviour
 
         return keywordId switch
         {
-            CardKeywordIds.Keep => "\uBCF4\uC874",
-            CardKeywordIds.Unplayable => "\uC0AC\uC6A9\uBD88\uAC00",
-            CardKeywordIds.Exhaust => "\uC18C\uBA78",
-            CardKeywordIds.Power => "\uD30C\uC6CC",
-            CardKeywordIds.Opening => "\uAC1C\uC2DC",
-            CardKeywordIds.Shadow => "\uADF8\uB9BC\uC790",
-            CardKeywordIds.Finale => "\uC885\uC5B8",
-            CardKeywordIds.Ghost => "\uC720\uB839",
-            CardKeywordIds.Unique => "\uC720\uC77C",
+            CardKeywordIds.Keep => "보존",
+            CardKeywordIds.Unplayable => "사용불가",
+            CardKeywordIds.Exhaust => "소멸",
+            CardKeywordIds.Power => "파워",
+            CardKeywordIds.Opening => "개시",
+            CardKeywordIds.Shadow => "그림자",
+            CardKeywordIds.Finale => "종언",
+            CardKeywordIds.Ghost => "유령",
+            CardKeywordIds.Unique => "유일",
             _ => string.Empty
         };
     }

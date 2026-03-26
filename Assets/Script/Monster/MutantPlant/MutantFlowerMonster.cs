@@ -11,15 +11,15 @@ public class MutantFlowerMonster : Monster
         switch (patternIndex)
         {
             case 0:
-                SetAttackIntent(9, "Deal 9 damage");
+                SetAttackIntent(9, "피해를 9 입힙니다.");
                 SetPlannedPattern(10101, MonsterIntentIconType.Attack);
                 break;
             case 1:
-                SetAttackIntent(6, "Deal 6 damage. Gain 7 Barrier");
-                SetPlannedPattern(10102, MonsterIntentIconType.Protection);
+                SetAttackIntent(6, "피해를 6 입힙니다. 보호막을 7 얻습니다.");
+                SetPlannedPattern(10102, MonsterIntentIconType.Attack, MonsterIntentIconType.Protection);
                 break;
             default:
-                SetIntent("Apply 2 Corrosion to player");
+                SetIntent("부식을 2 부여합니다.");
                 SetPlannedPattern(10103, MonsterIntentIconType.HarmfulEffect);
                 break;
         }
