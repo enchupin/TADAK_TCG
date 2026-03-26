@@ -162,6 +162,12 @@ public abstract class Monster : MonoBehaviour
         finalDamage = ApplyIncomingDamageMultiplier(finalDamage);
         if (finalDamage > 0)
         {
+            if (!CanReceiveDamage(finalDamage))
+            {
+                UpdateUI();
+                return 0;
+            }
+
             OnBeforeTakeDamage(finalDamage);
         }
         int defenseBeforeHit = defense;
@@ -696,6 +702,11 @@ public abstract class Monster : MonoBehaviour
 
     protected virtual void OnRevivedTriggered()
     {
+    }
+
+    protected virtual bool CanReceiveDamage(int incomingDamage)
+    {
+        return true;
     }
 
     protected abstract void BuildNextAction();

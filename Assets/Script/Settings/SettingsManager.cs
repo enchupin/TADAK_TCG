@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEditor.UI;
 using UnityEngine.UI;
 
 public class SettingsManager : MonoBehaviour

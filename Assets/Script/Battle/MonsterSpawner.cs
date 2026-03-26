@@ -19,6 +19,8 @@ public class MonsterSpawner : MonoBehaviour
         JackORipper,
         GiantFlowerSpider,
         Prophet,
+        IceAndFireBoss,
+        VoidLordBoss,
         StoneShieldGolem,
         StoneThrowGolem,
         StoneStealGolem,
@@ -71,7 +73,9 @@ public class MonsterSpawner : MonoBehaviour
     {
         new[] { SpawnMonsterType.JackORipper },
         new[] { SpawnMonsterType.GiantFlowerSpider },
-        new[] { SpawnMonsterType.Prophet }
+        new[] { SpawnMonsterType.Prophet },
+        new[] { SpawnMonsterType.IceAndFireBoss },
+        new[] { SpawnMonsterType.VoidLordBoss }
     };
 
     [Header("일반 몬스터 프리팹")]
@@ -311,6 +315,10 @@ public class MonsterSpawner : MonoBehaviour
                 return giantFlowerSpiderPrefab;
             case SpawnMonsterType.Prophet:
                 return prophetPrefab;
+            case SpawnMonsterType.IceAndFireBoss:
+                return LoadMonsterPrefabFromResources("IceAndFireBoss");
+            case SpawnMonsterType.VoidLordBoss:
+                return LoadMonsterPrefabFromResources("VoidLordBoss");
             case SpawnMonsterType.StoneShieldGolem:
                 return stoneShieldGolemPrefab;
             case SpawnMonsterType.StoneThrowGolem:
@@ -332,5 +340,15 @@ public class MonsterSpawner : MonoBehaviour
             default:
                 return null;
         }
+    }
+
+    private static GameObject LoadMonsterPrefabFromResources(string prefabName)
+    {
+        if (string.IsNullOrWhiteSpace(prefabName))
+        {
+            return null;
+        }
+
+        return Resources.Load<GameObject>($"MonsterPrefabs/{prefabName}");
     }
 }
