@@ -11,15 +11,15 @@ public class MutantCarnivorousPlantMonster : Monster
         switch (patternIndex)
         {
             case 0:
-                SetAttackIntent(7, "Deal 7 damage");
+                SetAttackIntent(7, "피해를 7 입힙니다.");
                 SetPlannedPattern(10202, MonsterIntentIconType.Attack);
                 break;
             case 1:
-                SetIntent("Gain 2 Damage Amplify");
+                SetIntent("피해 증폭을 2 얻습니다.");
                 SetPlannedPattern(10201, MonsterIntentIconType.BeneficialEffect);
                 break;
             default:
-                SetAttackIntent(9, "Deal 3 damage 3 times. If unblocked damage is dealt, add Wound to discard pile");
+                SetAttackIntent(9, "피해를 3씩 3회 입힙니다. 피해를 입혔다면 자상을 버린 카드 더미에 생성합니다.");
                 SetPlannedPattern(10203, MonsterIntentIconType.Attack, MonsterIntentIconType.DisruptCard);
                 break;
         }

@@ -44,8 +44,12 @@ public class MultiplyBarrierEffect : ICardEffect
         List<Monster> targets = CardEffectRuntimeUtility.ResolveEnemyTargets(battleManager, target);
         foreach (Monster monster in targets)
         {
-            monster.defense = Mathf.Max(0, monster.defense * multiplier);
-            monster.UpdateUI();
+            if (monster == null || monster.IsDead())
+            {
+                continue;
+            }
+
+            monster.SetDefense(monster.defense * multiplier);
         }
 
         battleManager.UpdateAllUI();
