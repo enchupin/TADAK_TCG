@@ -207,7 +207,28 @@ public static class TrainingRunDeckPersistence
         return deck;
     }
 
+    public static bool ShouldPersistRunDeck(TrainingNodeType nodeType)
+    {
+        return nodeType == TrainingNodeType.Boss || nodeType == TrainingNodeType.Escape;
+    }
+
+    public static bool TrySaveRunDeckAsPermanentDeck(BuildingDeck runDeck, List<Character> selectedCharacters, TrainingNodeType nodeType)
+    {
+        if (!ShouldPersistRunDeck(nodeType))
+        {
+            return false;
+        }
+
+        SaveRunDeckAsPermanentDeckInternal(runDeck, selectedCharacters, nodeType);
+        return true;
+    }
+
     public static void SaveRunDeckAsPermanentDeck(BuildingDeck runDeck, List<Character> selectedCharacters)
+    {
+        SaveRunDeckAsPermanentDeckInternal(runDeck, selectedCharacters, TrainingNodeType.Boss);
+    }
+
+    private static void SaveRunDeckAsPermanentDeckInternal(BuildingDeck runDeck, List<Character> selectedCharacters, TrainingNodeType nodeType)
     {
         if (runDeck == null || selectedCharacters == null || selectedCharacters.Count == 0)
         {
@@ -254,7 +275,7 @@ public static class TrainingRunDeckPersistence
         }
 
         ProfileSaveManager.Save(profile);
-        Debug.Log("[TrainingRunDeckPersistence] 보스 클리어로 영구덱을 저장했습니다");
+        Debug.Log($"[TrainingRunDeckPersistence] {GetPersistReason(nodeType)} 영구덱을 저장했습니다");
     }
 
     private static List<int> LoadPermanentDeckCardIds(List<Character> selectedCharacters)
@@ -347,5 +368,18 @@ public static class TrainingRunDeckPersistence
         }
 
         return cardIds;
+    }
+
+    private static string GetPersistReason(TrainingNodeType nodeType)
+    {
+        switch (nodeType)
+        {
+            case TrainingNodeType.Boss:
+                return "보스 클리어로";
+            case TrainingNodeType.Escape:
+                return "Escape 종료로";
+            default:
+                return "런 종료로";
+        }
     }
 }

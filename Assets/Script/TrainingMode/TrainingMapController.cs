@@ -16,6 +16,7 @@ public class TrainingMapController : MonoBehaviour
     [Header("Run Setup")]
     [SerializeField] private string battleSceneName = "TrainingScene";
     [SerializeField] private string restSceneName = "TrainingRestScene";
+    [SerializeField] private string escapeSceneName = string.Empty;
     [SerializeField] private bool autoStartRunIfMissing = true;
     [SerializeField] private int defaultStageCount = 15;
     [SerializeField] private int defaultLaneCount = 4;
@@ -27,6 +28,7 @@ public class TrainingMapController : MonoBehaviour
     [SerializeField] private Button namedNodeButtonPrefab;
     [SerializeField] private Button restNodeButtonPrefab;
     [SerializeField] private Button bossNodeButtonPrefab;
+    [SerializeField] private Button escapeNodeButtonPrefab;
     [SerializeField] private Vector2 nodeSpacing = new Vector2(260f, 170f);
     [SerializeField] private Vector2 nodeSize = new Vector2(110f, 56f);
     [SerializeField] private Vector2 mapPadding = new Vector2(80f, 80f);
@@ -95,6 +97,19 @@ public class TrainingMapController : MonoBehaviour
             }
 
             SceneManager.LoadScene(restSceneName);
+            return;
+        }
+
+        if (node.nodeType == TrainingNodeType.Escape)
+        {
+            if (!string.IsNullOrEmpty(escapeSceneName))
+            {
+                SceneManager.LoadScene(escapeSceneName);
+                return;
+            }
+
+            SaveRunDeckForEscape();
+            CompleteNodeOnMap();
             return;
         }
 
@@ -338,6 +353,8 @@ public class TrainingMapController : MonoBehaviour
                 return restNodeButtonPrefab;
             case TrainingNodeType.Boss:
                 return bossNodeButtonPrefab;
+            case TrainingNodeType.Escape:
+                return escapeNodeButtonPrefab != null ? escapeNodeButtonPrefab : restNodeButtonPrefab;
             default:
                 return null;
         }
@@ -488,7 +505,21 @@ public class TrainingMapController : MonoBehaviour
     private void CompleteNodeOnMap()
     {
         TrainingRunState.CompletePendingNode(true);
+
+        if (TrainingRunState.IsRunCompleted || TrainingRunState.IsRunFailed)
+        {
+            TrainingBattleManager.buildingDeck = null;
+        }
+
         BuildMapUI();
+    }
+
+    private void SaveRunDeckForEscape()
+    {
+        TrainingRunDeckPersistence.TrySaveRunDeckAsPermanentDeck(
+            TrainingBattleManager.buildingDeck,
+            SelectedButtonControl.selectedCharacterList,
+            TrainingNodeType.Escape);
     }
 
     private static bool NodeRequiresBattle(TrainingNodeType nodeType)

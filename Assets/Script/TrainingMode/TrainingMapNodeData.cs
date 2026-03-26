@@ -7,7 +7,8 @@ public enum TrainingNodeType
     Monster,
     Named,
     Rest,
-    Boss
+    Boss,
+    Escape
 }
 
 [Serializable]

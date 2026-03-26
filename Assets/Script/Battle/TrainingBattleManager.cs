@@ -1384,12 +1384,12 @@ public class TrainingBattleManager : MonoBehaviour
         if (!TrainingRunState.HasMapData)
             yield break;
 
-        bool shouldPersistRunDeck = false;
+        TrainingNodeType pendingNodeType = TrainingNodeType.Monster;
         if (isVictory
             && TrainingRunState.PendingNodeId.HasValue
             && TrainingRunState.TryGetNode(TrainingRunState.PendingNodeId.Value, out TrainingMapNodeData pendingNode))
         {
-            shouldPersistRunDeck = pendingNode.nodeType == TrainingNodeType.Boss;
+            pendingNodeType = pendingNode.nodeType;
         }
 
         if (PlayerData.Instance != null)
@@ -1397,9 +1397,12 @@ public class TrainingBattleManager : MonoBehaviour
             TrainingRunState.SetPlayerHealthState(PlayerData.Instance.hp, PlayerData.Instance.maxHP);
         }
 
-        if (shouldPersistRunDeck)
+        if (isVictory)
         {
-            TrainingRunDeckPersistence.SaveRunDeckAsPermanentDeck(buildingDeck, SelectedButtonControl.selectedCharacterList);
+            TrainingRunDeckPersistence.TrySaveRunDeckAsPermanentDeck(
+                buildingDeck,
+                SelectedButtonControl.selectedCharacterList,
+                pendingNodeType);
         }
 
         TrainingRunState.CompletePendingNode(isVictory);
