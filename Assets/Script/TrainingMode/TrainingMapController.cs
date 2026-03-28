@@ -266,11 +266,18 @@ public class TrainingMapController : MonoBehaviour
         bool isToCleared = TrainingRunState.IsNodeCleared(toNodeId);
         bool isFromCurrent = TrainingRunState.CurrentNodeId.HasValue && TrainingRunState.CurrentNodeId.Value == fromNodeId;
         bool isToSelectable = TrainingRunState.IsNodeSelectable(toNodeId);
+        bool isFromStartNode = false;
+
+        if (!TrainingRunState.CurrentNodeId.HasValue
+            && TrainingRunState.TryGetNode(fromNodeId, out TrainingMapNodeData fromNode))
+        {
+            isFromStartNode = fromNode.nodeType == TrainingNodeType.Start;
+        }
 
         if (isFromCleared && isToCleared)
             return clearedConnectionColor;
 
-        if (isFromCurrent || isToSelectable)
+        if ((isFromCurrent || isFromStartNode) && isToSelectable)
             return selectableConnectionColor;
 
         return lockedConnectionColor;

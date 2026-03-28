@@ -5,7 +5,7 @@ public class MonsterSpawner : MonoBehaviour
 {
     private const int MaxMonsterCount = 5;
 
-    private enum SpawnMonsterType
+    public enum SpawnMonsterType
     {
         MutantFlower,
         MutantCarnivorousPlant,
@@ -71,11 +71,10 @@ public class MonsterSpawner : MonoBehaviour
 
     private static readonly SpawnMonsterType[][] bossNodeEncounterTable =
     {
-        new[] { SpawnMonsterType.JackORipper },
         new[] { SpawnMonsterType.GiantFlowerSpider },
-        new[] { SpawnMonsterType.Prophet },
+        new[] { SpawnMonsterType.Mirror, SpawnMonsterType.Mirror, SpawnMonsterType.Prophet },
         new[] { SpawnMonsterType.IceAndFireBoss },
-        new[] { SpawnMonsterType.VoidLordBoss }
+        new[] { SpawnMonsterType.VoidBug, SpawnMonsterType.VoidBeast, SpawnMonsterType.VoidLordBoss }
     };
 
     [Header("일반 몬스터 프리팹")]
@@ -110,10 +109,19 @@ public class MonsterSpawner : MonoBehaviour
 
     public List<Monster> SpawnEncounter(TrainingNodeType nodeType)
     {
-        SpawnMonsterType[] encounter = ResolveEncounter(nodeType);
-        List<Monster> spawnedMonsters = new List<Monster>(encounter.Length);
+        return SpawnEncounter(CreateEncounterPlan(nodeType, ResolveCurrentFloorNumber()));
+    }
 
-        for (int i = 0; i < encounter.Length; i++)
+    public List<Monster> SpawnEncounter(IReadOnlyList<SpawnMonsterType> encounter)
+    {
+        if (encounter == null || encounter.Count == 0)
+        {
+            return new List<Monster>();
+        }
+
+        List<Monster> spawnedMonsters = new List<Monster>(encounter.Count);
+
+        for (int i = 0; i < encounter.Count; i++)
         {
             GameObject monsterPrefab = ResolveMonsterPrefab(encounter[i]);
             if (monsterPrefab == null)
@@ -130,6 +138,12 @@ public class MonsterSpawner : MonoBehaviour
         }
 
         return spawnedMonsters;
+    }
+
+    public static List<SpawnMonsterType> CreateEncounterPlan(TrainingNodeType nodeType, int floorNumber)
+    {
+        SpawnMonsterType[] encounter = ResolveEncounter(nodeType, floorNumber);
+        return new List<SpawnMonsterType>(encounter);
     }
 
     public Monster SpawnSummonedMonster(GameObject monsterPrefab)
@@ -159,26 +173,37 @@ public class MonsterSpawner : MonoBehaviour
         reservedSummonCount = 0;
     }
 
-    private SpawnMonsterType[] ResolveEncounter(TrainingNodeType nodeType)
+    private static SpawnMonsterType[] ResolveEncounter(TrainingNodeType nodeType, int floorNumber)
     {
         switch (nodeType)
         {
             case TrainingNodeType.Named:
-                return namedNodeEncounterTable[Random.Range(0, namedNodeEncounterTable.Length)];
+                return PickRandomEncounter(namedNodeEncounterTable);
             case TrainingNodeType.Boss:
-                return bossNodeEncounterTable[Random.Range(0, bossNodeEncounterTable.Length)];
+                return PickRandomEncounter(bossNodeEncounterTable);
             case TrainingNodeType.Monster:
-            default:
-                SpawnMonsterType[][] encounterTable = IsLateGameEncounterFloor()
+                SpawnMonsterType[][] encounterTable = IsLateGameEncounterFloor(floorNumber)
                     ? lateNormalNodeEncounterTable
                     : earlyNormalNodeEncounterTable;
-                return encounterTable[Random.Range(0, encounterTable.Length)];
+                return PickRandomEncounter(encounterTable);
+            default:
+                return new SpawnMonsterType[0];
         }
     }
 
-    private static bool IsLateGameEncounterFloor()
+    private static SpawnMonsterType[] PickRandomEncounter(SpawnMonsterType[][] encounterTable)
     {
-        return ResolveCurrentFloorNumber() >= 9;
+        if (encounterTable == null || encounterTable.Length == 0)
+        {
+            return new SpawnMonsterType[0];
+        }
+
+        return encounterTable[Random.Range(0, encounterTable.Length)];
+    }
+
+    private static bool IsLateGameEncounterFloor(int floorNumber)
+    {
+        return floorNumber >= 9;
     }
 
     private static int ResolveCurrentFloorNumber()

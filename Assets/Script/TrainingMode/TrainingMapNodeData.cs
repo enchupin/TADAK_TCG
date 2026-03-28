@@ -19,5 +19,8 @@ public class TrainingMapNodeData
     public int laneIndex;
     public TrainingNodeType nodeType;
     public Vector2 gridPosition;
+    public List<MonsterSpawner.SpawnMonsterType> plannedEncounter = new List<MonsterSpawner.SpawnMonsterType>();
     public List<int> nextNodeIds = new List<int>();
+
+    public bool HasPlannedEncounter => plannedEncounter != null && plannedEncounter.Count > 0;
 }

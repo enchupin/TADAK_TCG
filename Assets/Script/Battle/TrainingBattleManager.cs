@@ -1295,22 +1295,26 @@ public class TrainingBattleManager : MonoBehaviour
             return;
         }
 
-        List<Monster> encounterMonsters = monsterSpawner.SpawnEncounter(ResolveCurrentEncounterNodeType());
+        TrainingMapNodeData encounterNode = ResolveCurrentEncounterNode();
+        List<Monster> encounterMonsters = encounterNode != null && encounterNode.HasPlannedEncounter
+            ? monsterSpawner.SpawnEncounter(encounterNode.plannedEncounter)
+            : monsterSpawner.SpawnEncounter(encounterNode != null ? encounterNode.nodeType : TrainingNodeType.Monster);
+
         foreach (Monster monster in encounterMonsters)
         {
             RegisterMonster(monster);
         }
     }
 
-    private TrainingNodeType ResolveCurrentEncounterNodeType()
+    private TrainingMapNodeData ResolveCurrentEncounterNode()
     {
         if (TrainingRunState.PendingNodeId.HasValue
             && TrainingRunState.TryGetNode(TrainingRunState.PendingNodeId.Value, out TrainingMapNodeData pendingNode))
         {
-            return pendingNode.nodeType;
+            return pendingNode;
         }
 
-        return TrainingNodeType.Monster;
+        return null;
     }
 
     private List<Card> BuildDebugBattleDeck()

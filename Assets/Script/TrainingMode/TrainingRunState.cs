@@ -128,7 +128,8 @@ public static class TrainingRunState
                     stageIndex = stage,
                     laneIndex = lane,
                     nodeType = nodeType,
-                    gridPosition = new Vector2(stage, lane - centeredOffset)
+                    gridPosition = new Vector2(stage, lane - centeredOffset),
+                    plannedEncounter = CreatePlannedEncounter(nodeType, stage)
                 };
 
                 nodesById[node.nodeId] = node;
@@ -142,6 +143,16 @@ public static class TrainingRunState
         {
             ApplyRandomStageConnections(stageNodeIds[stage], stageNodeIds[stage + 1]);
         }
+    }
+
+    private static List<MonsterSpawner.SpawnMonsterType> CreatePlannedEncounter(TrainingNodeType nodeType, int stageIndex)
+    {
+        if (!NodeRequiresBattle(nodeType))
+        {
+            return new List<MonsterSpawner.SpawnMonsterType>();
+        }
+
+        return MonsterSpawner.CreateEncounterPlan(nodeType, stageIndex);
     }
 
     private static List<int> BuildStageNodeCounts()
@@ -378,6 +389,13 @@ public static class TrainingRunState
             return TrainingNodeType.Named;
 
         return TrainingNodeType.Monster;
+    }
+
+    private static bool NodeRequiresBattle(TrainingNodeType nodeType)
+    {
+        return nodeType == TrainingNodeType.Monster
+               || nodeType == TrainingNodeType.Named
+               || nodeType == TrainingNodeType.Boss;
     }
 
     public static bool TrySelectNode(int nodeId, out TrainingMapNodeData selectedNode)
