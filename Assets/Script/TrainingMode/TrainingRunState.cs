@@ -9,9 +9,11 @@ public static class TrainingRunState
 {
     private const int DefaultFloorCount = 15;
     private const int DefaultMaxNodesPerFloor = 4;
-    private const int DefaultInteriorNodeTargetCount = 45;
-    private const int DefaultInteriorNodeBaseline = 3;
-    private const int MinInteriorNodesPerFloor = 2;
+    private const int DefaultTotalNodeCount = 45;
+    private const int MidTowerSingleNodeStageIndex = 7;
+    private const int BossStageIndex = DefaultFloorCount - 1;
+    private const int SingleNodeFloorNodeCount = 1;
+    private const int MinNodesPerRegularFloor = 2;
 
     private static readonly Dictionary<int, TrainingMapNodeData> nodesById = new Dictionary<int, TrainingMapNodeData>();
     private static readonly List<TrainingMapNodeData> orderedNodes = new List<TrainingMapNodeData>();
@@ -75,15 +77,12 @@ public static class TrainingRunState
         return true;
     }
 
-    public static void StartNewRun(string mapSceneName, string battleSceneName, int stageCount = DefaultFloorCount, int laneCount = DefaultMaxNodesPerFloor)
+    public static void StartNewRun(string mapSceneName, string battleSceneName)
     {
         MapSceneName = mapSceneName;
         BattleSceneName = battleSceneName;
 
-        int resolvedStageCount = Mathf.Max(2, stageCount);
-        int resolvedLaneCount = Mathf.Clamp(laneCount, 2, DefaultMaxNodesPerFloor);
-
-        BuildSimpleMap(resolvedStageCount, resolvedLaneCount);
+        BuildSimpleMap();
 
         selectableNodeIds.Clear();
         clearedNodeIds.Clear();
@@ -108,26 +107,26 @@ public static class TrainingRunState
         IsRunFailed = false;
         IsRunActive = true;
 
-        Debug.Log($"[TrainingRunState] New run started. StageCount={resolvedStageCount}, LaneCount={resolvedLaneCount}");
+        Debug.Log("[TrainingRunState] New run started.");
     }
 
-    private static void BuildSimpleMap(int stageCount, int laneCount)
+    private static void BuildSimpleMap()
     {
         nodesById.Clear();
         orderedNodes.Clear();
 
-        List<int> stageNodeCounts = BuildStageNodeCounts(stageCount, laneCount);
+        List<int> stageNodeCounts = BuildStageNodeCounts();
         List<List<int>> stageNodeIds = new List<List<int>>();
         int nextId = 0;
 
-        for (int stage = 0; stage < stageCount; stage++)
+        for (int stage = 0; stage < DefaultFloorCount; stage++)
         {
             int nodeCount = stageNodeCounts[stage];
             List<int> idsInStage = new List<int>();
             float centeredOffset = (nodeCount - 1) * 0.5f;
             for (int lane = 0; lane < nodeCount; lane++)
             {
-                TrainingNodeType nodeType = DetermineNodeType(stage, lane, stageCount, nodeCount);
+                TrainingNodeType nodeType = DetermineNodeType(stage, lane, nodeCount);
                 TrainingMapNodeData node = new TrainingMapNodeData
                 {
                     nodeId = nextId++,
@@ -150,82 +149,68 @@ public static class TrainingRunState
         }
     }
 
-    private static List<int> BuildStageNodeCounts(int stageCount, int laneCount)
+    private static List<int> BuildStageNodeCounts()
     {
-        List<int> stageNodeCounts = new List<int>(stageCount);
-        if (stageCount <= 0)
+        List<int> stageNodeCounts = new List<int>(DefaultFloorCount);
+        HashSet<int> singleNodeStageIndices = BuildSingleNodeStageIndices();
+
+        int currentTotalNodeCount = 0;
+        for (int stage = 0; stage < DefaultFloorCount; stage++)
         {
-            return stageNodeCounts;
+            int nodeCount = singleNodeStageIndices.Contains(stage)
+                ? SingleNodeFloorNodeCount
+                : MinNodesPerRegularFloor;
+            stageNodeCounts.Add(nodeCount);
+            currentTotalNodeCount += nodeCount;
         }
 
-        stageNodeCounts.Add(1);
-
-        int interiorStageCount = Mathf.Max(0, stageCount - 2);
-        if (interiorStageCount > 0)
-        {
-            List<int> interiorCounts = new List<int>(interiorStageCount);
-            int baselineCount = Mathf.Clamp(DefaultInteriorNodeBaseline, MinInteriorNodesPerFloor, laneCount);
-            for (int i = 0; i < interiorStageCount; i++)
-            {
-                interiorCounts.Add(baselineCount);
-            }
-
-            int targetInteriorNodeCount = Mathf.Clamp(
-                DefaultInteriorNodeTargetCount,
-                interiorStageCount * MinInteriorNodesPerFloor,
-                interiorStageCount * laneCount);
-            int currentInteriorNodeCount = baselineCount * interiorStageCount;
-            int delta = targetInteriorNodeCount - currentInteriorNodeCount;
-
-            if (delta > 0)
-            {
-                ApplyStageNodeCountDelta(interiorCounts, delta, 1, laneCount);
-            }
-            else if (delta < 0)
-            {
-                ApplyStageNodeCountDelta(interiorCounts, -delta, -1, MinInteriorNodesPerFloor);
-            }
-
-            stageNodeCounts.AddRange(interiorCounts);
-        }
-
-        if (stageCount > 1)
-        {
-            stageNodeCounts.Add(1);
-        }
+        int additionalNodeCount = DefaultTotalNodeCount - currentTotalNodeCount;
+        DistributeAdditionalNodes(stageNodeCounts, singleNodeStageIndices, additionalNodeCount);
 
         return stageNodeCounts;
     }
 
-    private static void ApplyStageNodeCountDelta(List<int> stageNodeCounts, int deltaCount, int deltaValue, int limit)
+    private static HashSet<int> BuildSingleNodeStageIndices()
     {
-        if (stageNodeCounts == null || stageNodeCounts.Count == 0 || deltaCount <= 0)
+        return new HashSet<int>
+        {
+            MidTowerSingleNodeStageIndex,
+            BossStageIndex
+        };
+    }
+
+    private static void DistributeAdditionalNodes(List<int> stageNodeCounts, HashSet<int> singleNodeStageIndices, int additionalNodeCount)
+    {
+        if (stageNodeCounts == null || stageNodeCounts.Count == 0 || additionalNodeCount <= 0)
         {
             return;
         }
 
-        List<int> candidateIndices = new List<int>();
-        for (int i = 0; i < stageNodeCounts.Count; i++)
+        while (additionalNodeCount > 0)
         {
-            if (deltaValue > 0)
+            List<int> candidateIndices = new List<int>();
+            for (int stage = 0; stage < stageNodeCounts.Count; stage++)
             {
-                if (stageNodeCounts[i] < limit)
+                if (singleNodeStageIndices.Contains(stage))
                 {
-                    candidateIndices.Add(i);
+                    continue;
+                }
+
+                if (stageNodeCounts[stage] < DefaultMaxNodesPerFloor)
+                {
+                    candidateIndices.Add(stage);
                 }
             }
-            else if (stageNodeCounts[i] > limit)
-            {
-                candidateIndices.Add(i);
-            }
-        }
 
-        for (int i = 0; i < deltaCount && candidateIndices.Count > 0; i++)
-        {
+            if (candidateIndices.Count == 0)
+            {
+                Debug.LogWarning("[TrainingRunState] No more floors can receive additional nodes.");
+                return;
+            }
+
             int pickedIndex = Random.Range(0, candidateIndices.Count);
-            int stageIndex = candidateIndices[pickedIndex];
-            candidateIndices.RemoveAt(pickedIndex);
-            stageNodeCounts[stageIndex] += deltaValue;
+            stageNodeCounts[candidateIndices[pickedIndex]]++;
+            additionalNodeCount--;
         }
     }
 
@@ -309,21 +294,11 @@ public static class TrainingRunState
             {
                 return false;
             }
-
-            if (currentNodeCount > 1 && nextNodeCount > 1 && outgoingCounts[currentIndex] >= nextNodeCount)
-            {
-                return false;
-            }
         }
 
         for (int nextIndex = 0; nextIndex < nextNodeCount; nextIndex++)
         {
             if (incomingCounts[nextIndex] <= 0)
-            {
-                return false;
-            }
-
-            if (currentNodeCount > 1 && nextNodeCount > 1 && incomingCounts[nextIndex] >= currentNodeCount)
             {
                 return false;
             }
@@ -360,9 +335,9 @@ public static class TrainingRunState
         return (mask & (1 << bitIndex)) != 0;
     }
 
-    private static TrainingNodeType DetermineNodeType(int stage, int lane, int stageCount, int nodeCountInStage)
+    private static TrainingNodeType DetermineNodeType(int stage, int lane, int nodeCountInStage)
     {
-        if (stage == stageCount - 1)
+        if (stage == BossStageIndex)
             return TrainingNodeType.Boss;
 
         if (stage > 0 && stage % 3 == 0 && lane == nodeCountInStage - 1)

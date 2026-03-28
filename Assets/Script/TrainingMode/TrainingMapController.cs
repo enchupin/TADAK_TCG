@@ -17,8 +17,6 @@ public class TrainingMapController : MonoBehaviour
     [SerializeField] private string battleSceneName = "TrainingScene";
     [SerializeField] private string restSceneName = "TrainingRestScene";
     [SerializeField] private bool autoStartRunIfMissing = true;
-    [SerializeField] private int defaultStageCount = 15;
-    [SerializeField] private int defaultLaneCount = 4;
 
     [Header("Node UI")]
     [SerializeField] private RectTransform nodeRoot;
@@ -122,7 +120,7 @@ public class TrainingMapController : MonoBehaviour
             return;
 
         string mapSceneName = SceneManager.GetActiveScene().name;
-        TrainingRunState.StartNewRun(mapSceneName, battleSceneName, defaultStageCount, defaultLaneCount);
+        TrainingRunState.StartNewRun(mapSceneName, battleSceneName);
     }
 
     private void EnsureNodeRoot()
