@@ -314,6 +314,7 @@ public abstract class Monster : MonoBehaviour
 
     public void OnTurnStart()
     {
+        ClearDefenseOnTurnStart();
         OnTurnStarted();
         ResolveFreezeThresholdIfNeeded();
         UpdateUI();
@@ -606,6 +607,17 @@ public abstract class Monster : MonoBehaviour
         int previousDefense = defense;
         defense = Mathf.Max(0, amount);
         HandleRootedBarrierBreak(previousDefense);
+    }
+
+    private void ClearDefenseOnTurnStart()
+    {
+        if (defense <= 0 || GetBuffStack(BattleRuntimeDefinitions.RootedBuffId) > 0)
+        {
+            return;
+        }
+
+        defense = 0;
+        Debug.Log($"[Monster] {name} 턴 시작으로 보호막이 제거됩니다.");
     }
 
     private void HandleRootedBarrierBreak(int previousDefense)
