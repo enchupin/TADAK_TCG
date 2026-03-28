@@ -196,6 +196,7 @@ public class TrainingMapController : MonoBehaviour
         int capturedNodeId = node.nodeId;
         button.onClick.AddListener(() => OnNodeSelected(capturedNodeId));
 
+        ApplyNodeLabel(button, node);
         ApplyNodeVisual(button, isSelectable, isCleared, isCurrent);
         spawnedNodeObjects.Add(button.gameObject);
     }
@@ -264,13 +265,12 @@ public class TrainingMapController : MonoBehaviour
         bool isFromCleared = TrainingRunState.IsNodeCleared(fromNodeId);
         bool isToCleared = TrainingRunState.IsNodeCleared(toNodeId);
         bool isFromCurrent = TrainingRunState.CurrentNodeId.HasValue && TrainingRunState.CurrentNodeId.Value == fromNodeId;
-        bool isFromSelectable = TrainingRunState.IsNodeSelectable(fromNodeId);
         bool isToSelectable = TrainingRunState.IsNodeSelectable(toNodeId);
 
         if (isFromCleared && isToCleared)
             return clearedConnectionColor;
 
-        if (isFromCurrent || isFromSelectable || isToSelectable)
+        if (isFromCurrent || isToSelectable)
             return selectableConnectionColor;
 
         return lockedConnectionColor;
@@ -324,10 +324,23 @@ public class TrainingMapController : MonoBehaviour
         }
     }
 
+    private static void ApplyNodeLabel(Button button, TrainingMapNodeData node)
+    {
+        if (button == null || node == null || node.nodeType != TrainingNodeType.Start)
+            return;
+
+        TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
+        if (label != null)
+        {
+            label.text = "0F";
+        }
+    }
+
     private Button ResolveNodeButtonPrefab(TrainingMapNodeData node)
     {
         switch (node.nodeType)
         {
+            case TrainingNodeType.Start:
             case TrainingNodeType.Monster:
                 return monsterNodeButtonPrefab;
             case TrainingNodeType.Named:

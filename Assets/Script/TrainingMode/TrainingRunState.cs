@@ -8,10 +8,13 @@ using UnityEngine;
 public static class TrainingRunState
 {
     private const int DefaultFloorCount = 15;
+    private const int TotalStageCount = DefaultFloorCount + 1;
     private const int DefaultMaxNodesPerFloor = 4;
-    private const int DefaultTotalNodeCount = 45;
-    private const int MidTowerSingleNodeStageIndex = 7;
-    private const int BossStageIndex = DefaultFloorCount - 1;
+    private const int DefaultTotalNodeCount = 46;
+    private const int StartStageIndex = 0;
+    private const int FirstCombatStageIndex = 1;
+    private const int MidTowerSingleNodeStageIndex = 8;
+    private const int BossStageIndex = DefaultFloorCount;
     private const int SingleNodeFloorNodeCount = 1;
     private const int MinNodesPerRegularFloor = 2;
 
@@ -87,16 +90,8 @@ public static class TrainingRunState
         selectableNodeIds.Clear();
         clearedNodeIds.Clear();
 
-        // First stage is always selectable at run start.
-        foreach (TrainingMapNodeData node in orderedNodes)
-        {
-            if (node.stageIndex == 0)
-            {
-                selectableNodeIds.Add(node.nodeId);
-            }
-        }
+        InitializeRunStartState();
 
-        CurrentNodeId = null;
         PendingNodeId = null;
 
         HasPlayerHealthState = false;
@@ -119,7 +114,7 @@ public static class TrainingRunState
         List<List<int>> stageNodeIds = new List<List<int>>();
         int nextId = 0;
 
-        for (int stage = 0; stage < DefaultFloorCount; stage++)
+        for (int stage = 0; stage < TotalStageCount; stage++)
         {
             int nodeCount = stageNodeCounts[stage];
             List<int> idsInStage = new List<int>();
@@ -151,11 +146,11 @@ public static class TrainingRunState
 
     private static List<int> BuildStageNodeCounts()
     {
-        List<int> stageNodeCounts = new List<int>(DefaultFloorCount);
+        List<int> stageNodeCounts = new List<int>(TotalStageCount);
         HashSet<int> singleNodeStageIndices = BuildSingleNodeStageIndices();
 
         int currentTotalNodeCount = 0;
-        for (int stage = 0; stage < DefaultFloorCount; stage++)
+        for (int stage = 0; stage < TotalStageCount; stage++)
         {
             int nodeCount = singleNodeStageIndices.Contains(stage)
                 ? SingleNodeFloorNodeCount
@@ -174,9 +169,41 @@ public static class TrainingRunState
     {
         return new HashSet<int>
         {
+            StartStageIndex,
             MidTowerSingleNodeStageIndex,
             BossStageIndex
         };
+    }
+
+    private static void InitializeRunStartState()
+    {
+        CurrentNodeId = null;
+
+        for (int i = 0; i < orderedNodes.Count; i++)
+        {
+            TrainingMapNodeData node = orderedNodes[i];
+            if (node.stageIndex != StartStageIndex)
+            {
+                continue;
+            }
+
+            clearedNodeIds.Add(node.nodeId);
+            foreach (int nextNodeId in node.nextNodeIds)
+            {
+                selectableNodeIds.Add(nextNodeId);
+            }
+
+            return;
+        }
+
+        for (int i = 0; i < orderedNodes.Count; i++)
+        {
+            TrainingMapNodeData node = orderedNodes[i];
+            if (node.stageIndex == FirstCombatStageIndex)
+            {
+                selectableNodeIds.Add(node.nodeId);
+            }
+        }
     }
 
     private static void DistributeAdditionalNodes(List<int> stageNodeCounts, HashSet<int> singleNodeStageIndices, int additionalNodeCount)
@@ -337,13 +364,17 @@ public static class TrainingRunState
 
     private static TrainingNodeType DetermineNodeType(int stage, int lane, int nodeCountInStage)
     {
+        if (stage == StartStageIndex)
+            return TrainingNodeType.Start;
+
         if (stage == BossStageIndex)
             return TrainingNodeType.Boss;
 
-        if (stage > 0 && stage % 3 == 0 && lane == nodeCountInStage - 1)
+        int combatStageIndex = stage - FirstCombatStageIndex;
+        if (combatStageIndex > 0 && combatStageIndex % 3 == 0 && lane == nodeCountInStage - 1)
             return TrainingNodeType.Rest;
 
-        if (stage > 0 && (stage + lane) % 4 == 0)
+        if (combatStageIndex > 0 && (combatStageIndex + lane) % 4 == 0)
             return TrainingNodeType.Named;
 
         return TrainingNodeType.Monster;
