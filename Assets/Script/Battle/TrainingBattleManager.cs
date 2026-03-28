@@ -73,8 +73,7 @@ public class TrainingBattleManager : MonoBehaviour
     [SerializeField] private Button endTurnButton;
     [SerializeField] private bool enableKeyboardEndTurn = true;
 
-    [Header("Training Flow")]
-    [SerializeField] private bool enableTrainingRunFlow = true;
+    [Header("Run Flow")]
     [SerializeField] private float battleResultTransitionDelay = 0.8f;
 
     [Header("Spawned Monsters")]
@@ -755,7 +754,7 @@ public class TrainingBattleManager : MonoBehaviour
             ? "[BattleManager] Victory. All enemies are dead."
             : "[BattleManager] Defeat. Player is dead.");
 
-        if (enableTrainingRunFlow && TrainingRunState.IsRunActive)
+        if (TrainingRunState.IsRunActive)
         {
             StartCoroutine(HandleTrainingRunBattleResult(isVictory));
         }
