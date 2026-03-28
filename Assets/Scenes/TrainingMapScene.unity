@@ -781,8 +781,6 @@ MonoBehaviour:
   battleSceneName: TrainingScene
   restSceneName: TrainingRestScene
   autoStartRunIfMissing: 1
-  defaultStageCount: 15
-  defaultLaneCount: 4
   nodeRoot: {fileID: 1929906177}
   connectionRoot: {fileID: 0}
   monsterNodeButtonPrefab: {fileID: 1853389925522990436, guid: 2908b8bc7c242b546b4ecbc929277006, type: 3}

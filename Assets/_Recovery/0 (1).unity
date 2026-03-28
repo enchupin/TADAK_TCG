@@ -4417,8 +4417,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SceneChanger
   trainingMapSceneName: TrainingMapScene
   trainingBattleSceneName: TrainingScene
-  trainingStageCount: 15
-  trainingLaneCount: 4
 --- !u!114 &2094119973
 MonoBehaviour:
   m_ObjectHideFlags: 0
