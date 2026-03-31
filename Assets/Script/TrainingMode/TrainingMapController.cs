@@ -111,7 +111,7 @@ public class TrainingMapController : MonoBehaviour
             return;
         }
 
-        if (!NodeRequiresBattle(node.nodeType))
+        if (!TrainingNodeTypeUtility.RequiresBattle(node.nodeType))
         {
             CompleteNodeOnMap();
             return;
@@ -358,10 +358,25 @@ public class TrainingMapController : MonoBehaviour
         {
             label.text = "0F";
         }
+        else if (TrainingNodeTypeUtility.TryGetEncounterLabelPrefix(node.nodeType, out string encounterLabelPrefix))
+        {
+            label.text = BuildEncounterLabel(encounterLabelPrefix, node);
+        }
         else if (node.nodeType == TrainingNodeType.Event)
         {
             label.text = "이벤트";
         }
+    }
+
+    private static string BuildEncounterLabel(string prefix, TrainingMapNodeData node)
+    {
+        int encounterIndex = MonsterSpawner.GetEncounterDisplayIndex(node.nodeType, node.stageIndex, node.plannedEncounter);
+        if (encounterIndex <= 0)
+        {
+            return $"{prefix}(?)";
+        }
+
+        return $"{prefix}({encounterIndex})";
     }
 
     private Button ResolveNodeButtonPrefab(TrainingMapNodeData node)
@@ -532,10 +547,4 @@ public class TrainingMapController : MonoBehaviour
         BuildMapUI();
     }
 
-    private static bool NodeRequiresBattle(TrainingNodeType nodeType)
-    {
-        return nodeType == TrainingNodeType.Monster
-               || nodeType == TrainingNodeType.Named
-               || nodeType == TrainingNodeType.Boss;
-    }
 }

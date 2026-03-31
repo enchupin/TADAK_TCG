@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 public class MonsterSpawner : MonoBehaviour
@@ -146,6 +148,72 @@ public class MonsterSpawner : MonoBehaviour
         return new List<SpawnMonsterType>(encounter);
     }
 
+    public static List<List<SpawnMonsterType>> GetEncounterCandidates(TrainingNodeType nodeType, int floorNumber)
+    {
+        SpawnMonsterType[][] encounterTable = ResolveEncounterTable(nodeType, floorNumber);
+        List<List<SpawnMonsterType>> candidates = new List<List<SpawnMonsterType>>(encounterTable.Length);
+        for (int i = 0; i < encounterTable.Length; i++)
+        {
+            candidates.Add(new List<SpawnMonsterType>(encounterTable[i]));
+        }
+
+        return candidates;
+    }
+
+    public static string BuildEncounterSignature(IReadOnlyList<SpawnMonsterType> encounter)
+    {
+        if (encounter == null || encounter.Count == 0)
+        {
+            return string.Empty;
+        }
+
+        List<int> sortedMonsterTypes = new List<int>(encounter.Count);
+        for (int i = 0; i < encounter.Count; i++)
+        {
+            sortedMonsterTypes.Add((int)encounter[i]);
+        }
+
+        sortedMonsterTypes.Sort();
+
+        StringBuilder signatureBuilder = new StringBuilder(sortedMonsterTypes.Count * 4);
+        for (int i = 0; i < sortedMonsterTypes.Count; i++)
+        {
+            if (i > 0)
+            {
+                signatureBuilder.Append(',');
+            }
+
+            signatureBuilder.Append(sortedMonsterTypes[i]);
+        }
+
+        return signatureBuilder.ToString();
+    }
+
+    public static int GetEncounterDisplayIndex(TrainingNodeType nodeType, int floorNumber, IReadOnlyList<SpawnMonsterType> encounter)
+    {
+        if (encounter == null || encounter.Count == 0)
+        {
+            return 0;
+        }
+
+        SpawnMonsterType[][] encounterTable = ResolveEncounterTable(nodeType, floorNumber);
+        if (encounterTable == null || encounterTable.Length == 0)
+        {
+            return 0;
+        }
+
+        string targetSignature = BuildEncounterSignature(encounter);
+        for (int i = 0; i < encounterTable.Length; i++)
+        {
+            if (BuildEncounterSignature(encounterTable[i]) == targetSignature)
+            {
+                return i + 1;
+            }
+        }
+
+        return 0;
+    }
+
     public Monster SpawnSummonedMonster(GameObject monsterPrefab)
     {
         if (monsterPrefab == null)
@@ -175,19 +243,23 @@ public class MonsterSpawner : MonoBehaviour
 
     private static SpawnMonsterType[] ResolveEncounter(TrainingNodeType nodeType, int floorNumber)
     {
+        return PickRandomEncounter(ResolveEncounterTable(nodeType, floorNumber));
+    }
+
+    private static SpawnMonsterType[][] ResolveEncounterTable(TrainingNodeType nodeType, int floorNumber)
+    {
         switch (nodeType)
         {
             case TrainingNodeType.Named:
-                return PickRandomEncounter(namedNodeEncounterTable);
+                return namedNodeEncounterTable;
             case TrainingNodeType.Boss:
-                return PickRandomEncounter(bossNodeEncounterTable);
+                return bossNodeEncounterTable;
             case TrainingNodeType.Monster:
-                SpawnMonsterType[][] encounterTable = IsLateGameEncounterFloor(floorNumber)
+                return IsLateGameEncounterFloor(floorNumber)
                     ? lateNormalNodeEncounterTable
                     : earlyNormalNodeEncounterTable;
-                return PickRandomEncounter(encounterTable);
             default:
-                return new SpawnMonsterType[0];
+                return Array.Empty<SpawnMonsterType[]>();
         }
     }
 
@@ -198,7 +270,7 @@ public class MonsterSpawner : MonoBehaviour
             return new SpawnMonsterType[0];
         }
 
-        return encounterTable[Random.Range(0, encounterTable.Length)];
+        return encounterTable[UnityEngine.Random.Range(0, encounterTable.Length)];
     }
 
     private static bool IsLateGameEncounterFloor(int floorNumber)
