@@ -25,7 +25,7 @@ public class SettingsManager : MonoBehaviour
     [SerializeField] private Slider bgmSlider;
     [SerializeField] private Slider sfxSlider;
 
-    private readonly HashSet<int> boundResolutionButtonIds = new();
+    private readonly HashSet<Button> boundResolutionButtons = new();
     private Vector2Int lastObservedResolution;
     private Vector2Int pendingResizeResolution;
     private float pendingResizeChangedAt = -1f;
@@ -127,8 +127,7 @@ public class SettingsManager : MonoBehaviour
                 continue;
             }
 
-            int buttonId = button.GetInstanceID();
-            if (boundResolutionButtonIds.Contains(buttonId)) {
+            if (boundResolutionButtons.Contains(button)) {
                 continue;
             }
 
@@ -139,7 +138,7 @@ public class SettingsManager : MonoBehaviour
 
             Vector2Int capturedResolution = resolution;
             button.onClick.AddListener(() => ApplyResolution(capturedResolution));
-            boundResolutionButtonIds.Add(buttonId);
+            boundResolutionButtons.Add(button);
         }
     }
 

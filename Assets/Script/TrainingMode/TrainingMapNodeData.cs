@@ -8,6 +8,7 @@ public enum TrainingNodeType
     Monster,
     Named,
     Rest,
+    Event,
     Boss
 }
 

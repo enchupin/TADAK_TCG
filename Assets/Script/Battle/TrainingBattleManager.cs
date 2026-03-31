@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -71,6 +72,7 @@ public class TrainingBattleManager : MonoBehaviour
     [SerializeField] private int playerBaseEnergyPerTurn = 3;
     [SerializeField] private float enemyActionDelay = 0.2f;
     [SerializeField] private Button endTurnButton;
+    [SerializeField] private bool showInstantWinButton = true;
     [SerializeField] private bool enableKeyboardEndTurn = true;
 
     [Header("Run Flow")]
@@ -101,6 +103,7 @@ public class TrainingBattleManager : MonoBehaviour
     private EncounterSystem encounterSystem;
     private PowerBuffRuntime powerBuffRuntime;
     private bool hasResolvedBattleResult;
+    private Button instantWinButton;
     private readonly List<PendingMonsterRevive> pendingMonsterRevives = new List<PendingMonsterRevive>();
 
     public float EnemyActionDelay => enemyActionDelay;
@@ -135,6 +138,7 @@ public class TrainingBattleManager : MonoBehaviour
 
         InitializeCharacterSelection();
         InitializeBattle();
+        CreateInstantWinButton();
 
         battleUI?.UpdateAllUI();
         StartGame();
@@ -156,6 +160,74 @@ public class TrainingBattleManager : MonoBehaviour
     private void OnDestroy()
     {
         CardPlayEvents.OnCardPlayed -= HandleCardClicked;
+        if (instantWinButton != null)
+        {
+            instantWinButton.onClick.RemoveListener(OnClickInstantWin);
+        }
+    }
+
+    private void CreateInstantWinButton()
+    {
+        if (!showInstantWinButton || instantWinButton != null || endTurnButton == null)
+        {
+            return;
+        }
+
+        RectTransform parent = endTurnButton.transform.parent as RectTransform;
+        RectTransform endTurnRect = endTurnButton.transform as RectTransform;
+        if (parent == null || endTurnRect == null)
+        {
+            return;
+        }
+
+        instantWinButton = Instantiate(endTurnButton, parent);
+        instantWinButton.name = "InstantWinButton";
+        instantWinButton.onClick.RemoveAllListeners();
+        instantWinButton.onClick.AddListener(OnClickInstantWin);
+
+        RectTransform instantWinRect = instantWinButton.transform as RectTransform;
+        if (instantWinRect != null)
+        {
+            instantWinRect.anchorMin = endTurnRect.anchorMin;
+            instantWinRect.anchorMax = endTurnRect.anchorMax;
+            instantWinRect.pivot = endTurnRect.pivot;
+            instantWinRect.sizeDelta = endTurnRect.sizeDelta;
+            instantWinRect.anchoredPosition = endTurnRect.anchoredPosition + new Vector2(-180f, 0f);
+            instantWinRect.localScale = Vector3.one;
+        }
+
+        SetButtonLabel(instantWinButton, "승리");
+        UpdateEndTurnButtonState();
+    }
+
+    private void OnClickInstantWin()
+    {
+        if (hasResolvedBattleResult)
+        {
+            return;
+        }
+
+        ResolveBattleResult(true);
+    }
+
+    private void SetButtonLabel(Button button, string label)
+    {
+        if (button == null)
+        {
+            return;
+        }
+
+        TMP_Text tmpText = button.GetComponentInChildren<TMP_Text>(true);
+        if (tmpText != null)
+        {
+            tmpText.text = label ?? string.Empty;
+        }
+
+        Text legacyText = button.GetComponentInChildren<Text>(true);
+        if (legacyText != null)
+        {
+            legacyText.text = label ?? string.Empty;
+        }
     }
 
     public void RegisterMonster(Monster monster)
@@ -782,10 +854,15 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void UpdateEndTurnButtonState()
     {
-        if (endTurnButton == null)
-            return;
+        if (endTurnButton != null)
+        {
+            endTurnButton.interactable = CanEndPlayerTurn();
+        }
 
-        endTurnButton.interactable = CanEndPlayerTurn();
+        if (instantWinButton != null)
+        {
+            instantWinButton.interactable = !hasResolvedBattleResult && CurrentTurnState != BattleTurnState.CombatEnd;
+        }
     }
 
     public void RefreshHandPlayableState()
@@ -1439,7 +1516,10 @@ public class TrainingBattleManager : MonoBehaviour
 
         if (shouldPersistRunDeck)
         {
-            TrainingRunDeckPersistence.SaveRunDeckAsPermanentDeck(buildingDeck, SelectedButtonControl.selectedCharacterList);
+            TrainingRunDeckPersistence.SaveRunDeckAsPermanentDeck(
+                buildingDeck,
+                SelectedButtonControl.selectedCharacterList,
+                "보스 클리어로 저장덱을 갱신했습니다");
         }
 
         TrainingRunState.CompletePendingNode(isVictory);
