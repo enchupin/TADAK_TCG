@@ -12,6 +12,35 @@ public enum TrainingNodeType
     Boss
 }
 
+public static class TrainingNodeTypeUtility
+{
+    public static bool RequiresBattle(TrainingNodeType nodeType)
+    {
+        return nodeType == TrainingNodeType.Monster
+               || nodeType == TrainingNodeType.Named
+               || nodeType == TrainingNodeType.Boss;
+    }
+
+    public static bool TryGetEncounterLabelPrefix(TrainingNodeType nodeType, out string prefix)
+    {
+        switch (nodeType)
+        {
+            case TrainingNodeType.Monster:
+                prefix = "M";
+                return true;
+            case TrainingNodeType.Named:
+                prefix = "N";
+                return true;
+            case TrainingNodeType.Boss:
+                prefix = "B";
+                return true;
+            default:
+                prefix = string.Empty;
+                return false;
+        }
+    }
+}
+
 [Serializable]
 public class TrainingMapNodeData
 {
