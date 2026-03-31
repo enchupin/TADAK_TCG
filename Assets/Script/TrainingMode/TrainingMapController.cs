@@ -16,6 +16,7 @@ public class TrainingMapController : MonoBehaviour
     [Header("Run Setup")]
     [SerializeField] private string battleSceneName = "TrainingScene";
     [SerializeField] private string restSceneName = "TrainingRestScene";
+    [SerializeField] private string eventSceneName = "TrainingRestScene";
     [SerializeField] private bool autoStartRunIfMissing = true;
 
     [Header("Node UI")]
@@ -96,6 +97,20 @@ public class TrainingMapController : MonoBehaviour
             return;
         }
 
+        if (node.nodeType == TrainingNodeType.Event)
+        {
+            string targetSceneName = string.IsNullOrEmpty(eventSceneName) ? restSceneName : eventSceneName;
+            if (string.IsNullOrEmpty(targetSceneName))
+            {
+                Debug.LogWarning("[TrainingMapController] Event scene is empty. Resolving event node immediately.");
+                CompleteNodeOnMap();
+                return;
+            }
+
+            SceneManager.LoadScene(targetSceneName);
+            return;
+        }
+
         if (!NodeRequiresBattle(node.nodeType))
         {
             CompleteNodeOnMap();
@@ -136,7 +151,6 @@ public class TrainingMapController : MonoBehaviour
         Image rootImage = nodeRoot.GetComponent<Image>();
         if (rootImage != null)
         {
-            // Root panel is visual-only; do not block child button clicks.
             rootImage.raycastTarget = false;
         }
     }
@@ -333,13 +347,20 @@ public class TrainingMapController : MonoBehaviour
 
     private static void ApplyNodeLabel(Button button, TrainingMapNodeData node)
     {
-        if (button == null || node == null || node.nodeType != TrainingNodeType.Start)
+        if (button == null || node == null)
             return;
 
         TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
-        if (label != null)
+        if (label == null)
+            return;
+
+        if (node.nodeType == TrainingNodeType.Start)
         {
             label.text = "0F";
+        }
+        else if (node.nodeType == TrainingNodeType.Event)
+        {
+            label.text = "이벤트";
         }
     }
 
@@ -354,6 +375,8 @@ public class TrainingMapController : MonoBehaviour
                 return namedNodeButtonPrefab;
             case TrainingNodeType.Rest:
                 return restNodeButtonPrefab;
+            case TrainingNodeType.Event:
+                return namedNodeButtonPrefab != null ? namedNodeButtonPrefab : restNodeButtonPrefab;
             case TrainingNodeType.Boss:
                 return bossNodeButtonPrefab;
             default:
@@ -401,13 +424,13 @@ public class TrainingMapController : MonoBehaviour
 
         if (TrainingRunState.IsRunCompleted)
         {
-            statusText.text = "훈련모드 완료";
+            statusText.text = "훈련 모드 완료";
             return;
         }
 
         if (TrainingRunState.IsRunFailed)
         {
-            statusText.text = "훈련모드 실패";
+            statusText.text = "훈련 모드 실패";
             return;
         }
 

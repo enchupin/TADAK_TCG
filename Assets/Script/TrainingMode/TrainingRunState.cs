@@ -82,27 +82,39 @@ public static class TrainingRunState
 
     public static void StartNewRun(string mapSceneName, string battleSceneName)
     {
+        ResetRun();
+
         MapSceneName = mapSceneName;
         BattleSceneName = battleSceneName;
 
         BuildSimpleMap();
 
+        InitializeRunStartState();
+        IsRunActive = true;
+
+        Debug.Log("[TrainingRunState] New run started.");
+    }
+
+    public static void ResetRun()
+    {
+        nodesById.Clear();
+        orderedNodes.Clear();
         selectableNodeIds.Clear();
         clearedNodeIds.Clear();
 
-        InitializeRunStartState();
-
+        CurrentNodeId = null;
         PendingNodeId = null;
 
         HasPlayerHealthState = false;
         PlayerCurrentHp = 0;
         PlayerMaxHp = 0;
 
+        MapSceneName = string.Empty;
+        BattleSceneName = string.Empty;
+
+        IsRunActive = false;
         IsRunCompleted = false;
         IsRunFailed = false;
-        IsRunActive = true;
-
-        Debug.Log("[TrainingRunState] New run started.");
     }
 
     private static void BuildSimpleMap()
@@ -380,6 +392,9 @@ public static class TrainingRunState
 
         if (stage == BossStageIndex)
             return TrainingNodeType.Boss;
+
+        if (stage == MidTowerSingleNodeStageIndex)
+            return TrainingNodeType.Event;
 
         int combatStageIndex = stage - FirstCombatStageIndex;
         if (combatStageIndex > 0 && combatStageIndex % 3 == 0 && lane == nodeCountInStage - 1)

@@ -94,6 +94,32 @@ public class BuildingDeck
         Debug.Log($"[BuildingDeck] card added: {newCard.cardName} (total {deckList.Count})");
     }
 
+    public bool ReplaceCardAt(int index, int cardId)
+    {
+        if (index < 0 || index >= deckList.Count)
+        {
+            Debug.LogWarning($"[BuildingDeck] 교체할 카드 인덱스가 범위를 벗어났습니다: {index}");
+            return false;
+        }
+
+        Card newCard = CardManager.GetCardAsCard(cardId);
+        if (newCard == null)
+        {
+            Debug.LogWarning($"[BuildingDeck] 교체 카드 생성에 실패했습니다: {cardId}");
+            return false;
+        }
+
+        if (ViolatesUniqueRule(newCard, index))
+        {
+            Debug.LogWarning($"[BuildingDeck] 유일 키워드로 인해 카드를 교체할 수 없습니다: {newCard.cardName}");
+            return false;
+        }
+
+        deckList[index] = newCard;
+        Debug.Log($"[BuildingDeck] card replaced at {index}: {newCard.cardName}");
+        return true;
+    }
+
     /// <summary>
     /// Remove card from run deck.
     /// </summary>
@@ -167,15 +193,21 @@ public class BuildingDeck
         return cardIds;
     }
 
-    private bool ViolatesUniqueRule(Card newCard)
+    private bool ViolatesUniqueRule(Card newCard, int ignoredIndex = -1)
     {
         if (newCard == null)
         {
             return false;
         }
 
-        foreach (Card existingCard in deckList)
+        for (int i = 0; i < deckList.Count; i++)
         {
+            if (i == ignoredIndex)
+            {
+                continue;
+            }
+
+            Card existingCard = deckList[i];
             if (existingCard == null)
             {
                 continue;
@@ -207,7 +239,10 @@ public static class TrainingRunDeckPersistence
         return deck;
     }
 
-    public static void SaveRunDeckAsPermanentDeck(BuildingDeck runDeck, List<Character> selectedCharacters)
+    public static void SaveRunDeckAsPermanentDeck(
+        BuildingDeck runDeck,
+        List<Character> selectedCharacters,
+        string saveReasonLog = "저장덱을 갱신했습니다")
     {
         if (runDeck == null || selectedCharacters == null || selectedCharacters.Count == 0)
         {
@@ -254,7 +289,7 @@ public static class TrainingRunDeckPersistence
         }
 
         ProfileSaveManager.Save(profile);
-        Debug.Log("[TrainingRunDeckPersistence] 보스 클리어로 영구덱을 저장했습니다");
+        Debug.Log($"[TrainingRunDeckPersistence] {saveReasonLog}");
     }
 
     private static List<int> LoadPermanentDeckCardIds(List<Character> selectedCharacters)
