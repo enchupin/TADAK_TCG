@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -71,10 +72,10 @@ public class TrainingBattleManager : MonoBehaviour
     [SerializeField] private int playerBaseEnergyPerTurn = 3;
     [SerializeField] private float enemyActionDelay = 0.2f;
     [SerializeField] private Button endTurnButton;
+    [SerializeField] private bool showInstantWinButton = true;
     [SerializeField] private bool enableKeyboardEndTurn = true;
 
-    [Header("Training Flow")]
-    [SerializeField] private bool enableTrainingRunFlow = true;
+    [Header("Run Flow")]
     [SerializeField] private float battleResultTransitionDelay = 0.8f;
 
     [Header("Spawned Monsters")]
@@ -102,6 +103,7 @@ public class TrainingBattleManager : MonoBehaviour
     private EncounterSystem encounterSystem;
     private PowerBuffRuntime powerBuffRuntime;
     private bool hasResolvedBattleResult;
+    private Button instantWinButton;
     private readonly List<PendingMonsterRevive> pendingMonsterRevives = new List<PendingMonsterRevive>();
 
     public float EnemyActionDelay => enemyActionDelay;
@@ -136,6 +138,7 @@ public class TrainingBattleManager : MonoBehaviour
 
         InitializeCharacterSelection();
         InitializeBattle();
+        CreateInstantWinButton();
 
         battleUI?.UpdateAllUI();
         StartGame();
@@ -157,6 +160,74 @@ public class TrainingBattleManager : MonoBehaviour
     private void OnDestroy()
     {
         CardPlayEvents.OnCardPlayed -= HandleCardClicked;
+        if (instantWinButton != null)
+        {
+            instantWinButton.onClick.RemoveListener(OnClickInstantWin);
+        }
+    }
+
+    private void CreateInstantWinButton()
+    {
+        if (!showInstantWinButton || instantWinButton != null || endTurnButton == null)
+        {
+            return;
+        }
+
+        RectTransform parent = endTurnButton.transform.parent as RectTransform;
+        RectTransform endTurnRect = endTurnButton.transform as RectTransform;
+        if (parent == null || endTurnRect == null)
+        {
+            return;
+        }
+
+        instantWinButton = Instantiate(endTurnButton, parent);
+        instantWinButton.name = "InstantWinButton";
+        instantWinButton.onClick.RemoveAllListeners();
+        instantWinButton.onClick.AddListener(OnClickInstantWin);
+
+        RectTransform instantWinRect = instantWinButton.transform as RectTransform;
+        if (instantWinRect != null)
+        {
+            instantWinRect.anchorMin = endTurnRect.anchorMin;
+            instantWinRect.anchorMax = endTurnRect.anchorMax;
+            instantWinRect.pivot = endTurnRect.pivot;
+            instantWinRect.sizeDelta = endTurnRect.sizeDelta;
+            instantWinRect.anchoredPosition = endTurnRect.anchoredPosition + new Vector2(-180f, 0f);
+            instantWinRect.localScale = Vector3.one;
+        }
+
+        SetButtonLabel(instantWinButton, "승리");
+        UpdateEndTurnButtonState();
+    }
+
+    private void OnClickInstantWin()
+    {
+        if (hasResolvedBattleResult)
+        {
+            return;
+        }
+
+        ResolveBattleResult(true);
+    }
+
+    private void SetButtonLabel(Button button, string label)
+    {
+        if (button == null)
+        {
+            return;
+        }
+
+        TMP_Text tmpText = button.GetComponentInChildren<TMP_Text>(true);
+        if (tmpText != null)
+        {
+            tmpText.text = label ?? string.Empty;
+        }
+
+        Text legacyText = button.GetComponentInChildren<Text>(true);
+        if (legacyText != null)
+        {
+            legacyText.text = label ?? string.Empty;
+        }
     }
 
     public void RegisterMonster(Monster monster)
@@ -304,89 +375,47 @@ public class TrainingBattleManager : MonoBehaviour
         turnSystem.BeginPlayerTurn();
     }
 
-    public void DrawCards(int count)
+    public void DrawCards(int count, bool ignoreRootAbsorption = false)
     {
-        DrawCardsAndGet(count);
+        DrawCardsAndGet(count, ignoreRootAbsorption);
     }
 
-    public List<Card> DrawCardsAndGet(int count)
+    public List<Card> DrawCardsAndGet(int count, bool ignoreRootAbsorption = false)
     {
-        if (count <= 0 || usableDeckManager == null || handManager == null)
-            return new List<Card>();
-
-        if (!CanDrawCards())
-        {
-            return new List<Card>();
-        }
-
-        List<Card> drawnCards = usableDeckManager.DrawCard(count);
-        handManager.AddCard(drawnCards);
-
-        if (battleContext != null)
-        {
-            battleContext.OnCardsDrawn(drawnCards.Count);
-        }
-
-        RefreshHandPlayableState();
-        UpdateAllUI();
-        return drawnCards;
+        return DrawCardsSequentially(count, ignoreRootAbsorption, () => usableDeckManager?.DrawCard());
     }
 
-    public void DrawBasicCards(int count, Character? characterFilter = null)
+    public void DrawBasicCards(int count, Character? characterFilter = null, bool ignoreRootAbsorption = false)
     {
-        DrawBasicCardsAndGet(count, characterFilter);
+        DrawBasicCardsAndGet(count, characterFilter, ignoreRootAbsorption);
     }
 
-    public List<Card> DrawBasicCardsAndGet(int count, Character? characterFilter = null)
+    public List<Card> DrawBasicCardsAndGet(int count, Character? characterFilter = null, bool ignoreRootAbsorption = false)
     {
-        if (count <= 0 || usableDeckManager == null || handManager == null) {
-            return new List<Card>();
-        }
-
-        if (!CanDrawCards()) {
-            return new List<Card>();
-        }
-
-        List<Card> drawnCards = usableDeckManager.DrawBasicCards(count, characterFilter);
-        handManager.AddCard(drawnCards);
-
-        if (battleContext != null) {
-            battleContext.OnCardsDrawn(drawnCards.Count);
-        }
-
-        RefreshHandPlayableState();
-        UpdateAllUI();
-        return drawnCards;
+        return DrawCardsSequentially(count, ignoreRootAbsorption, () =>
+        {
+            List<Card> drawnCards = usableDeckManager?.DrawBasicCards(1, characterFilter);
+            return drawnCards != null && drawnCards.Count > 0 ? drawnCards[0] : null;
+        });
     }
 
-    public void DrawCharacterCards(int count, Character? characterFilter = null)
+    public void DrawCharacterCards(int count, Character? characterFilter = null, bool ignoreRootAbsorption = false)
     {
-        DrawCharacterCardsAndGet(count, characterFilter);
+        DrawCharacterCardsAndGet(count, characterFilter, ignoreRootAbsorption);
     }
 
-    public List<Card> DrawCharacterCardsAndGet(int count, Character? characterFilter = null)
+    public List<Card> DrawCharacterCardsAndGet(int count, Character? characterFilter = null, bool ignoreRootAbsorption = false)
     {
-        if (count <= 0 || usableDeckManager == null || handManager == null)
+        return DrawCardsSequentially(count, ignoreRootAbsorption, () =>
         {
-            return new List<Card>();
-        }
+            if (!characterFilter.HasValue)
+            {
+                return null;
+            }
 
-        if (!CanDrawCards())
-        {
-            return new List<Card>();
-        }
-
-        List<Card> drawnCards = usableDeckManager.DrawCharacterCards(count, characterFilter);
-        handManager.AddCard(drawnCards);
-
-        if (battleContext != null)
-        {
-            battleContext.OnCardsDrawn(drawnCards.Count);
-        }
-
-        RefreshHandPlayableState();
-        UpdateAllUI();
-        return drawnCards;
+            List<Card> drawnCards = usableDeckManager?.DrawCharacterCards(1, characterFilter);
+            return drawnCards != null && drawnCards.Count > 0 ? drawnCards[0] : null;
+        });
     }
 
     [ContextMenu("Debug Draw Matching Cards")]
@@ -797,7 +826,7 @@ public class TrainingBattleManager : MonoBehaviour
             ? "[BattleManager] Victory. All enemies are dead."
             : "[BattleManager] Defeat. Player is dead.");
 
-        if (enableTrainingRunFlow && TrainingRunState.IsRunActive)
+        if (TrainingRunState.IsRunActive)
         {
             StartCoroutine(HandleTrainingRunBattleResult(isVictory));
         }
@@ -825,10 +854,15 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void UpdateEndTurnButtonState()
     {
-        if (endTurnButton == null)
-            return;
+        if (endTurnButton != null)
+        {
+            endTurnButton.interactable = CanEndPlayerTurn();
+        }
 
-        endTurnButton.interactable = CanEndPlayerTurn();
+        if (instantWinButton != null)
+        {
+            instantWinButton.interactable = !hasResolvedBattleResult && CurrentTurnState != BattleTurnState.CombatEnd;
+        }
     }
 
     public void RefreshHandPlayableState()
@@ -871,6 +905,25 @@ public class TrainingBattleManager : MonoBehaviour
     public bool CanDrawCards()
     {
         return powerBuffRuntime == null || powerBuffRuntime.CanDrawCards();
+    }
+
+    public bool HasCardInHand(int cardId)
+    {
+        if (cardId <= 0 || handManager == null)
+        {
+            return false;
+        }
+
+        List<Card> handCards = handManager.GetHandCards();
+        foreach (Card handCard in handCards)
+        {
+            if (handCard != null && handCard.cardId == cardId)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public bool CanGainCardsToHand()
@@ -1319,22 +1372,26 @@ public class TrainingBattleManager : MonoBehaviour
             return;
         }
 
-        List<Monster> encounterMonsters = monsterSpawner.SpawnEncounter(ResolveCurrentEncounterNodeType());
+        TrainingMapNodeData encounterNode = ResolveCurrentEncounterNode();
+        List<Monster> encounterMonsters = encounterNode != null && encounterNode.HasPlannedEncounter
+            ? monsterSpawner.SpawnEncounter(encounterNode.plannedEncounter)
+            : monsterSpawner.SpawnEncounter(encounterNode != null ? encounterNode.nodeType : TrainingNodeType.Monster);
+
         foreach (Monster monster in encounterMonsters)
         {
             RegisterMonster(monster);
         }
     }
 
-    private TrainingNodeType ResolveCurrentEncounterNodeType()
+    private TrainingMapNodeData ResolveCurrentEncounterNode()
     {
         if (TrainingRunState.PendingNodeId.HasValue
             && TrainingRunState.TryGetNode(TrainingRunState.PendingNodeId.Value, out TrainingMapNodeData pendingNode))
         {
-            return pendingNode.nodeType;
+            return pendingNode;
         }
 
-        return TrainingNodeType.Monster;
+        return null;
     }
 
     private List<Card> BuildDebugBattleDeck()
@@ -1374,6 +1431,66 @@ public class TrainingBattleManager : MonoBehaviour
         return debugDeck;
     }
 
+    private List<Card> DrawCardsSequentially(int count, bool ignoreRootAbsorption, Func<Card> drawCard)
+    {
+        List<Card> drawnCards = new List<Card>();
+        if (count <= 0 || drawCard == null || handManager == null || usableDeckManager == null)
+        {
+            return drawnCards;
+        }
+
+        if (!CanStartDraw(ignoreRootAbsorption))
+        {
+            return drawnCards;
+        }
+
+        for (int drawIndex = 0; drawIndex < count; drawIndex++)
+        {
+            if (!ignoreRootAbsorption && HasRootAbsorptionInHand())
+            {
+                break;
+            }
+
+            Card drawnCard = drawCard();
+            if (drawnCard == null)
+            {
+                break;
+            }
+
+            drawnCards.Add(drawnCard);
+            handManager.AddCard(drawnCard);
+
+            if (!ignoreRootAbsorption && drawnCard.cardId == BattleRuntimeDefinitions.RootAbsorptionCardId)
+            {
+                break;
+            }
+        }
+
+        if (battleContext != null && drawnCards.Count > 0)
+        {
+            battleContext.OnCardsDrawn(drawnCards.Count);
+        }
+
+        RefreshHandPlayableState();
+        UpdateAllUI();
+        return drawnCards;
+    }
+
+    private bool CanStartDraw(bool ignoreRootAbsorption)
+    {
+        if (!CanDrawCards())
+        {
+            return false;
+        }
+
+        return ignoreRootAbsorption || !HasRootAbsorptionInHand();
+    }
+
+    private bool HasRootAbsorptionInHand()
+    {
+        return HasCardInHand(BattleRuntimeDefinitions.RootAbsorptionCardId);
+    }
+
     private System.Collections.IEnumerator HandleTrainingRunBattleResult(bool isVictory)
     {
         if (battleResultTransitionDelay > 0f)
@@ -1384,12 +1501,12 @@ public class TrainingBattleManager : MonoBehaviour
         if (!TrainingRunState.HasMapData)
             yield break;
 
-        TrainingNodeType pendingNodeType = TrainingNodeType.Monster;
+        bool shouldPersistRunDeck = false;
         if (isVictory
             && TrainingRunState.PendingNodeId.HasValue
             && TrainingRunState.TryGetNode(TrainingRunState.PendingNodeId.Value, out TrainingMapNodeData pendingNode))
         {
-            pendingNodeType = pendingNode.nodeType;
+            shouldPersistRunDeck = pendingNode.nodeType == TrainingNodeType.Boss;
         }
 
         if (PlayerData.Instance != null)
@@ -1397,12 +1514,12 @@ public class TrainingBattleManager : MonoBehaviour
             TrainingRunState.SetPlayerHealthState(PlayerData.Instance.hp, PlayerData.Instance.maxHP);
         }
 
-        if (isVictory)
+        if (shouldPersistRunDeck)
         {
-            TrainingRunDeckPersistence.TrySaveRunDeckAsPermanentDeck(
+            TrainingRunDeckPersistence.SaveRunDeckAsPermanentDeck(
                 buildingDeck,
                 SelectedButtonControl.selectedCharacterList,
-                pendingNodeType);
+                "보스 클리어로 저장덱을 갱신했습니다");
         }
 
         TrainingRunState.CompletePendingNode(isVictory);

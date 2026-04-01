@@ -16,10 +16,8 @@ public class TrainingMapController : MonoBehaviour
     [Header("Run Setup")]
     [SerializeField] private string battleSceneName = "TrainingScene";
     [SerializeField] private string restSceneName = "TrainingRestScene";
-    [SerializeField] private string escapeSceneName = string.Empty;
+    [SerializeField] private string eventSceneName = "TrainingRestScene";
     [SerializeField] private bool autoStartRunIfMissing = true;
-    [SerializeField] private int defaultStageCount = 15;
-    [SerializeField] private int defaultLaneCount = 4;
 
     [Header("Node UI")]
     [SerializeField] private RectTransform nodeRoot;
@@ -28,7 +26,6 @@ public class TrainingMapController : MonoBehaviour
     [SerializeField] private Button namedNodeButtonPrefab;
     [SerializeField] private Button restNodeButtonPrefab;
     [SerializeField] private Button bossNodeButtonPrefab;
-    [SerializeField] private Button escapeNodeButtonPrefab;
     [SerializeField] private Vector2 nodeSpacing = new Vector2(260f, 170f);
     [SerializeField] private Vector2 nodeSize = new Vector2(110f, 56f);
     [SerializeField] private Vector2 mapPadding = new Vector2(80f, 80f);
@@ -100,20 +97,21 @@ public class TrainingMapController : MonoBehaviour
             return;
         }
 
-        if (node.nodeType == TrainingNodeType.Escape)
+        if (node.nodeType == TrainingNodeType.Event)
         {
-            if (!string.IsNullOrEmpty(escapeSceneName))
+            string targetSceneName = string.IsNullOrEmpty(eventSceneName) ? restSceneName : eventSceneName;
+            if (string.IsNullOrEmpty(targetSceneName))
             {
-                SceneManager.LoadScene(escapeSceneName);
+                Debug.LogWarning("[TrainingMapController] Event scene is empty. Resolving event node immediately.");
+                CompleteNodeOnMap();
                 return;
             }
 
-            SaveRunDeckForEscape();
-            CompleteNodeOnMap();
+            SceneManager.LoadScene(targetSceneName);
             return;
         }
 
-        if (!NodeRequiresBattle(node.nodeType))
+        if (!TrainingNodeTypeUtility.RequiresBattle(node.nodeType))
         {
             CompleteNodeOnMap();
             return;
@@ -137,7 +135,7 @@ public class TrainingMapController : MonoBehaviour
             return;
 
         string mapSceneName = SceneManager.GetActiveScene().name;
-        TrainingRunState.StartNewRun(mapSceneName, battleSceneName, defaultStageCount, defaultLaneCount);
+        TrainingRunState.StartNewRun(mapSceneName, battleSceneName);
     }
 
     private void EnsureNodeRoot()
@@ -153,7 +151,6 @@ public class TrainingMapController : MonoBehaviour
         Image rootImage = nodeRoot.GetComponent<Image>();
         if (rootImage != null)
         {
-            // Root panel is visual-only; do not block child button clicks.
             rootImage.raycastTarget = false;
         }
     }
@@ -213,6 +210,7 @@ public class TrainingMapController : MonoBehaviour
         int capturedNodeId = node.nodeId;
         button.onClick.AddListener(() => OnNodeSelected(capturedNodeId));
 
+        ApplyNodeLabel(button, node);
         ApplyNodeVisual(button, isSelectable, isCleared, isCurrent);
         spawnedNodeObjects.Add(button.gameObject);
     }
@@ -281,13 +279,19 @@ public class TrainingMapController : MonoBehaviour
         bool isFromCleared = TrainingRunState.IsNodeCleared(fromNodeId);
         bool isToCleared = TrainingRunState.IsNodeCleared(toNodeId);
         bool isFromCurrent = TrainingRunState.CurrentNodeId.HasValue && TrainingRunState.CurrentNodeId.Value == fromNodeId;
-        bool isFromSelectable = TrainingRunState.IsNodeSelectable(fromNodeId);
         bool isToSelectable = TrainingRunState.IsNodeSelectable(toNodeId);
+        bool isFromStartNode = false;
+
+        if (!TrainingRunState.CurrentNodeId.HasValue
+            && TrainingRunState.TryGetNode(fromNodeId, out TrainingMapNodeData fromNode))
+        {
+            isFromStartNode = fromNode.nodeType == TrainingNodeType.Start;
+        }
 
         if (isFromCleared && isToCleared)
             return clearedConnectionColor;
 
-        if (isFromCurrent || isFromSelectable || isToSelectable)
+        if ((isFromCurrent || isFromStartNode) && isToSelectable)
             return selectableConnectionColor;
 
         return lockedConnectionColor;
@@ -341,20 +345,55 @@ public class TrainingMapController : MonoBehaviour
         }
     }
 
+    private static void ApplyNodeLabel(Button button, TrainingMapNodeData node)
+    {
+        if (button == null || node == null)
+            return;
+
+        TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
+        if (label == null)
+            return;
+
+        if (node.nodeType == TrainingNodeType.Start)
+        {
+            label.text = "0F";
+        }
+        else if (TrainingNodeTypeUtility.TryGetEncounterLabelPrefix(node.nodeType, out string encounterLabelPrefix))
+        {
+            label.text = BuildEncounterLabel(encounterLabelPrefix, node);
+        }
+        else if (node.nodeType == TrainingNodeType.Event)
+        {
+            label.text = "이벤트";
+        }
+    }
+
+    private static string BuildEncounterLabel(string prefix, TrainingMapNodeData node)
+    {
+        int encounterIndex = MonsterSpawner.GetEncounterDisplayIndex(node.nodeType, node.stageIndex, node.plannedEncounter);
+        if (encounterIndex <= 0)
+        {
+            return $"{prefix}(?)";
+        }
+
+        return $"{prefix}({encounterIndex})";
+    }
+
     private Button ResolveNodeButtonPrefab(TrainingMapNodeData node)
     {
         switch (node.nodeType)
         {
+            case TrainingNodeType.Start:
             case TrainingNodeType.Monster:
                 return monsterNodeButtonPrefab;
             case TrainingNodeType.Named:
                 return namedNodeButtonPrefab;
             case TrainingNodeType.Rest:
                 return restNodeButtonPrefab;
+            case TrainingNodeType.Event:
+                return namedNodeButtonPrefab != null ? namedNodeButtonPrefab : restNodeButtonPrefab;
             case TrainingNodeType.Boss:
                 return bossNodeButtonPrefab;
-            case TrainingNodeType.Escape:
-                return escapeNodeButtonPrefab != null ? escapeNodeButtonPrefab : restNodeButtonPrefab;
             default:
                 return null;
         }
@@ -400,13 +439,13 @@ public class TrainingMapController : MonoBehaviour
 
         if (TrainingRunState.IsRunCompleted)
         {
-            statusText.text = "훈련모드 완료";
+            statusText.text = "훈련 모드 완료";
             return;
         }
 
         if (TrainingRunState.IsRunFailed)
         {
-            statusText.text = "훈련모드 실패";
+            statusText.text = "훈련 모드 실패";
             return;
         }
 
@@ -505,27 +544,7 @@ public class TrainingMapController : MonoBehaviour
     private void CompleteNodeOnMap()
     {
         TrainingRunState.CompletePendingNode(true);
-
-        if (TrainingRunState.IsRunCompleted || TrainingRunState.IsRunFailed)
-        {
-            TrainingBattleManager.buildingDeck = null;
-        }
-
         BuildMapUI();
     }
 
-    private void SaveRunDeckForEscape()
-    {
-        TrainingRunDeckPersistence.TrySaveRunDeckAsPermanentDeck(
-            TrainingBattleManager.buildingDeck,
-            SelectedButtonControl.selectedCharacterList,
-            TrainingNodeType.Escape);
-    }
-
-    private static bool NodeRequiresBattle(TrainingNodeType nodeType)
-    {
-        return nodeType == TrainingNodeType.Monster
-               || nodeType == TrainingNodeType.Named
-               || nodeType == TrainingNodeType.Boss;
-    }
 }

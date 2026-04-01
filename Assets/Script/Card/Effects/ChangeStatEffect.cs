@@ -138,9 +138,7 @@ public class ChangeStatEffect : ICardEffect
             return 0;
         }
 
-        monster.defense = Mathf.Max(0, currentBarrier - changedAmount);
-        monster.UpdateUI();
-        return changedAmount;
+        return monster.RemoveDefense(changedAmount);
     }
 
     private int ResolveBarrierChangeAmount(int currentBarrier, string normalizedChange, TrainingBattleManager battleManager, int forwardedAmount)

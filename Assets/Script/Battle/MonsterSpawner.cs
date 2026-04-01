@@ -1,18 +1,28 @@
+using System;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 public class MonsterSpawner : MonoBehaviour
 {
     private const int MaxMonsterCount = 5;
 
-    private enum SpawnMonsterType
+    public enum SpawnMonsterType
     {
         MutantFlower,
         MutantCarnivorousPlant,
         MutantMushroom,
+        MutantSweetPotato,
+        MutantCarrot,
+        Mirror,
+        Cactus,
+        WoodenPuppet,
+        VoidBug,
         JackORipper,
         GiantFlowerSpider,
         Prophet,
+        IceAndFireBoss,
+        VoidLordBoss,
         StoneShieldGolem,
         StoneThrowGolem,
         StoneStealGolem,
@@ -24,18 +34,33 @@ public class MonsterSpawner : MonoBehaviour
         VoidBeast
     }
 
-    private static readonly SpawnMonsterType[][] normalNodeEncounterTable =
+    private static readonly SpawnMonsterType[][] earlyNormalNodeEncounterTable =
     {
         new[] { SpawnMonsterType.MutantFlower, SpawnMonsterType.MutantCarnivorousPlant },
         new[] { SpawnMonsterType.MutantFlower, SpawnMonsterType.MutantMushroom },
         new[] { SpawnMonsterType.MutantCarnivorousPlant, SpawnMonsterType.MutantMushroom },
-        new[] { SpawnMonsterType.JackORipper },
         new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneThrowGolem, SpawnMonsterType.StoneStealGolem },
         new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneThrowGolem, SpawnMonsterType.StoneThrowGolem },
         new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem },
         new[] { SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem },
+        new[] { SpawnMonsterType.VoidBug, SpawnMonsterType.VoidBug },
+        new[] { SpawnMonsterType.MutantSweetPotato, SpawnMonsterType.MutantCarrot },
+        new[] { SpawnMonsterType.FireSpirit, SpawnMonsterType.FireSpirit },
+        new[] { SpawnMonsterType.Mirror },
+        new[] { SpawnMonsterType.WoodenPuppet, SpawnMonsterType.WoodenPuppet }
+    };
+
+    private static readonly SpawnMonsterType[][] lateNormalNodeEncounterTable =
+    {
+        new[] { SpawnMonsterType.MutantFlower, SpawnMonsterType.MutantCarnivorousPlant, SpawnMonsterType.MutantMushroom },
+        new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneThrowGolem, SpawnMonsterType.StoneThrowGolem, SpawnMonsterType.StoneStealGolem },
+        new[] { SpawnMonsterType.VoidBug, SpawnMonsterType.VoidBug, SpawnMonsterType.VoidBug },
+        new[] { SpawnMonsterType.MutantSweetPotato, SpawnMonsterType.MutantSweetPotato, SpawnMonsterType.MutantCarrot },
+        new[] { SpawnMonsterType.MutantSweetPotato, SpawnMonsterType.MutantCarrot, SpawnMonsterType.MutantCarrot },
+        new[] { SpawnMonsterType.JackORipper },
         new[] { SpawnMonsterType.HauntedCloth },
-        new[] { SpawnMonsterType.FireSpirit, SpawnMonsterType.FireSpirit }
+        new[] { SpawnMonsterType.FireSpirit, SpawnMonsterType.FireSpirit, SpawnMonsterType.FireSpirit },
+        new[] { SpawnMonsterType.Cactus, SpawnMonsterType.Cactus }
     };
 
     private static readonly SpawnMonsterType[][] namedNodeEncounterTable =
@@ -48,15 +73,22 @@ public class MonsterSpawner : MonoBehaviour
 
     private static readonly SpawnMonsterType[][] bossNodeEncounterTable =
     {
-        new[] { SpawnMonsterType.JackORipper },
         new[] { SpawnMonsterType.GiantFlowerSpider },
-        new[] { SpawnMonsterType.Prophet }
+        new[] { SpawnMonsterType.Mirror, SpawnMonsterType.Mirror, SpawnMonsterType.Prophet },
+        new[] { SpawnMonsterType.IceAndFireBoss },
+        new[] { SpawnMonsterType.VoidBug, SpawnMonsterType.VoidBeast, SpawnMonsterType.VoidLordBoss }
     };
 
     [Header("일반 몬스터 프리팹")]
     [SerializeField] private GameObject mutantFlowerPrefab;
     [SerializeField] private GameObject mutantCarnivorousPlantPrefab;
     [SerializeField] private GameObject mutantMushroomPrefab;
+    [SerializeField] private GameObject mutantSweetPotatoPrefab;
+    [SerializeField] private GameObject mutantCarrotPrefab;
+    [SerializeField] private GameObject mirrorPrefab;
+    [SerializeField] private GameObject cactusPrefab;
+    [SerializeField] private GameObject woodenPuppetPrefab;
+    [SerializeField] private GameObject voidBugPrefab;
     [SerializeField] private GameObject jackORipperPrefab;
     [SerializeField] private GameObject giantFlowerSpiderPrefab;
     [SerializeField] private GameObject prophetPrefab;
@@ -79,10 +111,19 @@ public class MonsterSpawner : MonoBehaviour
 
     public List<Monster> SpawnEncounter(TrainingNodeType nodeType)
     {
-        SpawnMonsterType[] encounter = ResolveEncounter(nodeType);
-        List<Monster> spawnedMonsters = new List<Monster>(encounter.Length);
+        return SpawnEncounter(CreateEncounterPlan(nodeType, ResolveCurrentFloorNumber()));
+    }
 
-        for (int i = 0; i < encounter.Length; i++)
+    public List<Monster> SpawnEncounter(IReadOnlyList<SpawnMonsterType> encounter)
+    {
+        if (encounter == null || encounter.Count == 0)
+        {
+            return new List<Monster>();
+        }
+
+        List<Monster> spawnedMonsters = new List<Monster>(encounter.Count);
+
+        for (int i = 0; i < encounter.Count; i++)
         {
             GameObject monsterPrefab = ResolveMonsterPrefab(encounter[i]);
             if (monsterPrefab == null)
@@ -99,6 +140,78 @@ public class MonsterSpawner : MonoBehaviour
         }
 
         return spawnedMonsters;
+    }
+
+    public static List<SpawnMonsterType> CreateEncounterPlan(TrainingNodeType nodeType, int floorNumber)
+    {
+        SpawnMonsterType[] encounter = ResolveEncounter(nodeType, floorNumber);
+        return new List<SpawnMonsterType>(encounter);
+    }
+
+    public static List<List<SpawnMonsterType>> GetEncounterCandidates(TrainingNodeType nodeType, int floorNumber)
+    {
+        SpawnMonsterType[][] encounterTable = ResolveEncounterTable(nodeType, floorNumber);
+        List<List<SpawnMonsterType>> candidates = new List<List<SpawnMonsterType>>(encounterTable.Length);
+        for (int i = 0; i < encounterTable.Length; i++)
+        {
+            candidates.Add(new List<SpawnMonsterType>(encounterTable[i]));
+        }
+
+        return candidates;
+    }
+
+    public static string BuildEncounterSignature(IReadOnlyList<SpawnMonsterType> encounter)
+    {
+        if (encounter == null || encounter.Count == 0)
+        {
+            return string.Empty;
+        }
+
+        List<int> sortedMonsterTypes = new List<int>(encounter.Count);
+        for (int i = 0; i < encounter.Count; i++)
+        {
+            sortedMonsterTypes.Add((int)encounter[i]);
+        }
+
+        sortedMonsterTypes.Sort();
+
+        StringBuilder signatureBuilder = new StringBuilder(sortedMonsterTypes.Count * 4);
+        for (int i = 0; i < sortedMonsterTypes.Count; i++)
+        {
+            if (i > 0)
+            {
+                signatureBuilder.Append(',');
+            }
+
+            signatureBuilder.Append(sortedMonsterTypes[i]);
+        }
+
+        return signatureBuilder.ToString();
+    }
+
+    public static int GetEncounterDisplayIndex(TrainingNodeType nodeType, int floorNumber, IReadOnlyList<SpawnMonsterType> encounter)
+    {
+        if (encounter == null || encounter.Count == 0)
+        {
+            return 0;
+        }
+
+        SpawnMonsterType[][] encounterTable = ResolveEncounterTable(nodeType, floorNumber);
+        if (encounterTable == null || encounterTable.Length == 0)
+        {
+            return 0;
+        }
+
+        string targetSignature = BuildEncounterSignature(encounter);
+        for (int i = 0; i < encounterTable.Length; i++)
+        {
+            if (BuildEncounterSignature(encounterTable[i]) == targetSignature)
+            {
+                return i + 1;
+            }
+        }
+
+        return 0;
     }
 
     public Monster SpawnSummonedMonster(GameObject monsterPrefab)
@@ -128,18 +241,58 @@ public class MonsterSpawner : MonoBehaviour
         reservedSummonCount = 0;
     }
 
-    private SpawnMonsterType[] ResolveEncounter(TrainingNodeType nodeType)
+    private static SpawnMonsterType[] ResolveEncounter(TrainingNodeType nodeType, int floorNumber)
+    {
+        return PickRandomEncounter(ResolveEncounterTable(nodeType, floorNumber));
+    }
+
+    private static SpawnMonsterType[][] ResolveEncounterTable(TrainingNodeType nodeType, int floorNumber)
     {
         switch (nodeType)
         {
             case TrainingNodeType.Named:
-                return namedNodeEncounterTable[Random.Range(0, namedNodeEncounterTable.Length)];
+                return namedNodeEncounterTable;
             case TrainingNodeType.Boss:
-                return bossNodeEncounterTable[Random.Range(0, bossNodeEncounterTable.Length)];
+                return bossNodeEncounterTable;
             case TrainingNodeType.Monster:
+                return IsLateGameEncounterFloor(floorNumber)
+                    ? lateNormalNodeEncounterTable
+                    : earlyNormalNodeEncounterTable;
             default:
-                return normalNodeEncounterTable[Random.Range(0, normalNodeEncounterTable.Length)];
+                return Array.Empty<SpawnMonsterType[]>();
         }
+    }
+
+    private static SpawnMonsterType[] PickRandomEncounter(SpawnMonsterType[][] encounterTable)
+    {
+        if (encounterTable == null || encounterTable.Length == 0)
+        {
+            return new SpawnMonsterType[0];
+        }
+
+        return encounterTable[UnityEngine.Random.Range(0, encounterTable.Length)];
+    }
+
+    private static bool IsLateGameEncounterFloor(int floorNumber)
+    {
+        return floorNumber >= 9;
+    }
+
+    private static int ResolveCurrentFloorNumber()
+    {
+        if (TrainingRunState.PendingNodeId.HasValue
+            && TrainingRunState.TryGetNode(TrainingRunState.PendingNodeId.Value, out TrainingMapNodeData pendingNode))
+        {
+            return pendingNode.stageIndex;
+        }
+
+        if (TrainingRunState.CurrentNodeId.HasValue
+            && TrainingRunState.TryGetNode(TrainingRunState.CurrentNodeId.Value, out TrainingMapNodeData currentNode))
+        {
+            return currentNode.stageIndex;
+        }
+
+        return 1;
     }
 
     private Monster SpawnMonsterToAvailableSlot(GameObject monsterPrefab)
@@ -241,12 +394,28 @@ public class MonsterSpawner : MonoBehaviour
                 return mutantCarnivorousPlantPrefab;
             case SpawnMonsterType.MutantMushroom:
                 return mutantMushroomPrefab;
+            case SpawnMonsterType.MutantSweetPotato:
+                return mutantSweetPotatoPrefab;
+            case SpawnMonsterType.MutantCarrot:
+                return mutantCarrotPrefab;
+            case SpawnMonsterType.Mirror:
+                return mirrorPrefab;
+            case SpawnMonsterType.Cactus:
+                return cactusPrefab;
+            case SpawnMonsterType.WoodenPuppet:
+                return woodenPuppetPrefab;
+            case SpawnMonsterType.VoidBug:
+                return voidBugPrefab;
             case SpawnMonsterType.JackORipper:
                 return jackORipperPrefab;
             case SpawnMonsterType.GiantFlowerSpider:
                 return giantFlowerSpiderPrefab;
             case SpawnMonsterType.Prophet:
                 return prophetPrefab;
+            case SpawnMonsterType.IceAndFireBoss:
+                return LoadMonsterPrefabFromResources("IceAndFireBoss");
+            case SpawnMonsterType.VoidLordBoss:
+                return LoadMonsterPrefabFromResources("VoidLordBoss");
             case SpawnMonsterType.StoneShieldGolem:
                 return stoneShieldGolemPrefab;
             case SpawnMonsterType.StoneThrowGolem:
@@ -268,5 +437,15 @@ public class MonsterSpawner : MonoBehaviour
             default:
                 return null;
         }
+    }
+
+    private static GameObject LoadMonsterPrefabFromResources(string prefabName)
+    {
+        if (string.IsNullOrWhiteSpace(prefabName))
+        {
+            return null;
+        }
+
+        return Resources.Load<GameObject>($"MonsterPrefabs/{prefabName}");
     }
 }

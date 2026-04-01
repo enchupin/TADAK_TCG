@@ -2821,7 +2821,6 @@ MonoBehaviour:
   enemyActionDelay: 0.2
   endTurnButton: {fileID: 1007523897}
   enableKeyboardEndTurn: 1
-  enableTrainingRunFlow: 0
   battleResultTransitionDelay: 0.8
   spawnedMonsters: []
   isDebugMode: 0
@@ -3485,6 +3484,12 @@ MonoBehaviour:
   mutantFlowerPrefab: {fileID: 5506351440769215535, guid: 7610934366e5700489efa72e882351a2, type: 3}
   mutantCarnivorousPlantPrefab: {fileID: 5506351440769215535, guid: b9b223d43f2f4c3eaeb7d4c17d0d7f41, type: 3}
   mutantMushroomPrefab: {fileID: 5506351440769215535, guid: 0dcf70d4a2a34984b4a4e7d45b567e89, type: 3}
+  mutantSweetPotatoPrefab: {fileID: 5506351440769215535, guid: 3348bb0c411d4ba28da82b226b6681f2, type: 3}
+  mutantCarrotPrefab: {fileID: 5506351440769215535, guid: 44406c3ade21452ba03c0da559c1fdcf, type: 3}
+  mirrorPrefab: {fileID: 5506351440769215535, guid: 4b7ad84e85304e1e808ba7bdab71c08a, type: 3}
+  cactusPrefab: {fileID: 5506351440769215535, guid: e608bcd923e143b3853b680cc814810e, type: 3}
+  woodenPuppetPrefab: {fileID: 5506351440769215535, guid: 1b9b4eac15264117b99856976f5d8664, type: 3}
+  voidBugPrefab: {fileID: 5506351440769215535, guid: c91401c2e1ce493eb5d065c68f7d387f, type: 3}
   jackORipperPrefab: {fileID: 5506351440769215535, guid: daaa8abfc9ff4507b17464a40d1ab0e7, type: 3}
   giantFlowerSpiderPrefab: {fileID: 5506351440769215535, guid: 47ddd5f6ef944d22ae66b3e793b358c6, type: 3}
   prophetPrefab: {fileID: 5506351440769215535, guid: 8ca66e8c908d4e65beb5ae1e53eeda22, type: 3}

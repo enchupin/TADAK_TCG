@@ -1867,6 +1867,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -4342,7 +4343,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2079744163
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4417,8 +4418,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SceneChanger
   trainingMapSceneName: TrainingMapScene
   trainingBattleSceneName: TrainingScene
-  trainingStageCount: 15
-  trainingLaneCount: 4
 --- !u!114 &2094119973
 MonoBehaviour:
   m_ObjectHideFlags: 0

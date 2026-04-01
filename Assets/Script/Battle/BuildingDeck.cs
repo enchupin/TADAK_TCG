@@ -94,6 +94,32 @@ public class BuildingDeck
         Debug.Log($"[BuildingDeck] card added: {newCard.cardName} (total {deckList.Count})");
     }
 
+    public bool ReplaceCardAt(int index, int cardId)
+    {
+        if (index < 0 || index >= deckList.Count)
+        {
+            Debug.LogWarning($"[BuildingDeck] 교체할 카드 인덱스가 범위를 벗어났습니다: {index}");
+            return false;
+        }
+
+        Card newCard = CardManager.GetCardAsCard(cardId);
+        if (newCard == null)
+        {
+            Debug.LogWarning($"[BuildingDeck] 교체 카드 생성에 실패했습니다: {cardId}");
+            return false;
+        }
+
+        if (ViolatesUniqueRule(newCard, index))
+        {
+            Debug.LogWarning($"[BuildingDeck] 유일 키워드로 인해 카드를 교체할 수 없습니다: {newCard.cardName}");
+            return false;
+        }
+
+        deckList[index] = newCard;
+        Debug.Log($"[BuildingDeck] card replaced at {index}: {newCard.cardName}");
+        return true;
+    }
+
     /// <summary>
     /// Remove card from run deck.
     /// </summary>
@@ -167,15 +193,21 @@ public class BuildingDeck
         return cardIds;
     }
 
-    private bool ViolatesUniqueRule(Card newCard)
+    private bool ViolatesUniqueRule(Card newCard, int ignoredIndex = -1)
     {
         if (newCard == null)
         {
             return false;
         }
 
-        foreach (Card existingCard in deckList)
+        for (int i = 0; i < deckList.Count; i++)
         {
+            if (i == ignoredIndex)
+            {
+                continue;
+            }
+
+            Card existingCard = deckList[i];
             if (existingCard == null)
             {
                 continue;
@@ -207,28 +239,10 @@ public static class TrainingRunDeckPersistence
         return deck;
     }
 
-    public static bool ShouldPersistRunDeck(TrainingNodeType nodeType)
-    {
-        return nodeType == TrainingNodeType.Boss || nodeType == TrainingNodeType.Escape;
-    }
-
-    public static bool TrySaveRunDeckAsPermanentDeck(BuildingDeck runDeck, List<Character> selectedCharacters, TrainingNodeType nodeType)
-    {
-        if (!ShouldPersistRunDeck(nodeType))
-        {
-            return false;
-        }
-
-        SaveRunDeckAsPermanentDeckInternal(runDeck, selectedCharacters, nodeType);
-        return true;
-    }
-
-    public static void SaveRunDeckAsPermanentDeck(BuildingDeck runDeck, List<Character> selectedCharacters)
-    {
-        SaveRunDeckAsPermanentDeckInternal(runDeck, selectedCharacters, TrainingNodeType.Boss);
-    }
-
-    private static void SaveRunDeckAsPermanentDeckInternal(BuildingDeck runDeck, List<Character> selectedCharacters, TrainingNodeType nodeType)
+    public static void SaveRunDeckAsPermanentDeck(
+        BuildingDeck runDeck,
+        List<Character> selectedCharacters,
+        string saveReasonLog = "저장덱을 갱신했습니다")
     {
         if (runDeck == null || selectedCharacters == null || selectedCharacters.Count == 0)
         {
@@ -275,7 +289,7 @@ public static class TrainingRunDeckPersistence
         }
 
         ProfileSaveManager.Save(profile);
-        Debug.Log($"[TrainingRunDeckPersistence] {GetPersistReason(nodeType)} 영구덱을 저장했습니다");
+        Debug.Log($"[TrainingRunDeckPersistence] {saveReasonLog}");
     }
 
     private static List<int> LoadPermanentDeckCardIds(List<Character> selectedCharacters)
@@ -368,18 +382,5 @@ public static class TrainingRunDeckPersistence
         }
 
         return cardIds;
-    }
-
-    private static string GetPersistReason(TrainingNodeType nodeType)
-    {
-        switch (nodeType)
-        {
-            case TrainingNodeType.Boss:
-                return "보스 클리어로";
-            case TrainingNodeType.Escape:
-                return "Escape 종료로";
-            default:
-                return "런 종료로";
-        }
     }
 }

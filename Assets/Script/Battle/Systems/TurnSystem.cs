@@ -119,7 +119,7 @@ public class TurnSystem
         }
         else
         {
-            battleManager.DrawCards(GetTurnStartDrawCount());
+            battleManager.DrawCards(GetTurnStartDrawCount(), true);
         }
 
         battleManager.SetState(BattleTurnState.PlayerAction);
