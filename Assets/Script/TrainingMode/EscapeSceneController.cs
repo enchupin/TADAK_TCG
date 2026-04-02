@@ -7,38 +7,28 @@ public class EscapeSceneController : MonoBehaviour
 
     private void Start()
     {
-        if (!TrainingRunState.IsRunActive || !TrainingRunState.PendingNodeId.HasValue)
+        if (!TrainingRunState.IsRunActive)
         {
-            ReturnToNextScene();
-            return;
-        }
-
-        if (!TrainingRunState.TryGetNode(TrainingRunState.PendingNodeId.Value, out TrainingMapNodeData pendingNode) ||
-            pendingNode.nodeType != TrainingNodeType.Escape)
-        {
-            Debug.LogWarning("[EscapeSceneController] Pending node is not an Escape node. Returning.");
             ReturnToNextScene();
         }
     }
 
     public void OnClickEscape()
     {
-        TrainingRunDeckPersistence.TrySaveRunDeckAsPermanentDeck(
-            TrainingBattleManager.buildingDeck,
-            SelectedButtonControl.selectedCharacterList,
-            TrainingNodeType.Escape);
+        if (TrainingBattleManager.buildingDeck != null)
+        {
+            TrainingRunDeckPersistence.SaveRunDeckOnEventEscape(
+                TrainingBattleManager.buildingDeck,
+                SelectedButtonControl.selectedCharacterList);
+        }
 
-        TrainingRunState.CompletePendingNode(true);
         TrainingBattleManager.buildingDeck = null;
+        PlayerData.Reset();
+        TrainingRunState.ResetRun();
         ReturnToNextScene();
     }
 
     public void OnClickCancel()
-    {
-        ReturnToMap();
-    }
-
-    private void ReturnToMap()
     {
         if (!string.IsNullOrEmpty(TrainingRunState.MapSceneName))
         {
@@ -51,20 +41,6 @@ public class EscapeSceneController : MonoBehaviour
 
     private void ReturnToNextScene()
     {
-        if (!string.IsNullOrEmpty(nextSceneName))
-        {
-            SceneManager.LoadScene(nextSceneName);
-            return;
-        }
-
-        ReturnToMapFallback();
-    }
-
-    private void ReturnToMapFallback()
-    {
-        if (!string.IsNullOrEmpty(TrainingRunState.MapSceneName))
-        {
-            SceneManager.LoadScene(TrainingRunState.MapSceneName);
-        }
+        SceneManager.LoadScene(string.IsNullOrEmpty(nextSceneName) ? "LobbyScene" : nextSceneName);
     }
 }

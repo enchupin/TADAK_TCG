@@ -231,12 +231,24 @@ public class BuildingDeck
 public static class TrainingRunDeckPersistence
 {
     private const string DefaultDeckName = "기본 덱";
+    private const string BossClearSaveReasonLog = "보스 클리어로 저장덱을 갱신했습니다";
+    private const string EventEscapeSaveReasonLog = "이벤트 탈출로 저장덱을 갱신했습니다";
 
     public static BuildingDeck CreateRunDeck(List<Character> selectedCharacters)
     {
         BuildingDeck deck = new BuildingDeck();
         deck.InitializeFromCardIds(LoadPermanentDeckCardIds(selectedCharacters));
         return deck;
+    }
+
+    public static void SaveRunDeckOnBossClear(BuildingDeck runDeck, List<Character> selectedCharacters)
+    {
+        SaveRunDeckAsPermanentDeck(runDeck, selectedCharacters, BossClearSaveReasonLog);
+    }
+
+    public static void SaveRunDeckOnEventEscape(BuildingDeck runDeck, List<Character> selectedCharacters)
+    {
+        SaveRunDeckAsPermanentDeck(runDeck, selectedCharacters, EventEscapeSaveReasonLog);
     }
 
     public static void SaveRunDeckAsPermanentDeck(
