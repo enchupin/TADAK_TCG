@@ -7,7 +7,6 @@ public class BuffData
 {
     public int buffId;
     public string name;
-    public int buffType; // 1: Buff, 2: Debuff (Example)
     public string description;
     public List<BuffEffectData> effects = new();
 
@@ -18,12 +17,12 @@ public class BuffData
 
     public bool MatchesAllowedType(int allowedType)
     {
-        return IsBeneficialEffect() == IsBeneficialBuffType(allowedType);
+        return GetBuffType(buffId) == GetAllowedBuffType(allowedType);
     }
 
-    public static int GetPolarityBuffType(int targetBuffId)
+    public static int GetBuffType(int targetBuffId)
     {
-        return IsBeneficialBuffId(targetBuffId) ? 1 : 2;
+        return GetLeadingDigit(targetBuffId);
     }
 
     public static bool IsBeneficialBuffId(int targetBuffId)
@@ -32,12 +31,18 @@ public class BuffData
         return leadingDigit % 2 == 1;
     }
 
-    public static bool IsBeneficialBuffType(int targetBuffType)
+    private static int GetAllowedBuffType(int allowedType)
     {
-        return Mathf.Abs(targetBuffType) % 2 == 1;
+        int normalizedValue = Mathf.Abs(allowedType);
+        if (normalizedValue < 10)
+        {
+            return normalizedValue;
+        }
+
+        return GetLeadingDigit(normalizedValue);
     }
 
-    private static int GetLeadingDigit(int value)      
+    private static int GetLeadingDigit(int value)
     {
         value = Mathf.Abs(value);
         while (value >= 10)

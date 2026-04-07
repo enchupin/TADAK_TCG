@@ -49,8 +49,6 @@ public class BuffManager : MonoBehaviour
             }
 
             NormalizeBuffText(buff);
-            buff.buffType = BuffData.GetPolarityBuffType(buff.buffId);
-
             if (buffDatabase.ContainsKey(buff.buffId))
             {
                 Debug.LogWarning($"[BuffManager] Duplicate buffId detected: {buff.buffId}. Later entry ignored.");
@@ -106,7 +104,6 @@ public class BuffManager : MonoBehaviour
         }
 
         NormalizeBuffText(data);
-        data.buffType = BuffData.GetPolarityBuffType(data.buffId);
         buffDatabase[data.buffId] = data;
     }
 

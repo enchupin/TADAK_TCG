@@ -291,7 +291,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3030,
+                    "buffId": 4013,
                     "target": "SingleEnemy"
                 }
             ],
@@ -421,9 +421,9 @@
                     "stat": "Buff",
                     "change": "Remove",
                     "target": "SingleEnemy",
-                    "buffType": [
-                        1,
-                        3
+                    "buffIds": [
+                        1001,
+                        3001
                     ],
                     "amount": 1,
                     "random": true

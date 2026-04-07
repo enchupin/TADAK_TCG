@@ -140,14 +140,16 @@ public class PlayerData : MonoBehaviour
             {
                 buffId = buffId,
                 name = $"버프 {buffId}",
-                buffType = BuffData.GetPolarityBuffType(buffId),
                 description = string.Empty
             };
         }
 
-        Buff existingBuff = currentBuffs.Find(b => b.data.buffId == buffId);
+        Buff existingBuff = currentBuffs.Find(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
         if (existingBuff != null)
         {
+            existingBuff.data = data;
             existingBuff.stack += amount;
             Debug.Log($"버프 중첩: {data.name} (+{amount}) -> {existingBuff.stack}");
         }
@@ -346,7 +348,9 @@ public class PlayerData : MonoBehaviour
 
     public int GetBuffStack(int buffId)
     {
-        Buff buff = currentBuffs.Find(b => b.data != null && b.data.buffId == buffId);
+        Buff buff = currentBuffs.Find(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
         return buff != null ? buff.stack : 0;
     }
 
@@ -424,7 +428,9 @@ public class PlayerData : MonoBehaviour
         if (amount <= 0)
             return;
 
-        Buff buff = currentBuffs.Find(b => b.data != null && b.data.buffId == buffId);
+        Buff buff = currentBuffs.Find(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
         if (buff == null)
             return;
 
@@ -447,7 +453,9 @@ public class PlayerData : MonoBehaviour
 
     private void RemoveBuff(int buffId)
     {
-        currentBuffs.RemoveAll(b => b.data != null && b.data.buffId == buffId);
+        currentBuffs.RemoveAll(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
     }
 
     /// <summary>

@@ -185,7 +185,6 @@ public class CharacterJSONConverter : EditorWindow
                 type = ParseIdentityEffectType(effectJson.type),
                 amount = effectJson.amount,
                 target = ParseIdentityTargetType(effectJson.target),
-                buffType = effectJson.buffType ?? string.Empty,
                 cardId = effectJson.cardId
             });
         }
@@ -314,7 +313,6 @@ public class CharacterIdentityJsonData
 public class CharacterEffectJsonData
 {
     public string type;
-    public string buffType;
     public int amount;
     public string target;
     public int cardId;

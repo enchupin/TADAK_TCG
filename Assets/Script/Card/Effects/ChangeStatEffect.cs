@@ -12,7 +12,7 @@ public class ChangeStatEffect : ICardEffect
     public string change;
     public string subject;
     public int buffId;
-    public List<int> buffTypes;
+    public List<int> buffFilterIds;
     public bool random;
     public int amount;
     public string amountFormula;
@@ -189,7 +189,7 @@ public class ChangeStatEffect : ICardEffect
         switch (normalizedChange)
         {
             case "remove":
-                if (random && buffId <= 0 && buffTypes != null && buffTypes.Count > 0)
+                if (random && buffId <= 0 && buffFilterIds != null && buffFilterIds.Count > 0)
                 {
                     int removeCount = ResolveNumericAmount(battleManager, forwardedAmount);
                     if (removeCount <= 0)
@@ -200,7 +200,7 @@ public class ChangeStatEffect : ICardEffect
                     int removedBuffEntries = 0;
                     for (int i = 0; i < removeCount; i++)
                     {
-                        Buff randomBuff = CardEffectRuntimeUtility.PickRandomBuffByTypes(buffs, buffTypes);
+                        Buff randomBuff = CardEffectRuntimeUtility.PickRandomBuffByFilters(buffs, buffFilterIds);
                         if (randomBuff == null)
                         {
                             break;

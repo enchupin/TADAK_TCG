@@ -119,7 +119,7 @@ public static class CardEffectFactory
                     change = effectData.change,
                     subject = resolvedSubject,
                     buffId = effectData.buffId,
-                    buffTypes = effectData.buffTypes == null ? null : new List<int>(effectData.buffTypes),
+                    buffFilterIds = effectData.buffFilterIds == null ? null : new List<int>(effectData.buffFilterIds),
                     random = effectData.random,
                     amount = effectData.amount,
                     amountFormula = effectData.amountFormula,

@@ -50,9 +50,6 @@ public class IdentityEffectData
     public int amount;
     public IdentityTargetType target;
     
-    [Header("Buff")]
-    public string buffType;
-    
     [Header("GenerateCard")]
     public int cardId;
 }
