@@ -27,6 +27,9 @@ public class HandManager : MonoBehaviour
             return;
         }
 
+        card = TrainingBattleManager.Instance != null
+            ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
+            : card;
         handCardList.Add(card);
         InstantiateCardUI(card);
     }
@@ -47,8 +50,11 @@ public class HandManager : MonoBehaviour
             if (card == null)
                 continue;
 
-            handCardList.Add(card);
-            InstantiateCardUI(card);
+            Card processedCard = TrainingBattleManager.Instance != null
+                ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
+                : card;
+            handCardList.Add(processedCard);
+            InstantiateCardUI(processedCard);
         }
     }
 
@@ -86,8 +92,11 @@ public class HandManager : MonoBehaviour
             if (card == null)
                 continue;
 
-            handCardList.Add(card);
-            InstantiateCardUIWithoutInputController(card);
+            Card processedCard = TrainingBattleManager.Instance != null
+                ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
+                : card;
+            handCardList.Add(processedCard);
+            InstantiateCardUIWithoutInputController(processedCard);
         }
     }
 

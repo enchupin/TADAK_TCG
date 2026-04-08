@@ -9,6 +9,7 @@ public class PowerBuffRuntime
 
     private static readonly Dictionary<int, int> GeneratedUpgradeMap = new()
     {
+        { 20, 21 },
         { 101080, 101081 },
         { 101082, 101083 },
         { 101084, 101085 },
@@ -542,7 +543,8 @@ public class PowerBuffRuntime
     public int ResolvePersistentUpgradeCardId(int cardId)
     {
         int resolvedCardId = ResolvePotionEnhanceCardId(cardId);
-        return ResolveGlacierShapeEnhanceCardId(resolvedCardId);
+        resolvedCardId = ResolveGlacierShapeEnhanceCardId(resolvedCardId);
+        return ResolvePoisonUpgradeCardId(resolvedCardId);
     }
 
     public int ResolvePersistentUpgradeCardId(int cardId, int sourceBuffId)
@@ -554,6 +556,9 @@ public class PowerBuffRuntime
 
             case GlacierShapeEnhanceBuffId:
                 return ResolveGlacierShapeEnhanceCardId(cardId);
+
+            case PoisonUpgradeBuffId:
+                return ResolvePoisonUpgradeCardId(cardId);
 
             default:
                 return ResolvePersistentUpgradeCardId(cardId);
@@ -790,7 +795,7 @@ public class PowerBuffRuntime
 
     private int ResolvePotionEnhanceCardId(int cardId)
     {
-        if (GetPlayerBuffStack(PotionEnhanceBuffId) > 0
+        if (IsPersistentUpgradeBuffActive(PotionEnhanceBuffId)
             && GeneratedUpgradeMap.TryGetValue(cardId, out int upgradedPotionId)
             && IsPotionCardId(cardId))
         {
@@ -802,11 +807,23 @@ public class PowerBuffRuntime
 
     private int ResolveGlacierShapeEnhanceCardId(int cardId)
     {
-        if (GetPlayerBuffStack(GlacierShapeEnhanceBuffId) > 0
+        if (IsPersistentUpgradeBuffActive(GlacierShapeEnhanceBuffId)
             && cardId == 301080
             && GeneratedUpgradeMap.TryGetValue(cardId, out int upgradedGlacierShapeId))
         {
             return upgradedGlacierShapeId;
+        }
+
+        return cardId;
+    }
+
+    private int ResolvePoisonUpgradeCardId(int cardId)
+    {
+        if (IsPersistentUpgradeBuffActive(PoisonUpgradeBuffId)
+            && cardId == 20
+            && GeneratedUpgradeMap.TryGetValue(cardId, out int upgradedPoisonId))
+        {
+            return upgradedPoisonId;
         }
 
         return cardId;
@@ -827,6 +844,31 @@ public class PowerBuffRuntime
     private int GetPlayerBuffStack(int buffId)
     {
         return battleManager?.playerData != null ? battleManager.playerData.GetBuffStack(buffId) : 0;
+    }
+
+    private bool IsPersistentUpgradeBuffActive(int buffId)
+    {
+        return buffId switch
+        {
+            PotionEnhanceBuffId => GetPlayerBuffStack(PotionEnhanceBuffId) > 0,
+            GlacierShapeEnhanceBuffId => GetPlayerBuffStack(GlacierShapeEnhanceBuffId) > 0,
+            PoisonUpgradeBuffId => HasAnyLivingMonsterWithBuff(PoisonUpgradeBuffId),
+            _ => false
+        };
+    }
+
+    private bool HasAnyLivingMonsterWithBuff(int buffId)
+    {
+        List<Monster> livingMonsters = battleManager.GetLivingMonsters();
+        foreach (Monster monster in livingMonsters)
+        {
+            if (monster != null && monster.GetBuffStack(buffId) > 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static bool IsPotionCard(Card card)

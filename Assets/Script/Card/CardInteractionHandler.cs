@@ -479,7 +479,7 @@ public class CardInteractionHandler : UIHoverEffect,
             return false;
 
         TrainingBattleManager manager = TrainingBattleManager.Instance;
-        if (manager != null && !manager.CanUseIdentityAbility())
+        if (manager != null && !manager.CanInteractWithCards())
             return false;
 
         return true;

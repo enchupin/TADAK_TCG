@@ -83,9 +83,4 @@ public static class BattleRuntimeDefinitions
     public const int RootedBuffId = 5011;
     public const int MirrorBuffId = 5012;
     public const int PoisonousMushroomBuffId = 5013;
-    public const int VoidCallCardId = 30;
-    public const int RootAbsorptionCardId = 40;
-    public const int WoundCardId = 10;
-    public const int PoisonCardId = 20;
-    public const int PoisonPlusCardId = 21;
 }

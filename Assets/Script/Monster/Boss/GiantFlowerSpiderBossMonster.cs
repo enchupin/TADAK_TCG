@@ -95,8 +95,8 @@ public class GiantFlowerSpiderBossMonster : Monster
                 break;
             case 30103:
                 DealDamage(target, 21);
-                AddCardToPlayerDiscard(CardManager.GetCardAsCard(BattleRuntimeDefinitions.WoundCardId));
-                AddCardToPlayerDiscard(CardManager.GetCardAsCard(BattleRuntimeDefinitions.WoundCardId));
+                AddCardToPlayerDiscard(CardManager.GetCardAsCard(10));
+                AddCardToPlayerDiscard(CardManager.GetCardAsCard(10));
                 break;
             default:
                 AddDefense(8);

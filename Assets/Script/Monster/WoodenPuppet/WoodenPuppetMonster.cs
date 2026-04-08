@@ -65,7 +65,7 @@ public class WoodenPuppetMonster : Monster
     {
         for (int cardIndex = 0; cardIndex < count; cardIndex++)
         {
-            AddCardToPlayerDiscard(CardManager.GetCardAsCard(BattleRuntimeDefinitions.RootAbsorptionCardId));
+            AddCardToPlayerDiscard(CardManager.GetCardAsCard(40));
         }
     }
 
