@@ -151,9 +151,9 @@ public class BuffManager : MonoBehaviour
 
         foreach (char character in text)
         {
-            if ((character >= '\u1100' && character <= '\u11FF')
-                || (character >= '\u3130' && character <= '\u318F')
-                || (character >= '\uAC00' && character <= '\uD7A3'))
+            if ((character >= 'ᄀ' && character <= 'ᇿ')
+                || (character >= '㄰' && character <= '㆏')
+                || (character >= '가' && character <= '힣'))
             {
                 return true;
             }

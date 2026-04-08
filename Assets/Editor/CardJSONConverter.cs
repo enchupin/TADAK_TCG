@@ -383,7 +383,7 @@ public class CardJSONConverter : EditorWindow
         }
 
         // onAction이 있으면 바깥 effect에 subject가 반드시 있어야 함
-        if (hasOnAction && string.IsNullOrWhiteSpace(ReadJsonString(effectObject, "subject"))) {
+        if (hasOnAction && !isOnActionContext && string.IsNullOrWhiteSpace(ReadJsonString(effectObject, "subject"))) {
             throw new ArgumentException("[CardJSONConverter] Effect with onAction requires outer 'subject'.");
         }
         
@@ -417,6 +417,7 @@ public class CardJSONConverter : EditorWindow
             duration = ReadJsonInt(effectObject, "duration"),
             cardId = ReadJsonString(effectObject, "cardId"),
             subject = ReadJsonString(effectObject, "subject"),
+            characterFilter = ReadJsonString(effectObject, "character", ReadJsonString(effectObject, "characterFilter")),
             timing = ReadJsonString(effectObject, "timing"),
             repeatNextEffect = string.Equals(effectTypeRaw, "Repeat", StringComparison.OrdinalIgnoreCase)
         };
@@ -780,6 +781,9 @@ public class CardJSONConverter : EditorWindow
             case "Trigger": return EffectType.Trigger;
             case "RemoveBuff": return EffectType.RemoveBuff;
             case "Scry": return EffectType.Scry;
+            case "OnAttackGainAmplify": return EffectType.OnAttackGainAmplify;
+            case "TransformCards":
+            case "TransformMonsterCards": return EffectType.TransformCards;
 
             default:
                 throw new ArgumentException($"[CardJSONConverter] Unsupported effect type: {type}");

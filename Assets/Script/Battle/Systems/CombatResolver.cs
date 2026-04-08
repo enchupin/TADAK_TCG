@@ -118,13 +118,13 @@ public class CombatResolver
 
         if (playedCard.ShouldExhaustWhenPlayed())
         {
-            battleManager.HandleCardsExhausted(1);
+            battleManager.MoveCardToExhaust(playedCard);
             return;
         }
 
         if (battleManager.ShouldExhaustUnlockedUnplayableCard(playedCard))
         {
-            battleManager.HandleCardsExhausted(1);
+            battleManager.MoveCardToExhaust(playedCard);
             return;
         }
 

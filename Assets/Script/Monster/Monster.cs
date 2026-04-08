@@ -274,6 +274,9 @@ public abstract class Monster : MonoBehaviour
             return;
         }
 
+        bool isNonStackable = IsNonStackableBuff(buffId);
+        int appliedAmount = isNonStackable ? 1 : amount;
+
         BuffData data = BuffManager.Instance != null ? BuffManager.Instance.GetBuffData(buffId) : null;
         if (data == null)
         {
@@ -291,22 +294,21 @@ public abstract class Monster : MonoBehaviour
         if (existingBuff != null)
         {
             existingBuff.data = data;
-            if (IsNonStackableBuff(buffId))
+            if (isNonStackable)
             {
-                existingBuff.stack = Mathf.Max(existingBuff.stack, 1);
+                existingBuff.stack = 1;
             }
             else
             {
-                existingBuff.stack += amount;
+                existingBuff.stack += appliedAmount;
             }
-            Debug.Log($"[Monster Buff Stack] {data.name} (+{amount}) -> {existingBuff.stack}");
+            Debug.Log($"[Monster Buff Stack] {data.name} (+{appliedAmount}) -> {existingBuff.stack}");
         }
         else
         {
-            int initialStack = IsNonStackableBuff(buffId) ? 1 : amount;
-            Buff newBuff = new Buff(data, initialStack, 0);
+            Buff newBuff = new Buff(data, appliedAmount, 0);
             currentBuffs.Add(newBuff);
-            Debug.Log($"[Monster Buff Added] {data.name} ({initialStack})");
+            Debug.Log($"[Monster Buff Added] {data.name} ({appliedAmount})");
         }
 
         // 디버프/버프 스택 변경 즉시 UI 반영
@@ -713,7 +715,7 @@ public abstract class Monster : MonoBehaviour
 
     protected virtual bool IsNonStackableBuff(int buffId)
     {
-        return false;
+        return BuffData.IsNonStackableBuffId(buffId);
     }
 
     protected virtual void OnBattleStart()

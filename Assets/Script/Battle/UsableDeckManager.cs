@@ -8,6 +8,7 @@ public class UsableDeckManager : MonoBehaviour
 {
     public Queue<Card> usableDeck;
     public List<Card> discardPile = new List<Card>(); // 버린 카드 더미
+    public List<Card> exhaustPile = new List<Card>(); // 소멸 카드 더미
 
     /// <summary>
     /// 버리기 더미에 카드 추가
@@ -48,6 +49,44 @@ public class UsableDeckManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 소멸 카드 더미에 카드 추가
+    /// </summary>
+    public void AddToExhaust(Card card)
+    {
+        if (card == null) {
+            return;
+        }
+
+        card = TrainingBattleManager.Instance != null
+            ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
+            : card;
+        exhaustPile.Add(card);
+    }
+
+    /// <summary>
+    /// 소멸 카드 더미에 카드 리스트 추가
+    /// </summary>
+    public void AddToExhaust(List<Card> cards)
+    {
+        if (cards == null || cards.Count == 0) {
+            return;
+        }
+
+        foreach (Card card in cards)
+        {
+            if (card == null)
+            {
+                continue;
+            }
+
+            Card processedCard = TrainingBattleManager.Instance != null
+                ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
+                : card;
+            exhaustPile.Add(processedCard);
+        }
+    }
+
+    /// <summary>
     /// 버린 카드 더미 리스트 반환
     /// </summary>
     public List<Card> GetDiscardPile()
@@ -68,6 +107,14 @@ public class UsableDeckManager : MonoBehaviour
         {
             discardPile.Remove(card);
         }
+    }
+
+    /// <summary>
+    /// 소멸 카드 더미 리스트 반환
+    /// </summary>
+    public List<Card> GetExhaustPile()
+    {
+        return new List<Card>(exhaustPile);
     }
 
     /// <summary>
@@ -337,6 +384,11 @@ public class UsableDeckManager : MonoBehaviour
         return discardPile != null ? discardPile.Count : 0;
     }
 
+    public int GetExhaustPileCount()
+    {
+        return exhaustPile != null ? exhaustPile.Count : 0;
+    }
+
     /// <summary>
     /// 현재 드로우 더미 순서를 그대로 설정
     /// </summary>
@@ -359,6 +411,7 @@ public class UsableDeckManager : MonoBehaviour
         }
 
         discardPile.Clear();
+        exhaustPile.Clear();
 
         Debug.Log($"[UsableDeckManager] 덱 설정 완료: 총 {usableDeck.Count}장");
     }

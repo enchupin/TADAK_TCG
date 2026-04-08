@@ -319,7 +319,7 @@ public class TurnSystem
                 battleManager.handManager.RemoveCard(exhaustedCard);
             }
 
-            battleManager.HandleCardsExhausted(exhaustedCards.Count);
+            battleManager.MoveCardsToExhaust(exhaustedCards);
         }
         foreach (Card retainedCard in retainedCards)
         {
@@ -437,6 +437,7 @@ public class TurnSystem
         ClearTurnModifiers(battleManager.handManager?.GetHandCards());
         ClearTurnModifiers(battleManager.usableDeckManager?.GetDrawPile());
         ClearTurnModifiers(battleManager.usableDeckManager?.GetDiscardPile());
+        ClearTurnModifiers(battleManager.usableDeckManager?.GetExhaustPile());
     }
 
     private static void ClearTurnModifiers(List<Card> cards)

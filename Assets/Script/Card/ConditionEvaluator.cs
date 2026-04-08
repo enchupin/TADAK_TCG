@@ -112,6 +112,8 @@ public static class ConditionEvaluator
                 case "Cost": return card.cost;
                 case "CharacterId": return (int)card.character;
                 case "IsPotion": return IsPotionCard(card) ? 1f : 0f;
+                case "HasKeyword":
+                    return card.HasKeyword(ResolveKeywordId(param)) ? 1f : 0f;
             }
         }
 
@@ -164,6 +166,28 @@ public static class ConditionEvaluator
         if (card.character != Character.Isla) return false;
 
         return card.cardId >= 101080 && card.cardId <= 101087;
+    }
+
+    private static int ResolveKeywordId(string rawKeyword)
+    {
+        if (int.TryParse(rawKeyword, out int keywordId))
+        {
+            return keywordId;
+        }
+
+        switch (rawKeyword)
+        {
+            case "Keep": return CardKeywordIds.Keep;
+            case "Unplayable": return CardKeywordIds.Unplayable;
+            case "Exhaust": return CardKeywordIds.Exhaust;
+            case "Power": return CardKeywordIds.Power;
+            case "Opening": return CardKeywordIds.Opening;
+            case "Shadow": return CardKeywordIds.Shadow;
+            case "Finale": return CardKeywordIds.Finale;
+            case "Ghost": return CardKeywordIds.Ghost;
+            case "Unique": return CardKeywordIds.Unique;
+            default: return 0;
+        }
     }
 
     private static bool Compare(float actual, string op, string targetStr)

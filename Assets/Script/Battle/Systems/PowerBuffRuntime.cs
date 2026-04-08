@@ -157,16 +157,6 @@ public class PowerBuffRuntime
     {
         remainingHighCostRepeatCount = GetPlayerBuffStack(HighCostRepeatBuffId);
 
-        int strengthContract = GetPlayerBuffStack(StrengthContractBuffId);
-        if (strengthContract > 0 && battleManager.playerData != null)
-        {
-            battleManager.playerData.LoseHp(strengthContract);
-            if (!battleManager.playerData.IsDead())
-            {
-                battleManager.ApplyBuffToPlayer(DamageAmplifyBuffId, strengthContract);
-            }
-        }
-
         int drawInterference = GetPlayerBuffStack(DrawInterferenceBuffId);
         if (drawInterference > 0)
         {
@@ -233,12 +223,6 @@ public class PowerBuffRuntime
             battleManager.ApplyBuffToPlayer(3031, runeGeneration);
         }
 
-        int runeProtection = GetPlayerBuffStack(RuneProtectionBuffId);
-        if (runeProtection > 0 && battleManager.playerData != null)
-        {
-            battleManager.playerData.AddDefense(runeProtection);
-        }
-
         int runeBarrier = GetPlayerBuffStack(RuneBarrierBuffId);
         if (runeBarrier > 0 && battleManager.playerData != null)
         {
@@ -295,16 +279,6 @@ public class PowerBuffRuntime
         {
             remainingHighCostRepeatCount--;
             repeatCount++;
-        }
-
-        if (playedCard.HasKeyword(CardKeywordIds.Power))
-        {
-            int repeatNextPowerCard = GetPlayerBuffStack(RepeatNextPowerCardBuffId);
-            if (repeatNextPowerCard > 0)
-            {
-                battleManager.playerData?.ConsumeBuffStack(RepeatNextPowerCardBuffId, repeatNextPowerCard);
-                repeatCount += repeatNextPowerCard;
-            }
         }
 
         int repeatNextCard = GetPlayerBuffStack(RepeatNextCardBuffId);
