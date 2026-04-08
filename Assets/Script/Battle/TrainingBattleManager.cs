@@ -102,6 +102,10 @@ public class TrainingBattleManager : MonoBehaviour
     private CombatResolver combatResolver;
     private EncounterSystem encounterSystem;
     private PowerBuffRuntime powerBuffRuntime;
+    private CombatBuffRuntime combatBuffRuntime;
+    private RuneBuffRuntime runeBuffRuntime;
+    private SurvivalBuffRuntime survivalBuffRuntime;
+    private FeatherBuffRuntime featherBuffRuntime;
     private bool hasResolvedBattleResult;
     private Button instantWinButton;
     private readonly List<PendingMonsterRevive> pendingMonsterRevives = new List<PendingMonsterRevive>();
@@ -125,6 +129,10 @@ public class TrainingBattleManager : MonoBehaviour
         turnSystem = new TurnSystem(this);
         combatResolver = new CombatResolver(this);
         powerBuffRuntime = new PowerBuffRuntime(this);
+        combatBuffRuntime = new CombatBuffRuntime(this);
+        runeBuffRuntime = new RuneBuffRuntime(this);
+        survivalBuffRuntime = new SurvivalBuffRuntime(this);
+        featherBuffRuntime = new FeatherBuffRuntime(this);
 
         if (battleDeckViewer == null)
         {
@@ -367,6 +375,7 @@ public class TrainingBattleManager : MonoBehaviour
 
         turnSystem.ResetForCombat();
         powerBuffRuntime?.ResetForCombat();
+        featherBuffRuntime?.ResetForCombat();
         ApplyCombatStartEffects();
 
         if (TryHandleCombatEnd())
@@ -625,6 +634,8 @@ public class TrainingBattleManager : MonoBehaviour
                 return effect is RepeatEffect;
             case EffectType.Trigger:
                 return effect is TriggerEffect;
+            case EffectType.OnAttackGainAmplify:
+                return effect is OnAttackGainAmplifyEffect;
             case EffectType.Kill:
                 return effect is KillEffect;
             case EffectType.ChangeStat:
@@ -787,6 +798,8 @@ public class TrainingBattleManager : MonoBehaviour
     public void ApplyPlayerTurnStartEffects()
     {
         ApplyDebugEnergy();
+        combatBuffRuntime?.OnTurnStart();
+        featherBuffRuntime?.OnTurnStart();
         powerBuffRuntime?.OnTurnStart();
     }
 
@@ -797,12 +810,15 @@ public class TrainingBattleManager : MonoBehaviour
             playerData.OnTurnEnd();
         }
 
+        combatBuffRuntime?.OnTurnEnd();
         powerBuffRuntime?.OnTurnEnd();
+        runeBuffRuntime?.ReplayTurnEndTriggeredEffects();
     }
 
     public void ResolveAdditionalTurnEndTriggers()
     {
         powerBuffRuntime?.ReplayTurnEndTriggeredEffects();
+        runeBuffRuntime?.ReplayTurnEndTriggeredEffects();
     }
 
     public bool TryHandleCombatEnd()
@@ -968,15 +984,15 @@ public class TrainingBattleManager : MonoBehaviour
 
     public int GetCardBaseDamageBonus(Card sourceCard, bool isAttackEffect)
     {
-        return powerBuffRuntime != null
-            ? powerBuffRuntime.GetCardBaseDamageBonus(sourceCard, isAttackEffect)
+        return combatBuffRuntime != null
+            ? combatBuffRuntime.GetCardBaseDamageBonus(sourceCard, isAttackEffect)
             : 0;
     }
 
     public int ApplyCardDamageRuntimeModifiers(Card sourceCard, int damage)
     {
-        return powerBuffRuntime != null
-            ? powerBuffRuntime.ApplyCardDamageRuntimeModifiers(sourceCard, damage)
+        return runeBuffRuntime != null
+            ? runeBuffRuntime.ApplyCardDamageRuntimeModifiers(sourceCard, damage)
             : Mathf.Max(0, damage);
     }
 
@@ -1004,11 +1020,19 @@ public class TrainingBattleManager : MonoBehaviour
 
     public int ConsumeRepeatedPlayCount(Card playedCard, bool isRepeatedEffect)
     {
-        return powerBuffRuntime != null ? powerBuffRuntime.ConsumeRepeatCount(playedCard, isRepeatedEffect) : 0;
+        int repeatCount = powerBuffRuntime != null ? powerBuffRuntime.ConsumeRepeatCount(playedCard, isRepeatedEffect) : 0;
+        repeatCount += combatBuffRuntime != null ? combatBuffRuntime.ConsumeRepeatCount(playedCard, isRepeatedEffect) : 0;
+        return repeatCount;
+    }
+
+    public void RegisterAttackGainAmplifyThisTurn(int amount)
+    {
+        combatBuffRuntime?.RegisterAttackGainAmplifyThisTurn(amount);
     }
 
     public void HandlePlayerAttackResolved(Monster targetMonster, int barrierBefore, int barrierAfter)
     {
+        combatBuffRuntime?.OnAttackResolved(targetMonster);
         powerBuffRuntime?.OnAttackResolved(targetMonster, barrierBefore, barrierAfter);
     }
 
@@ -1035,7 +1059,59 @@ public class TrainingBattleManager : MonoBehaviour
         }
 
         battleContext?.OnCardsExhausted(count);
-        powerBuffRuntime?.OnCardsExhausted(count);
+        combatBuffRuntime?.OnCardsExhausted(count);
+    }
+
+    public void MoveCardToExhaust(Card card)
+    {
+        if (card == null)
+        {
+            return;
+        }
+
+        usableDeckManager?.AddToExhaust(card);
+        HandleCardsExhausted(1);
+    }
+
+    public void MoveCardsToExhaust(List<Card> cards)
+    {
+        if (cards == null || cards.Count == 0)
+        {
+            return;
+        }
+
+        usableDeckManager?.AddToExhaust(cards);
+        HandleCardsExhausted(cards.Count);
+    }
+
+    public int TriggerFeather(TargetType target, int repeatCount = 1)
+    {
+        return featherBuffRuntime != null ? featherBuffRuntime.Trigger(target, repeatCount) : 0;
+    }
+
+    public int TriggerFeatherUntilEmpty(TargetType target)
+    {
+        return featherBuffRuntime != null ? featherBuffRuntime.TriggerUntilEmpty(target) : 0;
+    }
+
+    public int ReplayExhaustedFeathers()
+    {
+        return featherBuffRuntime != null ? featherBuffRuntime.ReplayExhaustedFeathers() : 0;
+    }
+
+    public bool TryConsumeSoulProtection()
+    {
+        return survivalBuffRuntime != null && survivalBuffRuntime.TryConsumeSoulProtection();
+    }
+
+    public void HandleEnemyDebuffApplied(Monster monster, int buffId, int amount, int crueltyStackBeforeApply = -1)
+    {
+        if (BuffData.IsBeneficialBuffId(buffId))
+        {
+            return;
+        }
+
+        powerBuffRuntime?.OnEnemyDebuffApplied(monster, buffId, amount, crueltyStackBeforeApply);
     }
 
     public void HandleMonsterDeath(Monster monster)
@@ -1251,6 +1327,12 @@ public class TrainingBattleManager : MonoBehaviour
             return;
         }
 
+        if (featherBuffRuntime != null && featherBuffRuntime.TryApplyToPlayer(buffId, amount))
+        {
+            ApplyPersistentCardBuffChanges(buffId);
+            return;
+        }
+
         playerData?.AddBuff(buffId, amount);
         ApplyPersistentCardBuffChanges(buffId);
     }
@@ -1269,12 +1351,18 @@ public class TrainingBattleManager : MonoBehaviour
             buffId = BattleRuntimeDefinitions.EnhancedCorrosionBuffId;
         }
 
+        if (featherBuffRuntime != null && featherBuffRuntime.TryApplyToMonster(buffId, monster, amount))
+        {
+            ApplyPersistentCardBuffChanges(buffId);
+            return;
+        }
+
         int crueltyStackBeforeApply = monster.GetBuffStack(BattleRuntimeDefinitions.CrueltyDebuffId);
         monster.AddBuff(buffId, amount);
         ApplyPersistentCardBuffChanges(buffId);
         if (!BuffData.IsBeneficialBuffId(buffId))
         {
-            powerBuffRuntime?.OnEnemyDebuffApplied(monster, buffId, amount, crueltyStackBeforeApply);
+            HandleEnemyDebuffApplied(monster, buffId, amount, crueltyStackBeforeApply);
         }
     }
 
@@ -1282,6 +1370,12 @@ public class TrainingBattleManager : MonoBehaviour
     {
         if (amount <= 0)
         {
+            return;
+        }
+
+        if (featherBuffRuntime != null && featherBuffRuntime.TryApplyToAllEnemies(buffId, amount))
+        {
+            ApplyPersistentCardBuffChanges(buffId);
             return;
         }
 
@@ -1308,6 +1402,7 @@ public class TrainingBattleManager : MonoBehaviour
         hasChanges |= ApplyPersistentCardBuffChanges(handManager?.GetHandCards(), changedHandCards, buffId);
         hasChanges |= ApplyPersistentCardBuffChanges(usableDeckManager?.GetDrawPile(), null, buffId);
         hasChanges |= ApplyPersistentCardBuffChanges(usableDeckManager?.GetDiscardPile(), null, buffId);
+        hasChanges |= ApplyPersistentCardBuffChanges(usableDeckManager?.GetExhaustPile(), null, buffId);
 
         if (!hasChanges)
         {
@@ -1486,7 +1581,7 @@ public class TrainingBattleManager : MonoBehaviour
             }
         }
 
-        Debug.Log($"[BattleManager] \uB514\uBC84\uADF8 \uB371 \uAD6C\uC131 \uC644\uB8CC: {debugDeck.Count}\uC7A5");
+        Debug.Log($"[BattleManager] 디버그 덱 구성 완료: {debugDeck.Count}장");
         return debugDeck;
     }
 

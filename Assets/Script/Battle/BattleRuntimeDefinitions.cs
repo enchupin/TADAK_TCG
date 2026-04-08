@@ -58,6 +58,7 @@ public static class BattleRuntimeDefinitions
     public const int StrengthContractBuffId = 3042;
     public const int RuneProtectionBuffId = 3043;
     public const int RuneAttackBuffId = 3044;
+    public const int FeatherRepeatBuffId = 3045;
     public const int CorrosionBuffId = 4001;
     public const int EnhancedCorrosionBuffId = 4002;
     public const int BurnBuffId = 4003;

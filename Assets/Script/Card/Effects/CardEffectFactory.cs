@@ -348,7 +348,27 @@ public static class CardEffectFactory
             case EffectType.Trigger:
                 return new TriggerEffect
                 {
-                    timing = effectData.timing
+                    timing = effectData.timing,
+                    target = effectData.target,
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula
+                };
+
+            case EffectType.OnAttackGainAmplify:
+                return new OnAttackGainAmplifyEffect
+                {
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula
+                };
+
+            case EffectType.TransformCards:
+                return new TransformCardsEffect
+                {
+                    from = effectData.from,
+                    subject = resolvedSubject,
+                    characterFilter = effectData.characterFilter,
+                    cardId = effectData.cardId,
+                    cardIdList = effectData.formulaCardIdFilter == null ? null : new List<int>(effectData.formulaCardIdFilter)
                 };
 
             default:

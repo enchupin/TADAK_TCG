@@ -31,6 +31,18 @@ public class BuffData
         return leadingDigit % 2 == 1;
     }
 
+    public static bool IsNonStackableBuffId(int targetBuffId)
+    {
+        int leadingDigit = GetLeadingDigit(targetBuffId);
+        return leadingDigit == 1 || leadingDigit == 2;
+    }
+
+    public static bool IsStackableBuffId(int targetBuffId)
+    {
+        int leadingDigit = GetLeadingDigit(targetBuffId);
+        return leadingDigit == 3 || leadingDigit == 4;
+    }
+
     private static int GetAllowedBuffType(int allowedType)
     {
         int normalizedValue = Mathf.Abs(allowedType);

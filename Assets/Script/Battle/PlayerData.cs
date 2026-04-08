@@ -133,6 +133,15 @@ public class PlayerData : MonoBehaviour
     /// </summary>
     public void AddBuff(int buffId, int amount)
     {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        bool isNonStackable = BuffData.IsNonStackableBuffId(buffId);
+        int appliedAmount = isNonStackable ? 1 : amount;
+        amount = appliedAmount;
+
         BuffData data = BuffManager.Instance != null ? BuffManager.Instance.GetBuffData(buffId) : null;
         if (data == null)
         {
@@ -150,12 +159,19 @@ public class PlayerData : MonoBehaviour
         if (existingBuff != null)
         {
             existingBuff.data = data;
-            existingBuff.stack += amount;
+            if (isNonStackable)
+            {
+                existingBuff.stack = 1;
+            }
+            else
+            {
+                existingBuff.stack += appliedAmount;
+            }
             Debug.Log($"버프 중첩: {data.name} (+{amount}) -> {existingBuff.stack}");
         }
         else
         {
-            Buff newBuff = new Buff(data, amount, 0); // Duration logic TBD
+            Buff newBuff = new Buff(data, appliedAmount, 0); // Duration logic TBD
             currentBuffs.Add(newBuff);
             Debug.Log($"버프 획득: {data.name} ({amount})");
         }
@@ -245,14 +261,7 @@ public class PlayerData : MonoBehaviour
 
     private void TryConsumeSoulProtection()
     {
-        if (hp > 0 || GetBuffStack(BattleRuntimeDefinitions.SoulProtectionBuffId) <= 0)
-        {
-            return;
-        }
-
-        hp = 1;
-        DecreaseBuffStack(BattleRuntimeDefinitions.SoulProtectionBuffId, 1);
-        Debug.Log("영혼 보호가 발동해 체력 1로 버팁니다");
+        TrainingBattleManager.Instance?.TryConsumeSoulProtection();
     }
 
     private int ApplyDamageClamp(int finalDamage)

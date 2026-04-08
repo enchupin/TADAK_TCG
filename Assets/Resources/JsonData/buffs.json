@@ -1022,6 +1022,14 @@
                                   ]
                   },
                   {
+                      "buffId":  3045,
+                      "name":  "깃털 반복",
+                      "description":  "적의 깃털을 발동시킬 때 {stack}회 더 발동합니다.",
+                      "effects":  [
+
+                                  ]
+                  },
+                  {
                       "buffId":  4001,
                       "name":  "부식",
                       "trigger":  {
