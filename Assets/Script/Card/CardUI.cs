@@ -423,7 +423,7 @@ public static class CardDescriptionFormatter
             return card.description;
         }
 
-        if (!TryResolveAmount(card.effects, battleManager, out int amount))
+        if (!TryResolveAmount(card.effects, battleManager, card, out int amount))
         {
             return card.description.Replace("{amount}", "0");
         }
@@ -431,7 +431,7 @@ public static class CardDescriptionFormatter
         return card.description.Replace("{amount}", amount.ToString());
     }
 
-    private static bool TryResolveAmount(List<ICardEffect> effects, TrainingBattleManager battleManager, out int amount)
+    private static bool TryResolveAmount(List<ICardEffect> effects, TrainingBattleManager battleManager, Card sourceCard, out int amount)
     {
         amount = 0;
         if (effects == null || effects.Count == 0)
@@ -449,11 +449,11 @@ public static class CardDescriptionFormatter
             switch (effect)
             {
                 case AttackEffect attackEffect:
-                    amount = ResolveAttackAmount(attackEffect, battleManager);
+                    amount = ResolveAttackAmount(attackEffect, battleManager, sourceCard);
                     return true;
 
                 case DamageEffect damageEffect:
-                    amount = ResolveDamageAmount(damageEffect, battleManager);
+                    amount = ResolveDamageAmount(damageEffect, battleManager, sourceCard);
                     return true;
 
                 case BarrierEffect barrierEffect:
@@ -461,14 +461,14 @@ public static class CardDescriptionFormatter
                     return true;
 
                 case ConditionalEffect conditionalEffect:
-                    if (TryResolveConditionalAmount(conditionalEffect, battleManager, out amount))
+                    if (TryResolveConditionalAmount(conditionalEffect, battleManager, sourceCard, out amount))
                     {
                         return true;
                     }
                     break;
 
                 case RepeatEffect repeatEffect:
-                    if (TryResolveRepeatAmount(repeatEffect, battleManager, out amount))
+                    if (TryResolveRepeatAmount(repeatEffect, battleManager, sourceCard, out amount))
                     {
                         return true;
                     }
@@ -479,7 +479,7 @@ public static class CardDescriptionFormatter
         return false;
     }
 
-    private static bool TryResolveConditionalAmount(ConditionalEffect conditionalEffect, TrainingBattleManager battleManager, out int amount)
+    private static bool TryResolveConditionalAmount(ConditionalEffect conditionalEffect, TrainingBattleManager battleManager, Card sourceCard, out int amount)
     {
         amount = 0;
         if (conditionalEffect == null)
@@ -496,15 +496,15 @@ public static class CardDescriptionFormatter
             secondaryEffects = conditionalEffect.failEffects;
         }
 
-        if (TryResolveAmount(primaryEffects, battleManager, out amount))
+        if (TryResolveAmount(primaryEffects, battleManager, sourceCard, out amount))
         {
             return true;
         }
 
-        return TryResolveAmount(secondaryEffects, battleManager, out amount);
+        return TryResolveAmount(secondaryEffects, battleManager, sourceCard, out amount);
     }
 
-    private static bool TryResolveRepeatAmount(RepeatEffect repeatEffect, TrainingBattleManager battleManager, out int amount)
+    private static bool TryResolveRepeatAmount(RepeatEffect repeatEffect, TrainingBattleManager battleManager, Card sourceCard, out int amount)
     {
         amount = 0;
         if (repeatEffect?.effectToRepeat == null)
@@ -512,10 +512,10 @@ public static class CardDescriptionFormatter
             return false;
         }
 
-        return TryResolveAmount(new List<ICardEffect> { repeatEffect.effectToRepeat }, battleManager, out amount);
+        return TryResolveAmount(new List<ICardEffect> { repeatEffect.effectToRepeat }, battleManager, sourceCard, out amount);
     }
 
-    private static int ResolveAttackAmount(AttackEffect effect, TrainingBattleManager battleManager)
+    private static int ResolveAttackAmount(AttackEffect effect, TrainingBattleManager battleManager, Card sourceCard)
     {
         int attackBoost = battleManager?.playerData != null
             ? battleManager.playerData.GetBuffStack(AttackBoostBuffId)
@@ -523,14 +523,19 @@ public static class CardDescriptionFormatter
 
         ResolveAttackBaseAmount(effect, battleManager, out int baseAmount, out float cardMultiplier);
         baseAmount += Mathf.Max(0, attackBoost);
+        baseAmount += Mathf.Max(0, battleManager != null ? battleManager.GetCardBaseDamageBonus(sourceCard, true) : 0);
 
         if (battleManager?.playerData == null)
         {
             int fallbackAmount = Mathf.Max(0, Mathf.FloorToInt(baseAmount * Mathf.Max(0f, cardMultiplier)));
+            fallbackAmount = battleManager != null
+                ? battleManager.ApplyCardDamageRuntimeModifiers(sourceCard, fallbackAmount)
+                : fallbackAmount;
             return ApplyPreviewTargetDamageMultiplier(fallbackAmount, effect?.target ?? TargetType.None, battleManager);
         }
 
         int resolvedAmount = battleManager.playerData.CalculateCardDamage(baseAmount, effect.ampMultiplier, cardMultiplier);
+        resolvedAmount = battleManager.ApplyCardDamageRuntimeModifiers(sourceCard, resolvedAmount);
         return ApplyPreviewTargetDamageMultiplier(resolvedAmount, effect?.target ?? TargetType.None, battleManager);
     }
 
@@ -558,16 +563,20 @@ public static class CardDescriptionFormatter
             effect.amount));
     }
 
-    private static int ResolveDamageAmount(DamageEffect effect, TrainingBattleManager battleManager)
+    private static int ResolveDamageAmount(DamageEffect effect, TrainingBattleManager battleManager, Card sourceCard)
     {
         ResolveDamageBaseAmount(effect, battleManager, out int baseAmount, out float cardMultiplier);
         if (battleManager?.playerData == null)
         {
             int fallbackAmount = Mathf.Max(0, Mathf.FloorToInt(baseAmount * Mathf.Max(0f, cardMultiplier)));
+            fallbackAmount = battleManager != null
+                ? battleManager.ApplyCardDamageRuntimeModifiers(sourceCard, fallbackAmount)
+                : fallbackAmount;
             return ApplyPreviewTargetDamageMultiplier(fallbackAmount, effect?.target ?? TargetType.None, battleManager);
         }
 
         int resolvedAmount = battleManager.playerData.CalculateCardDamage(baseAmount, effect.ampMultiplier, cardMultiplier);
+        resolvedAmount = battleManager.ApplyCardDamageRuntimeModifiers(sourceCard, resolvedAmount);
         return ApplyPreviewTargetDamageMultiplier(resolvedAmount, effect?.target ?? TargetType.None, battleManager);
     }
 
@@ -677,13 +686,20 @@ public static class CardDescriptionFormatter
         }
 
         float multiplier = 1f;
-        if (previewTarget.GetBuffStack(EnhancedCorrosionBuffId) > 0)
+        bool hasEnhancedCorrosion = previewTarget.GetBuffStack(EnhancedCorrosionBuffId) > 0;
+        bool hasCorrosion = previewTarget.GetBuffStack(CorrosionBuffId) > 0;
+        bool playerEnhancesCorrosion = !hasEnhancedCorrosion
+            && hasCorrosion
+            && battleManager.playerData != null
+            && battleManager.playerData.GetBuffStack(CorrosionEnhanceBuffId) > 0;
+
+        if (hasEnhancedCorrosion || playerEnhancesCorrosion)
         {
             multiplier = BuffManager.Instance != null
                 ? BuffManager.Instance.GetIncomingDamageMultiplier(EnhancedCorrosionBuffId, 1.5f)
                 : 1.5f;
         }
-        else if (previewTarget.GetBuffStack(CorrosionBuffId) > 0)
+        else if (hasCorrosion)
         {
             multiplier = BuffManager.Instance != null
                 ? BuffManager.Instance.GetIncomingDamageMultiplier(CorrosionBuffId, 1.25f)

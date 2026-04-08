@@ -966,6 +966,20 @@ public class TrainingBattleManager : MonoBehaviour
         return powerBuffRuntime != null ? powerBuffRuntime.GetTurnEndRetainCount() : 0;
     }
 
+    public int GetCardBaseDamageBonus(Card sourceCard, bool isAttackEffect)
+    {
+        return powerBuffRuntime != null
+            ? powerBuffRuntime.GetCardBaseDamageBonus(sourceCard, isAttackEffect)
+            : 0;
+    }
+
+    public int ApplyCardDamageRuntimeModifiers(Card sourceCard, int damage)
+    {
+        return powerBuffRuntime != null
+            ? powerBuffRuntime.ApplyCardDamageRuntimeModifiers(sourceCard, damage)
+            : Mathf.Max(0, damage);
+    }
+
     public bool HasPermanentBarrierRetention()
     {
         return powerBuffRuntime != null && powerBuffRuntime.HasPermanentBarrierRetention();
@@ -1004,6 +1018,17 @@ public class TrainingBattleManager : MonoBehaviour
     public void HandleMonsterHpLost(Monster monster, int hpLoss)
     {
         powerBuffRuntime?.OnMonsterHpLost(monster, hpLoss);
+    }
+
+    public void HandleCardsExhausted(int count)
+    {
+        if (count <= 0)
+        {
+            return;
+        }
+
+        battleContext?.OnCardsExhausted(count);
+        powerBuffRuntime?.OnCardsExhausted(count);
     }
 
     public void HandleMonsterDeath(Monster monster)
@@ -1239,9 +1264,9 @@ public class TrainingBattleManager : MonoBehaviour
         List<Card> changedHandCards = new List<Card>();
         bool hasChanges = false;
 
-        hasChanges |= ApplyPersistentCardBuffChanges(handManager?.GetHandCards(), changedHandCards);
-        hasChanges |= ApplyPersistentCardBuffChanges(usableDeckManager?.GetDrawPile(), null);
-        hasChanges |= ApplyPersistentCardBuffChanges(usableDeckManager?.GetDiscardPile(), null);
+        hasChanges |= ApplyPersistentCardBuffChanges(handManager?.GetHandCards(), changedHandCards, buffId);
+        hasChanges |= ApplyPersistentCardBuffChanges(usableDeckManager?.GetDrawPile(), null, buffId);
+        hasChanges |= ApplyPersistentCardBuffChanges(usableDeckManager?.GetDiscardPile(), null, buffId);
 
         if (!hasChanges)
         {
@@ -1257,7 +1282,7 @@ public class TrainingBattleManager : MonoBehaviour
         UpdateAllUI();
     }
 
-    private bool ApplyPersistentCardBuffChanges(List<Card> cards, List<Card> changedCards)
+    private bool ApplyPersistentCardBuffChanges(List<Card> cards, List<Card> changedCards, int sourceBuffId)
     {
         if (cards == null || cards.Count == 0 || powerBuffRuntime == null)
         {
@@ -1272,7 +1297,7 @@ public class TrainingBattleManager : MonoBehaviour
                 continue;
             }
 
-            int upgradedCardId = powerBuffRuntime.ResolvePersistentUpgradeCardId(card.cardId);
+            int upgradedCardId = powerBuffRuntime.ResolvePersistentUpgradeCardId(card.cardId, sourceBuffId);
             if (upgradedCardId == card.cardId)
             {
                 continue;

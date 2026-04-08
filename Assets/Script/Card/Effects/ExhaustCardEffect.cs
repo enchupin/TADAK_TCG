@@ -50,7 +50,7 @@ public class ExhaustCardEffect : ICardEffect
             return;
         }
 
-        battleManager.battleContext?.OnCardsExhausted(exhaustedCount);
+        battleManager.HandleCardsExhausted(exhaustedCount);
 
         if (onActions != null)
         {

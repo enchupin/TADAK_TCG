@@ -163,8 +163,7 @@ public static class ConditionEvaluator
         if (card == null) return false;
         if (card.character != Character.Isla) return false;
 
-        return (card.cardId >= 101050 && card.cardId <= 101055)
-            || (card.cardId >= 101080 && card.cardId <= 101087);
+        return card.cardId >= 101080 && card.cardId <= 101087;
     }
 
     private static bool Compare(float actual, string op, string targetStr)

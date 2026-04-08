@@ -107,6 +107,14 @@ public class TurnSystem
         }
 
         battleManager.ApplyPlayerTurnStartEffects();
+        if (battleManager.TryHandleCombatEnd())
+        {
+            battleManager.UpdateEndTurnButtonState();
+            battleManager.RefreshHandPlayableState();
+            battleManager.UpdateAllUI();
+            return;
+        }
+
         battleManager.ProcessPendingMonsterRevives();
         if (replanEnemyActions)
         {
@@ -306,14 +314,12 @@ public class TurnSystem
         }
         if (exhaustedCards.Count > 0)
         {
-            if (battleManager.battleContext != null)
-            {
-                battleManager.battleContext.OnCardsExhausted(exhaustedCards.Count);
-            }
             foreach (Card exhaustedCard in exhaustedCards)
             {
                 battleManager.handManager.RemoveCard(exhaustedCard);
             }
+
+            battleManager.HandleCardsExhausted(exhaustedCards.Count);
         }
         foreach (Card retainedCard in retainedCards)
         {

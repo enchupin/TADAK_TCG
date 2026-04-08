@@ -126,9 +126,45 @@ public class PowerBuffRuntime
         return GetPlayerBuffStack(RetainChoiceBuffId);
     }
 
+    public int GetCardBaseDamageBonus(Card sourceCard, bool isAttackEffect)
+    {
+        if (!isAttackEffect || sourceCard == null || sourceCard.cost != 0)
+        {
+            return 0;
+        }
+
+        return GetPlayerBuffStack(PrecisionBuffId);
+    }
+
+    public int ApplyCardDamageRuntimeModifiers(Card sourceCard, int damage)
+    {
+        if (damage <= 0 || sourceCard == null)
+        {
+            return Mathf.Max(0, damage);
+        }
+
+        int finalDamage = damage;
+        if (sourceCard.character == Character.Rune && GetPlayerBuffStack(RuneAttackBuffId) > 0)
+        {
+            finalDamage *= 2;
+        }
+
+        return Mathf.Max(0, finalDamage);
+    }
+
     public void OnTurnStart()
     {
         remainingHighCostRepeatCount = GetPlayerBuffStack(HighCostRepeatBuffId);
+
+        int strengthContract = GetPlayerBuffStack(StrengthContractBuffId);
+        if (strengthContract > 0 && battleManager.playerData != null)
+        {
+            battleManager.playerData.LoseHp(strengthContract);
+            if (!battleManager.playerData.IsDead())
+            {
+                battleManager.ApplyBuffToPlayer(DamageAmplifyBuffId, strengthContract);
+            }
+        }
 
         int drawInterference = GetPlayerBuffStack(DrawInterferenceBuffId);
         if (drawInterference > 0)
@@ -196,6 +232,12 @@ public class PowerBuffRuntime
             battleManager.ApplyBuffToPlayer(3031, runeGeneration);
         }
 
+        int runeProtection = GetPlayerBuffStack(RuneProtectionBuffId);
+        if (runeProtection > 0 && battleManager.playerData != null)
+        {
+            battleManager.playerData.AddDefense(runeProtection);
+        }
+
         int runeBarrier = GetPlayerBuffStack(RuneBarrierBuffId);
         if (runeBarrier > 0 && battleManager.playerData != null)
         {
@@ -252,6 +294,16 @@ public class PowerBuffRuntime
         {
             remainingHighCostRepeatCount--;
             repeatCount++;
+        }
+
+        if (playedCard.HasKeyword(CardKeywordIds.Power))
+        {
+            int repeatNextPowerCard = GetPlayerBuffStack(RepeatNextPowerCardBuffId);
+            if (repeatNextPowerCard > 0)
+            {
+                battleManager.playerData?.ConsumeBuffStack(RepeatNextPowerCardBuffId, repeatNextPowerCard);
+                repeatCount += repeatNextPowerCard;
+            }
         }
 
         int repeatNextCard = GetPlayerBuffStack(RepeatNextCardBuffId);
@@ -403,6 +455,20 @@ public class PowerBuffRuntime
         battleManager.ApplyBuffToAllEnemies(BurnBuffId, burnStack);
     }
 
+    public void OnCardsExhausted(int exhaustedCount)
+    {
+        if (exhaustedCount <= 0)
+        {
+            return;
+        }
+
+        int exhaustDrawContract = GetPlayerBuffStack(ExhaustDrawContractBuffId);
+        if (exhaustDrawContract > 0)
+        {
+            battleManager.DrawCards(exhaustedCount * exhaustDrawContract);
+        }
+    }
+
     public void ApplyCardUseAllEnemiesDamage(int damage)
     {
         if (damage <= 0)
@@ -475,22 +541,23 @@ public class PowerBuffRuntime
 
     public int ResolvePersistentUpgradeCardId(int cardId)
     {
-        int resolvedCardId = cardId;
-        if (GetPlayerBuffStack(PotionEnhanceBuffId) > 0
-            && GeneratedUpgradeMap.TryGetValue(resolvedCardId, out int upgradedPotionId)
-            && IsPotionCardId(resolvedCardId))
-        {
-            resolvedCardId = upgradedPotionId;
-        }
+        int resolvedCardId = ResolvePotionEnhanceCardId(cardId);
+        return ResolveGlacierShapeEnhanceCardId(resolvedCardId);
+    }
 
-        if (GetPlayerBuffStack(GlacierShapeEnhanceBuffId) > 0
-            && resolvedCardId == 301080
-            && GeneratedUpgradeMap.TryGetValue(resolvedCardId, out int upgradedGlacierShapeId))
+    public int ResolvePersistentUpgradeCardId(int cardId, int sourceBuffId)
+    {
+        switch (sourceBuffId)
         {
-            resolvedCardId = upgradedGlacierShapeId;
-        }
+            case PotionEnhanceBuffId:
+                return ResolvePotionEnhanceCardId(cardId);
 
-        return resolvedCardId;
+            case GlacierShapeEnhanceBuffId:
+                return ResolveGlacierShapeEnhanceCardId(cardId);
+
+            default:
+                return ResolvePersistentUpgradeCardId(cardId);
+        }
     }
 
     private void ApplyDoubleJack(Card playedCard)
@@ -719,6 +786,30 @@ public class PowerBuffRuntime
 
         Card transformedCard = CardManager.GetCardAsCard(transformedCardId);
         return transformedCard ?? generatedCard;
+    }
+
+    private int ResolvePotionEnhanceCardId(int cardId)
+    {
+        if (GetPlayerBuffStack(PotionEnhanceBuffId) > 0
+            && GeneratedUpgradeMap.TryGetValue(cardId, out int upgradedPotionId)
+            && IsPotionCardId(cardId))
+        {
+            return upgradedPotionId;
+        }
+
+        return cardId;
+    }
+
+    private int ResolveGlacierShapeEnhanceCardId(int cardId)
+    {
+        if (GetPlayerBuffStack(GlacierShapeEnhanceBuffId) > 0
+            && cardId == 301080
+            && GeneratedUpgradeMap.TryGetValue(cardId, out int upgradedGlacierShapeId))
+        {
+            return upgradedGlacierShapeId;
+        }
+
+        return cardId;
     }
 
     private Monster PickRandomLivingMonster()
