@@ -99,15 +99,21 @@ public class AttackEffect : ICardEffect
 
     private int BuildFinalDamageAmount(TrainingBattleManager battleManager, int attackBoost)
     {
+        Card sourceCard = battleManager?.battleContext?.GetLastPlayedCard();
         ResolveAttackAmount(battleManager, out int baseAmount, out float cardMultiplier);
         baseAmount += Mathf.Max(0, attackBoost);
+        baseAmount += Mathf.Max(0, battleManager != null ? battleManager.GetCardBaseDamageBonus(sourceCard, true) : 0);
 
         if (battleManager.playerData == null)
         {
-            return Mathf.Max(0, Mathf.FloorToInt(baseAmount * Mathf.Max(0f, cardMultiplier)));
+            int fallbackDamage = Mathf.Max(0, Mathf.FloorToInt(baseAmount * Mathf.Max(0f, cardMultiplier)));
+            return battleManager != null
+                ? battleManager.ApplyCardDamageRuntimeModifiers(sourceCard, fallbackDamage)
+                : fallbackDamage;
         }
 
-        return battleManager.playerData.CalculateCardDamage(baseAmount, ampMultiplier, cardMultiplier);
+        int resolvedDamage = battleManager.playerData.CalculateCardDamage(baseAmount, ampMultiplier, cardMultiplier);
+        return battleManager.ApplyCardDamageRuntimeModifiers(sourceCard, resolvedDamage);
     }
 
     private void ResolveAttackAmount(TrainingBattleManager battleManager, out int baseAmount, out float cardMultiplier)

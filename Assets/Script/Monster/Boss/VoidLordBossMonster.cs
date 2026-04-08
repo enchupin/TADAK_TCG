@@ -10,7 +10,7 @@ public class VoidLordBossMonster : Monster
     private bool recoverySequenceActive;
 
     public override int MonsterId => 304;
-    protected override string MonsterName => "\uACF5\uD5C8 \uAD70\uC8FC";
+    protected override string MonsterName => "공허 군주";
     protected override int BaseMaxHp => 400;
     protected override bool IsBossMonster => true;
 
@@ -71,28 +71,28 @@ public class VoidLordBossMonster : Monster
         switch (nextPatternId)
         {
             case 30401:
-                SetIntent("\uBF51\uC744 \uCE74\uB4DC \uB354\uBBF8, \uC190, \uBC84\uB9B0 \uCE74\uB4DC \uB354\uBBF8\uC5D0 \uACF5\uD5C8\uC758 \uBD80\uB984 \uCE74\uB4DC\uB97C \uAC01\uAC01 1\uC7A5\uC529 \uC0DD\uC131\uD569\uB2C8\uB2E4.");
+                SetIntent("뽑을 카드 더미, 손, 버린 카드 더미에 공허의 부름 카드를 각각 1장씩 생성합니다.");
                 SetPlannedPattern(30401, MonsterIntentIconType.DisruptCard);
                 break;
             case 30402:
-                SetIntent("\uBAA8\uB4E0 \uC544\uAD70\uC774 \uACF5\uD5C8 \uAF8D\uC9C8\uC744 4 \uC5BB\uC2B5\uB2C8\uB2E4.");
+                SetIntent("모든 아군이 공허 껍질을 4 얻습니다.");
                 SetPlannedPattern(30402, MonsterIntentIconType.BeneficialEffect);
                 break;
             case 30403:
                 int previewDamage = GetPreviewDamage(14);
-                SetAttackIntent(previewDamage, $"\uD53C\uD574\uB97C {previewDamage}\uC529 3\uD68C \uC785\uD799\uB2C8\uB2E4.");
+                SetAttackIntent(previewDamage, $"피해를 {previewDamage}씩 3회 입힙니다.");
                 SetPlannedPattern(30403, MonsterIntentIconType.Attack);
                 break;
             case 30404:
-                SetIntent("\uD574\uB85C\uC6B4 \uD6A8\uACFC\uB97C \uBAA8\uB450 \uC81C\uAC70\uD569\uB2C8\uB2E4. \uB2E4\uC74C \uD134\uC5D0 \uC544\uBB34\uAC83\uB3C4 \uD558\uC9C0 \uC54A\uC9C0\uB9CC, \uD53C\uD574\uB97C \uBC1B\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.");
+                SetIntent("해로운 효과를 모두 제거합니다. 다음 턴에 아무것도 하지 않지만, 피해를 받지 않습니다.");
                 SetPlannedPattern(30404, MonsterIntentIconType.BeneficialEffect);
                 break;
             case 30405:
-                SetIntent("\uC544\uBB34\uAC83\uB3C4 \uD558\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.");
+                SetIntent("아무것도 하지 않습니다.");
                 SetPlannedPattern(30405, MonsterIntentIconType.Stun);
                 break;
             default:
-                SetIntent("\uACF5\uACA9 \uAC15\uD654\uB97C 6 \uC5BB\uC2B5\uB2C8\uB2E4.");
+                SetIntent("공격 강화를 6 얻습니다.");
                 SetPlannedPattern(30406, MonsterIntentIconType.BeneficialEffect);
                 break;
         }
@@ -158,50 +158,27 @@ public class VoidLordBossMonster : Monster
             return;
         }
 
-        Card drawPileCard = CreateVoidCallCard();
-        Card handCard = CreateVoidCallCard();
-        Card discardCard = CreateVoidCallCard();
+        Card drawPileCard = CardManager.GetCardAsCard(30);
+        Card handCard = CardManager.GetCardAsCard(30);
+        Card discardCard = CardManager.GetCardAsCard(30);
 
-        battleManager.usableDeckManager?.AddToDrawPileRandom(drawPileCard);
-        battleManager.handManager?.AddCard(handCard);
-        battleManager.usableDeckManager?.AddToDiscard(discardCard);
-        battleManager.RefreshHandPlayableState();
-        battleManager.UpdateAllUI();
-    }
-
-    private Card CreateVoidCallCard()
-    {
-        List<CardData> allCards = CardManager.GetAllCards();
-        foreach (CardData cardData in allCards)
+        if (drawPileCard != null)
         {
-            if (cardData != null && cardData.cardId == BattleRuntimeDefinitions.VoidCallCardId)
-            {
-                return cardData.ToCard();
-            }
+            battleManager.usableDeckManager?.AddToDrawPileRandom(drawPileCard);
         }
 
-        Card fallbackCard = new Card
+        if (handCard != null)
         {
-            cardId = BattleRuntimeDefinitions.VoidCallCardId,
-            cardName = "\uACF5\uD5C8\uC758 \uBD80\uB984",
-            character = 0,
-            cost = 0,
-            description = "\uD134 \uC885\uB8CC \uC2DC \uC57D\uD654\uB97C 2 \uC5BB\uC2B5\uB2C8\uB2E4.",
-            keywords = new List<int> { CardKeywordIds.Unplayable },
-            effects = new List<ICardEffect>(),
-            keepEffects = new List<ICardEffect>(),
-            endTurnInHandEffects = new List<ICardEffect>
-            {
-                new BuffEffect
-                {
-                    buffId = BattleRuntimeDefinitions.WeakBuffId,
-                    amount = 2,
-                    target = TargetType.Self
-                }
-            }
-        };
-        fallbackCard.InitializeRuntimeState();
-        return fallbackCard;
+            battleManager.handManager?.AddCard(handCard);
+        }
+
+        if (discardCard != null)
+        {
+            battleManager.usableDeckManager?.AddToDiscard(discardCard);
+        }
+
+        battleManager.RefreshHandPlayableState();
+        battleManager.UpdateAllUI();
     }
 
     private void ApplyVoidShellToAllAllies(int amount)

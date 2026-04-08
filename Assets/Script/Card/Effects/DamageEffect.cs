@@ -92,12 +92,17 @@ public class DamageEffect : ICardEffect
 
     private int BuildFinalDamageAmount(TrainingBattleManager battleManager, int baseAmount, float cardMultiplier)
     {
+        Card sourceCard = battleManager?.battleContext?.GetLastPlayedCard();
         if (battleManager.playerData == null)
         {
-            return Mathf.Max(0, Mathf.FloorToInt(baseAmount * Mathf.Max(0f, cardMultiplier)));
+            int fallbackDamage = Mathf.Max(0, Mathf.FloorToInt(baseAmount * Mathf.Max(0f, cardMultiplier)));
+            return battleManager != null
+                ? battleManager.ApplyCardDamageRuntimeModifiers(sourceCard, fallbackDamage)
+                : fallbackDamage;
         }
 
-        return battleManager.playerData.CalculateCardDamage(baseAmount, ampMultiplier, cardMultiplier);
+        int resolvedDamage = battleManager.playerData.CalculateCardDamage(baseAmount, ampMultiplier, cardMultiplier);
+        return battleManager.ApplyCardDamageRuntimeModifiers(sourceCard, resolvedDamage);
     }
 
     private void ResolveDamageAmount(TrainingBattleManager battleManager, int forwardedAmount, out int baseAmount, out float cardMultiplier)

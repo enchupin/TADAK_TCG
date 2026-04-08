@@ -25,7 +25,7 @@ public class CardEffectData
     public string stat;
     public int buffId;
     public int duration;
-    public List<int> buffTypes;
+    public List<int> buffFilterIds;
     public bool random;
     public string change;
 

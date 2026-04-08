@@ -140,14 +140,16 @@ public class PlayerData : MonoBehaviour
             {
                 buffId = buffId,
                 name = $"버프 {buffId}",
-                buffType = BuffData.GetPolarityBuffType(buffId),
                 description = string.Empty
             };
         }
 
-        Buff existingBuff = currentBuffs.Find(b => b.data.buffId == buffId);
+        Buff existingBuff = currentBuffs.Find(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
         if (existingBuff != null)
         {
+            existingBuff.data = data;
             existingBuff.stack += amount;
             Debug.Log($"버프 중첩: {data.name} (+{amount}) -> {existingBuff.stack}");
         }
@@ -187,7 +189,7 @@ public class PlayerData : MonoBehaviour
     /// </summary>
     public int TakeDamage(int amount, Monster attacker = null)
     {
-        int finalDamage = ApplyIncomingDamageMultiplier(amount);
+        int finalDamage = ApplyIncomingDamageMultiplier(amount, attacker);
         finalDamage = ApplyDamageClamp(finalDamage);
         if (TryConsumeEvade(finalDamage, attacker))
         {
@@ -212,12 +214,45 @@ public class PlayerData : MonoBehaviour
         }
 
         Debug.Log($"플레이어가 {damageAfterDefense} 데미지를 받았습니다! (HP: {hp}/{maxHP})");
+        TryConsumeSoulProtection();
+        if (finalDamage > 0)
+        {
+            ConsumeIncomingDamageBuff();
+        }
         if (attacker != null && finalDamage > 0)
         {
             TrainingBattleManager.Instance?.HandlePlayerHit(attacker, blockedDamage, damageAfterDefense);
         }
 
         return damageAfterDefense;
+    }
+
+    public int LoseHp(int amount)
+    {
+        int lostAmount = Mathf.Clamp(amount, 0, hp);
+        if (lostAmount <= 0)
+        {
+            return 0;
+        }
+
+        hp -= lostAmount;
+        hpLostThisTurn += lostAmount;
+        hasLostHpThisTurn = true;
+        TryConsumeSoulProtection();
+
+        return lostAmount;
+    }
+
+    private void TryConsumeSoulProtection()
+    {
+        if (hp > 0 || GetBuffStack(BattleRuntimeDefinitions.SoulProtectionBuffId) <= 0)
+        {
+            return;
+        }
+
+        hp = 1;
+        DecreaseBuffStack(BattleRuntimeDefinitions.SoulProtectionBuffId, 1);
+        Debug.Log("영혼 보호가 발동해 체력 1로 버팁니다");
     }
 
     private int ApplyDamageClamp(int finalDamage)
@@ -338,15 +373,15 @@ public class PlayerData : MonoBehaviour
         DecreaseBuffStack(BattleRuntimeDefinitions.DamageClampToOneBuffId, 1);
         RemoveBuff(BattleRuntimeDefinitions.DrawLockBuffId);
 
-        DecreaseBuffStack(BattleRuntimeDefinitions.CorrosionBuffId, 1);
-        DecreaseBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1);
         DecreaseBuffStack(BattleRuntimeDefinitions.WeakBuffId, 1);
         DecreaseBuffStack(BattleRuntimeDefinitions.FrailBuffId, 1);
     }
 
     public int GetBuffStack(int buffId)
     {
-        Buff buff = currentBuffs.Find(b => b.data != null && b.data.buffId == buffId);
+        Buff buff = currentBuffs.Find(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
         return buff != null ? buff.stack : 0;
     }
 
@@ -391,7 +426,7 @@ public class PlayerData : MonoBehaviour
         return Mathf.Max(0, Mathf.FloorToInt(amplifiedDamage * GetOutgoingDamageMultiplier()));
     }
 
-    private int ApplyIncomingDamageMultiplier(int incomingDamage)
+    private int ApplyIncomingDamageMultiplier(int incomingDamage, Monster attacker)
     {
         if (incomingDamage <= 0)
         {
@@ -399,7 +434,14 @@ public class PlayerData : MonoBehaviour
         }
 
         float multiplier = 1f;
-        if (GetBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId) > 0)
+        bool hasEnhancedCorrosion = GetBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId) > 0;
+        bool hasCorrosion = GetBuffStack(BattleRuntimeDefinitions.CorrosionBuffId) > 0;
+        bool attackerEnhancesCorrosion = !hasEnhancedCorrosion
+            && hasCorrosion
+            && attacker != null
+            && attacker.GetBuffStack(BattleRuntimeDefinitions.CorrosionEnhanceBuffId) > 0;
+
+        if (hasEnhancedCorrosion || attackerEnhancesCorrosion)
         {
             multiplier = Mathf.Max(
                 multiplier,
@@ -407,7 +449,7 @@ public class PlayerData : MonoBehaviour
                     ? BuffManager.Instance.GetIncomingDamageMultiplier(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1.5f)
                     : 1.5f);
         }
-        else if (GetBuffStack(BattleRuntimeDefinitions.CorrosionBuffId) > 0)
+        else if (hasCorrosion)
         {
             multiplier = Mathf.Max(
                 multiplier,
@@ -419,12 +461,28 @@ public class PlayerData : MonoBehaviour
         return Mathf.FloorToInt(incomingDamage * multiplier);
     }
 
+    private void ConsumeIncomingDamageBuff()
+    {
+        if (GetBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId) > 0)
+        {
+            DecreaseBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1);
+            return;
+        }
+
+        if (GetBuffStack(BattleRuntimeDefinitions.CorrosionBuffId) > 0)
+        {
+            DecreaseBuffStack(BattleRuntimeDefinitions.CorrosionBuffId, 1);
+        }
+    }
+
     private void DecreaseBuffStack(int buffId, int amount)
     {
         if (amount <= 0)
             return;
 
-        Buff buff = currentBuffs.Find(b => b.data != null && b.data.buffId == buffId);
+        Buff buff = currentBuffs.Find(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
         if (buff == null)
             return;
 
@@ -447,7 +505,9 @@ public class PlayerData : MonoBehaviour
 
     private void RemoveBuff(int buffId)
     {
-        currentBuffs.RemoveAll(b => b.data != null && b.data.buffId == buffId);
+        currentBuffs.RemoveAll(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
     }
 
     /// <summary>

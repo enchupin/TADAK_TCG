@@ -98,7 +98,6 @@ public class Mirror : Monster
             {
                 buffId = BattleRuntimeDefinitions.MirrorBuffId,
                 name = "거울",
-                buffType = BuffData.GetPolarityBuffType(BattleRuntimeDefinitions.MirrorBuffId),
                 description = "받은 피해만큼 중첩됩니다. 공격하면 0으로 초기화됩니다."
             };
         }

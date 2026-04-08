@@ -412,7 +412,7 @@ public class CardJSONConverter : EditorWindow
             stat = ReadJsonString(effectObject, "stat"),
             change = ReadJsonString(effectObject, "change"),
             buffId = ReadJsonInt(effectObject, "buffId"),
-            buffTypes = ReadJsonIntList(effectObject, "buffType"),
+            buffFilterIds = ReadJsonIntList(effectObject, "buffIds"),
             random = ReadJsonBool(effectObject, "random"),
             duration = ReadJsonInt(effectObject, "duration"),
             cardId = ReadJsonString(effectObject, "cardId"),
@@ -1040,15 +1040,25 @@ public class CardJSONConverter : EditorWindow
 
     private static List<int> ReadJsonIntList(JObject obj, string key)
     {
+        if (obj == null)
+        {
+            return new List<int>();
+        }
+
+        return ReadJsonIntList(obj[key]);
+    }
+
+    private static List<int> ReadJsonIntList(JToken token)
+    {
         List<int> values = new List<int>();
-        if (obj == null || obj[key] is not JArray array)
+        if (token is not JArray array)
         {
             return values;
         }
 
-        foreach (JToken token in array)
+        foreach (JToken item in array)
         {
-            int parsed = ReadJsonInt(token, int.MinValue);
+            int parsed = ReadJsonInt(item, int.MinValue);
             if (parsed != int.MinValue)
             {
                 values.Add(parsed);

@@ -48,7 +48,7 @@ public class MutantCarnivorousPlantMonster : Monster
 
                 if (shouldGenerateWound)
                 {
-                    AddCardToPlayerDiscard(CardManager.GetCardAsCard(BattleRuntimeDefinitions.WoundCardId));
+                    AddCardToPlayerDiscard(CardManager.GetCardAsCard(10));
                 }
                 break;
         }

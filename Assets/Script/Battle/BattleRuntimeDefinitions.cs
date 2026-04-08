@@ -4,7 +4,7 @@ public static class BattleRuntimeDefinitions
     public const int PotionEnhanceBuffId = 1002;
     public const int PotionCycleBuffId = 1003;
     public const int GlacierShapeEnhanceBuffId = 1004;
-    public const int FlameTransferBuffId = 1005;
+    public const int FlameTransferBuffId = 2002;
     public const int UnplayableUnlockBuffId = 1006;
     public const int DoubleJackBuffId = 1007;
     public const int DuplicateGenerateBuffId = 1008;
@@ -13,6 +13,9 @@ public static class BattleRuntimeDefinitions
     public const int RuneBarrierBuffId = 1011;
     public const int EfficientBarrierBuffId = 1012;
     public const int PermanentBarrierRetentionBuffId = 1013;
+    public const int FeatherCycleBuffId = 1015;
+    public const int FeatherEnhanceBuffId = 1016;
+    public const int SoulProtectionBuffId = 1017;
     public const int DrawLockBuffId = 2001;
     public const int RegenerationBuffId = 3001;
     public const int DamageAmplifyBuffId = 3002;
@@ -40,9 +43,21 @@ public static class BattleRuntimeDefinitions
     public const int NextCardFreeBuffId = 3027;
     public const int RetainChoiceBuffId = 3028;
     public const int JokerPowerBuffId = 3029;
-    public const int LifeLinkBuffId = 3030;
+    public const int RuneBuffId = 3031;
+    public const int LifeLinkBuffId = 4013;
     public const int RuneGenerationBuffId = 3032;
     public const int LavaBarrierBuffId = 3033;
+    public const int FeatherStackBoostBuffId = 3034;
+    public const int RepeatNextPowerCardBuffId = 3035;
+    public const int GrowingFeatherBuffId = 3036;
+    public const int PrecisionBuffId = 3037;
+    public const int FeatherAutoTriggerBuffId = 3038;
+    public const int BlindFeatherBuffId = 3039;
+    public const int DeadlyAmbushBuffId = 3040;
+    public const int ExhaustDrawContractBuffId = 3041;
+    public const int StrengthContractBuffId = 3042;
+    public const int RuneProtectionBuffId = 3043;
+    public const int RuneAttackBuffId = 3044;
     public const int CorrosionBuffId = 4001;
     public const int EnhancedCorrosionBuffId = 4002;
     public const int BurnBuffId = 4003;
@@ -54,6 +69,7 @@ public static class BattleRuntimeDefinitions
     public const int CrueltyDebuffId = 4009;
     public const int FrailBuffId = 4011;
     public const int DrawInterferenceBuffId = 4012;
+    public const int FeatherBuffId = 4014;
     public const int MonsterLifeStealBuffId = 5001;
     public const int VoidShellBuffId = 5002;
     public const int FaithfulPrayerBuffId = 5003;
@@ -66,10 +82,5 @@ public static class BattleRuntimeDefinitions
     public const int FuturePredationBuffId = 5010;
     public const int RootedBuffId = 5011;
     public const int MirrorBuffId = 5012;
-    public const int PoisonousMushroomBuffId = 1014;
-    public const int VoidCallCardId = 30;
-    public const int RootAbsorptionCardId = 40;
-    public const int WoundCardId = 10;
-    public const int PoisonCardId = 20;
-    public const int PoisonPlusCardId = 21;
+    public const int PoisonousMushroomBuffId = 5013;
 }

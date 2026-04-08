@@ -18,6 +18,9 @@ public class UsableDeckManager : MonoBehaviour
             return;
         }
 
+        card = TrainingBattleManager.Instance != null
+            ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
+            : card;
         discardPile.Add(card);
     }
 
@@ -30,7 +33,18 @@ public class UsableDeckManager : MonoBehaviour
             return;
         }
 
-        discardPile.AddRange(cards);
+        foreach (Card card in cards)
+        {
+            if (card == null)
+            {
+                continue;
+            }
+
+            Card processedCard = TrainingBattleManager.Instance != null
+                ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
+                : card;
+            discardPile.Add(processedCard);
+        }
     }
 
     /// <summary>
@@ -250,6 +264,9 @@ public class UsableDeckManager : MonoBehaviour
             return;
         }
 
+        card = TrainingBattleManager.Instance != null
+            ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
+            : card;
         List<Card> drawPile = usableDeck != null ? new List<Card>(usableDeck) : new List<Card>();
         drawPile.Insert(0, card);
         usableDeck = new Queue<Card>(drawPile);
@@ -261,6 +278,9 @@ public class UsableDeckManager : MonoBehaviour
             return;
         }
 
+        card = TrainingBattleManager.Instance != null
+            ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
+            : card;
         List<Card> drawPile = usableDeck != null ? new List<Card>(usableDeck) : new List<Card>();
         int index = Random.Range(0, drawPile.Count + 1);
         drawPile.Insert(index, card);

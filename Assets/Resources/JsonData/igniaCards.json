@@ -553,7 +553,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 1005,
+                    "buffId": 2002,
                     "amount": 1,
                     "target": "SingleEnemy"
                 }

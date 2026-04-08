@@ -170,7 +170,7 @@ public static class CardEffectRuntimeUtility
             return 0;
         }
 
-        Buff buff = buffs.Find(candidate => candidate?.data != null && candidate.data.buffId == buffId);
+        Buff buff = buffs.Find(candidate => BuffIdMatches(candidate, buffId));
         if (buff == null)
         {
             return 0;
@@ -211,7 +211,7 @@ public static class CardEffectRuntimeUtility
             return 0;
         }
 
-        Buff buff = buffs.Find(candidate => candidate?.data != null && candidate.data.buffId == buffId);
+        Buff buff = buffs.Find(candidate => BuffIdMatches(candidate, buffId));
         if (buff == null)
         {
             return 0;
@@ -226,9 +226,9 @@ public static class CardEffectRuntimeUtility
         return buff.stack;
     }
 
-    public static Buff PickRandomBuffByTypes(List<Buff> buffs, List<int> allowedBuffTypes)
+    public static Buff PickRandomBuffByFilters(List<Buff> buffs, List<int> allowedBuffFilters)
     {
-        if (buffs == null || buffs.Count == 0 || allowedBuffTypes == null || allowedBuffTypes.Count == 0)
+        if (buffs == null || buffs.Count == 0 || allowedBuffFilters == null || allowedBuffFilters.Count == 0)
         {
             return null;
         }
@@ -237,7 +237,7 @@ public static class CardEffectRuntimeUtility
             buff != null &&
             buff.data != null &&
             buff.stack > 0 &&
-            allowedBuffTypes.Exists(buff.data.MatchesAllowedType));
+            allowedBuffFilters.Exists(buff.data.MatchesAllowedType));
 
         if (candidates.Count == 0)
         {
@@ -272,6 +272,12 @@ public static class CardEffectRuntimeUtility
         {
             target.Add(card);
         }
+    }
+
+    private static bool BuffIdMatches(Buff buff, int buffId)
+    {
+        return buff?.data != null
+            && buff.data.buffId == buffId;
     }
 }
 
@@ -316,84 +322,5 @@ public class ExtraTurnEffect : ICardEffect
         }
 
         return forwardedAmount > 0 ? forwardedAmount : 1;
-    }
-}
-
-[System.Serializable]
-public class MixBuffEffect : ICardEffect
-{
-    public TargetType target = TargetType.Self;
-
-    public void Execute(TrainingBattleManager battleManager)
-    {
-        if (battleManager == null)
-        {
-            return;
-        }
-
-        switch (target)
-        {
-            case TargetType.Self:
-            case TargetType.None:
-                MixBuffs(battleManager.playerData?.currentBuffs);
-                break;
-
-            case TargetType.SingleEnemy:
-            case TargetType.AllEnemies:
-                List<Monster> targets = CardEffectRuntimeUtility.ResolveEnemyTargets(battleManager, target);
-                foreach (Monster monster in targets)
-                {
-                    if (monster == null)
-                    {
-                        continue;
-                    }
-
-                    MixBuffs(monster.currentBuffs);
-                    monster.UpdateUI();
-                }
-                break;
-        }
-
-        battleManager.UpdateAllUI();
-    }
-
-    private static void MixBuffs(List<Buff> buffs)
-    {
-        if (buffs == null || buffs.Count == 0)
-        {
-            return;
-        }
-
-        List<Buff> activeBuffs = new List<Buff>();
-        int totalStack = 0;
-
-        foreach (Buff buff in buffs)
-        {
-            if (buff == null || buff.data == null || buff.stack <= 0)
-            {
-                continue;
-            }
-
-            activeBuffs.Add(buff);
-            totalStack += buff.stack;
-        }
-
-        if (activeBuffs.Count == 0 || totalStack <= 0)
-        {
-            return;
-        }
-
-        foreach (Buff buff in activeBuffs)
-        {
-            buff.stack = 1;
-        }
-
-        int remainingStack = totalStack - activeBuffs.Count;
-        while (remainingStack > 0)
-        {
-            int randomIndex = Random.Range(0, activeBuffs.Count);
-            activeBuffs[randomIndex].stack++;
-            remainingStack--;
-        }
     }
 }

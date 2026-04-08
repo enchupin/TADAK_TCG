@@ -847,7 +847,7 @@ public class TrainingBattleManager : MonoBehaviour
         return turnSystem.CanEndPlayerTurn();
     }
 
-    public bool CanUseIdentityAbility()
+    public bool CanInteractWithCards()
     {
         return turnSystem.CanPlayerPlayCard();
     }
@@ -966,6 +966,27 @@ public class TrainingBattleManager : MonoBehaviour
         return powerBuffRuntime != null ? powerBuffRuntime.GetTurnEndRetainCount() : 0;
     }
 
+    public int GetCardBaseDamageBonus(Card sourceCard, bool isAttackEffect)
+    {
+        return powerBuffRuntime != null
+            ? powerBuffRuntime.GetCardBaseDamageBonus(sourceCard, isAttackEffect)
+            : 0;
+    }
+
+    public int ApplyCardDamageRuntimeModifiers(Card sourceCard, int damage)
+    {
+        return powerBuffRuntime != null
+            ? powerBuffRuntime.ApplyCardDamageRuntimeModifiers(sourceCard, damage)
+            : Mathf.Max(0, damage);
+    }
+
+    public int ResolvePersistentUpgradeCardId(int cardId)
+    {
+        return powerBuffRuntime != null
+            ? powerBuffRuntime.ResolvePersistentUpgradeCardId(cardId)
+            : cardId;
+    }
+
     public bool HasPermanentBarrierRetention()
     {
         return powerBuffRuntime != null && powerBuffRuntime.HasPermanentBarrierRetention();
@@ -1004,6 +1025,17 @@ public class TrainingBattleManager : MonoBehaviour
     public void HandleMonsterHpLost(Monster monster, int hpLoss)
     {
         powerBuffRuntime?.OnMonsterHpLost(monster, hpLoss);
+    }
+
+    public void HandleCardsExhausted(int count)
+    {
+        if (count <= 0)
+        {
+            return;
+        }
+
+        battleContext?.OnCardsExhausted(count);
+        powerBuffRuntime?.OnCardsExhausted(count);
     }
 
     public void HandleMonsterDeath(Monster monster)
@@ -1182,6 +1214,36 @@ public class TrainingBattleManager : MonoBehaviour
             : new List<Card>(generatedCards);
     }
 
+    public Card ApplyPersistentUpgradeToCard(Card card)
+    {
+        return ApplyPersistentUpgradeToCard(card, 0);
+    }
+
+    public Card ApplyPersistentUpgradeToCard(Card card, int sourceBuffId)
+    {
+        if (card == null || powerBuffRuntime == null)
+        {
+            return card;
+        }
+
+        int upgradedCardId = sourceBuffId > 0
+            ? powerBuffRuntime.ResolvePersistentUpgradeCardId(card.cardId, sourceBuffId)
+            : powerBuffRuntime.ResolvePersistentUpgradeCardId(card.cardId);
+        if (upgradedCardId == card.cardId)
+        {
+            return card;
+        }
+
+        Card upgradedTemplate = CardManager.GetCardAsCard(upgradedCardId);
+        if (upgradedTemplate == null)
+        {
+            return card;
+        }
+
+        card.ApplyTemplate(upgradedTemplate);
+        return card;
+    }
+
     public void ApplyBuffToPlayer(int buffId, int amount)
     {
         if (amount <= 0)
@@ -1209,6 +1271,7 @@ public class TrainingBattleManager : MonoBehaviour
 
         int crueltyStackBeforeApply = monster.GetBuffStack(BattleRuntimeDefinitions.CrueltyDebuffId);
         monster.AddBuff(buffId, amount);
+        ApplyPersistentCardBuffChanges(buffId);
         if (!BuffData.IsBeneficialBuffId(buffId))
         {
             powerBuffRuntime?.OnEnemyDebuffApplied(monster, buffId, amount, crueltyStackBeforeApply);
@@ -1231,7 +1294,10 @@ public class TrainingBattleManager : MonoBehaviour
 
     private void ApplyPersistentCardBuffChanges(int buffId)
     {
-        if (powerBuffRuntime == null || (buffId != 1002 && buffId != 1004))
+        if (powerBuffRuntime == null
+            || (buffId != BattleRuntimeDefinitions.PotionEnhanceBuffId
+                && buffId != BattleRuntimeDefinitions.GlacierShapeEnhanceBuffId
+                && buffId != BattleRuntimeDefinitions.PoisonUpgradeBuffId))
         {
             return;
         }
@@ -1239,9 +1305,9 @@ public class TrainingBattleManager : MonoBehaviour
         List<Card> changedHandCards = new List<Card>();
         bool hasChanges = false;
 
-        hasChanges |= ApplyPersistentCardBuffChanges(handManager?.GetHandCards(), changedHandCards);
-        hasChanges |= ApplyPersistentCardBuffChanges(usableDeckManager?.GetDrawPile(), null);
-        hasChanges |= ApplyPersistentCardBuffChanges(usableDeckManager?.GetDiscardPile(), null);
+        hasChanges |= ApplyPersistentCardBuffChanges(handManager?.GetHandCards(), changedHandCards, buffId);
+        hasChanges |= ApplyPersistentCardBuffChanges(usableDeckManager?.GetDrawPile(), null, buffId);
+        hasChanges |= ApplyPersistentCardBuffChanges(usableDeckManager?.GetDiscardPile(), null, buffId);
 
         if (!hasChanges)
         {
@@ -1257,7 +1323,7 @@ public class TrainingBattleManager : MonoBehaviour
         UpdateAllUI();
     }
 
-    private bool ApplyPersistentCardBuffChanges(List<Card> cards, List<Card> changedCards)
+    private bool ApplyPersistentCardBuffChanges(List<Card> cards, List<Card> changedCards, int sourceBuffId)
     {
         if (cards == null || cards.Count == 0 || powerBuffRuntime == null)
         {
@@ -1272,19 +1338,12 @@ public class TrainingBattleManager : MonoBehaviour
                 continue;
             }
 
-            int upgradedCardId = powerBuffRuntime.ResolvePersistentUpgradeCardId(card.cardId);
-            if (upgradedCardId == card.cardId)
+            int originalCardId = card.cardId;
+            ApplyPersistentUpgradeToCard(card, sourceBuffId);
+            if (card.cardId == originalCardId)
             {
                 continue;
             }
-
-            Card upgradedTemplate = CardManager.GetCardAsCard(upgradedCardId);
-            if (upgradedTemplate == null)
-            {
-                continue;
-            }
-
-            card.ApplyTemplate(upgradedTemplate);
             hasChanges = true;
             changedCards?.Add(card);
         }
@@ -1460,7 +1519,7 @@ public class TrainingBattleManager : MonoBehaviour
             drawnCards.Add(drawnCard);
             handManager.AddCard(drawnCard);
 
-            if (!ignoreRootAbsorption && drawnCard.cardId == BattleRuntimeDefinitions.RootAbsorptionCardId)
+            if (!ignoreRootAbsorption && drawnCard.cardId == 40)
             {
                 break;
             }
@@ -1488,7 +1547,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     private bool HasRootAbsorptionInHand()
     {
-        return HasCardInHand(BattleRuntimeDefinitions.RootAbsorptionCardId);
+        return HasCardInHand(40);
     }
 
     private System.Collections.IEnumerator HandleTrainingRunBattleResult(bool isVictory)

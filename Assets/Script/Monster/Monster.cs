@@ -183,6 +183,10 @@ public abstract class Monster : MonoBehaviour
         }
 
         OnAfterTakeDamage(finalDamage, damageAfterDefense);
+        if (finalDamage > 0)
+        {
+            ConsumeIncomingDamageBuff();
+        }
         HandleDeathIfNeeded();
         UpdateUI();
         return damageAfterDefense;
@@ -277,14 +281,16 @@ public abstract class Monster : MonoBehaviour
             {
                 buffId = buffId,
                 name = $"버프 {buffId}",
-                buffType = BuffData.GetPolarityBuffType(buffId),
                 description = string.Empty
             };
         }
 
-        Buff existingBuff = currentBuffs.Find(b => b.data.buffId == buffId);
+        Buff existingBuff = currentBuffs.Find(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
         if (existingBuff != null)
         {
+            existingBuff.data = data;
             if (IsNonStackableBuff(buffId))
             {
                 existingBuff.stack = Mathf.Max(existingBuff.stack, 1);
@@ -347,8 +353,7 @@ public abstract class Monster : MonoBehaviour
         }
 
         // 부식(4001), 강화부식(4002)은 턴 종료 시 지속 턴 1 감소
-        DecreaseBuffStack(BattleRuntimeDefinitions.CorrosionBuffId, 1);
-        DecreaseBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1);
+        // 현재는 피격 시마다 부식 계열 스택이 1 감소함
         OnTurnEnded();
         UpdateUI();
     }
@@ -368,7 +373,9 @@ public abstract class Monster : MonoBehaviour
 
     public int GetBuffStack(int buffId)
     {
-        Buff buff = currentBuffs.Find(b => b.data != null && b.data.buffId == buffId);
+        Buff buff = currentBuffs.Find(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
         return buff != null ? buff.stack : 0;
     }
 
@@ -497,13 +504,20 @@ public abstract class Monster : MonoBehaviour
         float multiplier = 1f;
 
         // 강화부식이 있으면 50%, 아니면 부식 25%
-        if (GetBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId) > 0)
+        bool hasEnhancedCorrosion = GetBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId) > 0;
+        bool hasCorrosion = GetBuffStack(BattleRuntimeDefinitions.CorrosionBuffId) > 0;
+        bool playerEnhancesCorrosion = !hasEnhancedCorrosion
+            && hasCorrosion
+            && TrainingBattleManager.Instance?.playerData != null
+            && TrainingBattleManager.Instance.playerData.GetBuffStack(BattleRuntimeDefinitions.CorrosionEnhanceBuffId) > 0;
+
+        if (hasEnhancedCorrosion || playerEnhancesCorrosion)
         {
             multiplier = BuffManager.Instance != null
                 ? BuffManager.Instance.GetIncomingDamageMultiplier(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1.5f)
                 : 1.5f;
         }
-        else if (GetBuffStack(BattleRuntimeDefinitions.CorrosionBuffId) > 0)
+        else if (hasCorrosion)
         {
             multiplier = BuffManager.Instance != null
                 ? BuffManager.Instance.GetIncomingDamageMultiplier(BattleRuntimeDefinitions.CorrosionBuffId, 1.25f)
@@ -513,12 +527,28 @@ public abstract class Monster : MonoBehaviour
         return Mathf.FloorToInt(incomingDamage * multiplier);
     }
 
+    private void ConsumeIncomingDamageBuff()
+    {
+        if (GetBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId) > 0)
+        {
+            DecreaseBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1);
+            return;
+        }
+
+        if (GetBuffStack(BattleRuntimeDefinitions.CorrosionBuffId) > 0)
+        {
+            DecreaseBuffStack(BattleRuntimeDefinitions.CorrosionBuffId, 1);
+        }
+    }
+
     private void DecreaseBuffStack(int buffId, int amount)
     {
         if (amount <= 0)
             return;
 
-        Buff buff = currentBuffs.Find(b => b.data != null && b.data.buffId == buffId);
+        Buff buff = currentBuffs.Find(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
         if (buff == null)
             return;
 
@@ -531,7 +561,9 @@ public abstract class Monster : MonoBehaviour
 
     private void RemoveBuff(int buffId)
     {
-        currentBuffs.RemoveAll(buff => buff.data != null && buff.data.buffId == buffId);
+        currentBuffs.RemoveAll(buff =>
+            buff.data != null &&
+            buff.data.buffId == buffId);
     }
 
     private void ResolveFreezeThresholdIfNeeded()
