@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Mirror : Monster
 {
@@ -11,7 +11,6 @@ public class Mirror : Monster
     protected override void OnBattleStart()
     {
         patternIndex = 0;
-        EnsureMirrorBuff();
     }
 
     protected override void BuildNextAction()
@@ -30,8 +29,7 @@ public class Mirror : Monster
     {
         if (patternIndex < 2)
         {
-            DealDamage(target, GetMirrorStack());
-            SetMirrorStack(0);
+            DealDamage(target, 0);
         }
         else
         {
@@ -49,7 +47,6 @@ public class Mirror : Monster
             return;
         }
 
-        SetMirrorStack(GetMirrorStack() + damageAfterDefense);
         if (PlannedPatternId == 11401)
         {
             SetMirrorAttackIntent();
@@ -66,44 +63,6 @@ public class Mirror : Monster
 
     private int GetMirrorStack()
     {
-        Buff mirrorBuff = EnsureMirrorBuff();
-        return mirrorBuff != null ? Mathf.Max(0, mirrorBuff.stack) : 0;
-    }
-
-    private void SetMirrorStack(int value)
-    {
-        Buff mirrorBuff = EnsureMirrorBuff();
-        if (mirrorBuff == null)
-        {
-            return;
-        }
-
-        mirrorBuff.stack = Mathf.Max(0, value);
-    }
-
-    private Buff EnsureMirrorBuff()
-    {
-        Buff mirrorBuff = currentBuffs.Find(buff => buff?.data != null && buff.data.buffId == BattleRuntimeDefinitions.MirrorBuffId);
-        if (mirrorBuff != null)
-        {
-            return mirrorBuff;
-        }
-
-        BuffData mirrorBuffData = BuffManager.Instance != null
-            ? BuffManager.Instance.GetBuffData(BattleRuntimeDefinitions.MirrorBuffId)
-            : null;
-        if (mirrorBuffData == null)
-        {
-            mirrorBuffData = new BuffData
-            {
-                buffId = BattleRuntimeDefinitions.MirrorBuffId,
-                name = "거울",
-                description = "받은 피해만큼 중첩됩니다. 공격하면 0으로 초기화됩니다."
-            };
-        }
-
-        mirrorBuff = new Buff(mirrorBuffData, 0, 0);
-        currentBuffs.Add(mirrorBuff);
-        return mirrorBuff;
+        return PreviewOutgoingDamage(0);
     }
 }

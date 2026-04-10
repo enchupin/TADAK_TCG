@@ -32,6 +32,6 @@ public enum EffectType
     Upgrade = 38,
     ExtraTurn = 39,
     MixBuff = 40,
-    OnAttackGainAmplify = 41,
+    OnAttackGainStrength = 41,
     TransformCards = 42
 }

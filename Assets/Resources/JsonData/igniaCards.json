@@ -106,7 +106,7 @@
             "name": "폴리모프 +",
             "characterId": 201,
             "cost": 0,
-            "description": "피해 증폭을 3 얻습니다. 턴 종료 시 사라집니다.",
+            "description": "힘을 3 얻습니다. 턴 종료 시 사라집니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -130,7 +130,7 @@
             "keywords": [
                 4
             ],
-            "description": "피해 증폭을 2 얻습니다.",
+            "description": "힘을 2 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",

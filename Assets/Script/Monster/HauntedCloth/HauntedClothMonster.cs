@@ -22,7 +22,6 @@ public class HauntedClothMonster : Monster
         public PlayerCardZone Zone { get; }
     }
 
-    private readonly List<Card> stolenCards = new List<Card>();
     private int patternIndex;
 
     public override int MonsterId => 110;
@@ -33,21 +32,6 @@ public class HauntedClothMonster : Monster
     {
         AddBuff(BattleRuntimeDefinitions.PranksterGhostBuffId, 5);
         patternIndex = 0;
-    }
-
-    protected override void OnDeathTriggered()
-    {
-        ReturnStolenCards();
-    }
-
-    protected override void OnLeaveCombatTriggered()
-    {
-        ReturnStolenCards();
-    }
-
-    protected override void OnTurnEnded()
-    {
-        ConsumeBuffStack(BattleRuntimeDefinitions.PranksterGhostBuffId, 1);
     }
 
     protected override void BuildNextAction()
@@ -122,43 +106,9 @@ public class HauntedClothMonster : Monster
             return;
         }
 
-        stolenCards.Add(candidate.Card);
+        ThiefMonsterBuffScript.RegisterStolenCard(this, candidate.Card);
         AddBuff(BattleRuntimeDefinitions.ThiefBuffId, 1);
         battleManager.UpdateAllUI();
-    }
-
-    private void ReturnStolenCards()
-    {
-        if (stolenCards.Count <= 0)
-        {
-            return;
-        }
-
-        TrainingBattleManager battleManager = TrainingBattleManager.Instance;
-        int returnedCount = 0;
-
-        if (battleManager?.usableDeckManager != null)
-        {
-            foreach (Card stolenCard in stolenCards)
-            {
-                if (stolenCard == null)
-                {
-                    continue;
-                }
-
-                battleManager.usableDeckManager.AddToDrawPileRandom(stolenCard);
-                returnedCount++;
-            }
-
-            battleManager.UpdateAllUI();
-        }
-
-        stolenCards.Clear();
-
-        if (returnedCount > 0)
-        {
-            ConsumeBuffStack(BattleRuntimeDefinitions.ThiefBuffId, returnedCount);
-        }
     }
 
     private static void AddCandidates(List<StolenCardCandidate> candidates, List<Card> cards, PlayerCardZone zone)

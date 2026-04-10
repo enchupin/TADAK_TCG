@@ -6,7 +6,6 @@ public class ProphetBossMonster : Monster
     private int plannedPatternIdForTurn;
     private int plannedDamageValue;
     private int plannedRepeatCount;
-    private int futurePredationTriggerCount;
     private int routeStage;
     private bool stealSucceededLastCycle;
 
@@ -21,25 +20,14 @@ public class ProphetBossMonster : Monster
         plannedPatternIdForTurn = 0;
         plannedDamageValue = 0;
         plannedRepeatCount = 1;
-        futurePredationTriggerCount = 0;
         routeStage = 0;
         stealSucceededLastCycle = false;
-    }
-
-    protected override bool IsNonStackableBuff(int buffId)
-    {
-        return buffId == BattleRuntimeDefinitions.FuturePredationBuffId || base.IsNonStackableBuff(buffId);
-    }
-
-    protected override void OnTurnStarted()
-    {
-        TryTriggerFuturePredation();
     }
 
     protected override void BuildNextAction()
     {
         plannedPatternIdForTurn = GetPatternIdForCurrentRoute();
-        plannedRepeatCount = Mathf.Max(1, 1 + futurePredationTriggerCount);
+        plannedRepeatCount = Mathf.Max(1, GetBuffStack(BattleRuntimeDefinitions.FuturePredationBuffId));
         plannedDamageValue = 0;
 
         switch (plannedPatternIdForTurn)
@@ -104,87 +92,20 @@ public class ProphetBossMonster : Monster
         }
     }
 
-    private void TryTriggerFuturePredation()
-    {
-        if (GetBuffStack(BattleRuntimeDefinitions.FuturePredationBuffId) <= 0)
-        {
-            return;
-        }
-
-        Buff removableBuff = PickRandomSelfBeneficialBuff();
-        if (removableBuff == null)
-        {
-            return;
-        }
-
-        currentBuffs.Remove(removableBuff);
-        Heal(50);
-        AddBuff(BattleRuntimeDefinitions.DamageAmplifyBuffId, 2);
-        futurePredationTriggerCount++;
-    }
-
-    private Buff PickRandomSelfBeneficialBuff()
-    {
-        List<Buff> candidates = new List<Buff>();
-        foreach (Buff buff in currentBuffs)
-        {
-            if (buff?.data == null)
-            {
-                continue;
-            }
-
-            if (buff.data.buffId == BattleRuntimeDefinitions.FuturePredationBuffId)
-            {
-                continue;
-            }
-
-            if (!BuffData.IsBeneficialBuffId(buff.data.buffId))
-            {
-                continue;
-            }
-
-            candidates.Add(buff);
-        }
-
-        if (candidates.Count <= 0)
-        {
-            return null;
-        }
-
-        return candidates[Random.Range(0, candidates.Count)];
-    }
-
     private bool TryStealPlayerBeneficialBuff()
     {
         PlayerData player = TrainingBattleManager.Instance != null ? TrainingBattleManager.Instance.playerData : null;
-        if (player?.currentBuffs == null)
+        if (player == null)
         {
             return false;
         }
 
-        List<Buff> candidates = new List<Buff>();
-        foreach (Buff buff in player.currentBuffs)
-        {
-            if (buff?.data == null)
-            {
-                continue;
-            }
-
-            if (!BuffData.IsBeneficialBuffId(buff.data.buffId))
-            {
-                continue;
-            }
-
-            candidates.Add(buff);
-        }
-
-        if (candidates.Count <= 0)
+        Buff stolenBuff = BuffCombatUtility.RemoveRandomBeneficialBuff(player);
+        if (stolenBuff == null)
         {
             return false;
         }
 
-        Buff stolenBuff = candidates[Random.Range(0, candidates.Count)];
-        player.currentBuffs.Remove(stolenBuff);
         AddBuff(stolenBuff.data.buffId, Mathf.Max(1, stolenBuff.stack));
         TrainingBattleManager.Instance?.UpdateAllUI();
         return true;
@@ -207,7 +128,7 @@ public class ProphetBossMonster : Monster
 
     private int GetPreviewDamage(int baseDamage)
     {
-        return Mathf.Max(0, baseDamage + GetBuffStack(BattleRuntimeDefinitions.DamageAmplifyBuffId));
+        return PreviewOutgoingDamage(baseDamage);
     }
 
     private void DealFixedDamage(PlayerData target, int damage)

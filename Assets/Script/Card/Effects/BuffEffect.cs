@@ -30,7 +30,7 @@ public class BuffEffect : ICardEffect
             return;
         }
 
-        // Apply by BuffID using BuffManager
+        // 버프 ID 기준으로 런타임 버프 서비스를 통해 적용
         ApplyBuff(battleManager, finalAmount);
         battleManager.UpdateAllUI();
     }

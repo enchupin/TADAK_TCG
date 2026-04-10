@@ -41,7 +41,7 @@ public class IceAndFireBossMonster : Monster
                 SetPlannedPattern(30302, MonsterIntentIconType.HarmfulEffect);
                 break;
             default:
-                SetIntent("피해 증폭을 3 얻습니다.");
+                SetIntent("힘을 3 얻습니다.");
                 SetPlannedPattern(30303, MonsterIntentIconType.BeneficialEffect);
                 break;
         }
@@ -60,7 +60,7 @@ public class IceAndFireBossMonster : Monster
                 target?.AddBuff(BattleRuntimeDefinitions.WeakBuffId, 99);
                 break;
             default:
-                AddBuff(BattleRuntimeDefinitions.DamageAmplifyBuffId, 3);
+                AddBuff(BattleRuntimeDefinitions.StrengthBuffId, 3);
                 break;
         }
     }
@@ -84,6 +84,6 @@ public class IceAndFireBossMonster : Monster
 
     private int GetPreviewDamage(int baseDamage)
     {
-        return Mathf.Max(0, baseDamage + GetBuffStack(BattleRuntimeDefinitions.DamageAmplifyBuffId));
+        return PreviewOutgoingDamage(baseDamage);
     }
 }

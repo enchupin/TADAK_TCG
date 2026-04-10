@@ -5,6 +5,21 @@ public static class CharacterManager
 {
     private static readonly int[] StarterDeckOffsets = { 10, 20, 30, 40, 50, 60, 70 };
 
+    [System.Serializable]
+    private sealed class CharacterJsonRoot
+    {
+        public List<CharacterJsonData> characters = new List<CharacterJsonData>();
+    }
+
+    [System.Serializable]
+    private sealed class CharacterJsonData
+    {
+        public int characterId = 0;
+        public string name = string.Empty;
+        public int maxHp = 0;
+        public string characterColor = string.Empty;
+    }
+
     private static Dictionary<int, CharacterData> characterCache;
     private static bool isInitialized = false;
 
@@ -16,38 +31,48 @@ public static class CharacterManager
             return;
         }
 
-        CharacterCollection collection = Resources.Load<CharacterCollection>("CharacterCollection");
-
-        if (collection == null)
+        TextAsset jsonFile = Resources.Load<TextAsset>("JsonData/characters");
+        if (jsonFile == null)
         {
-            Debug.LogError("[CharacterManager] CharacterCollection not found in Resources folder!");
-            Debug.LogError("[CharacterManager] Please create CharacterCollection.asset in Assets/Resources/");
-            return;
-        }
-
-        if (collection.allCharacters == null || collection.allCharacters.Count == 0)
-        {
-            Debug.LogWarning("[CharacterManager] CharacterCollection is empty!");
+            Debug.LogError("[CharacterManager] characters.json을 불러오지 못했습니다");
             characterCache = new Dictionary<int, CharacterData>();
             isInitialized = true;
             return;
         }
 
-        characterCache = new Dictionary<int, CharacterData>();
-        foreach (CharacterData character in collection.allCharacters)
+        CharacterJsonRoot root = JsonUtility.FromJson<CharacterJsonRoot>(jsonFile.text);
+        if (root?.characters == null || root.characters.Count == 0)
         {
-            if (character == null)
+            Debug.LogWarning("[CharacterManager] characters.json이 비어 있습니다");
+            characterCache = new Dictionary<int, CharacterData>();
+            isInitialized = true;
+            return;
+        }
+
+        BuffMetadataDatabase.Preload();
+        BattleRuntimeDefinitions.Initialize();
+
+        characterCache = new Dictionary<int, CharacterData>();
+        foreach (CharacterJsonData sourceCharacter in root.characters)
+        {
+            if (sourceCharacter == null)
             {
                 continue;
             }
 
-            if (!characterCache.ContainsKey(character.characterId))
+            CharacterData runtimeCharacter = ScriptableObject.CreateInstance<CharacterData>();
+            runtimeCharacter.characterId = sourceCharacter.characterId;
+            runtimeCharacter.characterName = sourceCharacter.name ?? string.Empty;
+            runtimeCharacter.maxHp = sourceCharacter.maxHp;
+            runtimeCharacter.characterColor = sourceCharacter.characterColor ?? string.Empty;
+
+            if (!characterCache.ContainsKey(runtimeCharacter.characterId))
             {
-                characterCache[character.characterId] = character;
+                characterCache[runtimeCharacter.characterId] = runtimeCharacter;
             }
             else
             {
-                Debug.LogWarning($"[CharacterManager] Duplicate characterId found: {character.characterId}");
+                Debug.LogWarning($"[CharacterManager] Duplicate characterId found: {runtimeCharacter.characterId}");
             }
         }
 

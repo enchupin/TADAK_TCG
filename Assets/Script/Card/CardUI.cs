@@ -79,7 +79,7 @@ public class CardUI : MonoBehaviour
     {
         CacheTooltipReferences();
 
-        if (tooltipPanel == null || tooltipText == null || currentCard == null || BuffManager.Instance == null)
+        if (tooltipPanel == null || tooltipText == null || currentCard == null)
         {
             HideBuffTooltip();
             return;
@@ -163,7 +163,7 @@ public class CardUI : MonoBehaviour
 
     private string BuildBuffTooltipText(Card card)
     {
-        if (card == null || BuffManager.Instance == null)
+        if (card == null)
         {
             return string.Empty;
         }
@@ -267,12 +267,12 @@ public class CardUI : MonoBehaviour
 
     private void AddBuffId(List<int> buffIds, int buffId)
     {
-        if (buffIds == null || buffId <= 0 || buffIds.Contains(buffId) || BuffManager.Instance == null)
+        if (buffIds == null || buffId <= 0 || buffIds.Contains(buffId))
         {
             return;
         }
 
-        if (!BuffManager.Instance.TryGetBuffData(buffId, out _))
+        if (!BuffMetadataDatabase.TryGetBuffData(buffId, out _))
         {
             return;
         }
@@ -307,14 +307,14 @@ public class CardUI : MonoBehaviour
 
     private void AppendBuffTooltipText(StringBuilder builder, List<int> buffIds)
     {
-        if (builder == null || buffIds == null || BuffManager.Instance == null)
+        if (builder == null || buffIds == null)
         {
             return;
         }
 
         foreach (int buffId in buffIds)
         {
-            if (!BuffManager.Instance.TryGetBuffData(buffId, out BuffData buffData) || buffData == null)
+            if (!BuffMetadataDatabase.TryGetBuffData(buffId, out BuffData buffData) || buffData == null)
             {
                 continue;
             }
@@ -517,12 +517,7 @@ public static class CardDescriptionFormatter
 
     private static int ResolveAttackAmount(AttackEffect effect, TrainingBattleManager battleManager, Card sourceCard)
     {
-        int attackBoost = battleManager?.playerData != null
-            ? battleManager.playerData.GetBuffStack(AttackBoostBuffId)
-            : 0;
-
         ResolveAttackBaseAmount(effect, battleManager, out int baseAmount, out float cardMultiplier);
-        baseAmount += Mathf.Max(0, attackBoost);
         baseAmount += Mathf.Max(0, battleManager != null ? battleManager.GetCardBaseDamageBonus(sourceCard, true) : 0);
 
         if (battleManager?.playerData == null)
@@ -637,7 +632,7 @@ public static class CardDescriptionFormatter
 
         if (effect.target == TargetType.Self && battleManager != null)
         {
-            resolvedAmount += Mathf.Max(0, battleManager.GetAdditionalBarrierGain());
+            resolvedAmount = battleManager.ResolvePlayerBarrierGain(resolvedAmount);
         }
 
         return Mathf.Max(0, resolvedAmount);
@@ -685,27 +680,6 @@ public static class CardDescriptionFormatter
             return Mathf.Max(0, amount);
         }
 
-        float multiplier = 1f;
-        bool hasEnhancedCorrosion = previewTarget.GetBuffStack(EnhancedCorrosionBuffId) > 0;
-        bool hasCorrosion = previewTarget.GetBuffStack(CorrosionBuffId) > 0;
-        bool playerEnhancesCorrosion = !hasEnhancedCorrosion
-            && hasCorrosion
-            && battleManager.playerData != null
-            && battleManager.playerData.GetBuffStack(CorrosionEnhanceBuffId) > 0;
-
-        if (hasEnhancedCorrosion || playerEnhancesCorrosion)
-        {
-            multiplier = BuffManager.Instance != null
-                ? BuffManager.Instance.GetIncomingDamageMultiplier(EnhancedCorrosionBuffId, 1.5f)
-                : 1.5f;
-        }
-        else if (hasCorrosion)
-        {
-            multiplier = BuffManager.Instance != null
-                ? BuffManager.Instance.GetIncomingDamageMultiplier(CorrosionBuffId, 1.25f)
-                : 1.25f;
-        }
-
-        return Mathf.Max(0, Mathf.FloorToInt(amount * multiplier));
+        return battleManager.ResolveMonsterIncomingDamage(previewTarget, amount);
     }
 }
