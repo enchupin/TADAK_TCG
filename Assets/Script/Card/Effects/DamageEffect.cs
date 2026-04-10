@@ -141,7 +141,7 @@ public class DamageEffect : ICardEffect
                 amountFormula,
                 battleManager.battleContext,
                 battleManager.playerData,
-                null,
+                (List<int>)null,
                 formulaBaseValue));
             return;
         }

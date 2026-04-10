@@ -784,6 +784,8 @@ public class CardJSONConverter : EditorWindow
             case "OnAttackGainStrength": return EffectType.OnAttackGainStrength;
             case "TransformCards":
             case "TransformMonsterCards": return EffectType.TransformCards;
+            case "EnemyHpLossHealPlayer": return EffectType.EnemyHpLossHealPlayer;
+            case "Party": return EffectType.Party;
 
             default:
                 throw new ArgumentException($"[CardJSONConverter] Unsupported effect type: {type}");

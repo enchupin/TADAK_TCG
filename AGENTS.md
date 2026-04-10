@@ -7,3 +7,5 @@
 - 새로 작성하는 주석은 문장 끝을 마침표로 마무리하지 않는다.
 - 한글 주석이 깨져 있으면 해당 주석을 우선 복구하고 이후 작업을 진행한다.
 - 위 규칙 위반 가능성이 있으면 수정 전 사용자 확인을 받는다.
+- `.asset` 파일은 기본적으로 사용자가 직접 관리하므로 명시적인 요청이 없는 한 수정하거나 생성하지 않는다
+- 특히 `Assets/Data/Cards/*.asset`, `Assets/Resources/CardCollection.asset`, `Assets/Resources/CharacterCollection.asset`은 자동 반영 대상으로 취급하지 않는다

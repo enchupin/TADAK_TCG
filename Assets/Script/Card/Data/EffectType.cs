@@ -33,5 +33,7 @@ public enum EffectType
     ExtraTurn = 39,
     MixBuff = 40,
     OnAttackGainStrength = 41,
-    TransformCards = 42
+    TransformCards = 42,
+    EnemyHpLossHealPlayer = 43,
+    Party = 44
 }

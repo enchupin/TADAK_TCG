@@ -373,6 +373,15 @@ public static class CardEffectFactory
                     cardIdList = effectData.formulaCardIdFilter == null ? null : new List<int>(effectData.formulaCardIdFilter)
                 };
 
+            case EffectType.EnemyHpLossHealPlayer:
+                return new EnemyHpLossHealPlayerEffect
+                {
+                    target = effectData.target
+                };
+
+            case EffectType.Party:
+                return new PartyEffect();
+
             default:
                 Debug.LogWarning($"[CardData] Unknown effect type: {effectData.type}");
                 return null;

@@ -510,8 +510,43 @@ public static class CardDescriptionFormatter
                 CollectOnActionAmounts(drawCharacterEffect.onActions, battleManager, sourceCard, amounts);
                 return;
 
+            case HealEffect healEffect:
+                AddAmount(amounts, ResolveHealAmount(healEffect, battleManager));
+                return;
+
+            case StaminaEffect staminaEffect:
+                AddAmount(amounts, ResolveStaminaAmount(staminaEffect, battleManager));
+                return;
+
+            case ScryEffect scryEffect:
+                AddAmount(amounts, ResolveScryAmount(scryEffect));
+                return;
+
             case BuffEffect buffEffect:
                 AddAmount(amounts, ResolveBuffAmount(buffEffect, battleManager));
+                return;
+
+            case GenerateCardEffect generateCardEffect:
+                AddAmount(amounts, ResolveGenerateCardAmount(generateCardEffect));
+                return;
+
+            case RandGenerateEffect randGenerateEffect:
+                AddAmount(amounts, ResolveRandGenerateAmount(randGenerateEffect, battleManager));
+                return;
+
+            case TriggerEffect triggerEffect:
+                AddAmount(amounts, ResolveTriggerAmount(triggerEffect, battleManager));
+                return;
+
+            case RemoveBuffEffect removeBuffEffect:
+                AddAmount(amounts, ResolveRemoveBuffAmount(removeBuffEffect, battleManager));
+                return;
+
+            case ModifyCardEffect modifyCardEffect:
+                if (TryResolveModifyCardAmount(modifyCardEffect, battleManager, out int modifyCardAmount))
+                {
+                    AddAmount(amounts, modifyCardAmount);
+                }
                 return;
 
             case SelectCardEffect selectCardEffect:
@@ -543,6 +578,10 @@ public static class CardDescriptionFormatter
                 CollectOnActionAmounts(changeStatEffect.onActions, battleManager, sourceCard, amounts);
                 return;
 
+            case OnAttackGainStrengthEffect onAttackGainStrengthEffect:
+                AddAmount(amounts, ResolveOnAttackGainStrengthAmount(onAttackGainStrengthEffect, battleManager));
+                return;
+
             case MoveEffect moveEffect:
                 if (TryResolveMoveAmount(moveEffect, battleManager, out int moveAmount))
                 {
@@ -564,9 +603,17 @@ public static class CardDescriptionFormatter
                 return;
 
             case RepeatEffect repeatEffect:
+                if (TryResolveRepeatedDrawTotalAmount(repeatEffect, battleManager, out int repeatedDrawTotalAmount))
+                {
+                    AddAmount(amounts, repeatedDrawTotalAmount);
+                }
                 if (repeatEffect?.effectToRepeat != null)
                 {
                     CollectResolvedAmount(repeatEffect.effectToRepeat, battleManager, sourceCard, amounts);
+                }
+                if (TryResolveRepeatCount(repeatEffect, battleManager, out int repeatCount))
+                {
+                    AddAmount(amounts, repeatCount);
                 }
                 return;
         }
@@ -584,6 +631,7 @@ public static class CardDescriptionFormatter
             return;
         }
 
+        // 조건 분기 결과를 카드 설명 수치에 반영하지 않음
         // 조건 분기 결과를 카드 설명 수치에 반영하지 않음
         List<ICardEffect> primaryEffects = conditionalEffect.failEffects;
         List<ICardEffect> secondaryEffects = conditionalEffect.successEffects;
@@ -618,6 +666,7 @@ public static class CardDescriptionFormatter
             return false;
         }
 
+        // 조건 분기 결과를 카드 설명 수치에 반영하지 않음
         // 조건 분기 결과를 카드 설명 수치에 반영하지 않음
         List<ICardEffect> primaryEffects = conditionalEffect.failEffects;
         List<ICardEffect> secondaryEffects = conditionalEffect.successEffects;
@@ -732,7 +781,7 @@ public static class CardDescriptionFormatter
             effect.amountFormula,
             battleManager?.battleContext,
             battleManager?.playerData,
-            null,
+            (List<int>)null,
             effect.amount));
     }
 
@@ -826,6 +875,36 @@ public static class CardDescriptionFormatter
         return Mathf.Max(0, effect.amount);
     }
 
+    private static int ResolveHealAmount(HealEffect effect, TrainingBattleManager battleManager)
+    {
+        if (effect == null)
+        {
+            return 0;
+        }
+
+        return Mathf.Max(0, ResolveCardValueAmount(effect.amount, effect.amountFormula, battleManager, 0));
+    }
+
+    private static int ResolveStaminaAmount(StaminaEffect effect, TrainingBattleManager battleManager)
+    {
+        if (effect == null)
+        {
+            return 0;
+        }
+
+        return Mathf.Max(0, ResolveCardValueAmount(effect.amount, effect.amountFormula, battleManager, 0));
+    }
+
+    private static int ResolveScryAmount(ScryEffect effect)
+    {
+        if (effect == null)
+        {
+            return 0;
+        }
+
+        return Mathf.Max(0, effect.count);
+    }
+
     private static int ResolveBuffAmount(BuffEffect effect, TrainingBattleManager battleManager)
     {
         if (effect == null)
@@ -836,10 +915,12 @@ public static class CardDescriptionFormatter
         int resolvedAmount;
         if (!string.IsNullOrWhiteSpace(effect.amountFormula))
         {
+            Monster formulaTargetMonster = CardEffectRuntimeUtility.ResolveSingleEnemyTarget(battleManager);
             resolvedAmount = FormulaEvaluator.Evaluate(
                 effect.amountFormula,
                 battleManager?.battleContext,
                 battleManager?.playerData,
+                formulaTargetMonster,
                 effect.amount);
         }
         else
@@ -853,6 +934,73 @@ public static class CardDescriptionFormatter
         }
 
         return Mathf.Max(0, resolvedAmount);
+    }
+
+    private static int ResolveGenerateCardAmount(GenerateCardEffect effect)
+    {
+        if (effect == null)
+        {
+            return 0;
+        }
+
+        if (!string.IsNullOrWhiteSpace(effect.cardId))
+        {
+            return 1;
+        }
+
+        if (effect.cardIdList != null && effect.cardIdList.Count > 0)
+        {
+            return 1;
+        }
+
+        if (effect.RandomCard != null && effect.RandomCard.Count > 0)
+        {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    private static int ResolveRandGenerateAmount(RandGenerateEffect effect, TrainingBattleManager battleManager)
+    {
+        if (effect == null)
+        {
+            return 0;
+        }
+
+        return Mathf.Max(0, ResolveCardValueAmount(effect.amount, effect.amountFormula, battleManager, 0));
+    }
+
+    private static int ResolveTriggerAmount(TriggerEffect effect, TrainingBattleManager battleManager)
+    {
+        if (effect == null)
+        {
+            return 0;
+        }
+
+        return Mathf.Max(0, ResolveCardValueAmount(effect.amount, effect.amountFormula, battleManager, 1));
+    }
+
+    private static int ResolveRemoveBuffAmount(RemoveBuffEffect effect, TrainingBattleManager battleManager)
+    {
+        if (effect == null)
+        {
+            return 0;
+        }
+
+        return Mathf.Max(0, ResolveCardValueAmount(effect.amount, effect.amountFormula, battleManager, 0));
+    }
+
+    private static bool TryResolveModifyCardAmount(ModifyCardEffect effect, TrainingBattleManager battleManager, out int amount)
+    {
+        amount = 0;
+        if (effect == null)
+        {
+            return false;
+        }
+
+        amount = Mathf.Abs(ResolveCardValueAmount(effect.amount, effect.amountFormula, battleManager, 0));
+        return amount > 0;
     }
 
     private static bool TryResolveCopyAmount(CopyEffect effect, TrainingBattleManager battleManager, out int amount)
@@ -911,6 +1059,53 @@ public static class CardDescriptionFormatter
 
         amount = Mathf.Abs(ResolveCardValueAmount(effect.amount, effect.amountFormula, battleManager, 0));
         return amount > 0;
+    }
+
+    private static bool TryResolveRepeatCount(RepeatEffect effect, TrainingBattleManager battleManager, out int amount)
+    {
+        amount = 0;
+        if (effect == null)
+        {
+            return false;
+        }
+
+        amount = Mathf.Max(0, ResolveCardValueAmount(effect.amount, effect.amountFormula, battleManager, 0));
+        return amount > 0;
+    }
+
+    private static bool TryResolveRepeatedDrawTotalAmount(RepeatEffect effect, TrainingBattleManager battleManager, out int amount)
+    {
+        amount = 0;
+        if (effect?.effectToRepeat == null || !TryResolveRepeatCount(effect, battleManager, out int repeatCount) || repeatCount <= 0)
+        {
+            return false;
+        }
+
+        int singleDrawAmount = effect.effectToRepeat switch
+        {
+            DrawEffect drawEffect => ResolveDrawAmount(drawEffect, battleManager),
+            DrawBasicEffect drawBasicEffect => ResolveDrawBasicAmount(drawBasicEffect, battleManager),
+            DrawCharacterEffect drawCharacterEffect => ResolveDrawCharacterAmount(drawCharacterEffect, battleManager),
+            _ => 0
+        };
+
+        if (singleDrawAmount <= 0)
+        {
+            return false;
+        }
+
+        amount = singleDrawAmount * repeatCount;
+        return amount > 0;
+    }
+
+    private static int ResolveOnAttackGainStrengthAmount(OnAttackGainStrengthEffect effect, TrainingBattleManager battleManager)
+    {
+        if (effect == null)
+        {
+            return 0;
+        }
+
+        return Mathf.Max(0, ResolveCardValueAmount(effect.amount, effect.amountFormula, battleManager, 0));
     }
 
     private static int ResolveCardValueAmount(int amount, string amountFormula, TrainingBattleManager battleManager, int forwardedAmount)

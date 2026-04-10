@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public enum MonsterIntentIconType
 {
@@ -20,8 +22,10 @@ public enum MonsterIntentIconType
 /// <summary>
 /// Holds monster battle data and turn hooks.
 /// </summary>
-public abstract class Monster : MonoBehaviour
+public abstract class Monster : MonoBehaviour, IPointerClickHandler
 {
+    private static readonly Color SelectionTintColor = new Color(0.45f, 0.75f, 1f, 1f);
+
     [Header("UI Reference")]
     [SerializeField] private TextMeshProUGUI hpText;
     [SerializeField] private TextMeshProUGUI defenseText;
@@ -46,6 +50,10 @@ public abstract class Monster : MonoBehaviour
     private bool hasTriggeredDeath = false;
     private bool hasLeftCombat = false;
     private bool hasInitializedBattleStart = false;
+    private bool isSelectionHighlighted = false;
+    private int lastSelectionClickFrame = -1;
+    private readonly Dictionary<Graphic, Color> originalGraphicColors = new();
+    private readonly Dictionary<SpriteRenderer, Color> originalSpriteColors = new();
 
     public bool HasAttackIntent => hasAttackIntent;
     public int PlannedIntentValue => plannedIntentValue;
@@ -79,6 +87,8 @@ public abstract class Monster : MonoBehaviour
 
     protected virtual void OnDestroy()
     {
+        SetSelectionHighlight(false);
+
         if (TrainingBattleManager.Instance != null)
         {
             TrainingBattleManager.Instance.UnregisterMonster(this);
@@ -383,6 +393,22 @@ public abstract class Monster : MonoBehaviour
         RemoveBuff(buffId);
     }
 
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        TryHandleSelectionClick();
+    }
+
+    public void SetSelectionHighlight(bool isHighlighted)
+    {
+        if (isSelectionHighlighted == isHighlighted)
+        {
+            return;
+        }
+
+        isSelectionHighlighted = isHighlighted;
+        ApplySelectionHighlight();
+    }
+
     public void SkipCurrentTurnActionOnce()
     {
         skipCurrentTurnAction = true;
@@ -593,6 +619,84 @@ public abstract class Monster : MonoBehaviour
         int previousDefense = defense;
         defense = Mathf.Max(0, amount);
         TrainingBattleManager.Instance?.HandleMonsterDefenseChanged(this, previousDefense, defense);
+    }
+
+    private void OnMouseDown()
+    {
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+
+        TryHandleSelectionClick();
+    }
+
+    private void TryHandleSelectionClick()
+    {
+        if (lastSelectionClickFrame == Time.frameCount)
+        {
+            return;
+        }
+
+        lastSelectionClickFrame = Time.frameCount;
+        TrainingBattleManager.Instance?.HandleMonsterClicked(this);
+    }
+
+    private void ApplySelectionHighlight()
+    {
+        ApplyGraphicSelectionHighlight();
+        ApplySpriteSelectionHighlight();
+    }
+
+    private void ApplyGraphicSelectionHighlight()
+    {
+        Graphic[] graphics = GetComponentsInChildren<Graphic>(true);
+        foreach (Graphic graphic in graphics)
+        {
+            if (graphic == null)
+            {
+                continue;
+            }
+
+            if (!originalGraphicColors.ContainsKey(graphic))
+            {
+                originalGraphicColors[graphic] = graphic.color;
+            }
+
+            Color originalColor = originalGraphicColors[graphic];
+            graphic.color = isSelectionHighlighted
+                ? BlendSelectionColor(originalColor)
+                : originalColor;
+        }
+    }
+
+    private void ApplySpriteSelectionHighlight()
+    {
+        SpriteRenderer[] spriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
+        foreach (SpriteRenderer spriteRenderer in spriteRenderers)
+        {
+            if (spriteRenderer == null)
+            {
+                continue;
+            }
+
+            if (!originalSpriteColors.ContainsKey(spriteRenderer))
+            {
+                originalSpriteColors[spriteRenderer] = spriteRenderer.color;
+            }
+
+            Color originalColor = originalSpriteColors[spriteRenderer];
+            spriteRenderer.color = isSelectionHighlighted
+                ? BlendSelectionColor(originalColor)
+                : originalColor;
+        }
+    }
+
+    private static Color BlendSelectionColor(Color originalColor)
+    {
+        Color tintedColor = Color.Lerp(originalColor, SelectionTintColor, 0.65f);
+        tintedColor.a = originalColor.a;
+        return tintedColor;
     }
 
     private int ApplyOutgoingDamageModifier(int baseDamage)

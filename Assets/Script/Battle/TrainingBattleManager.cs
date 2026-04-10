@@ -92,6 +92,11 @@ public class TrainingBattleManager : MonoBehaviour
     // Temporary target used while card effects are executing.
     public Monster currentTarget;
     private Monster previewDescriptionTarget;
+    private Action<List<Monster>> pendingMonsterSelectionCallback;
+    private readonly List<Monster> selectableMonsters = new List<Monster>();
+    private readonly List<Monster> selectedMonsters = new List<Monster>();
+    private int requiredMonsterSelectionCount;
+    private bool isMonsterSelectionActive;
 
     [Header("Run Data")]
     public static BuildingDeck buildingDeck;
@@ -638,6 +643,10 @@ public class TrainingBattleManager : MonoBehaviour
                 return effect is ExtraTurnEffect;
             case EffectType.MixBuff:
                 return effect is MixBuffEffect;
+            case EffectType.EnemyHpLossHealPlayer:
+                return effect is EnemyHpLossHealPlayerEffect;
+            case EffectType.Party:
+                return effect is PartyEffect;
             case EffectType.RemoveBuff:
                 return effect is RemoveBuffEffect;
             case EffectType.MultiplyBarrier:
@@ -829,17 +838,17 @@ public class TrainingBattleManager : MonoBehaviour
 
     public bool CanPlayerPlayCard()
     {
-        return turnSystem.CanPlayerPlayCard();
+        return !isMonsterSelectionActive && turnSystem.CanPlayerPlayCard();
     }
 
     public bool CanEndPlayerTurn()
     {
-        return turnSystem.CanEndPlayerTurn();
+        return !isMonsterSelectionActive && turnSystem.CanEndPlayerTurn();
     }
 
     public bool CanInteractWithCards()
     {
-        return turnSystem.CanPlayerPlayCard();
+        return !isMonsterSelectionActive && turnSystem.CanPlayerPlayCard();
     }
 
     public void UpdateEndTurnButtonState()
@@ -1219,6 +1228,8 @@ public class TrainingBattleManager : MonoBehaviour
             previewDescriptionTarget = null;
         }
 
+        HandleMonsterUnavailableForSelection(monster);
+
         UnregisterMonster(monster);
 
         if (monster.gameObject.activeSelf)
@@ -1247,6 +1258,8 @@ public class TrainingBattleManager : MonoBehaviour
         {
             previewDescriptionTarget = null;
         }
+
+        HandleMonsterUnavailableForSelection(monster);
 
         UnregisterMonster(monster);
 
@@ -1546,6 +1559,123 @@ public class TrainingBattleManager : MonoBehaviour
         }
 
         return battleDeckViewer.OpenSelectionPanel(selectableCards, selectCount, onSelected);
+    }
+
+    public bool OpenMonsterSelection(List<Monster> selectionTargets, int selectCount, Action<List<Monster>> onSelected)
+    {
+        if (selectionTargets == null || selectCount <= 0 || onSelected == null)
+        {
+            return false;
+        }
+
+        CancelMonsterSelection();
+
+        foreach (Monster monster in selectionTargets)
+        {
+            if (monster == null || monster.IsDead() || selectableMonsters.Contains(monster))
+            {
+                continue;
+            }
+
+            selectableMonsters.Add(monster);
+        }
+
+        if (selectableMonsters.Count < selectCount)
+        {
+            selectableMonsters.Clear();
+            return false;
+        }
+
+        requiredMonsterSelectionCount = selectCount;
+        pendingMonsterSelectionCallback = onSelected;
+        isMonsterSelectionActive = true;
+        RefreshHandPlayableState();
+        UpdateEndTurnButtonState();
+        return true;
+    }
+
+    public void HandleMonsterClicked(Monster monster)
+    {
+        if (!isMonsterSelectionActive || monster == null || monster.IsDead() || !selectableMonsters.Contains(monster))
+        {
+            return;
+        }
+
+        if (selectedMonsters.Contains(monster))
+        {
+            selectedMonsters.Remove(monster);
+            monster.SetSelectionHighlight(false);
+            return;
+        }
+
+        if (selectedMonsters.Count >= requiredMonsterSelectionCount)
+        {
+            return;
+        }
+
+        selectedMonsters.Add(monster);
+        monster.SetSelectionHighlight(true);
+
+        if (selectedMonsters.Count >= requiredMonsterSelectionCount)
+        {
+            CompleteMonsterSelection();
+        }
+    }
+
+    public void RegisterMonsterHpLossHealPlayerThisTurn(Monster monster)
+    {
+        battleBuffController?.RegisterMonsterHpLossHealPlayerThisTurn(monster);
+    }
+
+    private void CompleteMonsterSelection()
+    {
+        List<Monster> resolvedSelection = new List<Monster>(selectedMonsters);
+        Action<List<Monster>> callback = pendingMonsterSelectionCallback;
+        ClearMonsterSelectionState();
+        callback?.Invoke(resolvedSelection);
+    }
+
+    private void CancelMonsterSelection()
+    {
+        if (!isMonsterSelectionActive && selectableMonsters.Count == 0 && selectedMonsters.Count == 0)
+        {
+            return;
+        }
+
+        ClearMonsterSelectionState();
+    }
+
+    private void ClearMonsterSelectionState()
+    {
+        foreach (Monster selectedMonster in selectedMonsters)
+        {
+            selectedMonster?.SetSelectionHighlight(false);
+        }
+
+        selectableMonsters.Clear();
+        selectedMonsters.Clear();
+        pendingMonsterSelectionCallback = null;
+        requiredMonsterSelectionCount = 0;
+        isMonsterSelectionActive = false;
+        RefreshHandPlayableState();
+        UpdateEndTurnButtonState();
+    }
+
+    private void HandleMonsterUnavailableForSelection(Monster monster)
+    {
+        if (monster == null)
+        {
+            return;
+        }
+
+        monster.SetSelectionHighlight(false);
+        selectableMonsters.Remove(monster);
+        selectedMonsters.Remove(monster);
+
+        if (isMonsterSelectionActive && selectableMonsters.Count < requiredMonsterSelectionCount)
+        {
+            CancelMonsterSelection();
+        }
     }
 
     private void ApplyDebugEnergy()

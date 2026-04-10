@@ -5,7 +5,7 @@
             "name": "깃털 뽑기",
             "characterId": 203,
             "cost": 1,
-            "description": "깃털을 2장 생성합니다.",
+            "description": "깃털을 {amount}장 생성합니다.",
             "effects": [
                 {
                     "type": "Repeat",
@@ -39,7 +39,7 @@
             "keywords": [
                 4
             ],
-            "description": "깃털 겹치기를 1 얻습니다.",
+            "description": "깃털 겹치기를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -58,7 +58,7 @@
             "keywords": [
                 4
             ],
-            "description": "깃털 겹치기를 2 얻습니다.",
+            "description": "깃털 겹치기를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -73,7 +73,7 @@
             "name": "겹치기 +",
             "characterId": 203,
             "cost": 1,
-            "description": "이번 턴에 적을 공격할 때마다, 이번 턴에 힘을 2 얻습니다.",
+            "description": "이번 턴에 적을 공격할 때마다, 이번 턴에 힘을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "OnAttackGainStrength",
@@ -97,7 +97,7 @@
             "name": "겹치기 +",
             "characterId": 203,
             "cost": 1,
-            "description": "파워 반복을 1 얻습니다.",
+            "description": "파워 반복을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -112,7 +112,7 @@
             "name": "겹치기 +",
             "characterId": 203,
             "cost": 1,
-            "description": "버린 카드 더미를 뽑을 카드 더미로 옮깁니다. 카드를 2장 뽑습니다.",
+            "description": "버린 카드 더미를 뽑을 카드 더미에 넣고 섞습니다. 카드를 {amount}장 뽑습니다.",
             "effects": [
                 {
                     "type": "Move",
@@ -132,7 +132,7 @@
             "name": "예비용 깃털",
             "characterId": 203,
             "cost": 2,
-            "description": "깃털을 3장 생성합니다.",
+            "description": "깃털을 {amount}장 생성합니다.",
             "effects": [
                 {
                     "type": "Repeat",
@@ -150,7 +150,7 @@
             "name": "예비용 깃털 +",
             "characterId": 203,
             "cost": 2,
-            "description": "강화된 깃털을 3장 생성합니다.",
+            "description": "강화된 깃털을 {amount}장 생성합니다.",
             "effects": [
                 {
                     "type": "Repeat",
@@ -167,7 +167,7 @@
             "name": "예비용 깃털 +",
             "characterId": 203,
             "cost": 2,
-            "description": "깃털을 3장 생성합니다. 사용할 때마다 이 카드의 비용이 1 감소합니다.",
+            "description": "깃털을 {amount}장 생성합니다. 사용할 때마다 이 카드의 비용이 {amount2} 감소합니다.",
             "effects": [
                 {
                     "type": "Repeat",
@@ -191,7 +191,7 @@
             "name": "예비용 깃털 +",
             "characterId": 203,
             "cost": 1,
-            "description": "카드를 2장 뽑습니다. 깃털을 2장 생성합니다.",
+            "description": "카드를 {amount}장 뽑습니다. 깃털을 {amount2}장 생성합니다.",
             "effects": [
                 {
                     "type": "Draw",
@@ -216,7 +216,7 @@
                 4,
                 5
             ],
-            "description": "자라나는 깃털을 1 얻습니다.",
+            "description": "자라나는 깃털을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -235,7 +235,7 @@
             "effects": [
                 {
                     "type": "TransformCards",
-                    "from": "AllCards",
+                    "from": "Hand",
                     "character": "Monster",
                     "cardId": "203080"
                 }
@@ -246,7 +246,7 @@
             "name": "회수",
             "characterId": 203,
             "cost": 1,
-            "description": "적의 깃털을 1회 발동시킵니다.",
+            "description": "적의 깃털을 {amount}회 발동시킵니다.",
             "effects": [
                 {
                     "type": "Trigger",
@@ -262,7 +262,7 @@
             "name": "회수 +",
             "characterId": 203,
             "cost": 1,
-            "description": "모든 적의 깃털을 1회 발동시킵니다.",
+            "description": "모든 적의 깃털을 {amount}회 발동시킵니다.",
             "effects": [
                 {
                     "type": "Trigger",
@@ -277,7 +277,7 @@
             "name": "회수 +",
             "characterId": 203,
             "cost": 0,
-            "description": "적의 깃털을 1회 발동시킵니다.",
+            "description": "적의 깃털을 {amount}회 발동시킵니다.",
             "effects": [
                 {
                     "type": "Trigger",
@@ -292,7 +292,7 @@
             "name": "회수 +",
             "characterId": 203,
             "cost": 1,
-            "description": "적의 깃털을 2회 발동시킵니다.",
+            "description": "적의 깃털을 {amount}회 발동시킵니다.",
             "effects": [
                 {
                     "type": "Trigger",
@@ -341,7 +341,7 @@
                 5,
                 3
             ],
-            "description": "모든 적에게 약화를 1, 빈약을 1, 부식을 1 부여합니다.",
+            "description": "모든 적에게 약화를 {amount}, 빈약을 {amount}, 부식을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -373,7 +373,7 @@
                 5,
                 3
             ],
-            "description": "모든 적에게 약화를 2, 빈약을 2, 부식을 2 부여합니다.",
+            "description": "모든 적에게 약화를 {amount}, 빈약을 {amount}, 부식을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -430,7 +430,7 @@
             "name": "정보 탐색 +",
             "characterId": 203,
             "cost": 1,
-            "description": "적이 공격할 의도가 있다면, 깃털을 2장 생성하고 보호막을 5 얻습니다.",
+            "description": "적이 공격할 의도가 있다면, 깃털을 {amount}장 생성하고 보호막을 {amount2} 얻습니다.",
             "effects": [
                 {
                     "condition": {
@@ -466,7 +466,7 @@
             "name": "정보 탐색 +",
             "characterId": 203,
             "cost": 0,
-            "description": "카드를 1장 뽑습니다. 파워 카드라면 비용을 1 감소시킵니다.",
+            "description": "카드를 {amount}장 뽑습니다. 파워 카드라면 비용을 {amount2} 감소시킵니다.",
             "effects": [
                 {
                     "type": "Draw",
@@ -502,7 +502,7 @@
             "keywords": [
                 3
             ],
-            "description": "약화를 1 얻고 힘을 3 얻습니다.",
+            "description": "약화를 {amount} 얻고 힘을 {amount2} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -526,7 +526,7 @@
             "keywords": [
                 4
             ],
-            "description": "정밀을 4 얻습니다.",
+            "description": "정밀을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -545,7 +545,7 @@
             "keywords": [
                 4
             ],
-            "description": "자동 회수를 1 얻습니다.",
+            "description": "자동 회수를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -589,7 +589,7 @@
             "keywords": [
                 4
             ],
-            "description": "순환: 깃털을 1 얻습니다.",
+            "description": "순환: 깃털을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -607,7 +607,7 @@
             "keywords": [
                 4
             ],
-            "description": "치명적인 기습을 8 얻습니다.",
+            "description": "치명적인 기습을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -651,7 +651,7 @@
             "keywords": [
                 3
             ],
-            "description": "피해를 {amount} 입힙니다. 깃털을 1 부여합니다.",
+            "description": "피해를 {amount} 입힙니다. 깃털을 {amount2} 부여합니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -675,7 +675,7 @@
             "keywords": [
                 3
             ],
-            "description": "피해를 {amount} 입힙니다. 깃털을 2 부여합니다.",
+            "description": "피해를 {amount} 입힙니다. 깃털을 {amount2} 부여합니다.",
             "effects": [
                 {
                     "type": "Attack",
