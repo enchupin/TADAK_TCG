@@ -807,9 +807,9 @@ public class CardJSONConverter : EditorWindow
         switch (target)
         {
             case "AllEnemies": return TargetType.AllEnemies;
-            case "SingleEnemy":
+            case "SingleEnemy": return TargetType.SingleEnemy;
             case "RandomEnemy":
-            case "RandEnemy": return TargetType.SingleEnemy;
+            case "RandEnemy": return TargetType.RandomEnemy;
             case "Self": return TargetType.Self;
             case "ThisCard": return TargetType.None;
             case "Hand": return TargetType.Hand;

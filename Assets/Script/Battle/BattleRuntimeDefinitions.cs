@@ -3,6 +3,8 @@ using UnityEngine;
 
 public static class BattleRuntimeDefinitions
 {
+    public const int TemporaryLavaSkinBuffId = 930020;
+
     private static readonly Dictionary<string, int> BuffIds = new Dictionary<string, int>();
     private static bool isInitialized;
 

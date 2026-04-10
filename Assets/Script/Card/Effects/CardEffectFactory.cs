@@ -163,6 +163,7 @@ public static class CardEffectFactory
                 {
                     amount = effectData.amount,
                     amountFormula = effectData.amountFormula,
+                    subject = resolvedSubject,
                     onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
                 };
 
@@ -302,6 +303,7 @@ public static class CardEffectFactory
                     count = effectData.count > 0 ? effectData.count : effectData.amount,
                     from = effectData.from,
                     cardIdFilter = effectData.formulaCardIdFilter == null ? null : new List<int>(effectData.formulaCardIdFilter),
+                    characterFilter = effectData.characterFilter,
                     onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
                 };
 

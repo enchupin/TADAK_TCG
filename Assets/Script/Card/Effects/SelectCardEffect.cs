@@ -6,6 +6,7 @@ public class SelectCardEffect : ICardEffect
     public int count;
     public MoveZoneType from;
     public List<int> cardIdFilter;
+    public string characterFilter;
     public List<ICardEffect> onActions;
 
     public void Execute(TrainingBattleManager battleManager)
@@ -112,7 +113,35 @@ public class SelectCardEffect : ICardEffect
             sourceCards = sourceCards.FindAll(card => card != null && cardIdFilter.Contains(card.cardId));
         }
 
+        Character? filteredCharacter = ResolveCharacterFilter(battleManager);
+        if (filteredCharacter.HasValue) {
+            sourceCards = sourceCards.FindAll(card => card != null && card.character == filteredCharacter.Value);
+        }
+
         return sourceCards;
+    }
+
+    private Character? ResolveCharacterFilter(TrainingBattleManager battleManager)
+    {
+        if (string.IsNullOrWhiteSpace(characterFilter)) {
+            return null;
+        }
+
+        if (string.Equals(characterFilter, "Self", System.StringComparison.OrdinalIgnoreCase)
+            || string.Equals(characterFilter, "Source", System.StringComparison.OrdinalIgnoreCase)) {
+            return ResolveSourceCharacter(battleManager);
+        }
+
+        if (int.TryParse(characterFilter, out int characterId) && System.Enum.IsDefined(typeof(Character), characterId)) {
+            return (Character)characterId;
+        }
+
+        if (System.Enum.TryParse(characterFilter, true, out Character parsedCharacter)) {
+            return parsedCharacter;
+        }
+
+        Debug.LogWarning($"[SelectCard] 알 수 없는 characterFilter입니다: {characterFilter}");
+        return null;
     }
 
     private static void AddHandCards(List<Card> target, TrainingBattleManager battleManager)

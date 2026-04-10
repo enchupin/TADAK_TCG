@@ -68,9 +68,13 @@ public static class ConditionEvaluator
     private static object GetSubject(string subjectType, TrainingBattleManager bm)
     {
         if (bm?.battleContext != null && !string.IsNullOrWhiteSpace(subjectType)) {
-            Card contextCard = bm.battleContext.GetContextCard(subjectType);
-            if (contextCard != null) {
-                return contextCard;
+            List<Card> contextCards = bm.battleContext.GetContextCards(subjectType);
+            if (contextCards.Count > 1) {
+                return contextCards;
+            }
+
+            if (contextCards.Count == 1) {
+                return contextCards[0];
             }
         }
 
@@ -114,6 +118,21 @@ public static class ConditionEvaluator
                 case "IsPotion": return IsPotionCard(card) ? 1f : 0f;
                 case "HasKeyword":
                     return card.HasKeyword(ResolveKeywordId(param)) ? 1f : 0f;
+            }
+        }
+
+        if (subject is List<Card> cards)
+        {
+            switch (property)
+            {
+                case "Count":
+                    return cards.Count;
+                case "HasCharacterId":
+                    if (int.TryParse(param, out int characterId))
+                    {
+                        return cards.Exists(card => card != null && (int)card.character == characterId) ? 1f : 0f;
+                    }
+                    return 0f;
             }
         }
 

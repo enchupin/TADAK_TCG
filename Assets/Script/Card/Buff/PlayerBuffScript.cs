@@ -2,6 +2,11 @@ public abstract class PlayerBuffScript
 {
     public abstract int BuffId { get; }
 
+    public virtual int GetRuntimeStack(TrainingBattleManager battleManager, PlayerData player)
+    {
+        return player != null ? player.GetBuffStack(BuffId) : 0;
+    }
+
     public virtual void ResetForCombat(TrainingBattleManager battleManager, PlayerData player)
     {
     }

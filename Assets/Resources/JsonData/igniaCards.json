@@ -32,22 +32,22 @@
             "cardId": 201030,
             "name": "폴리모프",
             "characterId": 201,
-            "cost": 1,
+            "cost": 0,
             "keywords": [
                 1
             ],
-            "description": "이번 턴에 내 카드의 피해량이 20% 증가합니다.",
+            "description": "이번 턴 동안 과열을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 3017,
-                    "amount": 2,
+                    "amount": 3,
                     "target": "Self"
                 },
                 {
                     "type": "Buff",
                     "buffId": 4007,
-                    "amount": 2,
+                    "amount": 3,
                     "target": "Self"
                 }
             ],
@@ -61,18 +61,18 @@
             "keywords": [
                 1
             ],
-            "description": "이번 턴에 내 카드의 피해량이 40% 증가합니다.",
+            "description": "이번 턴 동안 과열을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 3017,
-                    "amount": 4,
+                    "amount": 5,
                     "target": "Self"
                 },
                 {
                     "type": "Buff",
                     "buffId": 4007,
-                    "amount": 4,
+                    "amount": 5,
                     "target": "Self"
                 }
             ]
@@ -81,21 +81,12 @@
             "cardId": 201032,
             "name": "폴리모프 +",
             "characterId": 201,
-            "cost": 0,
-            "keywords": [
-                5
-            ],
-            "description": "이번 턴에 내 카드의 피해량이 20% 증가합니다.",
+            "cost": 1,
+            "description": "과열을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 3017,
-                    "amount": 2,
-                    "target": "Self"
-                },
-                {
-                    "type": "Buff",
-                    "buffId": 4007,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -106,7 +97,7 @@
             "name": "폴리모프 +",
             "characterId": 201,
             "cost": 0,
-            "description": "힘을 3 얻습니다. 턴 종료 시 사라집니다.",
+            "description": "이번 턴 동안 힘을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -130,7 +121,7 @@
             "keywords": [
                 4
             ],
-            "description": "힘을 2 얻습니다.",
+            "description": "힘을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -148,7 +139,7 @@
             "keywords": [
                 4
             ],
-            "description": "매 턴 내 카드의 피해량이 20%씩 증가합니다.",
+            "description": "발열을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -163,9 +154,6 @@
             "name": "드래곤 브레스",
             "characterId": 201,
             "cost": 2,
-            "keywords": [
-                7
-            ],
             "description": "피해를 {amount} 입힙니다.",
             "effects": [
                 {
@@ -181,9 +169,6 @@
             "name": "드래곤 브레스 +",
             "characterId": 201,
             "cost": 2,
-            "keywords": [
-                7
-            ],
             "description": "피해를 {amount} 입힙니다.",
             "effects": [
                 {
@@ -197,20 +182,13 @@
             "cardId": 201042,
             "name": "드래곤 브레스 +",
             "characterId": 201,
-            "cost": 2,
-            "description": "내 손의 다른 카드를 모두 버립니다. 버린 카드 1장 당 피해를 8 입힙니다.",
+            "cost": 1,
+            "description": "모든 적에게 피해를 {amount} 입힙니다.",
             "effects": [
                 {
-                    "type": "Move",
-                    "from": "Hand",
-                    "to": "DiscardPile",
-                    "amountFormula": "all",
-                    "onAction": {
-                        "type": "Damage",
-                        "amountFormula": "moved * 8",
-                        "target": "SingleEnemy"
-                    },
-                    "subject": "MovedCount"
+                    "type": "Attack",
+                    "amount": 8,
+                    "target": "AllEnemies"
                 }
             ]
         },
@@ -219,18 +197,33 @@
             "name": "드래곤 브레스 +",
             "characterId": 201,
             "cost": 1,
-            "description": "내 손의 다른 카드를 모두 소멸시킵니다. 소멸시킨 카드 1장 당 피해를 12 입힙니다.",
+            "description": "모든 적에게 피해를 {amount} 입힙니다. 적이 혼자인 경우, 피해량이 3배가 됩니다.",
             "effects": [
                 {
-                    "type": "ExhaustCard",
-                    "from": "Hand",
-                    "amountFormula": "all",
-                    "onAction": {
-                        "type": "Damage",
-                        "amountFormula": "exhausted * 12",
-                        "target": "SingleEnemy"
-                    },
-                    "subject": "ExhaustedCount"
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "EnemyCount",
+                                "operator": "Eq",
+                                "value": 1
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "Attack",
+                                "amount": 6,
+                                "amountFormula": "*3",
+                                "target": "AllEnemies"
+                            }
+                        ],
+                        "elseEffects": [
+                            {
+                                "type": "Attack",
+                                "amount": 6,
+                                "target": "AllEnemies"
+                            }
+                        ]
+                    }
                 }
             ]
         },
@@ -238,22 +231,19 @@
             "cardId": 201044,
             "name": "드래곤 브레스 +",
             "characterId": 201,
-            "cost": 0,
-            "keywords": [
-                1,
-                3
-            ],
-            "description": "내 손의 다른 카드를 모두 버립니다. 버린 카드 수 만큼 카드를 뽑습니다.",
+            "cost": 1,
+            "description": "내 손의 카드를 모두 소멸시킵니다. 소멸시킨 카드 1장 당 피해를 8 입힙니다.",
             "effects": [
                 {
-                    "type": "Move",
+                    "type": "ExhaustCard",
                     "from": "Hand",
-                    "to": "DiscardPile",
                     "amountFormula": "all",
+                    "subject": "ExhaustedCount",
                     "onAction": {
-                        "type": "Draw"
-                    },
-                    "subject": "MovedCount"
+                        "type": "Attack",
+                        "amountFormula": "exhausted * 8",
+                        "target": "SingleEnemy"
+                    }
                 }
             ]
         },
@@ -262,7 +252,7 @@
             "name": "드래곤 브레스 +",
             "characterId": 201,
             "cost": 3,
-            "description": "이 카드의 비용이 2 이하일 때 피해를 40 입힙니다.",
+            "description": "피해를 {amount} 입힙니다. 이 카드의 비용이 2 이하라면 대신 피해를 {amount2} 입힙니다.",
             "effects": [
                 {
                     "condition": {
@@ -276,8 +266,15 @@
                         ],
                         "effects": [
                             {
-                                "type": "Damage",
+                                "type": "Attack",
                                 "amount": 40,
+                                "target": "SingleEnemy"
+                            }
+                        ],
+                        "elseEffects": [
+                            {
+                                "type": "Attack",
+                                "amount": 28,
                                 "target": "SingleEnemy"
                             }
                         ]
@@ -289,18 +286,12 @@
             "cardId": 201050,
             "name": "화염 고리",
             "characterId": 201,
-            "cost": 1,
-            "description": "이그니아의 기본 카드를 1장 뽑습니다. 이번 턴에 그 카드의 비용이 1 감소합니다.",
+            "cost": 0,
+            "description": "뽑을 카드 더미의 이그니아 기본 카드를 {amount}장 뽑습니다.",
             "effects": [
                 {
                     "type": "DrawBasic",
-                    "amount": 1,
-                    "onAction": {
-                        "type": "ReduceCost",
-                        "amount": 1,
-                        "duration": "Turn"
-                    },
-                    "subject": "DrawnCard"
+                    "amount": 2
                 }
             ],
             "enforceGroup": "enforce_201050"
@@ -309,8 +300,8 @@
             "cardId": 201051,
             "name": "화염 고리 +",
             "characterId": 201,
-            "cost": 1,
-            "description": "이그니아의 기본 카드를 2장 뽑습니다. 이번 턴에 그 카드들의 비용이 1 감소합니다.",
+            "cost": 0,
+            "description": "뽑을 카드 더미의 이그니아 기본 카드를 {amount}장 뽑습니다. 이번 턴에 그 카드들의 비용이 {amount2} 감소합니다.",
             "effects": [
                 {
                     "type": "DrawBasic",
@@ -329,7 +320,7 @@
             "name": "화염 고리 +",
             "characterId": 201,
             "cost": 0,
-            "description": "화염탄 카드를 1장 생성합니다. 이번 턴에 그 카드의 비용이 1 감소합니다.",
+            "description": "화염탄 카드를 {amount}장 생성합니다. 이번 턴에 그 카드의 비용이 {amount2} 감소합니다.",
             "effects": [
                 {
                     "type": "Copy",
@@ -350,8 +341,8 @@
             "cardId": 201053,
             "name": "화염 고리 +",
             "characterId": 201,
-            "cost": 1,
-            "description": "이그니아의 카드를 1장 뽑습니다. 이번 턴에 그 카드의 비용이 1 감소합니다.",
+            "cost": 0,
+            "description": "뽑을 카드 더미의 이그니아 카드를 {amount}장 뽑습니다. 이번 턴에 그 카드의 비용이 {amount2} 감소합니다.",
             "effects": [
                 {
                     "type": "DrawCharacter",
@@ -369,33 +360,31 @@
             "cardId": 201054,
             "name": "화염 고리 +",
             "characterId": 201,
-            "cost": 0,
-            "description": "카드를 1장 뽑습니다. 뽑은 카드가 이그니아의 카드면, 화염 낙인을 3 부여합니다.",
+            "cost": 1,
+            "keywords": [
+                3
+            ],
+            "description": "버린 카드 더미의 이그니아 카드를 {amount}장 선택해 가져옵니다. 이번 게임 동안 그 카드들의 비용이 {amount2} 감소합니다.",
             "effects": [
                 {
-                    "type": "Draw",
-                    "amount": 1,
-                    "onAction": {
-                        "condition": {
-                            "checks": [
-                                {
-                                    "subject": "DrawnCard",
-                                    "property": "CharacterId",
-                                    "operator": "Eq",
-                                    "value": 201
-                                }
-                            ],
-                            "effects": [
-                                {
-                                    "type": "Buff",
-                                    "buffId": 4003,
-                                    "amount": 3,
-                                    "target": "RandEnemy"
-                                }
-                            ]
+                    "type": "SelectCard",
+                    "from": "DiscardPile",
+                    "count": 2,
+                    "subject": "Selected",
+                    "characterFilter": "Self",
+                    "onAction": [
+                        {
+                            "type": "Move",
+                            "from": "Source",
+                            "to": "Hand",
+                            "amountFormula": "all",
+                            "onAction": {
+                                "type": "ReduceCost",
+                                "amount": 1,
+                                "duration": "Game"
+                            }
                         }
-                    },
-                    "subject": "DrawnCard"
+                    ]
                 }
             ]
         },
@@ -403,18 +392,34 @@
             "cardId": 201055,
             "name": "화염 고리 +",
             "characterId": 201,
-            "cost": 1,
-            "description": "이그니아의 카드를 1장 뽑습니다. 이번 게임 동안 그 카드의 비용이 1 감소합니다.",
+            "cost": 0,
+            "description": "카드를 {amount}장 뽑습니다. 이그니아 카드를 뽑았으면, 화염 낙인을 {amount2} 부여합니다.",
             "effects": [
                 {
-                    "type": "DrawCharacter",
-                    "amount": 1,
+                    "type": "Draw",
+                    "amount": 2,
+                    "subject": "DrawnCards",
                     "onAction": {
-                        "type": "ReduceCost",
-                        "amount": 1,
-                        "duration": "Game"
-                    },
-                    "subject": "DrawnCard"
+                        "condition": {
+                            "checks": [
+                                {
+                                    "subject": "DrawnCards",
+                                    "property": "HasCharacterId",
+                                    "param": "201",
+                                    "operator": "Eq",
+                                    "value": "true"
+                                }
+                            ],
+                            "effects": [
+                                {
+                                    "type": "Buff",
+                                    "buffId": 4003,
+                                    "amount": 3,
+                                    "target": "RandomEnemy"
+                                }
+                            ]
+                        }
+                    }
                 }
             ]
         },
@@ -423,33 +428,13 @@
             "name": "지옥불",
             "characterId": 201,
             "cost": 1,
-            "description": "모든 적에게 피해를 {amount} 입힙니다. 적이 혼자인 경우, 피해량이 3배가 됩니다.",
+            "description": "모든 적에게 화염 낙인을 {amount} 부여합니다.",
             "effects": [
                 {
-                    "condition": {
-                        "checks": [
-                            {
-                                "subject": "EnemyCount",
-                                "operator": "Eq",
-                                "value": 1
-                            }
-                        ],
-                        "effects": [
-                            {
-                                "type": "Attack",
-                                "amount": 4,
-                                "amountFormula": "*3",
-                                "target": "AllEnemies"
-                            }
-                        ],
-                        "elseEffects": [
-                            {
-                                "type": "Attack",
-                                "amount": 4,
-                                "target": "AllEnemies"
-                            }
-                        ]
-                    }
+                    "type": "Buff",
+                    "buffId": 4003,
+                    "amount": 3,
+                    "target": "AllEnemies"
                 }
             ],
             "enforceGroup": "enforce_201060"
@@ -459,33 +444,13 @@
             "name": "지옥불 +",
             "characterId": 201,
             "cost": 1,
-            "description": "모든 적에게 피해를 {amount} 입힙니다. 적이 혼자인 경우, 피해량이 5배가 됩니다.",
+            "description": "모든 적에게 화염 낙인을 {amount} 부여합니다.",
             "effects": [
                 {
-                    "condition": {
-                        "checks": [
-                            {
-                                "subject": "EnemyCount",
-                                "operator": "Eq",
-                                "value": 1
-                            }
-                        ],
-                        "effects": [
-                            {
-                                "type": "Attack",
-                                "amount": 4,
-                                "amountFormula": "*5",
-                                "target": "AllEnemies"
-                            }
-                        ],
-                        "elseEffects": [
-                            {
-                                "type": "Attack",
-                                "amount": 4,
-                                "target": "AllEnemies"
-                            }
-                        ]
-                    }
+                    "type": "Buff",
+                    "buffId": 4003,
+                    "amount": 5,
+                    "target": "AllEnemies"
                 }
             ]
         },
@@ -494,13 +459,13 @@
             "name": "지옥불 +",
             "characterId": 201,
             "cost": 1,
-            "description": "모든 적에게 화염 낙인을 4 부여합니다.",
+            "description": "화염 낙인을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 4003,
-                    "amount": 4,
-                    "target": "AllEnemies"
+                    "amount": 7,
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -510,15 +475,17 @@
             "characterId": 201,
             "cost": 1,
             "keywords": [
-                5
+                3
             ],
-            "description": "모든 적에게 화염 낙인을 3 부여합니다.",
+            "description": "대상의 화염 낙인을 {amount}배로 만듭니다.",
             "effects": [
                 {
-                    "type": "Buff",
+                    "type": "ChangeStat",
+                    "stat": "buff",
+                    "change": "multiply",
                     "buffId": 4003,
-                    "amount": 3,
-                    "target": "AllEnemies"
+                    "amount": 2,
+                    "target": "SingleEnemy"
                 }
             ]
         },
@@ -530,7 +497,7 @@
             "keywords": [
                 4
             ],
-            "description": "공격할 때마다 적에게 화염 낙인을 1 부여합니다.",
+            "description": "공격할 때마다 적에게 화염 낙인을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -567,12 +534,12 @@
             "keywords": [
                 4
             ],
-            "description": "공격받을 때마다 공격한 적에게 피해를 3 줍니다.",
+            "description": "용암 피부를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3010,
-                    "amount": 3,
+                    "buffId": 3020,
+                    "amount": 2,
                     "target": "Self"
                 }
             ],
@@ -586,31 +553,7 @@
             "keywords": [
                 4
             ],
-            "description": "보호막을 {amount} 얻습니다. 공격받을 때마다 공격한 적에게 피해를 3 줍니다.",
-            "effects": [
-                {
-                    "type": "Barrier",
-                    "amount": 6,
-                    "target": "Self"
-                },
-                {
-                    "type": "Buff",
-                    "buffId": 3010,
-                    "amount": 3,
-                    "target": "Self"
-                }
-            ]
-        },
-        {
-            "cardId": 201072,
-            "name": "뜨거운 피부 +",
-            "characterId": 201,
-            "cost": 2,
-            "keywords": [
-                4,
-                9
-            ],
-            "description": "공격받을 때마다 공격한 적에게 화염 낙인을 3 부여합니다.",
+            "description": "용암 피부를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -621,15 +564,49 @@
             ]
         },
         {
+            "cardId": 201072,
+            "name": "뜨거운 피부 +",
+            "characterId": 201,
+            "cost": 1,
+            "description": "카드 {amount}장을 선택해 소멸시킵니다. 보호막을 {amount2} 얻습니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "Hand",
+                    "count": 1,
+                    "subject": "Selected",
+                    "onAction": [
+                        {
+                            "type": "ExhaustCard",
+                            "from": "Source",
+                            "subject": "Selected",
+                            "amountFormula": "all"
+                        },
+                        {
+                            "type": "Barrier",
+                            "amount": 8,
+                            "target": "Self"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "cardId": 201073,
             "name": "뜨거운 피부 +",
             "characterId": 201,
             "cost": 2,
-            "description": "보호막을 {amount} 얻습니다.",
+            "description": "보호막을 {amount} 얻습니다. 이번 턴 동안 용암 피부를 {amount2} 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",
                     "amount": 16,
+                    "target": "Self"
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 930020,
+                    "amount": 3,
                     "target": "Self"
                 }
             ]
@@ -639,15 +616,17 @@
             "name": "뜨거운 피부 +",
             "characterId": 201,
             "cost": 1,
-            "keywords": [
-                4
-            ],
-            "description": "사용불가 카드를 사용할 수 있습니다. 사용한 사용불가 카드는 소멸됩니다.",
+            "description": "강공을 {amount} 얻습니다. 보호막을 {amount2} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 1006,
-                    "amount": 1,
+                    "buffId": 3009,
+                    "amount": 6,
+                    "target": "Self"
+                },
+                {
+                    "type": "Barrier",
+                    "amount": 8,
                     "target": "Self"
                 }
             ]
@@ -656,15 +635,16 @@
             "cardId": 201075,
             "name": "뜨거운 피부 +",
             "characterId": 201,
-            "cost": 1,
+            "cost": 3,
             "keywords": [
-                3
+                4,
+                9
             ],
-            "description": "피해를 1회 막습니다.",
+            "description": "금기 해제를 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3033,
+                    "buffId": 1006,
                     "amount": 1,
                     "target": "Self"
                 }

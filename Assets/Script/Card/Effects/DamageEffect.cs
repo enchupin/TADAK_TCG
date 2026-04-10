@@ -68,6 +68,17 @@ public class DamageEffect : ICardEffect
                 }
                 break;
 
+            case TargetType.RandomEnemy:
+                List<Monster> randomTargets = battleManager.GetLivingMonsters();
+                if (randomTargets == null || randomTargets.Count == 0) {
+                    Debug.LogWarning("[DamageEffect] No enemies available for RandomEnemy target. Effect cancelled.");
+                    break;
+                }
+
+                Monster randomTarget = randomTargets[Random.Range(0, randomTargets.Count)];
+                totalDamageDealt += randomTarget.TakeDamage(finalAmount, 0);
+                break;
+
             case TargetType.Self: // 플레이어 자신 대상
                 if (battleManager.playerData == null)
                 {
@@ -183,5 +194,6 @@ public enum TargetType
     Hand,
     Discard,
     Deck,
-    None
+    None,
+    RandomEnemy
 }

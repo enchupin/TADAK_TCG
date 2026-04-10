@@ -72,5 +72,19 @@ public class BuffEffect : ICardEffect
                 }
             }
         }
+        else if (target == TargetType.RandomEnemy)
+        {
+            List<Monster> livingMonsters = manager.GetLivingMonsters();
+            if (livingMonsters == null || livingMonsters.Count == 0)
+            {
+                return;
+            }
+
+            Monster randomTarget = livingMonsters[Random.Range(0, livingMonsters.Count)];
+            if (randomTarget != null && !randomTarget.IsDead())
+            {
+                manager.ApplyBuffToMonster(randomTarget, buffId, finalAmount);
+            }
+        }
     }
 }

@@ -71,6 +71,7 @@ public class PlayerBuffRuntimeService
         Register(new ThornBuffScript());
         Register(new EvadeBuffScript());
         Register(new LavaSkinBuffScript());
+        Register(new TemporaryLavaSkinBuffScript());
         Register(new CounterattackBuffScript());
         Register(new ColdAirBuffScript());
         Register(new LavaBarrierBuffScript());
@@ -219,7 +220,7 @@ public class PlayerBuffRuntimeService
 
         foreach (PlayerBuffScript script in orderedScripts)
         {
-            int stack = player.GetBuffStack(script.BuffId);
+            int stack = script.GetRuntimeStack(battleManager, player);
             if (stack <= 0)
             {
                 continue;
@@ -345,7 +346,7 @@ public class PlayerBuffRuntimeService
 
         foreach (PlayerBuffScript script in orderedScripts)
         {
-            int stack = player.GetBuffStack(script.BuffId);
+            int stack = script.GetRuntimeStack(battleManager, player);
             if (stack <= 0)
             {
                 continue;
@@ -370,7 +371,7 @@ public class PlayerBuffRuntimeService
 
         foreach (PlayerBuffScript script in orderedScripts)
         {
-            int stack = player.GetBuffStack(script.BuffId);
+            int stack = script.GetRuntimeStack(battleManager, player);
             if (stack <= 0)
             {
                 continue;
@@ -493,7 +494,7 @@ public class PlayerBuffRuntimeService
 
         foreach (PlayerBuffScript script in orderedScripts)
         {
-            int stack = player.GetBuffStack(script.BuffId);
+            int stack = script.GetRuntimeStack(battleManager, player);
             if (stack <= 0)
             {
                 continue;
@@ -577,7 +578,7 @@ public class PlayerBuffRuntimeService
 
         foreach (PlayerBuffScript script in orderedScripts)
         {
-            int stack = player.GetBuffStack(script.BuffId);
+            int stack = script.GetRuntimeStack(battleManager, player);
             if (stack > 0)
             {
                 action(script, player, stack);
@@ -596,7 +597,7 @@ public class PlayerBuffRuntimeService
         T result = initialValue;
         foreach (PlayerBuffScript script in orderedScripts)
         {
-            int stack = player.GetBuffStack(script.BuffId);
+            int stack = script.GetRuntimeStack(battleManager, player);
             if (stack <= 0)
             {
                 continue;
