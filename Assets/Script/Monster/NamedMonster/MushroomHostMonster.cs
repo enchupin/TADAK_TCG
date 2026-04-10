@@ -15,13 +15,6 @@ public class MushroomHostMonster : Monster
         AddBuff(BattleRuntimeDefinitions.ParasiticMushroomBuffId, 1);
     }
 
-    protected override bool IsNonStackableBuff(int buffId)
-    {
-        return buffId == BattleRuntimeDefinitions.ParasiticMushroomBuffId
-            || buffId == BattleRuntimeDefinitions.PoisonUpgradeBuffId
-            || base.IsNonStackableBuff(buffId);
-    }
-
     protected override void BuildNextAction()
     {
         switch (GetCurrentPatternId())
@@ -53,18 +46,11 @@ public class MushroomHostMonster : Monster
                 AddPoisonCardsToPlayerHand(2);
                 break;
             case 20302:
-                if (DealDamage(target, 16) > 0)
-                {
-                    ReducePlayerMaxHp(target, 2);
-                }
-
+                DealDamage(target, 16);
                 target?.AddBuff(BattleRuntimeDefinitions.FrailBuffId, 2);
                 break;
             case 20303:
-                if (DealDamage(target, 21) > 0)
-                {
-                    ReducePlayerMaxHp(target, 2);
-                }
+                DealDamage(target, 21);
                 break;
             default:
                 TrainingBattleManager.Instance?.ApplyBuffToMonster(this, BattleRuntimeDefinitions.PoisonUpgradeBuffId, 1);
@@ -129,21 +115,4 @@ public class MushroomHostMonster : Monster
         battleManager.UpdateAllUI();
     }
 
-    private void ReducePlayerMaxHp(PlayerData target, int amount)
-    {
-        if (target == null || amount <= 0)
-        {
-            return;
-        }
-
-        target.maxHP = Mathf.Max(1, target.maxHP - amount);
-        target.hp = Mathf.Min(target.hp, target.maxHP);
-
-        if (TrainingRunState.IsRunActive)
-        {
-            TrainingRunState.SetPlayerHealthState(target.hp, target.maxHP);
-        }
-
-        TrainingBattleManager.Instance?.UpdateAllUI();
-    }
 }

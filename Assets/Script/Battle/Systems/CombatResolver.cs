@@ -61,8 +61,6 @@ public class CombatResolver
 
         int repeatCount = battleManager.ConsumeRepeatedPlayCount(playedCard, false);
         int cardUseAllEnemiesDamage = battleManager.GetCardUseAllEnemiesDamage();
-        bool shouldConsumeFreeCost = battleManager.playerData.GetBuffStack(BattleRuntimeDefinitions.NextCardFreeBuffId) > 0;
-
         Debug.Log($"[Player] Used card: {playedCard.cardName} (Energy now: {battleManager.playerData.energy})");
 
         battleManager.battleContext?.OnCardPlayed(playedCard);
@@ -77,11 +75,6 @@ public class CombatResolver
             battleManager.ApplyCardUseAllEnemiesDamage(cardUseAllEnemiesDamage);
         }
         ReplayCardEffectsIfNeeded(playedCard, originalTarget, repeatCount);
-
-        if (shouldConsumeFreeCost)
-        {
-            battleManager.playerData.ConsumeBuffStack(BattleRuntimeDefinitions.NextCardFreeBuffId, 1);
-        }
 
         if (battleManager.handManager != null)
         {

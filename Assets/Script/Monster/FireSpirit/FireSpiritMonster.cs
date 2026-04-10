@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class FireSpiritMonster : Monster
 {
-    private const int ReviveDelayTurns = 2;
-
     private int plannedPatternIdForTurn;
     private int lastExecutedPatternId;
 
@@ -17,21 +15,6 @@ public class FireSpiritMonster : Monster
         plannedPatternIdForTurn = 0;
         lastExecutedPatternId = 0;
         ApplyBurningFlameBuff();
-    }
-
-    protected override bool IsNonStackableBuff(int buffId)
-    {
-        return buffId == BattleRuntimeDefinitions.BurningFlameBuffId || base.IsNonStackableBuff(buffId);
-    }
-
-    protected override void OnDeathTriggered()
-    {
-        if (!HasOtherLivingFireSpirit())
-        {
-            return;
-        }
-
-        TrainingBattleManager.Instance?.ScheduleMonsterRevive(this, ReviveDelayTurns);
     }
 
     protected override void OnRevivedTriggered()
@@ -48,7 +31,7 @@ public class FireSpiritMonster : Monster
         switch (plannedPatternIdForTurn)
         {
             case 11101:
-                SetIntent("피해 증폭을 2 얻습니다.");
+                SetIntent("힘을 2 얻습니다.");
                 SetPlannedPattern(11101, MonsterIntentIconType.BeneficialEffect);
                 break;
             case 11102:
@@ -67,7 +50,7 @@ public class FireSpiritMonster : Monster
         switch (plannedPatternIdForTurn)
         {
             case 11101:
-                AddBuff(BattleRuntimeDefinitions.DamageAmplifyBuffId, 2);
+                AddBuff(BattleRuntimeDefinitions.StrengthBuffId, 2);
                 break;
             case 11102:
                 for (int hitIndex = 0; hitIndex < 2; hitIndex++)
@@ -103,34 +86,8 @@ public class FireSpiritMonster : Monster
         return candidates[Random.Range(0, candidates.Count)];
     }
 
-    private bool HasOtherLivingFireSpirit()
-    {
-        List<Monster> livingMonsters = TrainingBattleManager.Instance != null
-            ? TrainingBattleManager.Instance.GetLivingMonsters()
-            : null;
-        if (livingMonsters == null)
-        {
-            return false;
-        }
-
-        foreach (Monster monster in livingMonsters)
-        {
-            if (monster == null || monster == this || monster.IsDead())
-            {
-                continue;
-            }
-
-            if (monster.MonsterId == MonsterId)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private int GetPreviewDamage(int baseDamage)
     {
-        return Mathf.Max(0, baseDamage + GetBuffStack(BattleRuntimeDefinitions.DamageAmplifyBuffId));
+        return PreviewOutgoingDamage(baseDamage);
     }
 }

@@ -73,10 +73,10 @@
             "name": "겹치기 +",
             "characterId": 203,
             "cost": 1,
-            "description": "이번 턴에 적을 공격할 때마다, 이번 턴에 피해 증폭을 2 얻습니다.",
+            "description": "이번 턴에 적을 공격할 때마다, 이번 턴에 힘을 2 얻습니다.",
             "effects": [
                 {
-                    "type": "OnAttackGainAmplify",
+                    "type": "OnAttackGainStrength",
                     "amount": 2
                 }
             ]
@@ -90,14 +90,7 @@
                 4
             ],
             "description": "이번 전투 동안 깃털이 반복을 얻습니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffId": 3045,
-                    "amount": 1,
-                    "target": "Self"
-                }
-            ]
+            "effects": []
         },
         {
             "cardId": 203034,
@@ -509,7 +502,7 @@
             "keywords": [
                 3
             ],
-            "description": "약화를 1 얻고 피해 증폭을 3 얻습니다.",
+            "description": "약화를 1 얻고 힘을 3 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",

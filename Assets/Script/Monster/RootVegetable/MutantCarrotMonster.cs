@@ -15,7 +15,7 @@ public class MutantCarrotMonster : Monster
     private const int MultiHitBaseCount = 2;
     private const int MultiHitRootedDamage = 10;
     private const int MultiHitRootedCount = 3;
-    private const int DamageAmplifyAmount = 3;
+    private const int StrengthAmount = 3;
 
     private int phase;
     private int plannedPatternIdForTurn;
@@ -28,11 +28,6 @@ public class MutantCarrotMonster : Monster
     {
         phase = 0;
         plannedPatternIdForTurn = 0;
-    }
-
-    protected override bool IsNonStackableBuff(int buffId)
-    {
-        return buffId == BattleRuntimeDefinitions.RootedBuffId || base.IsNonStackableBuff(buffId);
     }
 
     protected override void BuildNextAction()
@@ -51,7 +46,7 @@ public class MutantCarrotMonster : Monster
                 SetPlannedPattern(MultiHitPatternId, MonsterIntentIconType.Attack);
                 break;
             case PowerUpPatternId:
-                SetIntent($"피해 증폭을 {DamageAmplifyAmount} 얻습니다.");
+                SetIntent($"힘을 {StrengthAmount} 얻습니다.");
                 SetPlannedPattern(PowerUpPatternId, MonsterIntentIconType.BeneficialEffect);
                 break;
             default:
@@ -84,7 +79,7 @@ public class MutantCarrotMonster : Monster
                 }
                 break;
             case PowerUpPatternId:
-                AddBuff(BattleRuntimeDefinitions.DamageAmplifyBuffId, DamageAmplifyAmount);
+                AddBuff(BattleRuntimeDefinitions.StrengthBuffId, StrengthAmount);
                 break;
             default:
                 DealDamage(target, IsRooted() ? AttackRootedDamage : AttackBaseDamage);
@@ -102,7 +97,7 @@ public class MutantCarrotMonster : Monster
 
     private int GetPreviewDamage(int baseDamage)
     {
-        return Mathf.Max(0, baseDamage + GetBuffStack(BattleRuntimeDefinitions.DamageAmplifyBuffId));
+        return PreviewOutgoingDamage(baseDamage);
     }
 
     private int GetPatternIdForCurrentPhase()

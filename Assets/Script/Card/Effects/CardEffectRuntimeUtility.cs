@@ -237,7 +237,7 @@ public static class CardEffectRuntimeUtility
             buff != null &&
             buff.data != null &&
             buff.stack > 0 &&
-            allowedBuffFilters.Exists(buff.data.MatchesAllowedType));
+            allowedBuffFilters.Exists(allowedBuffFilter => MatchesAllowedBuffFilter(buff.data.buffId, allowedBuffFilter)));
 
         if (candidates.Count == 0)
         {
@@ -278,6 +278,33 @@ public static class CardEffectRuntimeUtility
     {
         return buff?.data != null
             && buff.data.buffId == buffId;
+    }
+
+    private static bool MatchesAllowedBuffFilter(int buffId, int allowedBuffFilter)
+    {
+        return GetLeadingDigit(buffId) == NormalizeAllowedBuffFilter(allowedBuffFilter);
+    }
+
+    private static int NormalizeAllowedBuffFilter(int allowedBuffFilter)
+    {
+        int normalizedValue = Mathf.Abs(allowedBuffFilter);
+        if (normalizedValue < 10)
+        {
+            return normalizedValue;
+        }
+
+        return GetLeadingDigit(normalizedValue);
+    }
+
+    private static int GetLeadingDigit(int value)
+    {
+        value = Mathf.Abs(value);
+        while (value >= 10)
+        {
+            value /= 10;
+        }
+
+        return value;
     }
 }
 

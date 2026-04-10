@@ -8,7 +8,7 @@ public class StoneThrowGolemMonster : StoneGolemMonsterBase
     private bool useSupportPattern;
 
     public override int MonsterId => 107;
-    protected override string MonsterName => "돌 던져 골렘";
+    protected override string MonsterName => "???섏졇 怨⑤젞";
     protected override int BaseMaxHp => baseMaxHp;
 
     protected override void BuildNextAction()
@@ -16,12 +16,13 @@ public class StoneThrowGolemMonster : StoneGolemMonsterBase
         useSupportPattern = HasOtherLivingStoneGolem();
         if (useSupportPattern)
         {
-            SetIntent("적에게 부식을 2 부여합니다. 모든 아군이 피해 증폭을 1 얻습니다.");
+            SetIntent("적에게 부식을 2 부여합니다. 모든 아군이 힘을 1 얻습니다.");
             SetPlannedPattern(10701, MonsterIntentIconType.BeneficialEffect, MonsterIntentIconType.HarmfulEffect);
             return;
         }
 
-        SetAttackIntent(12, "피해를 12 입힙니다.");
+        int previewDamage = PreviewOutgoingDamage(12);
+        SetAttackIntent(previewDamage, $"?쇳빐瑜?{previewDamage} ?낇옓?덈떎.");
         SetPlannedPattern(10702, MonsterIntentIconType.Attack);
     }
 
@@ -30,14 +31,14 @@ public class StoneThrowGolemMonster : StoneGolemMonsterBase
         if (useSupportPattern)
         {
             target?.AddBuff(BattleRuntimeDefinitions.CorrosionBuffId, 2);
-            ApplyDamageAmplifyToAllAllies();
+            ApplyStrengthToAllAllies();
             return;
         }
 
         DealDamage(target, 12);
     }
 
-    private void ApplyDamageAmplifyToAllAllies()
+    private void ApplyStrengthToAllAllies()
     {
         List<Monster> livingMonsters = TrainingBattleManager.Instance != null
             ? TrainingBattleManager.Instance.GetLivingMonsters()
@@ -49,7 +50,7 @@ public class StoneThrowGolemMonster : StoneGolemMonsterBase
 
         foreach (Monster monster in livingMonsters)
         {
-            monster?.AddBuff(BattleRuntimeDefinitions.DamageAmplifyBuffId, 1);
+            monster?.AddBuff(BattleRuntimeDefinitions.StrengthBuffId, 1);
         }
     }
 }

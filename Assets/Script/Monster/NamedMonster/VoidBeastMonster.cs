@@ -4,7 +4,6 @@ public class VoidBeastMonster : Monster
 {
     private int patternIndex;
     private int attackHitCount = 2;
-    private bool hasTriggeredVoidShellThisTurn;
 
     public override int MonsterId => 204;
     protected override string MonsterName => "공허 괴수";
@@ -13,28 +12,6 @@ public class VoidBeastMonster : Monster
     protected override void OnBattleStart()
     {
         AddBuff(BattleRuntimeDefinitions.VoidShellBuffId, 7);
-    }
-
-    protected override void OnTurnStarted()
-    {
-        hasTriggeredVoidShellThisTurn = false;
-    }
-
-    protected override void OnAfterTakeDamage(int incomingDamage, int damageAfterDefense)
-    {
-        if (incomingDamage <= 0 || hasTriggeredVoidShellThisTurn || IsDead())
-        {
-            return;
-        }
-
-        int voidShellStack = GetBuffStack(BattleRuntimeDefinitions.VoidShellBuffId);
-        if (voidShellStack <= 0)
-        {
-            return;
-        }
-
-        hasTriggeredVoidShellThisTurn = true;
-        AddDefense(voidShellStack);
     }
 
     protected override void BuildNextAction()
@@ -46,7 +23,7 @@ public class VoidBeastMonster : Monster
                 SetPlannedPattern(20401, MonsterIntentIconType.Attack);
                 break;
             case 1:
-                SetIntent("적의 피해 증폭을 2 감소시키고, 피해 증폭을 2 얻습니다.");
+                SetIntent("적의 힘을 2 감소시키고, 힘을 2 얻습니다.");
                 SetPlannedPattern(20402, MonsterIntentIconType.HarmfulEffect, MonsterIntentIconType.BeneficialEffect);
                 break;
             default:
@@ -73,8 +50,8 @@ public class VoidBeastMonster : Monster
                 attackHitCount++;
                 break;
             case 1:
-                target?.ConsumeBuffStack(BattleRuntimeDefinitions.DamageAmplifyBuffId, 2);
-                AddBuff(BattleRuntimeDefinitions.DamageAmplifyBuffId, 2);
+                target?.ConsumeBuffStack(BattleRuntimeDefinitions.StrengthBuffId, 2);
+                AddBuff(BattleRuntimeDefinitions.StrengthBuffId, 2);
                 break;
             default:
                 AddBuff(BattleRuntimeDefinitions.VoidShellBuffId, 3);
@@ -86,6 +63,6 @@ public class VoidBeastMonster : Monster
 
     private int GetPreviewDamage(int baseDamage)
     {
-        return Mathf.Max(0, baseDamage + GetBuffStack(BattleRuntimeDefinitions.DamageAmplifyBuffId));
+        return PreviewOutgoingDamage(baseDamage);
     }
 }

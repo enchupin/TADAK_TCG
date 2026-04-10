@@ -15,7 +15,7 @@ public class BattleUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playerEnergyText;
     [SerializeField] private TextMeshProUGUI playerDefenseText;
     [SerializeField] private TextMeshProUGUI overheatText;
-    [SerializeField] private TextMeshProUGUI damageAmplifyText;
+    [SerializeField] private TextMeshProUGUI strengthText;
     [SerializeField] private TextMeshProUGUI drawPileCountText;
     [SerializeField] private TextMeshProUGUI discardPileCountText;
     [SerializeField] private TextMeshProUGUI handCountText;
@@ -26,7 +26,7 @@ public class BattleUI : MonoBehaviour
 
     private void Awake()
     {
-        EnsureDamageAmplifyText();
+        EnsureStrengthText();
     }
 
     /// <summary>
@@ -68,13 +68,13 @@ public class BattleUI : MonoBehaviour
         overheatText.text = $"OverHeat : {overheatPercent}%";
     }
 
-    public void UpdateDamageAmplify()
+    public void UpdateStrength()
     {
-        EnsureDamageAmplifyText();
-        if (PlayerData.Instance == null || damageAmplifyText == null) return;
+        EnsureStrengthText();
+        if (PlayerData.Instance == null || strengthText == null) return;
 
-        int damageAmplify = PlayerData.Instance.GetBuffStack(DamageAmplifyBuffId);
-        damageAmplifyText.text = $"DamageAmplification : {damageAmplify}";
+        int strength = PlayerData.Instance.GetBuffStack(StrengthBuffId);
+        strengthText.text = $"힘 : {strength}";
     }
 
     public void UpdateDeckPileCount()
@@ -105,31 +105,31 @@ public class BattleUI : MonoBehaviour
         UpdateEnergy();
         UpdatePlayerDefense();
         UpdateOverheat();
-        UpdateDamageAmplify();
+        UpdateStrength();
         UpdateDeckPileCount();
     }
 
-    private void EnsureDamageAmplifyText()
+    private void EnsureStrengthText()
     {
-        if (damageAmplifyText != null || overheatText == null) {
+        if (strengthText != null || overheatText == null) {
             return;
         }
 
-        damageAmplifyText = Instantiate(overheatText, overheatText.transform.parent);
-        damageAmplifyText.gameObject.name = "DamageAmplifyText";
-        damageAmplifyText.text = "DamageAmplification : 0";
+        strengthText = Instantiate(overheatText, overheatText.transform.parent);
+        strengthText.gameObject.name = "StrengthText";
+        strengthText.text = "힘 : 0";
 
         RectTransform overheatRect = overheatText.rectTransform;
-        RectTransform amplifyRect = damageAmplifyText.rectTransform;
+        RectTransform strengthRect = strengthText.rectTransform;
 
-        amplifyRect.anchorMin = overheatRect.anchorMin;
-        amplifyRect.anchorMax = overheatRect.anchorMax;
-        amplifyRect.pivot = overheatRect.pivot;
-        amplifyRect.sizeDelta = overheatRect.sizeDelta;
-        amplifyRect.anchoredPosition = overheatRect.anchoredPosition + new Vector2(0f, -35f);
-        amplifyRect.localScale = overheatRect.localScale;
+        strengthRect.anchorMin = overheatRect.anchorMin;
+        strengthRect.anchorMax = overheatRect.anchorMax;
+        strengthRect.pivot = overheatRect.pivot;
+        strengthRect.sizeDelta = overheatRect.sizeDelta;
+        strengthRect.anchoredPosition = overheatRect.anchoredPosition + new Vector2(0f, -35f);
+        strengthRect.localScale = overheatRect.localScale;
 
         int siblingIndex = overheatText.transform.GetSiblingIndex();
-        damageAmplifyText.transform.SetSiblingIndex(siblingIndex + 1);
+        strengthText.transform.SetSiblingIndex(siblingIndex + 1);
     }
 }

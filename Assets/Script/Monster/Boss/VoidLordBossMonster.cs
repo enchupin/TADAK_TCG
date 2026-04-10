@@ -5,7 +5,6 @@ public class VoidLordBossMonster : Monster
 {
     private int nextPatternId;
     private int pendingAttackBoost;
-    private bool hasTriggeredVoidShellThisTurn;
     private bool isInvulnerable;
     private bool recoverySequenceActive;
 
@@ -18,32 +17,9 @@ public class VoidLordBossMonster : Monster
     {
         nextPatternId = 30403;
         pendingAttackBoost = 0;
-        hasTriggeredVoidShellThisTurn = false;
         isInvulnerable = false;
         recoverySequenceActive = false;
         AddBuff(BattleRuntimeDefinitions.VoidShellBuffId, 11);
-    }
-
-    protected override void OnTurnStarted()
-    {
-        hasTriggeredVoidShellThisTurn = false;
-    }
-
-    protected override void OnAfterTakeDamage(int incomingDamage, int damageAfterDefense)
-    {
-        if (incomingDamage <= 0 || hasTriggeredVoidShellThisTurn || IsDead())
-        {
-            return;
-        }
-
-        int voidShellStack = GetBuffStack(BattleRuntimeDefinitions.VoidShellBuffId);
-        if (voidShellStack <= 0)
-        {
-            return;
-        }
-
-        hasTriggeredVoidShellThisTurn = true;
-        AddDefense(voidShellStack);
     }
 
     protected override void OnTurnEnded()
@@ -53,7 +29,7 @@ public class VoidLordBossMonster : Monster
             return;
         }
 
-        if (GetNegativeBuffTypeCount() < 3)
+        if (BuffCombatUtility.CountDistinctNegativeBuffTypes(this) < 3)
         {
             return;
         }
@@ -119,7 +95,7 @@ public class VoidLordBossMonster : Monster
                 }
                 break;
             case 30404:
-                RemoveAllNegativeBuffs();
+                BuffCombatUtility.RemoveAllNegativeBuffs(this);
                 isInvulnerable = true;
                 recoverySequenceActive = true;
                 nextPatternId = 30405;
@@ -197,12 +173,6 @@ public class VoidLordBossMonster : Monster
         }
     }
 
-    private void RemoveAllNegativeBuffs()
-    {
-        currentBuffs.RemoveAll(buff =>
-            buff?.data != null && !BuffData.IsBeneficialBuffId(buff.data.buffId));
-    }
-
     private int DetermineStandardLoopStartPattern()
     {
         return HasOtherLivingAllies() ? 30401 : 30406;
@@ -231,29 +201,8 @@ public class VoidLordBossMonster : Monster
         return false;
     }
 
-    private int GetNegativeBuffTypeCount()
-    {
-        HashSet<int> negativeBuffIds = new HashSet<int>();
-        foreach (Buff buff in currentBuffs)
-        {
-            if (buff?.data == null)
-            {
-                continue;
-            }
-
-            if (BuffData.IsBeneficialBuffId(buff.data.buffId))
-            {
-                continue;
-            }
-
-            negativeBuffIds.Add(buff.data.buffId);
-        }
-
-        return negativeBuffIds.Count;
-    }
-
     private int GetPreviewDamage(int baseDamage)
     {
-        return Mathf.Max(0, baseDamage + pendingAttackBoost + GetBuffStack(BattleRuntimeDefinitions.DamageAmplifyBuffId));
+        return PreviewOutgoingDamage(baseDamage + pendingAttackBoost);
     }
 }

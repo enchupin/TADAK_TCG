@@ -13,22 +13,6 @@ public class PriestessMonster : Monster
         AddBuff(BattleRuntimeDefinitions.FaithfulPrayerBuffId, 1);
     }
 
-    protected override bool IsNonStackableBuff(int buffId)
-    {
-        return buffId == BattleRuntimeDefinitions.FaithfulPrayerBuffId || base.IsNonStackableBuff(buffId);
-    }
-
-    protected override void OnTurnEnded()
-    {
-        if (GetBuffStack(BattleRuntimeDefinitions.FaithfulPrayerBuffId) <= 0)
-        {
-            return;
-        }
-
-        AddBuff(BattleRuntimeDefinitions.DamageAmplifyBuffId, 1);
-        AddBuff(BattleRuntimeDefinitions.GlacierBondBuffId, 1);
-    }
-
     protected override void BuildNextAction()
     {
         switch (patternIndex)
@@ -83,11 +67,11 @@ public class PriestessMonster : Monster
 
     private int GetPreviewDamage(int baseDamage)
     {
-        return Mathf.Max(0, baseDamage + GetBuffStack(BattleRuntimeDefinitions.DamageAmplifyBuffId));
+        return PreviewOutgoingDamage(baseDamage);
     }
 
     private int GetBarrierGain(int baseAmount)
     {
-        return Mathf.Max(0, baseAmount + GetBuffStack(BattleRuntimeDefinitions.GlacierBondBuffId));
+        return PreviewBarrierGain(baseAmount);
     }
 }
