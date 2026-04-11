@@ -120,6 +120,7 @@ public class Card
         clonedCard.cardId = cardId;
         clonedCard.cardName = cardName;
         clonedCard.character = character;
+        clonedCard.costType = costType;
         clonedCard.description = description;
         clonedCard.enforceCardIds = enforceCardIds != null
             ? new List<int>(enforceCardIds)
@@ -229,6 +230,7 @@ public class Card
         cardId = templateCard.cardId;
         cardName = templateCard.cardName;
         character = templateCard.character;
+        costType = templateCard.costType;
         description = templateCard.description;
         enforceCardIds = templateCard.enforceCardIds != null
             ? new List<int>(templateCard.enforceCardIds)

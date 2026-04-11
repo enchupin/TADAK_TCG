@@ -43,15 +43,15 @@ public class CombatResolver
             return;
         }
 
-        if (battleManager.playerData.energy < effectiveCost)
+        if (!battleManager.CanPayCardCost(playedCard))
         {
-            Debug.LogWarning($"[CombatResolver] Not enough energy for {playedCard.cardName}. Needed: {effectiveCost}, Current: {battleManager.playerData.energy}");
+            Debug.LogWarning($"[CombatResolver] 카드 비용을 지불할 수 없습니다: {playedCard.cardName} ({effectiveCost})");
             battleManager.RefreshHandPlayableState();
             battleManager.UpdateAllUI();
             return;
         }
 
-        bool spent = battleManager.playerData.UseEnergy(effectiveCost);
+        bool spent = battleManager.TryPayCardCost(playedCard);
         if (!spent)
         {
             battleManager.RefreshHandPlayableState();
@@ -61,7 +61,7 @@ public class CombatResolver
 
         int repeatCount = battleManager.ConsumeRepeatedPlayCount(playedCard, false);
         int cardUseAllEnemiesDamage = battleManager.GetCardUseAllEnemiesDamage();
-        Debug.Log($"[Player] Used card: {playedCard.cardName} (Energy now: {battleManager.playerData.energy})");
+        Debug.Log($"[Player] 카드 사용: {playedCard.cardName}");
 
         battleManager.battleContext?.OnCardPlayed(playedCard);
 

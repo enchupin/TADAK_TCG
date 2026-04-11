@@ -299,6 +299,7 @@ public class CardJSONConverter : EditorWindow
         cardData.cardName = ReadRequiredJsonString(cardObject, "name");
         cardData.character = CharacterManager.GetCharacterEnumById(ReadRequiredJsonInt(cardObject, "characterId"));
         cardData.cost = ReadRequiredJsonInt(cardObject, "cost");
+        cardData.costType = ParseCardCostType(ReadJsonString(cardObject, "costType", "Energy"));
         cardData.description = ReadRequiredJsonString(cardObject, "description");
 
         cardData.enforceCardIds.Clear();
@@ -789,6 +790,22 @@ public class CardJSONConverter : EditorWindow
 
             default:
                 throw new ArgumentException($"[CardJSONConverter] Unsupported effect type: {type}");
+        }
+    }
+
+    private static CardCostType ParseCardCostType(string type)
+    {
+        if (string.IsNullOrWhiteSpace(type)) {
+            return CardCostType.Energy;
+        }
+
+        switch (type)
+        {
+            case "Energy": return CardCostType.Energy;
+            case "Barrier": return CardCostType.Barrier;
+            default:
+                Debug.LogWarning($"[CardJSONConverter] Unknown cost type: {type}. Fallback to Energy.");
+                return CardCostType.Energy;
         }
     }
 

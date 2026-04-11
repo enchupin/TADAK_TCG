@@ -872,7 +872,7 @@ public class TrainingBattleManager : MonoBehaviour
         bool canInteract = CanPlayerPlayCard();
 
         handManager.RefreshCardPlayability(
-            card => playerData != null && card != null && CanPlayCard(card) && playerData.energy >= GetEffectiveCardCost(card),
+            card => playerData != null && card != null && CanPlayCard(card) && CanPayCardCost(card),
             canInteract);
     }
 
@@ -943,6 +943,45 @@ public class TrainingBattleManager : MonoBehaviour
         }
 
         return battleBuffController != null ? battleBuffController.GetEffectiveCardCost(card) : card.cost;
+    }
+
+    public bool CanPayCardCost(Card card)
+    {
+        if (card == null || playerData == null)
+        {
+            return false;
+        }
+
+        int effectiveCost = GetEffectiveCardCost(card);
+        if (effectiveCost <= 0)
+        {
+            return true;
+        }
+
+        return card.costType == CardCostType.Barrier
+            ? playerData.defense >= effectiveCost
+            : playerData.energy >= effectiveCost;
+    }
+
+    public bool TryPayCardCost(Card card)
+    {
+        if (card == null || playerData == null)
+        {
+            return false;
+        }
+
+        int effectiveCost = GetEffectiveCardCost(card);
+        if (effectiveCost <= 0)
+        {
+            return true;
+        }
+
+        if (card.costType == CardCostType.Barrier)
+        {
+            return playerData.RemoveDefense(effectiveCost) == effectiveCost;
+        }
+
+        return playerData.UseEnergy(effectiveCost);
     }
 
     public int GetCardUseAllEnemiesDamage()

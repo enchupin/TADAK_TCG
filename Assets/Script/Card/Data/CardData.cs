@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 /// <summary>
@@ -13,6 +13,7 @@ public class CardData : ScriptableObject
     public string cardName;
     public Character character;
     public int cost;
+    public CardCostType costType = CardCostType.Energy;
     public string description;
     
     [Header("강화")]
@@ -37,6 +38,7 @@ public class CardData : ScriptableObject
             cardName = this.cardName,
             character = this.character,
             cost = this.cost,
+            costType = this.costType,
             description = this.description,
             enforceCardIds = new List<int>(this.enforceCardIds),
             keywords = this.keywords != null ? new List<int>(this.keywords) : new List<int>(),
