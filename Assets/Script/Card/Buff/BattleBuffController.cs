@@ -96,13 +96,20 @@ public class BattleBuffController
             return;
         }
 
-        List<Monster> targets = battleManager.GetLivingMonsters();
-        foreach (Monster monster in targets)
+        int resolvedDamage = battleManager.ResolvePlayerEffectDamage(damage);
+        if (resolvedDamage <= 0)
         {
-            monster.TakeDamage(damage, 0);
+            return;
         }
 
-        battleManager.battleContext?.OnDamageDealt(damage * targets.Count);
+        List<Monster> targets = battleManager.GetLivingMonsters();
+        int totalDamageDealt = 0;
+        foreach (Monster monster in targets)
+        {
+            totalDamageDealt += monster.TakeDamage(resolvedDamage, 0);
+        }
+
+        battleManager.battleContext?.OnDamageDealt(totalDamageDealt);
     }
 
     public int GetAdditionalBarrierGain()

@@ -1048,6 +1048,12 @@ public class TrainingBattleManager : MonoBehaviour
         return battleBuffController != null ? battleBuffController.GetPlayerOutgoingDamageMultiplier() : 1f;
     }
 
+    public int ResolvePlayerEffectDamage(int damage)
+    {
+        int safeDamage = Mathf.Max(0, damage);
+        return Mathf.Max(0, Mathf.FloorToInt(safeDamage * GetPlayerOutgoingDamageMultiplier()));
+    }
+
     public int ResolvePlayerIncomingDamage(int damage, Monster attacker)
     {
         return battleBuffController != null ? battleBuffController.ResolvePlayerIncomingDamage(damage, attacker) : Mathf.Max(0, damage);

@@ -6,6 +6,13 @@ using UnityEngine;
 /// 순수 C# 객체로 카드의 런타임 상태를 관리
 /// </summary>
 [System.Serializable]
+public enum CardCostType
+{
+    Energy,
+    Barrier
+}
+
+[System.Serializable]
 public class Card
 {
     // 기본 정보
@@ -13,6 +20,7 @@ public class Card
     public string cardName;
     public Character character;
     public int cost;
+    public CardCostType costType = CardCostType.Energy;
     public int baseCost;
     public string description;  // 카드 설명
 

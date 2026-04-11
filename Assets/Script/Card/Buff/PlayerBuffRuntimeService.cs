@@ -11,6 +11,8 @@ public class PlayerBuffRuntimeService
     {
         this.battleManager = battleManager;
 
+        Register(new WuppiAttackSwitchBuffScript());
+        Register(new WuppiGuardSwitchBuffScript());
         Register(new StrengthBuffScript());
         Register(new OverheatBuffScript());
         Register(new EnhancedCorrosionBuffScript());
@@ -64,6 +66,8 @@ public class PlayerBuffRuntimeService
         Register(new DoubleActionBuffScript());
         Register(new JokerPowerBuffScript());
         Register(new RuneBuffScript());
+        Register(new WuppiGuardBuffScript());
+        Register(new WuppiAttackBuffScript());
         Register(new RuneGenerationBuffScript());
         Register(new RuneBarrierBuffScript());
         Register(new FlameConductionBuffScript());

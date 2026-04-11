@@ -4,6 +4,13 @@ using System.Collections.Generic;
 /// <summary>
 /// 플레이어의 전투 관련 데이터를 관리하는 클래스
 /// </summary>
+public enum WuppiModeState
+{
+    Normal,
+    Guard,
+    Attack
+}
+
 public class PlayerData : MonoBehaviour
 {
     /// <summary>싱글톤 인스턴스 (TrainingBattleManager.InitializeBattle()에서 생성)</summary>
@@ -65,6 +72,7 @@ public class PlayerData : MonoBehaviour
 
     // 버프/디버프
     public List<Buff> currentBuffs = new List<Buff>();
+    public WuppiModeState wuppiMode = WuppiModeState.Normal;
 
     /// <summary>
     /// 플레이어의 전투 시작 스탯을 초기화
@@ -79,6 +87,7 @@ public class PlayerData : MonoBehaviour
         maxEnergy = startMaxEnergy;
         energy = maxEnergy;
         currentBuffs.Clear();
+        wuppiMode = WuppiModeState.Normal;
         
         Debug.Log($"플레이어 초기화 완료 - HP: {hp}/{maxHP}, 방어력: {defense}, 에너지: {energy}/{maxEnergy}");
     }
@@ -337,6 +346,32 @@ public class PlayerData : MonoBehaviour
     public void ConsumeBuffStack(int buffId, int amount)
     {
         DecreaseBuffStack(buffId, amount);
+    }
+
+    public void SetBuffStack(int buffId, int amount)
+    {
+        Buff existingBuff = currentBuffs.Find(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
+
+        if (amount <= 0)
+        {
+            if (existingBuff != null)
+            {
+                currentBuffs.Remove(existingBuff);
+            }
+            return;
+        }
+
+        BuffData data = BuffMetadataResolver.Resolve(buffId);
+        if (existingBuff != null)
+        {
+            existingBuff.data = data;
+            existingBuff.stack = amount;
+            return;
+        }
+
+        currentBuffs.Add(new Buff(data, amount));
     }
 
     public void RemoveBuffStack(int buffId)

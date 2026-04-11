@@ -7,15 +7,15 @@ public sealed class FreezeMonsterBuffScript : MonsterBuffScript
 
     public override void OnBuffApplied(TrainingBattleManager battleManager, Monster monster, int appliedAmount, int stack)
     {
-        ResolveThreshold(monster);
+        ResolveThreshold(battleManager, monster);
     }
 
     public override void OnMonsterTurnStart(TrainingBattleManager battleManager, Monster monster, int stack)
     {
-        ResolveThreshold(monster);
+        ResolveThreshold(battleManager, monster);
     }
 
-    private static void ResolveThreshold(Monster monster)
+    private static void ResolveThreshold(TrainingBattleManager battleManager, Monster monster)
     {
         if (monster == null)
         {
@@ -31,7 +31,11 @@ public sealed class FreezeMonsterBuffScript : MonsterBuffScript
             if (monster.IsBoss)
             {
                 Debug.Log($"[Monster] {monster.name}은 빙결 7스택으로 대신 20 피해를 받습니다.");
-                monster.TakeDamage(20, 0);
+                int damage = battleManager != null ? battleManager.ResolvePlayerEffectDamage(20) : 20;
+                if (damage > 0)
+                {
+                    monster.TakeDamage(damage, 0);
+                }
                 continue;
             }
 
