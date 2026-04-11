@@ -126,7 +126,24 @@ public class CombatResolver
             return;
         }
 
+        if (HasResolvedCardDestination(playedCard))
+        {
+            return;
+        }
+
         battleManager.usableDeckManager?.AddToDiscard(playedCard);
+    }
+
+    private bool HasResolvedCardDestination(Card playedCard)
+    {
+        if (playedCard == null || battleManager?.usableDeckManager == null)
+        {
+            return false;
+        }
+
+        return battleManager.usableDeckManager.GetDrawPile().Contains(playedCard)
+            || battleManager.usableDeckManager.GetDiscardPile().Contains(playedCard)
+            || battleManager.usableDeckManager.GetExhaustPile().Contains(playedCard);
     }
 
     private void ApplyPostPlayKeywords(Card playedCard)

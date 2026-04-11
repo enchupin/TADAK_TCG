@@ -9,7 +9,8 @@ using UnityEngine;
 public enum CardCostType
 {
     Energy,
-    Barrier
+    Barrier,
+    Rune
 }
 
 [System.Serializable]
@@ -60,9 +61,22 @@ public class Card
     {
         Debug.Log($"[{cardName}] 카드 사용!");
 
+        if (battlemanager?.battleContext != null)
+        {
+            List<Card> contextCards = new List<Card> { this };
+            battlemanager.battleContext.SetContextCards("ThisCard", contextCards);
+            battlemanager.battleContext.SetContextCards("Self", contextCards);
+        }
+
         foreach (ICardEffect effect in effects)
         {
             effect.Execute(battlemanager);
+        }
+
+        if (battlemanager?.battleContext != null)
+        {
+            battlemanager.battleContext.ClearContextCards("ThisCard");
+            battlemanager.battleContext.ClearContextCards("Self");
         }
     }
 

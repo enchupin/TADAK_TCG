@@ -141,6 +141,11 @@ public class CardUI : MonoBehaviour
 
     private static string GetKeywordDisplayName(int keywordId)
     {
+        if (keywordId == CardKeywordIds.Repeat)
+        {
+            return "\ubc18\ubcf5";
+        }
+
         string keywordName = KeywordDatabase.GetKeywordName(keywordId);
         if (!string.IsNullOrWhiteSpace(keywordName))
         {

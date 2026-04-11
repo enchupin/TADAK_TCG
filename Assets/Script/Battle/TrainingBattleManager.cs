@@ -958,9 +958,15 @@ public class TrainingBattleManager : MonoBehaviour
             return true;
         }
 
-        return card.costType == CardCostType.Barrier
-            ? playerData.defense >= effectiveCost
-            : playerData.energy >= effectiveCost;
+        switch (card.costType)
+        {
+            case CardCostType.Barrier:
+                return playerData.defense >= effectiveCost;
+            case CardCostType.Rune:
+                return playerData.GetBuffStack(BattleRuntimeDefinitions.RuneBuffId) >= effectiveCost;
+            default:
+                return playerData.energy >= effectiveCost;
+        }
     }
 
     public bool TryPayCardCost(Card card)
@@ -979,6 +985,18 @@ public class TrainingBattleManager : MonoBehaviour
         if (card.costType == CardCostType.Barrier)
         {
             return playerData.RemoveDefense(effectiveCost) == effectiveCost;
+        }
+
+        if (card.costType == CardCostType.Rune)
+        {
+            if (playerData.GetBuffStack(BattleRuntimeDefinitions.RuneBuffId) < effectiveCost)
+            {
+                return false;
+            }
+
+            playerData.ConsumeBuffStack(BattleRuntimeDefinitions.RuneBuffId, effectiveCost);
+            WuppiModeRuntimeUtility.SyncModeBuffStacks(playerData);
+            return true;
         }
 
         return playerData.UseEnergy(effectiveCost);

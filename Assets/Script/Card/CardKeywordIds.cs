@@ -12,4 +12,5 @@ public static class CardKeywordIds
     public const int Finale = 7;
     public const int Ghost = 8;
     public const int Unique = 9;
+    public const int Repeat = 10;
 }

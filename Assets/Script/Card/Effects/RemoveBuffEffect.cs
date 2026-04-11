@@ -33,11 +33,8 @@ public class RemoveBuffEffect : ICardEffect
 
         if (target == TargetType.Self)
         {
-            int removedAmount = CardEffectRuntimeUtility.RemoveBuffStacks(battleManager.playerData?.currentBuffs, buffId, removeAmount, true);
-            if (removedAmount > 0)
-            {
-                WuppiModeRuntimeUtility.HandleDirectBuffStackChange(battleManager, battleManager.playerData, buffId);
-            }
+            CardEffectRuntimeUtility.RemoveBuffStacks(battleManager.playerData?.currentBuffs, buffId, removeAmount, true);
+            WuppiModeRuntimeUtility.HandleDirectBuffStackChange(battleManager, battleManager.playerData, buffId);
             battleManager.UpdateAllUI();
             return;
         }

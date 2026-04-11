@@ -803,6 +803,7 @@ public class CardJSONConverter : EditorWindow
         {
             case "Energy": return CardCostType.Energy;
             case "Barrier": return CardCostType.Barrier;
+            case "Rune": return CardCostType.Rune;
             default:
                 Debug.LogWarning($"[CardJSONConverter] Unknown cost type: {type}. Fallback to Energy.");
                 return CardCostType.Energy;
