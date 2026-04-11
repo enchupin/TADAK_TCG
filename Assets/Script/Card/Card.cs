@@ -153,6 +153,9 @@ public class Card
         clonedCard.effects = effects != null
             ? new List<ICardEffect>(effects)
             : new List<ICardEffect>();
+        clonedCard.onDrawEffects = onDrawEffects != null
+            ? new List<ICardEffect>(onDrawEffects)
+            : new List<ICardEffect>();
         clonedCard.keepEffects = keepEffects != null
             ? new List<ICardEffect>(keepEffects)
             : new List<ICardEffect>();
@@ -182,6 +185,26 @@ public class Card
             effect?.Execute(battleManager);
         }
 
+        battleManager.battleContext.ClearContextCards("ThisCard");
+        battleManager.battleContext.ClearContextCards("Self");
+    }
+
+    public void ExecuteOnDrawEffects(TrainingBattleManager battleManager)
+    {
+        if (battleManager?.battleContext == null || onDrawEffects == null || onDrawEffects.Count == 0) {
+            return;
+        }
+
+        List<Card> contextCards = new List<Card> { this };
+        battleManager.battleContext.SetContextCards("ThisCard", contextCards);
+        battleManager.battleContext.SetContextCards("Self", contextCards);
+        battleManager.battleContext.SetContextCards("DrawnCard", contextCards);
+
+        foreach (ICardEffect effect in onDrawEffects) {
+            effect?.Execute(battleManager);
+        }
+
+        battleManager.battleContext.ClearContextCards("DrawnCard");
         battleManager.battleContext.ClearContextCards("ThisCard");
         battleManager.battleContext.ClearContextCards("Self");
     }
@@ -262,6 +285,9 @@ public class Card
             : new List<int>();
         effects = templateCard.effects != null
             ? new List<ICardEffect>(templateCard.effects)
+            : new List<ICardEffect>();
+        onDrawEffects = templateCard.onDrawEffects != null
+            ? new List<ICardEffect>(templateCard.onDrawEffects)
             : new List<ICardEffect>();
         keepEffects = templateCard.keepEffects != null
             ? new List<ICardEffect>(templateCard.keepEffects)

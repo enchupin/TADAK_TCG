@@ -124,6 +124,9 @@ public class ModifyCardEffect : ICardEffect
             case DrawCharacterEffect drawCharacter:
                 drawCharacter.amount = ApplyOperation(drawCharacter.amount, resolvedAmount);
                 break;
+            case HpLossEffect hpLoss:
+                hpLoss.amount = ApplyOperation(hpLoss.amount, resolvedAmount);
+                break;
             default:
                 Debug.LogWarning($"[ModifyCardEffect] EffectAmount 변경을 지원하지 않는 효과입니다: {targetEffect.GetType().Name}");
                 break;

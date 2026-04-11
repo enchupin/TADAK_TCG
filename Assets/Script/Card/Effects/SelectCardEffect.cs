@@ -7,6 +7,9 @@ public class SelectCardEffect : ICardEffect
     public MoveZoneType from;
     public List<int> cardIdFilter;
     public string characterFilter;
+    public bool random;
+    public bool allowFewerSelection;
+    public bool upgradeableOnly;
     public List<ICardEffect> onActions;
 
     public void Execute(TrainingBattleManager battleManager)
@@ -35,7 +38,12 @@ public class SelectCardEffect : ICardEffect
         }
 
         int selectCount = Mathf.Clamp(requestCount, 0, sourceCards.Count);
-        if (battleManager.OpenSelectCardPanel(sourceCards, selectCount, selectedCards => ApplySelectionResult(battleManager, selectedCards))) {
+        if (random) {
+            ApplySelectionResult(battleManager, PickRandomCards(sourceCards, selectCount));
+            return;
+        }
+
+        if (battleManager.OpenSelectCardPanel(sourceCards, selectCount, selectedCards => ApplySelectionResult(battleManager, selectedCards), allowFewerSelection)) {
             return;
         }
 
@@ -48,6 +56,20 @@ public class SelectCardEffect : ICardEffect
         }
 
         ApplySelectionResult(battleManager, fallbackCards);
+    }
+
+    private static List<Card> PickRandomCards(List<Card> sourceCards, int selectCount)
+    {
+        List<Card> candidates = sourceCards != null ? new List<Card>(sourceCards) : new List<Card>();
+        List<Card> selectedCards = new List<Card>();
+        int resolvedCount = Mathf.Clamp(selectCount, 0, candidates.Count);
+        for (int i = 0; i < resolvedCount; i++) {
+            int index = Random.Range(0, candidates.Count);
+            selectedCards.Add(candidates[index]);
+            candidates.RemoveAt(index);
+        }
+
+        return selectedCards;
     }
 
     private void ApplySelectionResult(TrainingBattleManager battleManager, List<Card> selectedCards)
@@ -118,7 +140,19 @@ public class SelectCardEffect : ICardEffect
             sourceCards = sourceCards.FindAll(card => card != null && card.character == filteredCharacter.Value);
         }
 
+        if (upgradeableOnly) {
+            sourceCards = sourceCards.FindAll(IsUpgradeableCard);
+        }
+
         return sourceCards;
+    }
+
+    private static bool IsUpgradeableCard(Card card)
+    {
+        return card != null
+            && Mathf.Abs(card.cardId) % 10 == 0
+            && card.enforceCardIds != null
+            && card.enforceCardIds.Count > 0;
     }
 
     private Character? ResolveCharacterFilter(TrainingBattleManager battleManager)

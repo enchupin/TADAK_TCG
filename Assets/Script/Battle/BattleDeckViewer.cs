@@ -18,6 +18,7 @@ public class BattleDeckViewer : MonoBehaviour
     [SerializeField] private TrainingBattleManager battleManager;
     private bool isSelectionMode;
     private int requiredSelectionCount;
+    private bool allowFewerSelection;
     private Action<List<Card>> onSelectionCompleted;
     private readonly List<Card> selectedCards = new List<Card>();
     private readonly List<CardController> selectedControllers = new List<CardController>();
@@ -91,7 +92,7 @@ public class BattleDeckViewer : MonoBehaviour
         }
     }
 
-    public bool OpenSelectionPanel(List<Card> selectableCards, int selectCount, Action<List<Card>> onComplete) {
+    public bool OpenSelectionPanel(List<Card> selectableCards, int selectCount, Action<List<Card>> onComplete, bool allowFewer = false) {
         ValidateRequiredReferences();
 
         if (selectableCards == null) {
@@ -102,6 +103,7 @@ public class BattleDeckViewer : MonoBehaviour
 
         isSelectionMode = true;
         requiredSelectionCount = Mathf.Max(0, selectCount);
+        allowFewerSelection = allowFewer;
         onSelectionCompleted = onComplete;
         selectedCards.Clear();
         selectedControllers.Clear();
@@ -172,6 +174,7 @@ public class BattleDeckViewer : MonoBehaviour
 
         isSelectionMode = false;
         requiredSelectionCount = 0;
+        allowFewerSelection = false;
         onSelectionCompleted = null;
         selectedCards.Clear();
         selectedControllers.Clear();
@@ -202,6 +205,10 @@ public class BattleDeckViewer : MonoBehaviour
     }
 
     private bool CanConfirmSelection() {
+        if (allowFewerSelection) {
+            return selectedCards.Count <= requiredSelectionCount;
+        }
+
         return selectedCards.Count >= requiredSelectionCount;
     }
 

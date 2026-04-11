@@ -515,8 +515,16 @@ public static class CardDescriptionFormatter
                 CollectOnActionAmounts(drawCharacterEffect.onActions, battleManager, sourceCard, amounts);
                 return;
 
+            case DrawUntilHandFullEffect drawUntilHandFullEffect:
+                AddAmount(amounts, ResolveDrawUntilHandFullAmount(drawUntilHandFullEffect, battleManager));
+                return;
+
             case HealEffect healEffect:
                 AddAmount(amounts, ResolveHealAmount(healEffect, battleManager));
+                return;
+
+            case HpLossEffect hpLossEffect:
+                AddAmount(amounts, ResolveHpLossAmount(hpLossEffect, battleManager));
                 return;
 
             case StaminaEffect staminaEffect:
@@ -881,6 +889,26 @@ public static class CardDescriptionFormatter
     }
 
     private static int ResolveHealAmount(HealEffect effect, TrainingBattleManager battleManager)
+    {
+        if (effect == null)
+        {
+            return 0;
+        }
+
+        return Mathf.Max(0, ResolveCardValueAmount(effect.amount, effect.amountFormula, battleManager, 0));
+    }
+
+    private static int ResolveHpLossAmount(HpLossEffect effect, TrainingBattleManager battleManager)
+    {
+        if (effect == null)
+        {
+            return 0;
+        }
+
+        return Mathf.Max(0, ResolveCardValueAmount(effect.amount, effect.amountFormula, battleManager, 0));
+    }
+
+    private static int ResolveDrawUntilHandFullAmount(DrawUntilHandFullEffect effect, TrainingBattleManager battleManager)
     {
         if (effect == null)
         {

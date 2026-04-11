@@ -56,6 +56,8 @@ public class CardEffectData
     public int count;
     public List<int> formulaCardIdFilter;
     public string characterFilter;
+    public bool allowFewerSelection;
+    public bool upgradeableOnly;
 
     [Header("Keyword")]
     public string keyword;

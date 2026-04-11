@@ -87,6 +87,8 @@ public static class FormulaEvaluator
                 return context != null ? context.lastDamageDealt : 0;
             case "haslosthpthisturn":
                 return hasLostHpThisTurn;
+            case "energyspentthisturn":
+                return context != null ? context.energySpentThisTurn : 0;
         }
 
         try
@@ -124,6 +126,7 @@ public static class FormulaEvaluator
         expression = expression.Replace("eventValue", baseValue.ToString());
         expression = expression.Replace("UnblockedDamage", baseValue.ToString());
         expression = expression.Replace("HasLostHpThisTurn", hasLostHpThisTurn.ToString());
+        expression = expression.Replace("EnergySpentThisTurn", (context != null ? context.energySpentThisTurn : 0).ToString());
         return expression;
     }
 

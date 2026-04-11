@@ -35,5 +35,11 @@ public enum EffectType
     OnAttackGainStrength = 41,
     TransformCards = 42,
     EnemyHpLossHealPlayer = 43,
-    Party = 44
+    Party = 44,
+    HpLoss = 45,
+    DrawUntilHandFull = 46,
+    UpgradeCards = 47,
+    SwapCardCosts = 48,
+    MultiplyEnemyDebuffs = 49,
+    ScaleIntent = 50
 }

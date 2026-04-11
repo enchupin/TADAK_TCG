@@ -211,6 +211,21 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         return damageAfterDefense;
     }
 
+    public int LoseHp(int amount)
+    {
+        int lostAmount = Mathf.Clamp(amount, 0, hp);
+        if (lostAmount <= 0)
+        {
+            return 0;
+        }
+
+        hp -= lostAmount;
+        TrainingBattleManager.Instance?.HandleMonsterHpLost(this, lostAmount);
+        HandleDeathIfNeeded();
+        UpdateUI();
+        return lostAmount;
+    }
+
     public void Kill()
     {
         if (IsDead())
@@ -422,6 +437,19 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         SetPlannedPattern(0, MonsterIntentIconType.Stun);
     }
 
+    public void ScalePlannedIntent(float multiplier)
+    {
+        if (multiplier < 0f || !hasAttackIntent || plannedIntentValue <= 0)
+        {
+            return;
+        }
+
+        int previousValue = plannedIntentValue;
+        plannedIntentValue = Mathf.Max(0, Mathf.FloorToInt(plannedIntentValue * multiplier));
+        plannedIntentDescription = ReplaceIntentValue(plannedIntentDescription, previousValue, plannedIntentValue);
+        UpdateUI();
+    }
+
     protected void SetAttackIntent(int intentValue, string intentDescription)
     {
         hasAttackIntent = true;
@@ -612,6 +640,25 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         plannedIntentDescription = string.Empty;
         plannedPatternId = 0;
         plannedIntentIcons.Clear();
+    }
+
+    private static string ReplaceIntentValue(string description, int previousValue, int nextValue)
+    {
+        if (string.IsNullOrWhiteSpace(description) || previousValue < 0)
+        {
+            return description;
+        }
+
+        string previousText = previousValue.ToString();
+        int replaceIndex = description.IndexOf(previousText, System.StringComparison.Ordinal);
+        if (replaceIndex < 0)
+        {
+            return description;
+        }
+
+        return description.Substring(0, replaceIndex)
+            + nextValue
+            + description.Substring(replaceIndex + previousText.Length);
     }
 
     private void SetDefenseValue(int amount)

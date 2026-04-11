@@ -68,6 +68,7 @@ public class PlayerData : MonoBehaviour
 
     // 에너지
     public int energy;
+    public int baseMaxEnergy;
     public int maxEnergy;
 
     // 버프/디버프
@@ -84,7 +85,8 @@ public class PlayerData : MonoBehaviour
         hpLostThisTurn = 0;
         hasLostHpThisTurn = false;
         defense = startDefense;
-        maxEnergy = startMaxEnergy;
+        baseMaxEnergy = startMaxEnergy;
+        maxEnergy = baseMaxEnergy;
         energy = maxEnergy;
         currentBuffs.Clear();
         wuppiMode = WuppiModeState.Normal;
@@ -170,6 +172,11 @@ public class PlayerData : MonoBehaviour
             currentBuffs.Add(newBuff);
             Debug.Log($"버프 획득: {data.name} ({amount})");
         }
+
+        if (buffId == CreamBuffRuntimeUtility.EnergyOverflowBuffId)
+        {
+            CreamBuffRuntimeUtility.SyncEnergyOverflow(this);
+        }
     }
 
     /// <summary>
@@ -177,8 +184,26 @@ public class PlayerData : MonoBehaviour
     /// </summary>
     public void AddEnergy(int amount)
     {
-        energy = Mathf.Min(energy + amount, maxEnergy);
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        energy = Mathf.Clamp(energy + amount, 0, maxEnergy);
         Debug.Log($"에너지 +{amount} (현재: {energy}/{maxEnergy})");
+    }
+
+    public int LoseEnergy(int amount)
+    {
+        int lostAmount = Mathf.Clamp(amount, 0, energy);
+        if (lostAmount <= 0)
+        {
+            return 0;
+        }
+
+        energy -= lostAmount;
+        Debug.Log($"에너지 -{lostAmount} (현재: {energy}/{maxEnergy})");
+        return lostAmount;
     }
 
     /// <summary>
@@ -341,6 +366,11 @@ public class PlayerData : MonoBehaviour
         {
             currentBuffs.Remove(buff);
         }
+
+        if (buffId == CreamBuffRuntimeUtility.EnergyOverflowBuffId)
+        {
+            CreamBuffRuntimeUtility.SyncEnergyOverflow(this);
+        }
     }
 
     public void ConsumeBuffStack(int buffId, int amount)
@@ -360,6 +390,11 @@ public class PlayerData : MonoBehaviour
             {
                 currentBuffs.Remove(existingBuff);
             }
+
+            if (buffId == CreamBuffRuntimeUtility.EnergyOverflowBuffId)
+            {
+                CreamBuffRuntimeUtility.SyncEnergyOverflow(this);
+            }
             return;
         }
 
@@ -368,10 +403,19 @@ public class PlayerData : MonoBehaviour
         {
             existingBuff.data = data;
             existingBuff.stack = amount;
+            if (buffId == CreamBuffRuntimeUtility.EnergyOverflowBuffId)
+            {
+                CreamBuffRuntimeUtility.SyncEnergyOverflow(this);
+            }
             return;
         }
 
         currentBuffs.Add(new Buff(data, amount));
+
+        if (buffId == CreamBuffRuntimeUtility.EnergyOverflowBuffId)
+        {
+            CreamBuffRuntimeUtility.SyncEnergyOverflow(this);
+        }
     }
 
     public void RemoveBuffStack(int buffId)
@@ -384,6 +428,11 @@ public class PlayerData : MonoBehaviour
         currentBuffs.RemoveAll(b =>
             b.data != null &&
             b.data.buffId == buffId);
+
+        if (buffId == CreamBuffRuntimeUtility.EnergyOverflowBuffId)
+        {
+            CreamBuffRuntimeUtility.SyncEnergyOverflow(this);
+        }
     }
 
     /// <summary>

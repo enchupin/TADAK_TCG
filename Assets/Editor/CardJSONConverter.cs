@@ -339,6 +339,21 @@ public class CardJSONConverter : EditorWindow
             }
         }
 
+        cardData.onDrawEffects ??= new List<CardEffectData>();
+        cardData.onDrawEffects.Clear();
+        if (cardObject["onDrawEffects"] is JArray onDrawEffectsArray) {
+            foreach (JToken token in onDrawEffectsArray) {
+                if (token is not JObject effectObject) {
+                    continue;
+                }
+
+                CardEffectData effect = ReadEffect(effectObject);
+                if (effect != null) {
+                    cardData.onDrawEffects.Add(effect);
+                }
+            }
+        }
+
         cardData.endTurnInHandEffects ??= new List<CardEffectData>();
         cardData.endTurnInHandEffects.Clear();
         if (cardObject["endTurnInHandEffects"] is JArray endTurnInHandEffectsArray) {
@@ -409,12 +424,15 @@ public class CardJSONConverter : EditorWindow
             durationText = ReadJsonString(effectObject, "duration"),
             effectIndex = ReadJsonInt(effectObject, "effectIndex", -1),
             ampMultiplier = ReadJsonFloat(effectObject, "ampMultiplier", 1f),
+            multiplier = ReadJsonFloat(effectObject, "multiplier", 0f),
             count = ReadJsonInt(effectObject, "count"),
             stat = ReadJsonString(effectObject, "stat"),
             change = ReadJsonString(effectObject, "change"),
             buffId = ReadJsonInt(effectObject, "buffId"),
             buffFilterIds = ReadJsonIntList(effectObject, "buffIds"),
             random = ReadJsonBool(effectObject, "random"),
+            allowFewerSelection = ReadJsonBool(effectObject, "allowFewer"),
+            upgradeableOnly = ReadJsonBool(effectObject, "upgradeableOnly"),
             duration = ReadJsonInt(effectObject, "duration"),
             cardId = ReadJsonString(effectObject, "cardId"),
             subject = ReadJsonString(effectObject, "subject"),
@@ -751,10 +769,12 @@ public class CardJSONConverter : EditorWindow
             case "Damage": return EffectType.Damage;
             case "Barrier": return EffectType.Barrier;
             case "Draw": return EffectType.Draw;
+            case "DrawUntilHandFull": return EffectType.DrawUntilHandFull;
             case "DrawBasic": return EffectType.DrawBasic;
             case "DrawCharacter": return EffectType.DrawCharacter;
             case "Buff": return EffectType.Buff;
             case "Heal": return EffectType.Heal;
+            case "HpLoss": return EffectType.HpLoss;
             case "GenerateCard": return EffectType.GenerateCard;
             case "ExhaustCard": return EffectType.ExhaustCard;
             case "Conditional": return EffectType.Conditional;
@@ -785,6 +805,10 @@ public class CardJSONConverter : EditorWindow
             case "OnAttackGainStrength": return EffectType.OnAttackGainStrength;
             case "TransformCards":
             case "TransformMonsterCards": return EffectType.TransformCards;
+            case "UpgradeCards": return EffectType.UpgradeCards;
+            case "SwapCardCosts": return EffectType.SwapCardCosts;
+            case "MultiplyEnemyDebuffs": return EffectType.MultiplyEnemyDebuffs;
+            case "ScaleIntent": return EffectType.ScaleIntent;
             case "EnemyHpLossHealPlayer": return EffectType.EnemyHpLossHealPlayer;
             case "Party": return EffectType.Party;
 

@@ -167,6 +167,13 @@ public static class CardEffectFactory
                     onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
                 };
 
+            case EffectType.DrawUntilHandFull:
+                return new DrawUntilHandFullEffect
+                {
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula
+                };
+
             case EffectType.DrawBasic:
                 return new DrawBasicEffect
                 {
@@ -209,6 +216,14 @@ public static class CardEffectFactory
                     amount = effectData.amount,
                     amountFormula = effectData.amountFormula,
                     cardIdList = effectData.formulaCardIdFilter,
+                    target = effectData.target
+                };
+
+            case EffectType.HpLoss:
+                return new HpLossEffect
+                {
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula,
                     target = effectData.target
                 };
 
@@ -304,6 +319,9 @@ public static class CardEffectFactory
                     from = effectData.from,
                     cardIdFilter = effectData.formulaCardIdFilter == null ? null : new List<int>(effectData.formulaCardIdFilter),
                     characterFilter = effectData.characterFilter,
+                    random = effectData.random,
+                    allowFewerSelection = effectData.allowFewerSelection,
+                    upgradeableOnly = effectData.upgradeableOnly,
                     onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
                 };
 
@@ -371,6 +389,36 @@ public static class CardEffectFactory
                     characterFilter = effectData.characterFilter,
                     cardId = effectData.cardId,
                     cardIdList = effectData.formulaCardIdFilter == null ? null : new List<int>(effectData.formulaCardIdFilter)
+                };
+
+            case EffectType.UpgradeCards:
+                return new UpgradeCardsEffect
+                {
+                    from = effectData.from,
+                    subject = resolvedSubject,
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula,
+                    upgrade = effectData.upgrade
+                };
+
+            case EffectType.SwapCardCosts:
+                return new SwapCardCostsEffect
+                {
+                    subject = resolvedSubject
+                };
+
+            case EffectType.MultiplyEnemyDebuffs:
+                return new MultiplyEnemyDebuffsEffect
+                {
+                    amount = effectData.amount,
+                    target = effectData.target
+                };
+
+            case EffectType.ScaleIntent:
+                return new ScaleIntentEffect
+                {
+                    target = effectData.target,
+                    multiplier = effectData.multiplier
                 };
 
             case EffectType.EnemyHpLossHealPlayer:

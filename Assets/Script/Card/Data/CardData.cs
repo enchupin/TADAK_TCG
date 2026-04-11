@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// 카드 데이터를 저장하는 ScriptableObject
@@ -25,6 +25,9 @@ public class CardData : ScriptableObject
     [Header("효과")]
     public List<CardEffectData> effects = new();
 
+    [Header("드로우 시 효과")]
+    public List<CardEffectData> onDrawEffects = new();
+
     [Header("턴 종료 손패 효과")]
     public List<CardEffectData> endTurnInHandEffects = new();
     
@@ -33,26 +36,28 @@ public class CardData : ScriptableObject
     /// </summary>
     public Card ToCard()
     {
-        Card card = new() {
-            cardId = this.cardId,
-            cardName = this.cardName,
-            character = this.character,
-            cost = this.cost,
-            costType = this.costType,
-            description = this.description,
-            enforceCardIds = new List<int>(this.enforceCardIds),
-            keywords = this.keywords != null ? new List<int>(this.keywords) : new List<int>(),
+        Card card = new()
+        {
+            cardId = cardId,
+            cardName = cardName,
+            character = character,
+            cost = cost,
+            costType = costType,
+            description = description,
+            enforceCardIds = new List<int>(enforceCardIds),
+            keywords = keywords != null ? new List<int>(keywords) : new List<int>(),
             effects = new List<ICardEffect>(),
+            onDrawEffects = new List<ICardEffect>(),
             keepEffects = new List<ICardEffect>(),
             endTurnInHandEffects = new List<ICardEffect>()
         };
-        
-        // 효과 변환
+
         card.effects = CardEffectFactory.CreateEffects(effects);
+        card.onDrawEffects = CardEffectFactory.CreateEffects(onDrawEffects);
         card.keepEffects = CardEffectFactory.CreateKeepEffects(effects);
         card.endTurnInHandEffects = CardEffectFactory.CreateEffects(endTurnInHandEffects);
         card.InitializeRuntimeState();
-        
+
         return card;
     }
 }

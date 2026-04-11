@@ -65,6 +65,7 @@ public class PlayerBuffRuntimeService
         Register(new DeadlyAmbushBuffScript());
         Register(new DoubleActionBuffScript());
         Register(new JokerPowerBuffScript());
+        Register(new EnergyOverflowBuffScript());
         Register(new RuneBuffScript());
         Register(new WuppiGuardBuffScript());
         Register(new WuppiAttackBuffScript());

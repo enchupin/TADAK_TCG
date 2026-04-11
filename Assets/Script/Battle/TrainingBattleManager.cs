@@ -999,7 +999,13 @@ public class TrainingBattleManager : MonoBehaviour
             return true;
         }
 
-        return playerData.UseEnergy(effectiveCost);
+        bool usedEnergy = playerData.UseEnergy(effectiveCost);
+        if (usedEnergy)
+        {
+            battleContext?.OnEnergySpent(effectiveCost);
+        }
+
+        return usedEnergy;
     }
 
     public int GetCardUseAllEnemiesDamage()
@@ -1613,7 +1619,7 @@ public class TrainingBattleManager : MonoBehaviour
         handManager.RefreshCardDisplays(handManager.GetHandCards());
     }
 
-    public bool OpenSelectCardPanel(List<Card> selectableCards, int selectCount, Action<List<Card>> onSelected)
+    public bool OpenSelectCardPanel(List<Card> selectableCards, int selectCount, Action<List<Card>> onSelected, bool allowFewer = false)
     {
         if (battleDeckViewer == null)
         {
@@ -1621,7 +1627,7 @@ public class TrainingBattleManager : MonoBehaviour
             return false;
         }
 
-        return battleDeckViewer.OpenSelectionPanel(selectableCards, selectCount, onSelected);
+        return battleDeckViewer.OpenSelectionPanel(selectableCards, selectCount, onSelected, allowFewer);
     }
 
     public bool OpenMonsterSelection(List<Monster> selectionTargets, int selectCount, Action<List<Monster>> onSelected)
@@ -1746,8 +1752,10 @@ public class TrainingBattleManager : MonoBehaviour
         if (!isDebugMode || playerData == null)
             return;
 
+        playerData.baseMaxEnergy = debugEnergyAmount;
         playerData.maxEnergy = debugEnergyAmount;
-        playerData.energy = debugEnergyAmount;
+        CreamBuffRuntimeUtility.SyncEnergyOverflow(playerData);
+        playerData.energy = playerData.maxEnergy;
     }
 
     private void SpawnEncounterMonsters()
@@ -1845,6 +1853,7 @@ public class TrainingBattleManager : MonoBehaviour
 
             drawnCards.Add(drawnCard);
             handManager.AddCard(drawnCard);
+            drawnCard.ExecuteOnDrawEffects(this);
 
             if (!ignoreRootAbsorption && drawnCard.cardId == 40)
             {

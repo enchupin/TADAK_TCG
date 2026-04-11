@@ -169,6 +169,7 @@ public class ChangeStatEffect : ICardEffect
             if (totalChanged > 0)
             {
                 WuppiModeRuntimeUtility.HandleDirectBuffStackChange(battleManager, battleManager.playerData, buffId);
+                CreamBuffRuntimeUtility.SyncEnergyOverflow(battleManager.playerData);
             }
             return totalChanged;
         }
