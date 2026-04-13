@@ -53,6 +53,12 @@ public class UIHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             currentAnimation = null;
         }
     }
+
+    public void ResetHoverState()
+    {
+        StopAnimation();
+        transform.localScale = originalScale;
+    }
     
     protected virtual IEnumerator AnimateScale(Vector3 target)
     {

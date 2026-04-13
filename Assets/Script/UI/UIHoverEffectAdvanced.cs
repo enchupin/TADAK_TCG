@@ -85,4 +85,22 @@ public class UIHoverEffectAdvanced : MonoBehaviour, IPointerEnterHandler, IPoint
         if (enableColorChange)
             targetColor = normalColor;
     }
+
+    public void ResetHoverState()
+    {
+        if (enableScale)
+        {
+            targetScale = originalScale;
+            transform.localScale = originalScale;
+        }
+
+        if (enableColorChange)
+        {
+            targetColor = normalColor;
+            if (image != null)
+            {
+                image.color = normalColor;
+            }
+        }
+    }
 }
