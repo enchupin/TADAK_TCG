@@ -31,15 +31,15 @@ public sealed class WeakMonsterBuffScript : MonsterBuffScript
 {
     public override int BuffId => WeakBuffId;
 
-    public override int ModifyOutgoingDamage(TrainingBattleManager battleManager, Monster monster, int stack, int currentDamage)
+    public override float GetOutgoingDamageMultiplier(TrainingBattleManager battleManager, Monster monster, int stack, float currentMultiplier)
     {
-        if (stack <= 0 || currentDamage <= 0)
+        if (stack <= 0)
         {
-            return currentDamage;
+            return currentMultiplier;
         }
 
         float multiplier = BuffValueUtility.GetOutgoingDamageMultiplier(BuffId);
-        return Mathf.Max(0, Mathf.FloorToInt(currentDamage * multiplier));
+        return currentMultiplier * multiplier;
     }
 
     public override void OnMonsterTurnEnd(TrainingBattleManager battleManager, Monster monster, int stack)

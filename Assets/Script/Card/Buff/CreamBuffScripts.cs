@@ -22,14 +22,14 @@ public sealed class StrengthDecayMonsterBuffScript : MonsterBuffScript
 {
     public override int BuffId => 4006;
 
-    public override int ModifyOutgoingDamage(TrainingBattleManager battleManager, Monster monster, int stack, int currentDamage)
+    public override int GetOutgoingDamageFlatBonus(TrainingBattleManager battleManager, Monster monster, int stack, int currentBonus)
     {
-        if (stack <= 0 || currentDamage <= 0)
+        if (stack <= 0)
         {
-            return currentDamage;
+            return currentBonus;
         }
 
-        return Mathf.Max(0, currentDamage - stack);
+        return currentBonus - stack;
     }
 
     public override void OnMonsterTurnEnd(TrainingBattleManager battleManager, Monster monster, int stack)

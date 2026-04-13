@@ -17,7 +17,7 @@ public sealed class CorrosionBuffScript : PlayerBuffScript
             ? BuffValueUtility.GetIncomingDamageMultiplier(EnhancedCorrosionBuffId)
             : BuffValueUtility.GetIncomingDamageMultiplier(BuffId);
 
-        return Mathf.Max(currentMultiplier, multiplier);
+        return currentMultiplier * multiplier;
     }
 
     public override bool TryConsumeIncomingDamageBuff(TrainingBattleManager battleManager, PlayerData player, Monster attacker, int incomingDamage, int stack)

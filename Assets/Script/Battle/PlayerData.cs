@@ -346,8 +346,8 @@ public class PlayerData : MonoBehaviour
         float totalMultiplier = battleManager != null
             ? battleManager.GetPlayerCalculatedCardBaseMultiplier(safeCardBaseDamageMultiplier)
             : safeCardBaseDamageMultiplier;
-        int damageWithStrength = Mathf.Max(0, Mathf.FloorToInt((safeBaseDamage + strengthBonus) * totalMultiplier));
-        return Mathf.Max(0, Mathf.FloorToInt(damageWithStrength * GetOutgoingDamageMultiplier()));
+        totalMultiplier *= GetOutgoingDamageMultiplier();
+        return Mathf.Max(0, Mathf.FloorToInt((safeBaseDamage + strengthBonus) * totalMultiplier));
     }
 
     private void DecreaseBuffStack(int buffId, int amount)
