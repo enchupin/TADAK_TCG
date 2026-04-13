@@ -14,9 +14,9 @@ public sealed class MirrorMonsterBuffScript : MonsterBuffScript
         monster.AddBuff(BuffId, hpLoss);
     }
 
-    public override int ModifyOutgoingDamage(TrainingBattleManager battleManager, Monster monster, int stack, int currentDamage)
+    public override int GetOutgoingDamageFlatBonus(TrainingBattleManager battleManager, Monster monster, int stack, int currentBonus)
     {
-        return currentDamage + stack;
+        return currentBonus + stack;
     }
 
     public override void OnMonsterAttackResolved(TrainingBattleManager battleManager, Monster monster, PlayerData target, int attemptedDamage, int hpDamage, int stack)

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public class MonsterBuffRuntimeService
 {
@@ -285,7 +286,21 @@ public class MonsterBuffRuntimeService
             return 0;
         }
 
-        int finalDamage = damage;
+        int flatBonus = 0;
+        float damageMultiplier = 1f;
+
+        InvokeForActiveBuffs(monster, (script, stack) =>
+        {
+            flatBonus = script.GetOutgoingDamageFlatBonus(battleManager, monster, stack, flatBonus);
+        });
+
+        InvokeForActiveBuffs(monster, (script, stack) =>
+        {
+            damageMultiplier = script.GetOutgoingDamageMultiplier(battleManager, monster, stack, damageMultiplier);
+        });
+
+        int finalDamage = Mathf.Max(0, Mathf.FloorToInt(Mathf.Max(0, damage + flatBonus) * Mathf.Max(0f, damageMultiplier)));
+
         InvokeForActiveBuffs(monster, (script, stack) =>
         {
             finalDamage = script.ModifyOutgoingDamage(battleManager, monster, stack, finalDamage);

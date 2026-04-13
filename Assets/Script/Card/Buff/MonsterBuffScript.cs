@@ -69,6 +69,16 @@ public abstract class MonsterBuffScript
     {
     }
 
+    public virtual int GetOutgoingDamageFlatBonus(TrainingBattleManager battleManager, Monster monster, int stack, int currentBonus)
+    {
+        return currentBonus;
+    }
+
+    public virtual float GetOutgoingDamageMultiplier(TrainingBattleManager battleManager, Monster monster, int stack, float currentMultiplier)
+    {
+        return currentMultiplier;
+    }
+
     public virtual int ModifyOutgoingDamage(TrainingBattleManager battleManager, Monster monster, int stack, int currentDamage)
     {
         return currentDamage;
