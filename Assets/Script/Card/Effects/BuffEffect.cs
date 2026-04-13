@@ -16,8 +16,9 @@ public class BuffEffect : ICardEffect
 
     public void Execute(TrainingBattleManager battleManager)
     {
+        Monster formulaTargetMonster = CardEffectRuntimeUtility.ResolveSingleEnemyTarget(battleManager);
         int finalAmount = string.IsNullOrWhiteSpace(amountFormula)
-            ? amount : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData);
+            ? amount : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, formulaTargetMonster);
 
         if (buffId > 0 && string.IsNullOrWhiteSpace(amountFormula) && finalAmount <= 0)
         {
@@ -70,6 +71,20 @@ public class BuffEffect : ICardEffect
                 {
                     manager.ApplyBuffToMonster(monster, buffId, finalAmount);
                 }
+            }
+        }
+        else if (target == TargetType.RandomEnemy)
+        {
+            List<Monster> livingMonsters = manager.GetLivingMonsters();
+            if (livingMonsters == null || livingMonsters.Count == 0)
+            {
+                return;
+            }
+
+            Monster randomTarget = livingMonsters[Random.Range(0, livingMonsters.Count)];
+            if (randomTarget != null && !randomTarget.IsDead())
+            {
+                manager.ApplyBuffToMonster(randomTarget, buffId, finalAmount);
             }
         }
     }

@@ -8,7 +8,7 @@ public class BattleBuffController
     private readonly PlayerBuffRuntimeService playerBuffRuntimeService;
     private readonly MonsterBuffRuntimeService monsterBuffRuntimeService;
     private readonly FeatherBuffScript featherBuffScript;
-
+    private readonly HashSet<Monster> monsterHpLossHealPlayerTargetsThisTurn = new();
     private int pendingStrengthGainThisTurn;
 
     public BattleBuffController(TrainingBattleManager battleManager)
@@ -22,6 +22,7 @@ public class BattleBuffController
     public void ResetForCombat()
     {
         pendingStrengthGainThisTurn = 0;
+        monsterHpLossHealPlayerTargetsThisTurn.Clear();
         playerBuffRuntimeService.ResetForCombat();
         featherBuffScript.ResetForCombat();
     }
@@ -29,6 +30,7 @@ public class BattleBuffController
     public void ApplyPlayerTurnStartEffects()
     {
         pendingStrengthGainThisTurn = 0;
+        monsterHpLossHealPlayerTargetsThisTurn.Clear();
         playerBuffRuntimeService.OnPlayerTurnStart();
         featherBuffScript.OnTurnStart();
     }
@@ -39,6 +41,7 @@ public class BattleBuffController
         playerBuffRuntimeService.ReplayTurnEndTriggeredEffects();
         monsterBuffRuntimeService.OnPlayerTurnEnd();
         pendingStrengthGainThisTurn = 0;
+        monsterHpLossHealPlayerTargetsThisTurn.Clear();
     }
 
     public void ReplayAdditionalTurnEndTriggers()
@@ -93,13 +96,20 @@ public class BattleBuffController
             return;
         }
 
-        List<Monster> targets = battleManager.GetLivingMonsters();
-        foreach (Monster monster in targets)
+        int resolvedDamage = battleManager.ResolvePlayerEffectDamage(damage);
+        if (resolvedDamage <= 0)
         {
-            monster.TakeDamage(damage, 0);
+            return;
         }
 
-        battleManager.battleContext?.OnDamageDealt(damage * targets.Count);
+        List<Monster> targets = battleManager.GetLivingMonsters();
+        int totalDamageDealt = 0;
+        foreach (Monster monster in targets)
+        {
+            totalDamageDealt += monster.TakeDamage(resolvedDamage, 0);
+        }
+
+        battleManager.battleContext?.OnDamageDealt(totalDamageDealt);
     }
 
     public int GetAdditionalBarrierGain()
@@ -205,6 +215,16 @@ public class BattleBuffController
         }
     }
 
+    public void RegisterMonsterHpLossHealPlayerThisTurn(Monster monster)
+    {
+        if (monster == null || monster.IsDead())
+        {
+            return;
+        }
+
+        monsterHpLossHealPlayerTargetsThisTurn.Add(monster);
+    }
+
     public void HandlePlayerAttackResolved(Monster targetMonster, int barrierBefore, int barrierAfter)
     {
         if (targetMonster != null && battleManager.playerData != null && pendingStrengthGainThisTurn > 0)
@@ -308,6 +328,14 @@ public class BattleBuffController
 
     public void HandleMonsterHpLost(Monster monster, int hpLoss)
     {
+        if (monster != null
+            && hpLoss > 0
+            && battleManager.playerData != null
+            && monsterHpLossHealPlayerTargetsThisTurn.Contains(monster))
+        {
+            battleManager.playerData.Heal(hpLoss);
+        }
+
         monsterBuffRuntimeService.OnMonsterHpLost(monster, hpLoss);
     }
 
@@ -395,11 +423,13 @@ public class BattleBuffController
 
     public void HandleMonsterDeath(Monster monster)
     {
+        monsterHpLossHealPlayerTargetsThisTurn.Remove(monster);
         monsterBuffRuntimeService.OnMonsterDeath(monster);
     }
 
     public void HandleMonsterLeaveCombat(Monster monster)
     {
+        monsterHpLossHealPlayerTargetsThisTurn.Remove(monster);
         monsterBuffRuntimeService.OnMonsterLeaveCombat(monster);
     }
 

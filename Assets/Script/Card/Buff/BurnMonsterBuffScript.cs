@@ -11,6 +11,10 @@ public sealed class BurnMonsterBuffScript : MonsterBuffScript
             return;
         }
 
-        monster.TakeDamage(stack, 0);
+        int damage = battleManager != null ? battleManager.ResolvePlayerEffectDamage(stack) : stack;
+        if (damage > 0)
+        {
+            monster.TakeDamage(damage, 0);
+        }
     }
 }

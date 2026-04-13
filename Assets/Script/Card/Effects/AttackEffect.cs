@@ -13,7 +13,17 @@ public class AttackEffect : ICardEffect
 
     public void Execute(TrainingBattleManager battleManager)
     {
-        int finalAmount = BuildFinalDamageAmount(battleManager);
+        ExecuteInternal(battleManager, amount);
+    }
+
+    public void Execute(TrainingBattleManager battleManager, int forwardedAmount)
+    {
+        ExecuteInternal(battleManager, forwardedAmount);
+    }
+
+    private void ExecuteInternal(TrainingBattleManager battleManager, int forwardedAmount)
+    {
+        int finalAmount = BuildFinalDamageAmount(battleManager, forwardedAmount);
         int totalDamageDealt = 0;
 
         switch (target)
@@ -72,6 +82,20 @@ public class AttackEffect : ICardEffect
                 battleManager.HandlePlayerAttackResolved(targetMonster, targetBarrierBefore, targetMonster.defense);
                 break;
 
+            case TargetType.RandomEnemy:
+                List<Monster> randomTargets = battleManager.GetLivingMonsters();
+                if (randomTargets == null || randomTargets.Count == 0)
+                {
+                    Debug.LogWarning("[AttackEffect] No enemies available for RandomEnemy target. Effect cancelled.");
+                    return;
+                }
+
+                Monster randomTarget = randomTargets[Random.Range(0, randomTargets.Count)];
+                int randomBarrierBefore = randomTarget.defense;
+                totalDamageDealt += randomTarget.TakeDamage(finalAmount, 0);
+                battleManager.HandlePlayerAttackResolved(randomTarget, randomBarrierBefore, randomTarget.defense);
+                break;
+
             case TargetType.Self:
                 if (battleManager.playerData == null)
                 {
@@ -98,11 +122,11 @@ public class AttackEffect : ICardEffect
         }
     }
 
-    private int BuildFinalDamageAmount(TrainingBattleManager battleManager)
+    private int BuildFinalDamageAmount(TrainingBattleManager battleManager, int forwardedAmount)
     {
         Card sourceCard = battleManager?.battleContext?.GetContextCard("ThisCard")
             ?? battleManager?.battleContext?.GetLastPlayedCard();
-        ResolveAttackAmount(battleManager, out int baseAmount, out float cardMultiplier);
+        ResolveAttackAmount(battleManager, forwardedAmount, out int baseAmount, out float cardMultiplier);
         baseAmount += Mathf.Max(0, battleManager != null ? battleManager.GetCardBaseDamageBonus(sourceCard, true) : 0);
 
         if (battleManager.playerData == null)
@@ -117,10 +141,11 @@ public class AttackEffect : ICardEffect
         return battleManager.ApplyCardDamageRuntimeModifiers(sourceCard, resolvedDamage);
     }
 
-    private void ResolveAttackAmount(TrainingBattleManager battleManager, out int baseAmount, out float cardMultiplier)
+    private void ResolveAttackAmount(TrainingBattleManager battleManager, int forwardedAmount, out int baseAmount, out float cardMultiplier)
     {
         cardMultiplier = 1f;
-        baseAmount = amount;
+        baseAmount = amount > 0 ? amount : Mathf.Max(0, forwardedAmount);
+        int formulaBaseValue = forwardedAmount > 0 ? forwardedAmount : amount;
 
         if (string.IsNullOrWhiteSpace(amountFormula))
         {
@@ -133,7 +158,7 @@ public class AttackEffect : ICardEffect
             return;
         }
 
-        baseAmount = FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, cardIdList, amount);
+        baseAmount = FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, cardIdList, formulaBaseValue);
     }
 
     private bool TryParseMultiplierFormula(string formula, out float multiplier)

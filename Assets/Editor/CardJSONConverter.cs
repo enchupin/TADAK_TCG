@@ -299,6 +299,7 @@ public class CardJSONConverter : EditorWindow
         cardData.cardName = ReadRequiredJsonString(cardObject, "name");
         cardData.character = CharacterManager.GetCharacterEnumById(ReadRequiredJsonInt(cardObject, "characterId"));
         cardData.cost = ReadRequiredJsonInt(cardObject, "cost");
+        cardData.costType = ParseCardCostType(ReadJsonString(cardObject, "costType", "Energy"));
         cardData.description = ReadRequiredJsonString(cardObject, "description");
 
         cardData.enforceCardIds.Clear();
@@ -334,6 +335,21 @@ public class CardJSONConverter : EditorWindow
                 CardEffectData effect = ReadEffect(effectObject);
                 if (effect != null) {
                     cardData.effects.Add(effect);
+                }
+            }
+        }
+
+        cardData.onDrawEffects ??= new List<CardEffectData>();
+        cardData.onDrawEffects.Clear();
+        if (cardObject["onDrawEffects"] is JArray onDrawEffectsArray) {
+            foreach (JToken token in onDrawEffectsArray) {
+                if (token is not JObject effectObject) {
+                    continue;
+                }
+
+                CardEffectData effect = ReadEffect(effectObject);
+                if (effect != null) {
+                    cardData.onDrawEffects.Add(effect);
                 }
             }
         }
@@ -408,12 +424,15 @@ public class CardJSONConverter : EditorWindow
             durationText = ReadJsonString(effectObject, "duration"),
             effectIndex = ReadJsonInt(effectObject, "effectIndex", -1),
             ampMultiplier = ReadJsonFloat(effectObject, "ampMultiplier", 1f),
+            multiplier = ReadJsonFloat(effectObject, "multiplier", 0f),
             count = ReadJsonInt(effectObject, "count"),
             stat = ReadJsonString(effectObject, "stat"),
             change = ReadJsonString(effectObject, "change"),
             buffId = ReadJsonInt(effectObject, "buffId"),
             buffFilterIds = ReadJsonIntList(effectObject, "buffIds"),
             random = ReadJsonBool(effectObject, "random"),
+            allowFewerSelection = ReadJsonBool(effectObject, "allowFewer"),
+            upgradeableOnly = ReadJsonBool(effectObject, "upgradeableOnly"),
             duration = ReadJsonInt(effectObject, "duration"),
             cardId = ReadJsonString(effectObject, "cardId"),
             subject = ReadJsonString(effectObject, "subject"),
@@ -750,10 +769,12 @@ public class CardJSONConverter : EditorWindow
             case "Damage": return EffectType.Damage;
             case "Barrier": return EffectType.Barrier;
             case "Draw": return EffectType.Draw;
+            case "DrawUntilHandFull": return EffectType.DrawUntilHandFull;
             case "DrawBasic": return EffectType.DrawBasic;
             case "DrawCharacter": return EffectType.DrawCharacter;
             case "Buff": return EffectType.Buff;
             case "Heal": return EffectType.Heal;
+            case "HpLoss": return EffectType.HpLoss;
             case "GenerateCard": return EffectType.GenerateCard;
             case "ExhaustCard": return EffectType.ExhaustCard;
             case "Conditional": return EffectType.Conditional;
@@ -784,9 +805,32 @@ public class CardJSONConverter : EditorWindow
             case "OnAttackGainStrength": return EffectType.OnAttackGainStrength;
             case "TransformCards":
             case "TransformMonsterCards": return EffectType.TransformCards;
+            case "UpgradeCards": return EffectType.UpgradeCards;
+            case "SwapCardCosts": return EffectType.SwapCardCosts;
+            case "MultiplyEnemyDebuffs": return EffectType.MultiplyEnemyDebuffs;
+            case "ScaleIntent": return EffectType.ScaleIntent;
+            case "EnemyHpLossHealPlayer": return EffectType.EnemyHpLossHealPlayer;
+            case "Party": return EffectType.Party;
 
             default:
                 throw new ArgumentException($"[CardJSONConverter] Unsupported effect type: {type}");
+        }
+    }
+
+    private static CardCostType ParseCardCostType(string type)
+    {
+        if (string.IsNullOrWhiteSpace(type)) {
+            return CardCostType.Energy;
+        }
+
+        switch (type)
+        {
+            case "Energy": return CardCostType.Energy;
+            case "Barrier": return CardCostType.Barrier;
+            case "Rune": return CardCostType.Rune;
+            default:
+                Debug.LogWarning($"[CardJSONConverter] Unknown cost type: {type}. Fallback to Energy.");
+                return CardCostType.Energy;
         }
     }
 
@@ -807,9 +851,9 @@ public class CardJSONConverter : EditorWindow
         switch (target)
         {
             case "AllEnemies": return TargetType.AllEnemies;
-            case "SingleEnemy":
+            case "SingleEnemy": return TargetType.SingleEnemy;
             case "RandomEnemy":
-            case "RandEnemy": return TargetType.SingleEnemy;
+            case "RandEnemy": return TargetType.RandomEnemy;
             case "Self": return TargetType.Self;
             case "ThisCard": return TargetType.None;
             case "Hand": return TargetType.Hand;

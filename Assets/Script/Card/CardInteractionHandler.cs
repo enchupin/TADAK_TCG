@@ -160,6 +160,13 @@ public class CardInteractionHandler : UIHoverEffect,
             return;
         }
 
+        if (effect is EnemyHpLossHealPlayerEffect enemyHpLossHealPlayerEffect) {
+            if (enemyHpLossHealPlayerEffect.target == TargetType.SingleEnemy) {
+                hasSingleEnemyTarget = true;
+            }
+            return;
+        }
+
         if (effect is ChangeStatEffect changeStatEffect) {
             if (changeStatEffect.target == TargetType.SingleEnemy) {
                 hasSingleEnemyTarget = true;

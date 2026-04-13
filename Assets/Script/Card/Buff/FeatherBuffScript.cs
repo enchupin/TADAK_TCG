@@ -245,7 +245,8 @@ public sealed class FeatherBuffScript : PlayerBuffScript
                 break;
             }
 
-            int dealtDamage = monster.TakeDamage(featherStack + triggerBonus, 0);
+            int damage = battleManager.ResolvePlayerEffectDamage(featherStack + triggerBonus);
+            int dealtDamage = damage > 0 ? monster.TakeDamage(damage, 0) : 0;
             monster.ConsumeBuffStack(FeatherBuffId, 1);
             if (dealtDamage > 0)
             {

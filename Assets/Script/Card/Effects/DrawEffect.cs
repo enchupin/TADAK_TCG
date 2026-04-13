@@ -10,6 +10,7 @@ public class DrawEffect : ICardEffect
 {
     public int amount;
     public string amountFormula;
+    public string subject;
     public List<ICardEffect> onActions;
 
     public void Execute(TrainingBattleManager battleManager)
@@ -45,6 +46,18 @@ public class DrawEffect : ICardEffect
             return;
         }
 
+        battleManager.battleContext.SetContextCards("DrawnCards", drawnCards);
+        if (string.Equals(subject, "DrawnCards", System.StringComparison.OrdinalIgnoreCase))
+        {
+            foreach (ICardEffect onAction in onActions)
+            {
+                onAction?.Execute(battleManager, drawnCards.Count);
+            }
+
+            battleManager.battleContext.ClearContextCards("DrawnCards");
+            return;
+        }
+
         foreach (Card drawnCard in drawnCards) {
             if (drawnCard == null) {
                 continue;
@@ -58,5 +71,7 @@ public class DrawEffect : ICardEffect
 
             battleManager.battleContext.ClearContextCards("DrawnCard");
         }
+
+        battleManager.battleContext.ClearContextCards("DrawnCards");
     }
 }

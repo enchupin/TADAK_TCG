@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public enum MonsterIntentIconType
 {
@@ -20,8 +22,10 @@ public enum MonsterIntentIconType
 /// <summary>
 /// Holds monster battle data and turn hooks.
 /// </summary>
-public abstract class Monster : MonoBehaviour
+public abstract class Monster : MonoBehaviour, IPointerClickHandler
 {
+    private static readonly Color SelectionTintColor = new Color(0.45f, 0.75f, 1f, 1f);
+
     [Header("UI Reference")]
     [SerializeField] private TextMeshProUGUI hpText;
     [SerializeField] private TextMeshProUGUI defenseText;
@@ -46,6 +50,10 @@ public abstract class Monster : MonoBehaviour
     private bool hasTriggeredDeath = false;
     private bool hasLeftCombat = false;
     private bool hasInitializedBattleStart = false;
+    private bool isSelectionHighlighted = false;
+    private int lastSelectionClickFrame = -1;
+    private readonly Dictionary<Graphic, Color> originalGraphicColors = new();
+    private readonly Dictionary<SpriteRenderer, Color> originalSpriteColors = new();
 
     public bool HasAttackIntent => hasAttackIntent;
     public int PlannedIntentValue => plannedIntentValue;
@@ -79,6 +87,8 @@ public abstract class Monster : MonoBehaviour
 
     protected virtual void OnDestroy()
     {
+        SetSelectionHighlight(false);
+
         if (TrainingBattleManager.Instance != null)
         {
             TrainingBattleManager.Instance.UnregisterMonster(this);
@@ -199,6 +209,21 @@ public abstract class Monster : MonoBehaviour
         HandleDeathIfNeeded();
         UpdateUI();
         return damageAfterDefense;
+    }
+
+    public int LoseHp(int amount)
+    {
+        int lostAmount = Mathf.Clamp(amount, 0, hp);
+        if (lostAmount <= 0)
+        {
+            return 0;
+        }
+
+        hp -= lostAmount;
+        TrainingBattleManager.Instance?.HandleMonsterHpLost(this, lostAmount);
+        HandleDeathIfNeeded();
+        UpdateUI();
+        return lostAmount;
     }
 
     public void Kill()
@@ -383,6 +408,22 @@ public abstract class Monster : MonoBehaviour
         RemoveBuff(buffId);
     }
 
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        TryHandleSelectionClick();
+    }
+
+    public void SetSelectionHighlight(bool isHighlighted)
+    {
+        if (isSelectionHighlighted == isHighlighted)
+        {
+            return;
+        }
+
+        isSelectionHighlighted = isHighlighted;
+        ApplySelectionHighlight();
+    }
+
     public void SkipCurrentTurnActionOnce()
     {
         skipCurrentTurnAction = true;
@@ -394,6 +435,19 @@ public abstract class Monster : MonoBehaviour
         skipCurrentTurnAction = true;
         SetIntent("기절합니다.");
         SetPlannedPattern(0, MonsterIntentIconType.Stun);
+    }
+
+    public void ScalePlannedIntent(float multiplier)
+    {
+        if (multiplier < 0f || !hasAttackIntent || plannedIntentValue <= 0)
+        {
+            return;
+        }
+
+        int previousValue = plannedIntentValue;
+        plannedIntentValue = Mathf.Max(0, Mathf.FloorToInt(plannedIntentValue * multiplier));
+        plannedIntentDescription = ReplaceIntentValue(plannedIntentDescription, previousValue, plannedIntentValue);
+        UpdateUI();
     }
 
     protected void SetAttackIntent(int intentValue, string intentDescription)
@@ -588,11 +642,108 @@ public abstract class Monster : MonoBehaviour
         plannedIntentIcons.Clear();
     }
 
+    private static string ReplaceIntentValue(string description, int previousValue, int nextValue)
+    {
+        if (string.IsNullOrWhiteSpace(description) || previousValue < 0)
+        {
+            return description;
+        }
+
+        string previousText = previousValue.ToString();
+        int replaceIndex = description.IndexOf(previousText, System.StringComparison.Ordinal);
+        if (replaceIndex < 0)
+        {
+            return description;
+        }
+
+        return description.Substring(0, replaceIndex)
+            + nextValue
+            + description.Substring(replaceIndex + previousText.Length);
+    }
+
     private void SetDefenseValue(int amount)
     {
         int previousDefense = defense;
         defense = Mathf.Max(0, amount);
         TrainingBattleManager.Instance?.HandleMonsterDefenseChanged(this, previousDefense, defense);
+    }
+
+    private void OnMouseDown()
+    {
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+
+        TryHandleSelectionClick();
+    }
+
+    private void TryHandleSelectionClick()
+    {
+        if (lastSelectionClickFrame == Time.frameCount)
+        {
+            return;
+        }
+
+        lastSelectionClickFrame = Time.frameCount;
+        TrainingBattleManager.Instance?.HandleMonsterClicked(this);
+    }
+
+    private void ApplySelectionHighlight()
+    {
+        ApplyGraphicSelectionHighlight();
+        ApplySpriteSelectionHighlight();
+    }
+
+    private void ApplyGraphicSelectionHighlight()
+    {
+        Graphic[] graphics = GetComponentsInChildren<Graphic>(true);
+        foreach (Graphic graphic in graphics)
+        {
+            if (graphic == null)
+            {
+                continue;
+            }
+
+            if (!originalGraphicColors.ContainsKey(graphic))
+            {
+                originalGraphicColors[graphic] = graphic.color;
+            }
+
+            Color originalColor = originalGraphicColors[graphic];
+            graphic.color = isSelectionHighlighted
+                ? BlendSelectionColor(originalColor)
+                : originalColor;
+        }
+    }
+
+    private void ApplySpriteSelectionHighlight()
+    {
+        SpriteRenderer[] spriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
+        foreach (SpriteRenderer spriteRenderer in spriteRenderers)
+        {
+            if (spriteRenderer == null)
+            {
+                continue;
+            }
+
+            if (!originalSpriteColors.ContainsKey(spriteRenderer))
+            {
+                originalSpriteColors[spriteRenderer] = spriteRenderer.color;
+            }
+
+            Color originalColor = originalSpriteColors[spriteRenderer];
+            spriteRenderer.color = isSelectionHighlighted
+                ? BlendSelectionColor(originalColor)
+                : originalColor;
+        }
+    }
+
+    private static Color BlendSelectionColor(Color originalColor)
+    {
+        Color tintedColor = Color.Lerp(originalColor, SelectionTintColor, 0.65f);
+        tintedColor.a = originalColor.a;
+        return tintedColor;
     }
 
     private int ApplyOutgoingDamageModifier(int baseDamage)

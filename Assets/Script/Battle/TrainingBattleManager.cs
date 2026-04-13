@@ -92,6 +92,11 @@ public class TrainingBattleManager : MonoBehaviour
     // Temporary target used while card effects are executing.
     public Monster currentTarget;
     private Monster previewDescriptionTarget;
+    private Action<List<Monster>> pendingMonsterSelectionCallback;
+    private readonly List<Monster> selectableMonsters = new List<Monster>();
+    private readonly List<Monster> selectedMonsters = new List<Monster>();
+    private int requiredMonsterSelectionCount;
+    private bool isMonsterSelectionActive;
 
     [Header("Run Data")]
     public static BuildingDeck buildingDeck;
@@ -638,6 +643,10 @@ public class TrainingBattleManager : MonoBehaviour
                 return effect is ExtraTurnEffect;
             case EffectType.MixBuff:
                 return effect is MixBuffEffect;
+            case EffectType.EnemyHpLossHealPlayer:
+                return effect is EnemyHpLossHealPlayerEffect;
+            case EffectType.Party:
+                return effect is PartyEffect;
             case EffectType.RemoveBuff:
                 return effect is RemoveBuffEffect;
             case EffectType.MultiplyBarrier:
@@ -829,17 +838,17 @@ public class TrainingBattleManager : MonoBehaviour
 
     public bool CanPlayerPlayCard()
     {
-        return turnSystem.CanPlayerPlayCard();
+        return !isMonsterSelectionActive && turnSystem.CanPlayerPlayCard();
     }
 
     public bool CanEndPlayerTurn()
     {
-        return turnSystem.CanEndPlayerTurn();
+        return !isMonsterSelectionActive && turnSystem.CanEndPlayerTurn();
     }
 
     public bool CanInteractWithCards()
     {
-        return turnSystem.CanPlayerPlayCard();
+        return !isMonsterSelectionActive && turnSystem.CanPlayerPlayCard();
     }
 
     public void UpdateEndTurnButtonState()
@@ -863,7 +872,7 @@ public class TrainingBattleManager : MonoBehaviour
         bool canInteract = CanPlayerPlayCard();
 
         handManager.RefreshCardPlayability(
-            card => playerData != null && card != null && CanPlayCard(card) && playerData.energy >= GetEffectiveCardCost(card),
+            card => playerData != null && card != null && CanPlayCard(card) && CanPayCardCost(card),
             canInteract);
     }
 
@@ -936,6 +945,69 @@ public class TrainingBattleManager : MonoBehaviour
         return battleBuffController != null ? battleBuffController.GetEffectiveCardCost(card) : card.cost;
     }
 
+    public bool CanPayCardCost(Card card)
+    {
+        if (card == null || playerData == null)
+        {
+            return false;
+        }
+
+        int effectiveCost = GetEffectiveCardCost(card);
+        if (effectiveCost <= 0)
+        {
+            return true;
+        }
+
+        switch (card.costType)
+        {
+            case CardCostType.Barrier:
+                return playerData.defense >= effectiveCost;
+            case CardCostType.Rune:
+                return playerData.GetBuffStack(BattleRuntimeDefinitions.RuneBuffId) >= effectiveCost;
+            default:
+                return playerData.energy >= effectiveCost;
+        }
+    }
+
+    public bool TryPayCardCost(Card card)
+    {
+        if (card == null || playerData == null)
+        {
+            return false;
+        }
+
+        int effectiveCost = GetEffectiveCardCost(card);
+        if (effectiveCost <= 0)
+        {
+            return true;
+        }
+
+        if (card.costType == CardCostType.Barrier)
+        {
+            return playerData.RemoveDefense(effectiveCost) == effectiveCost;
+        }
+
+        if (card.costType == CardCostType.Rune)
+        {
+            if (playerData.GetBuffStack(BattleRuntimeDefinitions.RuneBuffId) < effectiveCost)
+            {
+                return false;
+            }
+
+            playerData.ConsumeBuffStack(BattleRuntimeDefinitions.RuneBuffId, effectiveCost);
+            WuppiModeRuntimeUtility.SyncModeBuffStacks(playerData);
+            return true;
+        }
+
+        bool usedEnergy = playerData.UseEnergy(effectiveCost);
+        if (usedEnergy)
+        {
+            battleContext?.OnEnergySpent(effectiveCost);
+        }
+
+        return usedEnergy;
+    }
+
     public int GetCardUseAllEnemiesDamage()
     {
         return battleBuffController != null ? battleBuffController.GetCardUseAllEnemiesDamage() : 0;
@@ -998,6 +1070,12 @@ public class TrainingBattleManager : MonoBehaviour
     public float GetPlayerOutgoingDamageMultiplier()
     {
         return battleBuffController != null ? battleBuffController.GetPlayerOutgoingDamageMultiplier() : 1f;
+    }
+
+    public int ResolvePlayerEffectDamage(int damage)
+    {
+        int safeDamage = Mathf.Max(0, damage);
+        return Mathf.Max(0, Mathf.FloorToInt(safeDamage * GetPlayerOutgoingDamageMultiplier()));
     }
 
     public int ResolvePlayerIncomingDamage(int damage, Monster attacker)
@@ -1219,6 +1297,8 @@ public class TrainingBattleManager : MonoBehaviour
             previewDescriptionTarget = null;
         }
 
+        HandleMonsterUnavailableForSelection(monster);
+
         UnregisterMonster(monster);
 
         if (monster.gameObject.activeSelf)
@@ -1247,6 +1327,8 @@ public class TrainingBattleManager : MonoBehaviour
         {
             previewDescriptionTarget = null;
         }
+
+        HandleMonsterUnavailableForSelection(monster);
 
         UnregisterMonster(monster);
 
@@ -1537,7 +1619,7 @@ public class TrainingBattleManager : MonoBehaviour
         handManager.RefreshCardDisplays(handManager.GetHandCards());
     }
 
-    public bool OpenSelectCardPanel(List<Card> selectableCards, int selectCount, Action<List<Card>> onSelected)
+    public bool OpenSelectCardPanel(List<Card> selectableCards, int selectCount, Action<List<Card>> onSelected, bool allowFewer = false)
     {
         if (battleDeckViewer == null)
         {
@@ -1545,7 +1627,124 @@ public class TrainingBattleManager : MonoBehaviour
             return false;
         }
 
-        return battleDeckViewer.OpenSelectionPanel(selectableCards, selectCount, onSelected);
+        return battleDeckViewer.OpenSelectionPanel(selectableCards, selectCount, onSelected, allowFewer);
+    }
+
+    public bool OpenMonsterSelection(List<Monster> selectionTargets, int selectCount, Action<List<Monster>> onSelected)
+    {
+        if (selectionTargets == null || selectCount <= 0 || onSelected == null)
+        {
+            return false;
+        }
+
+        CancelMonsterSelection();
+
+        foreach (Monster monster in selectionTargets)
+        {
+            if (monster == null || monster.IsDead() || selectableMonsters.Contains(monster))
+            {
+                continue;
+            }
+
+            selectableMonsters.Add(monster);
+        }
+
+        if (selectableMonsters.Count < selectCount)
+        {
+            selectableMonsters.Clear();
+            return false;
+        }
+
+        requiredMonsterSelectionCount = selectCount;
+        pendingMonsterSelectionCallback = onSelected;
+        isMonsterSelectionActive = true;
+        RefreshHandPlayableState();
+        UpdateEndTurnButtonState();
+        return true;
+    }
+
+    public void HandleMonsterClicked(Monster monster)
+    {
+        if (!isMonsterSelectionActive || monster == null || monster.IsDead() || !selectableMonsters.Contains(monster))
+        {
+            return;
+        }
+
+        if (selectedMonsters.Contains(monster))
+        {
+            selectedMonsters.Remove(monster);
+            monster.SetSelectionHighlight(false);
+            return;
+        }
+
+        if (selectedMonsters.Count >= requiredMonsterSelectionCount)
+        {
+            return;
+        }
+
+        selectedMonsters.Add(monster);
+        monster.SetSelectionHighlight(true);
+
+        if (selectedMonsters.Count >= requiredMonsterSelectionCount)
+        {
+            CompleteMonsterSelection();
+        }
+    }
+
+    public void RegisterMonsterHpLossHealPlayerThisTurn(Monster monster)
+    {
+        battleBuffController?.RegisterMonsterHpLossHealPlayerThisTurn(monster);
+    }
+
+    private void CompleteMonsterSelection()
+    {
+        List<Monster> resolvedSelection = new List<Monster>(selectedMonsters);
+        Action<List<Monster>> callback = pendingMonsterSelectionCallback;
+        ClearMonsterSelectionState();
+        callback?.Invoke(resolvedSelection);
+    }
+
+    private void CancelMonsterSelection()
+    {
+        if (!isMonsterSelectionActive && selectableMonsters.Count == 0 && selectedMonsters.Count == 0)
+        {
+            return;
+        }
+
+        ClearMonsterSelectionState();
+    }
+
+    private void ClearMonsterSelectionState()
+    {
+        foreach (Monster selectedMonster in selectedMonsters)
+        {
+            selectedMonster?.SetSelectionHighlight(false);
+        }
+
+        selectableMonsters.Clear();
+        selectedMonsters.Clear();
+        pendingMonsterSelectionCallback = null;
+        requiredMonsterSelectionCount = 0;
+        isMonsterSelectionActive = false;
+        RefreshHandPlayableState();
+        UpdateEndTurnButtonState();
+    }
+
+    private void HandleMonsterUnavailableForSelection(Monster monster)
+    {
+        if (monster == null)
+        {
+            return;
+        }
+
+        monster.SetSelectionHighlight(false);
+        selectableMonsters.Remove(monster);
+        selectedMonsters.Remove(monster);
+
+        if (isMonsterSelectionActive && selectableMonsters.Count < requiredMonsterSelectionCount)
+        {
+            CancelMonsterSelection();
+        }
     }
 
     private void ApplyDebugEnergy()
@@ -1553,8 +1752,10 @@ public class TrainingBattleManager : MonoBehaviour
         if (!isDebugMode || playerData == null)
             return;
 
+        playerData.baseMaxEnergy = debugEnergyAmount;
         playerData.maxEnergy = debugEnergyAmount;
-        playerData.energy = debugEnergyAmount;
+        CreamBuffRuntimeUtility.SyncEnergyOverflow(playerData);
+        playerData.energy = playerData.maxEnergy;
     }
 
     private void SpawnEncounterMonsters()
@@ -1652,6 +1853,7 @@ public class TrainingBattleManager : MonoBehaviour
 
             drawnCards.Add(drawnCard);
             handManager.AddCard(drawnCard);
+            drawnCard.ExecuteOnDrawEffects(this);
 
             if (!ignoreRootAbsorption && drawnCard.cardId == 40)
             {

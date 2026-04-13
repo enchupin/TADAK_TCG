@@ -22,6 +22,9 @@ public class BattleContext
     public int lastDamageDealt;
     public int totalDamageDealt;
 
+    // 에너지 관련
+    public int energySpentThisTurn;
+
     // 보호막 관련
     public int defenseConsumed;
 
@@ -103,6 +106,7 @@ public class BattleContext
         cardsDrawnThisTurn = 0;
         totalDamageDealt = 0;
         defenseConsumed = 0;
+        energySpentThisTurn = 0;
         ClearSelectedCards();
         ClearAllContextCards();
     }
@@ -216,5 +220,13 @@ public class BattleContext
     public void OnDefenseConsumed(int amount)
     {
         defenseConsumed += amount;
+    }
+
+    public void OnEnergySpent(int amount)
+    {
+        if (amount <= 0)
+            return;
+
+        energySpentThisTurn += amount;
     }
 }

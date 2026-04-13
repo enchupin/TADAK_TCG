@@ -4,6 +4,13 @@ using System.Collections.Generic;
 /// <summary>
 /// 플레이어의 전투 관련 데이터를 관리하는 클래스
 /// </summary>
+public enum WuppiModeState
+{
+    Normal,
+    Guard,
+    Attack
+}
+
 public class PlayerData : MonoBehaviour
 {
     /// <summary>싱글톤 인스턴스 (TrainingBattleManager.InitializeBattle()에서 생성)</summary>
@@ -61,10 +68,12 @@ public class PlayerData : MonoBehaviour
 
     // 에너지
     public int energy;
+    public int baseMaxEnergy;
     public int maxEnergy;
 
     // 버프/디버프
     public List<Buff> currentBuffs = new List<Buff>();
+    public WuppiModeState wuppiMode = WuppiModeState.Normal;
 
     /// <summary>
     /// 플레이어의 전투 시작 스탯을 초기화
@@ -76,9 +85,11 @@ public class PlayerData : MonoBehaviour
         hpLostThisTurn = 0;
         hasLostHpThisTurn = false;
         defense = startDefense;
-        maxEnergy = startMaxEnergy;
+        baseMaxEnergy = startMaxEnergy;
+        maxEnergy = baseMaxEnergy;
         energy = maxEnergy;
         currentBuffs.Clear();
+        wuppiMode = WuppiModeState.Normal;
         
         Debug.Log($"플레이어 초기화 완료 - HP: {hp}/{maxHP}, 방어력: {defense}, 에너지: {energy}/{maxEnergy}");
     }
@@ -161,6 +172,11 @@ public class PlayerData : MonoBehaviour
             currentBuffs.Add(newBuff);
             Debug.Log($"버프 획득: {data.name} ({amount})");
         }
+
+        if (buffId == CreamBuffRuntimeUtility.EnergyOverflowBuffId)
+        {
+            CreamBuffRuntimeUtility.SyncEnergyOverflow(this);
+        }
     }
 
     /// <summary>
@@ -168,8 +184,26 @@ public class PlayerData : MonoBehaviour
     /// </summary>
     public void AddEnergy(int amount)
     {
-        energy = Mathf.Min(energy + amount, maxEnergy);
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        energy = Mathf.Clamp(energy + amount, 0, maxEnergy);
         Debug.Log($"에너지 +{amount} (현재: {energy}/{maxEnergy})");
+    }
+
+    public int LoseEnergy(int amount)
+    {
+        int lostAmount = Mathf.Clamp(amount, 0, energy);
+        if (lostAmount <= 0)
+        {
+            return 0;
+        }
+
+        energy -= lostAmount;
+        Debug.Log($"에너지 -{lostAmount} (현재: {energy}/{maxEnergy})");
+        return lostAmount;
     }
 
     /// <summary>
@@ -332,11 +366,56 @@ public class PlayerData : MonoBehaviour
         {
             currentBuffs.Remove(buff);
         }
+
+        if (buffId == CreamBuffRuntimeUtility.EnergyOverflowBuffId)
+        {
+            CreamBuffRuntimeUtility.SyncEnergyOverflow(this);
+        }
     }
 
     public void ConsumeBuffStack(int buffId, int amount)
     {
         DecreaseBuffStack(buffId, amount);
+    }
+
+    public void SetBuffStack(int buffId, int amount)
+    {
+        Buff existingBuff = currentBuffs.Find(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
+
+        if (amount <= 0)
+        {
+            if (existingBuff != null)
+            {
+                currentBuffs.Remove(existingBuff);
+            }
+
+            if (buffId == CreamBuffRuntimeUtility.EnergyOverflowBuffId)
+            {
+                CreamBuffRuntimeUtility.SyncEnergyOverflow(this);
+            }
+            return;
+        }
+
+        BuffData data = BuffMetadataResolver.Resolve(buffId);
+        if (existingBuff != null)
+        {
+            existingBuff.data = data;
+            existingBuff.stack = amount;
+            if (buffId == CreamBuffRuntimeUtility.EnergyOverflowBuffId)
+            {
+                CreamBuffRuntimeUtility.SyncEnergyOverflow(this);
+            }
+            return;
+        }
+
+        currentBuffs.Add(new Buff(data, amount));
+
+        if (buffId == CreamBuffRuntimeUtility.EnergyOverflowBuffId)
+        {
+            CreamBuffRuntimeUtility.SyncEnergyOverflow(this);
+        }
     }
 
     public void RemoveBuffStack(int buffId)
@@ -349,6 +428,11 @@ public class PlayerData : MonoBehaviour
         currentBuffs.RemoveAll(b =>
             b.data != null &&
             b.data.buffId == buffId);
+
+        if (buffId == CreamBuffRuntimeUtility.EnergyOverflowBuffId)
+        {
+            CreamBuffRuntimeUtility.SyncEnergyOverflow(this);
+        }
     }
 
     /// <summary>

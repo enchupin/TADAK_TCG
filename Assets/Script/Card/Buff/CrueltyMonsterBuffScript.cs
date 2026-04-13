@@ -14,7 +14,11 @@ public sealed class CrueltyMonsterBuffScript : MonsterBuffScript
         int damage = crueltyStackBeforeApply >= 0 ? crueltyStackBeforeApply : stack;
         if (damage > 0)
         {
-            monster.TakeDamage(damage, 0);
+            int resolvedDamage = battleManager != null ? battleManager.ResolvePlayerEffectDamage(damage) : damage;
+            if (resolvedDamage > 0)
+            {
+                monster.TakeDamage(resolvedDamage, 0);
+            }
         }
     }
 }

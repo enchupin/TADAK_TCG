@@ -25,10 +25,20 @@ public static class FormulaEvaluator
     /// </summary>
     public static int Evaluate(string formula, BattleContext context, PlayerData player = null, int baseValue = 0)
     {
-        return Evaluate(formula, context, player, null, baseValue);
+        return Evaluate(formula, context, player, (List<int>)null, baseValue);
+    }
+
+    public static int Evaluate(string formula, BattleContext context, PlayerData player, Monster targetMonster, int baseValue = 0)
+    {
+        return Evaluate(formula, context, player, (List<int>)null, targetMonster, baseValue);
     }
 
     public static int Evaluate(string formula, BattleContext context, PlayerData player, List<int> cardIdFilter, int baseValue = 0)
+    {
+        return Evaluate(formula, context, player, cardIdFilter, null, baseValue);
+    }
+
+    public static int Evaluate(string formula, BattleContext context, PlayerData player, List<int> cardIdFilter, Monster targetMonster, int baseValue = 0)
     {
         if (string.IsNullOrEmpty(formula))
         {
@@ -77,6 +87,8 @@ public static class FormulaEvaluator
                 return context != null ? context.lastDamageDealt : 0;
             case "haslosthpthisturn":
                 return hasLostHpThisTurn;
+            case "energyspentthisturn":
+                return context != null ? context.energySpentThisTurn : 0;
         }
 
         try
@@ -87,7 +99,7 @@ public static class FormulaEvaluator
                 expression = baseValue + expression;
             }
 
-            expression = ReplaceFunctionCalls(expression, player);
+            expression = ReplaceFunctionCalls(expression, player, targetMonster);
             expression = ReplaceKnownKeywords(expression, context, cardsPlayedInCombat, cardsPlayedInTurn, hasLostHpThisTurn, baseValue);
             expression = EvaluateMinFunctions(expression);
 
@@ -114,13 +126,16 @@ public static class FormulaEvaluator
         expression = expression.Replace("eventValue", baseValue.ToString());
         expression = expression.Replace("UnblockedDamage", baseValue.ToString());
         expression = expression.Replace("HasLostHpThisTurn", hasLostHpThisTurn.ToString());
+        expression = expression.Replace("EnergySpentThisTurn", (context != null ? context.energySpentThisTurn : 0).ToString());
         return expression;
     }
 
-    private static string ReplaceFunctionCalls(string expression, PlayerData player)
+    private static string ReplaceFunctionCalls(string expression, PlayerData player, Monster targetMonster)
     {
         expression = ReplaceBuffStackFunction(expression, "GetBuffStack", player);
         expression = ReplaceBuffStackFunction(expression, "Stack", player);
+        expression = ReplaceTargetBuffStackFunction(expression, "TargetBuff", targetMonster);
+        expression = ReplaceTargetBuffStackFunction(expression, "TargetStack", targetMonster);
         return expression;
     }
 
@@ -137,6 +152,25 @@ public static class FormulaEvaluator
 
             int buffId = int.Parse(match.Groups[1].Value);
             int stack = player != null ? player.GetBuffStack(buffId) : 0;
+            expression = expression.Replace(match.Value, stack.ToString());
+        }
+
+        return expression;
+    }
+
+    private static string ReplaceTargetBuffStackFunction(string expression, string functionName, Monster targetMonster)
+    {
+        string pattern = $@"{functionName}\((\d+)\)";
+        while (Regex.IsMatch(expression, pattern))
+        {
+            Match match = Regex.Match(expression, pattern);
+            if (!match.Success)
+            {
+                break;
+            }
+
+            int buffId = int.Parse(match.Groups[1].Value);
+            int stack = targetMonster != null ? targetMonster.GetBuffStack(buffId) : 0;
             expression = expression.Replace(match.Value, stack.ToString());
         }
 

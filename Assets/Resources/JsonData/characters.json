@@ -41,6 +41,12 @@
       "name": "룬",
       "maxHp": 80,
       "characterColor": "brown"
+    },
+    {
+      "characterId": 103,
+      "name": "크림",
+      "maxHp": 30,
+      "characterColor": "cream"
     }
   ]
 }

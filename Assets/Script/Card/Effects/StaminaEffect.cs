@@ -28,12 +28,20 @@ public class StaminaEffect : ICardEffect
         }
 
         int staminaAmount = ResolveAmount(battleManager, forwardedAmount);
-        if (staminaAmount <= 0)
+        if (staminaAmount == 0)
         {
             return;
         }
 
-        battleManager.playerData.AddEnergy(staminaAmount);
+        if (staminaAmount > 0)
+        {
+            battleManager.playerData.AddEnergy(staminaAmount);
+        }
+        else
+        {
+            battleManager.playerData.LoseEnergy(-staminaAmount);
+        }
+
         battleManager.UpdateAllUI();
     }
 
@@ -41,14 +49,14 @@ public class StaminaEffect : ICardEffect
     {
         if (!string.IsNullOrWhiteSpace(amountFormula))
         {
-            return Mathf.Max(0, FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, forwardedAmount));
+            return FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, forwardedAmount);
         }
 
-        if (amount > 0)
+        if (amount != 0)
         {
             return amount;
         }
 
-        return Mathf.Max(0, forwardedAmount);
+        return forwardedAmount;
     }
 }
