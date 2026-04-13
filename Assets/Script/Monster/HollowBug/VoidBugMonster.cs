@@ -5,7 +5,7 @@ public class VoidBugMonster : Monster
     private bool useAttackPattern = true;
 
     public override int MonsterId => 109;
-    protected override string MonsterName => "怨듯뿀 踰뚮젅";
+    protected override string MonsterName => "공허 벌레";
     protected override int BaseMaxHp => 45;
 
     protected override void OnBattleStart()
@@ -21,12 +21,12 @@ public class VoidBugMonster : Monster
             int nextPatternId = Random.value < 0.5f ? 10901 : 10902;
             if (nextPatternId == 10901)
             {
-                SetAttackIntent(previewDamage, $"?쇳빐瑜?{previewDamage} ?낇엳怨??곸뿉寃?遺?앹쓣 3 遺?ы빀?덈떎.");
+                SetAttackIntent(previewDamage, $"피해를 {previewDamage} 입히고 적에게 부식을 3 부여합니다.");
                 SetPlannedPattern(10901, MonsterIntentIconType.Attack, MonsterIntentIconType.HarmfulEffect);
                 return;
             }
 
-            SetAttackIntent(previewDamage, $"?쇳빐瑜?{previewDamage} ?낇엳怨??곸뿉寃?鍮덉빟??3 遺?ы빀?덈떎.");
+            SetAttackIntent(previewDamage, $"피해를 {previewDamage} 입히고 적에게 빈약을 3 부여합니다.");
             SetPlannedPattern(10902, MonsterIntentIconType.Attack, MonsterIntentIconType.HarmfulEffect);
             return;
         }

@@ -31,6 +31,7 @@ public class Card
 
     // 실행 효과 목록
     public List<ICardEffect> effects = new();
+    public List<ICardEffect> onDrawEffects = new();
 
     // 보존 시 실행 효과 목록
     public List<ICardEffect> keepEffects = new();

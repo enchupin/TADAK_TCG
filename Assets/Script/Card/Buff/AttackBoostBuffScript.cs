@@ -13,14 +13,4 @@ public sealed class AttackBoostBuffScript : PlayerBuffScript
 
         return currentBonus + stack;
     }
-
-    public override void OnCardPlayed(TrainingBattleManager battleManager, PlayerData player, Card playedCard, Monster originalTarget, bool isRepeatedEffect, int stack)
-    {
-        if (player == null || playedCard == null || isRepeatedEffect || stack <= 0 || !BuffCardUtility.HasAttackEffect(playedCard))
-        {
-            return;
-        }
-
-        player.ConsumeBuffStack(BuffId, stack);
-    }
 }
