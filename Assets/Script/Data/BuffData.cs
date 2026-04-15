@@ -8,6 +8,16 @@ public class BuffData
     public int buffId;
     public string name;
     public string description;
+    public string koName;
+    public string koDescription;
+    public string enName;
+    public string enDescription;
+    public string jaName;
+    public string jaDescription;
+    public string zhHantName;
+    public string zhHantDescription;
+    public string zhHansName;
+    public string zhHansDescription;
 
     public static bool IsBeneficialBuffId(int targetBuffId)
     {

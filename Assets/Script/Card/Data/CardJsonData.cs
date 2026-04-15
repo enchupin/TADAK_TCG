@@ -10,11 +10,9 @@ using System.Collections.Generic;
 public class CardJsonData
 {
     public int cardId;
-    public string name;
     public int characterId;
     public int cost;
-    public string description;
-    public List<int> keywords; // 삭제 예정
+    public List<int> keywords;
     public string enforceGroup; // 연결 예정
     public AddressablesData addressables; // 삭제 예정
     public List<EffectJsonData> effects;

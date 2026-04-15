@@ -14,6 +14,7 @@ using UnityEngine;
 public class CardJSONConverter : EditorWindow
 {
     private const string DefaultJsonFolderPath = "Assets/Resources/JsonData";
+    private const string DefaultLocalizationFolderPath = "Assets/Resources/Localization/Cards";
     private const string DefaultOutputPath = "Assets/Data/Cards";
     private const string CardCollectionPath = "Assets/Resources/CardCollection.asset";
     private const string CardGroupsFileName = "cardGroups.json";
@@ -21,6 +22,7 @@ public class CardJSONConverter : EditorWindow
     private string jsonFolderPath = DefaultJsonFolderPath;
     private string outputPath = DefaultOutputPath;
     private Dictionary<string, List<int>> cardGroups = new();
+    private Dictionary<int, CardLocalizationEntry> cardLocalizations = new();
 
     [MenuItem("Tools/TCG/Card JSON Converter")]
     public static void ShowWindow()
@@ -171,6 +173,7 @@ public class CardJSONConverter : EditorWindow
             Directory.CreateDirectory(outputPath);
         }
         cardGroups = LoadCardGroups();
+        cardLocalizations = LoadCardLocalizations();
 
         // CardCollection SO 로드
         CardCollection collection = GetOrCreateCardCollection();
@@ -279,7 +282,7 @@ public class CardJSONConverter : EditorWindow
         }
 
         // 예상 경로에서 에셋 로드 시도
-        string candidatePath = BuildCardAssetPath(cardId, ReadJsonString(cardObject, "name"));
+        string candidatePath = BuildCardAssetPath(cardId, ResolveLocalizedCardName(cardId));
         CardData loaded = AssetDatabase.LoadAssetAtPath<CardData>(candidatePath);
         if (loaded != null) {
             return loaded;
@@ -296,11 +299,33 @@ public class CardJSONConverter : EditorWindow
     private void UpdateCardData(CardData cardData, JObject cardObject)
     {
         cardData.cardId = ReadRequiredJsonInt(cardObject, "cardId");
-        cardData.cardName = ReadRequiredJsonString(cardObject, "name");
         cardData.character = CharacterManager.GetCharacterEnumById(ReadRequiredJsonInt(cardObject, "characterId"));
         cardData.cost = ReadRequiredJsonInt(cardObject, "cost");
         cardData.costType = ParseCardCostType(ReadJsonString(cardObject, "costType", "Energy"));
-        cardData.description = ReadRequiredJsonString(cardObject, "description");
+
+        if (cardLocalizations.TryGetValue(cardData.cardId, out CardLocalizationEntry localizationEntry))
+        {
+            if (!string.IsNullOrWhiteSpace(localizationEntry.koName))
+            {
+                cardData.cardName = localizationEntry.koName;
+            }
+
+            if (!string.IsNullOrWhiteSpace(localizationEntry.koDescription))
+            {
+                cardData.description = localizationEntry.koDescription;
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"[CardJSONConverter] 카드 로컬라이징을 찾지 못했습니다: {cardData.cardId}");
+        }
+
+        if (string.IsNullOrWhiteSpace(cardData.cardName))
+        {
+            cardData.cardName = cardData.cardId.ToString();
+        }
+
+        cardData.description ??= string.Empty;
 
         cardData.enforceCardIds.Clear();
         string enforceGroup = ReadJsonString(cardObject, "enforceGroup");
@@ -368,6 +393,91 @@ public class CardJSONConverter : EditorWindow
                 }
             }
         }
+    }
+
+    private string ResolveLocalizedCardName(int cardId)
+    {
+        if (cardLocalizations.TryGetValue(cardId, out CardLocalizationEntry localizationEntry)
+            && !string.IsNullOrWhiteSpace(localizationEntry?.koName))
+        {
+            return localizationEntry.koName;
+        }
+
+        return cardId.ToString();
+    }
+
+    private Dictionary<int, CardLocalizationEntry> LoadCardLocalizations()
+    {
+        Dictionary<int, CardLocalizationEntry> map = new();
+        if (!Directory.Exists(DefaultLocalizationFolderPath))
+        {
+            Debug.LogWarning($"[CardJSONConverter] Localization folder not found: {DefaultLocalizationFolderPath}");
+            return map;
+        }
+
+        string[] localizationFiles = Directory.GetFiles(DefaultLocalizationFolderPath, "*.json");
+        foreach (string filePath in localizationFiles)
+        {
+            string jsonText;
+            try
+            {
+                jsonText = File.ReadAllText(filePath);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[CardJSONConverter] Could not read localization file {filePath}: {ex.Message}");
+                continue;
+            }
+
+            JObject root;
+            try
+            {
+                root = JObject.Parse(jsonText);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[CardJSONConverter] Invalid localization JSON in {filePath}: {ex.Message}");
+                continue;
+            }
+
+            if (root["cards"] is not JArray cardsArray)
+            {
+                Debug.LogWarning($"[CardJSONConverter] Missing 'cards' array in localization file: {filePath}");
+                continue;
+            }
+
+            foreach (JToken token in cardsArray)
+            {
+                if (token is not JObject cardObject)
+                {
+                    continue;
+                }
+
+                int cardId = ReadRequiredJsonInt(cardObject, "cardId");
+                if (cardId <= 0)
+                {
+                    continue;
+                }
+
+                map[cardId] = new CardLocalizationEntry
+                {
+                    cardId = cardId,
+                    koName = ReadJsonString(cardObject, "koName"),
+                    koDescription = ReadJsonString(cardObject, "koDescription"),
+                    enName = ReadJsonString(cardObject, "enName"),
+                    enDescription = ReadJsonString(cardObject, "enDescription"),
+                    jaName = ReadJsonString(cardObject, "jaName"),
+                    jaDescription = ReadJsonString(cardObject, "jaDescription"),
+                    zhHantName = ReadJsonString(cardObject, "zhHantName"),
+                    zhHantDescription = ReadJsonString(cardObject, "zhHantDescription"),
+                    zhHansName = ReadJsonString(cardObject, "zhHansName"),
+                    zhHansDescription = ReadJsonString(cardObject, "zhHansDescription")
+                };
+            }
+        }
+
+        Debug.Log($"[CardJSONConverter] Loaded card localizations: {map.Count}");
+        return map;
     }
 
 

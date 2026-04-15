@@ -18,7 +18,6 @@ public static class CardManager
     private class CardRuntimeJsonData
     {
         public int cardId = 0;
-        public string description = string.Empty;
         public List<int> keywords = null;
     }
 
@@ -38,7 +37,6 @@ public static class CardManager
     private static Dictionary<int, CardData> cardCache;
     private static Dictionary<Character, List<CardData>> characterCache;
     private static Dictionary<int, List<int>> keywordCache;
-    private static Dictionary<int, string> descriptionCache;
     private static Dictionary<string, List<int>> groupCache;
     private static bool isInitialized = false;
     
@@ -60,6 +58,7 @@ public static class CardManager
         }
 
         ApplyRuntimeCardData(collection.allCards);
+        CardLocalizationManager.ApplyToCards(collection.allCards);
         
         // Dictionary 캐싱 (cardId로 조회)
         cardCache = new Dictionary<int, CardData>();
@@ -97,7 +96,6 @@ public static class CardManager
         }
 
         Dictionary<int, List<int>> runtimeKeywords = LoadRuntimeKeywords();
-        Dictionary<int, string> runtimeDescriptions = LoadRuntimeDescriptions();
 
         foreach (CardData card in cards)
         {
@@ -111,10 +109,6 @@ public static class CardManager
                 card.keywords = keywords != null ? new List<int>(keywords) : new List<int>();
             }
 
-            if (runtimeDescriptions.TryGetValue(card.cardId, out string description))
-            {
-                card.description = description ?? string.Empty;
-            }
         }
     }
 
@@ -168,56 +162,6 @@ public static class CardManager
         }
 
         return keywordCache;
-    }
-
-    private static Dictionary<int, string> LoadRuntimeDescriptions()
-    {
-        if (descriptionCache != null)
-        {
-            return descriptionCache;
-        }
-
-        descriptionCache = new Dictionary<int, string>();
-        TextAsset[] jsonFiles = Resources.LoadAll<TextAsset>("JsonData");
-        foreach (TextAsset jsonFile in jsonFiles)
-        {
-            if (jsonFile == null || string.IsNullOrWhiteSpace(jsonFile.name))
-            {
-                continue;
-            }
-
-            if (!jsonFile.name.EndsWith("Cards"))
-            {
-                continue;
-            }
-
-            CardRuntimeJsonRoot root;
-            try
-            {
-                root = JsonUtility.FromJson<CardRuntimeJsonRoot>(jsonFile.text);
-            }
-            catch
-            {
-                continue;
-            }
-
-            if (root?.cards == null)
-            {
-                continue;
-            }
-
-            foreach (CardRuntimeJsonData jsonCard in root.cards)
-            {
-                if (jsonCard == null || jsonCard.cardId <= 0)
-                {
-                    continue;
-                }
-
-                descriptionCache[jsonCard.cardId] = jsonCard.description ?? string.Empty;
-            }
-        }
-
-        return descriptionCache;
     }
     
     /// <summary>
