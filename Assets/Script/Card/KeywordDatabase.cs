@@ -10,12 +10,6 @@ public class KeywordData
     public string description;
 }
 
-[System.Serializable]
-public class KeywordList
-{
-    public List<KeywordData> keywords;
-}
-
 public static class KeywordDatabase
 {
     private static bool isLoaded;
@@ -61,21 +55,12 @@ public static class KeywordDatabase
         keywordById.Clear();
         keywordIdByName.Clear();
 
-        TextAsset jsonFile = Resources.Load<TextAsset>("JsonData/keywords");
-        if (jsonFile == null)
+        if (!KeywordJsonParser.TryLoad(out List<KeywordData> keywords))
         {
-            Debug.LogWarning("[KeywordDatabase] JsonData/keywords.json을 불러오지 못했습니다");
             return;
         }
 
-        KeywordList keywordList = JsonUtility.FromJson<KeywordList>(jsonFile.text);
-        if (keywordList?.keywords == null)
-        {
-            Debug.LogWarning("[KeywordDatabase] keywords.json 형식이 올바르지 않습니다");
-            return;
-        }
-
-        foreach (KeywordData keywordData in keywordList.keywords)
+        foreach (KeywordData keywordData in keywords)
         {
             if (keywordData == null || keywordData.keywordId <= 0)
             {

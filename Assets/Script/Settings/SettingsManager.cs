@@ -95,34 +95,34 @@ public class SettingsManager : MonoBehaviour
         SFXControl.Instance.SetSFXVolume(sfxSlider.value);
     }
 
-    public void SetCardLanguageSystem()
+    public void SetGameLanguageToSystem()
     {
-        CardLocalizationManager.UseSystemLanguage();
+        LocalizationManager.UseSystemLanguage();
     }
 
-    public void SetCardLanguageKorean()
+    public void SetGameLanguageToKorean()
     {
-        CardLocalizationManager.SetCurrentLanguage(CardLocalizationLanguage.Korean);
+        LocalizationManager.SetCurrentLanguage(LocalizationLanguage.Korean);
     }
 
-    public void SetCardLanguageEnglish()
+    public void SetGameLanguageToEnglish()
     {
-        CardLocalizationManager.SetCurrentLanguage(CardLocalizationLanguage.English);
+        LocalizationManager.SetCurrentLanguage(LocalizationLanguage.English);
     }
 
-    public void SetCardLanguageJapanese()
+    public void SetGameLanguageToJapanese()
     {
-        CardLocalizationManager.SetCurrentLanguage(CardLocalizationLanguage.Japanese);
+        LocalizationManager.SetCurrentLanguage(LocalizationLanguage.Japanese);
     }
 
-    public void SetCardLanguageChineseTraditional()
+    public void SetGameLanguageToChineseTraditional()
     {
-        CardLocalizationManager.SetCurrentLanguage(CardLocalizationLanguage.ChineseTraditional);
+        LocalizationManager.SetCurrentLanguage(LocalizationLanguage.ChineseTraditional);
     }
 
-    public void SetCardLanguageChineseSimplified()
+    public void SetGameLanguageToChineseSimplified()
     {
-        CardLocalizationManager.SetCurrentLanguage(CardLocalizationLanguage.ChineseSimplified);
+        LocalizationManager.SetCurrentLanguage(LocalizationLanguage.ChineseSimplified);
     }
 
     private void InitializeResolutionState()

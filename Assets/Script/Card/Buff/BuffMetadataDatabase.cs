@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public static class BuffMetadataDatabase
 {
-    private const string BuffResourcePath = "JsonData/buffs";
-
     private static readonly Dictionary<int, BuffData> BuffDatabase = new Dictionary<int, BuffData>();
     private static readonly Dictionary<string, int> BuffIdByName = new Dictionary<string, int>(StringComparer.Ordinal);
     private static bool isLoaded;
@@ -13,6 +10,12 @@ public static class BuffMetadataDatabase
     public static void Preload()
     {
         EnsureLoaded();
+    }
+
+    public static void RefreshLocalizedText()
+    {
+        EnsureLoaded();
+        ApplyCurrentLanguage();
     }
 
     public static bool TryGetBuffData(int buffId, out BuffData data)
@@ -44,60 +47,111 @@ public static class BuffMetadataDatabase
         BuffDatabase.Clear();
         BuffIdByName.Clear();
 
-        TextAsset jsonFile = Resources.Load<TextAsset>(BuffResourcePath);
-        if (jsonFile == null)
+        if (!BuffMetadataJsonParser.TryLoad(out List<BuffMetadataJsonData> parsedBuffs))
         {
-            Debug.LogError("[BuffMetadataDatabase] buffs.json을 불러오지 못했습니다");
             return;
         }
 
-        BuffMetadataList buffList = JsonUtility.FromJson<BuffMetadataList>(jsonFile.text);
-        if (buffList?.buffs == null)
+        foreach (BuffMetadataJsonData sourceData in parsedBuffs)
         {
-            Debug.LogError("[BuffMetadataDatabase] buffs.json 형식이 올바르지 않습니다");
-            return;
-        }
-
-        foreach (BuffData sourceData in buffList.buffs)
-        {
-            if (sourceData == null)
-            {
-                continue;
-            }
-
-            BuffData runtimeData = new BuffData
-            {
-                buffId = sourceData.buffId,
-                name = sourceData.name,
-                description = sourceData.description
-            };
-
-            if (BuffDatabase.ContainsKey(runtimeData.buffId))
-            {
-                Debug.LogWarning($"[BuffMetadataDatabase] 중복 buffId가 감지되었습니다: {runtimeData.buffId}");
-                continue;
-            }
-
-            BuffDatabase.Add(runtimeData.buffId, runtimeData);
-
-            if (string.IsNullOrWhiteSpace(runtimeData.name))
-            {
-                continue;
-            }
-
-            if (BuffIdByName.ContainsKey(runtimeData.name))
-            {
-                Debug.LogWarning($"[BuffMetadataDatabase] 중복 버프 이름이 감지되었습니다: {runtimeData.name}");
-                continue;
-            }
-
-            BuffIdByName.Add(runtimeData.name, runtimeData.buffId);
+            AddRuntimeData(sourceData);
         }
     }
 
-    [Serializable]
-    private sealed class BuffMetadataList
+    private static void AddRuntimeData(BuffMetadataJsonData sourceData)
     {
-        public List<BuffData> buffs = new List<BuffData>();
+        if (sourceData == null || sourceData.buffId <= 0)
+        {
+            return;
+        }
+
+        BuffData runtimeData = CreateRuntimeData(sourceData);
+        ApplyLocalizedText(runtimeData);
+
+        if (BuffDatabase.ContainsKey(runtimeData.buffId))
+        {
+            UnityEngine.Debug.LogWarning($"[BuffMetadataDatabase] 중복 buffId가 감지되었습니다: {runtimeData.buffId}");
+            return;
+        }
+
+        BuffDatabase.Add(runtimeData.buffId, runtimeData);
+
+        string lookupName = GetLookupName(runtimeData);
+        if (string.IsNullOrWhiteSpace(lookupName))
+        {
+            return;
+        }
+
+        if (BuffIdByName.ContainsKey(lookupName))
+        {
+            UnityEngine.Debug.LogWarning($"[BuffMetadataDatabase] 중복 버프 이름이 감지되었습니다: {lookupName}");
+            return;
+        }
+
+        BuffIdByName.Add(lookupName, runtimeData.buffId);
+    }
+
+    private static BuffData CreateRuntimeData(BuffMetadataJsonData sourceData)
+    {
+        return new BuffData
+        {
+            buffId = sourceData.buffId,
+            name = sourceData.name,
+            description = sourceData.description,
+            koName = sourceData.name,
+            koDescription = sourceData.description,
+            enName = sourceData.enName,
+            enDescription = sourceData.enDescription,
+            jaName = sourceData.jaName,
+            jaDescription = sourceData.jaDescription,
+            zhHantName = sourceData.zhHantName,
+            zhHantDescription = sourceData.zhHantDescription,
+            zhHansName = sourceData.zhHansName,
+            zhHansDescription = sourceData.zhHansDescription
+        };
+    }
+
+    private static void ApplyCurrentLanguage()
+    {
+        foreach (BuffData runtimeData in BuffDatabase.Values)
+        {
+            ApplyLocalizedText(runtimeData);
+        }
+    }
+
+    private static void ApplyLocalizedText(BuffData runtimeData)
+    {
+        if (runtimeData == null)
+        {
+            return;
+        }
+
+        LocalizationLanguage currentLanguage = LocalizationManager.GetCurrentLanguage();
+        runtimeData.name = LocalizationManager.ResolveLocalizedText(
+            currentLanguage,
+            runtimeData.koName,
+            runtimeData.enName,
+            runtimeData.jaName,
+            runtimeData.zhHantName,
+            runtimeData.zhHansName,
+            runtimeData.name);
+        runtimeData.description = LocalizationManager.ResolveLocalizedText(
+            currentLanguage,
+            runtimeData.koDescription,
+            runtimeData.enDescription,
+            runtimeData.jaDescription,
+            runtimeData.zhHantDescription,
+            runtimeData.zhHansDescription,
+            runtimeData.description);
+    }
+
+    private static string GetLookupName(BuffData runtimeData)
+    {
+        if (!string.IsNullOrWhiteSpace(runtimeData?.koName))
+        {
+            return runtimeData.koName;
+        }
+
+        return runtimeData?.name ?? string.Empty;
     }
 }

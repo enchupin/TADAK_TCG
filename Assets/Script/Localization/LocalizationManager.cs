@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum CardLocalizationLanguage
+public enum LocalizationLanguage
 {
     Korean,
     English,
@@ -33,13 +33,13 @@ public class CardLocalizationEntry
     public string zhHansDescription;
 }
 
-public static class CardLocalizationManager
+public static class LocalizationManager
 {
     private const string LocalizationResourcePath = "Localization/Cards";
-    private const string LanguagePlayerPrefsKey = "CardLocalization.Language";
+    private const string LanguagePlayerPrefsKey = "Localization.Language";
 
     private static bool isInitialized;
-    private static CardLocalizationLanguage currentLanguage = CardLocalizationLanguage.Korean;
+    private static LocalizationLanguage currentLanguage = LocalizationLanguage.Korean;
     private static readonly Dictionary<int, CardLocalizationEntry> localizedEntriesById = new();
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -48,7 +48,7 @@ public static class CardLocalizationManager
         EnsureInitialized();
     }
 
-    public static CardLocalizationLanguage GetCurrentLanguage()
+    public static LocalizationLanguage GetCurrentLanguage()
     {
         EnsureInitialized();
         return currentLanguage;
@@ -65,16 +65,67 @@ public static class CardLocalizationManager
         EnsureInitialized();
         currentLanguage = ResolveSystemLanguage(Application.systemLanguage);
         PlayerPrefs.DeleteKey(LanguagePlayerPrefsKey);
+        BuffMetadataDatabase.RefreshLocalizedText();
         ApplyToAllCards();
     }
 
-    public static void SetCurrentLanguage(CardLocalizationLanguage language)
+    public static void SetCurrentLanguage(LocalizationLanguage language)
     {
         EnsureInitialized();
         currentLanguage = language;
         PlayerPrefs.SetString(LanguagePlayerPrefsKey, ToLanguageCode(language));
         PlayerPrefs.Save();
+        BuffMetadataDatabase.RefreshLocalizedText();
         ApplyToAllCards();
+    }
+
+    public static string ResolveLocalizedText(
+        string koreanText,
+        string englishText,
+        string japaneseText,
+        string chineseTraditionalText,
+        string chineseSimplifiedText,
+        string fallbackText = "")
+    {
+        EnsureInitialized();
+        return ResolveLocalizedText(
+            currentLanguage,
+            koreanText,
+            englishText,
+            japaneseText,
+            chineseTraditionalText,
+            chineseSimplifiedText,
+            fallbackText);
+    }
+
+    public static string ResolveLocalizedText(
+        LocalizationLanguage language,
+        string koreanText,
+        string englishText,
+        string japaneseText,
+        string chineseTraditionalText,
+        string chineseSimplifiedText,
+        string fallbackText = "")
+    {
+        string localizedText = GetLocalizedText(
+            language,
+            koreanText,
+            englishText,
+            japaneseText,
+            chineseTraditionalText,
+            chineseSimplifiedText);
+
+        if (!string.IsNullOrWhiteSpace(localizedText))
+        {
+            return localizedText;
+        }
+
+        if (!string.IsNullOrWhiteSpace(koreanText))
+        {
+            return koreanText;
+        }
+
+        return fallbackText ?? string.Empty;
     }
 
     public static bool TryGetLocalizedCardName(int cardId, out string localizedName)
@@ -135,7 +186,7 @@ public static class CardLocalizationManager
         TextAsset[] jsonFiles = Resources.LoadAll<TextAsset>(LocalizationResourcePath);
         if (jsonFiles == null || jsonFiles.Length == 0)
         {
-            Debug.LogWarning("[CardLocalizationManager] 카드 로컬라이징 파일을 찾지 못했습니다");
+            Debug.LogWarning("[LocalizationManager] 카드 로컬라이징 파일을 찾지 못했습니다");
             return;
         }
 
@@ -153,13 +204,13 @@ public static class CardLocalizationManager
             }
             catch
             {
-                Debug.LogWarning($"[CardLocalizationManager] 로컬라이징 파일 파싱에 실패했습니다: {jsonFile.name}");
+                Debug.LogWarning($"[LocalizationManager] 로컬라이징 파일 파싱에 실패했습니다: {jsonFile.name}");
                 continue;
             }
 
             if (table?.cards == null)
             {
-                Debug.LogWarning($"[CardLocalizationManager] 로컬라이징 파일 형식이 올바르지 않습니다: {jsonFile.name}");
+                Debug.LogWarning($"[LocalizationManager] 로컬라이징 파일 형식이 올바르지 않습니다: {jsonFile.name}");
                 continue;
             }
 
@@ -180,7 +231,7 @@ public static class CardLocalizationManager
         if (PlayerPrefs.HasKey(LanguagePlayerPrefsKey))
         {
             string languageCode = PlayerPrefs.GetString(LanguagePlayerPrefsKey);
-            if (TryParseLanguageCode(languageCode, out CardLocalizationLanguage savedLanguage))
+            if (TryParseLanguageCode(languageCode, out LocalizationLanguage savedLanguage))
             {
                 currentLanguage = savedLanguage;
                 return;
@@ -203,81 +254,82 @@ public static class CardLocalizationManager
 
     private static string ResolveLocalizedCardName(int cardId, string fallbackText)
     {
-        return ResolveLocalizedText(cardId, true, fallbackText);
+        if (!localizedEntriesById.TryGetValue(cardId, out CardLocalizationEntry entry) || entry == null)
+        {
+            return fallbackText ?? string.Empty;
+        }
+
+        return ResolveLocalizedText(
+            entry.koName,
+            entry.enName,
+            entry.jaName,
+            entry.zhHantName,
+            entry.zhHansName,
+            fallbackText);
     }
 
     private static string ResolveLocalizedCardDescription(int cardId, string fallbackText)
-    {
-        return ResolveLocalizedText(cardId, false, fallbackText);
-    }
-
-    private static string ResolveLocalizedText(int cardId, bool useName, string fallbackText)
     {
         if (!localizedEntriesById.TryGetValue(cardId, out CardLocalizationEntry entry) || entry == null)
         {
             return fallbackText ?? string.Empty;
         }
 
-        string localizedText = GetLocalizedText(entry, currentLanguage, useName);
-        if (!string.IsNullOrWhiteSpace(localizedText))
-        {
-            return localizedText;
-        }
-
-        string koreanText = GetLocalizedText(entry, CardLocalizationLanguage.Korean, useName);
-        if (!string.IsNullOrWhiteSpace(koreanText))
-        {
-            return koreanText;
-        }
-
-        return fallbackText ?? string.Empty;
+        return ResolveLocalizedText(
+            entry.koDescription,
+            entry.enDescription,
+            entry.jaDescription,
+            entry.zhHantDescription,
+            entry.zhHansDescription,
+            fallbackText);
     }
 
-    private static string GetLocalizedText(CardLocalizationEntry entry, CardLocalizationLanguage language, bool useName)
+    private static string GetLocalizedText(
+        LocalizationLanguage language,
+        string koreanText,
+        string englishText,
+        string japaneseText,
+        string chineseTraditionalText,
+        string chineseSimplifiedText)
     {
-        if (entry == null)
-        {
-            return string.Empty;
-        }
-
         return language switch
         {
-            CardLocalizationLanguage.Korean => useName ? entry.koName : entry.koDescription,
-            CardLocalizationLanguage.English => useName ? entry.enName : entry.enDescription,
-            CardLocalizationLanguage.Japanese => useName ? entry.jaName : entry.jaDescription,
-            CardLocalizationLanguage.ChineseTraditional => useName ? entry.zhHantName : entry.zhHantDescription,
-            CardLocalizationLanguage.ChineseSimplified => useName ? entry.zhHansName : entry.zhHansDescription,
+            LocalizationLanguage.Korean => koreanText,
+            LocalizationLanguage.English => englishText,
+            LocalizationLanguage.Japanese => japaneseText,
+            LocalizationLanguage.ChineseTraditional => chineseTraditionalText,
+            LocalizationLanguage.ChineseSimplified => chineseSimplifiedText,
             _ => string.Empty
         };
     }
 
-    private static CardLocalizationLanguage ResolveSystemLanguage(SystemLanguage systemLanguage)
+    private static LocalizationLanguage ResolveSystemLanguage(SystemLanguage systemLanguage)
     {
         return systemLanguage switch
         {
-            SystemLanguage.English => CardLocalizationLanguage.English,
-            SystemLanguage.Japanese => CardLocalizationLanguage.Japanese,
-            SystemLanguage.ChineseTraditional => CardLocalizationLanguage.ChineseTraditional,
-            SystemLanguage.ChineseSimplified => CardLocalizationLanguage.ChineseSimplified,
-            _ => CardLocalizationLanguage.Korean
+            SystemLanguage.English => LocalizationLanguage.English,
+            SystemLanguage.Japanese => LocalizationLanguage.Japanese,
+            SystemLanguage.ChineseTraditional => LocalizationLanguage.ChineseTraditional,
+            SystemLanguage.ChineseSimplified => LocalizationLanguage.ChineseSimplified,
+            _ => LocalizationLanguage.Korean
         };
     }
 
-    private static string ToLanguageCode(CardLocalizationLanguage language)
+    private static string ToLanguageCode(LocalizationLanguage language)
     {
         return language switch
         {
-            CardLocalizationLanguage.English => "en",
-            CardLocalizationLanguage.Japanese => "ja",
-            CardLocalizationLanguage.ChineseTraditional => "zh-Hant",
-            CardLocalizationLanguage.ChineseSimplified => "zh-Hans",
+            LocalizationLanguage.English => "en",
+            LocalizationLanguage.Japanese => "ja",
+            LocalizationLanguage.ChineseTraditional => "zh-Hant",
+            LocalizationLanguage.ChineseSimplified => "zh-Hans",
             _ => "ko"
         };
     }
 
-    private static bool TryParseLanguageCode(string languageCode, out CardLocalizationLanguage language)
+    private static bool TryParseLanguageCode(string languageCode, out LocalizationLanguage language)
     {
-        language = CardLocalizationLanguage.Korean;
+        language = LocalizationLanguage.Korean;
         if (string.IsNullOrWhiteSpace(languageCode))
         {
             return false;
@@ -286,23 +338,23 @@ public static class CardLocalizationManager
         switch (languageCode.Trim())
         {
             case "ko":
-                language = CardLocalizationLanguage.Korean;
+                language = LocalizationLanguage.Korean;
                 return true;
 
             case "en":
-                language = CardLocalizationLanguage.English;
+                language = LocalizationLanguage.English;
                 return true;
 
             case "ja":
-                language = CardLocalizationLanguage.Japanese;
+                language = LocalizationLanguage.Japanese;
                 return true;
 
             case "zh-Hant":
-                language = CardLocalizationLanguage.ChineseTraditional;
+                language = LocalizationLanguage.ChineseTraditional;
                 return true;
 
             case "zh-Hans":
-                language = CardLocalizationLanguage.ChineseSimplified;
+                language = LocalizationLanguage.ChineseSimplified;
                 return true;
 
             default:
