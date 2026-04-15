@@ -38,6 +38,8 @@ public static class LocalizationManager
     private const string LocalizationResourcePath = "Localization/Cards";
     private const string LanguagePlayerPrefsKey = "Localization.Language";
 
+    public static event Action LanguageChanged;
+
     private static bool isInitialized;
     private static LocalizationLanguage currentLanguage = LocalizationLanguage.Korean;
     private static readonly Dictionary<int, CardLocalizationEntry> localizedEntriesById = new();
@@ -67,6 +69,9 @@ public static class LocalizationManager
         PlayerPrefs.DeleteKey(LanguagePlayerPrefsKey);
         BuffMetadataDatabase.RefreshLocalizedText();
         ApplyToAllCards();
+        ApplyToCurrentRunDeck();
+        RefreshActiveCardControllers();
+        LanguageChanged?.Invoke();
     }
 
     public static void SetCurrentLanguage(LocalizationLanguage language)
@@ -77,6 +82,9 @@ public static class LocalizationManager
         PlayerPrefs.Save();
         BuffMetadataDatabase.RefreshLocalizedText();
         ApplyToAllCards();
+        ApplyToCurrentRunDeck();
+        RefreshActiveCardControllers();
+        LanguageChanged?.Invoke();
     }
 
     public static string ResolveLocalizedText(
@@ -156,6 +164,32 @@ public static class LocalizationManager
         }
     }
 
+    public static void ApplyToRuntimeCard(Card card)
+    {
+        EnsureInitialized();
+        if (card == null || card.cardId <= 0)
+        {
+            return;
+        }
+
+        card.cardName = ResolveLocalizedCardName(card.cardId, card.cardName);
+        card.description = ResolveLocalizedCardDescription(card.cardId, card.description);
+    }
+
+    public static void ApplyToRuntimeCards(IEnumerable<Card> cards)
+    {
+        EnsureInitialized();
+        if (cards == null)
+        {
+            return;
+        }
+
+        foreach (Card card in cards)
+        {
+            ApplyToRuntimeCard(card);
+        }
+    }
+
     public static void ApplyToAllCards()
     {
         EnsureInitialized();
@@ -165,6 +199,31 @@ public static class LocalizationManager
         }
 
         ApplyToCards(CardManager.GetAllCards());
+    }
+
+    private static void ApplyToCurrentRunDeck()
+    {
+        if (TrainingBattleManager.buildingDeck == null)
+        {
+            return;
+        }
+
+        TrainingBattleManager.buildingDeck.RefreshLocalizedTexts();
+    }
+
+    private static void RefreshActiveCardControllers()
+    {
+        CardController[] controllers = UnityEngine.Object.FindObjectsByType<CardController>(FindObjectsInactive.Exclude);
+        foreach (CardController controller in controllers)
+        {
+            if (controller == null || controller.Card == null || controller.cardUI == null)
+            {
+                continue;
+            }
+
+            ApplyToRuntimeCard(controller.Card);
+            controller.cardUI.UpdateDisplay(controller.Card);
+        }
     }
 
     private static void EnsureInitialized()

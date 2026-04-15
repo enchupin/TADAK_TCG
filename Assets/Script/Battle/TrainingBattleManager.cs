@@ -137,6 +137,16 @@ public class TrainingBattleManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        LocalizationManager.LanguageChanged += HandleLanguageChanged;
+    }
+
+    private void OnDisable()
+    {
+        LocalizationManager.LanguageChanged -= HandleLanguageChanged;
+    }
+
     private void Start()
     {
         CardPlayEvents.OnCardPlayed += HandleCardClicked;
@@ -169,6 +179,12 @@ public class TrainingBattleManager : MonoBehaviour
         {
             instantWinButton.onClick.RemoveListener(OnClickInstantWin);
         }
+    }
+
+    private void HandleLanguageChanged()
+    {
+        RefreshLocalizedRuntimeCards();
+        UpdateAllUI();
     }
 
     private void CreateInstantWinButton()
@@ -1617,6 +1633,21 @@ public class TrainingBattleManager : MonoBehaviour
         }
 
         handManager.RefreshCardDisplays(handManager.GetHandCards());
+    }
+
+    private void RefreshLocalizedRuntimeCards()
+    {
+        if (handManager != null)
+        {
+            LocalizationManager.ApplyToRuntimeCards(handManager.GetHandCards());
+        }
+
+        if (usableDeckManager != null)
+        {
+            LocalizationManager.ApplyToRuntimeCards(usableDeckManager.GetDrawPile());
+            LocalizationManager.ApplyToRuntimeCards(usableDeckManager.GetDiscardPile());
+            LocalizationManager.ApplyToRuntimeCards(usableDeckManager.GetExhaustPile());
+        }
     }
 
     public bool OpenSelectCardPanel(List<Card> selectableCards, int selectCount, Action<List<Card>> onSelected, bool allowFewer = false)

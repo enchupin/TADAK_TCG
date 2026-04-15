@@ -167,6 +167,8 @@ public class BuildingDeck
                 ? new List<int>(sourceCard.keywords)
                 : new List<int>();
 
+            LocalizationManager.ApplyToRuntimeCard(clonedCard);
+
             copiedDeck.Add(clonedCard);
         }
 
@@ -188,6 +190,14 @@ public class BuildingDeck
         }
 
         return cardIds;
+    }
+
+    public void RefreshLocalizedTexts()
+    {
+        foreach (Card card in deckList)
+        {
+            LocalizationManager.ApplyToRuntimeCard(card);
+        }
     }
 
     private bool ViolatesUniqueRule(Card newCard, int ignoredIndex = -1)
