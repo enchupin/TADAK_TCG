@@ -13,6 +13,10 @@ using static BattleRuntimeDefinitions;
 /// </summary>
 public class CardUI : MonoBehaviour
 {
+    private static readonly Regex BuffTooltipPlaceholderPattern = new(@"\{(?<content>[^{}]+)\}", RegexOptions.Compiled);
+    private static readonly Regex BuffTooltipMultipleWhitespacePattern = new(@"\s{2,}", RegexOptions.Compiled);
+    private static readonly Regex BuffTooltipWhitespaceBeforePunctuationPattern = new(@"\s+([.,!?])", RegexOptions.Compiled);
+
     [Header("UI Components")]
     [SerializeField] private TextMeshProUGUI cardNameText;
     [SerializeField] private TextMeshProUGUI costText;
@@ -141,30 +145,7 @@ public class CardUI : MonoBehaviour
 
     private static string GetKeywordDisplayName(int keywordId)
     {
-        if (keywordId == CardKeywordIds.Repeat)
-        {
-            return "\ubc18\ubcf5";
-        }
-
-        string keywordName = KeywordDatabase.GetKeywordName(keywordId);
-        if (!string.IsNullOrWhiteSpace(keywordName))
-        {
-            return keywordName;
-        }
-
-        return keywordId switch
-        {
-            CardKeywordIds.Keep => "보존",
-            CardKeywordIds.Unplayable => "사용불가",
-            CardKeywordIds.Exhaust => "소멸",
-            CardKeywordIds.Power => "파워",
-            CardKeywordIds.Opening => "개시",
-            CardKeywordIds.Shadow => "그림자",
-            CardKeywordIds.Finale => "종언",
-            CardKeywordIds.Ghost => "유령",
-            CardKeywordIds.Unique => "유일",
-            _ => string.Empty
-        };
+        return KeywordDatabase.GetKeywordName(keywordId);
     }
 
     private string BuildBuffTooltipText(Card card)
@@ -325,7 +306,7 @@ public class CardUI : MonoBehaviour
                 continue;
             }
 
-            AppendTooltipEntry(builder, buffData.name, buffData.description);
+            AppendTooltipEntry(builder, buffData.name, FormatBuffTooltipDescription(buffData.description));
         }
     }
 
@@ -361,6 +342,28 @@ public class CardUI : MonoBehaviour
 
             builder.Append(description);
         }
+    }
+
+    private static string FormatBuffTooltipDescription(string description)
+    {
+        if (string.IsNullOrWhiteSpace(description))
+        {
+            return string.Empty;
+        }
+
+        return CleanupCommonBuffTooltipText(BuffTooltipPlaceholderPattern.Replace(description, string.Empty));
+    }
+
+    private static string CleanupCommonBuffTooltipText(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return string.Empty;
+        }
+
+        string cleaned = BuffTooltipMultipleWhitespacePattern.Replace(text, " ");
+        cleaned = BuffTooltipWhitespaceBeforePunctuationPattern.Replace(cleaned, "$1");
+        return cleaned.Trim();
     }
 
     private void CacheTooltipReferences()

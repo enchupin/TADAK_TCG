@@ -4031,6 +4031,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 9117329575968734381, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
   m_PrefabInstance: {fileID: 950367771}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1849256570 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6385272410774431951, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
+  m_PrefabInstance: {fileID: 6675620187246216497}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2cf06d0ab1b47db9f0aa64964e6baf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SettingsManager
 --- !u!1 &1912877253
 GameObject:
   m_ObjectHideFlags: 0
@@ -4786,6 +4797,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: SystemManager
       objectReference: {fileID: 0}
+    - target: {fileID: 1032971206086289870, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1032971206086289870, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1997011319094007253, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1849256570}
+    - target: {fileID: 1997011319094007253, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetGameLanguageToRussian
+      objectReference: {fileID: 0}
+    - target: {fileID: 1997011319094007253, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SettingsManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 1997011319094007253, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 4097932843644192594, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
       propertyPath: m_LocalPosition.x
       value: 684.6167
@@ -4825,6 +4860,58 @@ PrefabInstance:
     - target: {fileID: 4097932843644192594, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4911959074882686006, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4911959074882686006, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5184451928602008087, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1849256570}
+    - target: {fileID: 5184451928602008087, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetGameLanguageToJapanese
+      objectReference: {fileID: 0}
+    - target: {fileID: 5184451928602008087, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SettingsManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5184451928602008087, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 8514823382531731635, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8514823382531731635, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8514823382531731635, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8592992185003561083, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9123714322257067398, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 9123714322257067398, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9123714322257067398, guid: ff373f849bbc1db459bc8d03b9151849, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

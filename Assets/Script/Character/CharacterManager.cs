@@ -5,21 +5,6 @@ public static class CharacterManager
 {
     private static readonly int[] StarterDeckOffsets = { 10, 20, 30, 40, 50, 60, 70 };
 
-    [System.Serializable]
-    private sealed class CharacterJsonRoot
-    {
-        public List<CharacterJsonData> characters = new List<CharacterJsonData>();
-    }
-
-    [System.Serializable]
-    private sealed class CharacterJsonData
-    {
-        public int characterId = 0;
-        public string name = string.Empty;
-        public int maxHp = 0;
-        public string characterColor = string.Empty;
-    }
-
     private static Dictionary<int, CharacterData> characterCache;
     private static bool isInitialized = false;
 
@@ -31,19 +16,8 @@ public static class CharacterManager
             return;
         }
 
-        TextAsset jsonFile = Resources.Load<TextAsset>("JsonData/characters");
-        if (jsonFile == null)
+        if (!CharacterJsonParser.TryLoad(out List<CharacterJsonEntry> characters))
         {
-            Debug.LogError("[CharacterManager] characters.json을 불러오지 못했습니다");
-            characterCache = new Dictionary<int, CharacterData>();
-            isInitialized = true;
-            return;
-        }
-
-        CharacterJsonRoot root = JsonUtility.FromJson<CharacterJsonRoot>(jsonFile.text);
-        if (root?.characters == null || root.characters.Count == 0)
-        {
-            Debug.LogWarning("[CharacterManager] characters.json이 비어 있습니다");
             characterCache = new Dictionary<int, CharacterData>();
             isInitialized = true;
             return;
@@ -53,7 +27,7 @@ public static class CharacterManager
         BattleRuntimeDefinitions.Initialize();
 
         characterCache = new Dictionary<int, CharacterData>();
-        foreach (CharacterJsonData sourceCharacter in root.characters)
+        foreach (CharacterJsonEntry sourceCharacter in characters)
         {
             if (sourceCharacter == null)
             {

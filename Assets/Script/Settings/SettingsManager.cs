@@ -95,6 +95,41 @@ public class SettingsManager : MonoBehaviour
         SFXControl.Instance.SetSFXVolume(sfxSlider.value);
     }
 
+    public void SetGameLanguageToSystem()
+    {
+        LocalizationManager.UseSystemLanguage();
+    }
+
+    public void SetGameLanguageToKorean()
+    {
+        LocalizationManager.SetCurrentLanguage(LocalizationLanguage.Korean);
+    }
+
+    public void SetGameLanguageToEnglish()
+    {
+        LocalizationManager.SetCurrentLanguage(LocalizationLanguage.English);
+    }
+
+    public void SetGameLanguageToJapanese()
+    {
+        LocalizationManager.SetCurrentLanguage(LocalizationLanguage.Japanese);
+    }
+
+    public void SetGameLanguageToChineseTraditional()
+    {
+        LocalizationManager.SetCurrentLanguage(LocalizationLanguage.ChineseTraditional);
+    }
+
+    public void SetGameLanguageToChineseSimplified()
+    {
+        LocalizationManager.SetCurrentLanguage(LocalizationLanguage.ChineseSimplified);
+    }
+
+    public void SetGameLanguageToRussian()
+    {
+        LocalizationManager.SetCurrentLanguage(LocalizationLanguage.Russian);
+    }
+
     private void InitializeResolutionState()
     {
         Vector2Int currentResolution = GetCurrentResolution();
