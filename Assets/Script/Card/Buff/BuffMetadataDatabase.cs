@@ -107,7 +107,9 @@ public static class BuffMetadataDatabase
             zhHantName = sourceData.zhHantName,
             zhHantDescription = sourceData.zhHantDescription,
             zhHansName = sourceData.zhHansName,
-            zhHansDescription = sourceData.zhHansDescription
+            zhHansDescription = sourceData.zhHansDescription,
+            ruName = sourceData.ruName,
+            ruDescription = sourceData.ruDescription
         };
     }
 
@@ -134,6 +136,7 @@ public static class BuffMetadataDatabase
             runtimeData.jaName,
             runtimeData.zhHantName,
             runtimeData.zhHansName,
+            runtimeData.ruName,
             runtimeData.name);
         runtimeData.description = LocalizationManager.ResolveLocalizedText(
             currentLanguage,
@@ -142,6 +145,7 @@ public static class BuffMetadataDatabase
             runtimeData.jaDescription,
             runtimeData.zhHantDescription,
             runtimeData.zhHansDescription,
+            runtimeData.ruDescription,
             runtimeData.description);
     }
 

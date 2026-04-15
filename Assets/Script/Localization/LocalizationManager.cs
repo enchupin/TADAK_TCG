@@ -8,7 +8,8 @@ public enum LocalizationLanguage
     English,
     Japanese,
     ChineseTraditional,
-    ChineseSimplified
+    ChineseSimplified,
+    Russian
 }
 
 [Serializable]
@@ -31,6 +32,8 @@ public class CardLocalizationEntry
     public string zhHantDescription;
     public string zhHansName;
     public string zhHansDescription;
+    public string ruName;
+    public string ruDescription;
 }
 
 public static class LocalizationManager
@@ -93,6 +96,7 @@ public static class LocalizationManager
         string japaneseText,
         string chineseTraditionalText,
         string chineseSimplifiedText,
+        string russianText,
         string fallbackText = "")
     {
         EnsureInitialized();
@@ -103,6 +107,7 @@ public static class LocalizationManager
             japaneseText,
             chineseTraditionalText,
             chineseSimplifiedText,
+            russianText,
             fallbackText);
     }
 
@@ -113,6 +118,7 @@ public static class LocalizationManager
         string japaneseText,
         string chineseTraditionalText,
         string chineseSimplifiedText,
+        string russianText,
         string fallbackText = "")
     {
         string localizedText = GetLocalizedText(
@@ -121,11 +127,17 @@ public static class LocalizationManager
             englishText,
             japaneseText,
             chineseTraditionalText,
-            chineseSimplifiedText);
+            chineseSimplifiedText,
+            russianText);
 
         if (!string.IsNullOrWhiteSpace(localizedText))
         {
             return localizedText;
+        }
+
+        if (language == LocalizationLanguage.Russian && !string.IsNullOrWhiteSpace(englishText))
+        {
+            return englishText;
         }
 
         if (!string.IsNullOrWhiteSpace(koreanText))
@@ -324,6 +336,7 @@ public static class LocalizationManager
             entry.jaName,
             entry.zhHantName,
             entry.zhHansName,
+            entry.ruName,
             fallbackText);
     }
 
@@ -340,6 +353,7 @@ public static class LocalizationManager
             entry.jaDescription,
             entry.zhHantDescription,
             entry.zhHansDescription,
+            entry.ruDescription,
             fallbackText);
     }
 
@@ -349,7 +363,8 @@ public static class LocalizationManager
         string englishText,
         string japaneseText,
         string chineseTraditionalText,
-        string chineseSimplifiedText)
+        string chineseSimplifiedText,
+        string russianText)
     {
         return language switch
         {
@@ -358,6 +373,7 @@ public static class LocalizationManager
             LocalizationLanguage.Japanese => japaneseText,
             LocalizationLanguage.ChineseTraditional => chineseTraditionalText,
             LocalizationLanguage.ChineseSimplified => chineseSimplifiedText,
+            LocalizationLanguage.Russian => russianText,
             _ => string.Empty
         };
     }
@@ -370,6 +386,7 @@ public static class LocalizationManager
             SystemLanguage.Japanese => LocalizationLanguage.Japanese,
             SystemLanguage.ChineseTraditional => LocalizationLanguage.ChineseTraditional,
             SystemLanguage.ChineseSimplified => LocalizationLanguage.ChineseSimplified,
+            SystemLanguage.Russian => LocalizationLanguage.Russian,
             _ => LocalizationLanguage.Korean
         };
     }
@@ -382,6 +399,7 @@ public static class LocalizationManager
             LocalizationLanguage.Japanese => "ja",
             LocalizationLanguage.ChineseTraditional => "zh-Hant",
             LocalizationLanguage.ChineseSimplified => "zh-Hans",
+            LocalizationLanguage.Russian => "ru",
             _ => "ko"
         };
     }
@@ -414,6 +432,10 @@ public static class LocalizationManager
 
             case "zh-Hans":
                 language = LocalizationLanguage.ChineseSimplified;
+                return true;
+
+            case "ru":
+                language = LocalizationLanguage.Russian;
                 return true;
 
             default:

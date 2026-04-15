@@ -125,6 +125,11 @@ public class SettingsManager : MonoBehaviour
         LocalizationManager.SetCurrentLanguage(LocalizationLanguage.ChineseSimplified);
     }
 
+    public void SetGameLanguageToRussian()
+    {
+        LocalizationManager.SetCurrentLanguage(LocalizationLanguage.Russian);
+    }
+
     private void InitializeResolutionState()
     {
         Vector2Int currentResolution = GetCurrentResolution();

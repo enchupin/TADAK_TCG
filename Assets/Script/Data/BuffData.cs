@@ -18,6 +18,8 @@ public class BuffData
     public string zhHantDescription;
     public string zhHansName;
     public string zhHansDescription;
+    public string ruName;
+    public string ruDescription;
 
     public static bool IsBeneficialBuffId(int targetBuffId)
     {

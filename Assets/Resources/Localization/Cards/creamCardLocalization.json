@@ -11,7 +11,9 @@
             "zhHantName": "治癒魔法",
             "zhHantDescription": "恢復{amount}點生命值。",
             "zhHansName": "治愈魔法",
-            "zhHansDescription": "恢复{amount}点生命值。"
+            "zhHansDescription": "恢复{amount}点生命值。",
+            "ruName": "Исцеляющая магия",
+            "ruDescription": "Восстановите {amount} здоровья."
         },
         {
             "cardId": 103020,
@@ -24,7 +26,9 @@
             "zhHantName": "守護魔法",
             "zhHantDescription": "獲得{amount}點護盾。",
             "zhHansName": "守护魔法",
-            "zhHansDescription": "获得{amount}点护盾。"
+            "zhHansDescription": "获得{amount}点护盾。",
+            "ruName": "Магия защиты",
+            "ruDescription": "Получите {amount} барьера."
         },
         {
             "cardId": 103030,
@@ -37,7 +41,9 @@
             "zhHantName": "神聖祝福",
             "zhHantDescription": "恢復{amount}點生命值。抽{amount2}張牌。",
             "zhHansName": "神圣祝福",
-            "zhHansDescription": "恢复{amount}点生命值。抽{amount2}张牌。"
+            "zhHansDescription": "恢复{amount}点生命值。抽{amount2}张牌。",
+            "ruName": "Святое благословение",
+            "ruDescription": "Восстановите {amount} здоровья. Возьмите {amount2} карт."
         },
         {
             "cardId": 103031,
@@ -50,7 +56,9 @@
             "zhHantName": "神聖祝福 +",
             "zhHantDescription": "恢復{amount}點生命值。抽{amount2}張牌。",
             "zhHansName": "神圣祝福 +",
-            "zhHansDescription": "恢复{amount}点生命值。抽{amount2}张牌。"
+            "zhHansDescription": "恢复{amount}点生命值。抽{amount2}张牌。",
+            "ruName": "Святое благословение +",
+            "ruDescription": "Восстановите {amount} здоровья. Возьмите {amount2} карт."
         },
         {
             "cardId": 103032,
@@ -63,7 +71,9 @@
             "zhHantName": "神聖祝福 +",
             "zhHantDescription": "抽{amount}張牌。若抽到的是克琳牌，獲得{amount2}點護盾。",
             "zhHansName": "神圣祝福 +",
-            "zhHansDescription": "抽{amount}张牌。若抽到的是克琳牌，获得{amount2}点护盾。"
+            "zhHansDescription": "抽{amount}张牌。若抽到的是克琳牌，获得{amount2}点护盾。",
+            "ruName": "Святое благословение +",
+            "ruDescription": "Возьмите {amount} карт. Если среди взятых карт есть карта Крим, получите {amount2} барьера."
         },
         {
             "cardId": 103033,
@@ -76,7 +86,9 @@
             "zhHantName": "神聖祝福 +",
             "zhHantDescription": "獲得{amount}點護盾。此牌費用增加1。",
             "zhHansName": "神圣祝福 +",
-            "zhHansDescription": "获得{amount}点护盾。此牌费用增加1。"
+            "zhHansDescription": "获得{amount}点护盾。此牌费用增加1。",
+            "ruName": "Святое благословение +",
+            "ruDescription": "Получите {amount} барьера. Увеличьте стоимость этой карты на 1."
         },
         {
             "cardId": 103034,
@@ -89,7 +101,9 @@
             "zhHantName": "神聖祝福 +",
             "zhHantDescription": "所有未強化的牌都會隨機強化。已強化的牌不會觸發好奇心。",
             "zhHansName": "神圣祝福 +",
-            "zhHansDescription": "所有未强化的牌都会随机强化。已强化的牌不会触发好奇心。"
+            "zhHansDescription": "所有未强化的牌都会随机强化。已强化的牌不会触发好奇心。",
+            "ruName": "Святое благословение +",
+            "ruDescription": "Все неулучшенные карты случайным образом улучшаются. Улучшенные карты не активируют Любопытство."
         },
         {
             "cardId": 103035,
@@ -102,7 +116,9 @@
             "zhHantName": "神聖祝福 +",
             "zhHantDescription": "從手中選擇1張未強化的牌，在本場戰鬥中將其強化。",
             "zhHansName": "神圣祝福 +",
-            "zhHansDescription": "从手中选择1张未强化的牌，在本场战斗中将其强化。"
+            "zhHansDescription": "从手中选择1张未强化的牌，在本场战斗中将其强化。",
+            "ruName": "Святое благословение +",
+            "ruDescription": "Выберите 1 неулучшенную карту в руке. Улучшите её до конца этого боя."
         },
         {
             "cardId": 103040,
@@ -115,7 +131,9 @@
             "zhHantName": "正當契約",
             "zhHantDescription": "契約: 獲得{amount}張牌。",
             "zhHansName": "正当契约",
-            "zhHansDescription": "契约: 获得{amount}张牌。"
+            "zhHansDescription": "契约: 获得{amount}张牌。",
+            "ruName": "Праведный контракт",
+            "ruDescription": "Контракт: получите {amount} карт."
         },
         {
             "cardId": 103041,
@@ -128,7 +146,9 @@
             "zhHantName": "正當契約 +",
             "zhHantDescription": "契約: 獲得{amount}張牌。",
             "zhHansName": "正当契约 +",
-            "zhHansDescription": "契约: 获得{amount}张牌。"
+            "zhHansDescription": "契约: 获得{amount}张牌。",
+            "ruName": "Праведный контракт +",
+            "ruDescription": "Контракт: получите {amount} карт."
         },
         {
             "cardId": 103042,
@@ -141,7 +161,9 @@
             "zhHantName": "正當契約 +",
             "zhHantDescription": "契約: 獲得{amount}張牌。",
             "zhHansName": "正当契约 +",
-            "zhHansDescription": "契约: 获得{amount}张牌。"
+            "zhHansDescription": "契约: 获得{amount}张牌。",
+            "ruName": "Праведный контракт +",
+            "ruDescription": "Контракт: получите {amount} карт."
         },
         {
             "cardId": 103043,
@@ -154,7 +176,9 @@
             "zhHantName": "正當契約 +",
             "zhHantDescription": "契約: 獲得{amount}點力量。",
             "zhHansName": "正当契约 +",
-            "zhHansDescription": "契约: 获得{amount}点力量。"
+            "zhHansDescription": "契约: 获得{amount}点力量。",
+            "ruName": "Праведный контракт +",
+            "ruDescription": "Контракт: получите {amount} Силы."
         },
         {
             "cardId": 103044,
@@ -167,7 +191,9 @@
             "zhHantName": "正當契約 +",
             "zhHantDescription": "失去{amount}點生命值並抽1張牌。重複直到手牌滿為止。",
             "zhHansName": "正当契约 +",
-            "zhHansDescription": "失去{amount}点生命值并抽1张牌。重复直到手牌满为止。"
+            "zhHansDescription": "失去{amount}点生命值并抽1张牌。重复直到手牌满为止。",
+            "ruName": "Праведный контракт +",
+            "ruDescription": "Потеряйте {amount} здоровья и возьмите 1 карту. Повторяйте, пока ваша рука не заполнится."
         },
         {
             "cardId": 103045,
@@ -180,7 +206,9 @@
             "zhHantName": "正當契約 +",
             "zhHantDescription": "失去自己全部的力量。敵人也會失去同樣數值的力量。",
             "zhHansName": "正当契约 +",
-            "zhHansDescription": "失去自己全部的力量。敌人也会失去同样数值的力量。"
+            "zhHansDescription": "失去自己全部的力量。敌人也会失去同样数值的力量。",
+            "ruName": "Праведный контракт +",
+            "ruDescription": "Потеряйте всю свою Силу. Враг также теряет столько же Силы."
         },
         {
             "cardId": 103050,
@@ -193,7 +221,9 @@
             "zhHantName": "羊毛工藝",
             "zhHantDescription": "從抽牌堆中選擇{amount}張牌加入手牌，再額外生成{amount2}張相同的牌。",
             "zhHansName": "羊毛工艺",
-            "zhHansDescription": "从抽牌堆中选择{amount}张牌加入手牌，再额外生成{amount2}张相同的牌。"
+            "zhHansDescription": "从抽牌堆中选择{amount}张牌加入手牌，再额外生成{amount2}张相同的牌。",
+            "ruName": "Шерстяное ремесло",
+            "ruDescription": "Выберите {amount} карт из колоды добора и положите их в руку. Создайте ещё {amount2} копий этих карт."
         },
         {
             "cardId": 103051,
@@ -206,7 +236,9 @@
             "zhHantName": "羊毛工藝 +",
             "zhHantDescription": "從抽牌堆中選擇{amount}張牌加入手牌，再額外生成{amount2}張相同的牌。",
             "zhHansName": "羊毛工艺 +",
-            "zhHansDescription": "从抽牌堆中选择{amount}张牌加入手牌，再额外生成{amount2}张相同的牌。"
+            "zhHansDescription": "从抽牌堆中选择{amount}张牌加入手牌，再额外生成{amount2}张相同的牌。",
+            "ruName": "Шерстяное ремесло +",
+            "ruDescription": "Выберите {amount} карт из колоды добора и положите их в руку. Создайте ещё {amount2} копий этих карт."
         },
         {
             "cardId": 103052,
@@ -219,7 +251,9 @@
             "zhHantName": "羊毛工藝 +",
             "zhHantDescription": "從抽牌堆中選擇{amount}張牌加入手牌，再額外生成{amount2}張相同的牌。",
             "zhHansName": "羊毛工艺 +",
-            "zhHansDescription": "从抽牌堆中选择{amount}张牌加入手牌，再额外生成{amount2}张相同的牌。"
+            "zhHansDescription": "从抽牌堆中选择{amount}张牌加入手牌，再额外生成{amount2}张相同的牌。",
+            "ruName": "Шерстяное ремесло +",
+            "ruDescription": "Выберите {amount} карт из колоды добора и положите их в руку. Создайте ещё {amount2} копий этих карт."
         },
         {
             "cardId": 103053,
@@ -232,7 +266,9 @@
             "zhHantName": "羊毛工藝 +",
             "zhHantDescription": "生成{amount}張來自自己牌庫的隨機牌。",
             "zhHansName": "羊毛工艺 +",
-            "zhHansDescription": "生成{amount}张来自自己牌库的随机牌。"
+            "zhHansDescription": "生成{amount}张来自自己牌库的随机牌。",
+            "ruName": "Шерстяное ремесло +",
+            "ruDescription": "Создайте {amount} случайных карт из вашей колоды."
         },
         {
             "cardId": 103054,
@@ -245,7 +281,9 @@
             "zhHantName": "羊毛工藝 +",
             "zhHantDescription": "從手中選擇最多{amount}張牌並將其消滅。",
             "zhHansName": "羊毛工艺 +",
-            "zhHansDescription": "从手中选择最多{amount}张牌并将其消灭。"
+            "zhHansDescription": "从手中选择最多{amount}张牌并将其消灭。",
+            "ruName": "Шерстяное ремесло +",
+            "ruDescription": "Выберите до {amount} карт в руке и изгоните их."
         },
         {
             "cardId": 103055,
@@ -258,7 +296,9 @@
             "zhHantName": "羊毛工藝 +",
             "zhHantDescription": "抽{amount}張牌。兩張牌的費用互換。",
             "zhHansName": "羊毛工艺 +",
-            "zhHansDescription": "抽{amount}张牌。两张牌的费用互换。"
+            "zhHansDescription": "抽{amount}张牌。两张牌的费用互换。",
+            "ruName": "Шерстяное ремесло +",
+            "ruDescription": "Возьмите {amount} карт. Две карты меняются стоимостью."
         },
         {
             "cardId": 103060,
@@ -271,7 +311,9 @@
             "zhHantName": "咖啡，幫幫我!",
             "zhHantDescription": "獲得{amount}點能量。",
             "zhHansName": "咖啡，帮帮我!",
-            "zhHansDescription": "获得{amount}点能量。"
+            "zhHansDescription": "获得{amount}点能量。",
+            "ruName": "Кофе, помоги мне!",
+            "ruDescription": "Получите {amount} энергии."
         },
         {
             "cardId": 103061,
@@ -284,7 +326,9 @@
             "zhHantName": "咖啡，幫幫我! +",
             "zhHantDescription": "獲得{amount}點能量。",
             "zhHansName": "咖啡，帮帮我! +",
-            "zhHansDescription": "获得{amount}点能量。"
+            "zhHansDescription": "获得{amount}点能量。",
+            "ruName": "Кофе, помоги мне! +",
+            "ruDescription": "Получите {amount} энергии."
         },
         {
             "cardId": 103062,
@@ -297,7 +341,9 @@
             "zhHantName": "咖啡，幫幫我! +",
             "zhHantDescription": "獲得{amount}點能量。",
             "zhHansName": "咖啡，帮帮我! +",
-            "zhHansDescription": "获得{amount}点能量。"
+            "zhHansDescription": "获得{amount}点能量。",
+            "ruName": "Кофе, помоги мне! +",
+            "ruDescription": "Получите {amount} энергии."
         },
         {
             "cardId": 103063,
@@ -310,7 +356,9 @@
             "zhHantName": "咖啡，幫幫我! +",
             "zhHantDescription": "獲得無法抽牌。你手中的所有牌在本回合內費用變為0。",
             "zhHansName": "咖啡，帮帮我! +",
-            "zhHansDescription": "获得无法抽牌。你手中的所有牌在本回合内费用变为0。"
+            "zhHansDescription": "获得无法抽牌。你手中的所有牌在本回合内费用变为0。",
+            "ruName": "Кофе, помоги мне! +",
+            "ruDescription": "Получите Блок добора. Все карты в вашей руке стоят 0 в этом ходу."
         },
         {
             "cardId": 103064,
@@ -323,7 +371,9 @@
             "zhHantName": "咖啡，幫幫我! +",
             "zhHantDescription": "獲得靈魂保護。",
             "zhHansName": "咖啡，帮帮我! +",
-            "zhHansDescription": "获得灵魂保护。"
+            "zhHansDescription": "获得灵魂保护。",
+            "ruName": "Кофе, помоги мне! +",
+            "ruDescription": "Получите Защиту души."
         },
         {
             "cardId": 103065,
@@ -336,7 +386,9 @@
             "zhHantName": "咖啡，幫幫我! +",
             "zhHantDescription": "抽取等同於本回合已消耗能量數量的牌。",
             "zhHansName": "咖啡，帮帮我! +",
-            "zhHansDescription": "抽取等同于本回合已消耗能量数量的牌。"
+            "zhHansDescription": "抽取等同于本回合已消耗能量数量的牌。",
+            "ruName": "Кофе, помоги мне! +",
+            "ruDescription": "Возьмите количество карт, равное потраченной в этом ходу энергии."
         },
         {
             "cardId": 103070,
@@ -349,7 +401,9 @@
             "zhHantName": "時間詛咒",
             "zhHantDescription": "所有敵人在本回合失去{amount}點力量。",
             "zhHansName": "时间诅咒",
-            "zhHansDescription": "所有敌人在本回合失去{amount}点力量。"
+            "zhHansDescription": "所有敌人在本回合失去{amount}点力量。",
+            "ruName": "Проклятие времени",
+            "ruDescription": "Все враги теряют {amount} Силы в этом ходу."
         },
         {
             "cardId": 103071,
@@ -362,7 +416,9 @@
             "zhHantName": "時間詛咒 +",
             "zhHantDescription": "將敵人持有的負面效果加倍。",
             "zhHansName": "时间诅咒 +",
-            "zhHansDescription": "将敌人持有的负面效果加倍。"
+            "zhHansDescription": "将敌人持有的负面效果加倍。",
+            "ruName": "Проклятие времени +",
+            "ruDescription": "Удвойте вредные эффекты на враге."
         },
         {
             "cardId": 103072,
@@ -375,7 +431,9 @@
             "zhHantName": "時間詛咒 +",
             "zhHantDescription": "對所有敵人施加{amount}層殘酷。",
             "zhHansName": "时间诅咒 +",
-            "zhHansDescription": "对所有敌人施加{amount}层残酷。"
+            "zhHansDescription": "对所有敌人施加{amount}层残酷。",
+            "ruName": "Проклятие времени +",
+            "ruDescription": "Наложите {amount} Жестокости на всех врагов."
         },
         {
             "cardId": 103073,
@@ -388,7 +446,9 @@
             "zhHantName": "時間詛咒 +",
             "zhHantDescription": "在手中生成1張詛咒。獲得1層氣力超載。",
             "zhHansName": "时间诅咒 +",
-            "zhHansDescription": "在手中生成1张诅咒。获得1层气力超载。"
+            "zhHansDescription": "在手中生成1张诅咒。获得1层气力超载。",
+            "ruName": "Проклятие времени +",
+            "ruDescription": "Создайте Проклятие в руке. Получите 1 Перезаряда."
         },
         {
             "cardId": 103074,
@@ -401,7 +461,9 @@
             "zhHantName": "時間詛咒 +",
             "zhHantDescription": "所有敵人失去{amount}點生命值。每次被保留時，失去的生命值增加2。",
             "zhHansName": "时间诅咒 +",
-            "zhHansDescription": "所有敌人失去{amount}点生命值。每次被保留时，失去的生命值增加2。"
+            "zhHansDescription": "所有敌人失去{amount}点生命值。每次被保留时，失去的生命值增加2。",
+            "ruName": "Проклятие времени +",
+            "ruDescription": "Все враги теряют {amount} здоровья. Каждый раз, когда эта карта сохраняется, потеря здоровья увеличивается на 2."
         },
         {
             "cardId": 103075,
@@ -414,7 +476,9 @@
             "zhHantName": "時間詛咒 +",
             "zhHantDescription": "將敵人的意圖減半。",
             "zhHansName": "时间诅咒 +",
-            "zhHansDescription": "将敌人的意图减半。"
+            "zhHansDescription": "将敌人的意图减半。",
+            "ruName": "Проклятие времени +",
+            "ruDescription": "Уменьшите намерение врага вдвое."
         },
         {
             "cardId": 103080,
@@ -427,7 +491,9 @@
             "zhHantName": "詛咒",
             "zhHantDescription": "當你抽到這張牌時，失去2點能量。",
             "zhHansName": "诅咒",
-            "zhHansDescription": "当你抽到这张牌时，失去2点能量。"
+            "zhHansDescription": "当你抽到这张牌时，失去2点能量。",
+            "ruName": "Проклятие",
+            "ruDescription": "Когда вы берёте эту карту, потеряйте 2 энергии."
         }
     ]
 }

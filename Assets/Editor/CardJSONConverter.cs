@@ -471,7 +471,9 @@ public class CardJSONConverter : EditorWindow
                     zhHantName = ReadJsonString(cardObject, "zhHantName"),
                     zhHantDescription = ReadJsonString(cardObject, "zhHantDescription"),
                     zhHansName = ReadJsonString(cardObject, "zhHansName"),
-                    zhHansDescription = ReadJsonString(cardObject, "zhHansDescription")
+                    zhHansDescription = ReadJsonString(cardObject, "zhHansDescription"),
+                    ruName = ReadJsonString(cardObject, "ruName"),
+                    ruDescription = ReadJsonString(cardObject, "ruDescription")
                 };
             }
         }

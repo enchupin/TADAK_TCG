@@ -11,7 +11,9 @@
             "zhHantName": "爆炸實驗",
             "zhHantDescription": "造成{amount}點傷害。",
             "zhHansName": "爆炸实验",
-            "zhHansDescription": "造成{amount}点伤害。"
+            "zhHansDescription": "造成{amount}点伤害。",
+            "ruName": "Взрывной эксперимент",
+            "ruDescription": "Нанесите {amount} урона."
         },
         {
             "cardId": 101020,
@@ -24,7 +26,9 @@
             "zhHantName": "對身體有益的藥",
             "zhHantDescription": "恢復{amount}點生命值。",
             "zhHansName": "对身体有益的药",
-            "zhHansDescription": "恢复{amount}点生命值。"
+            "zhHansDescription": "恢复{amount}点生命值。",
+            "ruName": "Полезное лекарство",
+            "ruDescription": "Восстановите {amount} здоровья."
         },
         {
             "cardId": 101030,
@@ -37,7 +41,9 @@
             "zhHantName": "準備實驗材料",
             "zhHantDescription": "抽{amount}張牌。",
             "zhHansName": "准备实验材料",
-            "zhHansDescription": "抽{amount}张牌。"
+            "zhHansDescription": "抽{amount}张牌。",
+            "ruName": "Подготовка реагентов",
+            "ruDescription": "Возьмите {amount} карт."
         },
         {
             "cardId": 101031,
@@ -50,7 +56,9 @@
             "zhHantName": "準備實驗材料 +",
             "zhHantDescription": "抽{amount}張牌。",
             "zhHansName": "准备实验材料 +",
-            "zhHansDescription": "抽{amount}张牌。"
+            "zhHansDescription": "抽{amount}张牌。",
+            "ruName": "Подготовка реагентов +",
+            "ruDescription": "Возьмите {amount} карт."
         },
         {
             "cardId": 101032,
@@ -63,7 +71,9 @@
             "zhHantName": "準備實驗材料 +",
             "zhHantDescription": "抽{amount}張牌。若手牌為4張以下，再抽1張。",
             "zhHansName": "准备实验材料 +",
-            "zhHansDescription": "抽{amount}张牌。若手牌为4张以下，再抽1张。"
+            "zhHansDescription": "抽{amount}张牌。若手牌为4张以下，再抽1张。",
+            "ruName": "Подготовка реагентов +",
+            "ruDescription": "Возьмите {amount} карт. Если у вас в руке 4 карты или меньше, возьмите ещё 1."
         },
         {
             "cardId": 101033,
@@ -76,7 +86,9 @@
             "zhHantName": "準備實驗材料 +",
             "zhHantDescription": "從棄牌堆中選擇{amount}張牌加入手牌。",
             "zhHansName": "准备实验材料 +",
-            "zhHansDescription": "从弃牌堆中选择{amount}张牌加入手牌。"
+            "zhHansDescription": "从弃牌堆中选择{amount}张牌加入手牌。",
+            "ruName": "Подготовка реагентов +",
+            "ruDescription": "Выберите {amount} карт из стопки сброса и добавьте их в руку."
         },
         {
             "cardId": 101034,
@@ -89,7 +101,9 @@
             "zhHantName": "準備實驗材料 +",
             "zhHantDescription": "選擇手中的{amount}張牌並複製。若選中的牌是藥水，對所有敵人施加2層腐蝕。",
             "zhHansName": "准备实验材料 +",
-            "zhHansDescription": "选择手中的{amount}张牌并复制。若选中的牌是药水，对所有敌人施加2层腐蚀。"
+            "zhHansDescription": "选择手中的{amount}张牌并复制。若选中的牌是药水，对所有敌人施加2层腐蚀。",
+            "ruName": "Подготовка реагентов +",
+            "ruDescription": "Выберите {amount} карт в руке и скопируйте их. Если выбранная карта является Зельем, наложите 2 Коррозии на всех врагов."
         },
         {
             "cardId": 101035,
@@ -102,7 +116,9 @@
             "zhHantName": "準備實驗材料 +",
             "zhHantDescription": "選擇手中的{amount}張牌並複製。若選中的牌是藥水，再額外複製1次。",
             "zhHansName": "准备实验材料 +",
-            "zhHansDescription": "选择手中的{amount}张牌并复制。若选中的牌是药水，再额外复制1次。"
+            "zhHansDescription": "选择手中的{amount}张牌并复制。若选中的牌是药水，再额外复制1次。",
+            "ruName": "Подготовка реагентов +",
+            "ruDescription": "Выберите {amount} карт в руке и скопируйте их. Если выбранная карта является Зельем, скопируйте её ещё 1 раз."
         },
         {
             "cardId": 101040,
@@ -115,7 +131,9 @@
             "zhHantName": "咕嚕咕嚕",
             "zhHantDescription": "製作{amount}張隨機藥水牌。",
             "zhHansName": "咕噜咕噜",
-            "zhHansDescription": "制作{amount}张随机药水牌。"
+            "zhHansDescription": "制作{amount}张随机药水牌。",
+            "ruName": "Бурлящее варево",
+            "ruDescription": "Создайте {amount} случайных карт Зелья."
         },
         {
             "cardId": 101041,
@@ -128,7 +146,9 @@
             "zhHantName": "咕嚕咕嚕 +",
             "zhHantDescription": "製作{amount}張隨機藥水牌。",
             "zhHansName": "咕噜咕噜 +",
-            "zhHansDescription": "制作{amount}张随机药水牌。"
+            "zhHansDescription": "制作{amount}张随机药水牌。",
+            "ruName": "Бурлящее варево +",
+            "ruDescription": "Создайте {amount} случайных карт Зелья."
         },
         {
             "cardId": 101042,
@@ -141,7 +161,9 @@
             "zhHantName": "咕嚕咕嚕 +",
             "zhHantDescription": "選擇{amount}張藥水牌並製作。",
             "zhHansName": "咕噜咕噜 +",
-            "zhHansDescription": "选择{amount}张药水牌并制作。"
+            "zhHansDescription": "选择{amount}张药水牌并制作。",
+            "ruName": "Бурлящее варево +",
+            "ruDescription": "Выберите {amount} карт Зелья для создания."
         },
         {
             "cardId": 101043,
@@ -154,7 +176,9 @@
             "zhHantName": "咕嚕咕嚕 +",
             "zhHantDescription": "製作{amount}張隨機強化藥水牌。",
             "zhHansName": "咕噜咕噜 +",
-            "zhHansDescription": "制作{amount}张随机强化药水牌。"
+            "zhHansDescription": "制作{amount}张随机强化药水牌。",
+            "ruName": "Бурлящее варево +",
+            "ruDescription": "Создайте {amount} случайных улучшенных карт Зелья."
         },
         {
             "cardId": 101044,
@@ -167,7 +191,9 @@
             "zhHantName": "咕嚕咕嚕 +",
             "zhHantDescription": "選擇手中的{amount}張牌並棄掉。製作{amount2}張隨機強化藥水牌。",
             "zhHansName": "咕噜咕噜 +",
-            "zhHansDescription": "选择手中的{amount}张牌并弃掉。制作{amount2}张随机强化药水牌。"
+            "zhHansDescription": "选择手中的{amount}张牌并弃掉。制作{amount2}张随机强化药水牌。",
+            "ruName": "Бурлящее варево +",
+            "ruDescription": "Выберите {amount} карт в руке и сбросьте их. Создайте {amount2} случайных улучшенных карт Зелья."
         },
         {
             "cardId": 101045,
@@ -180,7 +206,9 @@
             "zhHantName": "咕嚕咕嚕 +",
             "zhHantDescription": "獲得{amount}個調製設施。",
             "zhHansName": "咕噜咕噜 +",
-            "zhHansDescription": "获得{amount}个调制设施。"
+            "zhHansDescription": "获得{amount}个调制设施。",
+            "ruName": "Бурлящее варево +",
+            "ruDescription": "Получите {amount} Алхимической станции."
         },
         {
             "cardId": 101050,
@@ -193,7 +221,9 @@
             "zhHantName": "實驗結束!",
             "zhHantDescription": "造成相當於本場戰鬥中已使用藥水數量×3的傷害。",
             "zhHansName": "实验结束!",
-            "zhHansDescription": "造成相当于本场战斗中已使用药水数量×3的伤害。"
+            "zhHansDescription": "造成相当于本场战斗中已使用药水数量×3的伤害。",
+            "ruName": "Эксперимент завершён!",
+            "ruDescription": "Нанесите урон, равный утроенному числу Зелий, использованных в этом бою."
         },
         {
             "cardId": 101051,
@@ -206,7 +236,9 @@
             "zhHantName": "實驗結束! +",
             "zhHantDescription": "造成相當於本場戰鬥中已使用藥水數量×3的傷害。保留: 費用減少1。",
             "zhHansName": "实验结束! +",
-            "zhHansDescription": "造成相当于本场战斗中已使用药水数量×3的伤害。保留: 费用减少1。"
+            "zhHansDescription": "造成相当于本场战斗中已使用药水数量×3的伤害。保留: 费用减少1。",
+            "ruName": "Эксперимент завершён! +",
+            "ruDescription": "Нанесите урон, равный утроенному числу Зелий, использованных в этом бою. Сохранение: уменьшите стоимость этой карты на 1."
         },
         {
             "cardId": 101052,
@@ -219,7 +251,9 @@
             "zhHantName": "實驗結束! +",
             "zhHantDescription": "恢復相當於本場戰鬥中已使用藥水牌數量的生命值。",
             "zhHansName": "实验结束! +",
-            "zhHansDescription": "恢复相当于本场战斗中已使用药水牌数量的生命值。"
+            "zhHansDescription": "恢复相当于本场战斗中已使用药水牌数量的生命值。",
+            "ruName": "Эксперимент завершён! +",
+            "ruDescription": "Восстановите здоровье, равное числу карт Зелья, использованных в этом бою."
         },
         {
             "cardId": 101053,
@@ -232,7 +266,9 @@
             "zhHantName": "實驗結束! +",
             "zhHantDescription": "對所有敵人造成相當於本場戰鬥中已使用藥水數量×3的傷害。",
             "zhHansName": "实验结束! +",
-            "zhHansDescription": "对所有敌人造成相当于本场战斗中已使用药水数量×3的伤害。"
+            "zhHansDescription": "对所有敌人造成相当于本场战斗中已使用药水数量×3的伤害。",
+            "ruName": "Эксперимент завершён! +",
+            "ruDescription": "Нанесите всем врагам урон, равный утроенному числу Зелий, использованных в этом бою."
         },
         {
             "cardId": 101054,
@@ -245,7 +281,9 @@
             "zhHantName": "實驗結束 +",
             "zhHantDescription": "強化: 獲得1張藥水牌。",
             "zhHansName": "实验结束 +",
-            "zhHansDescription": "强化: 获得1张药水牌。"
+            "zhHansDescription": "强化: 获得1张药水牌。",
+            "ruName": "Эксперимент окончен +",
+            "ruDescription": "Усиление: получите Зелье."
         },
         {
             "cardId": 101055,
@@ -258,7 +296,9 @@
             "zhHantName": "實驗結束 +",
             "zhHantDescription": "循環: 獲得1張藥水牌。",
             "zhHansName": "实验结束 +",
-            "zhHansDescription": "循环: 获得1张药水牌。"
+            "zhHansDescription": "循环: 获得1张药水牌。",
+            "ruName": "Эксперимент окончен +",
+            "ruDescription": "Цикл: получите Зелье."
         },
         {
             "cardId": 101060,
@@ -271,7 +311,9 @@
             "zhHantName": "實驗廢棄物",
             "zhHantDescription": "施加{amount}層腐蝕。",
             "zhHansName": "实验废弃物",
-            "zhHansDescription": "施加{amount}层腐蚀。"
+            "zhHansDescription": "施加{amount}层腐蚀。",
+            "ruName": "Лабораторные отходы",
+            "ruDescription": "Наложите {amount} Коррозии."
         },
         {
             "cardId": 101061,
@@ -284,7 +326,9 @@
             "zhHantName": "實驗廢棄物 +",
             "zhHantDescription": "抽{amount}張牌。施加{amount2}層腐蝕。",
             "zhHansName": "实验废弃物 +",
-            "zhHansDescription": "抽{amount}张牌。施加{amount2}层腐蚀。"
+            "zhHansDescription": "抽{amount}张牌。施加{amount2}层腐蚀。",
+            "ruName": "Лабораторные отходы +",
+            "ruDescription": "Возьмите {amount} карт. Наложите {amount2} Коррозии."
         },
         {
             "cardId": 101062,
@@ -297,7 +341,9 @@
             "zhHantName": "實驗廢棄物 +",
             "zhHantDescription": "施加{amount}層腐蝕。若目標已處於腐蝕狀態，改為施加給所有敵人。",
             "zhHansName": "实验废弃物 +",
-            "zhHansDescription": "施加{amount}层腐蚀。若目标已处于腐蚀状态，改为施加给所有敌人。"
+            "zhHansDescription": "施加{amount}层腐蚀。若目标已处于腐蚀状态，改为施加给所有敌人。",
+            "ruName": "Лабораторные отходы +",
+            "ruDescription": "Наложите {amount} Коррозии. Если цель уже под Коррозией, наложите её на всех врагов."
         },
         {
             "cardId": 101063,
@@ -310,7 +356,9 @@
             "zhHantName": "實驗廢棄物 +",
             "zhHantDescription": "每當你使用藥水時，對隨機敵人施加{amount}層腐蝕。",
             "zhHansName": "实验废弃物 +",
-            "zhHansDescription": "每当你使用药水时，对随机敌人施加{amount}层腐蚀。"
+            "zhHansDescription": "每当你使用药水时，对随机敌人施加{amount}层腐蚀。",
+            "ruName": "Лабораторные отходы +",
+            "ruDescription": "Каждый раз, когда вы используете Зелье, накладывайте {amount} Коррозии на случайного врага."
         },
         {
             "cardId": 101064,
@@ -323,7 +371,9 @@
             "zhHantName": "實驗廢棄物 +",
             "zhHantDescription": "施加{amount}層腐蝕。",
             "zhHansName": "实验废弃物 +",
-            "zhHansDescription": "施加{amount}层腐蚀。"
+            "zhHansDescription": "施加{amount}层腐蚀。",
+            "ruName": "Лабораторные отходы +",
+            "ruDescription": "Наложите {amount} Коррозии."
         },
         {
             "cardId": 101065,
@@ -336,7 +386,9 @@
             "zhHantName": "實驗廢棄物 +",
             "zhHantDescription": "施加{amount}層腐蝕。獲得{amount2}點力量。",
             "zhHansName": "实验废弃物 +",
-            "zhHansDescription": "施加{amount}层腐蚀。获得{amount2}点力量。"
+            "zhHansDescription": "施加{amount}层腐蚀。获得{amount2}点力量。",
+            "ruName": "Лабораторные отходы +",
+            "ruDescription": "Наложите {amount} Коррозии. Получите {amount2} Силы."
         },
         {
             "cardId": 101070,
@@ -349,7 +401,9 @@
             "zhHantName": "生體實驗",
             "zhHantDescription": "施加{amount}層殘酷。",
             "zhHansName": "生体实验",
-            "zhHansDescription": "施加{amount}层残酷。"
+            "zhHansDescription": "施加{amount}层残酷。",
+            "ruName": "Биоэксперимент",
+            "ruDescription": "Наложите {amount} Жестокости."
         },
         {
             "cardId": 101071,
@@ -362,7 +416,9 @@
             "zhHantName": "生體實驗 +",
             "zhHantDescription": "施加{amount}層殘酷。",
             "zhHansName": "生体实验 +",
-            "zhHansDescription": "施加{amount}层残酷。"
+            "zhHansDescription": "施加{amount}层残酷。",
+            "ruName": "Биоэксперимент +",
+            "ruDescription": "Наложите {amount} Жестокости."
         },
         {
             "cardId": 101072,
@@ -375,7 +431,9 @@
             "zhHantName": "生體實驗 +",
             "zhHantDescription": "獲得等同於目標腐蝕層數的力量。",
             "zhHansName": "生体实验 +",
-            "zhHansDescription": "获得等同于目标腐蚀层数的力量。"
+            "zhHansDescription": "获得等同于目标腐蚀层数的力量。",
+            "ruName": "Биоэксперимент +",
+            "ruDescription": "Получите Силу, равную Коррозии цели."
         },
         {
             "cardId": 101073,
@@ -388,7 +446,9 @@
             "zhHantName": "生體實驗 +",
             "zhHantDescription": "強化: 獲得腐蝕。",
             "zhHansName": "生体实验 +",
-            "zhHansDescription": "强化: 获得腐蚀。"
+            "zhHansDescription": "强化: 获得腐蚀。",
+            "ruName": "Биоэксперимент +",
+            "ruDescription": "Усиление: получите Коррозию."
         },
         {
             "cardId": 101074,
@@ -401,7 +461,9 @@
             "zhHantName": "生體實驗 +",
             "zhHantDescription": "獲得{amount}層暴虐。",
             "zhHansName": "生体实验 +",
-            "zhHansDescription": "获得{amount}层暴虐。"
+            "zhHansDescription": "获得{amount}层暴虐。",
+            "ruName": "Биоэксперимент +",
+            "ruDescription": "Получите {amount} Зверства."
         },
         {
             "cardId": 101075,
@@ -414,7 +476,9 @@
             "zhHantName": "生體實驗 +",
             "zhHantDescription": "施加{amount}層殘酷。",
             "zhHansName": "生体实验 +",
-            "zhHansDescription": "施加{amount}层残酷。"
+            "zhHansDescription": "施加{amount}层残酷。",
+            "ruName": "Биоэксперимент +",
+            "ruDescription": "Наложите {amount} Жестокости."
         },
         {
             "cardId": 101080,
@@ -427,7 +491,9 @@
             "zhHantName": "痛苦藥水",
             "zhHantDescription": "造成{amount}點傷害。",
             "zhHansName": "痛苦药水",
-            "zhHansDescription": "造成{amount}点伤害。"
+            "zhHansDescription": "造成{amount}点伤害。",
+            "ruName": "Зелье боли",
+            "ruDescription": "Нанесите {amount} урона."
         },
         {
             "cardId": 101081,
@@ -440,7 +506,9 @@
             "zhHantName": "痛苦藥水 +",
             "zhHantDescription": "造成{amount}點傷害。",
             "zhHansName": "痛苦药水 +",
-            "zhHansDescription": "造成{amount}点伤害。"
+            "zhHansDescription": "造成{amount}点伤害。",
+            "ruName": "Зелье боли +",
+            "ruDescription": "Нанесите {amount} урона."
         },
         {
             "cardId": 101082,
@@ -453,7 +521,9 @@
             "zhHantName": "循環藥水",
             "zhHantDescription": "抽{amount}張牌。",
             "zhHansName": "循环药水",
-            "zhHansDescription": "抽{amount}张牌。"
+            "zhHansDescription": "抽{amount}张牌。",
+            "ruName": "Зелье цикла",
+            "ruDescription": "Возьмите {amount} карт."
         },
         {
             "cardId": 101083,
@@ -466,7 +536,9 @@
             "zhHantName": "循環藥水 +",
             "zhHantDescription": "抽{amount}張牌。",
             "zhHansName": "循环药水 +",
-            "zhHansDescription": "抽{amount}张牌。"
+            "zhHansDescription": "抽{amount}张牌。",
+            "ruName": "Зелье цикла +",
+            "ruDescription": "Возьмите {amount} карт."
         },
         {
             "cardId": 101084,
@@ -479,7 +551,9 @@
             "zhHantName": "堅固藥水",
             "zhHantDescription": "恢復{amount}點生命值。",
             "zhHansName": "坚固药水",
-            "zhHansDescription": "恢复{amount}点生命值。"
+            "zhHansDescription": "恢复{amount}点生命值。",
+            "ruName": "Прочное зелье",
+            "ruDescription": "Восстановите {amount} здоровья."
         },
         {
             "cardId": 101085,
@@ -492,7 +566,9 @@
             "zhHantName": "堅固藥水 +",
             "zhHantDescription": "恢復{amount}點生命值。",
             "zhHansName": "坚固药水 +",
-            "zhHansDescription": "恢复{amount}点生命值。"
+            "zhHansDescription": "恢复{amount}点生命值。",
+            "ruName": "Прочное зелье +",
+            "ruDescription": "Восстановите {amount} здоровья."
         },
         {
             "cardId": 101086,
@@ -505,7 +581,9 @@
             "zhHantName": "咕嘟咕嘟藥水",
             "zhHantDescription": "施加{amount}層腐蝕。",
             "zhHansName": "咕嘟咕嘟药水",
-            "zhHansDescription": "施加{amount}层腐蚀。"
+            "zhHansDescription": "施加{amount}层腐蚀。",
+            "ruName": "Бурлящее зелье",
+            "ruDescription": "Наложите {amount} Коррозии."
         },
         {
             "cardId": 101087,
@@ -518,7 +596,9 @@
             "zhHantName": "咕嘟咕嘟藥水 +",
             "zhHantDescription": "施加{amount}層腐蝕。",
             "zhHansName": "咕嘟咕嘟药水 +",
-            "zhHansDescription": "施加{amount}层腐蚀。"
+            "zhHansDescription": "施加{amount}层腐蚀。",
+            "ruName": "Бурлящее зелье +",
+            "ruDescription": "Наложите {amount} Коррозии."
         }
     ]
 }

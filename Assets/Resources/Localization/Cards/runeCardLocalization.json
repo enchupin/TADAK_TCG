@@ -11,7 +11,9 @@
             "zhHantName": "指令: 攻擊",
             "zhHantDescription": "造成{amount}點傷害。",
             "zhHansName": "指令: 攻击",
-            "zhHansDescription": "造成{amount}点伤害。"
+            "zhHansDescription": "造成{amount}点伤害。",
+            "ruName": "Команда: Атака",
+            "ruDescription": "Нанесите {amount} урона."
         },
         {
             "cardId": 302020,
@@ -24,7 +26,9 @@
             "zhHantName": "指令: 防禦",
             "zhHantDescription": "獲得{amount}點護盾。",
             "zhHansName": "指令: 防御",
-            "zhHansDescription": "获得{amount}点护盾。"
+            "zhHansDescription": "获得{amount}点护盾。",
+            "ruName": "Команда: Защита",
+            "ruDescription": "Получите {amount} барьера."
         },
         {
             "cardId": 302030,
@@ -37,7 +41,9 @@
             "zhHantName": "能量餅乾",
             "zhHantDescription": "獲得{amount}層{充能}。",
             "zhHansName": "能量饼干",
-            "zhHansDescription": "获得{amount}层{充能}。"
+            "zhHansDescription": "获得{amount}层{充能}。",
+            "ruName": "Энергетическое печенье",
+            "ruDescription": "Получите {amount} {Charge}."
         },
         {
             "cardId": 302031,
@@ -50,7 +56,9 @@
             "zhHantName": "能量餅乾 +",
             "zhHantDescription": "獲得{amount}層{充能}。每次使用時，獲得量增加2。",
             "zhHansName": "能量饼干 +",
-            "zhHansDescription": "获得{amount}层{充能}。每次使用时，获得量增加2。"
+            "zhHansDescription": "获得{amount}层{充能}。每次使用时，获得量增加2。",
+            "ruName": "Энергетическое печенье +",
+            "ruDescription": "Получите {amount} {Charge}. Каждый раз при использовании этой карты значение увеличивается на 2."
         },
         {
             "cardId": 302032,
@@ -63,7 +71,9 @@
             "zhHantName": "能量餅乾 +",
             "zhHantDescription": "獲得{amount}層{充能}。使用後，將此牌移到抽牌堆頂。",
             "zhHansName": "能量饼干 +",
-            "zhHansDescription": "获得{amount}层{充能}。使用后，将此牌移到抽牌堆顶。"
+            "zhHansDescription": "获得{amount}层{充能}。使用后，将此牌移到抽牌堆顶。",
+            "ruName": "Энергетическое печенье +",
+            "ruDescription": "Получите {amount} {Charge}. После использования переместите эту карту на верх колоды добора."
         },
         {
             "cardId": 302033,
@@ -76,7 +86,9 @@
             "zhHantName": "能量餅乾 +",
             "zhHantDescription": "獲得{amount}點護盾2次。",
             "zhHansName": "能量饼干 +",
-            "zhHansDescription": "获得{amount}点护盾2次。"
+            "zhHansDescription": "获得{amount}点护盾2次。",
+            "ruName": "Энергетическое печенье +",
+            "ruDescription": "Дважды получите {amount} барьера."
         },
         {
             "cardId": 302034,
@@ -89,7 +101,9 @@
             "zhHantName": "能量餅乾 +",
             "zhHantDescription": "獲得{amount}層強攻。",
             "zhHansName": "能量饼干 +",
-            "zhHansDescription": "获得{amount}层强攻。"
+            "zhHansDescription": "获得{amount}层强攻。",
+            "ruName": "Энергетическое печенье +",
+            "ruDescription": "Получите {amount} Тяжёлого удара."
         },
         {
             "cardId": 302035,
@@ -102,7 +116,9 @@
             "zhHantName": "能量餅乾 +",
             "zhHantDescription": "獲得{amount}層電池。",
             "zhHansName": "能量饼干 +",
-            "zhHansDescription": "获得{amount}层电池。"
+            "zhHansDescription": "获得{amount}层电池。",
+            "ruName": "Энергетическое печенье +",
+            "ruDescription": "Получите {amount} Батареи."
         },
         {
             "cardId": 302040,
@@ -115,7 +131,9 @@
             "zhHantName": "協定: 防禦",
             "zhHantDescription": "烏比切換為防禦模式。",
             "zhHansName": "协议: 防御",
-            "zhHansDescription": "乌比切换为防御模式。"
+            "zhHansDescription": "乌比切换为防御模式。",
+            "ruName": "Протокол: Защита",
+            "ruDescription": "Вуппи переходит в режим Защиты."
         },
         {
             "cardId": 302041,
@@ -128,7 +146,9 @@
             "zhHantName": "協定: 防禦 +",
             "zhHantDescription": "獲得{amount}層{充能}。烏比切換為防禦模式。",
             "zhHansName": "协议: 防御 +",
-            "zhHansDescription": "获得{amount}层{充能}。乌比切换为防御模式。"
+            "zhHansDescription": "获得{amount}层{充能}。乌比切换为防御模式。",
+            "ruName": "Протокол: Защита +",
+            "ruDescription": "Получите {amount} {Charge}. Вуппи переходит в режим Защиты."
         },
         {
             "cardId": 302042,
@@ -141,7 +161,9 @@
             "zhHantName": "協定: 防禦 +",
             "zhHantDescription": "獲得{amount}點護盾。獲得{amount2}層預防。",
             "zhHansName": "协议: 防御 +",
-            "zhHansDescription": "获得{amount}点护盾。获得{amount2}层预防。"
+            "zhHansDescription": "获得{amount}点护盾。获得{amount2}层预防。",
+            "ruName": "Протокол: Защита +",
+            "ruDescription": "Получите {amount} барьера. Получите {amount2} Предотвращения."
         },
         {
             "cardId": 302043,
@@ -154,7 +176,9 @@
             "zhHantName": "協定: 防禦 +",
             "zhHantDescription": "獲得{amount}點護盾。獲得{amount2}層荊棘。",
             "zhHansName": "协议: 防御 +",
-            "zhHansDescription": "获得{amount}点护盾。获得{amount2}层荆棘。"
+            "zhHansDescription": "获得{amount}点护盾。获得{amount2}层荆棘。",
+            "ruName": "Протокол: Защита +",
+            "ruDescription": "Получите {amount} барьера. Получите {amount2} Шипов."
         },
         {
             "cardId": 302044,
@@ -167,7 +191,9 @@
             "zhHantName": "協定: 防禦 +",
             "zhHantDescription": "獲得{amount}層{充能}。獲得{amount2}點護盾。",
             "zhHansName": "协议: 防御 +",
-            "zhHansDescription": "获得{amount}层{充能}。获得{amount2}点护盾。"
+            "zhHansDescription": "获得{amount}层{充能}。获得{amount2}点护盾。",
+            "ruName": "Протокол: Защита +",
+            "ruDescription": "Получите {amount} {Charge}. Получите {amount2} барьера."
         },
         {
             "cardId": 302045,
@@ -180,7 +206,9 @@
             "zhHantName": "協定: 防禦 +",
             "zhHantDescription": "切換: 獲得防禦。",
             "zhHansName": "协议: 防御 +",
-            "zhHansDescription": "切换: 获得防御。"
+            "zhHansDescription": "切换: 获得防御。",
+            "ruName": "Протокол: Защита +",
+            "ruDescription": "Переключение: получите Защиту."
         },
         {
             "cardId": 302050,
@@ -193,7 +221,9 @@
             "zhHantName": "協定: 攻擊",
             "zhHantDescription": "烏比切換為攻擊模式。",
             "zhHansName": "协议: 攻击",
-            "zhHansDescription": "乌比切换为攻击模式。"
+            "zhHansDescription": "乌比切换为攻击模式。",
+            "ruName": "Протокол: Атака",
+            "ruDescription": "Вуппи переходит в режим Атаки."
         },
         {
             "cardId": 302051,
@@ -206,7 +236,9 @@
             "zhHantName": "協定: 攻擊 +",
             "zhHantDescription": "烏比切換為攻擊模式。造成{amount2}點傷害。",
             "zhHansName": "协议: 攻击 +",
-            "zhHansDescription": "乌比切换为攻击模式。造成{amount2}点伤害。"
+            "zhHansDescription": "乌比切换为攻击模式。造成{amount2}点伤害。",
+            "ruName": "Протокол: Атака +",
+            "ruDescription": "Вуппи переходит в режим Атаки. Нанесите {amount2} урона."
         },
         {
             "cardId": 302052,
@@ -219,7 +251,9 @@
             "zhHantName": "協定: 攻擊 +",
             "zhHantDescription": "獲得{amount}層{充能}。烏比切換為攻擊模式。",
             "zhHansName": "协议: 攻击 +",
-            "zhHansDescription": "获得{amount}层{充能}。乌比切换为攻击模式。"
+            "zhHansDescription": "获得{amount}层{充能}。乌比切换为攻击模式。",
+            "ruName": "Протокол: Атака +",
+            "ruDescription": "Получите {amount} {Charge}. Вуппи переходит в режим Атаки."
         },
         {
             "cardId": 302053,
@@ -232,7 +266,9 @@
             "zhHantName": "協定: 攻擊 +",
             "zhHantDescription": "獲得{amount}點護盾。造成{amount2}點傷害。",
             "zhHansName": "协议: 攻击 +",
-            "zhHansDescription": "获得{amount}点护盾。造成{amount2}点伤害。"
+            "zhHansDescription": "获得{amount}点护盾。造成{amount2}点伤害。",
+            "ruName": "Протокол: Атака +",
+            "ruDescription": "Получите {amount} барьера. Нанесите {amount2} урона."
         },
         {
             "cardId": 302054,
@@ -245,7 +281,9 @@
             "zhHantName": "協定: 攻擊 +",
             "zhHantDescription": "獲得{amount}層過充能。",
             "zhHansName": "协议: 攻击 +",
-            "zhHansDescription": "获得{amount}层过充能。"
+            "zhHansDescription": "获得{amount}层过充能。",
+            "ruName": "Протокол: Атака +",
+            "ruDescription": "Получите {amount} Перезаряда."
         },
         {
             "cardId": 302055,
@@ -258,7 +296,9 @@
             "zhHantName": "協定: 攻擊 +",
             "zhHantDescription": "切換: 獲得攻擊。",
             "zhHansName": "协议: 攻击 +",
-            "zhHansDescription": "切换: 获得攻击。"
+            "zhHansDescription": "切换: 获得攻击。",
+            "ruName": "Протокол: Атака +",
+            "ruDescription": "Переключение: получите Атаку."
         },
         {
             "cardId": 302060,
@@ -271,7 +311,9 @@
             "zhHantName": "烏比暴走",
             "zhHantDescription": "解除烏比的模式。",
             "zhHansName": "乌比暴走",
-            "zhHansDescription": "解除乌比的模式。"
+            "zhHansDescription": "解除乌比的模式。",
+            "ruName": "Буйство Вуппи",
+            "ruDescription": "Отключите режим Вуппи."
         },
         {
             "cardId": 302061,
@@ -284,7 +326,9 @@
             "zhHantName": "烏比暴走 +",
             "zhHantDescription": "解除烏比的模式。抽{amount}張牌。",
             "zhHansName": "乌比暴走 +",
-            "zhHansDescription": "解除乌比的模式。抽{amount}张牌。"
+            "zhHansDescription": "解除乌比的模式。抽{amount}张牌。",
+            "ruName": "Буйство Вуппи +",
+            "ruDescription": "Отключите режим Вуппи. Возьмите {amount} карт."
         },
         {
             "cardId": 302062,
@@ -297,7 +341,9 @@
             "zhHantName": "烏比暴走 +",
             "zhHantDescription": "觸發所有回合結束效果。",
             "zhHansName": "乌比暴走 +",
-            "zhHansDescription": "触发所有回合结束效果。"
+            "zhHansDescription": "触发所有回合结束效果。",
+            "ruName": "Буйство Вуппи +",
+            "ruDescription": "Активируйте все эффекты конца хода."
         },
         {
             "cardId": 302063,
@@ -310,7 +356,9 @@
             "zhHantName": "烏比暴走 +",
             "zhHantDescription": "將{充能}層數變為{amount}倍。",
             "zhHansName": "乌比暴走 +",
-            "zhHansDescription": "将{充能}层数变为{amount}倍。"
+            "zhHansDescription": "将{充能}层数变为{amount}倍。",
+            "ruName": "Буйство Вуппи +",
+            "ruDescription": "Умножьте ваши стаки {Charge} на {amount}."
         },
         {
             "cardId": 302064,
@@ -323,7 +371,9 @@
             "zhHantName": "烏比暴走 +",
             "zhHantDescription": "獲得{amount}層雙重動作。",
             "zhHansName": "乌比暴走 +",
-            "zhHansDescription": "获得{amount}层双重动作。"
+            "zhHansDescription": "获得{amount}层双重动作。",
+            "ruName": "Буйство Вуппи +",
+            "ruDescription": "Получите {amount} Двойного действия."
         },
         {
             "cardId": 302065,
@@ -336,7 +386,9 @@
             "zhHantName": "烏比暴走 +",
             "zhHantDescription": "循環: 獲得{amount}層模式。",
             "zhHansName": "乌比暴走 +",
-            "zhHansDescription": "循环: 获得{amount}层模式。"
+            "zhHansDescription": "循环: 获得{amount}层模式。",
+            "ruName": "Буйство Вуппи +",
+            "ruDescription": "Цикл: получите {amount} Режима."
         },
         {
             "cardId": 302070,
@@ -349,7 +401,9 @@
             "zhHantName": "過載",
             "zhHantDescription": "改為使用{充能}而非能量。對敵人施加{amount}層易傷與{amount2}層虛弱。",
             "zhHansName": "过载",
-            "zhHansDescription": "改为使用{充能}而非能量。对敌人施加{amount}层易伤与{amount2}层虚弱。"
+            "zhHansDescription": "改为使用{充能}而非能量。对敌人施加{amount}层易伤与{amount2}层虚弱。",
+            "ruName": "Перегрузка",
+            "ruDescription": "Используйте {Charge} вместо энергии. Наложите на врага {amount} Уязвимости и {amount2} Слабости."
         },
         {
             "cardId": 302071,
@@ -362,7 +416,9 @@
             "zhHantName": "過載 +",
             "zhHantDescription": "改為使用{充能}而非能量。造成{amount}點傷害。",
             "zhHansName": "过载 +",
-            "zhHansDescription": "改为使用{充能}而非能量。造成{amount}点伤害。"
+            "zhHansDescription": "改为使用{充能}而非能量。造成{amount}点伤害。",
+            "ruName": "Перегрузка +",
+            "ruDescription": "Используйте {Charge} вместо энергии. Нанесите {amount} урона."
         },
         {
             "cardId": 302072,
@@ -375,7 +431,9 @@
             "zhHantName": "過載 +",
             "zhHantDescription": "改為使用{充能}而非能量。獲得{amount}點護盾。",
             "zhHansName": "过载 +",
-            "zhHansDescription": "改为使用{充能}而非能量。获得{amount}点护盾。"
+            "zhHansDescription": "改为使用{充能}而非能量。获得{amount}点护盾。",
+            "ruName": "Перегрузка +",
+            "ruDescription": "Используйте {Charge} вместо энергии. Получите {amount} барьера."
         },
         {
             "cardId": 302073,
@@ -388,7 +446,9 @@
             "zhHantName": "過載 +",
             "zhHantDescription": "改為使用{充能}而非能量。獲得{amount}層羈絆。",
             "zhHansName": "过载 +",
-            "zhHansDescription": "改为使用{充能}而非能量。获得{amount}层羁绊。"
+            "zhHansDescription": "改为使用{充能}而非能量。获得{amount}层羁绊。",
+            "ruName": "Перегрузка +",
+            "ruDescription": "Используйте {Charge} вместо энергии. Получите {amount} Связи."
         },
         {
             "cardId": 302074,
@@ -401,7 +461,9 @@
             "zhHantName": "過載 +",
             "zhHantDescription": "改為使用{充能}而非能量。隨機移除{amount}個有害效果。",
             "zhHansName": "过载 +",
-            "zhHansDescription": "改为使用{充能}而非能量。随机移除{amount}个有害效果。"
+            "zhHansDescription": "改为使用{充能}而非能量。随机移除{amount}个有害效果。",
+            "ruName": "Перегрузка +",
+            "ruDescription": "Используйте {Charge} вместо энергии. Удалите {amount} случайных отрицательных эффектов."
         },
         {
             "cardId": 302075,
@@ -414,7 +476,9 @@
             "zhHantName": "過載 +",
             "zhHantDescription": "改為使用{充能}而非能量。獲得{amount}點能量並抽{amount2}張牌。",
             "zhHansName": "过载 +",
-            "zhHansDescription": "改为使用{充能}而非能量。获得{amount}点能量并抽{amount2}张牌。"
+            "zhHansDescription": "改为使用{充能}而非能量。获得{amount}点能量并抽{amount2}张牌。",
+            "ruName": "Перегрузка +",
+            "ruDescription": "Используйте {Charge} вместо энергии. Получите {amount} энергии и возьмите {amount2} карт."
         }
     ]
 }

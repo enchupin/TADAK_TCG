@@ -11,7 +11,9 @@
             "zhHantName": "裂傷",
             "zhHantDescription": "回合結束時，受到2點傷害。",
             "zhHansName": "裂伤",
-            "zhHansDescription": "回合结束时，受到2点伤害。"
+            "zhHansDescription": "回合结束时，受到2点伤害。",
+            "ruName": "Рваная рана",
+            "ruDescription": "В конце хода получите 2 урона."
         },
         {
             "cardId": 20,
@@ -24,7 +26,9 @@
             "zhHantName": "中毒",
             "zhHantDescription": "回合結束時，受到4點傷害。",
             "zhHansName": "中毒",
-            "zhHansDescription": "回合结束时，受到4点伤害。"
+            "zhHansDescription": "回合结束时，受到4点伤害。",
+            "ruName": "Отравление",
+            "ruDescription": "В конце хода получите 4 урона."
         },
         {
             "cardId": 21,
@@ -37,7 +41,9 @@
             "zhHantName": "中毒+",
             "zhHantDescription": "回合結束時，受到6點傷害。",
             "zhHansName": "中毒+",
-            "zhHansDescription": "回合结束时，受到6点伤害。"
+            "zhHansDescription": "回合结束时，受到6点伤害。",
+            "ruName": "Отравление+",
+            "ruDescription": "В конце хода получите 6 урона."
         },
         {
             "cardId": 30,
@@ -50,7 +56,9 @@
             "zhHantName": "虛空的呼喚",
             "zhHantDescription": "回合結束時，獲得2層虛弱。",
             "zhHansName": "虚空的呼唤",
-            "zhHansDescription": "回合结束时，获得2层虚弱。"
+            "zhHansDescription": "回合结束时，获得2层虚弱。",
+            "ruName": "Зов пустоты",
+            "ruDescription": "В конце хода получите 2 Слабости."
         },
         {
             "cardId": 40,
@@ -63,7 +71,9 @@
             "zhHantName": "根部吸收",
             "zhHantDescription": "當此牌在手中時，你無法抽牌。",
             "zhHansName": "根部吸收",
-            "zhHansDescription": "当此牌在手中时，你无法抽牌。"
+            "zhHansDescription": "当此牌在手中时，你无法抽牌。",
+            "ruName": "Дренаж корней",
+            "ruDescription": "Пока эта карта у вас в руке, вы не можете брать карты."
         }
     ]
 }

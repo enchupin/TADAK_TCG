@@ -16,6 +16,8 @@ public sealed class BuffMetadataJsonData
     public string zhHantDescription;
     public string zhHansName;
     public string zhHansDescription;
+    public string ruName;
+    public string ruDescription;
 }
 
 public static class BuffMetadataJsonParser

@@ -11,7 +11,9 @@
             "zhHantName": "攻擊",
             "zhHantDescription": "造成{amount}點傷害。",
             "zhHansName": "攻击",
-            "zhHansDescription": "造成{amount}点伤害。"
+            "zhHansDescription": "造成{amount}点伤害。",
+            "ruName": "Атака",
+            "ruDescription": "Нанесите {amount} урона."
         },
         {
             "cardId": 202020,
@@ -24,7 +26,9 @@
             "zhHantName": "招架",
             "zhHantDescription": "獲得{amount}點護盾。",
             "zhHansName": "招架",
-            "zhHansDescription": "获得{amount}点护盾。"
+            "zhHansDescription": "获得{amount}点护盾。",
+            "ruName": "Парад",
+            "ruDescription": "Получите {amount} барьера."
         },
         {
             "cardId": 202030,
@@ -37,7 +41,9 @@
             "zhHantName": "突刺",
             "zhHantDescription": "造成{amount}點傷害。施加{amount2}層腐蝕。",
             "zhHansName": "突刺",
-            "zhHansDescription": "造成{amount}点伤害。施加{amount2}层腐蚀。"
+            "zhHansDescription": "造成{amount}点伤害。施加{amount2}层腐蚀。",
+            "ruName": "Выпад",
+            "ruDescription": "Нанесите {amount} урона. Наложите {amount2} Коррозии."
         },
         {
             "cardId": 202031,
@@ -50,7 +56,9 @@
             "zhHantName": "突刺 +",
             "zhHantDescription": "造成{amount}點傷害。施加{amount2}層腐蝕。",
             "zhHansName": "突刺 +",
-            "zhHansDescription": "造成{amount}点伤害。施加{amount2}层腐蚀。"
+            "zhHansDescription": "造成{amount}点伤害。施加{amount2}层腐蚀。",
+            "ruName": "Выпад +",
+            "ruDescription": "Нанесите {amount} урона. Наложите {amount2} Коррозии."
         },
         {
             "cardId": 202032,
@@ -63,7 +71,9 @@
             "zhHantName": "突刺 +",
             "zhHantDescription": "對所有敵人造成{amount}點傷害。",
             "zhHansName": "突刺 +",
-            "zhHansDescription": "对所有敌人造成{amount}点伤害。"
+            "zhHansDescription": "对所有敌人造成{amount}点伤害。",
+            "ruName": "Выпад +",
+            "ruDescription": "Нанесите {amount} урона всем врагам."
         },
         {
             "cardId": 202033,
@@ -76,7 +86,9 @@
             "zhHantName": "突刺 +",
             "zhHantDescription": "造成{amount}點傷害。此牌受到的力量效果加倍。",
             "zhHansName": "突刺 +",
-            "zhHansDescription": "造成{amount}点伤害。此牌受到的力量效果加倍。"
+            "zhHansDescription": "造成{amount}点伤害。此牌受到的力量效果加倍。",
+            "ruName": "Выпад +",
+            "ruDescription": "Нанесите {amount} урона. Эта карта получает двойной эффект от Силы."
         },
         {
             "cardId": 202034,
@@ -89,7 +101,9 @@
             "zhHantName": "突刺 +",
             "zhHantDescription": "造成{amount}點傷害。失去{amount2}點力量。",
             "zhHansName": "突刺 +",
-            "zhHansDescription": "造成{amount}点伤害。失去{amount2}点力量。"
+            "zhHansDescription": "造成{amount}点伤害。失去{amount2}点力量。",
+            "ruName": "Выпад +",
+            "ruDescription": "Нанесите {amount} урона. Потеряйте {amount2} Силы."
         },
         {
             "cardId": 202035,
@@ -102,7 +116,9 @@
             "zhHantName": "突刺 +",
             "zhHantDescription": "失去{amount}點生命值。造成{amount2}點傷害。",
             "zhHansName": "突刺 +",
-            "zhHansDescription": "失去{amount}点生命值。造成{amount2}点伤害。"
+            "zhHansDescription": "失去{amount}点生命值。造成{amount2}点伤害。",
+            "ruName": "Выпад +",
+            "ruDescription": "Потеряйте {amount} здоровья. Нанесите {amount2} урона."
         },
         {
             "cardId": 202040,
@@ -115,7 +131,9 @@
             "zhHantName": "防守",
             "zhHantDescription": "查看接下來要抽的{amount}張牌，並從中選擇1張抽取。",
             "zhHansName": "防守",
-            "zhHansDescription": "查看接下来要抽的{amount}张牌，并从中选择1张抽取。"
+            "zhHansDescription": "查看接下来要抽的{amount}张牌，并从中选择1张抽取。",
+            "ruName": "Гард",
+            "ruDescription": "Посмотрите на следующие {amount} карт, которые вы бы взяли. Выберите одну из них, чтобы взять."
         },
         {
             "cardId": 202041,
@@ -128,7 +146,9 @@
             "zhHantName": "防守 +",
             "zhHantDescription": "抽{amount}張牌，將其中費用不為0的牌棄掉。",
             "zhHansName": "防守 +",
-            "zhHansDescription": "抽{amount}张牌，将其中费用不为0的牌弃掉。"
+            "zhHansDescription": "抽{amount}张牌，将其中费用不为0的牌弃掉。",
+            "ruName": "Гард +",
+            "ruDescription": "Возьмите {amount} карт. Сбросьте те, чья стоимость не равна 0."
         },
         {
             "cardId": 202042,
@@ -141,7 +161,9 @@
             "zhHantName": "防守 +",
             "zhHantDescription": "從手中選擇並棄掉{amount}張牌，然後抽{amount2}張牌。",
             "zhHansName": "防守 +",
-            "zhHansDescription": "从手中选择并弃掉{amount}张牌，然后抽{amount2}张牌。"
+            "zhHansDescription": "从手中选择并弃掉{amount}张牌，然后抽{amount2}张牌。",
+            "ruName": "Гард +",
+            "ruDescription": "Выберите и сбросьте {amount} карт из руки, затем возьмите {amount2} карт."
         },
         {
             "cardId": 202043,
@@ -154,7 +176,9 @@
             "zhHantName": "防守 +",
             "zhHantDescription": "抽{amount}張牌。依其中凡妮莎牌的數量獲得力量。",
             "zhHansName": "防守 +",
-            "zhHansDescription": "抽{amount}张牌。依其中凡妮莎牌的数量获得力量。"
+            "zhHansDescription": "抽{amount}张牌。依其中凡妮莎牌的数量获得力量。",
+            "ruName": "Гард +",
+            "ruDescription": "Возьмите {amount} карт. Получите Силу, равную числу карт Ванессы среди них."
         },
         {
             "cardId": 202044,
@@ -167,7 +191,9 @@
             "zhHantName": "防守 +",
             "zhHantDescription": "獲得{amount}點力量。回合結束時消失。",
             "zhHansName": "防守 +",
-            "zhHansDescription": "获得{amount}点力量。回合结束时消失。"
+            "zhHansDescription": "获得{amount}点力量。回合结束时消失。",
+            "ruName": "Гард +",
+            "ruDescription": "Получите {amount} Силы. Она исчезает в конце хода."
         },
         {
             "cardId": 202045,
@@ -180,7 +206,9 @@
             "zhHantName": "防守 +",
             "zhHantDescription": "抽{amount}張牌。本回合內你不能再抽牌。",
             "zhHansName": "防守 +",
-            "zhHansDescription": "抽{amount}张牌。本回合内你不能再抽牌。"
+            "zhHansDescription": "抽{amount}张牌。本回合内你不能再抽牌。",
+            "ruName": "Гард +",
+            "ruDescription": "Возьмите {amount} карт. Вы не можете брать больше карт в этом ходу."
         },
         {
             "cardId": 202050,
@@ -193,7 +221,9 @@
             "zhHantName": "回敬",
             "zhHantDescription": "本回合獲得{amount}層反擊。",
             "zhHansName": "回敬",
-            "zhHansDescription": "本回合获得{amount}层反击。"
+            "zhHansDescription": "本回合获得{amount}层反击。",
+            "ruName": "Рипост",
+            "ruDescription": "Получите {amount} Контратаки в этом ходу."
         },
         {
             "cardId": 202051,
@@ -206,7 +236,9 @@
             "zhHantName": "回敬 +",
             "zhHantDescription": "獲得{amount}層反擊。",
             "zhHansName": "回敬 +",
-            "zhHansDescription": "获得{amount}层反击。"
+            "zhHansDescription": "获得{amount}层反击。",
+            "ruName": "Рипост +",
+            "ruDescription": "Получите {amount} Контратаки."
         },
         {
             "cardId": 202052,
@@ -219,7 +251,9 @@
             "zhHantName": "回敬 +",
             "zhHantDescription": "獲得{amount}層迴避。",
             "zhHansName": "回敬 +",
-            "zhHansDescription": "获得{amount}层回避。"
+            "zhHansDescription": "获得{amount}层回避。",
+            "ruName": "Рипост +",
+            "ruDescription": "Получите {amount} Уклонения."
         },
         {
             "cardId": 202053,
@@ -232,7 +266,9 @@
             "zhHantName": "回敬 +",
             "zhHantDescription": "恢復{amount}點生命值。獲得{amount2}點力量。",
             "zhHansName": "回敬 +",
-            "zhHansDescription": "恢复{amount}点生命值。获得{amount2}点力量。"
+            "zhHansDescription": "恢复{amount}点生命值。获得{amount2}点力量。",
+            "ruName": "Рипост +",
+            "ruDescription": "Восстановите {amount} здоровья. Получите {amount2} Силы."
         },
         {
             "cardId": 202054,
@@ -245,7 +281,9 @@
             "zhHantName": "回敬 +",
             "zhHantDescription": "造成{amount}點傷害。若你在本回合失去過生命值，改為造成3倍傷害。",
             "zhHansName": "回敬 +",
-            "zhHansDescription": "造成{amount}点伤害。若你在本回合失去过生命值，改为造成3倍伤害。"
+            "zhHansDescription": "造成{amount}点伤害。若你在本回合失去过生命值，改为造成3倍伤害。",
+            "ruName": "Рипост +",
+            "ruDescription": "Нанесите {amount} урона. Если вы теряли здоровье в этом ходу, вместо этого нанесите тройной урон."
         },
         {
             "cardId": 202055,
@@ -258,7 +296,9 @@
             "zhHantName": "回敬 +",
             "zhHantDescription": "造成{amount}點傷害。若敵人有攻擊意圖，改為造成2倍傷害。",
             "zhHansName": "回敬 +",
-            "zhHansDescription": "造成{amount}点伤害。若敌人有攻击意图，改为造成2倍伤害。"
+            "zhHansDescription": "造成{amount}点伤害。若敌人有攻击意图，改为造成2倍伤害。",
+            "ruName": "Рипост +",
+            "ruDescription": "Нанесите {amount} урона. Если враг собирается атаковать, вместо этого нанесите двойной урон."
         },
         {
             "cardId": 202060,
@@ -271,7 +311,9 @@
             "zhHantName": "連刺",
             "zhHantDescription": "造成{amount}點傷害，共{amount2}次。",
             "zhHansName": "连刺",
-            "zhHansDescription": "造成{amount}点伤害，共{amount2}次。"
+            "zhHansDescription": "造成{amount}点伤害，共{amount2}次。",
+            "ruName": "Ремиз",
+            "ruDescription": "Нанесите {amount} урона {amount2} раз."
         },
         {
             "cardId": 202061,
@@ -284,7 +326,9 @@
             "zhHantName": "連刺 +",
             "zhHantDescription": "造成{amount}點傷害，共{amount2}次。",
             "zhHansName": "连刺 +",
-            "zhHansDescription": "造成{amount}点伤害，共{amount2}次。"
+            "zhHansDescription": "造成{amount}点伤害，共{amount2}次。",
+            "ruName": "Ремиз +",
+            "ruDescription": "Нанесите {amount} урона {amount2} раз."
         },
         {
             "cardId": 202062,
@@ -297,7 +341,9 @@
             "zhHantName": "連刺 +",
             "zhHantDescription": "造成{amount}點傷害，共{amount2}次。",
             "zhHansName": "连刺 +",
-            "zhHansDescription": "造成{amount}点伤害，共{amount2}次。"
+            "zhHansDescription": "造成{amount}点伤害，共{amount2}次。",
+            "ruName": "Ремиз +",
+            "ruDescription": "Нанесите {amount} урона {amount2} раз."
         },
         {
             "cardId": 202063,
@@ -310,7 +356,9 @@
             "zhHantName": "連刺 +",
             "zhHantDescription": "造成{amount}點傷害。將此牌的{amount2}張複製洗入抽牌堆。",
             "zhHansName": "连刺 +",
-            "zhHansDescription": "造成{amount}点伤害。将此牌的{amount2}张复制洗入抽牌堆。"
+            "zhHansDescription": "造成{amount}点伤害。将此牌的{amount2}张复制洗入抽牌堆。",
+            "ruName": "Ремиз +",
+            "ruDescription": "Нанесите {amount} урона. Замешайте {amount2} копий этой карты в колоду добора."
         },
         {
             "cardId": 202064,
@@ -323,7 +371,9 @@
             "zhHantName": "連刺 +",
             "zhHantDescription": "下一張使用的牌會額外施放{amount}次。",
             "zhHansName": "连刺 +",
-            "zhHansDescription": "下一张使用的牌会额外施放{amount}次。"
+            "zhHansDescription": "下一张使用的牌会额外施放{amount}次。",
+            "ruName": "Ремиз +",
+            "ruDescription": "Следующая разыгранная вами карта разыгрывается ещё {amount} раз."
         },
         {
             "cardId": 202065,
@@ -336,7 +386,9 @@
             "zhHantName": "連刺 +",
             "zhHantDescription": "獲得{amount}層連擊。",
             "zhHansName": "连刺 +",
-            "zhHansDescription": "获得{amount}层连击。"
+            "zhHansDescription": "获得{amount}层连击。",
+            "ruName": "Ремиз +",
+            "ruDescription": "Получите {amount} Комбо."
         },
         {
             "cardId": 202070,
@@ -349,7 +401,9 @@
             "zhHantName": "得手",
             "zhHantDescription": "造成{amount}點傷害。獲得等同於未被護盾阻擋傷害的力量。",
             "zhHansName": "得手",
-            "zhHansDescription": "造成{amount}点伤害。获得等同于未被护盾阻挡伤害的力量。"
+            "zhHansDescription": "造成{amount}点伤害。获得等同于未被护盾阻挡伤害的力量。",
+            "ruName": "Туше",
+            "ruDescription": "Нанесите {amount} урона. Получите Силу, равную нанесённому непроблокированному урону."
         },
         {
             "cardId": 202071,
@@ -362,7 +416,9 @@
             "zhHantName": "得手 +",
             "zhHantDescription": "造成{amount}點傷害。獲得等同於未被護盾阻擋傷害的力量。",
             "zhHansName": "得手 +",
-            "zhHansDescription": "造成{amount}点伤害。获得等同于未被护盾阻挡伤害的力量。"
+            "zhHansDescription": "造成{amount}点伤害。获得等同于未被护盾阻挡伤害的力量。",
+            "ruName": "Туше +",
+            "ruDescription": "Нанесите {amount} урона. Получите Силу, равную нанесённому непроблокированному урону."
         },
         {
             "cardId": 202072,
@@ -375,7 +431,9 @@
             "zhHantName": "得手 +",
             "zhHantDescription": "造成{amount}點傷害。獲得等同於未被護盾阻擋傷害的力量。",
             "zhHansName": "得手 +",
-            "zhHansDescription": "造成{amount}点伤害。获得等同于未被护盾阻挡伤害的力量。"
+            "zhHansDescription": "造成{amount}点伤害。获得等同于未被护盾阻挡伤害的力量。",
+            "ruName": "Туше +",
+            "ruDescription": "Нанесите {amount} урона. Получите Силу, равную нанесённому непроблокированному урону."
         },
         {
             "cardId": 202073,
@@ -388,7 +446,9 @@
             "zhHantName": "得手 +",
             "zhHantDescription": "獲得{amount}層威壓。",
             "zhHansName": "得手 +",
-            "zhHansDescription": "获得{amount}层威压。"
+            "zhHansDescription": "获得{amount}层威压。",
+            "ruName": "Туше +",
+            "ruDescription": "Получите {amount} Запугивания."
         },
         {
             "cardId": 202074,
@@ -401,7 +461,9 @@
             "zhHantName": "得手 +",
             "zhHantDescription": "造成{amount}點傷害。保留: 傷害量依你的力量增加。",
             "zhHansName": "得手 +",
-            "zhHansDescription": "造成{amount}点伤害。保留: 伤害量依你的力量增加。"
+            "zhHansDescription": "造成{amount}点伤害。保留: 伤害量依你的力量增加。",
+            "ruName": "Туше +",
+            "ruDescription": "Нанесите {amount} урона. Сохранение: урон увеличивается на вашу Силу."
         },
         {
             "cardId": 202075,
@@ -414,7 +476,9 @@
             "zhHantName": "得手 +",
             "zhHantDescription": "造成{amount}點傷害。獲得等同於未被護盾阻擋傷害的反擊。",
             "zhHansName": "得手 +",
-            "zhHansDescription": "造成{amount}点伤害。获得等同于未被护盾阻挡伤害的反击。"
+            "zhHansDescription": "造成{amount}点伤害。获得等同于未被护盾阻挡伤害的反击。",
+            "ruName": "Туше +",
+            "ruDescription": "Нанесите {amount} урона. Получите Контратаку, равную нанесённому непроблокированному урону."
         }
     ]
 }

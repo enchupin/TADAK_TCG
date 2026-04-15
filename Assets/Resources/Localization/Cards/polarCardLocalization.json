@@ -11,7 +11,9 @@
             "zhHantName": "盾擊",
             "zhHantDescription": "造成{amount}點傷害。",
             "zhHansName": "盾击",
-            "zhHansDescription": "造成{amount}点伤害。"
+            "zhHansDescription": "造成{amount}点伤害。",
+            "ruName": "Удар щитом",
+            "ruDescription": "Нанесите {amount} урона."
         },
         {
             "cardId": 301020,
@@ -24,7 +26,9 @@
             "zhHantName": "冰之屏障",
             "zhHantDescription": "獲得{amount}點護盾。",
             "zhHansName": "冰之屏障",
-            "zhHansDescription": "获得{amount}点护盾。"
+            "zhHansDescription": "获得{amount}点护盾。",
+            "ruName": "Ледяной барьер",
+            "ruDescription": "Получите {amount} барьера."
         },
         {
             "cardId": 301030,
@@ -37,7 +41,9 @@
             "zhHantName": "絕對零度",
             "zhHantDescription": "對所有敵人施加{amount}層凍結。",
             "zhHansName": "绝对零度",
-            "zhHansDescription": "对所有敌人施加{amount}层冻结。"
+            "zhHansDescription": "对所有敌人施加{amount}层冻结。",
+            "ruName": "Абсолютный ноль",
+            "ruDescription": "Наложите {amount} Заморозки на всех врагов."
         },
         {
             "cardId": 301031,
@@ -50,7 +56,9 @@
             "zhHantName": "絕對零度 +",
             "zhHantDescription": "對所有敵人施加{amount}層凍結。",
             "zhHansName": "绝对零度 +",
-            "zhHansDescription": "对所有敌人施加{amount}层冻结。"
+            "zhHansDescription": "对所有敌人施加{amount}层冻结。",
+            "ruName": "Абсолютный ноль +",
+            "ruDescription": "Наложите {amount} Заморозки на всех врагов."
         },
         {
             "cardId": 301032,
@@ -63,7 +71,9 @@
             "zhHantName": "絕對零度 +",
             "zhHantDescription": "對所有敵人施加{amount}層凍結。",
             "zhHansName": "绝对零度 +",
-            "zhHansDescription": "对所有敌人施加{amount}层冻结。"
+            "zhHansDescription": "对所有敌人施加{amount}层冻结。",
+            "ruName": "Абсолютный ноль +",
+            "ruDescription": "Наложите {amount} Заморозки на всех врагов."
         },
         {
             "cardId": 301033,
@@ -76,7 +86,9 @@
             "zhHantName": "絕對零度 +",
             "zhHantDescription": "對所有敵人施加{amount}層凍結。",
             "zhHansName": "绝对零度 +",
-            "zhHansDescription": "对所有敌人施加{amount}层冻结。"
+            "zhHansDescription": "对所有敌人施加{amount}层冻结。",
+            "ruName": "Абсолютный ноль +",
+            "ruDescription": "Наложите {amount} Заморозки на всех врагов."
         },
         {
             "cardId": 301034,
@@ -89,7 +101,9 @@
             "zhHantName": "絕對零度 +",
             "zhHantDescription": "獲得{amount}層絕對零度。",
             "zhHansName": "绝对零度 +",
-            "zhHansDescription": "获得{amount}层绝对零度。"
+            "zhHansDescription": "获得{amount}层绝对零度。",
+            "ruName": "Абсолютный ноль +",
+            "ruDescription": "Получите {amount} Абсолютного нуля."
         },
         {
             "cardId": 301035,
@@ -102,7 +116,9 @@
             "zhHantName": "絕對零度 +",
             "zhHantDescription": "獲得{amount}層粉碎。",
             "zhHansName": "绝对零度 +",
-            "zhHansDescription": "获得{amount}层粉碎。"
+            "zhHansDescription": "获得{amount}层粉碎。",
+            "ruName": "Абсолютный ноль +",
+            "ruDescription": "Получите {amount} Раскола."
         },
         {
             "cardId": 301040,
@@ -115,7 +131,9 @@
             "zhHantName": "冰河帷幕",
             "zhHantDescription": "獲得{amount}點護盾。",
             "zhHansName": "冰河帷幕",
-            "zhHansDescription": "获得{amount}点护盾。"
+            "zhHansDescription": "获得{amount}点护盾。",
+            "ruName": "Ледяная вуаль",
+            "ruDescription": "Получите {amount} барьера."
         },
         {
             "cardId": 301041,
@@ -128,7 +146,9 @@
             "zhHantName": "冰河帷幕 +",
             "zhHantDescription": "獲得{amount}層羈絆。",
             "zhHansName": "冰河帷幕 +",
-            "zhHansDescription": "获得{amount}层羁绊。"
+            "zhHansDescription": "获得{amount}层羁绊。",
+            "ruName": "Ледяная вуаль +",
+            "ruDescription": "Получите {amount} Связи."
         },
         {
             "cardId": 301042,
@@ -141,7 +161,9 @@
             "zhHantName": "冰河帷幕 +",
             "zhHantDescription": "獲得{amount}點護盾2次。",
             "zhHansName": "冰河帷幕 +",
-            "zhHansDescription": "获得{amount}点护盾2次。"
+            "zhHansDescription": "获得{amount}点护盾2次。",
+            "ruName": "Ледяная вуаль +",
+            "ruDescription": "Дважды получите {amount} барьера."
         },
         {
             "cardId": 301043,
@@ -154,7 +176,9 @@
             "zhHantName": "冰河帷幕 +",
             "zhHantDescription": "造成{amount}點傷害。獲得等同於造成傷害量的護盾。",
             "zhHansName": "冰河帷幕 +",
-            "zhHansDescription": "造成{amount}点伤害。获得等同于造成伤害量的护盾。"
+            "zhHansDescription": "造成{amount}点伤害。获得等同于造成伤害量的护盾。",
+            "ruName": "Ледяная вуаль +",
+            "ruDescription": "Нанесите {amount} урона. Получите барьер, равный нанесённому урону."
         },
         {
             "cardId": 301044,
@@ -167,7 +191,9 @@
             "zhHantName": "冰河帷幕 +",
             "zhHantDescription": "生成{amount}張冰河塑形牌。",
             "zhHansName": "冰河帷幕 +",
-            "zhHansDescription": "生成{amount}张冰河塑形牌。"
+            "zhHansDescription": "生成{amount}张冰河塑形牌。",
+            "ruName": "Ледяная вуаль +",
+            "ruDescription": "Создайте {amount} карт Ледяное ваяние."
         },
         {
             "cardId": 301045,
@@ -180,7 +206,9 @@
             "zhHantName": "冰河帷幕 +",
             "zhHantDescription": "獲得{amount2}點護盾。抽{amount}張牌。",
             "zhHansName": "冰河帷幕 +",
-            "zhHansDescription": "获得{amount2}点护盾。抽{amount}张牌。"
+            "zhHansDescription": "获得{amount2}点护盾。抽{amount}张牌。",
+            "ruName": "Ледяная вуаль +",
+            "ruDescription": "Получите {amount2} барьера. Возьмите {amount} карт."
         },
         {
             "cardId": 301050,
@@ -193,7 +221,9 @@
             "zhHantName": "寒氣",
             "zhHantDescription": "造成{amount}點傷害。施加{amount2}層凍結。",
             "zhHansName": "寒气",
-            "zhHansDescription": "造成{amount}点伤害。施加{amount2}层冻结。"
+            "zhHansDescription": "造成{amount}点伤害。施加{amount2}层冻结。",
+            "ruName": "Озноб",
+            "ruDescription": "Нанесите {amount} урона. Наложите {amount2} Заморозки."
         },
         {
             "cardId": 301051,
@@ -206,7 +236,9 @@
             "zhHantName": "寒氣 +",
             "zhHantDescription": "造成{amount}點傷害。施加{amount2}層凍結。",
             "zhHansName": "寒气 +",
-            "zhHansDescription": "造成{amount}点伤害。施加{amount2}层冻结。"
+            "zhHansDescription": "造成{amount}点伤害。施加{amount2}层冻结。",
+            "ruName": "Озноб +",
+            "ruDescription": "Нанесите {amount} урона. Наложите {amount2} Заморозки."
         },
         {
             "cardId": 301052,
@@ -219,7 +251,9 @@
             "zhHantName": "寒氣 +",
             "zhHantDescription": "抽{amount}張牌。獲得{amount2}點護盾。",
             "zhHansName": "寒气 +",
-            "zhHansDescription": "抽{amount}张牌。获得{amount2}点护盾。"
+            "zhHansDescription": "抽{amount}张牌。获得{amount2}点护盾。",
+            "ruName": "Озноб +",
+            "ruDescription": "Возьмите {amount} карт. Получите {amount2} барьера."
         },
         {
             "cardId": 301053,
@@ -232,7 +266,9 @@
             "zhHantName": "寒氣 +",
             "zhHantDescription": "強化: 獲得寒氣。",
             "zhHansName": "寒气 +",
-            "zhHansDescription": "强化: 获得寒气。"
+            "zhHansDescription": "强化: 获得寒气。",
+            "ruName": "Озноб +",
+            "ruDescription": "Усиление: получите Озноб."
         },
         {
             "cardId": 301054,
@@ -245,7 +281,9 @@
             "zhHantName": "寒氣 +",
             "zhHantDescription": "獲得{amount}層羈絆。",
             "zhHansName": "寒气 +",
-            "zhHansDescription": "获得{amount}层羁绊。"
+            "zhHansDescription": "获得{amount}层羁绊。",
+            "ruName": "Озноб +",
+            "ruDescription": "Получите {amount} Связи."
         },
         {
             "cardId": 301055,
@@ -258,7 +296,9 @@
             "zhHantName": "寒氣 +",
             "zhHantDescription": "獲得{amount}層寒氣。",
             "zhHansName": "寒气 +",
-            "zhHansDescription": "获得{amount}层寒气。"
+            "zhHansDescription": "获得{amount}层寒气。",
+            "ruName": "Озноб +",
+            "ruDescription": "Получите {amount} Озноба."
         },
         {
             "cardId": 301060,
@@ -271,7 +311,9 @@
             "zhHantName": "魔力置換",
             "zhHantDescription": "改為使用護盾而非能量。生成{amount}張冰河塑形牌。",
             "zhHansName": "魔力置换",
-            "zhHansDescription": "改为使用护盾而非能量。生成{amount}张冰河塑形牌。"
+            "zhHansDescription": "改为使用护盾而非能量。生成{amount}张冰河塑形牌。",
+            "ruName": "Замена маны",
+            "ruDescription": "Используйте барьер вместо энергии. Создайте {amount} карт Ледяное ваяние."
         },
         {
             "cardId": 301061,
@@ -284,7 +326,9 @@
             "zhHantName": "魔力置換 +",
             "zhHantDescription": "改為使用護盾而非能量。恢復{amount}點生命值。",
             "zhHansName": "魔力置换 +",
-            "zhHansDescription": "改为使用护盾而非能量。恢复{amount}点生命值。"
+            "zhHansDescription": "改为使用护盾而非能量。恢复{amount}点生命值。",
+            "ruName": "Замена маны +",
+            "ruDescription": "Используйте барьер вместо энергии. Восстановите {amount} здоровья."
         },
         {
             "cardId": 301062,
@@ -297,7 +341,9 @@
             "zhHantName": "魔力置換 +",
             "zhHantDescription": "改為使用護盾而非能量。造成{amount}點傷害。",
             "zhHansName": "魔力置换 +",
-            "zhHansDescription": "改为使用护盾而非能量。造成{amount}点伤害。"
+            "zhHansDescription": "改为使用护盾而非能量。造成{amount}点伤害。",
+            "ruName": "Замена маны +",
+            "ruDescription": "Используйте барьер вместо энергии. Нанесите {amount} урона."
         },
         {
             "cardId": 301063,
@@ -310,7 +356,9 @@
             "zhHantName": "魔力置換 +",
             "zhHantDescription": "改為使用護盾而非能量。生成{amount}張冰河塑形牌。",
             "zhHansName": "魔力置换 +",
-            "zhHansDescription": "改为使用护盾而非能量。生成{amount}张冰河塑形牌。"
+            "zhHansDescription": "改为使用护盾而非能量。生成{amount}张冰河塑形牌。",
+            "ruName": "Замена маны +",
+            "ruDescription": "Используйте барьер вместо энергии. Создайте {amount} карт Ледяное ваяние."
         },
         {
             "cardId": 301064,
@@ -323,7 +371,9 @@
             "zhHantName": "魔力置換 +",
             "zhHantDescription": "改為使用護盾而非能量。獲得{amount}層羈絆。",
             "zhHansName": "魔力置换 +",
-            "zhHansDescription": "改为使用护盾而非能量。获得{amount}层羁绊。"
+            "zhHansDescription": "改为使用护盾而非能量。获得{amount}层羁绊。",
+            "ruName": "Замена маны +",
+            "ruDescription": "Используйте барьер вместо энергии. Получите {amount} Связи."
         },
         {
             "cardId": 301065,
@@ -336,7 +386,9 @@
             "zhHantName": "魔力置換 +",
             "zhHantDescription": "改為使用護盾而非能量。獲得{amount}層再生。",
             "zhHansName": "魔力置换 +",
-            "zhHansDescription": "改为使用护盾而非能量。获得{amount}层再生。"
+            "zhHansDescription": "改为使用护盾而非能量。获得{amount}层再生。",
+            "ruName": "Замена маны +",
+            "ruDescription": "Используйте барьер вместо энергии. Получите {amount} Регенерации."
         },
         {
             "cardId": 301070,
@@ -349,7 +401,9 @@
             "zhHantName": "防護凍結",
             "zhHantDescription": "獲得1層預防。保留: 獲得5點護盾。",
             "zhHansName": "防护冻结",
-            "zhHansDescription": "获得1层预防。保留: 获得5点护盾。"
+            "zhHansDescription": "获得1层预防。保留: 获得5点护盾。",
+            "ruName": "Защитная заморозка",
+            "ruDescription": "Получите 1 Предотвращения. Сохранение: получите 5 барьера."
         },
         {
             "cardId": 301071,
@@ -362,7 +416,9 @@
             "zhHantName": "防護凍結 +",
             "zhHantDescription": "獲得1層預防。保留: 獲得等同於羈絆層數的護盾。",
             "zhHansName": "防护冻结 +",
-            "zhHansDescription": "获得1层预防。保留: 获得等同于羁绊层数的护盾。"
+            "zhHansDescription": "获得1层预防。保留: 获得等同于羁绊层数的护盾。",
+            "ruName": "Защитная заморозка +",
+            "ruDescription": "Получите 1 Предотвращения. Сохранение: получите барьер, равный Связи."
         },
         {
             "cardId": 301072,
@@ -375,7 +431,9 @@
             "zhHantName": "防護凍結 +",
             "zhHantDescription": "獲得2層預防。保留: 獲得7點護盾。",
             "zhHansName": "防护冻结 +",
-            "zhHansDescription": "获得2层预防。保留: 获得7点护盾。"
+            "zhHansDescription": "获得2层预防。保留: 获得7点护盾。",
+            "ruName": "Защитная заморозка +",
+            "ruDescription": "Получите 2 Предотвращения. Сохранение: получите 7 барьера."
         },
         {
             "cardId": 301073,
@@ -388,7 +446,9 @@
             "zhHantName": "防護凍結 +",
             "zhHantDescription": "獲得{amount}點護盾。",
             "zhHansName": "防护冻结 +",
-            "zhHansDescription": "获得{amount}点护盾。"
+            "zhHansDescription": "获得{amount}点护盾。",
+            "ruName": "Защитная заморозка +",
+            "ruDescription": "Получите {amount} барьера."
         },
         {
             "cardId": 301074,
@@ -401,7 +461,9 @@
             "zhHantName": "防護凍結 +",
             "zhHantDescription": "獲得永久凍結。",
             "zhHansName": "防护冻结 +",
-            "zhHansDescription": "获得永久冻结。"
+            "zhHansDescription": "获得永久冻结。",
+            "ruName": "Защитная заморозка +",
+            "ruDescription": "Получите Вечную мерзлоту."
         },
         {
             "cardId": 301075,
@@ -414,7 +476,9 @@
             "zhHantName": "防護凍結 +",
             "zhHantDescription": "將目前的護盾變為2倍。",
             "zhHansName": "防护冻结 +",
-            "zhHansDescription": "将目前的护盾变为2倍。"
+            "zhHansDescription": "将目前的护盾变为2倍。",
+            "ruName": "Защитная заморозка +",
+            "ruDescription": "Удвойте ваш текущий барьер."
         },
         {
             "cardId": 301080,
@@ -427,7 +491,9 @@
             "zhHantName": "冰河塑形",
             "zhHantDescription": "施加{amount}層凍結。",
             "zhHansName": "冰河塑形",
-            "zhHansDescription": "施加{amount}层冻结。"
+            "zhHansDescription": "施加{amount}层冻结。",
+            "ruName": "Ледяное ваяние",
+            "ruDescription": "Наложите {amount} Заморозки."
         },
         {
             "cardId": 301081,
@@ -440,7 +506,9 @@
             "zhHantName": "冰河塑形 +",
             "zhHantDescription": "施加{amount}層凍結。",
             "zhHansName": "冰河塑形 +",
-            "zhHansDescription": "施加{amount}层冻结。"
+            "zhHansDescription": "施加{amount}层冻结。",
+            "ruName": "Ледяное ваяние +",
+            "ruDescription": "Наложите {amount} Заморозки."
         }
     ]
 }
