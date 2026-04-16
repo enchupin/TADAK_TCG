@@ -52,7 +52,9 @@ public class DamageEffect : ICardEffect
                     break;
                 }
 
-                totalDamageDealt += singleTarget.TakeDamage(finalAmount, 0);
+                int singleDamage = singleTarget.TakeDamage(finalAmount, 0);
+                totalDamageDealt += singleDamage;
+                battleManager.HandlePlayerDamageDealt(singleTarget, singleDamage);
                 break;
 
             case TargetType.AllEnemies: // 모든 적 대상
@@ -64,7 +66,9 @@ public class DamageEffect : ICardEffect
                 List<Monster> allMonsters = new List<Monster>(battleManager.spawnedMonsters);
                 foreach (var m in allMonsters)
                 {
-                    totalDamageDealt += m.TakeDamage(finalAmount, 0);
+                    int dealtDamage = m.TakeDamage(finalAmount, 0);
+                    totalDamageDealt += dealtDamage;
+                    battleManager.HandlePlayerDamageDealt(m, dealtDamage);
                 }
                 break;
 
@@ -76,7 +80,9 @@ public class DamageEffect : ICardEffect
                 }
 
                 Monster randomTarget = randomTargets[Random.Range(0, randomTargets.Count)];
-                totalDamageDealt += randomTarget.TakeDamage(finalAmount, 0);
+                int randomDamage = randomTarget.TakeDamage(finalAmount, 0);
+                totalDamageDealt += randomDamage;
+                battleManager.HandlePlayerDamageDealt(randomTarget, randomDamage);
                 break;
 
             case TargetType.Self: // 플레이어 자신 대상

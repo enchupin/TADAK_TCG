@@ -58,6 +58,7 @@ public class PlayerBuffRuntimeService
         Register(new AttackBoostBuffScript());
         Register(new FeatherCycleBuffScript());
         Register(new FeatherEnhanceBuffScript());
+        Register(new BloodBattleBuffScript());
         Register(new FeatherStackBoostBuffScript());
         Register(new GrowingFeatherBuffScript());
         Register(new FeatherAutoTriggerBuffScript());
@@ -65,7 +66,12 @@ public class PlayerBuffRuntimeService
         Register(new DeadlyAmbushBuffScript());
         Register(new DoubleActionBuffScript());
         Register(new JokerPowerBuffScript());
+        Register(new ComboBuffScript());
         Register(new EnergyOverflowBuffScript());
+        Register(new BurningWillBuffScript());
+        Register(new IndomitableBuffScript());
+        Register(new VictorRestBuffScript());
+        Register(new BerserkerBuffScript());
         Register(new RuneBuffScript());
         Register(new WuppiGuardBuffScript());
         Register(new WuppiAttackBuffScript());
@@ -81,6 +87,7 @@ public class PlayerBuffRuntimeService
         Register(new ColdAirBuffScript());
         Register(new LavaBarrierBuffScript());
         Register(new ExhaustDrawContractBuffScript());
+        Register(new LastStandBuffScript());
         Register(new SoulProtectionBuffScript());
     }
 
@@ -463,6 +470,19 @@ public class PlayerBuffRuntimeService
         });
     }
 
+    public void OnPlayerHpLost(int hpLoss)
+    {
+        if (hpLoss <= 0)
+        {
+            return;
+        }
+
+        InvokeForActiveBuffs((script, player, stack) =>
+        {
+            script.OnPlayerHpLost(battleManager, player, hpLoss, stack);
+        });
+    }
+
     public void OnEnemyDebuffApplied(Monster targetMonster, int buffId, int amount, int crueltyStackBeforeApply)
     {
         if (targetMonster == null || targetMonster.IsDead() || amount <= 0)
@@ -473,6 +493,19 @@ public class PlayerBuffRuntimeService
         InvokeForActiveBuffs((script, player, stack) =>
         {
             script.OnEnemyDebuffApplied(battleManager, player, targetMonster, buffId, amount, stack, crueltyStackBeforeApply);
+        });
+    }
+
+    public void OnPlayerDamageDealt(Monster targetMonster, int dealtDamage)
+    {
+        if (targetMonster == null || dealtDamage <= 0)
+        {
+            return;
+        }
+
+        InvokeForActiveBuffs((script, player, stack) =>
+        {
+            script.OnPlayerDamageDealt(battleManager, player, targetMonster, dealtDamage, stack);
         });
     }
 
@@ -554,6 +587,14 @@ public class PlayerBuffRuntimeService
         InvokeForActiveBuffs((script, player, stack) =>
         {
             script.OnFeatherApplied(battleManager, player, appliedAmount, targetCount, targetType, stack);
+        });
+    }
+
+    public void OnBattleEnded(bool isVictory)
+    {
+        InvokeForActiveBuffs((script, player, stack) =>
+        {
+            script.OnBattleEnded(battleManager, player, stack, isVictory);
         });
     }
 

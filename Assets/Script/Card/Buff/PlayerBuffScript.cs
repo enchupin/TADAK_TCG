@@ -183,7 +183,15 @@ public abstract class PlayerBuffScript
     {
     }
 
+    public virtual void OnPlayerHpLost(TrainingBattleManager battleManager, PlayerData player, int hpLoss, int stack)
+    {
+    }
+
     public virtual void OnEnemyDebuffApplied(TrainingBattleManager battleManager, PlayerData player, Monster targetMonster, int buffId, int amount, int stack, int crueltyStackBeforeApply)
+    {
+    }
+
+    public virtual void OnPlayerDamageDealt(TrainingBattleManager battleManager, PlayerData player, Monster targetMonster, int dealtDamage, int stack)
     {
     }
 
@@ -222,6 +230,10 @@ public abstract class PlayerBuffScript
     }
 
     public virtual void OnFeatherApplied(TrainingBattleManager battleManager, PlayerData player, int appliedAmount, int targetCount, TargetType targetType, int stack)
+    {
+    }
+
+    public virtual void OnBattleEnded(TrainingBattleManager battleManager, PlayerData player, int stack, bool isVictory)
     {
     }
 }

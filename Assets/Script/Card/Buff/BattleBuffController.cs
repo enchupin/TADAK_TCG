@@ -106,7 +106,9 @@ public class BattleBuffController
         int totalDamageDealt = 0;
         foreach (Monster monster in targets)
         {
-            totalDamageDealt += monster.TakeDamage(resolvedDamage, 0);
+            int dealtDamage = monster.TakeDamage(resolvedDamage, 0);
+            totalDamageDealt += dealtDamage;
+            HandlePlayerDamageDealt(monster, dealtDamage);
         }
 
         battleManager.battleContext?.OnDamageDealt(totalDamageDealt);
@@ -341,7 +343,18 @@ public class BattleBuffController
 
     public void HandlePlayerHpLost(int hpLoss)
     {
+        playerBuffRuntimeService.OnPlayerHpLost(hpLoss);
         monsterBuffRuntimeService.OnPlayerHpLost(hpLoss);
+    }
+
+    public void HandlePlayerDamageDealt(Monster monster, int dealtDamage)
+    {
+        playerBuffRuntimeService.OnPlayerDamageDealt(monster, dealtDamage);
+    }
+
+    public void HandleBattleEnded(bool isVictory)
+    {
+        playerBuffRuntimeService.OnBattleEnded(isVictory);
     }
 
     public void HandleMonsterBuffApplied(Monster monster, int buffId, int amount)

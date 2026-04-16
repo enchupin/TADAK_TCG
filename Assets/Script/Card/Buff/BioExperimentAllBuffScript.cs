@@ -19,7 +19,13 @@ public sealed class BioExperimentAllBuffScript : PlayerBuffScript
 
         foreach (Monster monster in battleManager.GetLivingMonsters())
         {
-            monster?.TakeDamage(damage, 0);
+            if (monster == null)
+            {
+                continue;
+            }
+
+            int dealtDamage = monster.TakeDamage(damage, 0);
+            battleManager.HandlePlayerDamageDealt(monster, dealtDamage);
         }
     }
 }

@@ -108,6 +108,85 @@ public static class BuffCardUtility
         return false;
     }
 
+    public static bool CausesSelfHpLoss(Card card)
+    {
+        return CausesSelfHpLoss(card?.effects);
+    }
+
+    public static bool CausesSelfHpLoss(List<ICardEffect> effects)
+    {
+        if (effects == null || effects.Count == 0)
+        {
+            return false;
+        }
+
+        foreach (ICardEffect effect in effects)
+        {
+            if (CausesSelfHpLoss(effect))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool CausesSelfHpLoss(ICardEffect effect)
+    {
+        if (effect == null)
+        {
+            return false;
+        }
+
+        switch (effect)
+        {
+            case HpLossEffect hpLossEffect:
+                return hpLossEffect.target == TargetType.Self;
+
+            case AttackEffect attackEffect:
+                return attackEffect.target == TargetType.Self || CausesSelfHpLoss(attackEffect.onActions);
+
+            case DamageEffect damageEffect:
+                return damageEffect.target == TargetType.Self || CausesSelfHpLoss(damageEffect.onActions);
+
+            case DrawEffect drawEffect:
+                return CausesSelfHpLoss(drawEffect.onActions);
+
+            case DrawBasicEffect drawBasicEffect:
+                return CausesSelfHpLoss(drawBasicEffect.onActions);
+
+            case DrawCharacterEffect drawCharacterEffect:
+                return CausesSelfHpLoss(drawCharacterEffect.onActions);
+
+            case BarrierEffect barrierEffect:
+                return CausesSelfHpLoss(barrierEffect.onActions);
+
+            case ExhaustCardEffect exhaustCardEffect:
+                return CausesSelfHpLoss(exhaustCardEffect.onActions);
+
+            case CopyEffect copyEffect:
+                return CausesSelfHpLoss(copyEffect.onActions);
+
+            case MoveEffect moveEffect:
+                return CausesSelfHpLoss(moveEffect.onActions);
+
+            case SelectCardEffect selectCardEffect:
+                return CausesSelfHpLoss(selectCardEffect.onActions);
+
+            case ChangeStatEffect changeStatEffect:
+                return CausesSelfHpLoss(changeStatEffect.onActions);
+
+            case ConditionalEffect conditionalEffect:
+                return CausesSelfHpLoss(conditionalEffect.successEffects)
+                    || CausesSelfHpLoss(conditionalEffect.failEffects);
+
+            case RepeatEffect repeatEffect:
+                return CausesSelfHpLoss(repeatEffect.effectToRepeat);
+        }
+
+        return false;
+    }
+
     private static List<int> GetUniqueUpgradeCardPool()
     {
         List<int> pool = new();

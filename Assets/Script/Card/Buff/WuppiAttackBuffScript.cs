@@ -19,4 +19,9 @@ public sealed class WuppiAttackBuffScript : PlayerBuffScript
     {
         return stack > 0 ? currentMultiplier * 2f : currentMultiplier;
     }
+
+    public override float GetIncomingDamageMultiplier(TrainingBattleManager battleManager, PlayerData player, Monster attacker, int stack, float currentMultiplier)
+    {
+        return stack > 0 ? currentMultiplier * 2f : currentMultiplier;
+    }
 }

@@ -60,6 +60,11 @@ public static class WuppiModeRuntimeUtility
         if (changedBuffId == RuneBuffId)
         {
             SyncModeBuffStacks(player);
+            int drawCount = Mathf.Max(0, player.GetBuffStack(ModeCycleBuffId));
+            if (battleManager != null && drawCount > 0)
+            {
+                battleManager.DrawCards(drawCount);
+            }
             return;
         }
 
