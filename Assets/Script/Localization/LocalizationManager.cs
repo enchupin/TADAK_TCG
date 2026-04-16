@@ -71,6 +71,7 @@ public static class LocalizationManager
         currentLanguage = ResolveSystemLanguage(Application.systemLanguage);
         PlayerPrefs.DeleteKey(LanguagePlayerPrefsKey);
         BuffMetadataDatabase.RefreshLocalizedText();
+        CharacterManager.RefreshLocalizedText();
         ApplyToAllCards();
         ApplyToCurrentRunDeck();
         RefreshActiveCardControllers();
@@ -84,6 +85,7 @@ public static class LocalizationManager
         PlayerPrefs.SetString(LanguagePlayerPrefsKey, ToLanguageCode(language));
         PlayerPrefs.Save();
         BuffMetadataDatabase.RefreshLocalizedText();
+        CharacterManager.RefreshLocalizedText();
         ApplyToAllCards();
         ApplyToCurrentRunDeck();
         RefreshActiveCardControllers();
