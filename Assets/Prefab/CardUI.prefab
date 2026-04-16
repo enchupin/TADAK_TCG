@@ -96,7 +96,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
   m_UseReflectionProbes: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 1
@@ -390,6 +390,7 @@ GameObject:
   - component: {fileID: 3894038196007526712}
   - component: {fileID: 8692048824840444247}
   - component: {fileID: 7755415359058617408}
+  - component: {fileID: 4138733409394275079}
   m_Layer: 5
   m_Name: CardUI
   m_TagString: Untagged
@@ -536,6 +537,28 @@ MonoBehaviour:
   interactionHandler: {fileID: 8692048824840444247}
   isPlayable: 0
   useInteractionHandler: 1
+--- !u!114 &4138733409394275079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3192966017208014355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d25c226b9c24ef84380fd5977c63f40e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedTMPFontBinder
+  autoCollectTargets: 1
+  includeInactiveTargets: 1
+  targetTexts:
+  - {fileID: 5194070512402103804}
+  - {fileID: 6973884561520195343}
+  - {fileID: 3934500121876543213}
+  - {fileID: 5575262321193615248}
+  - {fileID: 4960167764994320406}
+  fontProfile: {fileID: 11400000, guid: 8a7c13635a5d2e440ae822f0f77d7dd9, type: 2}
+  defaultFont: {fileID: 11400000, guid: 5d346aab3032ee943b4b589b10738d3e, type: 2}
 --- !u!1 &3934500121876543210
 GameObject:
   m_ObjectHideFlags: 0
