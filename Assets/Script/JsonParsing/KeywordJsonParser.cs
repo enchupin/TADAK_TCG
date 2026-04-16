@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class KeywordJsonParser
 {
-    private const string KeywordResourcePath = "JsonData/keywords";
+    private const string KeywordResourcePath = "Localization/keywords";
 
     public static bool TryLoad(out List<KeywordData> keywords)
     {

@@ -1,0 +1,76 @@
+{
+  "characters": [
+    {
+      "characterId": 101,
+      "koName": "아일라",
+      "enName": "Isla",
+      "jaName": "アイラ",
+      "zhHantName": "伊斯拉",
+      "zhHansName": "伊斯拉",
+      "ruName": "Айла"
+    },
+    {
+      "characterId": 102,
+      "koName": "잭",
+      "enName": "Jack",
+      "jaName": "ジャック",
+      "zhHantName": "傑克",
+      "zhHansName": "杰克",
+      "ruName": "Джек"
+    },
+    {
+      "characterId": 201,
+      "koName": "이그니아",
+      "enName": "Ignia",
+      "jaName": "イグニア",
+      "zhHantName": "伊格尼亞",
+      "zhHansName": "伊格尼亚",
+      "ruName": "Игния"
+    },
+    {
+      "characterId": 202,
+      "koName": "바네사",
+      "enName": "Vanessa",
+      "jaName": "ヴァネッサ",
+      "zhHantName": "瓦妮莎",
+      "zhHansName": "瓦妮莎",
+      "ruName": "Ванесса"
+    },
+    {
+      "characterId": 203,
+      "koName": "메렐",
+      "enName": "Merel",
+      "jaName": "メレル",
+      "zhHantName": "梅雷爾",
+      "zhHansName": "梅雷尔",
+      "ruName": "Мерел"
+    },
+    {
+      "characterId": 301,
+      "koName": "폴라",
+      "enName": "Polar",
+      "jaName": "ポーラー",
+      "zhHantName": "波拉",
+      "zhHansName": "波拉",
+      "ruName": "Полар"
+    },
+    {
+      "characterId": 302,
+      "koName": "룬",
+      "enName": "Rune",
+      "jaName": "ルーン",
+      "zhHantName": "露恩",
+      "zhHansName": "露恩",
+      "ruName": "Рун"
+    },
+    {
+      "characterId": 103,
+      "koName": "크림",
+      "enName": "Cream",
+      "jaName": "クリーム",
+      "zhHantName": "克里姆",
+      "zhHansName": "克里姆",
+      "ruName": "Крим"
+    }
+  ]
+}

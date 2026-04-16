@@ -146,6 +146,7 @@ public class ButtonCreateManager : MonoBehaviour {
     }
 
     private void BindCharacterData(GameObject buttonObject, CharacterData characterData) {
+        BindCharacterLabel(buttonObject, characterData);
         SetButtonText(buttonObject, characterData.characterName);
         if (!Enum.IsDefined(typeof(Character), characterData.characterId)) {
             Debug.LogWarning($"[ButtonCreateManager] Character enum에 없는 characterId입니다: {characterData.characterId}");
@@ -154,6 +155,19 @@ public class ButtonCreateManager : MonoBehaviour {
         Character character = (Character)characterData.characterId;
         BindTrainingButton(buttonObject, character);
         BindCharacterBookButton(buttonObject, character);
+    }
+
+    private static void BindCharacterLabel(GameObject buttonObject, CharacterData characterData) {
+        if (buttonObject == null || characterData == null) {
+            return;
+        }
+
+        CharacterLocalizedButtonLabel localizedLabel = buttonObject.GetComponent<CharacterLocalizedButtonLabel>();
+        if (localizedLabel == null) {
+            localizedLabel = buttonObject.AddComponent<CharacterLocalizedButtonLabel>();
+        }
+
+        localizedLabel.Bind(characterData.characterId);
     }
 
     private static void BindTrainingButton(GameObject buttonObject, Character character) {

@@ -22,7 +22,7 @@ public sealed class BuffMetadataJsonData
 
 public static class BuffMetadataJsonParser
 {
-    private const string BuffResourcePath = "JsonData/buffs";
+    private const string BuffResourcePath = "Localization/buffs";
 
     public static bool TryLoad(out List<BuffMetadataJsonData> buffs)
     {
