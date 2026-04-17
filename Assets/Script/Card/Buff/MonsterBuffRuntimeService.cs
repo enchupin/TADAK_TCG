@@ -19,6 +19,7 @@ public class MonsterBuffRuntimeService
         Register(new StrengthMonsterBuffScript());
         Register(new StrengthDecayMonsterBuffScript());
         Register(new WeakMonsterBuffScript());
+        Register(new OverheatMonsterBuffScript());
         Register(new RootedMonsterBuffScript());
         Register(new GlacierBondMonsterBuffScript());
         Register(new ThornMonsterBuffScript());

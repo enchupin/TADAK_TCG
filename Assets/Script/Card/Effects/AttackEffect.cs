@@ -133,7 +133,8 @@ public class AttackEffect : ICardEffect
                 }
 
                 ConsumeAttackBoost(battleManager, attackBoostStack);
-                battleManager.playerData.TakeDamage(finalAmount);
+                int selfDamage = battleManager.playerData.TakeDamage(finalAmount);
+                battleManager.battleContext?.OnPlayerCardHpLost(selfDamage);
                 break;
         }
 

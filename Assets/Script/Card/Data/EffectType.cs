@@ -41,5 +41,9 @@ public enum EffectType
     UpgradeCards = 47,
     SwapCardCosts = 48,
     MultiplyEnemyDebuffs = 49,
-    ScaleIntent = 50
+    ScaleIntent = 50,
+    ReplanIntent = 51,
+    ReplayExhaustedCards = 52,
+    UseTopDeckCards = 53,
+    BindCard = 54
 }

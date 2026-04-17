@@ -71,6 +71,15 @@
       "zhHantName": "克里姆",
       "zhHansName": "克里姆",
       "ruName": "Крим"
+    },
+    {
+      "characterId": 303,
+      "koName": "칸",
+      "enName": "Khan",
+      "jaName": "",
+      "zhHantName": "",
+      "zhHansName": "",
+      "ruName": ""
     }
   ]
 }

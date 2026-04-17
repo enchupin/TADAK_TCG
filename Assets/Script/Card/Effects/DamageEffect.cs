@@ -92,7 +92,8 @@ public class DamageEffect : ICardEffect
                     break;
                 }
 
-                battleManager.playerData.TakeDamage(finalAmount);
+                int selfDamage = battleManager.playerData.TakeDamage(finalAmount);
+                battleManager.battleContext?.OnPlayerCardHpLost(selfDamage);
                 break;
         }
 

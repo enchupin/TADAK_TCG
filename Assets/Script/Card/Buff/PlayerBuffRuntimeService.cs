@@ -48,6 +48,7 @@ public class PlayerBuffRuntimeService
         Register(new WeakBuffScript());
         Register(new FrailBuffScript());
         Register(new GlacierBondBuffScript());
+        Register(new BondDecayBuffScript());
         Register(new RetainChoiceBuffScript());
         Register(new RepeatNextCardBuffScript());
         Register(new RepeatNextPowerCardBuffScript());

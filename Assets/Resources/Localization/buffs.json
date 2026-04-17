@@ -1074,6 +1074,21 @@
             "ruDescription": "Максимум энергии увеличивается на {stack}."
         },
         {
+            "buffId": 3054,
+            "name": "임시 결속",
+            "description": "턴 종료 시 결속이 {stack} 감소합니다.",
+            "enName": "Temporary Bond",
+            "enDescription": "At the end of the turn, lose {stack} Bond.",
+            "jaName": "",
+            "jaDescription": "",
+            "zhHantName": "",
+            "zhHantDescription": "",
+            "zhHansName": "",
+            "zhHansDescription": "",
+            "ruName": "",
+            "ruDescription": ""
+        },
+        {
             "buffId": 4001,
             "name": "부식",
             "description": "다음에 받는 피해가 {stack회} 25% 증가합니다.",
