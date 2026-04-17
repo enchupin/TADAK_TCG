@@ -1,6 +1,6 @@
 public sealed class BondDecayBuffScript : PlayerBuffScript
 {
-    private const int BuffIdValue = 3054;
+    private const int BuffIdValue = 4015;
     private const int BondBuffId = 3012;
 
     public override int BuffId => BuffIdValue;

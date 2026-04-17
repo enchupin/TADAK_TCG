@@ -123,6 +123,7 @@ public class CombatResolver
 
         if (playedCard.ShouldLeaveCombatWhenPlayed())
         {
+            battleManager.RemoveCardFromCombat(playedCard);
             return;
         }
 
