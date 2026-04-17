@@ -8,5 +8,6 @@ public enum Character
     Vanessa = 202,
     Merel = 203,
     Polar = 301,
-    Rune = 302
+    Rune = 302,
+    Khan = 303
 }

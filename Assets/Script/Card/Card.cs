@@ -38,6 +38,7 @@ public class Card
 
     // 손에 남았을 때 턴 종료 시 실행 효과 목록
     public List<ICardEffect> endTurnInHandEffects = new();
+    public List<Card> boundCards = new();
 
     private int turnCostDelta;
     private bool hasTurnCostOverride;
@@ -72,6 +73,22 @@ public class Card
         foreach (ICardEffect effect in effects)
         {
             effect.Execute(battlemanager);
+        }
+
+        if (boundCards != null && boundCards.Count > 0)
+        {
+            List<Card> boundCardSnapshot = new List<Card>(boundCards);
+            foreach (Card boundCard in boundCardSnapshot)
+            {
+                TriggeredCardExecutionUtility.ExecuteTriggeredCard(
+                    battlemanager,
+                    boundCard,
+                    battlemanager != null ? battlemanager.currentTarget : null,
+                    resolveDestination: false,
+                    triggerPowerEffects: false,
+                    allowRepeats: false,
+                    applyPostPlayKeywords: false);
+            }
         }
 
         if (battlemanager?.battleContext != null)
@@ -163,6 +180,7 @@ public class Card
         clonedCard.endTurnInHandEffects = endTurnInHandEffects != null
             ? new List<ICardEffect>(endTurnInHandEffects)
             : new List<ICardEffect>();
+        clonedCard.boundCards = CloneBoundCards(boundCards);
         clonedCard.baseCost = Mathf.Max(0, baseCost);
         clonedCard.cost = Mathf.Max(0, cost);
         clonedCard.turnCostDelta = turnCostDelta;
@@ -265,6 +283,27 @@ public class Card
         hasTurnCostOverride = false;
         turnCostOverride = 0;
         RecalculateCost();
+
+        if (boundCards == null)
+        {
+            return;
+        }
+
+        foreach (Card boundCard in boundCards)
+        {
+            boundCard?.ClearTurnModifiers();
+        }
+    }
+
+    public void AddBoundCard(Card card)
+    {
+        if (card == null)
+        {
+            return;
+        }
+
+        boundCards ??= new List<Card>();
+        boundCards.Add(card);
     }
 
     public void ApplyTemplate(Card templateCard)
@@ -302,6 +341,26 @@ public class Card
         hasTurnCostOverride = false;
         turnCostOverride = 0;
         RecalculateCost();
+    }
+
+    private static List<Card> CloneBoundCards(List<Card> sourceCards)
+    {
+        List<Card> clonedCards = new List<Card>();
+        if (sourceCards == null || sourceCards.Count == 0)
+        {
+            return clonedCards;
+        }
+
+        foreach (Card sourceCard in sourceCards)
+        {
+            Card clonedCard = sourceCard?.CloneForRuntimeCopy();
+            if (clonedCard != null)
+            {
+                clonedCards.Add(clonedCard);
+            }
+        }
+
+        return clonedCards;
     }
 
     private void RecalculateCost()

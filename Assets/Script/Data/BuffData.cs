@@ -32,6 +32,7 @@ public class BuffData
         int leadingDigit = GetLeadingDigit(targetBuffId);
         return leadingDigit == 1
             || leadingDigit == 2
+            || targetBuffId == ComboBuffId
             || targetBuffId == FaithfulPrayerBuffId
             || targetBuffId == ParasiticMushroomBuffId
             || targetBuffId == PoisonUpgradeBuffId

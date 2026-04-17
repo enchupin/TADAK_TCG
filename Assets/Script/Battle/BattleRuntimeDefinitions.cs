@@ -25,6 +25,9 @@ public static class BattleRuntimeDefinitions
     public static int FeatherEnhanceBuffId => GetBuffId(nameof(FeatherEnhanceBuffId));
     public static int SoulProtectionBuffId => GetBuffId(nameof(SoulProtectionBuffId));
     public static int WuppiAttackSwitchBuffId => GetBuffId(nameof(WuppiAttackSwitchBuffId));
+    public static int IntentionalRageBuffId => GetBuffId(nameof(IntentionalRageBuffId));
+    public static int BloodBattleBuffId => GetBuffId(nameof(BloodBattleBuffId));
+    public static int LastStandBuffId => GetBuffId(nameof(LastStandBuffId));
     public static int DrawLockBuffId => GetBuffId(nameof(DrawLockBuffId));
     public static int FlameTransferBuffId => GetBuffId(nameof(FlameTransferBuffId));
     public static int RegenerationBuffId => GetBuffId(nameof(RegenerationBuffId));
@@ -71,6 +74,12 @@ public static class BattleRuntimeDefinitions
     public static int DoubleActionBuffId => GetBuffId(nameof(DoubleActionBuffId));
     public static int ModeCycleBuffId => GetBuffId(nameof(ModeCycleBuffId));
     public static int OverchargeBuffId => GetBuffId(nameof(OverchargeBuffId));
+    public static int ComboBuffId => GetBuffId(nameof(ComboBuffId));
+    public static int BurningWillBuffId => GetBuffId(nameof(BurningWillBuffId));
+    public static int IndomitableBuffId => GetBuffId(nameof(IndomitableBuffId));
+    public static int VictorRestBuffId => GetBuffId(nameof(VictorRestBuffId));
+    public static int BerserkerBuffId => GetBuffId(nameof(BerserkerBuffId));
+    public static int EnergyOverflowBuffId => GetBuffId(nameof(EnergyOverflowBuffId));
     public static int CorrosionBuffId => GetBuffId(nameof(CorrosionBuffId));
     public static int EnhancedCorrosionBuffId => GetBuffId(nameof(EnhancedCorrosionBuffId));
     public static int BurnBuffId => GetBuffId(nameof(BurnBuffId));
@@ -137,6 +146,9 @@ public static class BattleRuntimeDefinitions
         Register(nameof(FeatherEnhanceBuffId), "강화: 깃털", 1016);
         Register(nameof(SoulProtectionBuffId), "영혼 보호", 1017);
         Register(nameof(WuppiAttackSwitchBuffId), "전환: 공격", 1018);
+        Register(nameof(IntentionalRageBuffId), "의도된 분노", 1019);
+        Register(nameof(BloodBattleBuffId), "혈투", 1020);
+        Register(nameof(LastStandBuffId), "구사일생", 1021);
         Register(nameof(DrawLockBuffId), "드로우 불가", 2001);
         Register(nameof(FlameTransferBuffId), "화염 전이", 2002);
         Register(nameof(RegenerationBuffId), "재생", 3001);
@@ -183,6 +195,12 @@ public static class BattleRuntimeDefinitions
         Register(nameof(DoubleActionBuffId), "이중 동작", 3045);
         Register(nameof(ModeCycleBuffId), "순환: 모드", 3046);
         Register(nameof(OverchargeBuffId), "과충전", 3047);
+        Register(nameof(ComboBuffId), "콤보", 3048);
+        Register(nameof(BurningWillBuffId), "불타는 투지", 3049);
+        Register(nameof(IndomitableBuffId), "불굴", 3050);
+        Register(nameof(VictorRestBuffId), "승자의 휴식", 3051);
+        Register(nameof(BerserkerBuffId), "광전사", 3052);
+        Register(nameof(EnergyOverflowBuffId), "기력 초과", 3053);
         Register(nameof(CorrosionBuffId), "부식", 4001);
         Register(nameof(EnhancedCorrosionBuffId), "맹독", 4002);
         Register(nameof(BurnBuffId), "화염 낙인", 4003);

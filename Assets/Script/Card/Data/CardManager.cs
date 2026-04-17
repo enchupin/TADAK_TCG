@@ -4,14 +4,12 @@ using System.Linq;
 
 /// <summary>
 /// 카드 데이터를 관리하는 Static 클래스
-/// CardCollection SO를 로드하여 Dictionary로 캐싱합니다.
+/// CardCollection SO를 로드하여 Dictionary로 캐싱합니다
 /// </summary>
 public static class CardManager
 {
     private static Dictionary<int, CardData> cardCache;
     private static Dictionary<Character, List<CardData>> characterCache;
-    private static Dictionary<int, List<int>> keywordCache;
-    private static Dictionary<string, List<int>> groupCache;
     private static bool isInitialized = false;
     
     /// <summary>
@@ -31,7 +29,6 @@ public static class CardManager
             return;
         }
 
-        ApplyRuntimeCardData(collection.allCards);
         LocalizationManager.ApplyToCards(collection.allCards);
         
         // Dictionary 캐싱 (cardId로 조회)
@@ -60,41 +57,6 @@ public static class CardManager
         {
             Debug.Log($"[CardManager] {kvp.Key}: {kvp.Value.Count}장");
         }
-    }
-
-    private static void ApplyRuntimeCardData(List<CardData> cards)
-    {
-        if (cards == null || cards.Count == 0)
-        {
-            return;
-        }
-
-        Dictionary<int, List<int>> runtimeKeywords = LoadRuntimeKeywords();
-
-        foreach (CardData card in cards)
-        {
-            if (card == null)
-            {
-                continue;
-            }
-
-            if (runtimeKeywords.TryGetValue(card.cardId, out List<int> keywords))
-            {
-                card.keywords = keywords != null ? new List<int>(keywords) : new List<int>();
-            }
-
-        }
-    }
-
-    private static Dictionary<int, List<int>> LoadRuntimeKeywords()
-    {
-        if (keywordCache != null)
-        {
-            return keywordCache;
-        }
-
-        keywordCache = CardRuntimeJsonParser.LoadRuntimeKeywords();
-        return keywordCache;
     }
     
     /// <summary>
@@ -144,6 +106,38 @@ public static class CardManager
         Debug.LogWarning($"[CardManager] No cards found for character: {character}");
         return new List<CardData>();
     }
+
+    public static List<int> GetCardIdsByGroup(string groupName)
+    {
+        if (!isInitialized) Initialize();
+
+        if (string.IsNullOrWhiteSpace(groupName))
+        {
+            return new List<int>();
+        }
+
+        if (groupName.StartsWith("enforce_", System.StringComparison.OrdinalIgnoreCase))
+        {
+            string baseCardIdText = groupName.Substring("enforce_".Length);
+            if (int.TryParse(baseCardIdText, out int baseCardId))
+            {
+                CardData baseCard = GetCard(baseCardId);
+                if (baseCard?.enforceCardIds != null && baseCard.enforceCardIds.Count > 0)
+                {
+                    return new List<int>(baseCard.enforceCardIds);
+                }
+            }
+        }
+
+        return groupName switch
+        {
+            "isla_potion_all" => new List<int> { 101080, 101081, 101082, 101083, 101084, 101085, 101086, 101087 },
+            "isla_potion_enhanced_even_pool" => new List<int> { 101080, 101082, 101084, 101086 },
+            "isla_potion_enhanced_odd_pool" => new List<int> { 101081, 101083, 101085, 101087 },
+            "isla_potion_even_base_pool" => new List<int> { 101080, 101082, 101084, 101086 },
+            _ => new List<int>()
+        };
+    }
     
     /// <summary>
     /// 모든 카드 조회
@@ -154,23 +148,6 @@ public static class CardManager
         
         return cardCache.Values.ToList();
     }
-
-    public static List<int> GetCardIdsByGroup(string groupName)
-    {
-        if (string.IsNullOrWhiteSpace(groupName))
-        {
-            return new List<int>();
-        }
-
-        EnsureGroupCacheLoaded();
-        if (groupCache != null && groupCache.TryGetValue(groupName, out List<int> cardIds))
-        {
-            return new List<int>(cardIds);
-        }
-
-        Debug.LogWarning($"[CardManager] Card group not found: {groupName}");
-        return new List<int>();
-    }
     
     /// <summary>
     /// 초기화 여부 확인
@@ -179,18 +156,4 @@ public static class CardManager
     {
         return isInitialized;
     }
-
-    private static void EnsureGroupCacheLoaded()
-    {
-        if (groupCache != null)
-        {
-            return;
-        }
-
-        if (!CardRuntimeJsonParser.TryLoadCardGroups(out groupCache))
-        {
-            groupCache = new Dictionary<string, List<int>>();
-        }
-    }
 }
-

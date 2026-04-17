@@ -61,6 +61,9 @@ public static class FormulaEvaluator
         int cardsPlayedInCombat = context != null ? context.GetCardsPlayedThisCombatCount(cardIdFilter) : 0;
         int cardsPlayedInTurn = context != null ? context.GetCardsPlayedThisTurnCount(cardIdFilter) : 0;
         int hasLostHpThisTurn = player != null && player.hasLostHpThisTurn ? 1 : 0;
+        int hpLostThisTurn = player != null ? Mathf.Max(0, player.hpLostThisTurn) : 0;
+        int missingHp = player != null ? Mathf.Max(0, player.maxHP - player.hp) : 0;
+        int playerCardHpLostThisCombat = context != null ? Mathf.Max(0, context.playerCardHpLostThisCombat) : 0;
 
         switch (formula.ToLowerInvariant())
         {
@@ -85,8 +88,14 @@ public static class FormulaEvaluator
                 return context != null ? context.cardsDrawnThisTurn : 0;
             case "finaldamage":
                 return context != null ? context.lastDamageDealt : 0;
+            case "hplostthisturn":
+                return hpLostThisTurn;
             case "haslosthpthisturn":
                 return hasLostHpThisTurn;
+            case "missinghp":
+                return missingHp;
+            case "cardhplostthiscombat":
+                return playerCardHpLostThisCombat;
             case "energyspentthisturn":
                 return context != null ? context.energySpentThisTurn : 0;
         }
@@ -100,7 +109,7 @@ public static class FormulaEvaluator
             }
 
             expression = ReplaceFunctionCalls(expression, player, targetMonster);
-            expression = ReplaceKnownKeywords(expression, context, cardsPlayedInCombat, cardsPlayedInTurn, hasLostHpThisTurn, baseValue);
+            expression = ReplaceKnownKeywords(expression, context, cardsPlayedInCombat, cardsPlayedInTurn, hpLostThisTurn, hasLostHpThisTurn, missingHp, playerCardHpLostThisCombat, baseValue);
             expression = EvaluateMinFunctions(expression);
 
             return EvaluateSimpleExpression(expression);
@@ -112,7 +121,7 @@ public static class FormulaEvaluator
         }
     }
 
-    private static string ReplaceKnownKeywords(string expression, BattleContext context, int cardsPlayedInCombat, int cardsPlayedInTurn, int hasLostHpThisTurn, int baseValue)
+    private static string ReplaceKnownKeywords(string expression, BattleContext context, int cardsPlayedInCombat, int cardsPlayedInTurn, int hpLostThisTurn, int hasLostHpThisTurn, int missingHp, int playerCardHpLostThisCombat, int baseValue)
     {
         expression = expression.Replace("UseCardInCombat", cardsPlayedInCombat.ToString());
         expression = expression.Replace("UseCardInTurn", cardsPlayedInTurn.ToString());
@@ -122,10 +131,13 @@ public static class FormulaEvaluator
         expression = expression.Replace("exhausted", (context != null ? context.cardsExhaustedThisTurn : 0).ToString());
         expression = expression.Replace("cardsDrawnThisTurn", (context != null ? context.cardsDrawnThisTurn : 0).ToString());
         expression = expression.Replace("finalDamage", (context != null ? context.lastDamageDealt : 0).ToString());
+        expression = expression.Replace("HpLostThisTurn", hpLostThisTurn.ToString());
         expression = expression.Replace("value", baseValue.ToString());
         expression = expression.Replace("eventValue", baseValue.ToString());
         expression = expression.Replace("UnblockedDamage", baseValue.ToString());
         expression = expression.Replace("HasLostHpThisTurn", hasLostHpThisTurn.ToString());
+        expression = expression.Replace("MissingHp", missingHp.ToString());
+        expression = expression.Replace("CardHpLostThisCombat", playerCardHpLostThisCombat.ToString());
         expression = expression.Replace("EnergySpentThisTurn", (context != null ? context.energySpentThisTurn : 0).ToString());
         return expression;
     }

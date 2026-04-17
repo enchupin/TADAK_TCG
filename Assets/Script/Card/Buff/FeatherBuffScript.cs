@@ -250,6 +250,7 @@ public sealed class FeatherBuffScript : PlayerBuffScript
             monster.ConsumeBuffStack(FeatherBuffId, 1);
             if (dealtDamage > 0)
             {
+                battleManager.HandlePlayerDamageDealt(monster, dealtDamage);
                 totalDamage += dealtDamage;
                 battleManager.battleContext?.OnDamageDealt(dealtDamage);
             }

@@ -21,6 +21,7 @@ public class BattleContext
     // 데미지 관련
     public int lastDamageDealt;
     public int totalDamageDealt;
+    public int playerCardHpLostThisCombat;
 
     // 에너지 관련
     public int energySpentThisTurn;
@@ -120,6 +121,7 @@ public class BattleContext
         cardsPlayedThisCombatList.Clear();
         deckShuffleCountThisCombat = 0;
         totalDamageDealt = 0;
+        playerCardHpLostThisCombat = 0;
         OnTurnStart();
     }
 
@@ -215,6 +217,16 @@ public class BattleContext
 
         lastDamageDealt = amount;
         totalDamageDealt += amount;
+    }
+
+    public void OnPlayerCardHpLost(int amount)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        playerCardHpLostThisCombat += amount;
     }
 
     public void OnDefenseConsumed(int amount)

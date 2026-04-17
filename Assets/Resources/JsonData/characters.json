@@ -47,6 +47,12 @@
       "name": "크림",
       "maxHp": 30,
       "characterColor": "cream"
+    },
+    {
+      "characterId": 303,
+      "name": "칸",
+      "maxHp": 80,
+      "characterColor": "khan"
     }
   ]
 }

@@ -607,7 +607,7 @@
         },
         {
           "type": "Buff",
-          "buffId": 3048,
+          "buffId": 3053,
           "amount": 1,
           "target": "Self"
         }

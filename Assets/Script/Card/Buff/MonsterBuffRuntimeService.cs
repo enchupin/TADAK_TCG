@@ -19,6 +19,7 @@ public class MonsterBuffRuntimeService
         Register(new StrengthMonsterBuffScript());
         Register(new StrengthDecayMonsterBuffScript());
         Register(new WeakMonsterBuffScript());
+        Register(new OverheatMonsterBuffScript());
         Register(new RootedMonsterBuffScript());
         Register(new GlacierBondMonsterBuffScript());
         Register(new ThornMonsterBuffScript());
@@ -33,6 +34,7 @@ public class MonsterBuffRuntimeService
         Register(new PranksterGhostMonsterBuffScript());
         Register(new ThiefMonsterBuffScript());
         Register(new BurningFlameMonsterBuffScript());
+        Register(new IntentionalRageMonsterBuffScript());
         Register(new EightLegsMonsterBuffScript());
         Register(new FuturePredationMonsterBuffScript());
         Register(new PoisonousMushroomMonsterBuffScript());
@@ -299,6 +301,12 @@ public class MonsterBuffRuntimeService
             damageMultiplier = script.GetOutgoingDamageMultiplier(battleManager, monster, stack, damageMultiplier);
         });
 
+        if (monster.GetBuffStack(BattleRuntimeDefinitions.IntentionalRageBuffId) <= 0
+            && HasOtherLivingMonsterWithBuff(monster, BattleRuntimeDefinitions.IntentionalRageBuffId))
+        {
+            damageMultiplier *= 0.5f;
+        }
+
         int finalDamage = Mathf.Max(0, Mathf.FloorToInt(Mathf.Max(0, damage + flatBonus) * Mathf.Max(0f, damageMultiplier)));
 
         InvokeForActiveBuffs(monster, (script, stack) =>
@@ -368,6 +376,24 @@ public class MonsterBuffRuntimeService
         });
 
         return canRevive;
+    }
+
+    private bool HasOtherLivingMonsterWithBuff(Monster excludedMonster, int buffId)
+    {
+        foreach (Monster monster in battleManager.GetLivingMonsters())
+        {
+            if (monster == null || monster == excludedMonster || monster.IsDead())
+            {
+                continue;
+            }
+
+            if (monster.GetBuffStack(buffId) > 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void Register(MonsterBuffScript script)

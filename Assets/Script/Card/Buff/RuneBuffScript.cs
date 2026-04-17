@@ -16,7 +16,7 @@ public sealed class RuneBuffScript : PlayerBuffScript
         if (finalAmount > 0)
         {
             player.AddBuff(BuffId, finalAmount);
-            WuppiModeRuntimeUtility.SyncModeBuffStacks(player);
+            WuppiModeRuntimeUtility.HandleDirectBuffStackChange(battleManager, player, BuffId);
         }
 
         return true;

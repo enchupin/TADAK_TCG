@@ -21,7 +21,7 @@ public sealed class SoulProtectionBuffScript : PlayerBuffScript
 
         hasRevivedThisCombat = true;
         player.hp = 1;
-        Debug.Log("영혼 보호가 발동해 체력을 1로 유지합니다");
+        Debug.Log("영혼 보호가 발동해 체력을 1로 회복합니다");
         return true;
     }
 }

@@ -421,6 +421,32 @@ public static class CardEffectFactory
                     multiplier = effectData.multiplier
                 };
 
+            case EffectType.ReplanIntent:
+                return new ReplanIntentEffect
+                {
+                    target = effectData.target
+                };
+
+            case EffectType.ReplayExhaustedCards:
+                return new ReplayExhaustedCardsEffect
+                {
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula
+                };
+
+            case EffectType.UseTopDeckCards:
+                return new UseTopDeckCardsEffect
+                {
+                    amount = effectData.amount,
+                    amountFormula = effectData.amountFormula
+                };
+
+            case EffectType.BindCard:
+                return new BindCardEffect
+                {
+                    count = effectData.count > 0 ? effectData.count : effectData.amount
+                };
+
             case EffectType.EnemyHpLossHealPlayer:
                 return new EnemyHpLossHealPlayerEffect
                 {

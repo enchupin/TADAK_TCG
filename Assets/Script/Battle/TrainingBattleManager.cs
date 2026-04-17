@@ -833,6 +833,7 @@ public class TrainingBattleManager : MonoBehaviour
         hasResolvedBattleResult = true;
 
         SetState(BattleTurnState.CombatEnd);
+        battleBuffController?.HandleBattleEnded(isVictory);
         UpdateEndTurnButtonState();
         RefreshHandPlayableState();
         UpdateAllUI();
@@ -1011,7 +1012,7 @@ public class TrainingBattleManager : MonoBehaviour
             }
 
             playerData.ConsumeBuffStack(BattleRuntimeDefinitions.RuneBuffId, effectiveCost);
-            WuppiModeRuntimeUtility.SyncModeBuffStacks(playerData);
+            WuppiModeRuntimeUtility.HandleDirectBuffStackChange(this, playerData, BattleRuntimeDefinitions.RuneBuffId);
             return true;
         }
 
@@ -1164,6 +1165,11 @@ public class TrainingBattleManager : MonoBehaviour
     public void HandlePlayerHpLost(int hpLoss)
     {
         battleBuffController?.HandlePlayerHpLost(hpLoss);
+    }
+
+    public void HandlePlayerDamageDealt(Monster monster, int dealtDamage)
+    {
+        battleBuffController?.HandlePlayerDamageDealt(monster, dealtDamage);
     }
 
     public void HandleMonsterBuffApplied(Monster monster, int buffId, int amount)
