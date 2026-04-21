@@ -213,32 +213,32 @@
         {
             "cardId": 202050,
             "koName": "리포스트",
-            "koDescription": "이번 턴에 반격을 {amount} 얻습니다.",
+            "koDescription": "이번 턴에 가시를 {amount} 얻습니다.",
             "enName": "Riposte",
-            "enDescription": "Gain {amount} Counterattack this turn.",
+            "enDescription": "Gain {amount} Thorns this turn.",
             "jaName": "リポスト",
             "jaDescription": "このターン中、反撃を{amount}得る。",
             "zhHantName": "回敬",
-            "zhHantDescription": "本回合獲得{amount}層反擊。",
+            "zhHantDescription": "本回合獲得{amount}層荊棘。",
             "zhHansName": "回敬",
-            "zhHansDescription": "本回合获得{amount}层反击。",
+            "zhHansDescription": "本回合获得{amount}层荆棘。",
             "ruName": "Рипост",
-            "ruDescription": "Получите {amount} Контратаки в этом ходу."
+            "ruDescription": "Получите {amount} Шипов в этом ходу."
         },
         {
             "cardId": 202051,
             "koName": "리포스트 +",
-            "koDescription": "반격을 {amount} 얻습니다.",
+            "koDescription": "가시를 {amount} 얻습니다.",
             "enName": "Riposte +",
-            "enDescription": "Gain {amount} Counterattack.",
+            "enDescription": "Gain {amount} Thorns.",
             "jaName": "リポスト +",
             "jaDescription": "反撃を{amount}得る。",
             "zhHantName": "回敬 +",
-            "zhHantDescription": "獲得{amount}層反擊。",
+            "zhHantDescription": "獲得{amount}層荊棘。",
             "zhHansName": "回敬 +",
-            "zhHansDescription": "获得{amount}层反击。",
+            "zhHansDescription": "获得{amount}层荆棘。",
             "ruName": "Рипост +",
-            "ruDescription": "Получите {amount} Контратаки."
+            "ruDescription": "Получите {amount} Шипов."
         },
         {
             "cardId": 202052,
@@ -468,17 +468,17 @@
         {
             "cardId": 202075,
             "koName": "뚜셰 +",
-            "koDescription": "피해를 {amount} 입힙니다. 보호막에 막히지 않은 피해만큼 반격을 얻습니다.",
+            "koDescription": "피해를 {amount} 입힙니다. 보호막에 막히지 않은 피해만큼 가시를 얻습니다.",
             "enName": "Touché +",
-            "enDescription": "Deal {amount} damage. Gain Counterattack equal to the unblocked damage dealt.",
+            "enDescription": "Deal {amount} damage. Gain Thorns equal to the unblocked damage dealt.",
             "jaName": "トゥシェ +",
             "jaDescription": "{amount}ダメージを与える。バリアに防がれなかったダメージ分だけ反撃を得る。",
             "zhHantName": "得手 +",
-            "zhHantDescription": "造成{amount}點傷害。獲得等同於未被護盾阻擋傷害的反擊。",
+            "zhHantDescription": "造成{amount}點傷害。獲得等同於未被護盾阻擋傷害的荊棘。",
             "zhHansName": "得手 +",
-            "zhHansDescription": "造成{amount}点伤害。获得等同于未被护盾阻挡伤害的反击。",
+            "zhHansDescription": "造成{amount}点伤害。获得等同于未被护盾阻挡伤害的荆棘。",
             "ruName": "Туше +",
-            "ruDescription": "Нанесите {amount} урона. Получите Контратаку, равную нанесённому непроблокированному урону."
+            "ruDescription": "Нанесите {amount} урона. Получите Шипы, равные нанесённому непроблокированному урону."
         }
     ]
 }

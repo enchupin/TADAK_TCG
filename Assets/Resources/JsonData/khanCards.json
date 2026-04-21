@@ -94,7 +94,7 @@
                 },
                 {
                     "type": "Buff",
-                    "buffId": 3054,
+                    "buffId": 4015,
                     "amount": 3,
                     "target": "Self"
                 }
@@ -105,7 +105,7 @@
             "name": "투지 +",
             "characterId": 303,
             "cost": 0,
-            "description": "체력을 {amount} 잃습니다. 기력을 {amount2} 얻습니다.",
+            "description": "체력을 {amount} 잃습니다. 에너지를 {amount2} 얻습니다.",
             "effects": [
                 {
                     "type": "HpLoss",
@@ -126,7 +126,7 @@
             "keywords": [
                 3
             ],
-            "description": "체력을 {amount} 잃습니다. 기력을 {amount2} 얻습니다. 카드를 {amount3}장 뽑습니다.",
+            "description": "체력을 {amount} 잃습니다. 에너지를 {amount2} 얻습니다. 카드를 {amount3}장 뽑습니다.",
             "effects": [
                 {
                     "type": "HpLoss",

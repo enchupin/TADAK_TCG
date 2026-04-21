@@ -39,6 +39,8 @@ public class MonsterBuffRuntimeService
         Register(new FuturePredationMonsterBuffScript());
         Register(new PoisonousMushroomMonsterBuffScript());
         Register(new MirrorMonsterBuffScript());
+        Register(new DrowningMonsterBuffScript());
+        Register(new WhirlpoolMonsterBuffScript());
     }
 
     public void OnBuffApplied(Monster monster, int buffId, int appliedAmount)

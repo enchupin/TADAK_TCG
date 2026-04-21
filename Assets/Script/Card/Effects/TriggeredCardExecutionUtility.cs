@@ -140,6 +140,7 @@ public static class TriggeredCardExecutionUtility
 
         if (playedCard.ShouldLeaveCombatWhenPlayed())
         {
+            battleManager.RemoveCardFromCombat(playedCard);
             return;
         }
 

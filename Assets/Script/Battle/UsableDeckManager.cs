@@ -109,6 +109,31 @@ public class UsableDeckManager : MonoBehaviour
         }
     }
 
+    public void RemoveFromExhaust(Card card)
+    {
+        if (card == null)
+        {
+            return;
+        }
+
+        if (exhaustPile.Contains(card))
+        {
+            exhaustPile.Remove(card);
+        }
+    }
+
+    public void RemoveFromCombat(Card card)
+    {
+        if (card == null)
+        {
+            return;
+        }
+
+        RemoveFromDrawPile(card);
+        RemoveFromDiscard(card);
+        RemoveFromExhaust(card);
+    }
+
     /// <summary>
     /// 소멸 카드 더미 리스트 반환
     /// </summary>
