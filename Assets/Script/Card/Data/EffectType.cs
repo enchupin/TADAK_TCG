@@ -45,5 +45,10 @@ public enum EffectType
     ReplanIntent = 51,
     ReplayExhaustedCards = 52,
     UseTopDeckCards = 53,
-    BindCard = 54
+    BindCard = 54,
+    CopyEnemyDebuffs = 55,
+    ApplyBuffByTargetStack = 56,
+    ResolveDrowningLethal = 57,
+    DamageByBuffStack = 58,
+    IncreaseBeneficialBuffStacks = 59
 }

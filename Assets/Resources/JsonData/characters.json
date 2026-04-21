@@ -31,6 +31,12 @@
       "characterColor": "merel"
     },
     {
+      "characterId": 204,
+      "name": "미오",
+      "maxHp": 40,
+      "characterColor": "mio"
+    },
+    {
       "characterId": 301,
       "name": "폴라",
       "maxHp": 80,

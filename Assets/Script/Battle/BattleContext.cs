@@ -29,6 +29,8 @@ public class BattleContext
     // 보호막 관련
     public int defenseConsumed;
 
+    private readonly HashSet<int> enemyDebuffsAppliedThisTurn = new HashSet<int>();
+
     // 선택된 카드 (Choice -> Effect 연계용)
     private List<Card> selectedCards = new List<Card>();
     private readonly Dictionary<string, List<Card>> contextCardsBySubject = new Dictionary<string, List<Card>>(System.StringComparer.OrdinalIgnoreCase);
@@ -108,6 +110,7 @@ public class BattleContext
         totalDamageDealt = 0;
         defenseConsumed = 0;
         energySpentThisTurn = 0;
+        enemyDebuffsAppliedThisTurn.Clear();
         ClearSelectedCards();
         ClearAllContextCards();
     }
@@ -170,6 +173,21 @@ public class BattleContext
         }
 
         return count;
+    }
+
+    public void OnEnemyDebuffApplied(int buffId)
+    {
+        if (buffId <= 0)
+        {
+            return;
+        }
+
+        enemyDebuffsAppliedThisTurn.Add(buffId);
+    }
+
+    public bool WasEnemyDebuffAppliedThisTurn(int buffId)
+    {
+        return buffId > 0 && enemyDebuffsAppliedThisTurn.Contains(buffId);
     }
 
     public Card GetLastPlayedCard()

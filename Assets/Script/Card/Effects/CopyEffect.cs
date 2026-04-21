@@ -77,6 +77,11 @@ public class CopyEffect : ICardEffect
                 AddCardsByCardId(sourceCards);
                 break;
             case MoveZoneType.Source:
+                AddUnique(sourceCards, battleManager.battleContext?.GetContextCards(subject));
+                if (sourceCards.Count == 0 && IsThisCardSubject())
+                {
+                    AddUnique(sourceCards, battleManager.battleContext?.GetLastPlayedCard());
+                }
                 AddUnique(sourceCards, battleManager.battleContext?.GetSelectedCards());
                 break;
         }
@@ -213,6 +218,12 @@ public class CopyEffect : ICardEffect
     {
         return string.Equals(subject, "Selected", StringComparison.OrdinalIgnoreCase)
             || string.Equals(subject, "SelectedCard", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private bool IsThisCardSubject()
+    {
+        return string.Equals(subject, "ThisCard", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(subject, "Self", StringComparison.OrdinalIgnoreCase);
     }
 
     private bool CanRepeatSourceCards()

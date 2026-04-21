@@ -58,6 +58,23 @@ public static class ConditionEvaluator
             return Compare(barrier, op, check.value);
         }
 
+        if (check.subject == "UseCardInTurn" || check.property == "UseCardInTurn")
+        {
+            int cardsPlayed = battleManager.battleContext != null
+                ? battleManager.battleContext.GetCardsPlayedThisTurnCount(null)
+                : 0;
+            return Compare(cardsPlayed, op, check.value);
+        }
+
+        if (check.subject == "EnemyDebuffAppliedThisTurn")
+        {
+            int buffId = 0;
+            int.TryParse(check.param, out buffId);
+            bool wasApplied = battleManager.battleContext != null
+                && battleManager.battleContext.WasEnemyDebuffAppliedThisTurn(buffId);
+            return Compare(wasApplied ? 1f : 0f, op, check.value);
+        }
+
         object subjectObj = GetSubject(check.subject, battleManager);
         if (subjectObj == null) return false;
 

@@ -1308,6 +1308,7 @@ public class TrainingBattleManager : MonoBehaviour
             return;
         }
 
+        battleContext?.OnEnemyDebuffApplied(buffId);
         battleBuffController?.HandleEnemyDebuffApplied(monster, buffId, amount, crueltyStackBeforeApply);
     }
 

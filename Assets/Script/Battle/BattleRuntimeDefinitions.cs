@@ -84,6 +84,7 @@ public static class BattleRuntimeDefinitions
     public static int UnderwaterBreathingBuffId => GetBuffId(nameof(UnderwaterBreathingBuffId));
     public static int EncroachmentBuffId => GetBuffId(nameof(EncroachmentBuffId));
     public static int RisingWaterBuffId => GetBuffId(nameof(RisingWaterBuffId));
+    public static int DrowningOnDebuffBuffId => GetBuffId(nameof(DrowningOnDebuffBuffId));
     public static int CorrosionBuffId => GetBuffId(nameof(CorrosionBuffId));
     public static int EnhancedCorrosionBuffId => GetBuffId(nameof(EnhancedCorrosionBuffId));
     public static int BurnBuffId => GetBuffId(nameof(BurnBuffId));
@@ -209,6 +210,7 @@ public static class BattleRuntimeDefinitions
         Register(nameof(UnderwaterBreathingBuffId), "수중 호흡", 3056);
         Register(nameof(EncroachmentBuffId), "잠식", 3057);
         Register(nameof(RisingWaterBuffId), "수면 상승", 3058);
+        Register(nameof(DrowningOnDebuffBuffId), "역류", 3059);
         Register(nameof(CorrosionBuffId), "부식", 4001);
         Register(nameof(EnhancedCorrosionBuffId), "맹독", 4002);
         Register(nameof(BurnBuffId), "화염 낙인", 4003);

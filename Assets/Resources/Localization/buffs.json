@@ -1141,6 +1141,21 @@
             "ruDescription": "Каждый раз, когда вы накладываете Утопление, наложите ещё {stack}."
         },
         {
+            "buffId": 3059,
+            "name": "역류",
+            "description": "적에게 해로운 효과를 부여할 때마다 대상에게 익사를 {stack} 부여합니다.",
+            "enName": "Backflow",
+            "enDescription": "Whenever you apply a harmful effect to an enemy, apply {stack} Drowning to that target.",
+            "jaName": "逆流",
+            "jaDescription": "敵に有害効果を付与するたび、その対象に溺死を{stack}付与します。",
+            "zhHantName": "逆流",
+            "zhHantDescription": "每當你對敵人施加有害效果時，對該目標施加{stack}層溺水。",
+            "zhHansName": "逆流",
+            "zhHansDescription": "每当你对敌人施加有害效果时，对该目标施加{stack}层溺水。",
+            "ruName": "Обратное течение",
+            "ruDescription": "Каждый раз, когда вы накладываете вредный эффект на врага, наложите на эту цель {stack} Утопления."
+        },
+        {
             "buffId": 4015,
             "name": "해체",
             "description": "턴 종료 시 결속이 {stack} 감소합니다.",
