@@ -74,6 +74,11 @@ public class PlayerBuffRuntimeService
         Register(new VictorRestBuffScript());
         Register(new BerserkerBuffScript());
         Register(new RuneBuffScript());
+        Register(new DrowningBuffScript());
+        Register(new WhirlpoolBuffScript());
+        Register(new UnderwaterBreathingBuffScript());
+        Register(new EncroachmentBuffScript());
+        Register(new RisingWaterBuffScript());
         Register(new WuppiGuardBuffScript());
         Register(new WuppiAttackBuffScript());
         Register(new RuneGenerationBuffScript());
