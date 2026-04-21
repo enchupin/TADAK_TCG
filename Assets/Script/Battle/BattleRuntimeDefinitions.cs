@@ -49,7 +49,6 @@ public static class BattleRuntimeDefinitions
     public static int OverheatGrowthBuffId => GetBuffId(nameof(OverheatGrowthBuffId));
     public static int FlameConductionBuffId => GetBuffId(nameof(FlameConductionBuffId));
     public static int LavaSkinBuffId => GetBuffId(nameof(LavaSkinBuffId));
-    public static int CounterattackBuffId => GetBuffId(nameof(CounterattackBuffId));
     public static int IntimidationBuffId => GetBuffId(nameof(IntimidationBuffId));
     public static int RepeatNextCardBuffId => GetBuffId(nameof(RepeatNextCardBuffId));
     public static int CardUseAllEnemiesDamageBuffId => GetBuffId(nameof(CardUseAllEnemiesDamageBuffId));
@@ -84,7 +83,7 @@ public static class BattleRuntimeDefinitions
     public static int EnhancedCorrosionBuffId => GetBuffId(nameof(EnhancedCorrosionBuffId));
     public static int BurnBuffId => GetBuffId(nameof(BurnBuffId));
     public static int FreezeBuffId => GetBuffId(nameof(FreezeBuffId));
-    public static int CounterattackDecayBuffId => GetBuffId(nameof(CounterattackDecayBuffId));
+    public static int ThornDecayBuffId => GetBuffId(nameof(ThornDecayBuffId));
     public static int StrengthDecayBuffId => GetBuffId(nameof(StrengthDecayBuffId));
     public static int OverheatDecayBuffId => GetBuffId(nameof(OverheatDecayBuffId));
     public static int WeakBuffId => GetBuffId(nameof(WeakBuffId));
@@ -170,7 +169,6 @@ public static class BattleRuntimeDefinitions
         Register(nameof(OverheatGrowthBuffId), "발열", 3018);
         Register(nameof(FlameConductionBuffId), "불주먹", 3019);
         Register(nameof(LavaSkinBuffId), "용암 피부", 3020);
-        Register(nameof(CounterattackBuffId), "반격", 3021);
         Register(nameof(IntimidationBuffId), "위압", 3022);
         Register(nameof(RepeatNextCardBuffId), "재사용", 3023);
         Register(nameof(CardUseAllEnemiesDamageBuffId), "연격", 3024);
@@ -205,7 +203,7 @@ public static class BattleRuntimeDefinitions
         Register(nameof(EnhancedCorrosionBuffId), "맹독", 4002);
         Register(nameof(BurnBuffId), "화염 낙인", 4003);
         Register(nameof(FreezeBuffId), "빙결", 4004);
-        Register(nameof(CounterattackDecayBuffId), "재정비", 4005);
+        Register(nameof(ThornDecayBuffId), "재정비", 4005);
         Register(nameof(StrengthDecayBuffId), "기력 소진", 4006);
         Register(nameof(OverheatDecayBuffId), "화력 소진", 4007);
         Register(nameof(WeakBuffId), "약화", 4008);

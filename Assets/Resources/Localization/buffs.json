@@ -615,21 +615,6 @@
             "ruDescription": "Каждый раз, когда вас атакуют, накладывайте Пламенное клеймо {в размере stack} на атакующего."
         },
         {
-            "buffId": 3021,
-            "name": "반격",
-            "description": "공격받을 때마다 공격한 적을 {stack 피해로} 공격합니다.",
-            "enName": "Counterattack",
-            "enDescription": "Whenever you are attacked, counterattack the attacker {for stack damage}.",
-            "jaName": "反撃",
-            "jaDescription": "攻撃されるたびに、攻撃した敵に{stack}ダメージで反撃します。",
-            "zhHantName": "反擊",
-            "zhHantDescription": "每次受到攻擊時，對攻擊者以{stack點}傷害反擊。",
-            "zhHansName": "反击",
-            "zhHansDescription": "每次受到攻击时，对攻击者以{stack点}伤害反击。",
-            "ruName": "Контратака",
-            "ruDescription": "Каждый раз, когда вас атакуют, контратакуйте нападающего {с уроном stack}."
-        },
-        {
             "buffId": 3022,
             "name": "위압",
             "description": "적을 공격해서 보호막을 제거했다면, 힘을 {stack} 얻습니다.",
@@ -1150,17 +1135,17 @@
         {
             "buffId": 4005,
             "name": "재정비",
-            "description": "턴 시작 시 반격이 {stack} 감소합니다.",
+            "description": "턴 시작 시 가시가 {stack} 감소합니다.",
             "enName": "Recalibration",
-            "enDescription": "At the start of the turn, Counterattack decreases {by stack}.",
+            "enDescription": "At the start of the turn, Thorns decreases {by stack}.",
             "jaName": "再整備",
-            "jaDescription": "ターン開始時、反撃が{stack}減少します。",
+            "jaDescription": "ターン開始時、茨が{stack}減少します。",
             "zhHantName": "重新整備",
-            "zhHantDescription": "回合開始時，反擊減少{stack}。",
+            "zhHantDescription": "回合開始時，荊棘減少{stack}。",
             "zhHansName": "重新整备",
-            "zhHansDescription": "回合开始时，反击减少{stack}。",
+            "zhHansDescription": "回合开始时，荆棘减少{stack}。",
             "ruName": "Перекалибровка",
-            "ruDescription": "В начале хода Контратака уменьшается {на stack}."
+            "ruDescription": "В начале хода Шипы уменьшаются {на stack}."
         },
         {
             "buffId": 4006,

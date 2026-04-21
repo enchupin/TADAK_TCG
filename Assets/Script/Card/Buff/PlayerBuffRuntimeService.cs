@@ -39,7 +39,7 @@ public class PlayerBuffRuntimeService
         Register(new StraightBuffScript());
         Register(new RegenerationBuffScript());
         Register(new BurnBuffScript());
-        Register(new CounterattackDecayBuffScript());
+        Register(new ThornDecayBuffScript());
         Register(new StrengthDecayBuffScript());
         Register(new DrawLockBuffScript());
         Register(new NextCardFreeBuffScript());
@@ -84,7 +84,6 @@ public class PlayerBuffRuntimeService
         Register(new EvadeBuffScript());
         Register(new LavaSkinBuffScript());
         Register(new TemporaryLavaSkinBuffScript());
-        Register(new CounterattackBuffScript());
         Register(new ColdAirBuffScript());
         Register(new LavaBarrierBuffScript());
         Register(new ExhaustDrawContractBuffScript());
