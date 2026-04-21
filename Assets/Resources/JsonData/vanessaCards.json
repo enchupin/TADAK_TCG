@@ -300,11 +300,11 @@
             "name": "리포스트",
             "characterId": 202,
             "cost": 1,
-            "description": "이번 턴에 반격을 {amount} 얻습니다.",
+            "description": "이번 턴에 가시를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3021,
+                    "buffId": 3010,
                     "amount": 5,
                     "target": "Self"
                 },
@@ -325,11 +325,11 @@
             "keywords": [
                 4
             ],
-            "description": "반격을 {amount} 얻습니다.",
+            "description": "가시를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3021,
+                    "buffId": 3010,
                     "amount": 3,
                     "target": "Self"
                 }
@@ -672,7 +672,7 @@
             "name": "뚜셰 +",
             "characterId": 202,
             "cost": 1,
-            "description": "피해를 {amount} 입힙니다. 보호막에 막히지 않은 피해만큼 반격을 얻습니다.",
+            "description": "피해를 {amount} 입힙니다. 보호막에 막히지 않은 피해만큼 가시를 얻습니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -680,7 +680,7 @@
                     "target": "SingleEnemy",
                     "onAction": {
                         "type": "Buff",
-                        "buffId": 3021,
+                        "buffId": 3010,
                         "amountFormula": "UnblockedDamage",
                         "target": "Self"
                     },

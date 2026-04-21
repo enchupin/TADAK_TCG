@@ -39,7 +39,7 @@ public class PlayerBuffRuntimeService
         Register(new StraightBuffScript());
         Register(new RegenerationBuffScript());
         Register(new BurnBuffScript());
-        Register(new CounterattackDecayBuffScript());
+        Register(new ThornDecayBuffScript());
         Register(new StrengthDecayBuffScript());
         Register(new DrawLockBuffScript());
         Register(new NextCardFreeBuffScript());
@@ -74,6 +74,11 @@ public class PlayerBuffRuntimeService
         Register(new VictorRestBuffScript());
         Register(new BerserkerBuffScript());
         Register(new RuneBuffScript());
+        Register(new DrowningBuffScript());
+        Register(new WhirlpoolBuffScript());
+        Register(new UnderwaterBreathingBuffScript());
+        Register(new EncroachmentBuffScript());
+        Register(new RisingWaterBuffScript());
         Register(new WuppiGuardBuffScript());
         Register(new WuppiAttackBuffScript());
         Register(new RuneGenerationBuffScript());
@@ -84,7 +89,6 @@ public class PlayerBuffRuntimeService
         Register(new EvadeBuffScript());
         Register(new LavaSkinBuffScript());
         Register(new TemporaryLavaSkinBuffScript());
-        Register(new CounterattackBuffScript());
         Register(new ColdAirBuffScript());
         Register(new LavaBarrierBuffScript());
         Register(new ExhaustDrawContractBuffScript());
