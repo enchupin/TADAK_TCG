@@ -512,17 +512,17 @@
         {
             "buffId": 3014,
             "name": "산산조각",
-            "description": "공격받았다면, 다음 턴 시작 시 빙하 조형 카드를 {stack장} 생성합니다.",
+            "description": "다음 턴 시작 시 빙하 조형 카드를 {stack장} 생성합니다.",
             "enName": "Shatter",
-            "enDescription": "If you were attacked, create {stack} Glacier Sculpting cards at the start of next turn.",
+            "enDescription": "At the start of next turn, create {stack} Glacier Sculpting cards.",
             "jaName": "粉砕",
-            "jaDescription": "攻撃を受けていた場合、次のターン開始時に氷河造形カードを{stack枚}生成します。",
+            "jaDescription": "次のターン開始時に氷河造形カードを{stack枚}生成します。",
             "zhHantName": "粉碎",
-            "zhHantDescription": "若曾受到攻擊，則在下回合開始時生成{stack張}冰河塑形牌。",
+            "zhHantDescription": "下回合開始時生成{stack張}冰河塑形牌。",
             "zhHansName": "粉碎",
-            "zhHansDescription": "若曾受到攻击，则在下回合开始时生成{stack张}冰河塑形牌。",
+            "zhHansDescription": "下回合开始时生成{stack张}冰河塑形牌。",
             "ruName": "Раскол",
-            "ruDescription": "Если вас атаковали, в начале следующего хода создайте карты Ледяное ваяние {в количестве stack}."
+            "ruDescription": "В начале следующего хода создайте карты Ледяное ваяние {в количестве stack}."
         },
         {
             "buffId": 3015,
