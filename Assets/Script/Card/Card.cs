@@ -38,7 +38,8 @@ public class Card
 
     // 손에 남았을 때 턴 종료 시 실행 효과 목록
     public List<ICardEffect> endTurnInHandEffects = new();
-    public List<Card> boundCards = new();
+    public List<int> boundCardIds = new();
+    public List<int> pendingBoundCardIds = new();
 
     private int turnCostDelta;
     private bool hasTurnCostOverride;
@@ -62,6 +63,7 @@ public class Card
     public void Play(TrainingBattleManager battlemanager)
     {
         Debug.Log($"[{cardName}] 카드 사용!");
+        PromotePendingBoundCardIds();
 
         if (battlemanager?.battleContext != null)
         {
@@ -75,11 +77,17 @@ public class Card
             effect.Execute(battlemanager);
         }
 
-        if (boundCards != null && boundCards.Count > 0)
+        if (boundCardIds != null && boundCardIds.Count > 0)
         {
-            List<Card> boundCardSnapshot = new List<Card>(boundCards);
-            foreach (Card boundCard in boundCardSnapshot)
+            List<int> boundCardIdSnapshot = new List<int>(boundCardIds);
+            foreach (int boundCardId in boundCardIdSnapshot)
             {
+                Card boundCard = CardManager.GetCardAsCard(boundCardId);
+                if (boundCard == null)
+                {
+                    continue;
+                }
+
                 TriggeredCardExecutionUtility.ExecuteTriggeredCard(
                     battlemanager,
                     boundCard,
@@ -180,7 +188,12 @@ public class Card
         clonedCard.endTurnInHandEffects = endTurnInHandEffects != null
             ? new List<ICardEffect>(endTurnInHandEffects)
             : new List<ICardEffect>();
-        clonedCard.boundCards = CloneBoundCards(boundCards);
+        clonedCard.boundCardIds = boundCardIds != null
+            ? new List<int>(boundCardIds)
+            : new List<int>();
+        clonedCard.pendingBoundCardIds = pendingBoundCardIds != null
+            ? new List<int>(pendingBoundCardIds)
+            : new List<int>();
         clonedCard.baseCost = Mathf.Max(0, baseCost);
         clonedCard.cost = Mathf.Max(0, cost);
         clonedCard.turnCostDelta = turnCostDelta;
@@ -284,26 +297,17 @@ public class Card
         turnCostOverride = 0;
         RecalculateCost();
 
-        if (boundCards == null)
-        {
-            return;
-        }
-
-        foreach (Card boundCard in boundCards)
-        {
-            boundCard?.ClearTurnModifiers();
-        }
     }
 
-    public void AddBoundCard(Card card)
+    public void AddPendingBoundCardId(int cardId)
     {
-        if (card == null)
+        if (cardId <= 0)
         {
             return;
         }
 
-        boundCards ??= new List<Card>();
-        boundCards.Add(card);
+        pendingBoundCardIds ??= new List<int>();
+        pendingBoundCardIds.Add(cardId);
     }
 
     public void ApplyTemplate(Card templateCard)
@@ -335,6 +339,8 @@ public class Card
         endTurnInHandEffects = templateCard.endTurnInHandEffects != null
             ? new List<ICardEffect>(templateCard.endTurnInHandEffects)
             : new List<ICardEffect>();
+        boundCardIds = new List<int>();
+        pendingBoundCardIds = new List<int>();
 
         baseCost = Mathf.Max(0, templateCard.baseCost);
         turnCostDelta = 0;
@@ -343,24 +349,16 @@ public class Card
         RecalculateCost();
     }
 
-    private static List<Card> CloneBoundCards(List<Card> sourceCards)
+    private void PromotePendingBoundCardIds()
     {
-        List<Card> clonedCards = new List<Card>();
-        if (sourceCards == null || sourceCards.Count == 0)
+        if (pendingBoundCardIds == null || pendingBoundCardIds.Count == 0)
         {
-            return clonedCards;
+            return;
         }
 
-        foreach (Card sourceCard in sourceCards)
-        {
-            Card clonedCard = sourceCard?.CloneForRuntimeCopy();
-            if (clonedCard != null)
-            {
-                clonedCards.Add(clonedCard);
-            }
-        }
-
-        return clonedCards;
+        boundCardIds ??= new List<int>();
+        boundCardIds.AddRange(pendingBoundCardIds);
+        pendingBoundCardIds.Clear();
     }
 
     private void RecalculateCost()

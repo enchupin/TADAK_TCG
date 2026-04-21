@@ -1074,19 +1074,19 @@
             "ruDescription": "Максимум энергии увеличивается на {stack}."
         },
         {
-            "buffId": 3054,
-            "name": "임시 결속",
+            "buffId": 4015,
+            "name": "해체",
             "description": "턴 종료 시 결속이 {stack} 감소합니다.",
-            "enName": "Temporary Bond",
+            "enName": "Dismantle",
             "enDescription": "At the end of the turn, lose {stack} Bond.",
-            "jaName": "",
-            "jaDescription": "",
-            "zhHantName": "",
-            "zhHantDescription": "",
-            "zhHansName": "",
-            "zhHansDescription": "",
-            "ruName": "",
-            "ruDescription": ""
+            "jaName": "解体",
+            "jaDescription": "ターン終了時、絆を{stack}失います。",
+            "zhHantName": "解體",
+            "zhHantDescription": "回合結束時，失去{stack}層羈絆。",
+            "zhHansName": "解体",
+            "zhHansDescription": "回合结束时，失去{stack}层羁绊。",
+            "ruName": "Распад",
+            "ruDescription": "В конце хода потеряйте {stack} Связи."
         },
         {
             "buffId": 4001,

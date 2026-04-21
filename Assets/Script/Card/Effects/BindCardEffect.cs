@@ -79,7 +79,8 @@ public class BindCardEffect : ICardEffect
                 continue;
             }
 
-            hostCard.AddBoundCard(selectedCard);
+            battleManager.RemoveCardFromCombat(selectedCard);
+            hostCard.AddPendingBoundCardId(selectedCard.cardId);
         }
 
         battleManager.RefreshHandPlayableState();

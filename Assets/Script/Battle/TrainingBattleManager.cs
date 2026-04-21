@@ -1270,6 +1270,17 @@ public class TrainingBattleManager : MonoBehaviour
         HandleCardsExhausted(cards.Count);
     }
 
+    public void RemoveCardFromCombat(Card card)
+    {
+        if (card == null)
+        {
+            return;
+        }
+
+        handManager?.RemoveCard(card);
+        usableDeckManager?.RemoveFromCombat(card);
+    }
+
     public int TriggerFeather(TargetType target, int repeatCount = 1)
     {
         return battleBuffController != null ? battleBuffController.TriggerFeather(target, repeatCount) : 0;
