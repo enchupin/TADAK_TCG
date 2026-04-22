@@ -1,4 +1,4 @@
-{
+﻿{
     "cards": [
         {
             "cardId": 203010,
@@ -13,7 +13,7 @@
             "zhHansName": "拔羽",
             "zhHansDescription": "生成{amount}张羽毛。",
             "ruName": "Выщипать перья",
-            "ruDescription": "Создайте {amount} Перьев."
+            "ruDescription": "Создает {amount} Перьев."
         },
         {
             "cardId": 203020,
@@ -28,7 +28,7 @@
             "zhHansName": "防护披肩",
             "zhHansDescription": "获得{amount}点护盾。",
             "ruName": "Защитная шаль",
-            "ruDescription": "Получите {amount} барьера."
+            "ruDescription": "Получает {amount} барьера."
         },
         {
             "cardId": 203030,
@@ -43,7 +43,7 @@
             "zhHansName": "重叠",
             "zhHansDescription": "获得{amount}层羽毛重叠。",
             "ruName": "Наслоение",
-            "ruDescription": "Получите {amount} Наслоения перьев."
+            "ruDescription": "Получает {amount} Наслоения перьев."
         },
         {
             "cardId": 203031,
@@ -58,7 +58,7 @@
             "zhHansName": "重叠 +",
             "zhHansDescription": "获得{amount}层羽毛重叠。",
             "ruName": "Наслоение +",
-            "ruDescription": "Получите {amount} Наслоения перьев."
+            "ruDescription": "Получает {amount} Наслоения перьев."
         },
         {
             "cardId": 203032,
@@ -103,7 +103,7 @@
             "zhHansName": "重叠 +",
             "zhHansDescription": "获得{amount}层力量重复。",
             "ruName": "Наслоение +",
-            "ruDescription": "Получите {amount} Повтора силы."
+            "ruDescription": "Получает {amount} Повтора силы."
         },
         {
             "cardId": 203035,
@@ -133,7 +133,7 @@
             "zhHansName": "备用羽毛",
             "zhHansDescription": "生成{amount}张羽毛。",
             "ruName": "Запас перьев",
-            "ruDescription": "Создайте {amount} Перьев."
+            "ruDescription": "Создает {amount} Перьев."
         },
         {
             "cardId": 203041,
@@ -148,7 +148,7 @@
             "zhHansName": "备用羽毛 +",
             "zhHansDescription": "生成{amount}张强化羽毛。",
             "ruName": "Запас перьев +",
-            "ruDescription": "Создайте {amount} улучшенных Перьев."
+            "ruDescription": "Создает {amount} улучшенных Перьев."
         },
         {
             "cardId": 203042,
@@ -163,7 +163,7 @@
             "zhHansName": "备用羽毛 +",
             "zhHansDescription": "生成{amount}张羽毛。每当使用此牌时，其费用减少{amount2}。",
             "ruName": "Запас перьев +",
-            "ruDescription": "Создайте {amount} Перьев. Каждый раз, когда вы используете эту карту, её стоимость уменьшается на {amount2}."
+            "ruDescription": "Создает {amount} Перьев. Каждый раз, когда вы используете эту карту, её стоимость уменьшается на {amount2}."
         },
         {
             "cardId": 203043,
@@ -178,7 +178,7 @@
             "zhHansName": "备用羽毛 +",
             "zhHansDescription": "抽{amount}张牌。生成{amount2}张羽毛。",
             "ruName": "Запас перьев +",
-            "ruDescription": "Берет {amount} карт. Создайте {amount2} Перьев."
+            "ruDescription": "Берет {amount} карт. Создает {amount2} Перьев."
         },
         {
             "cardId": 203044,
@@ -193,7 +193,7 @@
             "zhHansName": "备用羽毛 +",
             "zhHansDescription": "获得{amount}层成长羽毛。",
             "ruName": "Запас перьев +",
-            "ruDescription": "Получите {amount} Растущего пера."
+            "ruDescription": "Получает {amount} Растущего пера."
         },
         {
             "cardId": 203045,
@@ -202,7 +202,7 @@
             "enName": "Reserve Feathers +",
             "enDescription": "Transform all hindrance cards in your hand into Feathers.",
             "jaName": "予備の羽 +",
-            "jaDescription": "手札にあるすべての妨害カードを羽に変えます。",
+            "jaDescription": "手札にあるすべての妨害カードを羽に変える。",
             "zhHantName": "備用羽毛 +",
             "zhHantDescription": "將你手中的所有妨礙牌變為羽毛。",
             "zhHansName": "备用羽毛 +",
@@ -217,7 +217,7 @@
             "enName": "Recall",
             "enDescription": "Trigger the enemy's Feathers {amount} times.",
             "jaName": "回収",
-            "jaDescription": "敵の羽を{amount}回発動させます。",
+            "jaDescription": "敵の羽を{amount}回発動させる。",
             "zhHantName": "回收",
             "zhHantDescription": "使敵人身上的羽毛觸發{amount效果}次。",
             "zhHansName": "回收",
@@ -232,7 +232,7 @@
             "enName": "Recall +",
             "enDescription": "Trigger all enemies' Feathers {amount} times.",
             "jaName": "回収 +",
-            "jaDescription": "すべての敵の羽を{amount}回発動させます。",
+            "jaDescription": "すべての敵の羽を{amount}回発動させる。",
             "zhHantName": "回收 +",
             "zhHantDescription": "使所有敵人身上的羽毛觸發{amount效果}次。",
             "zhHansName": "回收 +",
@@ -247,7 +247,7 @@
             "enName": "Recall +",
             "enDescription": "Trigger the enemy's Feathers {amount} times.",
             "jaName": "回収 +",
-            "jaDescription": "敵の羽を{amount}回発動させます。",
+            "jaDescription": "敵の羽を{amount}回発動させる。",
             "zhHantName": "回收 +",
             "zhHantDescription": "使敵人身上的羽毛觸發{amount效果}次。",
             "zhHansName": "回收 +",
@@ -262,7 +262,7 @@
             "enName": "Recall +",
             "enDescription": "Trigger the enemy's Feathers {amount} times.",
             "jaName": "回収 +",
-            "jaDescription": "敵の羽を{amount}回発動させます。",
+            "jaDescription": "敵の羽を{amount}回発動させる。",
             "zhHantName": "回收 +",
             "zhHantDescription": "使敵人身上的羽毛觸發{amount效果}次。",
             "zhHansName": "回收 +",
@@ -277,7 +277,7 @@
             "enName": "Recall +",
             "enDescription": "Repeatedly trigger the enemy's Feathers until they reach 0.",
             "jaName": "回収 +",
-            "jaDescription": "敵の羽が0になるまで繰り返し発動させます。",
+            "jaDescription": "敵の羽が0になるまで繰り返し発動させる。",
             "zhHantName": "回收 +",
             "zhHantDescription": "重複觸發敵人身上的羽毛，直到其層數變為0效果。",
             "zhHansName": "回收 +",
@@ -292,7 +292,7 @@
             "enName": "Recall +",
             "enDescription": "Reuse all exhausted Feathers on random enemies.",
             "jaName": "回収 +",
-            "jaDescription": "消滅したすべての羽をランダムな敵にもう一度使います。",
+            "jaDescription": "消滅したすべての羽をランダムな敵にもう一度使う。",
             "zhHantName": "回收 +",
             "zhHantDescription": "將所有已消滅的羽毛再次用在隨機敵人身上。",
             "zhHansName": "回收 +",
@@ -343,7 +343,7 @@
             "zhHansName": "情报探索 +",
             "zhHansDescription": "弃掉你手中的所有牌。依弃掉的牌数生成相同数量的羽毛。",
             "ruName": "Поиск разведданных +",
-            "ruDescription": "Сбросьте все карты в вашей руке. Создайте Перьев по числу сброшенных карт."
+            "ruDescription": "Сбрасывает все карты в руке. Создает Перьев по числу сброшенных карт."
         },
         {
             "cardId": 203063,
@@ -358,7 +358,7 @@
             "zhHansName": "情报探索 +",
             "zhHansDescription": "若敌人有攻击意图，生成{amount}张羽毛并获得{amount2}点护盾。",
             "ruName": "Поиск разведданных +",
-            "ruDescription": "Если враг собирается атаковать, создайте {amount} Перьев и получите {amount2} барьера."
+            "ruDescription": "Если враг собирается атаковать, создает {amount} Перьев и получает {amount2} барьера."
         },
         {
             "cardId": 203064,
@@ -373,7 +373,7 @@
             "zhHansName": "情报探索 +",
             "zhHansDescription": "抽{amount}张牌。若是力量牌，将其费用减少{amount2}。",
             "ruName": "Поиск разведданных +",
-            "ruDescription": "Берет {amount} карт. Если это карта Силы, уменьшите её стоимость на {amount2}."
+            "ruDescription": "Берет {amount} карт. Если это карта Силы, уменьшает её стоимость на {amount2}."
         },
         {
             "cardId": 203065,
@@ -388,7 +388,7 @@
             "zhHansName": "情报探索 +",
             "zhHansDescription": "获得{amount}层虚弱并获得{amount2}点力量。",
             "ruName": "Поиск разведданных +",
-            "ruDescription": "Получите {amount} Слабости и {amount2} Силы."
+            "ruDescription": "Получает {amount} Слабости и {amount2} Силы."
         },
         {
             "cardId": 203070,
@@ -403,7 +403,7 @@
             "zhHansName": "精准投掷",
             "zhHansDescription": "获得{amount}层精准。",
             "ruName": "Точный бросок",
-            "ruDescription": "Получите {amount} Точности."
+            "ruDescription": "Получает {amount} Точности."
         },
         {
             "cardId": 203071,
@@ -418,7 +418,7 @@
             "zhHansName": "精准投掷 +",
             "zhHansDescription": "获得{amount}层自动回收。",
             "ruName": "Точный бросок +",
-            "ruDescription": "Получите {amount} Автовозврата."
+            "ruDescription": "Получает {amount} Автовозврата."
         },
         {
             "cardId": 203072,
@@ -433,7 +433,7 @@
             "zhHansName": "精准投掷 +",
             "zhHansDescription": "获得盲羽。生成4张羽毛。",
             "ruName": "Точный бросок +",
-            "ruDescription": "Получите Слепое перо. Создайте 4 Пера."
+            "ruDescription": "Получает Слепое перо. Создает 4 Пера."
         },
         {
             "cardId": 203073,
@@ -448,7 +448,7 @@
             "zhHansName": "精准投掷 +",
             "zhHansDescription": "循环: 获得{amount}张羽毛。",
             "ruName": "Точный бросок +",
-            "ruDescription": "Цикл: получите {amount} Перьев."
+            "ruDescription": "Цикл: получает {amount} Перьев."
         },
         {
             "cardId": 203074,
@@ -463,7 +463,7 @@
             "zhHansName": "精准投掷 +",
             "zhHansDescription": "获得{amount}层致命伏击。",
             "ruName": "Точный бросок +",
-            "ruDescription": "Получите {amount} Смертельной засады."
+            "ruDescription": "Получает {amount} Смертельной засады."
         },
         {
             "cardId": 203075,
@@ -478,7 +478,7 @@
             "zhHansName": "精准投掷 +",
             "zhHansDescription": "强化: 获得羽毛。生成2张羽毛。",
             "ruName": "Точный бросок +",
-            "ruDescription": "Усиление: получите Перья. Создайте 2 Пера."
+            "ruDescription": "Усиление: получает Перья. Создает 2 Пера."
         },
         {
             "cardId": 203080,
@@ -493,7 +493,7 @@
             "zhHansName": "羽毛",
             "zhHansDescription": "造成{amount}点伤害。施加{amount2}层羽毛。",
             "ruName": "Перо",
-            "ruDescription": "Нанесите {amount} урона. Наложите {amount2} Перьев."
+            "ruDescription": "Наносит {amount} урона. Наложите {amount2} Перьев."
         },
         {
             "cardId": 203081,
@@ -508,7 +508,7 @@
             "zhHansName": "羽毛 +",
             "zhHansDescription": "造成{amount}点伤害。施加{amount2}层羽毛。",
             "ruName": "Перо +",
-            "ruDescription": "Нанесите {amount} урона. Наложите {amount2} Перьев."
+            "ruDescription": "Наносит {amount} урона. Наложите {amount2} Перьев."
         }
     ]
 }

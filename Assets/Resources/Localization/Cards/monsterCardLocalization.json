@@ -1,4 +1,4 @@
-{
+﻿{
     "cards": [
         {
             "cardId": 10,
@@ -13,7 +13,7 @@
             "zhHansName": "裂伤",
             "zhHansDescription": "回合结束时，受到2点伤害。",
             "ruName": "Рваная рана",
-            "ruDescription": "В конце хода получите 2 урона."
+            "ruDescription": "В конце хода получает 2 урона."
         },
         {
             "cardId": 20,
@@ -28,7 +28,7 @@
             "zhHansName": "中毒",
             "zhHansDescription": "回合结束时，受到4点伤害。",
             "ruName": "Отравление",
-            "ruDescription": "В конце хода получите 4 урона."
+            "ruDescription": "В конце хода получает 4 урона."
         },
         {
             "cardId": 21,
@@ -43,7 +43,7 @@
             "zhHansName": "中毒+",
             "zhHansDescription": "回合结束时，受到6点伤害。",
             "ruName": "Отравление+",
-            "ruDescription": "В конце хода получите 6 урона."
+            "ruDescription": "В конце хода получает 6 урона."
         },
         {
             "cardId": 30,
@@ -58,7 +58,7 @@
             "zhHansName": "虚空的呼唤",
             "zhHansDescription": "回合结束时，获得2层虚弱。",
             "ruName": "Зов пустоты",
-            "ruDescription": "В конце хода получите 2 Слабости."
+            "ruDescription": "В конце хода получает 2 Слабости."
         },
         {
             "cardId": 40,
@@ -67,7 +67,7 @@
             "enName": "Root Drain",
             "enDescription": "While this is in your hand, you cannot draw cards.",
             "jaName": "根の吸収",
-            "jaDescription": "手札にある間、カードを引けません。",
+            "jaDescription": "手札にある間、カードを引けない。",
             "zhHantName": "根部吸收",
             "zhHantDescription": "當此牌在手中時，你無法抽牌。",
             "zhHansName": "根部吸收",
