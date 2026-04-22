@@ -14,20 +14,13 @@ public class BattleUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playerHPText;
     [SerializeField] private TextMeshProUGUI playerEnergyText;
     [SerializeField] private TextMeshProUGUI playerDefenseText;
-    [SerializeField] private TextMeshProUGUI overheatText;
-    [SerializeField] private TextMeshProUGUI strengthText;
     [SerializeField] private TextMeshProUGUI drawPileCountText;
     [SerializeField] private TextMeshProUGUI discardPileCountText;
     [SerializeField] private TextMeshProUGUI handCountText;
 
     [Header("데이터 참조")]
-    [SerializeField] private Monster monster;
     [SerializeField] private TrainingBattleManager battleManager;
 
-    private void Awake()
-    {
-        EnsureStrengthText();
-    }
 
     /// <summary>
     /// 플레이어 HP 업데이트
@@ -59,23 +52,7 @@ public class BattleUI : MonoBehaviour
             playerDefenseText.text = $"Defense : {PlayerData.Instance.defense}";
     }
 
-    public void UpdateOverheat()
-    {
-        if (PlayerData.Instance == null || overheatText == null) return;
 
-        int overheat = PlayerData.Instance.GetBuffStack(OverheatBuffId);
-        int overheatPercent = overheat * 10;
-        overheatText.text = $"OverHeat : {overheatPercent}%";
-    }
-
-    public void UpdateStrength()
-    {
-        EnsureStrengthText();
-        if (PlayerData.Instance == null || strengthText == null) return;
-
-        int strength = PlayerData.Instance.GetBuffStack(StrengthBuffId);
-        strengthText.text = $"힘 : {strength}";
-    }
 
     public void UpdateDeckPileCount()
     {
@@ -104,32 +81,7 @@ public class BattleUI : MonoBehaviour
         UpdatePlayerHP();
         UpdateEnergy();
         UpdatePlayerDefense();
-        UpdateOverheat();
-        UpdateStrength();
         UpdateDeckPileCount();
     }
 
-    private void EnsureStrengthText()
-    {
-        if (strengthText != null || overheatText == null) {
-            return;
-        }
-
-        strengthText = Instantiate(overheatText, overheatText.transform.parent);
-        strengthText.gameObject.name = "StrengthText";
-        strengthText.text = "힘 : 0";
-
-        RectTransform overheatRect = overheatText.rectTransform;
-        RectTransform strengthRect = strengthText.rectTransform;
-
-        strengthRect.anchorMin = overheatRect.anchorMin;
-        strengthRect.anchorMax = overheatRect.anchorMax;
-        strengthRect.pivot = overheatRect.pivot;
-        strengthRect.sizeDelta = overheatRect.sizeDelta;
-        strengthRect.anchoredPosition = overheatRect.anchoredPosition + new Vector2(0f, -35f);
-        strengthRect.localScale = overheatRect.localScale;
-
-        int siblingIndex = overheatText.transform.GetSiblingIndex();
-        strengthText.transform.SetSiblingIndex(siblingIndex + 1);
-    }
 }

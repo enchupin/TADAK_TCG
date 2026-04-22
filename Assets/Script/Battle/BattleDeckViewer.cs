@@ -25,6 +25,8 @@ public class BattleDeckViewer : MonoBehaviour
 
     private void Awake() {
         ValidateRequiredReferences();
+        deckPanelRoot.SetActive(false);
+        UpdateConfirmButtonState();
     }
 
     /// <summary>
@@ -217,6 +219,7 @@ public class BattleDeckViewer : MonoBehaviour
             return;
         }
 
+        selectionConfirmButton.gameObject.SetActive(isSelectionMode);
         selectionConfirmButton.interactable = isSelectionMode && CanConfirmSelection();
     }
 
