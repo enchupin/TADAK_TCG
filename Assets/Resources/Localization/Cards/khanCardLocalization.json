@@ -1,4 +1,4 @@
-{
+﻿{
     "cards": [
         {
             "cardId": 303010,
@@ -7,28 +7,28 @@
             "enName": "Straight Punch",
             "enDescription": "Deal {amount} damage.",
             "jaName": "正拳",
-            "jaDescription": "{amount}ダメージを与えます。",
+            "jaDescription": "{amount}ダメージを与える。",
             "zhHantName": "正拳",
             "zhHantDescription": "造成{amount}點傷害。",
             "zhHansName": "正拳",
             "zhHansDescription": "造成{amount}点伤害。",
             "ruName": "Прямой удар",
-            "ruDescription": "Нанесите {amount} урона."
+            "ruDescription": "Наносит {amount} урона."
         },
         {
             "cardId": 303020,
             "koName": "가드",
             "koDescription": "보호막을 {amount} 얻습니다.",
             "enName": "Guard",
-            "enDescription": "Gain {amount} Barrier.",
+            "enDescription": "Gain {amount} Block.",
             "jaName": "ガード",
-            "jaDescription": "バリアを{amount}得ます。",
+            "jaDescription": "バリアを{amount}得る。",
             "zhHantName": "防禦",
             "zhHantDescription": "獲得{amount}點護盾。",
             "zhHansName": "防御",
             "zhHansDescription": "获得{amount}点护盾。",
             "ruName": "Защита",
-            "ruDescription": "Получите {amount} барьера."
+            "ruDescription": "Получает {amount} барьера."
         },
         {
             "cardId": 303030,
@@ -36,14 +36,14 @@
             "koDescription": "체력을 {amount} 잃습니다. 보호막을 {amount2} 얻습니다.",
             "enName": "Will",
             "enDescription": "Lose {amount} HP. Gain {amount2} Block.",
-            "jaName": "",
-            "jaDescription": "",
-            "zhHantName": "",
-            "zhHantDescription": "",
-            "zhHansName": "",
-            "zhHansDescription": "",
-            "ruName": "",
-            "ruDescription": ""
+            "jaName": "闘志",
+            "jaDescription": "体力を{amount}失い、バリアを{amount2}得る。",
+            "zhHantName": "鬥志",
+            "zhHantDescription": "失去{amount}點生命值並獲得{amount2}點護盾。",
+            "zhHansName": "斗志",
+            "zhHansDescription": "失去{amount}点生命值并获得{amount2}点护盾。",
+            "ruName": "Боевой дух",
+            "ruDescription": "Теряет {amount} здоровья. Получает {amount2} барьера."
         },
         {
             "cardId": 303031,
@@ -51,14 +51,14 @@
             "koDescription": "체력을 {amount} 잃습니다. 보호막을 {amount2} 얻습니다.",
             "enName": "Will +",
             "enDescription": "Lose {amount} HP. Gain {amount2} Block.",
-            "jaName": "",
-            "jaDescription": "",
-            "zhHantName": "",
-            "zhHantDescription": "",
-            "zhHansName": "",
-            "zhHansDescription": "",
-            "ruName": "",
-            "ruDescription": ""
+            "jaName": "闘志 +",
+            "jaDescription": "体力を{amount}失い、バリアを{amount2}得る。",
+            "zhHantName": "鬥志 +",
+            "zhHantDescription": "失去{amount}點生命值並獲得{amount2}點護盾。",
+            "zhHansName": "斗志 +",
+            "zhHansDescription": "失去{amount}点生命值并获得{amount2}点护盾。",
+            "ruName": "Боевой дух +",
+            "ruDescription": "Теряет {amount} здоровья. Получает {amount2} барьера."
         },
         {
             "cardId": 303032,
@@ -67,13 +67,13 @@
             "enName": "Will +",
             "enDescription": "Gain {amount} Strength and {amount2} Bond this turn.",
             "jaName": "闘志 +",
-            "jaDescription": "このターン中、力を{amount}、絆を{amount2}得ます。",
+            "jaDescription": "このターン中、力を{amount}、絆を{amount2}得る。",
             "zhHantName": "鬥志 +",
             "zhHantDescription": "本回合獲得{amount}點力量與{amount2}層羈絆。",
             "zhHansName": "斗志 +",
             "zhHansDescription": "本回合获得{amount}点力量与{amount2}层羁绊。",
             "ruName": "Боевой дух +",
-            "ruDescription": "Получите {amount} Силы и {amount2} Связи в этом ходу."
+            "ruDescription": "Получает {amount} Силы и {amount2} Связи в этом ходу."
         },
         {
             "cardId": 303033,
@@ -82,13 +82,13 @@
             "enName": "Will +",
             "enDescription": "Lose {amount} HP. Gain {amount2} Energy.",
             "jaName": "闘志 +",
-            "jaDescription": "体力を{amount}失います。エネルギーを{amount2}得ます。",
+            "jaDescription": "体力を{amount}失う。エネルギーを{amount2}得る。",
             "zhHantName": "鬥志 +",
             "zhHantDescription": "失去{amount}點生命值。獲得{amount2}點能量。",
             "zhHansName": "斗志 +",
             "zhHansDescription": "失去{amount}点生命值。获得{amount2}点能量。",
             "ruName": "Боевой дух +",
-            "ruDescription": "Потеряйте {amount} здоровья. Получите {amount2} энергии."
+            "ruDescription": "Потеряйте {amount} здоровья. Получает {amount2} энергии."
         },
         {
             "cardId": 303034,
@@ -97,13 +97,13 @@
             "enName": "Will +",
             "enDescription": "Lose {amount} HP. Gain {amount2} Energy. Draw {amount3} cards.",
             "jaName": "闘志 +",
-            "jaDescription": "体力を{amount}失います。エネルギーを{amount2}得ます。カードを{amount3}枚引きます。",
+            "jaDescription": "体力を{amount}失う。エネルギーを{amount2}得る。カードを{amount3}枚引く。",
             "zhHantName": "鬥志 +",
             "zhHantDescription": "失去{amount}點生命值。獲得{amount2}點能量。抽{amount3}張牌。",
             "zhHansName": "斗志 +",
             "zhHansDescription": "失去{amount}点生命值。获得{amount2}点能量。抽{amount3}张牌。",
             "ruName": "Боевой дух +",
-            "ruDescription": "Потеряйте {amount} здоровья. Получите {amount2} энергии. Возьмите {amount3} карты."
+            "ruDescription": "Потеряйте {amount} здоровья. Получает {amount2} энергии. Возьмите {amount3} карты."
         },
         {
             "cardId": 303035,
@@ -112,13 +112,13 @@
             "enName": "Will +",
             "enDescription": "Gain {amount} Burning Will.",
             "jaName": "闘志 +",
-            "jaDescription": "燃える闘志を{amount}得ます。",
+            "jaDescription": "燃える闘志を{amount}得る。",
             "zhHantName": "鬥志 +",
             "zhHantDescription": "獲得{amount}層燃燒鬥志。",
             "zhHansName": "斗志 +",
             "zhHansDescription": "获得{amount}层燃烧斗志。",
             "ruName": "Боевой дух +",
-            "ruDescription": "Получите {amount} Пылающей воли."
+            "ruDescription": "Получает {amount} Пылающей воли."
         },
         {
             "cardId": 303040,
@@ -127,13 +127,13 @@
             "enName": "Pummel",
             "enDescription": "Lose {amount} HP. Deal {amount2} damage.",
             "jaName": "乱打",
-            "jaDescription": "体力を{amount}失います。{amount2}ダメージを与えます。",
+            "jaDescription": "体力を{amount}失う。{amount2}ダメージを与える。",
             "zhHantName": "亂打",
             "zhHantDescription": "失去{amount}點生命值。造成{amount2}點傷害。",
             "zhHansName": "乱打",
             "zhHansDescription": "失去{amount}点生命值。造成{amount2}点伤害。",
             "ruName": "Избиение",
-            "ruDescription": "Потеряйте {amount} здоровья. Нанесите {amount2} урона."
+            "ruDescription": "Потеряйте {amount} здоровья. Наносит {amount2} урона."
         },
         {
             "cardId": 303041,
@@ -142,13 +142,13 @@
             "enName": "Pummel +",
             "enDescription": "Lose {amount} HP. Deal {amount2} damage 6 times.",
             "jaName": "乱打 +",
-            "jaDescription": "体力を{amount}失います。{amount2}ダメージを6回与えます。",
+            "jaDescription": "体力を{amount}失う。{amount2}ダメージを6回与える。",
             "zhHantName": "亂打 +",
             "zhHantDescription": "失去{amount}點生命值。造成{amount2}點傷害6次。",
             "zhHansName": "乱打 +",
             "zhHansDescription": "失去{amount}点生命值。造成{amount2}点伤害6次。",
             "ruName": "Избиение +",
-            "ruDescription": "Потеряйте {amount} здоровья. Нанесите {amount2} урона 6 раз."
+            "ruDescription": "Потеряйте {amount} здоровья. Наносит {amount2} урона 6 раз."
         },
         {
             "cardId": 303042,
@@ -157,7 +157,7 @@
             "enName": "Pummel +",
             "enDescription": "Reuse {amount} random cards from the Exhaust pile.",
             "jaName": "乱打 +",
-            "jaDescription": "消滅したカードの山からランダムなカードを{amount}枚再使用します。",
+            "jaDescription": "消滅したカードの山からランダムなカードを{amount}枚再使用する。",
             "zhHantName": "亂打 +",
             "zhHantDescription": "重用消滅牌堆中隨機{amount}張牌。",
             "zhHansName": "乱打 +",
@@ -172,7 +172,7 @@
             "enName": "Pummel +",
             "enDescription": "Use the top {amount} cards of your draw pile.",
             "jaName": "乱打 +",
-            "jaDescription": "山札の上から{amount}枚のカードを使用します。",
+            "jaDescription": "山札の上から{amount}枚のカードを使用する。",
             "zhHantName": "亂打 +",
             "zhHantDescription": "使用抽牌堆頂部的{amount}張牌。",
             "zhHansName": "乱打 +",
@@ -187,13 +187,13 @@
             "enName": "Pummel +",
             "enDescription": "Gain Combo.",
             "jaName": "乱打 +",
-            "jaDescription": "コンボを得ます。",
+            "jaDescription": "コンボを得る。",
             "zhHantName": "亂打 +",
             "zhHantDescription": "獲得連擊。",
             "zhHansName": "乱打 +",
             "zhHansDescription": "获得连击。",
             "ruName": "Избиение +",
-            "ruDescription": "Получите Комбо."
+            "ruDescription": "Получает Комбо."
         },
         {
             "cardId": 303045,
@@ -202,13 +202,13 @@
             "enName": "Pummel +",
             "enDescription": "Choose 1 card in your hand and bind it to this card. Bound cards are played with this card whenever it is used.",
             "jaName": "乱打 +",
-            "jaDescription": "手札からカードを1枚選び、このカードに紐づけます。紐づけられたカードは、このカードを使うたびに一緒に使われます。",
+            "jaDescription": "手札からカードを1枚選び、このカードに紐づける。紐づけられたカードは、このカードを使うたびに一緒に使われます。",
             "zhHantName": "亂打 +",
-            "zhHantDescription": "從手中選擇1張牌並將其綁定到此牌上。被綁定的牌會在此牌每次使用時一同使用。",
+            "zhHantDescription": "從手中選擇1張牌並將其綁定到此牌上。被綁定的牌會在此牌每當使用時一同使用。",
             "zhHansName": "乱打 +",
-            "zhHansDescription": "从手中选择1张牌并将其绑定到此牌上。被绑定的牌会在此牌每次使用时一同使用。",
+            "zhHansDescription": "从手中选择1张牌并将其绑定到此牌上。被绑定的牌会在此牌每当使用时一同使用。",
             "ruName": "Избиение +",
-            "ruDescription": "Выберите 1 карту в руке и привяжите её к этой карте. Привязанная карта разыгрывается вместе с этой каждый раз, когда эта карта используется."
+            "ruDescription": "Выбирает 1 карту в руке и привязывает её к этой карте. Привязанная карта разыгрывается вместе с этой каждый раз, когда эта карта используется."
         },
         {
             "cardId": 303050,
@@ -217,7 +217,7 @@
             "enName": "Indomitable",
             "enDescription": "Recover {amount} HP. This value is the HP you lost this turn.",
             "jaName": "不屈",
-            "jaDescription": "体力を{amount}回復します。この値はこのターン中に失った体力です。",
+            "jaDescription": "体力を{amount}回復する。この値はこのターン中に失った体力です。",
             "zhHantName": "不屈",
             "zhHantDescription": "恢復{amount}點生命值。此數值等同於你本回合失去的生命值。",
             "zhHansName": "不屈",
@@ -232,7 +232,7 @@
             "enName": "Indomitable +",
             "enDescription": "Recover {amount} HP. This value is the HP you lost this turn.",
             "jaName": "不屈 +",
-            "jaDescription": "体力を{amount}回復します。この値はこのターン中に失った体力です。",
+            "jaDescription": "体力を{amount}回復する。この値はこのターン中に失った体力です。",
             "zhHantName": "不屈 +",
             "zhHantDescription": "恢復{amount}點生命值。此數值等同於你本回合失去的生命值。",
             "zhHansName": "不屈 +",
@@ -246,14 +246,14 @@
             "koDescription": "보호막을 {amount} 얻습니다. 이 수치는 현재 잃은 체력의 20%입니다.",
             "enName": "Indomitable +",
             "enDescription": "Gain {amount} Block. This value is 20% of your missing HP.",
-            "jaName": "",
-            "jaDescription": "",
-            "zhHantName": "",
-            "zhHantDescription": "",
-            "zhHansName": "",
-            "zhHansDescription": "",
-            "ruName": "",
-            "ruDescription": ""
+            "jaName": "不屈 +",
+            "jaDescription": "バリアを{amount}得る。この数値は現在失った体力の20%だ。",
+            "zhHantName": "不屈 +",
+            "zhHantDescription": "獲得{amount}點護盾。此數值為當前已失去生命值的20%。",
+            "zhHansName": "不屈 +",
+            "zhHansDescription": "获得{amount}点护盾。此数值为当前已失去生命值的20%。",
+            "ruName": "Несгибаемость +",
+            "ruDescription": "Получает {amount} барьера. Это значение равно 20% потерянного здоровья."
         },
         {
             "cardId": 303053,
@@ -262,13 +262,13 @@
             "enName": "Indomitable +",
             "enDescription": "Gain Last Stand.",
             "jaName": "不屈 +",
-            "jaDescription": "九死に一生を得ます。",
+            "jaDescription": "九死に一生を得る。",
             "zhHantName": "不屈 +",
             "zhHantDescription": "獲得九死一生。",
             "zhHansName": "不屈 +",
             "zhHansDescription": "获得九死一生。",
             "ruName": "Несгибаемость +",
-            "ruDescription": "Получите Последний шанс."
+            "ruDescription": "Получает Последний шанс."
         },
         {
             "cardId": 303054,
@@ -277,13 +277,13 @@
             "enName": "Indomitable +",
             "enDescription": "Gain {amount} Indomitable.",
             "jaName": "不屈 +",
-            "jaDescription": "不屈を{amount}得ます。",
+            "jaDescription": "不屈を{amount}得る。",
             "zhHantName": "不屈 +",
             "zhHantDescription": "獲得{amount}層不屈。",
             "zhHansName": "不屈 +",
             "zhHansDescription": "获得{amount}层不屈。",
             "ruName": "Несгибаемость +",
-            "ruDescription": "Получите {amount} Несгибаемости."
+            "ruDescription": "Получает {amount} Несгибаемости."
         },
         {
             "cardId": 303055,
@@ -292,13 +292,13 @@
             "enName": "Indomitable +",
             "enDescription": "Gain {amount} Victor's Rest.",
             "jaName": "不屈 +",
-            "jaDescription": "勝者の休息を{amount}得ます。",
+            "jaDescription": "勝者の休息を{amount}得る。",
             "zhHantName": "不屈 +",
             "zhHantDescription": "獲得{amount}層勝者的休息。",
             "zhHansName": "不屈 +",
             "zhHansDescription": "获得{amount}层胜者的休息。",
             "ruName": "Несгибаемость +",
-            "ruDescription": "Получите {amount} Отдыха победителя."
+            "ruDescription": "Получает {amount} Отдыха победителя."
         },
         {
             "cardId": 303060,
@@ -307,13 +307,13 @@
             "enName": "Taunt",
             "enDescription": "Give an enemy {amount} Strength. Gain {amount2} Strength.",
             "jaName": "挑発",
-            "jaDescription": "敵に筋力を{amount}与えます。筋力を{amount2}得ます。",
+            "jaDescription": "敵に筋力を{amount}与える。筋力を{amount2}得る。",
             "zhHantName": "挑釁",
             "zhHantDescription": "使敵人獲得{amount}點力量。獲得{amount2}點力量。",
             "zhHansName": "挑衅",
             "zhHansDescription": "使敌人获得{amount}点力量。获得{amount2}点力量。",
             "ruName": "Провокация",
-            "ruDescription": "Дайте врагу {amount} Силы. Получите {amount2} Силы."
+            "ruDescription": "Дайте врагу {amount} Силы. Получает {amount2} Силы."
         },
         {
             "cardId": 303061,
@@ -322,13 +322,13 @@
             "enName": "Taunt +",
             "enDescription": "Give an enemy {amount} Strength. Gain {amount2} Strength.",
             "jaName": "挑発 +",
-            "jaDescription": "敵に筋力を{amount}与えます。筋力を{amount2}得ます。",
+            "jaDescription": "敵に筋力を{amount}与える。筋力を{amount2}得る。",
             "zhHantName": "挑釁 +",
             "zhHantDescription": "使敵人獲得{amount}點力量。獲得{amount2}點力量。",
             "zhHansName": "挑衅 +",
             "zhHansDescription": "使敌人获得{amount}点力量。获得{amount2}点力量。",
             "ruName": "Провокация +",
-            "ruDescription": "Дайте врагу {amount} Силы. Получите {amount2} Силы."
+            "ruDescription": "Дайте врагу {amount} Силы. Получает {amount2} Силы."
         },
         {
             "cardId": 303062,
@@ -337,7 +337,7 @@
             "enName": "Taunt +",
             "enDescription": "Give an enemy {amount} Strength. Change its intent.",
             "jaName": "挑発 +",
-            "jaDescription": "敵に筋力を{amount}与えます。その敵の意図を変更します。",
+            "jaDescription": "敵に筋力を{amount}与える。その敵の意図を変更する。",
             "zhHantName": "挑釁 +",
             "zhHantDescription": "使敵人獲得{amount}點力量。改變其意圖。",
             "zhHansName": "挑衅 +",
@@ -351,14 +351,14 @@
             "koDescription": "보호막을 {amount} 얻습니다. 약화를 {amount2} 부여합니다.",
             "enName": "Taunt +",
             "enDescription": "Gain {amount} Block. Apply {amount2} Weak.",
-            "jaName": "",
-            "jaDescription": "",
-            "zhHantName": "",
-            "zhHantDescription": "",
-            "zhHansName": "",
-            "zhHansDescription": "",
-            "ruName": "",
-            "ruDescription": ""
+            "jaName": "挑発 +",
+            "jaDescription": "バリアを{amount}得る。弱体を{amount2}付与する。",
+            "zhHantName": "挑釁 +",
+            "zhHantDescription": "獲得{amount}點護盾。對敵人施加{amount2}層虛弱。",
+            "zhHansName": "挑衅 +",
+            "zhHansDescription": "获得{amount}点护盾。对敌人施加{amount2}层虚弱。",
+            "ruName": "Провокация +",
+            "ruDescription": "Получает {amount} барьера. Накладывает {amount2} Слабости на врага."
         },
         {
             "cardId": 303064,
@@ -366,14 +366,14 @@
             "koDescription": "모든 적이 과열을 {amount} 얻습니다. 보호막을 {amount2} 얻습니다.",
             "enName": "Taunt +",
             "enDescription": "All enemies gain {amount} Overheat. Gain {amount2} Block.",
-            "jaName": "",
-            "jaDescription": "",
-            "zhHantName": "",
-            "zhHantDescription": "",
-            "zhHansName": "",
-            "zhHansDescription": "",
-            "ruName": "",
-            "ruDescription": ""
+            "jaName": "挑発 +",
+            "jaDescription": "すべての敵が過熱を{amount}得る。バリアを{amount2}得る。",
+            "zhHantName": "挑釁 +",
+            "zhHantDescription": "所有敵人獲得{amount}層過熱。獲得{amount2}點護盾。",
+            "zhHansName": "挑衅 +",
+            "zhHansDescription": "所有敌人获得{amount}层过热。获得{amount2}点护盾。",
+            "ruName": "Провокация +",
+            "ruDescription": "Все враги получают {amount} Перегрева. Получает {amount2} барьера."
         },
         {
             "cardId": 303065,
@@ -382,7 +382,7 @@
             "enName": "Taunt +",
             "enDescription": "Apply Intentional Rage to an enemy.",
             "jaName": "挑発 +",
-            "jaDescription": "敵に意図された怒りを付与します。",
+            "jaDescription": "敵に意図された怒りを付与する。",
             "zhHantName": "挑釁 +",
             "zhHantDescription": "對敵人施加刻意的憤怒。",
             "zhHansName": "挑衅 +",
@@ -397,13 +397,13 @@
             "enName": "Blood Battle",
             "enDescription": "Deal {amount} damage. This value is the HP you lost from your cards this combat.",
             "jaName": "血闘",
-            "jaDescription": "{amount}ダメージを与えます。この値は、この戦闘中に自分のカードで失った体力です。",
+            "jaDescription": "{amount}ダメージを与える。この値は、この戦闘中に自分のカードで失った体力です。",
             "zhHantName": "血鬥",
             "zhHantDescription": "造成{amount}點傷害。此數值等同於本場戰鬥中你因自己的牌失去的生命值。",
             "zhHansName": "血斗",
             "zhHansDescription": "造成{amount}点伤害。此数值等同于本场战斗中你因自己的牌失去的生命值。",
             "ruName": "Кровавая битва",
-            "ruDescription": "Нанесите {amount} урона. Это значение равно здоровью, потерянному вами от своих карт в этом бою."
+            "ruDescription": "Наносит {amount} урона. Это значение равно здоровью, потерянному вами от своих карт в этом бою."
         },
         {
             "cardId": 303071,
@@ -412,13 +412,13 @@
             "enName": "Blood Battle +",
             "enDescription": "Deal {amount} damage. This value is the HP you lost from your cards this combat.",
             "jaName": "血闘 +",
-            "jaDescription": "{amount}ダメージを与えます。この値は、この戦闘中に自分のカードで失った体力です。",
+            "jaDescription": "{amount}ダメージを与える。この値は、この戦闘中に自分のカードで失った体力です。",
             "zhHantName": "血鬥 +",
             "zhHantDescription": "造成{amount}點傷害。此數值等同於本場戰鬥中你因自己的牌失去的生命值。",
             "zhHansName": "血斗 +",
             "zhHansDescription": "造成{amount}点伤害。此数值等同于本场战斗中你因自己的牌失去的生命值。",
             "ruName": "Кровавая битва +",
-            "ruDescription": "Нанесите {amount} урона. Это значение равно здоровью, потерянному вами от своих карт в этом бою."
+            "ruDescription": "Наносит {amount} урона. Это значение равно здоровью, потерянному вами от своих карт в этом бою."
         },
         {
             "cardId": 303072,
@@ -427,13 +427,13 @@
             "enName": "Blood Battle +",
             "enDescription": "Exhaust 1 selected card from your hand. Draw {amount} cards.",
             "jaName": "血闘 +",
-            "jaDescription": "手札からカードを1枚選んで消滅させます。カードを{amount}枚引きます。",
+            "jaDescription": "手札からカードを1枚選んで消滅させる。カードを{amount}枚引く。",
             "zhHantName": "血鬥 +",
             "zhHantDescription": "從手中選擇1張牌並將其消滅。抽{amount}張牌。",
             "zhHansName": "血斗 +",
             "zhHansDescription": "从手中选择1张牌并将其消灭。抽{amount}张牌。",
             "ruName": "Кровавая битва +",
-            "ruDescription": "Выберите 1 карту в руке и изгоните её. Возьмите {amount} карты."
+            "ruDescription": "Выбирает 1 карту в руке и изгоняет её. Берет {amount} карт."
         },
         {
             "cardId": 303073,
@@ -442,13 +442,13 @@
             "enName": "Blood Battle +",
             "enDescription": "Deal {amount} damage to all enemies. Add 2 Wounds to your discard pile.",
             "jaName": "血闘 +",
-            "jaDescription": "すべての敵に{amount}ダメージを与えます。捨て札に負傷カードを2枚加えます。",
+            "jaDescription": "すべての敵に{amount}ダメージを与える。捨て札に負傷カードを2枚加える。",
             "zhHantName": "血鬥 +",
             "zhHantDescription": "對所有敵人造成{amount}點傷害。將2張受傷牌加入你的棄牌堆。",
             "zhHansName": "血斗 +",
             "zhHansDescription": "对所有敌人造成{amount}点伤害。将2张受伤牌加入你的弃牌堆。",
             "ruName": "Кровавая битва +",
-            "ruDescription": "Нанесите {amount} урона всем врагам. Добавьте 2 Раны в свою стопку сброса."
+            "ruDescription": "Наносит {amount} урона всем врагам. Добавьте 2 Раны в свою стопку сброса."
         },
         {
             "cardId": 303074,
@@ -457,13 +457,13 @@
             "enName": "Blood Battle +",
             "enDescription": "Gain {amount} Berserker.",
             "jaName": "血闘 +",
-            "jaDescription": "狂戦士を{amount}得ます。",
+            "jaDescription": "狂戦士を{amount}得る。",
             "zhHantName": "血鬥 +",
             "zhHantDescription": "獲得{amount}層狂戰士。",
             "zhHansName": "血斗 +",
             "zhHansDescription": "获得{amount}层狂战士。",
             "ruName": "Кровавая битва +",
-            "ruDescription": "Получите {amount} Берсерка."
+            "ruDescription": "Получает {amount} Берсерка."
         },
         {
             "cardId": 303075,
@@ -472,13 +472,13 @@
             "enName": "Blood Battle +",
             "enDescription": "Gain Blood Battle.",
             "jaName": "血闘 +",
-            "jaDescription": "血闘を得ます。",
+            "jaDescription": "血闘を得る。",
             "zhHantName": "血鬥 +",
             "zhHantDescription": "獲得血鬥。",
             "zhHansName": "血斗 +",
             "zhHansDescription": "获得血斗。",
             "ruName": "Кровавая битва +",
-            "ruDescription": "Получите Кровавую битву."
+            "ruDescription": "Получает Кровавую битву."
         },
         {
             "cardId": 303080,
@@ -487,7 +487,7 @@
             "enName": "Wound",
             "enDescription": "Unplayable.",
             "jaName": "負傷",
-            "jaDescription": "使用できません。",
+            "jaDescription": "使用できない。",
             "zhHantName": "受傷",
             "zhHantDescription": "無法使用。",
             "zhHansName": "受伤",

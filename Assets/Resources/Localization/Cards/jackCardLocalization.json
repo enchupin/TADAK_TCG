@@ -13,7 +13,7 @@
             "zhHansName": "掷硬币",
             "zhHansDescription": "造成{amount}点伤害。",
             "ruName": "Подброс монеты",
-            "ruDescription": "Нанесите {amount} урона."
+            "ruDescription": "Наносит {amount} урона."
         },
         {
             "cardId": 102020,
@@ -37,13 +37,13 @@
             "enName": "Shuffle",
             "enDescription": "Choose 1 card from your hand. Place that card on top of your draw pile.",
             "jaName": "シャッフル",
-            "jaDescription": "手札からカードを1枚選びます。そのカードを山札の一番上に置きます。",
+            "jaDescription": "手札からカードを1枚選ぶ。そのカードを山札の一番上に置く。",
             "zhHantName": "洗牌",
             "zhHantDescription": "從手中選擇1張牌，將其放到抽牌堆最上方。",
             "zhHansName": "洗牌",
             "zhHansDescription": "从手中选择1张牌，将其放到抽牌堆最上方。",
             "ruName": "Перетасовка",
-            "ruDescription": "Выбирает 1 карту из вашей руки. Поместите её на верх колоды добора."
+            "ruDescription": "Выбирает 1 карту из вашей руки. Помещает её на верх колоды добора."
         },
         {
             "cardId": 102031,
@@ -82,13 +82,13 @@
             "enName": "Shuffle +",
             "enDescription": "Choose 1 card from all cards. Place that card on top of your draw pile.",
             "jaName": "シャッフル +",
-            "jaDescription": "すべてのカードの中から1枚選びます。そのカードを山札の一番上に置きます。",
+            "jaDescription": "すべてのカードの中から1枚選ぶ。そのカードを山札の一番上に置く。",
             "zhHantName": "洗牌 +",
             "zhHantDescription": "從所有牌中選擇1張，將其放到抽牌堆最上方。",
             "zhHansName": "洗牌 +",
             "zhHansDescription": "从所有牌中选择1张，将其放到抽牌堆最上方。",
             "ruName": "Перетасовка +",
-            "ruDescription": "Выбирает 1 карту из всех карт. Поместите её на верх колоды добора."
+            "ruDescription": "Выбирает 1 карту из всех карт. Помещает её на верх колоды добора."
         },
         {
             "cardId": 102034,
@@ -118,7 +118,7 @@
             "zhHansName": "洗牌 +",
             "zhHansDescription": "强化: 获得{amount}层抽牌。",
             "ruName": "Перетасовка +",
-            "ruDescription": "Усиление: получите {amount} добора."
+            "ruDescription": "Усиление: получает {amount} добора."
         },
         {
             "cardId": 102040,
@@ -133,7 +133,7 @@
             "zhHansName": "小丑",
             "zhHansDescription": "选择并获得{amount}张杰克的其他固有牌。",
             "ruName": "Джокер",
-            "ruDescription": "Выбирает и получите {amount} других уникальных карт Джека."
+            "ruDescription": "Выбирает и получает {amount} других уникальных карт Джека."
         },
         {
             "cardId": 102041,
@@ -142,7 +142,7 @@
             "enName": "Joker +",
             "enDescription": "Choose {amount} of Jack's unique cards. That card is upgraded at random.",
             "jaName": "ジョーカー +",
-            "jaDescription": "ジャックの固有カードを{amount}枚選びます。そのカードはランダムに強化される。",
+            "jaDescription": "ジャックの固有カードを{amount}枚選ぶ。そのカードはランダムに強化される。",
             "zhHantName": "小丑 +",
             "zhHantDescription": "選擇{amount}張傑克的固有牌。該牌會隨機強化。",
             "zhHansName": "小丑 +",
@@ -163,7 +163,7 @@
             "zhHansName": "小丑 +",
             "zhHansDescription": "从所有友军的固有牌中选择并获得{amount}张。",
             "ruName": "Джокер +",
-            "ruDescription": "Выбирает и получите {amount} уникальных карт среди всех союзников."
+            "ruDescription": "Выбирает и получает {amount} уникальных карт среди всех союзников."
         },
         {
             "cardId": 102043,
@@ -172,13 +172,13 @@
             "enName": "Joker +",
             "enDescription": "Choose {amount} cards from your hand. Gain {amount2} copies of those cards.",
             "jaName": "ジョーカー +",
-            "jaDescription": "手札からカードを{amount}枚選びます。そのカードのコピーを{amount2}枚獲得する。",
+            "jaDescription": "手札からカードを{amount}枚選ぶ。そのカードのコピーを{amount2}枚獲得する。",
             "zhHantName": "小丑 +",
             "zhHantDescription": "從手中選擇{amount}張牌，獲得這些牌的{amount2}張複製。",
             "zhHansName": "小丑 +",
             "zhHansDescription": "从手中选择{amount}张牌，获得这些牌的{amount2}张复制。",
             "ruName": "Джокер +",
-            "ruDescription": "Выбирает {amount} карт из руки. Получите {amount2} копий этих карт."
+            "ruDescription": "Выбирает {amount} карт из руки. Получает {amount2} копий этих карт."
         },
         {
             "cardId": 102044,
@@ -193,7 +193,7 @@
             "zhHansName": "小丑 +",
             "zhHansDescription": "获得{amount}层丑角。",
             "ruName": "Джокер +",
-            "ruDescription": "Получите {amount} Шута."
+            "ruDescription": "Получает {amount} Шута."
         },
         {
             "cardId": 102045,
@@ -217,7 +217,7 @@
             "enName": "One-for-One Trade",
             "enDescription": "Choose an enemy. This turn, recover HP equal to the amount of HP that enemy loses.",
             "jaName": "一対一交換",
-            "jaDescription": "敵1体を選びます。このターン中、その敵が失った体力の分だけ自分の体力を回復する。",
+            "jaDescription": "敵1体を選ぶ。このターン中、その敵が失った体力の分だけ自分の体力を回復する。",
             "zhHantName": "一對一交換",
             "zhHantDescription": "選擇1名敵人。本回合內，該敵人失去多少生命值，你就恢復多少生命值。",
             "zhHansName": "一对一交换",
@@ -238,7 +238,7 @@
             "zhHansName": "一对一交换 +",
             "zhHansDescription": "随机重新分配自己的增益数值。",
             "ruName": "Равноценный обмен +",
-            "ruDescription": "Случайным образом перераспределите значения ваших эффектов."
+            "ruDescription": "Случайным образом перераспределяет значения ваших эффектов."
         },
         {
             "cardId": 102052,
@@ -247,13 +247,13 @@
             "enName": "One-for-One Trade +",
             "enDescription": "Choose an enemy. Randomly redistribute the values of that enemy's buffs.",
             "jaName": "一対一交換 +",
-            "jaDescription": "敵1体を選びます。その敵のバフ数値をランダムに再調整する。",
+            "jaDescription": "敵1体を選ぶ。その敵のバフ数値をランダムに再調整する。",
             "zhHantName": "一對一交換 +",
             "zhHantDescription": "選擇1名敵人。隨機重新分配該敵人身上的增益數值效果。",
             "zhHansName": "一对一交换 +",
             "zhHansDescription": "选择1名敌人。随机重新分配该敌人身上的增益数值效果。",
             "ruName": "Равноценный обмен +",
-            "ruDescription": "Выбирает врага. Случайным образом перераспределите значения его эффектов."
+            "ruDescription": "Выбирает врага. Случайным образом перераспределяет значения его эффектов."
         },
         {
             "cardId": 102053,
@@ -268,7 +268,7 @@
             "zhHansName": "一对一交换 +",
             "zhHansDescription": "从手中选择并弃掉{amount}张牌。抽{amount2}张牌。",
             "ruName": "Равноценный обмен +",
-            "ruDescription": "Выбирает и сбросьте {amount} карт из руки. Берет {amount2} карт."
+            "ruDescription": "Выбирает и сбрасывает {amount} карт из руки. Берет {amount2} карт."
         },
         {
             "cardId": 102054,
@@ -277,7 +277,7 @@
             "enName": "One-for-One Trade +",
             "enDescription": "You cannot draw or gain more cards this turn. All cards in your hand cost 0.",
             "jaName": "一対一交換 +",
-            "jaDescription": "このターン、これ以上カードを引いたり獲得したりできません。手札のすべてのカードのコストが0になる。",
+            "jaDescription": "このターン、これ以上カードを引いたり獲得したりできない。手札のすべてのカードのコストが0になる。",
             "zhHantName": "一對一交換 +",
             "zhHantDescription": "本回合內無法再抽牌或獲得牌。手中所有牌的費用變為0。",
             "zhHansName": "一对一交换 +",
@@ -292,13 +292,13 @@
             "enName": "One-for-One Trade +",
             "enDescription": "Choose an enemy. Deal damage equal to its remaining HP and kill it.",
             "jaName": "一対一交換 +",
-            "jaDescription": "敵1体を選びます。その敵の残り体力と同じダメージを与えて倒する。",
+            "jaDescription": "敵1体を選ぶ。その敵の残り体力と同じダメージを与えて倒する。",
             "zhHantName": "一對一交換 +",
             "zhHantDescription": "選擇1名敵人。造成等同於其剩餘生命值的傷害並將其擊殺。",
             "zhHansName": "一对一交换 +",
             "zhHansDescription": "选择1名敌人。造成等同于其剩余生命值的伤害并将其击杀。",
             "ruName": "Равноценный обмен +",
-            "ruDescription": "Выбирает врага. Нанесите урон, равный его оставшемуся здоровью, и убейте его."
+            "ruDescription": "Выбирает врага. Наносит урон, равный его оставшемуся здоровью, и убивает его."
         },
         {
             "cardId": 102060,
@@ -307,7 +307,7 @@
             "enName": "Bottom Deal",
             "enDescription": "Remove an enemy's Block.",
             "jaName": "底抜き",
-            "jaDescription": "敵のバリアを取り除きます。",
+            "jaDescription": "敵のバリアを取り除く。",
             "zhHantName": "抽底牌",
             "zhHantDescription": "移除敵人身上的護盾效果。",
             "zhHansName": "抽底牌",
@@ -322,13 +322,13 @@
             "enName": "Bottom Deal +",
             "enDescription": "Remove {amount} beneficial effects from the enemy.",
             "jaName": "底抜き +",
-            "jaDescription": "敵の有益な効果を{amount}個取り除きます。",
+            "jaDescription": "敵の有益な効果を{amount}個取り除く。",
             "zhHantName": "抽底牌 +",
             "zhHantDescription": "移除敵人{amount}個有益效果。",
             "zhHansName": "抽底牌 +",
             "zhHansDescription": "移除敌人{amount}个有益效果。",
             "ruName": "Сдача снизу +",
-            "ruDescription": "Удалите {amount} положительных эффектов у врага."
+            "ruDescription": "Удалите {amount} перемещаетльных эффектов у врага."
         },
         {
             "cardId": 102062,
@@ -343,7 +343,7 @@
             "zhHansName": "抽底牌 +",
             "zhHansDescription": "获得{amount}层准备。",
             "ruName": "Сдача снизу +",
-            "ruDescription": "Получите {amount} Подготовки."
+            "ruDescription": "Получает {amount} Подготовки."
         },
         {
             "cardId": 102063,
@@ -352,7 +352,7 @@
             "enName": "Bottom Deal +",
             "enDescription": "Take an extra turn.",
             "jaName": "底抜き +",
-            "jaDescription": "追加ターンを行います。",
+            "jaDescription": "追加ターンを行う。",
             "zhHantName": "抽底牌 +",
             "zhHantDescription": "進行額外回合。",
             "zhHansName": "抽底牌 +",
@@ -388,7 +388,7 @@
             "zhHansName": "抽底牌 +",
             "zhHansDescription": "获得复制生成。",
             "ruName": "Сдача снизу +",
-            "ruDescription": "Получите Дублирование."
+            "ruDescription": "Получает Дублирование."
         },
         {
             "cardId": 102070,
@@ -403,7 +403,7 @@
             "zhHansName": "黑杰克",
             "zhHansDescription": "获得双倍。",
             "ruName": "Блэкджек",
-            "ruDescription": "Получите Дубль."
+            "ruDescription": "Получает Дубль."
         },
         {
             "cardId": 102071,
@@ -418,7 +418,7 @@
             "zhHansName": "黑杰克 +",
             "zhHansDescription": "获得双倍。",
             "ruName": "Блэкджек +",
-            "ruDescription": "Получите Дубль."
+            "ruDescription": "Получает Дубль."
         },
         {
             "cardId": 102072,
@@ -433,7 +433,7 @@
             "zhHansName": "黑杰克 +",
             "zhHansDescription": "获得葫芦。",
             "ruName": "Блэкджек +",
-            "ruDescription": "Получите Фул-хаус."
+            "ruDescription": "Получает Фул-хаус."
         },
         {
             "cardId": 102073,
@@ -448,7 +448,7 @@
             "zhHansName": "黑杰克 +",
             "zhHansDescription": "获得顺子。",
             "ruName": "Блэкджек +",
-            "ruDescription": "Получите Стрит."
+            "ruDescription": "Получает Стрит."
         },
         {
             "cardId": 102074,
@@ -463,7 +463,7 @@
             "zhHansName": "黑杰克 +",
             "zhHansDescription": "获得{amount}点能量。抽{amount2}张牌。",
             "ruName": "Блэкджек +",
-            "ruDescription": "Получите {amount} энергии. Берет {amount2} карт."
+            "ruDescription": "Получает {amount} энергии. Берет {amount2} карт."
         },
         {
             "cardId": 102075,
@@ -472,7 +472,7 @@
             "enName": "Blackjack +",
             "enDescription": "Choose two enemies. They become a Party from now on.",
             "jaName": "ブラックジャック +",
-            "jaDescription": "敵を2体選びます。その2体はこれ以降パーティになる。",
+            "jaDescription": "敵を2体選ぶ。その2体はこれ以降パーティになる。",
             "zhHantName": "黑傑克 +",
             "zhHantDescription": "選擇2名敵人。從現在起，牠們會成為同一隊伍。",
             "zhHansName": "黑杰克 +",

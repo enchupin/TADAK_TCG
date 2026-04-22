@@ -1,4 +1,4 @@
-{
+﻿{
     "cards": [
         {
             "cardId": 201010,
@@ -13,7 +13,7 @@
             "zhHansName": "火焰弹",
             "zhHansDescription": "造成{amount}点伤害。",
             "ruName": "Огненный выстрел",
-            "ruDescription": "Нанесите {amount} урона."
+            "ruDescription": "Наносит {amount} урона."
         },
         {
             "cardId": 201020,
@@ -28,7 +28,7 @@
             "zhHansName": "龙鳞",
             "zhHansDescription": "获得{amount}点护盾。",
             "ruName": "Драконья чешуя",
-            "ruDescription": "Получите {amount} барьера."
+            "ruDescription": "Получает {amount} барьера."
         },
         {
             "cardId": 201030,
@@ -43,7 +43,7 @@
             "zhHansName": "变形术",
             "zhHansDescription": "本回合获得{amount}层过热。",
             "ruName": "Полиморф",
-            "ruDescription": "Получите {amount} Перегрева в этом ходу."
+            "ruDescription": "Получает {amount} Перегрева в этом ходу."
         },
         {
             "cardId": 201031,
@@ -58,7 +58,7 @@
             "zhHansName": "变形术 +",
             "zhHansDescription": "本回合获得{amount}层过热。",
             "ruName": "Полиморф +",
-            "ruDescription": "Получите {amount} Перегрева в этом ходу."
+            "ruDescription": "Получает {amount} Перегрева в этом ходу."
         },
         {
             "cardId": 201032,
@@ -73,7 +73,7 @@
             "zhHansName": "变形术 +",
             "zhHansDescription": "获得{amount}层过热。",
             "ruName": "Полиморф +",
-            "ruDescription": "Получите {amount} Перегрева."
+            "ruDescription": "Получает {amount} Перегрева."
         },
         {
             "cardId": 201033,
@@ -88,7 +88,7 @@
             "zhHansName": "变形术 +",
             "zhHansDescription": "本回合获得{amount}点力量。",
             "ruName": "Полиморф +",
-            "ruDescription": "Получите {amount} Силы в этом ходу."
+            "ruDescription": "Получает {amount} Силы в этом ходу."
         },
         {
             "cardId": 201034,
@@ -103,14 +103,14 @@
             "zhHansName": "变形术 +",
             "zhHansDescription": "获得{amount}点力量。",
             "ruName": "Полиморф +",
-            "ruDescription": "Получите {amount} Силы."
+            "ruDescription": "Получает {amount} Силы."
         },
         {
             "cardId": 201035,
             "koName": "폴리모프 +",
             "koDescription": "발열을 {amount} 얻습니다.",
             "enName": "Polymorph +",
-            "enDescription": "Gain {amount} Heat.",
+            "enDescription": "Gain {amount} Heat Up.",
             "jaName": "ポリモーフ +",
             "jaDescription": "発熱を{amount}得る。",
             "zhHantName": "變形術 +",
@@ -118,7 +118,7 @@
             "zhHansName": "变形术 +",
             "zhHansDescription": "获得{amount}层热能。",
             "ruName": "Полиморф +",
-            "ruDescription": "Получите {amount} Жара."
+            "ruDescription": "Получает {amount} Жара."
         },
         {
             "cardId": 201040,
@@ -133,7 +133,7 @@
             "zhHansName": "龙息",
             "zhHansDescription": "造成{amount}点伤害。",
             "ruName": "Дыхание дракона",
-            "ruDescription": "Нанесите {amount} урона."
+            "ruDescription": "Наносит {amount} урона."
         },
         {
             "cardId": 201041,
@@ -148,7 +148,7 @@
             "zhHansName": "龙息 +",
             "zhHansDescription": "造成{amount}点伤害。",
             "ruName": "Дыхание дракона +",
-            "ruDescription": "Нанесите {amount} урона."
+            "ruDescription": "Наносит {amount} урона."
         },
         {
             "cardId": 201042,
@@ -163,7 +163,7 @@
             "zhHansName": "龙息 +",
             "zhHansDescription": "对所有敌人造成{amount}点伤害。",
             "ruName": "Дыхание дракона +",
-            "ruDescription": "Нанесите {amount} урона всем врагам."
+            "ruDescription": "Наносит {amount} урона всем врагам."
         },
         {
             "cardId": 201043,
@@ -178,7 +178,7 @@
             "zhHansName": "龙息 +",
             "zhHansDescription": "对所有敌人造成{amount}点伤害。若只有1名敌人，伤害变为3倍。",
             "ruName": "Дыхание дракона +",
-            "ruDescription": "Нанесите {amount} урона всем врагам. Если враг только один, урон утраивается."
+            "ruDescription": "Наносит {amount} урона всем врагам. Если враг только один, урон утраивается."
         },
         {
             "cardId": 201044,
@@ -187,13 +187,13 @@
             "enName": "Dragon Breath +",
             "enDescription": "Exhaust all cards in your hand. Deal 8 damage for each card Exhausted this way.",
             "jaName": "ドラゴンブレス +",
-            "jaDescription": "手札のカードをすべて消滅させます。この方法で消滅させたカード1枚につき8ダメージを与える。",
+            "jaDescription": "手札のカードをすべて消滅させる。この方法で消滅させたカード1枚につき8ダメージを与える。",
             "zhHantName": "龍息 +",
             "zhHantDescription": "將手中的所有牌消滅。每以此法消滅1張牌，造成8點傷害。",
             "zhHansName": "龙息 +",
             "zhHansDescription": "将手中的所有牌消灭。每以此法消灭1张牌，造成8点伤害。",
             "ruName": "Дыхание дракона +",
-            "ruDescription": "Изгоните все карты в руке. Нанесите 8 урона за каждую карту, изгнанную таким образом."
+            "ruDescription": "Изгоняет все карты в руке. Наносит 8 урона за каждую карту, изгнанную таким образом."
         },
         {
             "cardId": 201045,
@@ -208,7 +208,7 @@
             "zhHansName": "龙息 +",
             "zhHansDescription": "造成{amount}点伤害。若此牌费用为2以下，改为造成{amount2}点伤害。",
             "ruName": "Дыхание дракона +",
-            "ruDescription": "Нанесите {amount} урона. Если эта карта стоит 2 или меньше, вместо этого нанесите {amount2} урона."
+            "ruDescription": "Наносит {amount} урона. Если эта карта стоит 2 или меньше, вместо этого наносит {amount2} урона."
         },
         {
             "cardId": 201050,
@@ -253,7 +253,7 @@
             "zhHansName": "火焰之环 +",
             "zhHansDescription": "生成{amount}张火焰弹牌。本回合内，这些牌的费用减少{amount2}。",
             "ruName": "Огненное кольцо +",
-            "ruDescription": "Создайте {amount} карт Огненный выстрел. Эти карты стоят на {amount2} меньше в этом ходу."
+            "ruDescription": "Создает {amount} карт Огненный выстрел. Эти карты стоят на {amount2} меньше в этом ходу."
         },
         {
             "cardId": 201053,
@@ -275,13 +275,13 @@
             "koName": "화염 고리 +",
             "koDescription": "버린 카드 더미의 이그니아 카드를 {amount}장 선택해 손으로 가져옵니다. 이번 게임 동안 그 카드들의 비용이 {amount2} 감소합니다.",
             "enName": "Flame Ring +",
-            "enDescription": "Choose {amount} Ignia cards from your discard pile and take them. Their costs are reduced by {amount2} for the rest of this game.",
+            "enDescription": "Choose {amount} Ignia cards from your discard pile and put them into your hand. Their costs are reduced by {amount2} for the rest of this game.",
             "jaName": "炎の輪 +",
-            "jaDescription": "捨て札のイグニアカードを{amount}枚選んで手札に加えます。このゲーム中、それらのカードのコストが{amount2}減少する。",
+            "jaDescription": "捨て札のイグニアカードを{amount}枚選んで手札に移す。このゲーム中、それらのカードのコストが{amount2}減少する。",
             "zhHantName": "火焰之環 +",
-            "zhHantDescription": "從棄牌堆中選擇{amount}張伊格尼亞牌並取得。這些牌在本局遊戲中費用減少{amount2}。",
+            "zhHantDescription": "從棄牌堆中選擇{amount}張伊格尼亞牌並加入手牌。這些牌在本局遊戲中費用減少{amount2}。",
             "zhHansName": "火焰之环 +",
-            "zhHansDescription": "从弃牌堆中选择{amount}张伊格尼亚牌并取得。这些牌在本局游戏中费用减少{amount2}。",
+            "zhHansDescription": "从弃牌堆中选择{amount}张伊格尼亚牌并加入手牌。这些牌在本局游戏中费用减少{amount2}。",
             "ruName": "Огненное кольцо +",
             "ruDescription": "Выбирает {amount} карт Игнии из стопки сброса и берет их в руку. Их стоимость уменьшается на {amount2} до конца этой игры."
         },
@@ -373,7 +373,7 @@
             "zhHansName": "地狱火 +",
             "zhHansDescription": "每当你攻击时，对敌人施加{amount}层火焰烙印。",
             "ruName": "Адское пламя +",
-            "ruDescription": "Каждый раз, когда вы атакуете, накладывает {amount} Пламенного клейма на врага."
+            "ruDescription": "Каждый раз, когда вы атакуете, накладывает {amount} Пламенное клеймо на врага."
         },
         {
             "cardId": 201065,
@@ -403,7 +403,7 @@
             "zhHansName": "灼热皮肤",
             "zhHansDescription": "获得{amount}层熔岩皮肤。",
             "ruName": "Горячая кожа",
-            "ruDescription": "Получите {amount} Лавовой кожи."
+            "ruDescription": "Получает {amount} Лавовой кожи."
         },
         {
             "cardId": 201071,
@@ -418,22 +418,22 @@
             "zhHansName": "灼热皮肤 +",
             "zhHansDescription": "获得{amount}层熔岩皮肤。",
             "ruName": "Горячая кожа +",
-            "ruDescription": "Получите {amount} Лавовой кожи."
+            "ruDescription": "Получает {amount} Лавовой кожи."
         },
         {
             "cardId": 201072,
             "koName": "뜨거운 피부 +",
             "koDescription": "카드 {amount}장을 선택해 소멸시킵니다. 보호막을 {amount2} 얻습니다.",
             "enName": "Hot Skin +",
-            "enDescription": "Choose {amount} cards and Exhaust them. Gain {amount2} Block.",
+            "enDescription": "Choose {amount} cards in your hand and Exhaust them. Gain {amount2} Block.",
             "jaName": "熱い皮膚 +",
-            "jaDescription": "カードを{amount}枚選んで消滅させます。バリアを{amount2}得る。",
+            "jaDescription": "手札からカードを{amount}枚選んで消滅させる。バリアを{amount2}得る。",
             "zhHantName": "灼熱皮膚 +",
-            "zhHantDescription": "選擇{amount}張牌並將其消滅。獲得{amount2}點護盾。",
+            "zhHantDescription": "從手中選擇{amount}張牌並將其消滅。獲得{amount2}點護盾。",
             "zhHansName": "灼热皮肤 +",
             "zhHansDescription": "选择{amount}张牌并将其消灭。获得{amount2}点护盾。",
             "ruName": "Горячая кожа +",
-            "ruDescription": "Выбирает {amount} карт и изгоните их. Получите {amount2} барьера."
+            "ruDescription": "Выбирает {amount} карт и изгоняет их. Получает {amount2} барьера."
         },
         {
             "cardId": 201073,
@@ -448,7 +448,7 @@
             "zhHansName": "灼热皮肤 +",
             "zhHansDescription": "获得{amount}点护盾。本回合获得{amount2}层熔岩皮肤。",
             "ruName": "Горячая кожа +",
-            "ruDescription": "Получите {amount} барьера. Получите {amount2} Лавовой кожи в этом ходу."
+            "ruDescription": "Получает {amount} барьера. Получает {amount2} Лавовой кожи в этом ходу."
         },
         {
             "cardId": 201074,
@@ -463,14 +463,14 @@
             "zhHansName": "灼热皮肤 +",
             "zhHansDescription": "获得{amount}层强攻。获得{amount2}点护盾。",
             "ruName": "Горячая кожа +",
-            "ruDescription": "Получите {amount} Тяжёлого удара. Получите {amount2} барьера."
+            "ruDescription": "Получает {amount} Тяжёлого удара. Получает {amount2} барьера."
         },
         {
             "cardId": 201075,
             "koName": "뜨거운 피부 +",
             "koDescription": "금기 해제를 얻습니다.",
             "enName": "Hot Skin +",
-            "enDescription": "Gain Taboo Release.",
+            "enDescription": "Gain Taboo Released.",
             "jaName": "熱い皮膚 +",
             "jaDescription": "禁忌解除を得る。",
             "zhHantName": "灼熱皮膚 +",
@@ -478,7 +478,7 @@
             "zhHansName": "灼热皮肤 +",
             "zhHansDescription": "获得禁忌解除。",
             "ruName": "Горячая кожа +",
-            "ruDescription": "Получите Снятие запрета."
+            "ruDescription": "Получает Снятие запрета."
         }
     ]
 }

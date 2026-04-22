@@ -1,4 +1,4 @@
-{
+﻿{
     "cards": [
         {
             "cardId": 301010,
@@ -13,7 +13,7 @@
             "zhHansName": "盾击",
             "zhHansDescription": "造成{amount}点伤害。",
             "ruName": "Удар щитом",
-            "ruDescription": "Нанесите {amount} урона."
+            "ruDescription": "Наносит {amount} урона."
         },
         {
             "cardId": 301020,
@@ -28,7 +28,7 @@
             "zhHansName": "冰之屏障",
             "zhHansDescription": "获得{amount}点护盾。",
             "ruName": "Ледяной барьер",
-            "ruDescription": "Получите {amount} барьера."
+            "ruDescription": "Получает {amount} барьера."
         },
         {
             "cardId": 301030,
@@ -103,7 +103,7 @@
             "zhHansName": "绝对零度 +",
             "zhHansDescription": "获得{amount}层绝对零度。",
             "ruName": "Абсолютный ноль +",
-            "ruDescription": "Получите {amount} Абсолютного нуля."
+            "ruDescription": "Получает {amount} Абсолютного нуля."
         },
         {
             "cardId": 301035,
@@ -118,7 +118,7 @@
             "zhHansName": "绝对零度 +",
             "zhHansDescription": "获得{amount}层粉碎。",
             "ruName": "Абсолютный ноль +",
-            "ruDescription": "Получите {amount} Раскола."
+            "ruDescription": "Получает {amount} Раскола."
         },
         {
             "cardId": 301040,
@@ -133,7 +133,7 @@
             "zhHansName": "冰河帷幕",
             "zhHansDescription": "获得{amount}点护盾。",
             "ruName": "Ледяная вуаль",
-            "ruDescription": "Получите {amount} барьера."
+            "ruDescription": "Получает {amount} барьера."
         },
         {
             "cardId": 301041,
@@ -148,7 +148,7 @@
             "zhHansName": "冰河帷幕 +",
             "zhHansDescription": "获得{amount}层羁绊。",
             "ruName": "Ледяная вуаль +",
-            "ruDescription": "Получите {amount} Связи."
+            "ruDescription": "Получает {amount} Связи."
         },
         {
             "cardId": 301042,
@@ -163,7 +163,7 @@
             "zhHansName": "冰河帷幕 +",
             "zhHansDescription": "获得{amount}点护盾2次。",
             "ruName": "Ледяная вуаль +",
-            "ruDescription": "Дважды получите {amount} барьера."
+            "ruDescription": "Дважды получает {amount} барьера."
         },
         {
             "cardId": 301043,
@@ -178,7 +178,7 @@
             "zhHansName": "冰河帷幕 +",
             "zhHansDescription": "造成{amount}点伤害。获得等同于造成伤害量的护盾。",
             "ruName": "Ледяная вуаль +",
-            "ruDescription": "Нанесите {amount} урона. Получите барьер, равный нанесённому урону."
+            "ruDescription": "Наносит {amount} урона. Получает барьер, равный нанесённому урону."
         },
         {
             "cardId": 301044,
@@ -193,7 +193,7 @@
             "zhHansName": "冰河帷幕 +",
             "zhHansDescription": "生成{amount}张冰河塑形牌。",
             "ruName": "Ледяная вуаль +",
-            "ruDescription": "Создайте {amount} карт Ледяное ваяние."
+            "ruDescription": "Создает {amount} карт Ледяное ваяние."
         },
         {
             "cardId": 301045,
@@ -208,7 +208,7 @@
             "zhHansName": "冰河帷幕 +",
             "zhHansDescription": "获得{amount2}点护盾。抽{amount}张牌。",
             "ruName": "Ледяная вуаль +",
-            "ruDescription": "Получите {amount2} барьера. Берет {amount} карт."
+            "ruDescription": "Получает {amount2} барьера. Берет {amount} карт."
         },
         {
             "cardId": 301050,
@@ -223,7 +223,7 @@
             "zhHansName": "寒气",
             "zhHansDescription": "造成{amount}点伤害。施加{amount2}层冻结。",
             "ruName": "Озноб",
-            "ruDescription": "Нанесите {amount} урона. Наложите {amount2} Заморозки."
+            "ruDescription": "Наносит {amount} урона. Наложите {amount2} Заморозки."
         },
         {
             "cardId": 301051,
@@ -238,7 +238,7 @@
             "zhHansName": "寒气 +",
             "zhHansDescription": "造成{amount}点伤害。施加{amount2}层冻结。",
             "ruName": "Озноб +",
-            "ruDescription": "Нанесите {amount} урона. Наложите {amount2} Заморозки."
+            "ruDescription": "Наносит {amount} урона. Наложите {amount2} Заморозки."
         },
         {
             "cardId": 301052,
@@ -253,7 +253,7 @@
             "zhHansName": "寒气 +",
             "zhHansDescription": "抽{amount}张牌。获得{amount2}点护盾。",
             "ruName": "Озноб +",
-            "ruDescription": "Берет {amount} карт. Получите {amount2} барьера."
+            "ruDescription": "Берет {amount} карт. Получает {amount2} барьера."
         },
         {
             "cardId": 301053,
@@ -268,7 +268,7 @@
             "zhHansName": "寒气 +",
             "zhHansDescription": "强化: 获得寒气。",
             "ruName": "Озноб +",
-            "ruDescription": "Усиление: получите Озноб."
+            "ruDescription": "Усиление: получает Озноб."
         },
         {
             "cardId": 301054,
@@ -283,7 +283,7 @@
             "zhHansName": "寒气 +",
             "zhHansDescription": "获得{amount}层羁绊。",
             "ruName": "Озноб +",
-            "ruDescription": "Получите {amount} Связи."
+            "ruDescription": "Получает {amount} Связи."
         },
         {
             "cardId": 301055,
@@ -298,7 +298,7 @@
             "zhHansName": "寒气 +",
             "zhHansDescription": "获得{amount}层寒气。",
             "ruName": "Озноб +",
-            "ruDescription": "Получите {amount} Озноба."
+            "ruDescription": "Получает {amount} Озноба."
         },
         {
             "cardId": 301060,
@@ -313,7 +313,7 @@
             "zhHansName": "魔力置换",
             "zhHansDescription": "改为使用护盾而非能量。生成{amount}张冰河塑形牌。",
             "ruName": "Замена маны",
-            "ruDescription": "Используйте барьер вместо энергии. Создайте {amount} карт Ледяное ваяние."
+            "ruDescription": "Используйте барьер вместо энергии. Создает {amount} карт Ледяное ваяние."
         },
         {
             "cardId": 301061,
@@ -343,7 +343,7 @@
             "zhHansName": "魔力置换 +",
             "zhHansDescription": "改为使用护盾而非能量。造成{amount}点伤害。",
             "ruName": "Замена маны +",
-            "ruDescription": "Используйте барьер вместо энергии. Нанесите {amount} урона."
+            "ruDescription": "Используйте барьер вместо энергии. Наносит {amount} урона."
         },
         {
             "cardId": 301063,
@@ -358,7 +358,7 @@
             "zhHansName": "魔力置换 +",
             "zhHansDescription": "改为使用护盾而非能量。生成{amount}张冰河塑形牌。",
             "ruName": "Замена маны +",
-            "ruDescription": "Используйте барьер вместо энергии. Создайте {amount} карт Ледяное ваяние."
+            "ruDescription": "Используйте барьер вместо энергии. Создает {amount} карт Ледяное ваяние."
         },
         {
             "cardId": 301064,
@@ -373,7 +373,7 @@
             "zhHansName": "魔力置换 +",
             "zhHansDescription": "改为使用护盾而非能量。获得{amount}层羁绊。",
             "ruName": "Замена маны +",
-            "ruDescription": "Используйте барьер вместо энергии. Получите {amount} Связи."
+            "ruDescription": "Используйте барьер вместо энергии. Получает {amount} Связи."
         },
         {
             "cardId": 301065,
@@ -388,7 +388,7 @@
             "zhHansName": "魔力置换 +",
             "zhHansDescription": "改为使用护盾而非能量。获得{amount}层再生。",
             "ruName": "Замена маны +",
-            "ruDescription": "Используйте барьер вместо энергии. Получите {amount} Регенерации."
+            "ruDescription": "Используйте барьер вместо энергии. Получает {amount} Регенерации."
         },
         {
             "cardId": 301070,
@@ -403,7 +403,7 @@
             "zhHansName": "防护冻结",
             "zhHansDescription": "获得1层预防。保留: 获得5点护盾。",
             "ruName": "Защитная заморозка",
-            "ruDescription": "Получите 1 Предотвращения. Сохранение: получите 5 барьера."
+            "ruDescription": "Получает 1 Предотвращения. Сохранение: получает 5 барьера."
         },
         {
             "cardId": 301071,
@@ -418,7 +418,7 @@
             "zhHansName": "防护冻结 +",
             "zhHansDescription": "获得1层预防。保留: 获得等同于羁绊层数的护盾。",
             "ruName": "Защитная заморозка +",
-            "ruDescription": "Получите 1 Предотвращения. Сохранение: получите барьер, равный Связи."
+            "ruDescription": "Получает 1 Предотвращения. Сохранение: получает барьер, равный Связи."
         },
         {
             "cardId": 301072,
@@ -433,7 +433,7 @@
             "zhHansName": "防护冻结 +",
             "zhHansDescription": "获得2层预防。保留: 获得7点护盾。",
             "ruName": "Защитная заморозка +",
-            "ruDescription": "Получите 2 Предотвращения. Сохранение: получите 7 барьера."
+            "ruDescription": "Получает 2 Предотвращения. Сохранение: получает 7 барьера."
         },
         {
             "cardId": 301073,
@@ -448,7 +448,7 @@
             "zhHansName": "防护冻结 +",
             "zhHansDescription": "获得{amount}点护盾。",
             "ruName": "Защитная заморозка +",
-            "ruDescription": "Получите {amount} барьера."
+            "ruDescription": "Получает {amount} барьера."
         },
         {
             "cardId": 301074,
@@ -463,7 +463,7 @@
             "zhHansName": "防护冻结 +",
             "zhHansDescription": "获得永久冻结。",
             "ruName": "Защитная заморозка +",
-            "ruDescription": "Получите Вечную мерзлоту."
+            "ruDescription": "Получает Вечную мерзлоту."
         },
         {
             "cardId": 301075,
@@ -478,7 +478,7 @@
             "zhHansName": "防护冻结 +",
             "zhHansDescription": "将目前的护盾变为2倍。",
             "ruName": "Защитная заморозка +",
-            "ruDescription": "Удвойте ваш текущий барьер."
+            "ruDescription": "Удваивает ваш текущий барьер."
         },
         {
             "cardId": 301080,

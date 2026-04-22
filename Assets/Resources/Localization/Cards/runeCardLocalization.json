@@ -1,4 +1,4 @@
-{
+﻿{
     "cards": [
         {
             "cardId": 302010,
@@ -13,7 +13,7 @@
             "zhHansName": "指令: 攻击",
             "zhHansDescription": "造成{amount}点伤害。",
             "ruName": "Команда: Атака",
-            "ruDescription": "Нанесите {amount} урона."
+            "ruDescription": "Наносит {amount} урона."
         },
         {
             "cardId": 302020,
@@ -28,7 +28,7 @@
             "zhHansName": "指令: 防御",
             "zhHansDescription": "获得{amount}点护盾。",
             "ruName": "Команда: Защита",
-            "ruDescription": "Получите {amount} барьера."
+            "ruDescription": "Получает {amount} барьера."
         },
         {
             "cardId": 302030,
@@ -43,7 +43,7 @@
             "zhHansName": "能量饼干",
             "zhHansDescription": "获得{amount}层{充能}。",
             "ruName": "Энергетическое печенье",
-            "ruDescription": "Получите {amount} {Charge}."
+            "ruDescription": "Получает {amount} {Charge}."
         },
         {
             "cardId": 302031,
@@ -58,7 +58,7 @@
             "zhHansName": "能量饼干 +",
             "zhHansDescription": "获得{amount}层{充能}。每当使用时，获得量增加2。",
             "ruName": "Энергетическое печенье +",
-            "ruDescription": "Получите {amount} {Charge}. Каждый раз при использовании этой карты значение увеличивается на 2."
+            "ruDescription": "Получает {amount} {Charge}. Каждый раз при использовании этой карты значение увеличивается на 2."
         },
         {
             "cardId": 302032,
@@ -73,7 +73,7 @@
             "zhHansName": "能量饼干 +",
             "zhHansDescription": "获得{amount}层{充能}。使用后，将此牌移到抽牌堆顶。",
             "ruName": "Энергетическое печенье +",
-            "ruDescription": "Получите {amount} {Charge}. После использования переместите эту карту на верх колоды добора."
+            "ruDescription": "Получает {amount} {Charge}. После использования переместите эту карту на верх колоды добора."
         },
         {
             "cardId": 302033,
@@ -88,7 +88,7 @@
             "zhHansName": "能量饼干 +",
             "zhHansDescription": "获得{amount}点护盾2次。",
             "ruName": "Энергетическое печенье +",
-            "ruDescription": "Дважды получите {amount} барьера."
+            "ruDescription": "Дважды получает {amount} барьера."
         },
         {
             "cardId": 302034,
@@ -103,7 +103,7 @@
             "zhHansName": "能量饼干 +",
             "zhHansDescription": "获得{amount}层强攻。",
             "ruName": "Энергетическое печенье +",
-            "ruDescription": "Получите {amount} Тяжёлого удара."
+            "ruDescription": "Получает {amount} Тяжёлого удара."
         },
         {
             "cardId": 302035,
@@ -118,7 +118,7 @@
             "zhHansName": "能量饼干 +",
             "zhHansDescription": "获得{amount}层电池。",
             "ruName": "Энергетическое печенье +",
-            "ruDescription": "Получите {amount} Батареи."
+            "ruDescription": "Получает {amount} Батареи."
         },
         {
             "cardId": 302040,
@@ -127,7 +127,7 @@
             "enName": "Protocol: Guard",
             "enDescription": "Wuppi switches to Guard Mode.",
             "jaName": "プロトコル: 防御",
-            "jaDescription": "ウッピが防御モードに切り替わります。",
+            "jaDescription": "ウッピが防御モードに切り替わる。",
             "zhHantName": "協定: 防禦",
             "zhHantDescription": "烏比切換為防禦模式。",
             "zhHansName": "协议: 防御",
@@ -142,13 +142,13 @@
             "enName": "Protocol: Guard +",
             "enDescription": "Gain {amount} {Charge}. Wuppi switches to Guard Mode.",
             "jaName": "プロトコル: 防御 +",
-            "jaDescription": "{チャージ}を{amount}得る。ウッピが防御モードに切り替わります。",
+            "jaDescription": "{チャージ}を{amount}得る。ウッピが防御モードに切り替わる。",
             "zhHantName": "協定: 防禦 +",
             "zhHantDescription": "獲得{amount}層{充能}。烏比切換為防禦模式。",
             "zhHansName": "协议: 防御 +",
             "zhHansDescription": "获得{amount}层{充能}。乌比切换为防御模式。",
             "ruName": "Протокол: Защита +",
-            "ruDescription": "Получите {amount} {Charge}. Вуппи переходит в режим Защиты."
+            "ruDescription": "Получает {amount} {Charge}. Вуппи переходит в режим Защиты."
         },
         {
             "cardId": 302042,
@@ -163,7 +163,7 @@
             "zhHansName": "协议: 防御 +",
             "zhHansDescription": "获得{amount}点护盾。获得{amount2}层预防。",
             "ruName": "Протокол: Защита +",
-            "ruDescription": "Получите {amount} барьера. Получите {amount2} Предотвращения."
+            "ruDescription": "Получает {amount} барьера. Получает {amount2} Предотвращения."
         },
         {
             "cardId": 302043,
@@ -178,7 +178,7 @@
             "zhHansName": "协议: 防御 +",
             "zhHansDescription": "获得{amount}点护盾。获得{amount2}层荆棘。",
             "ruName": "Протокол: Защита +",
-            "ruDescription": "Получите {amount} барьера. Получите {amount2} Шипов."
+            "ruDescription": "Получает {amount} барьера. Получает {amount2} Шипов."
         },
         {
             "cardId": 302044,
@@ -193,7 +193,7 @@
             "zhHansName": "协议: 防御 +",
             "zhHansDescription": "获得{amount}层{充能}。获得{amount2}点护盾。",
             "ruName": "Протокол: Защита +",
-            "ruDescription": "Получите {amount} {Charge}. Получите {amount2} барьера."
+            "ruDescription": "Получает {amount} {Charge}. Получает {amount2} барьера."
         },
         {
             "cardId": 302045,
@@ -208,7 +208,7 @@
             "zhHansName": "协议: 防御 +",
             "zhHansDescription": "切换: 获得防御。",
             "ruName": "Протокол: Защита +",
-            "ruDescription": "Переключение: получите Защиту."
+            "ruDescription": "Переключение: получает Защиту."
         },
         {
             "cardId": 302050,
@@ -217,7 +217,7 @@
             "enName": "Protocol: Attack",
             "enDescription": "Wuppi switches to Attack Mode.",
             "jaName": "プロトコル: 攻撃",
-            "jaDescription": "ウッピが攻撃モードに切り替わります。",
+            "jaDescription": "ウッピが攻撃モードに切り替わる。",
             "zhHantName": "協定: 攻擊",
             "zhHantDescription": "烏比切換為攻擊模式。",
             "zhHansName": "协议: 攻击",
@@ -232,13 +232,13 @@
             "enName": "Protocol: Attack +",
             "enDescription": "Wuppi switches to Attack Mode. Deal {amount2} damage.",
             "jaName": "プロトコル: 攻撃 +",
-            "jaDescription": "ウッピが攻撃モードに切り替わります。{amount2}ダメージを与える。",
+            "jaDescription": "ウッピが攻撃モードに切り替わる。{amount2}ダメージを与える。",
             "zhHantName": "協定: 攻擊 +",
             "zhHantDescription": "烏比切換為攻擊模式。造成{amount2}點傷害。",
             "zhHansName": "协议: 攻击 +",
             "zhHansDescription": "乌比切换为攻击模式。造成{amount2}点伤害。",
             "ruName": "Протокол: Атака +",
-            "ruDescription": "Вуппи переходит в режим Атаки. Нанесите {amount2} урона."
+            "ruDescription": "Вуппи переходит в режим Атаки. Наносит {amount2} урона."
         },
         {
             "cardId": 302052,
@@ -247,13 +247,13 @@
             "enName": "Protocol: Attack +",
             "enDescription": "Gain {amount} {Charge}. Wuppi switches to Attack Mode.",
             "jaName": "プロトコル: 攻撃 +",
-            "jaDescription": "{チャージ}を{amount}得る。ウッピが攻撃モードに切り替わります。",
+            "jaDescription": "{チャージ}を{amount}得る。ウッピが攻撃モードに切り替わる。",
             "zhHantName": "協定: 攻擊 +",
             "zhHantDescription": "獲得{amount}層{充能}。烏比切換為攻擊模式。",
             "zhHansName": "协议: 攻击 +",
             "zhHansDescription": "获得{amount}层{充能}。乌比切换为攻击模式。",
             "ruName": "Протокол: Атака +",
-            "ruDescription": "Получите {amount} {Charge}. Вуппи переходит в режим Атаки."
+            "ruDescription": "Получает {amount} {Charge}. Вуппи переходит в режим Атаки."
         },
         {
             "cardId": 302053,
@@ -268,7 +268,7 @@
             "zhHansName": "协议: 攻击 +",
             "zhHansDescription": "获得{amount}点护盾。造成{amount2}点伤害。",
             "ruName": "Протокол: Атака +",
-            "ruDescription": "Получите {amount} барьера. Нанесите {amount2} урона."
+            "ruDescription": "Получает {amount} барьера. Наносит {amount2} урона."
         },
         {
             "cardId": 302054,
@@ -283,7 +283,7 @@
             "zhHansName": "协议: 攻击 +",
             "zhHansDescription": "获得{amount}层过充能。",
             "ruName": "Протокол: Атака +",
-            "ruDescription": "Получите {amount} Перезаряда."
+            "ruDescription": "Получает {amount} Перезаряда."
         },
         {
             "cardId": 302055,
@@ -298,7 +298,7 @@
             "zhHansName": "协议: 攻击 +",
             "zhHansDescription": "切换: 获得攻击。",
             "ruName": "Протокол: Атака +",
-            "ruDescription": "Переключение: получите Атаку."
+            "ruDescription": "Переключение: получает Атаку."
         },
         {
             "cardId": 302060,
@@ -373,7 +373,7 @@
             "zhHansName": "乌比暴走 +",
             "zhHansDescription": "获得{amount}层双重动作。",
             "ruName": "Буйство Вуппи +",
-            "ruDescription": "Получите {amount} Двойного действия."
+            "ruDescription": "Получает {amount} Двойного действия."
         },
         {
             "cardId": 302065,
@@ -388,7 +388,7 @@
             "zhHansName": "乌比暴走 +",
             "zhHansDescription": "循环: 获得{amount}层模式。",
             "ruName": "Буйство Вуппи +",
-            "ruDescription": "Цикл: получите {amount} Режима."
+            "ruDescription": "Цикл: получает {amount} Режима."
         },
         {
             "cardId": 302070,
@@ -418,7 +418,7 @@
             "zhHansName": "过载 +",
             "zhHansDescription": "改为使用{充能}而非能量。造成{amount}点伤害。",
             "ruName": "Перегрузка +",
-            "ruDescription": "Используйте {Charge} вместо энергии. Нанесите {amount} урона."
+            "ruDescription": "Используйте {Charge} вместо энергии. Наносит {amount} урона."
         },
         {
             "cardId": 302072,
@@ -433,7 +433,7 @@
             "zhHansName": "过载 +",
             "zhHansDescription": "改为使用{充能}而非能量。获得{amount}点护盾。",
             "ruName": "Перегрузка +",
-            "ruDescription": "Используйте {Charge} вместо энергии. Получите {amount} барьера."
+            "ruDescription": "Используйте {Charge} вместо энергии. Получает {amount} барьера."
         },
         {
             "cardId": 302073,
@@ -448,7 +448,7 @@
             "zhHansName": "过载 +",
             "zhHansDescription": "改为使用{充能}而非能量。获得{amount}层羁绊。",
             "ruName": "Перегрузка +",
-            "ruDescription": "Используйте {Charge} вместо энергии. Получите {amount} Связи."
+            "ruDescription": "Используйте {Charge} вместо энергии. Получает {amount} Связи."
         },
         {
             "cardId": 302074,
@@ -478,7 +478,7 @@
             "zhHansName": "过载 +",
             "zhHansDescription": "改为使用{充能}而非能量。获得{amount}点能量并抽{amount2}张牌。",
             "ruName": "Перегрузка +",
-            "ruDescription": "Используйте {Charge} вместо энергии. Получите {amount} энергии и берет {amount2} карт."
+            "ruDescription": "Используйте {Charge} вместо энергии. Получает {amount} энергии и берет {amount2} карт."
         }
     ]
 }
