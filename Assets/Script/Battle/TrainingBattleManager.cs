@@ -56,7 +56,7 @@ public class TrainingBattleManager : MonoBehaviour
     public static TrainingBattleManager Instance { get; private set; }
 
     [Header("Battle Data")]
-    public PlayerData playerData;
+    [HideInInspector] public PlayerData playerData;
     public BattleContext battleContext;
 
     [Header("Manager References")]
