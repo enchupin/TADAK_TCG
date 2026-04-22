@@ -447,6 +447,43 @@ public static class CardEffectFactory
                     count = effectData.count > 0 ? effectData.count : effectData.amount
                 };
 
+            case EffectType.CopyEnemyDebuffs:
+                return new CopyEnemyDebuffsEffect
+                {
+                    target = effectData.target
+                };
+
+            case EffectType.ApplyBuffByTargetStack:
+                return new ApplyBuffByTargetStackEffect
+                {
+                    buffId = effectData.buffId,
+                    amount = effectData.amount,
+                    count = effectData.count,
+                    baseAmount = effectData.duration,
+                    target = effectData.target
+                };
+
+            case EffectType.ResolveDrowningLethal:
+                return new ResolveDrowningLethalEffect
+                {
+                    buffId = effectData.buffId,
+                    target = effectData.target
+                };
+
+            case EffectType.DamageByBuffStack:
+                return new DamageByBuffStackEffect
+                {
+                    buffId = effectData.buffId,
+                    target = effectData.target
+                };
+
+            case EffectType.IncreaseBeneficialBuffStacks:
+                return new IncreaseBeneficialBuffStacksEffect
+                {
+                    amount = effectData.amount,
+                    target = effectData.target
+                };
+
             case EffectType.EnemyHpLossHealPlayer:
                 return new EnemyHpLossHealPlayerEffect
                 {

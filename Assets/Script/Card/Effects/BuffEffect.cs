@@ -16,9 +16,19 @@ public class BuffEffect : ICardEffect
 
     public void Execute(TrainingBattleManager battleManager)
     {
+        ExecuteInternal(battleManager, 0);
+    }
+
+    public void Execute(TrainingBattleManager battleManager, int forwardedAmount)
+    {
+        ExecuteInternal(battleManager, forwardedAmount);
+    }
+
+    private void ExecuteInternal(TrainingBattleManager battleManager, int forwardedAmount)
+    {
         Monster formulaTargetMonster = CardEffectRuntimeUtility.ResolveSingleEnemyTarget(battleManager);
         int finalAmount = string.IsNullOrWhiteSpace(amountFormula)
-            ? amount : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, formulaTargetMonster);
+            ? amount : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, formulaTargetMonster, forwardedAmount);
 
         if (buffId > 0 && string.IsNullOrWhiteSpace(amountFormula) && finalAmount <= 0)
         {

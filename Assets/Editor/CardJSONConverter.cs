@@ -923,6 +923,11 @@ public class CardJSONConverter : EditorWindow
             case "ScaleIntent": return EffectType.ScaleIntent;
             case "EnemyHpLossHealPlayer": return EffectType.EnemyHpLossHealPlayer;
             case "Party": return EffectType.Party;
+            case "CopyEnemyDebuffs": return EffectType.CopyEnemyDebuffs;
+            case "ApplyBuffByTargetStack": return EffectType.ApplyBuffByTargetStack;
+            case "ResolveDrowningLethal": return EffectType.ResolveDrowningLethal;
+            case "DamageByBuffStack": return EffectType.DamageByBuffStack;
+            case "IncreaseBeneficialBuffStacks": return EffectType.IncreaseBeneficialBuffStacks;
 
             default:
                 throw new ArgumentException($"[CardJSONConverter] Unsupported effect type: {type}");

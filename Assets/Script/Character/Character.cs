@@ -7,6 +7,7 @@ public enum Character
     Ignia = 201,
     Vanessa = 202,
     Merel = 203,
+    Mio = 204,
     Polar = 301,
     Rune = 302,
     Khan = 303

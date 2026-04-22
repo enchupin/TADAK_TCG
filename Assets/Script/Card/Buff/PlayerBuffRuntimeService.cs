@@ -79,6 +79,7 @@ public class PlayerBuffRuntimeService
         Register(new UnderwaterBreathingBuffScript());
         Register(new EncroachmentBuffScript());
         Register(new RisingWaterBuffScript());
+        Register(new DrowningOnDebuffBuffScript());
         Register(new WuppiGuardBuffScript());
         Register(new WuppiAttackBuffScript());
         Register(new RuneGenerationBuffScript());
