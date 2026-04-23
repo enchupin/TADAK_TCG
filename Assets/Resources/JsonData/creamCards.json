@@ -171,7 +171,7 @@
                 8,
                 4
             ],
-            "description": "계약:카드를 {amount} 얻습니다.",
+            "description": "(계약:카드)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -191,7 +191,7 @@
                 8,
                 4
             ],
-            "description": "계약:카드를 {amount} 얻습니다.",
+            "description": "(계약:카드)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -210,7 +210,7 @@
                 1,
                 4
             ],
-            "description": "계약:카드를 {amount} 얻습니다.",
+            "description": "(계약:카드)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -228,7 +228,7 @@
             "keywords": [
                 4
             ],
-            "description": "계약:힘을 {amount} 얻습니다.",
+            "description": "(계약:힘)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -259,7 +259,7 @@
             "name": "정당한 계약 +",
             "characterId": 103,
             "cost": 0,
-            "description": "내 힘을 모두 잃습니다. 잃은 만큼 적도 힘을 잃습니다.",
+            "description": "내 (힘)을 모두 잃습니다. 잃은 만큼 적도 (힘)을 잃습니다.",
             "effects": [
                 {
                     "type": "ChangeStat",
@@ -489,7 +489,7 @@
             "name": "커피, 도와줘! +",
             "characterId": 103,
             "cost": 3,
-            "description": "드로우 불가를 얻습니다. 내 손에 있는 모든 카드가 이번 턴 동안 비용이 0이 됩니다.",
+            "description": "(드로우 불가)를 얻습니다. 내 손에 있는 모든 카드가 이번 턴 동안 비용이 0이 됩니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -515,7 +515,7 @@
                 9,
                 3
             ],
-            "description": "영혼 보호를 얻습니다.",
+            "description": "(영혼 보호)를 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -581,7 +581,7 @@
             "keywords": [
                 3
             ],
-            "description": "모든 적에게 잔혹을 {amount} 부여합니다.",
+            "description": "모든 적에게 (잔혹)을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -596,7 +596,7 @@
             "name": "시간 저주 +",
             "characterId": 103,
             "cost": 1,
-            "description": "손에 저주를 하나 생성합니다. 기력 초과를 1 얻습니다.",
+            "description": "손에 저주를 하나 생성합니다. (기력 초과)를 1 얻습니다.",
             "effects": [
                 {
                     "type": "GenerateCard",

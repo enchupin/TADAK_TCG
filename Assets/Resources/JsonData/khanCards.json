@@ -72,7 +72,7 @@
             "name": "투지 +",
             "characterId": 303,
             "cost": 0,
-            "description": "이번 턴 동안 힘을 {amount}, 결속을 {amount2} 얻습니다.",
+            "description": "이번 턴 동안 (힘)을 {amount}, (결속)을 {amount2} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -151,7 +151,7 @@
             "keywords": [
                 4
             ],
-            "description": "불타는 투지를 {amount} 얻습니다.",
+            "description": "(불타는 투지)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -260,7 +260,7 @@
                 4,
                 9
             ],
-            "description": "콤보를 얻습니다.",
+            "description": "(콤보)를 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -335,7 +335,7 @@
                 4,
                 9
             ],
-            "description": "구사일생을 얻습니다.",
+            "description": "(구사일생)을 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -352,7 +352,7 @@
             "keywords": [
                 4
             ],
-            "description": "불굴을 {amount} 얻습니다.",
+            "description": "(불굴)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -370,7 +370,7 @@
             "keywords": [
                 4
             ],
-            "description": "승자의 휴식을 {amount} 얻습니다.",
+            "description": "(승자의 휴식)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -388,7 +388,7 @@
             "keywords": [
                 1
             ],
-            "description": "적에게 힘을 {amount} 부여합니다. 힘을 {amount2} 얻습니다.",
+            "description": "적에게 (힘)을 {amount} 부여합니다. (힘)을 {amount2} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -413,7 +413,7 @@
             "keywords": [
                 1
             ],
-            "description": "적에게 힘을 {amount} 부여합니다. 힘을 {amount2} 얻습니다.",
+            "description": "적에게 (힘)을 {amount} 부여합니다. (힘)을 {amount2} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -434,7 +434,7 @@
             "name": "도발 +",
             "characterId": 303,
             "cost": 1,
-            "description": "적에게 힘을 {amount} 부여합니다. 적의 의도를 변경합니다.",
+            "description": "적에게 (힘)을 {amount} 부여합니다. 적의 의도를 변경합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -453,7 +453,7 @@
             "name": "도발 +",
             "characterId": 303,
             "cost": 1,
-            "description": "보호막을 {amount} 얻습니다. 약화를 {amount2} 부여합니다.",
+            "description": "보호막을 {amount} 얻습니다. (약화)를 {amount2} 부여합니다.",
             "effects": [
                 {
                     "type": "Barrier",
@@ -473,7 +473,7 @@
             "name": "도발 +",
             "characterId": 303,
             "cost": 1,
-            "description": "모든 적이 과열을 {amount} 얻습니다. 보호막을 {amount2} 얻습니다.",
+            "description": "모든 적이 (과열)을 {amount} 얻습니다. 보호막을 {amount2} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -497,7 +497,7 @@
                 9,
                 3
             ],
-            "description": "적에게 의도된 분노를 부여합니다.",
+            "description": "적에게 (의도된 분노)를 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -592,7 +592,7 @@
             "keywords": [
                 4
             ],
-            "description": "광전사를 {amount} 얻습니다.",
+            "description": "(광전사)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -611,7 +611,7 @@
                 4,
                 9
             ],
-            "description": "혈투를 얻습니다.",
+            "description": "(혈투)를 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",

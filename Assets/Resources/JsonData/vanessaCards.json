@@ -1,4 +1,4 @@
-{
+﻿{
     "cards": [
         {
             "cardId": 202010,
@@ -33,7 +33,7 @@
             "name": "팡트",
             "characterId": 202,
             "cost": 1,
-            "description": "피해를 {amount} 입힙니다. 부식을 {amount2} 부여합니다.",
+            "description": "피해를 {amount} 입힙니다. (부식)을 {amount2} 부여합니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -57,7 +57,7 @@
             "keywords": [
                 5
             ],
-            "description": "피해를 {amount} 입힙니다. 부식을 {amount2} 부여합니다.",
+            "description": "피해를 {amount} 입힙니다. (부식)을 {amount2} 부여합니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -261,7 +261,7 @@
             "name": "갸르드 +",
             "characterId": 202,
             "cost": 0,
-            "description": "힘을 {amount} 얻습니다. 턴 종료 시 사라집니다.",
+            "description": "(힘)을 {amount} 얻습니다. 턴 종료 시 사라집니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -282,7 +282,7 @@
             "name": "갸르드 +",
             "characterId": 202,
             "cost": 0,
-            "description": "카드를 {amount}장 뽑습니다. 드로우 불가를 얻습니다.",
+            "description": "카드를 {amount}장 뽑습니다. (드로우 불가)를 얻습니다.",
             "effects": [
                 {
                     "type": "Draw",
@@ -300,7 +300,7 @@
             "name": "리포스트",
             "characterId": 202,
             "cost": 1,
-            "description": "이번 턴에 가시를 {amount} 얻습니다.",
+            "description": "이번 턴에 (가시)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -325,7 +325,7 @@
             "keywords": [
                 4
             ],
-            "description": "가시를 {amount} 얻습니다.",
+            "description": "(가시)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -340,7 +340,7 @@
             "name": "리포스트 +",
             "characterId": 202,
             "cost": 2,
-            "description": "회피를 {amount} 얻습니다.",
+            "description": "(회피)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -355,7 +355,7 @@
             "name": "리포스트 +",
             "characterId": 202,
             "cost": 1,
-            "description": "체력을 {amount} 회복합니다. 힘을 {amount2} 얻습니다.",
+            "description": "체력을 {amount} 회복합니다. (힘)을 {amount2} 얻습니다.",
             "effects": [
                 {
                     "type": "Heal",
@@ -518,7 +518,9 @@
                 {
                     "type": "Copy",
                     "from": "CardId",
-                    "cardIds": [202063],
+                    "cardIds": [
+                        202063
+                    ],
                     "amount": 1,
                     "to": "DrawPile"
                 }
@@ -547,7 +549,7 @@
             "name": "르미즈 +",
             "characterId": 202,
             "cost": 1,
-            "description": "연격을 {amount} 얻습니다.",
+            "description": "(연격)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -629,7 +631,7 @@
             "keywords": [
                 4
             ],
-            "description": "위압을 {amount} 얻습니다.",
+            "description": "(위압)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",

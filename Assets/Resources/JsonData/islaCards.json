@@ -1,4 +1,4 @@
-{
+﻿{
     "cards": [
         {
             "cardId": 101010,
@@ -291,7 +291,7 @@
             "keywords": [
                 4
             ],
-            "description": "제조 시설을 {amount} 얻습니다.",
+            "description": "(제조 시설)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -382,7 +382,7 @@
             "keywords": [
                 4
             ],
-            "description": "강화: 포션을 얻습니다.",
+            "description": "(강화: 포션)을 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -399,7 +399,7 @@
             "keywords": [
                 4
             ],
-            "description": "순환: 포션을 얻습니다.",
+            "description": "(순환: 포션)을 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -416,7 +416,7 @@
             "keywords": [
                 3
             ],
-            "description": "부식을 {amount} 부여합니다.",
+            "description": "(부식)을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -435,7 +435,7 @@
             "keywords": [
                 3
             ],
-            "description": "카드를 {amount}장 뽑습니다. 부식을 {amount2} 부여합니다.",
+            "description": "카드를 {amount}장 뽑습니다. (부식)을 {amount2} 부여합니다.",
             "effects": [
                 {
                     "type": "Draw",
@@ -498,7 +498,7 @@
             "keywords": [
                 4
             ],
-            "description": "폐기물을 {amount} 얻습니다.",
+            "description": "(폐기물)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -516,7 +516,7 @@
             "keywords": [
                 5
             ],
-            "description": "부식을 {amount} 부여합니다.",
+            "description": "(부식)을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -531,7 +531,7 @@
             "name": "실험 폐기물 +",
             "characterId": 101,
             "cost": 1,
-            "description": "부식을 {amount} 부여합니다. 힘을 {amount2} 얻습니다.",
+            "description": "(부식)을 {amount} 부여합니다. (힘)을 {amount2} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -555,7 +555,7 @@
             "keywords": [
                 3
             ],
-            "description": "잔혹을 {amount} 부여합니다.",
+            "description": "(잔혹)을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -574,7 +574,7 @@
                 3,
                 5
             ],
-            "description": "잔혹을 {amount} 부여합니다.",
+            "description": "(잔혹)을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -592,7 +592,7 @@
             "keywords": [
                 3
             ],
-            "description": "대상의 부식만큼 힘을 얻습니다.",
+            "description": "대상의 부식만큼 (힘)을 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -610,7 +610,7 @@
             "keywords": [
                 4
             ],
-            "description": "강화: 부식을 얻습니다.",
+            "description": "(강화: 부식)을 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -627,7 +627,7 @@
             "keywords": [
                 4
             ],
-            "description": "잔악무도를 {amount} 얻습니다.",
+            "description": "(잔악무도)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -646,7 +646,7 @@
                 3,
                 6
             ],
-            "description": "잔혹을 {amount} 부여합니다.",
+            "description": "(잔혹)을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -767,7 +767,7 @@
             "keywords": [
                 3
             ],
-            "description": "부식을 {amount} 부여합니다.",
+            "description": "(부식)을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -786,7 +786,7 @@
             "keywords": [
                 3
             ],
-            "description": "부식을 {amount} 부여합니다.",
+            "description": "(부식)을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",

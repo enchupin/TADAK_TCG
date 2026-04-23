@@ -1,4 +1,4 @@
-{
+﻿{
     "cards": [
         {
             "cardId": 102010,
@@ -19,7 +19,7 @@
             "name": "속임수",
             "characterId": 102,
             "cost": 1,
-            "description": "체력을 5 회복합니다.",
+            "description": "체력을 {amount} 회복합니다.",
             "effects": [
                 {
                     "type": "Heal",
@@ -33,7 +33,7 @@
             "name": "셔플",
             "characterId": 102,
             "cost": 0,
-            "description": "손에서 카드를 1장 선택합니다. 그 카드를 뽑을 카드 더미 제일 위에 놓습니다.",
+            "description": "손에서 카드를 {amount}장 선택합니다. 그 카드를 뽑을 카드 더미 제일 위에 놓습니다.",
             "effects": [
                 {
                     "type": "SelectCard",
@@ -142,7 +142,7 @@
             "keywords": [
                 4
             ],
-            "description": "강화: 드로우를 {amount} 얻습니다.",
+            "description": "(강화: 드로우)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -256,7 +256,7 @@
             "keywords": [
                 4
             ],
-            "description": "광대를 {amount} 얻습니다.",
+            "description": "(광대)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -274,11 +274,12 @@
             "keywords": [
                 8
             ],
-            "description": "이번 턴에 받는 피해가 1로 고정됩니다.",
+            "description": "(아슬아슬)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 3026,
+                    "amount": 1,
                     "target": "Self"
                 }
             ]
@@ -439,7 +440,7 @@
             "keywords": [
                 4
             ],
-            "description": "준비를 {amount} 얻습니다.",
+            "description": "(준비)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -471,11 +472,12 @@
             "keywords": [
                 1
             ],
-            "description": "이 다음 카드의 비용이 0이 됩니다.",
+            "description": "(예고)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 3027,
+                    "amount": 1,
                     "target": "Self"
                 }
             ]
@@ -488,7 +490,7 @@
             "keywords": [
                 4
             ],
-            "description": "복제 생성을 얻습니다.",
+            "description": "(복제 생성)을 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -506,7 +508,7 @@
                 4,
                 9
             ],
-            "description": "더블을 얻습니다.",
+            "description": "(더블)을 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -525,7 +527,7 @@
                 4,
                 9
             ],
-            "description": "더블을 얻습니다.",
+            "description": "(더블)을 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -543,7 +545,7 @@
                 4,
                 9
             ],
-            "description": "풀하우스를 얻습니다.",
+            "description": "(풀하우스)를 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -560,7 +562,7 @@
             "keywords": [
                 4
             ],
-            "description": "스트레이트를 얻습니다.",
+            "description": "(스트레이트)를 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",

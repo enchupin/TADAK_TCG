@@ -36,7 +36,7 @@
             "keywords": [
                 1
             ],
-            "description": "이번 턴 동안 과열을 {amount} 얻습니다.",
+            "description": "이번 턴 동안 (과열)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -61,7 +61,7 @@
             "keywords": [
                 1
             ],
-            "description": "이번 턴 동안 과열을 {amount} 얻습니다.",
+            "description": "이번 턴 동안 (과열)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -82,7 +82,7 @@
             "name": "폴리모프 +",
             "characterId": 201,
             "cost": 1,
-            "description": "과열을 {amount} 얻습니다.",
+            "description": "(과열)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -97,7 +97,7 @@
             "name": "폴리모프 +",
             "characterId": 201,
             "cost": 0,
-            "description": "이번 턴 동안 힘을 {amount} 얻습니다.",
+            "description": "이번 턴 동안 (힘)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -121,7 +121,7 @@
             "keywords": [
                 4
             ],
-            "description": "힘을 {amount} 얻습니다.",
+            "description": "(힘)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -139,7 +139,7 @@
             "keywords": [
                 4
             ],
-            "description": "발열을 {amount} 얻습니다.",
+            "description": "(발열)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -430,7 +430,7 @@
             "name": "지옥불",
             "characterId": 201,
             "cost": 1,
-            "description": "모든 적에게 화염 낙인을 {amount} 부여합니다.",
+            "description": "모든 적에게 (화염 낙인)을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -446,7 +446,7 @@
             "name": "지옥불 +",
             "characterId": 201,
             "cost": 1,
-            "description": "모든 적에게 화염 낙인을 {amount} 부여합니다.",
+            "description": "모든 적에게 (화염 낙인)을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -461,7 +461,7 @@
             "name": "지옥불 +",
             "characterId": 201,
             "cost": 1,
-            "description": "화염 낙인을 {amount} 부여합니다.",
+            "description": "(화염 낙인)을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -499,7 +499,7 @@
             "keywords": [
                 4
             ],
-            "description": "불주먹을 {amount} 얻습니다.",
+            "description": "(불주먹)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -518,7 +518,7 @@
                 3,
                 9
             ],
-            "description": "대상에게 화염 전이를 부여합니다.",
+            "description": "대상에게 (화염 전이)를 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -535,7 +535,7 @@
             "keywords": [
                 4
             ],
-            "description": "용암 피부를 {amount} 얻습니다.",
+            "description": "(용암 피부)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -554,7 +554,7 @@
             "keywords": [
                 4
             ],
-            "description": "용암 피부를 {amount} 얻습니다.",
+            "description": "(용암 피부)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -617,7 +617,7 @@
             "name": "뜨거운 피부 +",
             "characterId": 201,
             "cost": 1,
-            "description": "강공을 {amount} 얻습니다. 보호막을 {amount2} 얻습니다.",
+            "description": "(강공)을 {amount} 얻습니다. 보호막을 {amount2} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -641,7 +641,7 @@
                 4,
                 9
             ],
-            "description": "금기 해제를 얻습니다.",
+            "description": "(금기 해제)를 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
