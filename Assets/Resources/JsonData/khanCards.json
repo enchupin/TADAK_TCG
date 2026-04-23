@@ -1,4 +1,4 @@
-{
+﻿{
     "cards": [
         {
             "cardId": 303010,
@@ -340,7 +340,6 @@
                 {
                     "type": "Buff",
                     "buffId": 1021,
-                    "amount": 1,
                     "target": "Self"
                 }
             ]
@@ -503,7 +502,6 @@
                 {
                     "type": "Buff",
                     "buffId": 1019,
-                    "amount": 1,
                     "target": "SingleEnemy"
                 }
             ]
@@ -618,7 +616,6 @@
                 {
                     "type": "Buff",
                     "buffId": 1020,
-                    "amount": 1,
                     "target": "Self"
                 }
             ]

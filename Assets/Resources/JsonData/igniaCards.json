@@ -1,4 +1,4 @@
-{
+﻿{
     "cards": [
         {
             "cardId": 201010,
@@ -325,7 +325,9 @@
                 {
                     "type": "Copy",
                     "from": "CardId",
-                    "cardIds": [201010],
+                    "cardIds": [
+                        201010
+                    ],
                     "amount": 1,
                     "to": "Hand",
                     "onAction": {
@@ -497,7 +499,7 @@
             "keywords": [
                 4
             ],
-            "description": "공격할 때마다 적에게 화염 낙인을 {amount} 부여합니다.",
+            "description": "불주먹을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -516,12 +518,11 @@
                 3,
                 9
             ],
-            "description": "대상 적이 죽을 때 보유한 화염 낙인 수치만큼 모든 적에게 화염 낙인을 부여합니다.",
+            "description": "대상에게 화염 전이를 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 2002,
-                    "amount": 1,
                     "target": "SingleEnemy"
                 }
             ]
@@ -645,7 +646,6 @@
                 {
                     "type": "Buff",
                     "buffId": 1006,
-                    "amount": 1,
                     "target": "Self"
                 }
             ]

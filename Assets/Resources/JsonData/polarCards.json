@@ -1,4 +1,4 @@
-{
+﻿{
     "cards": [
         {
             "cardId": 301010,
@@ -311,7 +311,6 @@
                 {
                     "type": "Buff",
                     "buffId": 1004,
-                    "amount": 1,
                     "target": "Self"
                 }
             ]
@@ -568,7 +567,6 @@
                 {
                     "type": "Buff",
                     "buffId": 1013,
-                    "amount": 1,
                     "target": "Self"
                 }
             ]

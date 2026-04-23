@@ -348,17 +348,17 @@
         {
             "cardId": 101063,
             "koName": "실험 폐기물 +",
-            "koDescription": "포션을 사용할 때마다 무작위 적에게 부식을 {amount} 부여합니다.",
+            "koDescription": "폐기물을 {amount} 얻습니다.",
             "enName": "Experimental Waste +",
-            "enDescription": "Whenever you use a Potion, apply {amount} Corrosion to a random enemy.",
+            "enDescription": "Gain {amount} Waste.",
             "jaName": "実験廃棄物 +",
             "jaDescription": "ポーションを使うたび、ランダムな敵1体に腐食を{amount}付与する。",
             "zhHantName": "實驗廢棄物 +",
-            "zhHantDescription": "每當你使用藥水時，對隨機敵人施加{amount}層腐蝕。",
+            "zhHantDescription": "獲得{amount}層廢棄物。",
             "zhHansName": "实验废弃物 +",
-            "zhHansDescription": "每当你使用药水时，对随机敌人施加{amount}层腐蚀。",
+            "zhHansDescription": "获得{amount}层废弃物。",
             "ruName": "Лабораторные отходы +",
-            "ruDescription": "Каждый раз, когда вы используете Зелье, накладывает {amount} Коррозии на случайного врага."
+            "ruDescription": "Получает {amount} Отходов."
         },
         {
             "cardId": 101064,

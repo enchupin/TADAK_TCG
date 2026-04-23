@@ -1,679 +1,677 @@
-{
-  "cards": [
-    {
-      "cardId": 103010,
-      "name": "치유 마법",
-      "characterId": 103,
-      "cost": 1,
-      "description": "체력을 {amount} 회복합니다.",
-      "effects": [
+﻿{
+    "cards": [
         {
-          "type": "Heal",
-          "amount": 4,
-          "target": "Self"
-        }
-      ]
-    },
-    {
-      "cardId": 103020,
-      "name": "수호 마법",
-      "characterId": 103,
-      "cost": 1,
-      "description": "보호막을 {amount} 얻습니다.",
-      "effects": [
-        {
-          "type": "Barrier",
-          "amount": 5,
-          "target": "Self"
-        }
-      ]
-    },
-    {
-      "cardId": 103030,
-      "name": "신성한 축복",
-      "characterId": 103,
-      "cost": 2,
-      "description": "체력을 {amount} 회복합니다. 카드를 {amount2}장 뽑습니다.",
-      "effects": [
-        {
-          "type": "Heal",
-          "amount": 9,
-          "target": "Self"
-        },
-        {
-          "type": "Draw",
-          "amount": 1
-        }
-      ],
-      "enforceGroup": "enforce_103030"
-    },
-    {
-      "cardId": 103031,
-      "name": "신성한 축복 +",
-      "characterId": 103,
-      "cost": 2,
-      "description": "체력을 {amount} 회복합니다. 카드를 {amount2}장 뽑습니다.",
-      "effects": [
-        {
-          "type": "Heal",
-          "amount": 9,
-          "target": "Self"
-        },
-        {
-          "type": "Draw",
-          "amount": 2
-        }
-      ]
-    },
-    {
-      "cardId": 103032,
-      "name": "신성한 축복 +",
-      "characterId": 103,
-      "cost": 0,
-      "description": "카드를 {amount}장 뽑습니다. 뽑은 카드가 크림 카드면 보호막을 {amount2} 얻습니다.",
-      "effects": [
-        {
-          "type": "Draw",
-          "amount": 1,
-          "subject": "DrawnCard",
-          "onAction": {
-            "condition": {
-              "checks": [
+            "cardId": 103010,
+            "name": "치유 마법",
+            "characterId": 103,
+            "cost": 1,
+            "description": "체력을 {amount} 회복합니다.",
+            "effects": [
                 {
-                  "subject": "DrawnCard",
-                  "property": "CharacterId",
-                  "operator": "Eq",
-                  "value": 103
+                    "type": "Heal",
+                    "amount": 4,
+                    "target": "Self"
                 }
-              ],
-              "effects": [
+            ]
+        },
+        {
+            "cardId": 103020,
+            "name": "수호 마법",
+            "characterId": 103,
+            "cost": 1,
+            "description": "보호막을 {amount} 얻습니다.",
+            "effects": [
                 {
-                  "type": "Barrier",
-                  "amount": 3,
-                  "target": "Self"
+                    "type": "Barrier",
+                    "amount": 5,
+                    "target": "Self"
                 }
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "cardId": 103033,
-      "name": "신성한 축복 +",
-      "characterId": 103,
-      "cost": 2,
-      "description": "보호막을 {amount} 얻습니다. 이 카드의 비용이 1 증가합니다.",
-      "effects": [
-        {
-          "type": "Barrier",
-          "amount": 20,
-          "target": "Self"
+            ]
         },
         {
-          "type": "ModifyCard",
-          "source": "ThisCard",
-          "param": "Cost",
-          "operation": "Add",
-          "amount": 1
-        }
-      ]
-    },
-    {
-      "cardId": 103034,
-      "name": "신성한 축복 +",
-      "characterId": 103,
-      "cost": 2,
-      "keywords": [
-        9,
-        3
-      ],
-      "description": "모든 강화되지 않은 카드가 무작위로 강화됩니다. 강화된 카드는 호기심이 발동하지 않습니다.",
-      "effects": [
-        {
-          "type": "UpgradeCards",
-          "from": "AllCards",
-          "amountFormula": "all",
-          "upgrade": "Random"
-        }
-      ]
-    },
-    {
-      "cardId": 103035,
-      "name": "신성한 축복 +",
-      "characterId": 103,
-      "cost": 1,
-      "keywords": [
-        9
-      ],
-      "description": "손에서 강화되지 않은 카드를 1장 선택해 이번 전투 동안 강화합니다.",
-      "effects": [
-        {
-          "type": "SelectCard",
-          "from": "Hand",
-          "count": 1,
-          "upgradeableOnly": true,
-          "subject": "Selected",
-          "onAction": {
-            "type": "UpgradeCards",
-            "from": "Source",
-            "upgrade": "Random"
-          }
-        }
-      ]
-    },
-    {
-      "cardId": 103040,
-      "name": "정당한 계약",
-      "characterId": 103,
-      "cost": 2,
-      "keywords": [
-        8,
-        4
-      ],
-      "description": "계약:카드를 {amount} 얻습니다.",
-      "effects": [
-        {
-          "type": "Buff",
-          "buffId": 3041,
-          "amount": 1,
-          "target": "Self"
-        }
-      ],
-      "enforceGroup": "enforce_103040"
-    },
-    {
-      "cardId": 103041,
-      "name": "정당한 계약 +",
-      "characterId": 103,
-      "cost": 1,
-      "keywords": [
-        8,
-        4
-      ],
-      "description": "계약:카드를 {amount} 얻습니다.",
-      "effects": [
-        {
-          "type": "Buff",
-          "buffId": 3041,
-          "amount": 1,
-          "target": "Self"
-        }
-      ]
-    },
-    {
-      "cardId": 103042,
-      "name": "정당한 계약 +",
-      "characterId": 103,
-      "cost": 2,
-      "keywords": [
-        1,
-        4
-      ],
-      "description": "계약:카드를 {amount} 얻습니다.",
-      "effects": [
-        {
-          "type": "Buff",
-          "buffId": 3041,
-          "amount": 1,
-          "target": "Self"
-        }
-      ]
-    },
-    {
-      "cardId": 103043,
-      "name": "정당한 계약 +",
-      "characterId": 103,
-      "cost": 1,
-      "keywords": [
-        4
-      ],
-      "description": "계약:힘을 {amount} 얻습니다.",
-      "effects": [
-        {
-          "type": "Buff",
-          "buffId": 3042,
-          "amount": 1,
-          "target": "Self"
-        }
-      ]
-    },
-    {
-      "cardId": 103044,
-      "name": "정당한 계약 +",
-      "characterId": 103,
-      "cost": 0,
-      "keywords": [
-        1
-      ],
-      "description": "체력을 {amount} 잃고 카드를 1장 뽑습니다. 손이 가득 찰 때까지 반복합니다.",
-      "effects": [
-        {
-          "type": "DrawUntilHandFull",
-          "amount": 1
-        }
-      ]
-    },
-    {
-      "cardId": 103045,
-      "name": "정당한 계약 +",
-      "characterId": 103,
-      "cost": 0,
-      "description": "내 힘을 모두 잃습니다. 잃은 만큼 적도 힘을 잃습니다.",
-      "effects": [
-        {
-          "type": "ChangeStat",
-          "stat": "Buff",
-          "change": "Remove",
-          "buffId": 3002,
-          "target": "Self",
-          "subject": "Self",
-          "onAction": {
-            "type": "ChangeStat",
-            "stat": "Buff",
-            "change": "Decrease",
-            "buffId": 3002,
-            "amountFormula": "eventValue",
-            "target": "SingleEnemy"
-          }
-        }
-      ]
-    },
-    {
-      "cardId": 103050,
-      "name": "양털 공예",
-      "characterId": 103,
-      "cost": 3,
-      "keywords": [
-        3
-      ],
-      "description": "뽑을 카드 더미의 카드를 {amount}장 선택해 내 손으로 가져옵니다. 이때 같은 카드를 {amount2}장 더 생성합니다.",
-      "effects": [
-        {
-          "type": "SelectCard",
-          "from": "DrawPile",
-          "count": 1,
-          "subject": "Selected",
-          "onAction": [
-            {
-              "type": "Move",
-              "from": "Source",
-              "to": "Hand"
-            },
-            {
-              "type": "Copy",
-              "from": "Source",
-              "to": "Hand",
-              "amount": 2
-            }
-          ]
-        }
-      ],
-      "enforceGroup": "enforce_103050"
-    },
-    {
-      "cardId": 103051,
-      "name": "양털 공예 +",
-      "characterId": 103,
-      "cost": 2,
-      "keywords": [
-        3
-      ],
-      "description": "뽑을 카드 더미의 카드를 {amount}장 선택해 내 손으로 가져옵니다. 이때 같은 카드를 {amount2}장 더 생성합니다.",
-      "effects": [
-        {
-          "type": "SelectCard",
-          "from": "DrawPile",
-          "count": 1,
-          "subject": "Selected",
-          "onAction": [
-            {
-              "type": "Move",
-              "from": "Source",
-              "to": "Hand"
-            },
-            {
-              "type": "Copy",
-              "from": "Source",
-              "to": "Hand",
-              "amount": 2
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "cardId": 103052,
-      "name": "양털 공예 +",
-      "characterId": 103,
-      "cost": 3,
-      "keywords": [
-        3
-      ],
-      "description": "뽑을 카드 더미의 카드를 {amount}장 선택해 내 손으로 가져옵니다. 이때 같은 카드를 {amount2}장 더 생성합니다.",
-      "effects": [
-        {
-          "type": "SelectCard",
-          "from": "DrawPile",
-          "count": 1,
-          "subject": "Selected",
-          "onAction": [
-            {
-              "type": "Move",
-              "from": "Source",
-              "to": "Hand"
-            },
-            {
-              "type": "Copy",
-              "from": "Source",
-              "to": "Hand",
-              "amount": 3
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "cardId": 103053,
-      "name": "양털 공예 +",
-      "characterId": 103,
-      "cost": 1,
-      "keywords": [
-        3
-      ],
-      "description": "내 덱에 있는 무작위 카드를 {amount}장 생성합니다.",
-      "effects": [
-        {
-          "type": "SelectCard",
-          "from": "DrawPile",
-          "count": 2,
-          "random": true,
-          "allowFewer": true,
-          "subject": "Selected",
-          "onAction": {
-            "type": "Copy",
-            "from": "Source",
-            "to": "Hand",
-            "amountFormula": "all"
-          }
-        }
-      ]
-    },
-    {
-      "cardId": 103054,
-      "name": "양털 공예 +",
-      "characterId": 103,
-      "cost": 0,
-      "keywords": [
-        3
-      ],
-      "description": "손에서 카드를 {amount}장까지 선택해 소멸시킵니다.",
-      "effects": [
-        {
-          "type": "SelectCard",
-          "from": "Hand",
-          "count": 3,
-          "allowFewer": true,
-          "subject": "Selected",
-          "onAction": {
-            "type": "ExhaustCard",
-            "from": "Source",
-            "amountFormula": "all"
-          }
-        }
-      ]
-    },
-    {
-      "cardId": 103055,
-      "name": "양털 공예 +",
-      "characterId": 103,
-      "cost": 1,
-      "description": "카드를 {amount}장 뽑습니다. 두 카드의 비용이 서로 바뀝니다.",
-      "effects": [
-        {
-          "type": "Draw",
-          "amount": 2,
-          "subject": "DrawnCards",
-          "onAction": {
-            "type": "SwapCardCosts",
-            "subject": "DrawnCards"
-          }
-        }
-      ]
-    },
-    {
-      "cardId": 103060,
-      "name": "커피, 도와줘!",
-      "characterId": 103,
-      "cost": 1,
-      "description": "에너지를 {amount} 얻습니다.",
-      "effects": [
-        {
-          "type": "Stamina",
-          "amount": 2
-        }
-      ],
-      "enforceGroup": "enforce_103060"
-    },
-    {
-      "cardId": 103061,
-      "name": "커피, 도와줘! +",
-      "characterId": 103,
-      "cost": 0,
-      "description": "에너지를 {amount} 얻습니다.",
-      "effects": [
-        {
-          "type": "Stamina",
-          "amount": 1
-        }
-      ]
-    },
-    {
-      "cardId": 103062,
-      "name": "커피, 도와줘! +",
-      "characterId": 103,
-      "cost": 0,
-      "keywords": [
-        3
-      ],
-      "description": "에너지를 {amount} 얻습니다.",
-      "effects": [
-        {
-          "type": "Stamina",
-          "amount": 3
-        }
-      ]
-    },
-    {
-      "cardId": 103063,
-      "name": "커피, 도와줘! +",
-      "characterId": 103,
-      "cost": 3,
-      "description": "드로우 불가를 얻습니다. 내 손에 있는 모든 카드가 이번 턴 동안 비용이 0이 됩니다.",
-      "effects": [
-        {
-          "type": "Buff",
-          "buffId": 2001,
-          "amount": 1,
-          "target": "Self"
+            "cardId": 103030,
+            "name": "신성한 축복",
+            "characterId": 103,
+            "cost": 2,
+            "description": "체력을 {amount} 회복합니다. 카드를 {amount2}장 뽑습니다.",
+            "effects": [
+                {
+                    "type": "Heal",
+                    "amount": 9,
+                    "target": "Self"
+                },
+                {
+                    "type": "Draw",
+                    "amount": 1
+                }
+            ],
+            "enforceGroup": "enforce_103030"
         },
         {
-          "type": "ModifyCards",
-          "source": "Hand",
-          "param": "Cost",
-          "operation": "Set",
-          "amount": 0,
-          "duration": "Turn"
-        }
-      ]
-    },
-    {
-      "cardId": 103064,
-      "name": "커피, 도와줘! +",
-      "characterId": 103,
-      "cost": 3,
-      "keywords": [
-        9,
-        3
-      ],
-      "description": "영혼 보호를 얻습니다.",
-      "effects": [
-        {
-          "type": "Buff",
-          "buffId": 1017,
-          "amount": 1,
-          "target": "Self"
-        }
-      ]
-    },
-    {
-      "cardId": 103065,
-      "name": "커피, 도와줘! +",
-      "characterId": 103,
-      "cost": 0,
-      "description": "이번 턴에 소모한 에너지만큼 카드를 뽑습니다.",
-      "effects": [
-        {
-          "type": "Draw",
-          "amountFormula": "EnergySpentThisTurn"
-        }
-      ]
-    },
-    {
-      "cardId": 103070,
-      "name": "시간 저주",
-      "characterId": 103,
-      "cost": 0,
-      "keywords": [
-        3
-      ],
-      "description": "모든 적이 이번 턴에 힘을 {amount} 잃습니다.",
-      "effects": [
-        {
-          "type": "Buff",
-          "buffId": 4006,
-          "amount": 8,
-          "target": "AllEnemies"
-        }
-      ],
-      "enforceGroup": "enforce_103070"
-    },
-    {
-      "cardId": 103071,
-      "name": "시간 저주 +",
-      "characterId": 103,
-      "cost": 1,
-      "keywords": [
-        3
-      ],
-      "description": "적이 보유한 해로운 효과를 2배로 만듭니다.",
-      "effects": [
-        {
-          "type": "MultiplyEnemyDebuffs",
-          "amount": 2,
-          "target": "SingleEnemy"
-        }
-      ]
-    },
-    {
-      "cardId": 103072,
-      "name": "시간 저주 +",
-      "characterId": 103,
-      "cost": 1,
-      "keywords": [
-        3
-      ],
-      "description": "모든 적에게 잔혹을 {amount} 부여합니다.",
-      "effects": [
-        {
-          "type": "Buff",
-          "buffId": 4009,
-          "amount": 2,
-          "target": "AllEnemies"
-        }
-      ]
-    },
-    {
-      "cardId": 103073,
-      "name": "시간 저주 +",
-      "characterId": 103,
-      "cost": 1,
-      "description": "손에 저주를 하나 생성합니다. 기력 초과를 1 얻습니다.",
-      "effects": [
-        {
-          "type": "GenerateCard",
-          "cardId": "103080",
-          "target": "Hand"
+            "cardId": 103031,
+            "name": "신성한 축복 +",
+            "characterId": 103,
+            "cost": 2,
+            "description": "체력을 {amount} 회복합니다. 카드를 {amount2}장 뽑습니다.",
+            "effects": [
+                {
+                    "type": "Heal",
+                    "amount": 9,
+                    "target": "Self"
+                },
+                {
+                    "type": "Draw",
+                    "amount": 2
+                }
+            ]
         },
         {
-          "type": "Buff",
-          "buffId": 3053,
-          "amount": 1,
-          "target": "Self"
-        }
-      ]
-    },
-    {
-      "cardId": 103074,
-      "name": "시간 저주 +",
-      "characterId": 103,
-      "cost": 1,
-      "keywords": [
-        1
-      ],
-      "description": "모든 적이 체력을 {amount} 잃습니다. 보존될 때마다 잃는 체력이 2씩 증가합니다.",
-      "effects": [
-        {
-          "type": "HpLoss",
-          "amount": 4,
-          "target": "AllEnemies"
+            "cardId": 103032,
+            "name": "신성한 축복 +",
+            "characterId": 103,
+            "cost": 0,
+            "description": "카드를 {amount}장 뽑습니다. 뽑은 카드가 크림 카드면 보호막을 {amount2} 얻습니다.",
+            "effects": [
+                {
+                    "type": "Draw",
+                    "amount": 1,
+                    "subject": "DrawnCard",
+                    "onAction": {
+                        "condition": {
+                            "checks": [
+                                {
+                                    "subject": "DrawnCard",
+                                    "property": "CharacterId",
+                                    "operator": "Eq",
+                                    "value": 103
+                                }
+                            ],
+                            "effects": [
+                                {
+                                    "type": "Barrier",
+                                    "amount": 3,
+                                    "target": "Self"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
         },
         {
-          "type": "Keep",
-          "effects": [
-            {
-              "type": "ModifyCard",
-              "param": "EffectAmount",
-              "effectIndex": 0,
-              "operation": "Add",
-              "amount": 2
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "cardId": 103075,
-      "name": "시간 저주 +",
-      "characterId": 103,
-      "cost": 1,
-      "keywords": [
-        3
-      ],
-      "description": "적의 의도를 반감합니다.",
-      "effects": [
+            "cardId": 103033,
+            "name": "신성한 축복 +",
+            "characterId": 103,
+            "cost": 2,
+            "description": "보호막을 {amount} 얻습니다. 이 카드의 비용이 1 증가합니다.",
+            "effects": [
+                {
+                    "type": "Barrier",
+                    "amount": 20,
+                    "target": "Self"
+                },
+                {
+                    "type": "ModifyCard",
+                    "source": "ThisCard",
+                    "param": "Cost",
+                    "operation": "Add",
+                    "amount": 1
+                }
+            ]
+        },
         {
-          "type": "ScaleIntent",
-          "target": "SingleEnemy",
-          "multiplier": 0.5
-        }
-      ]
-    },
-    {
-      "cardId": 103080,
-      "name": "저주",
-      "characterId": 103,
-      "cost": 0,
-      "keywords": [
-        2
-      ],
-      "description": "이 카드를 뽑을 때 에너지를 2 잃습니다.",
-      "onDrawEffects": [
+            "cardId": 103034,
+            "name": "신성한 축복 +",
+            "characterId": 103,
+            "cost": 2,
+            "keywords": [
+                9,
+                3
+            ],
+            "description": "모든 강화되지 않은 카드가 무작위로 강화됩니다. 강화된 카드는 호기심이 발동하지 않습니다.",
+            "effects": [
+                {
+                    "type": "UpgradeCards",
+                    "from": "AllCards",
+                    "amountFormula": "all",
+                    "upgrade": "Random"
+                }
+            ]
+        },
         {
-          "type": "Stamina",
-          "amount": -2
+            "cardId": 103035,
+            "name": "신성한 축복 +",
+            "characterId": 103,
+            "cost": 1,
+            "keywords": [
+                9
+            ],
+            "description": "손에서 강화되지 않은 카드를 1장 선택해 이번 전투 동안 강화합니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "Hand",
+                    "count": 1,
+                    "upgradeableOnly": true,
+                    "subject": "Selected",
+                    "onAction": {
+                        "type": "UpgradeCards",
+                        "from": "Source",
+                        "upgrade": "Random"
+                    }
+                }
+            ]
+        },
+        {
+            "cardId": 103040,
+            "name": "정당한 계약",
+            "characterId": 103,
+            "cost": 2,
+            "keywords": [
+                8,
+                4
+            ],
+            "description": "계약:카드를 {amount} 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3041,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ],
+            "enforceGroup": "enforce_103040"
+        },
+        {
+            "cardId": 103041,
+            "name": "정당한 계약 +",
+            "characterId": 103,
+            "cost": 1,
+            "keywords": [
+                8,
+                4
+            ],
+            "description": "계약:카드를 {amount} 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3041,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 103042,
+            "name": "정당한 계약 +",
+            "characterId": 103,
+            "cost": 2,
+            "keywords": [
+                1,
+                4
+            ],
+            "description": "계약:카드를 {amount} 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3041,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 103043,
+            "name": "정당한 계약 +",
+            "characterId": 103,
+            "cost": 1,
+            "keywords": [
+                4
+            ],
+            "description": "계약:힘을 {amount} 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3042,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 103044,
+            "name": "정당한 계약 +",
+            "characterId": 103,
+            "cost": 0,
+            "keywords": [
+                1
+            ],
+            "description": "체력을 {amount} 잃고 카드를 1장 뽑습니다. 손이 가득 찰 때까지 반복합니다.",
+            "effects": [
+                {
+                    "type": "DrawUntilHandFull",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "cardId": 103045,
+            "name": "정당한 계약 +",
+            "characterId": 103,
+            "cost": 0,
+            "description": "내 힘을 모두 잃습니다. 잃은 만큼 적도 힘을 잃습니다.",
+            "effects": [
+                {
+                    "type": "ChangeStat",
+                    "stat": "Buff",
+                    "change": "Remove",
+                    "buffId": 3002,
+                    "target": "Self",
+                    "subject": "Self",
+                    "onAction": {
+                        "type": "ChangeStat",
+                        "stat": "Buff",
+                        "change": "Decrease",
+                        "buffId": 3002,
+                        "amountFormula": "eventValue",
+                        "target": "SingleEnemy"
+                    }
+                }
+            ]
+        },
+        {
+            "cardId": 103050,
+            "name": "양털 공예",
+            "characterId": 103,
+            "cost": 3,
+            "keywords": [
+                3
+            ],
+            "description": "뽑을 카드 더미의 카드를 {amount}장 선택해 내 손으로 가져옵니다. 이때 같은 카드를 {amount2}장 더 생성합니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "DrawPile",
+                    "count": 1,
+                    "subject": "Selected",
+                    "onAction": [
+                        {
+                            "type": "Move",
+                            "from": "Source",
+                            "to": "Hand"
+                        },
+                        {
+                            "type": "Copy",
+                            "from": "Source",
+                            "to": "Hand",
+                            "amount": 2
+                        }
+                    ]
+                }
+            ],
+            "enforceGroup": "enforce_103050"
+        },
+        {
+            "cardId": 103051,
+            "name": "양털 공예 +",
+            "characterId": 103,
+            "cost": 2,
+            "keywords": [
+                3
+            ],
+            "description": "뽑을 카드 더미의 카드를 {amount}장 선택해 내 손으로 가져옵니다. 이때 같은 카드를 {amount2}장 더 생성합니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "DrawPile",
+                    "count": 1,
+                    "subject": "Selected",
+                    "onAction": [
+                        {
+                            "type": "Move",
+                            "from": "Source",
+                            "to": "Hand"
+                        },
+                        {
+                            "type": "Copy",
+                            "from": "Source",
+                            "to": "Hand",
+                            "amount": 2
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cardId": 103052,
+            "name": "양털 공예 +",
+            "characterId": 103,
+            "cost": 3,
+            "keywords": [
+                3
+            ],
+            "description": "뽑을 카드 더미의 카드를 {amount}장 선택해 내 손으로 가져옵니다. 이때 같은 카드를 {amount2}장 더 생성합니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "DrawPile",
+                    "count": 1,
+                    "subject": "Selected",
+                    "onAction": [
+                        {
+                            "type": "Move",
+                            "from": "Source",
+                            "to": "Hand"
+                        },
+                        {
+                            "type": "Copy",
+                            "from": "Source",
+                            "to": "Hand",
+                            "amount": 3
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cardId": 103053,
+            "name": "양털 공예 +",
+            "characterId": 103,
+            "cost": 1,
+            "keywords": [
+                3
+            ],
+            "description": "내 덱에 있는 무작위 카드를 {amount}장 생성합니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "DrawPile",
+                    "count": 2,
+                    "random": true,
+                    "allowFewer": true,
+                    "subject": "Selected",
+                    "onAction": {
+                        "type": "Copy",
+                        "from": "Source",
+                        "to": "Hand",
+                        "amountFormula": "all"
+                    }
+                }
+            ]
+        },
+        {
+            "cardId": 103054,
+            "name": "양털 공예 +",
+            "characterId": 103,
+            "cost": 0,
+            "keywords": [
+                3
+            ],
+            "description": "손에서 카드를 {amount}장까지 선택해 소멸시킵니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "Hand",
+                    "count": 3,
+                    "allowFewer": true,
+                    "subject": "Selected",
+                    "onAction": {
+                        "type": "ExhaustCard",
+                        "from": "Source",
+                        "amountFormula": "all"
+                    }
+                }
+            ]
+        },
+        {
+            "cardId": 103055,
+            "name": "양털 공예 +",
+            "characterId": 103,
+            "cost": 1,
+            "description": "카드를 {amount}장 뽑습니다. 두 카드의 비용이 서로 바뀝니다.",
+            "effects": [
+                {
+                    "type": "Draw",
+                    "amount": 2,
+                    "subject": "DrawnCards",
+                    "onAction": {
+                        "type": "SwapCardCosts",
+                        "subject": "DrawnCards"
+                    }
+                }
+            ]
+        },
+        {
+            "cardId": 103060,
+            "name": "커피, 도와줘!",
+            "characterId": 103,
+            "cost": 1,
+            "description": "에너지를 {amount} 얻습니다.",
+            "effects": [
+                {
+                    "type": "Stamina",
+                    "amount": 2
+                }
+            ],
+            "enforceGroup": "enforce_103060"
+        },
+        {
+            "cardId": 103061,
+            "name": "커피, 도와줘! +",
+            "characterId": 103,
+            "cost": 0,
+            "description": "에너지를 {amount} 얻습니다.",
+            "effects": [
+                {
+                    "type": "Stamina",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "cardId": 103062,
+            "name": "커피, 도와줘! +",
+            "characterId": 103,
+            "cost": 0,
+            "keywords": [
+                3
+            ],
+            "description": "에너지를 {amount} 얻습니다.",
+            "effects": [
+                {
+                    "type": "Stamina",
+                    "amount": 3
+                }
+            ]
+        },
+        {
+            "cardId": 103063,
+            "name": "커피, 도와줘! +",
+            "characterId": 103,
+            "cost": 3,
+            "description": "드로우 불가를 얻습니다. 내 손에 있는 모든 카드가 이번 턴 동안 비용이 0이 됩니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 2001,
+                    "target": "Self"
+                },
+                {
+                    "type": "ModifyCards",
+                    "source": "Hand",
+                    "param": "Cost",
+                    "operation": "Set",
+                    "amount": 0,
+                    "duration": "Turn"
+                }
+            ]
+        },
+        {
+            "cardId": 103064,
+            "name": "커피, 도와줘! +",
+            "characterId": 103,
+            "cost": 3,
+            "keywords": [
+                9,
+                3
+            ],
+            "description": "영혼 보호를 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 1017,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 103065,
+            "name": "커피, 도와줘! +",
+            "characterId": 103,
+            "cost": 0,
+            "description": "이번 턴에 소모한 에너지만큼 카드를 뽑습니다.",
+            "effects": [
+                {
+                    "type": "Draw",
+                    "amountFormula": "EnergySpentThisTurn"
+                }
+            ]
+        },
+        {
+            "cardId": 103070,
+            "name": "시간 저주",
+            "characterId": 103,
+            "cost": 0,
+            "keywords": [
+                3
+            ],
+            "description": "모든 적이 이번 턴에 힘을 {amount} 잃습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 4006,
+                    "amount": 8,
+                    "target": "AllEnemies"
+                }
+            ],
+            "enforceGroup": "enforce_103070"
+        },
+        {
+            "cardId": 103071,
+            "name": "시간 저주 +",
+            "characterId": 103,
+            "cost": 1,
+            "keywords": [
+                3
+            ],
+            "description": "적이 보유한 해로운 효과를 2배로 만듭니다.",
+            "effects": [
+                {
+                    "type": "MultiplyEnemyDebuffs",
+                    "amount": 2,
+                    "target": "SingleEnemy"
+                }
+            ]
+        },
+        {
+            "cardId": 103072,
+            "name": "시간 저주 +",
+            "characterId": 103,
+            "cost": 1,
+            "keywords": [
+                3
+            ],
+            "description": "모든 적에게 잔혹을 {amount} 부여합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 4009,
+                    "amount": 2,
+                    "target": "AllEnemies"
+                }
+            ]
+        },
+        {
+            "cardId": 103073,
+            "name": "시간 저주 +",
+            "characterId": 103,
+            "cost": 1,
+            "description": "손에 저주를 하나 생성합니다. 기력 초과를 1 얻습니다.",
+            "effects": [
+                {
+                    "type": "GenerateCard",
+                    "cardId": "103080",
+                    "target": "Hand"
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3053,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 103074,
+            "name": "시간 저주 +",
+            "characterId": 103,
+            "cost": 1,
+            "keywords": [
+                1
+            ],
+            "description": "모든 적이 체력을 {amount} 잃습니다. 보존될 때마다 잃는 체력이 2씩 증가합니다.",
+            "effects": [
+                {
+                    "type": "HpLoss",
+                    "amount": 4,
+                    "target": "AllEnemies"
+                },
+                {
+                    "type": "Keep",
+                    "effects": [
+                        {
+                            "type": "ModifyCard",
+                            "param": "EffectAmount",
+                            "effectIndex": 0,
+                            "operation": "Add",
+                            "amount": 2
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cardId": 103075,
+            "name": "시간 저주 +",
+            "characterId": 103,
+            "cost": 1,
+            "keywords": [
+                3
+            ],
+            "description": "적의 의도를 반감합니다.",
+            "effects": [
+                {
+                    "type": "ScaleIntent",
+                    "target": "SingleEnemy",
+                    "multiplier": 0.5
+                }
+            ]
+        },
+        {
+            "cardId": 103080,
+            "name": "저주",
+            "characterId": 103,
+            "cost": 0,
+            "keywords": [
+                2
+            ],
+            "description": "이 카드를 뽑을 때 에너지를 2 잃습니다.",
+            "onDrawEffects": [
+                {
+                    "type": "Stamina",
+                    "amount": -2
+                }
+            ]
         }
-      ]
-    }
-  ]
+    ]
 }
