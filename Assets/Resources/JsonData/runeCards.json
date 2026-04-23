@@ -113,7 +113,7 @@
             "name": "에너지 쿠키 +",
             "characterId": 302,
             "cost": 1,
-            "description": "강공을 {amount} 얻습니다.",
+            "description": "(강공)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -131,7 +131,7 @@
             "keywords": [
                 4
             ],
-            "description": "배터리를 {amount} 얻습니다.",
+            "description": "(배터리)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -183,7 +183,7 @@
             "name": "프로토콜: 보호 +",
             "characterId": 302,
             "cost": 2,
-            "description": "보호막을 {amount} 얻습니다. 예방을 {amount2} 얻습니다.",
+            "description": "보호막을 {amount} 얻습니다. (예방)을 {amount2} 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",
@@ -203,7 +203,7 @@
             "name": "프로토콜: 보호 +",
             "characterId": 302,
             "cost": 1,
-            "description": "보호막을 {amount} 얻습니다. 가시를 {amount2} 얻습니다.",
+            "description": "보호막을 {amount} 얻습니다. (가시)를 {amount2} 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",
@@ -250,7 +250,7 @@
                 4,
                 9
             ],
-            "description": "전환: 보호를 얻습니다.",
+            "description": "(전환: 보호)를 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -346,7 +346,7 @@
             "keywords": [
                 4
             ],
-            "description": "과충전을 {amount} 얻습니다.",
+            "description": "(과충전)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -365,7 +365,7 @@
                 4,
                 9
             ],
-            "description": "전환: 공격을 얻습니다.",
+            "description": "(전환: 공격)을 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -458,7 +458,7 @@
             "keywords": [
                 4
             ],
-            "description": "이중 동작을 {amount} 얻습니다.",
+            "description": "(이중 동작)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -476,7 +476,7 @@
             "keywords": [
                 4
             ],
-            "description": "순환: 모드를 {amount} 얻습니다.",
+            "description": "(순환: 모드)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -492,7 +492,7 @@
             "characterId": 302,
             "cost": 2,
             "costType": "Rune",
-            "description": "에너지 대신 {동력}을 사용합니다. 적에게 취약을 {amount}, 약화를 {amount2} 부여합니다.",
+            "description": "에너지 대신 {동력}을 사용합니다. 적에게 취약을 {amount}, (약화)를 {amount2} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -551,7 +551,7 @@
             "keywords": [
                 6
             ],
-            "description": "에너지 대신 {동력}을 사용합니다. 결속을 {amount} 얻습니다.",
+            "description": "에너지 대신 {동력}을 사용합니다. (결속)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",

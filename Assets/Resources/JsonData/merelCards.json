@@ -39,7 +39,7 @@
             "keywords": [
                 4
             ],
-            "description": "깃털 겹치기를 {amount} 얻습니다.",
+            "description": "(깃털 겹치기)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -58,7 +58,7 @@
             "keywords": [
                 4
             ],
-            "description": "깃털 겹치기를 {amount} 얻습니다.",
+            "description": "(깃털 겹치기)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -73,11 +73,13 @@
             "name": "겹치기 +",
             "characterId": 203,
             "cost": 1,
-            "description": "무아지경을 {amount} 얻습니다.",
+            "description": "(무아지경)을 {amount} 얻습니다.",
             "effects": [
                 {
-                    "type": "OnAttackGainStrength",
-                    "amount": 2
+                    "type": "Buff",
+                    "buffId": 3060,
+                    "amount": 2,
+                    "target": "Self"
                 }
             ]
         },
@@ -87,17 +89,25 @@
             "characterId": 203,
             "cost": 1,
             "keywords": [
-                4
+                4,
+                9
             ],
-            "description": "이중 깃털을 얻습니다.",
-            "effects": []
+            "description": "(이중 깃털)을 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 1022,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ]
         },
         {
             "cardId": 203034,
             "name": "겹치기 +",
             "characterId": 203,
             "cost": 1,
-            "description": "파워 반복을 {amount} 얻습니다.",
+            "description": "(파워 반복)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -216,7 +226,7 @@
                 4,
                 5
             ],
-            "description": "자라나는 깃털을 {amount} 얻습니다.",
+            "description": "(자라나는 깃털)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -341,7 +351,7 @@
                 5,
                 3
             ],
-            "description": "모든 적에게 약화를 {amount}, 빈약을 {amount}, 부식을 {amount} 부여합니다.",
+            "description": "모든 적에게 (약화)를 {amount}, (빈약)을 {amount}, (부식)을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -373,7 +383,7 @@
                 5,
                 3
             ],
-            "description": "모든 적에게 약화를 {amount}, 빈약을 {amount}, 부식을 {amount} 부여합니다.",
+            "description": "모든 적에게 (약화)를 {amount}, (빈약)을 {amount}, (부식)을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -502,7 +512,7 @@
             "keywords": [
                 3
             ],
-            "description": "약화를 {amount} 얻고 힘을 {amount2} 얻습니다.",
+            "description": "(약화)를 {amount} 얻고 (힘)을 {amount2} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -526,7 +536,7 @@
             "keywords": [
                 4
             ],
-            "description": "정밀을 {amount} 얻습니다.",
+            "description": "(정밀)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -545,7 +555,7 @@
             "keywords": [
                 4
             ],
-            "description": "자동 회수를 {amount} 얻습니다.",
+            "description": "(자동 회수)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -563,7 +573,7 @@
             "keywords": [
                 4
             ],
-            "description": "눈 먼 깃털을 얻습니다. 깃털을 4장 생성합니다.",
+            "description": "(눈 먼 깃털)을 얻습니다. 깃털을 4장 생성합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -589,7 +599,7 @@
             "keywords": [
                 4
             ],
-            "description": "순환: 깃털을 얻습니다.",
+            "description": "(순환: 깃털)을 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -606,7 +616,7 @@
             "keywords": [
                 4
             ],
-            "description": "치명적인 기습을 {amount} 얻습니다.",
+            "description": "(치명적인 기습)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -624,7 +634,7 @@
             "keywords": [
                 4
             ],
-            "description": "강화: 깃털을 얻습니다. 깃털을 2장 생성합니다.",
+            "description": "(강화: 깃털)을 얻습니다. 깃털을 2장 생성합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -649,7 +659,7 @@
             "keywords": [
                 3
             ],
-            "description": "피해를 {amount} 입힙니다. 깃털을 {amount2} 부여합니다.",
+            "description": "피해를 {amount} 입힙니다. (깃털)을 {amount2} 부여합니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -673,7 +683,7 @@
             "keywords": [
                 3
             ],
-            "description": "피해를 {amount} 입힙니다. 깃털을 {amount2} 부여합니다.",
+            "description": "피해를 {amount} 입힙니다. (깃털)을 {amount2} 부여합니다.",
             "effects": [
                 {
                     "type": "Attack",

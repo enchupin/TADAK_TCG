@@ -33,7 +33,7 @@
             "name": "절대영도",
             "characterId": 301,
             "cost": 1,
-            "description": "모든 적에게 빙결을 {amount} 부여합니다.",
+            "description": "모든 적에게 (빙결)을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -52,7 +52,7 @@
             "keywords": [
                 5
             ],
-            "description": "모든 적에게 빙결을 {amount} 부여합니다.",
+            "description": "모든 적에게 (빙결)을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -67,7 +67,7 @@
             "name": "절대영도 +",
             "characterId": 301,
             "cost": 0,
-            "description": "모든 적에게 빙결을 {amount} 부여합니다.",
+            "description": "모든 적에게 (빙결)을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -85,7 +85,7 @@
             "keywords": [
                 6
             ],
-            "description": "모든 적에게 빙결을 {amount} 부여합니다.",
+            "description": "모든 적에게 (빙결)을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -103,7 +103,7 @@
             "keywords": [
                 4
             ],
-            "description": "절대영도를 {amount} 얻습니다.",
+            "description": "(절대영도)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -121,7 +121,7 @@
             "keywords": [
                 4
             ],
-            "description": "산산조각을 {amount} 얻습니다.",
+            "description": "(산산조각)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -154,7 +154,7 @@
             "keywords": [
                 4
             ],
-            "description": "결속을 {amount} 얻습니다.",
+            "description": "(결속)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -244,7 +244,7 @@
             "name": "냉기",
             "characterId": 301,
             "cost": 1,
-            "description": "피해를 {amount} 입힙니다. 빙결을 {amount2} 부여합니다.",
+            "description": "피해를 {amount} 입힙니다. (빙결)을 {amount2} 부여합니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -265,7 +265,7 @@
             "name": "냉기 +",
             "characterId": 301,
             "cost": 1,
-            "description": "피해를 {amount} 입힙니다. 빙결을 {amount2} 부여합니다.",
+            "description": "피해를 {amount} 입힙니다. (빙결)을 {amount2} 부여합니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -306,7 +306,7 @@
             "keywords": [
                 4
             ],
-            "description": "강화: 냉기를 얻습니다.",
+            "description": "(강화: 냉기)를 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -323,7 +323,7 @@
             "keywords": [
                 4
             ],
-            "description": "결속을 {amount} 얻습니다.",
+            "description": "(결속)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -341,7 +341,7 @@
             "keywords": [
                 4
             ],
-            "description": "냉기를 {amount} 얻습니다.",
+            "description": "(냉기)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -426,7 +426,7 @@
             "characterId": 301,
             "cost": 10,
             "costType": "Barrier",
-            "description": "에너지 대신 보호막을 사용합니다. 결속을 {amount} 얻습니다.",
+            "description": "에너지 대신 보호막을 사용합니다. (결속)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -442,7 +442,7 @@
             "characterId": 301,
             "cost": 5,
             "costType": "Barrier",
-            "description": "에너지 대신 보호막을 사용합니다. 재생을 {amount} 얻습니다.",
+            "description": "에너지 대신 보호막을 사용합니다. (재생)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -460,7 +460,7 @@
             "keywords": [
                 1
             ],
-            "description": "예방을 1 얻습니다. 보존: 보호막을 5 얻습니다.",
+            "description": "(예방)을 1 얻습니다. 보존: 보호막을 5 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -489,7 +489,7 @@
             "keywords": [
                 1
             ],
-            "description": "예방을 1 얻습니다. 보존: 결속만큼 보호막을 얻습니다.",
+            "description": "(예방)을 1 얻습니다. 보존: 결속만큼 보호막을 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -517,7 +517,7 @@
             "keywords": [
                 1
             ],
-            "description": "예방을 2 얻습니다. 보존: 보호막을 7 얻습니다.",
+            "description": "(예방)을 2 얻습니다. 보존: 보호막을 7 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -562,7 +562,7 @@
             "keywords": [
                 4
             ],
-            "description": "영구 동결을 얻습니다.",
+            "description": "(영구 동결)을 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -596,7 +596,7 @@
             "keywords": [
                 8
             ],
-            "description": "빙결을 {amount} 부여합니다.",
+            "description": "(빙결)을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -614,7 +614,7 @@
             "keywords": [
                 8
             ],
-            "description": "빙결을 {amount} 부여합니다.",
+            "description": "(빙결)을 {amount} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
