@@ -12,6 +12,9 @@ public class BattleUI : MonoBehaviour
 {
     [Header("플레이어 UI")]
     [SerializeField] private TextMeshProUGUI playerHPText;
+    [SerializeField] private Slider playerHPSlider;
+    [SerializeField] private Image playerHPFillImage;
+    [SerializeField] private Color barrierHPFillColor = new Color32(135, 206, 235, 255);
     [SerializeField] private TextMeshProUGUI playerEnergyText;
     [SerializeField] private TextMeshProUGUI playerDefenseText;
     [SerializeField] private TextMeshProUGUI drawPileCountText;
@@ -20,6 +23,13 @@ public class BattleUI : MonoBehaviour
 
     [Header("데이터 참조")]
     [SerializeField] private TrainingBattleManager battleManager;
+    private Color defaultHPFillColor = Color.white;
+    private bool hasDefaultHPFillColor;
+
+    private void Awake()
+    {
+        CacheHPFillDefaultColor();
+    }
 
 
     /// <summary>
@@ -27,9 +37,21 @@ public class BattleUI : MonoBehaviour
     /// </summary>
     public void UpdatePlayerHP()
     {
-        if (PlayerData.Instance == null) return;
+        PlayerData playerData = PlayerData.Instance;
+        if (playerData == null) return;
+
         if (playerHPText != null)
-            playerHPText.text = $"HP : {PlayerData.Instance.hp}/{PlayerData.Instance.maxHP}";
+            playerHPText.text = $"HP : {playerData.hp}/{playerData.maxHP}";
+
+        if (playerHPSlider != null)
+        {
+            int maxHp = Mathf.Max(1, playerData.maxHP);
+            playerHPSlider.minValue = 0f;
+            playerHPSlider.maxValue = maxHp;
+            playerHPSlider.value = Mathf.Clamp(playerData.hp, 0, maxHp);
+        }
+
+        UpdatePlayerHPFillColor(playerData);
     }
 
     /// <summary>
@@ -82,6 +104,35 @@ public class BattleUI : MonoBehaviour
         UpdateEnergy();
         UpdatePlayerDefense();
         UpdateDeckPileCount();
+    }
+
+    private void CacheHPFillDefaultColor()
+    {
+        if (playerHPFillImage == null)
+        {
+            hasDefaultHPFillColor = false;
+            return;
+        }
+
+        defaultHPFillColor = playerHPFillImage.color;
+        hasDefaultHPFillColor = true;
+    }
+
+    private void UpdatePlayerHPFillColor(PlayerData playerData)
+    {
+        if (playerHPFillImage == null || playerData == null)
+        {
+            return;
+        }
+
+        if (!hasDefaultHPFillColor)
+        {
+            CacheHPFillDefaultColor();
+        }
+
+        playerHPFillImage.color = playerData.defense > 0
+            ? barrierHPFillColor
+            : defaultHPFillColor;
     }
 
 }
