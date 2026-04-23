@@ -63,9 +63,9 @@
         {
             "cardId": 203032,
             "koName": "겹치기 +",
-            "koDescription": "이번 턴에 적을 공격할 때마다, 이번 턴에 힘을 {amount} 얻습니다.",
+            "koDescription": "무아지경을 {amount} 얻습니다.",
             "enName": "Layering +",
-            "enDescription": "Whenever you attack an enemy this turn, gain {amount} Strength this turn.",
+            "enDescription": "Gain {amount} Trance.",
             "jaName": "重ねがけ +",
             "jaDescription": "このターン中、敵を攻撃するたびにこのターン用の筋力を{amount}得る。",
             "zhHantName": "重疊 +",
@@ -73,22 +73,22 @@
             "zhHansName": "重叠 +",
             "zhHansDescription": "本回合每当你攻击敌人时，本回合获得{amount}点力量。",
             "ruName": "Наслоение +",
-            "ruDescription": "Каждый раз, когда вы атакуете врага в этом ходу, получает {amount} Силы в этом ходу."
+            "ruDescription": "Получает {amount} Транса."
         },
         {
             "cardId": 203033,
             "koName": "겹치기 +",
-            "koDescription": "이번 전투 동안 깃털이 반복을 얻습니다.",
+            "koDescription": "이중 깃털을 얻습니다.",
             "enName": "Layering +",
-            "enDescription": "Feathers gain Repeat for this combat.",
+            "enDescription": "Gain Double Feather.",
             "jaName": "重ねがけ +",
-            "jaDescription": "この戦闘中、羽が反復を得る。",
+            "jaDescription": "二重の羽を得る。",
             "zhHantName": "重疊 +",
-            "zhHantDescription": "在本場戰鬥中，羽毛獲得重複。",
+            "zhHantDescription": "獲得雙重羽毛。",
             "zhHansName": "重叠 +",
-            "zhHansDescription": "在本场战斗中，羽毛获得重复。",
+            "zhHansDescription": "获得双重羽毛。",
             "ruName": "Наслоение +",
-            "ruDescription": "Перья получают Повтор до конца этого боя."
+            "ruDescription": "Получает Двойное перо."
         },
         {
             "cardId": 203034,
@@ -438,17 +438,17 @@
         {
             "cardId": 203073,
             "koName": "정밀 투척 +",
-            "koDescription": "순환: 깃털을 {amount} 얻습니다.",
+            "koDescription": "순환: 깃털을 얻습니다.",
             "enName": "Precision Throw +",
-            "enDescription": "Cycle: Gain {amount} Feathers.",
+            "enDescription": "Gain Cycle: Feather.",
             "jaName": "精密投擲 +",
-            "jaDescription": "循環: 羽を{amount}得る。",
+            "jaDescription": "羽循環を得る。",
             "zhHantName": "精準投擲 +",
-            "zhHantDescription": "循環: 獲得{amount}張羽毛。",
+            "zhHantDescription": "獲得循環: 羽毛。",
             "zhHansName": "精准投掷 +",
-            "zhHansDescription": "循环: 获得{amount}张羽毛。",
+            "zhHansDescription": "获得循环: 羽毛。",
             "ruName": "Точный бросок +",
-            "ruDescription": "Цикл: получает {amount} Перьев."
+            "ruDescription": "Получает Цикл: перо."
         },
         {
             "cardId": 203074,

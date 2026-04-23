@@ -1,4 +1,4 @@
-{
+﻿{
     "cards": [
         {
             "cardId": 302010,
@@ -255,7 +255,6 @@
                 {
                     "type": "Buff",
                     "buffId": 1014,
-                    "amount": 1,
                     "target": "Self"
                 }
             ]
@@ -371,7 +370,6 @@
                 {
                     "type": "Buff",
                     "buffId": 1018,
-                    "amount": 1,
                     "target": "Self"
                 }
             ]
@@ -490,11 +488,11 @@
         },
         {
             "cardId": 302070,
-            "name": "\uacfc\ubd80\ud558",
+            "name": "과부하",
             "characterId": 302,
             "cost": 2,
             "costType": "Rune",
-            "description": "\uc5d0\ub108\uc9c0 \ub300\uc2e0 {\ub3d9\ub825}\uc744 \uc0ac\uc6a9\ud569\ub2c8\ub2e4. \uc801\uc5d0\uac8c \ucde8\uc57d\uc744 {amount}, \uc57d\ud654\ub97c {amount2} \ubd80\uc5ec\ud569\ub2c8\ub2e4.",
+            "description": "에너지 대신 {동력}을 사용합니다. 적에게 취약을 {amount}, 약화를 {amount2} 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -513,11 +511,11 @@
         },
         {
             "cardId": 302071,
-            "name": "\uacfc\ubd80\ud558 +",
+            "name": "과부하 +",
             "characterId": 302,
             "cost": 2,
             "costType": "Rune",
-            "description": "\uc5d0\ub108\uc9c0 \ub300\uc2e0 {\ub3d9\ub825}\uc744 \uc0ac\uc6a9\ud569\ub2c8\ub2e4. \ud53c\ud574\ub97c {amount} \uc785\ud799\ub2c8\ub2e4.",
+            "description": "에너지 대신 {동력}을 사용합니다. 피해를 {amount} 입힙니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -528,14 +526,14 @@
         },
         {
             "cardId": 302072,
-            "name": "\uacfc\ubd80\ud558 +",
+            "name": "과부하 +",
             "characterId": 302,
             "cost": 1,
             "costType": "Rune",
             "keywords": [
                 6
             ],
-            "description": "\uc5d0\ub108\uc9c0 \ub300\uc2e0 {\ub3d9\ub825}\uc744 \uc0ac\uc6a9\ud569\ub2c8\ub2e4. \ubcf4\ud638\ub9c9\uc744 {amount} \uc5bb\uc2b5\ub2c8\ub2e4.",
+            "description": "에너지 대신 {동력}을 사용합니다. 보호막을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",
@@ -546,14 +544,14 @@
         },
         {
             "cardId": 302073,
-            "name": "\uacfc\ubd80\ud558 +",
+            "name": "과부하 +",
             "characterId": 302,
             "cost": 3,
             "costType": "Rune",
             "keywords": [
                 6
             ],
-            "description": "\uc5d0\ub108\uc9c0 \ub300\uc2e0 {\ub3d9\ub825}\uc744 \uc0ac\uc6a9\ud569\ub2c8\ub2e4. \uacb0\uc18d\uc744 {amount} \uc5bb\uc2b5\ub2c8\ub2e4.",
+            "description": "에너지 대신 {동력}을 사용합니다. 결속을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -565,11 +563,11 @@
         },
         {
             "cardId": 302074,
-            "name": "\uacfc\ubd80\ud558 +",
+            "name": "과부하 +",
             "characterId": 302,
             "cost": 5,
             "costType": "Rune",
-            "description": "\uc5d0\ub108\uc9c0 \ub300\uc2e0 {\ub3d9\ub825}\uc744 \uc0ac\uc6a9\ud569\ub2c8\ub2e4. \ud574\ub85c\uc6b4 \ud6a8\uacfc\ub97c {amount}\uac1c \ubb34\uc791\uc704\ub85c \uc81c\uac70\ud569\ub2c8\ub2e4.",
+            "description": "에너지 대신 {동력}을 사용합니다. 해로운 효과를 {amount}개 무작위로 제거합니다.",
             "effects": [
                 {
                     "type": "ChangeStat",
@@ -586,14 +584,14 @@
         },
         {
             "cardId": 302075,
-            "name": "\uacfc\ubd80\ud558 +",
+            "name": "과부하 +",
             "characterId": 302,
             "cost": 3,
             "costType": "Rune",
             "keywords": [
                 3
             ],
-            "description": "\uc5d0\ub108\uc9c0 \ub300\uc2e0 {\ub3d9\ub825}\uc744 \uc0ac\uc6a9\ud569\ub2c8\ub2e4. \uc5d0\ub108\uc9c0\ub97c {amount} \uc5bb\uace0 \uce74\ub4dc\ub97c {amount2}\uc7a5 \ubf51\uc2b5\ub2c8\ub2e4.",
+            "description": "에너지 대신 {동력}을 사용합니다. 에너지를 {amount} 얻고 카드를 {amount2}장 뽑습니다.",
             "effects": [
                 {
                     "type": "Stamina",

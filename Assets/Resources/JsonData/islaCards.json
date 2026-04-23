@@ -498,7 +498,7 @@
             "keywords": [
                 4
             ],
-            "description": "포션을 사용할 때마다 무작위 적에게 부식을 {amount} 부여합니다.",
+            "description": "폐기물을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",

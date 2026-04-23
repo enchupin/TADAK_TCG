@@ -198,7 +198,7 @@
         {
             "cardId": 202045,
             "koName": "갸르드 +",
-            "koDescription": "카드를 {amount}장 뽑습니다. 이번 턴에 더 이상 카드를 뽑을 수 없습니다.",
+            "koDescription": "카드를 {amount}장 뽑습니다. 드로우 불가를 얻습니다.",
             "enName": "Garde +",
             "enDescription": "Draw {amount} cards. You cannot draw more cards this turn.",
             "jaName": "ガルド +",
