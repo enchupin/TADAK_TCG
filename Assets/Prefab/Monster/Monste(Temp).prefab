@@ -368,8 +368,6 @@ MonoBehaviour:
   hpText: {fileID: 2532405729148732153}
   defenseText: {fileID: 1137208144515008067}
   intentText: {fileID: 3636331439371411414}
-  corrosionText: {fileID: 0}
-  freezeText: {fileID: 0}
   hp: 40
   maxHP: 40
   defense: 0

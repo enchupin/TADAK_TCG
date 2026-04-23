@@ -30,8 +30,6 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     [SerializeField] private TextMeshProUGUI hpText;
     [SerializeField] private TextMeshProUGUI defenseText;
     [SerializeField] private TextMeshProUGUI intentText;
-    [SerializeField] private TextMeshProUGUI corrosionText;
-    [SerializeField] private TextMeshProUGUI freezeText;
 
     [Header("Stats")]
     public int hp;
@@ -104,8 +102,6 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
             defenseText.text = defense > 0 ? $"DEF {defense}" : string.Empty;
 
         UpdateIntentUI();
-        UpdateCorrosionUI();
-        UpdateFreezeUI();
     }
 
     public void EnsureBattleStartInitialized()
@@ -550,32 +546,6 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    private void UpdateCorrosionUI()
-    {
-        if (corrosionText == null)
-            return;
-
-        int enhancedCorrosionStack = GetBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId);
-        int corrosionStack = GetBuffStack(BattleRuntimeDefinitions.CorrosionBuffId);
-
-        if (enhancedCorrosionStack > 0)
-        {
-            corrosionText.text = $"EcorrosionStack : {enhancedCorrosionStack}";
-            return;
-        }
-
-        corrosionText.text = $"corrosionStack : {corrosionStack}";
-    }
-
-    private void UpdateFreezeUI()
-    {
-        if (freezeText == null)
-            return;
-
-        int freezeStack = GetBuffStack(BattleRuntimeDefinitions.FreezeBuffId);
-        freezeText.text = $"FreezeStack : {freezeStack}";
-    }
-
     private void DecreaseBuffStack(int buffId, int amount)
     {
         if (amount <= 0)
@@ -765,7 +735,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        TextMeshProUGUI sourceText = hpText != null ? hpText : corrosionText;
+        TextMeshProUGUI sourceText = hpText != null ? hpText : defenseText;
         if (sourceText == null)
         {
             return;
