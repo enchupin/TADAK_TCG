@@ -28,6 +28,7 @@ public static class BattleRuntimeDefinitions
     public static int IntentionalRageBuffId => GetBuffId(nameof(IntentionalRageBuffId));
     public static int BloodBattleBuffId => GetBuffId(nameof(BloodBattleBuffId));
     public static int LastStandBuffId => GetBuffId(nameof(LastStandBuffId));
+    public static int DoubleFeatherBuffId => GetBuffId(nameof(DoubleFeatherBuffId));
     public static int DrawLockBuffId => GetBuffId(nameof(DrawLockBuffId));
     public static int FlameTransferBuffId => GetBuffId(nameof(FlameTransferBuffId));
     public static int RegenerationBuffId => GetBuffId(nameof(RegenerationBuffId));
@@ -85,6 +86,7 @@ public static class BattleRuntimeDefinitions
     public static int EncroachmentBuffId => GetBuffId(nameof(EncroachmentBuffId));
     public static int RisingWaterBuffId => GetBuffId(nameof(RisingWaterBuffId));
     public static int DrowningOnDebuffBuffId => GetBuffId(nameof(DrowningOnDebuffBuffId));
+    public static int TranceBuffId => GetBuffId(nameof(TranceBuffId));
     public static int CorrosionBuffId => GetBuffId(nameof(CorrosionBuffId));
     public static int EnhancedCorrosionBuffId => GetBuffId(nameof(EnhancedCorrosionBuffId));
     public static int BurnBuffId => GetBuffId(nameof(BurnBuffId));
@@ -154,6 +156,7 @@ public static class BattleRuntimeDefinitions
         Register(nameof(IntentionalRageBuffId), "의도된 분노", 1019);
         Register(nameof(BloodBattleBuffId), "혈투", 1020);
         Register(nameof(LastStandBuffId), "구사일생", 1021);
+        Register(nameof(DoubleFeatherBuffId), "이중 깃털", 1022);
         Register(nameof(DrawLockBuffId), "드로우 불가", 2001);
         Register(nameof(FlameTransferBuffId), "화염 전이", 2002);
         Register(nameof(RegenerationBuffId), "재생", 3001);
@@ -210,7 +213,8 @@ public static class BattleRuntimeDefinitions
         Register(nameof(UnderwaterBreathingBuffId), "수중 호흡", 3056);
         Register(nameof(EncroachmentBuffId), "잠식", 3057);
         Register(nameof(RisingWaterBuffId), "수면 상승", 3058);
-        Register(nameof(DrowningOnDebuffBuffId), "역류", 3059);
+        Register(nameof(DrowningOnDebuffBuffId), "부정한 물", 3059);
+        Register(nameof(TranceBuffId), "무아지경", 3060);
         Register(nameof(CorrosionBuffId), "부식", 4001);
         Register(nameof(EnhancedCorrosionBuffId), "맹독", 4002);
         Register(nameof(BurnBuffId), "화염 낙인", 4003);

@@ -60,6 +60,7 @@ public class PlayerBuffRuntimeService
         Register(new FeatherCycleBuffScript());
         Register(new FeatherEnhanceBuffScript());
         Register(new BloodBattleBuffScript());
+        Register(new DoubleFeatherBuffScript());
         Register(new FeatherStackBoostBuffScript());
         Register(new GrowingFeatherBuffScript());
         Register(new FeatherAutoTriggerBuffScript());
@@ -80,6 +81,7 @@ public class PlayerBuffRuntimeService
         Register(new EncroachmentBuffScript());
         Register(new RisingWaterBuffScript());
         Register(new DrowningOnDebuffBuffScript());
+        Register(new TranceBuffScript());
         Register(new WuppiGuardBuffScript());
         Register(new WuppiAttackBuffScript());
         Register(new RuneGenerationBuffScript());

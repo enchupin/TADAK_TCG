@@ -914,7 +914,6 @@ public class CardJSONConverter : EditorWindow
             case "Trigger": return EffectType.Trigger;
             case "RemoveBuff": return EffectType.RemoveBuff;
             case "Scry": return EffectType.Scry;
-            case "OnAttackGainStrength": return EffectType.OnAttackGainStrength;
             case "TransformCards":
             case "TransformMonsterCards": return EffectType.TransformCards;
             case "UpgradeCards": return EffectType.UpgradeCards;
