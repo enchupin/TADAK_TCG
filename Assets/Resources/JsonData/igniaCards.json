@@ -395,7 +395,7 @@
             "name": "화염 고리 +",
             "characterId": 201,
             "cost": 0,
-            "description": "카드를 {amount}장 뽑습니다. 이그니아 카드를 뽑았으면, 화염 낙인을 {amount2} 부여합니다.",
+            "description": "카드를 {amount}장 뽑습니다. 이그니아 카드를 뽑았으면, (화염 낙인)을 {amount2} 부여합니다.",
             "effects": [
                 {
                     "type": "Draw",
@@ -479,7 +479,7 @@
             "keywords": [
                 3
             ],
-            "description": "대상의 화염 낙인을 {amount}배로 만듭니다.",
+            "description": "대상의 (화염 낙인)을 {amount}배로 만듭니다.",
             "effects": [
                 {
                     "type": "ChangeStat",
@@ -597,7 +597,7 @@
             "name": "뜨거운 피부 +",
             "characterId": 201,
             "cost": 2,
-            "description": "보호막을 {amount} 얻습니다. 이번 턴 동안 용암 피부를 {amount2} 얻습니다.",
+            "description": "보호막을 {amount} 얻습니다. 이번 턴 동안 (용암 피부)를 {amount2} 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",

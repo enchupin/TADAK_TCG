@@ -93,17 +93,17 @@
         {
             "cardId": 101034,
             "koName": "실험 재료 준비 +",
-            "koDescription": "손에서 카드 {amount}장을 선택해 복제합니다. 포션일 경우, 모든 적에게 부식을 2 부여합니다.",
+            "koDescription": "손에서 카드 {amount}장을 선택해 복제합니다. 포션일 경우, 모든 적에게 (부식)을 2 부여합니다.",
             "enName": "Prepare Reagents +",
-            "enDescription": "Choose {amount} cards in your hand and copy them. If a selected card is a Potion, apply 2 Corrosion to all enemies.",
+            "enDescription": "Choose {amount} cards in your hand and copy them. If a selected card is a Potion, apply 2 (Corrosion) to all enemies.",
             "jaName": "実験材料の準備 +",
-            "jaDescription": "手札からカードを{amount}枚選んでコピーする。選んだカードがポーションなら、すべての敵に腐食を2付与する。",
+            "jaDescription": "手札からカードを{amount}枚選んでコピーする。選んだカードがポーションなら、すべての敵に(腐食)を2付与する。",
             "zhHantName": "準備實驗材料 +",
-            "zhHantDescription": "選擇手中的{amount}張牌並複製。若選中的牌是藥水，對所有敵人施加2層腐蝕。",
+            "zhHantDescription": "選擇手中的{amount}張牌並複製。若選中的牌是藥水，對所有敵人施加2層(腐蝕)。",
             "zhHansName": "准备实验材料 +",
-            "zhHansDescription": "选择手中的{amount}张牌并复制。若选中的牌是药水，对所有敌人施加2层腐蚀。",
+            "zhHansDescription": "选择手中的{amount}张牌并复制。若选中的牌是药水，对所有敌人施加2层(腐蚀)。",
             "ruName": "Подготовка реагентов +",
-            "ruDescription": "Выбирает {amount} карт в руке и копирует их. Если выбранная карта является Зельем, налагает 2 Коррозии на всех врагов."
+            "ruDescription": "Выбирает {amount} карт в руке и копирует их. Если выбранная карта является Зельем, налагает 2 (Коррозии) на всех врагов."
         },
         {
             "cardId": 101035,
@@ -333,17 +333,17 @@
         {
             "cardId": 101062,
             "koName": "실험 폐기물 +",
-            "koDescription": "부식을 {amount} 부여합니다. 대상이 이미 부식 상태라면, 대신 적 전체에 부여합니다.",
+            "koDescription": "(부식)을 {amount} 부여합니다. 대상이 이미 부식 상태라면, 대신 적 전체에 부여합니다.",
             "enName": "Experimental Waste +",
-            "enDescription": "Apply {amount} Corrosion. If the target is already Corroded, apply it to all enemies instead.",
+            "enDescription": "Apply {amount} (Corrosion). If the target is already Corroded, apply it to all enemies instead.",
             "jaName": "実験廃棄物 +",
-            "jaDescription": "腐食を{amount}付与する。対象がすでに腐食状態なら、代わりに敵全体に付与する。",
+            "jaDescription": "(腐食)を{amount}付与する。対象がすでに腐食状態なら、代わりに敵全体に付与する。",
             "zhHantName": "實驗廢棄物 +",
-            "zhHantDescription": "施加{amount}層腐蝕。若目標已處於腐蝕狀態，改為施加給所有敵人。",
+            "zhHantDescription": "施加{amount}層(腐蝕)。若目標已處於腐蝕狀態，改為施加給所有敵人。",
             "zhHansName": "实验废弃物 +",
-            "zhHansDescription": "施加{amount}层腐蚀。若目标已处于腐蚀状态，改为施加给所有敌人。",
+            "zhHansDescription": "施加{amount}层(腐蚀)。若目标已处于腐蚀状态，改为施加给所有敌人。",
             "ruName": "Лабораторные отходы +",
-            "ruDescription": "Наложите {amount} Коррозии. Если цель уже под Коррозией, наложите её на всех врагов."
+            "ruDescription": "Наложите {amount} (Коррозии). Если цель уже под Коррозией, наложите её на всех врагов."
         },
         {
             "cardId": 101063,

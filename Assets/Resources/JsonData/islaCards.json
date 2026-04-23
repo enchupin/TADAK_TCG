@@ -110,7 +110,7 @@
             "name": "실험 재료 준비 +",
             "characterId": 101,
             "cost": 1,
-            "description": "손에서 카드 {amount}장을 선택해 복제합니다. 포션일 경우, 모든 적에게 부식을 2 부여합니다.",
+            "description": "손에서 카드 {amount}장을 선택해 복제합니다. 포션일 경우, 모든 적에게 (부식)을 2 부여합니다.",
             "effects": [
                 {
                     "type": "SelectCard",
@@ -457,7 +457,7 @@
             "keywords": [
                 3
             ],
-            "description": "부식을 {amount} 부여합니다. 대상이 이미 부식 상태라면, 대신 적 전체에 부여합니다.",
+            "description": "(부식)을 {amount} 부여합니다. 대상이 이미 부식 상태라면, 대신 적 전체에 부여합니다.",
             "effects": [
                 {
                     "condition": {

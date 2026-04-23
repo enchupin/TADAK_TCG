@@ -198,17 +198,17 @@
         {
             "cardId": 102045,
             "koName": "조커 +",
-            "koDescription": "이번 턴에 받는 피해가 1로 고정됩니다.",
+            "koDescription": "(아슬아슬)을 {amount} 얻습니다.",
             "enName": "Joker +",
-            "enDescription": "Damage you take this turn is fixed at 1.",
+            "enDescription": "Gain {amount} (On the Edge).",
             "jaName": "ジョーカー +",
-            "jaDescription": "このターンに受けるダメージは1に固定される。",
+            "jaDescription": "(瀬戸際)を{amount}得る。",
             "zhHantName": "小丑 +",
-            "zhHantDescription": "本回合受到的傷害固定為1。",
+            "zhHantDescription": "獲得{amount}層(命懸一線)。",
             "zhHansName": "小丑 +",
-            "zhHansDescription": "本回合受到的伤害固定为1。",
+            "zhHansDescription": "获得{amount}层(命悬一线)。",
             "ruName": "Джокер +",
-            "ruDescription": "Получаемый вами урон в этом ходу фиксируется на 1."
+            "ruDescription": "Получает {amount} (На грани)."
         },
         {
             "cardId": 102050,
@@ -363,17 +363,17 @@
         {
             "cardId": 102064,
             "koName": "밑장 빼기 +",
-            "koDescription": "(예고)를 1 얻습니다.",
+            "koDescription": "(예고)를 {amount} 얻습니다.",
             "enName": "Bottom Deal +",
-            "enDescription": "Gain 1 (Forewarning).",
+            "enDescription": "Gain {amount} (Forewarning).",
             "jaName": "底抜き +",
-            "jaDescription": "(予告)を1得る。",
+            "jaDescription": "(予告)を{amount}得る。",
             "zhHantName": "抽底牌 +",
-            "zhHantDescription": "獲得1層(預告)。",
+            "zhHantDescription": "獲得{amount}層(預告)。",
             "zhHansName": "抽底牌 +",
-            "zhHansDescription": "获得1层(预告)。",
+            "zhHansDescription": "获得{amount}层(预告)。",
             "ruName": "Сдача снизу +",
-            "ruDescription": "Получает 1 (Предупреждение)."
+            "ruDescription": "Получает {amount} (Предупреждение)."
         },
         {
             "cardId": 102065,
