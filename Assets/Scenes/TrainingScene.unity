@@ -773,7 +773,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 508993666}
         m_TargetAssemblyTypeName: BattleDeckViewer, Assembly-CSharp
-        m_MethodName: OnClickDeckButton
+        m_MethodName: OnClickDiscardPileButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

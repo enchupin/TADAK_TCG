@@ -9,6 +9,14 @@ using UnityEngine.UI;
 /// </summary>
 public class BattleDeckViewer : MonoBehaviour
 {
+    private enum DeckPanelViewType
+    {
+        None,
+        DrawPile,
+        DiscardPile,
+        ExhaustPile
+    }
+
     [Header("패널/컨테이너")]
     [SerializeField] private GameObject deckPanelRoot;
     [SerializeField] private CardContainerManager cardContainerManager;
@@ -22,6 +30,7 @@ public class BattleDeckViewer : MonoBehaviour
     private Action<List<Card>> onSelectionCompleted;
     private readonly List<Card> selectedCards = new List<Card>();
     private readonly List<CardController> selectedControllers = new List<CardController>();
+    private DeckPanelViewType currentViewType;
 
     private void Awake() {
         ValidateRequiredReferences();
@@ -38,7 +47,31 @@ public class BattleDeckViewer : MonoBehaviour
             return;
         }
 
-        ToggleDeckPanel();
+        TogglePilePanel(DeckPanelViewType.DrawPile);
+    }
+
+    /// <summary>
+    /// 버린 카드 더미 버튼 OnClick에 연결해서 사용
+    /// </summary>
+    public void OnClickDiscardPileButton() {
+        if (isSelectionMode) {
+            OnClickSelectionConfirm();
+            return;
+        }
+
+        TogglePilePanel(DeckPanelViewType.DiscardPile);
+    }
+
+    /// <summary>
+    /// 소멸 카드 더미 버튼 OnClick에 연결해서 사용
+    /// </summary>
+    public void OnClickExhaustPileButton() {
+        if (isSelectionMode) {
+            OnClickSelectionConfirm();
+            return;
+        }
+
+        TogglePilePanel(DeckPanelViewType.ExhaustPile);
     }
 
     public void OnClickSelectionConfirm() {
@@ -53,45 +86,20 @@ public class BattleDeckViewer : MonoBehaviour
         CompleteSelection(new List<Card>(selectedCards));
     }
 
-    public void ToggleDeckPanel() {
-        if (isSelectionMode) {
-            Debug.Log("[BattleDeckViewer] 카드 선택 중에는 덱 뷰를 토글할 수 없습니다");
-            return;
-        }
+    private void TogglePilePanel(DeckPanelViewType viewType) {
         if (deckPanelRoot == null) {
             Debug.LogWarning("[BattleDeckViewer] deckPanelRoot 참조가 비어 있습니다");
             return;
         }
 
-        bool willOpen = !deckPanelRoot.activeSelf;
-        deckPanelRoot.SetActive(willOpen);
-
-        if (willOpen) {
-            RefreshDeckCards();
-        }
-    }
-
-    public void OpenDeckPanel() {
-        if (isSelectionMode) {
-            Debug.Log("[BattleDeckViewer] 카드 선택 중에는 덱 뷰를 열 수 없습니다");
-            return;
-        }
-
-        if (deckPanelRoot != null) {
-            deckPanelRoot.SetActive(true);
-        }
-        RefreshDeckCards();
-    }
-
-    public void CloseDeckPanel() {
-        if (isSelectionMode) {
-            Debug.Log("[BattleDeckViewer] 카드 선택 중에는 패널을 닫을 수 없습니다");
-            return;
-        }
-
-        if (deckPanelRoot != null) {
+        if (deckPanelRoot.activeSelf && currentViewType == viewType) {
             deckPanelRoot.SetActive(false);
+            currentViewType = DeckPanelViewType.None;
+            return;
         }
+
+        deckPanelRoot.SetActive(true);
+        RefreshPileCards(viewType);
     }
 
     public bool OpenSelectionPanel(List<Card> selectableCards, int selectCount, Action<List<Card>> onComplete, bool allowFewer = false) {
@@ -124,27 +132,30 @@ public class BattleDeckViewer : MonoBehaviour
         return true;
     }
 
-    /// <summary>
-    /// 현재 덱 상태를 스크롤뷰 카드 목록으로 다시 그림
-    /// </summary>
-    public void RefreshDeckCards() {
+    private void RefreshPileCards(DeckPanelViewType viewType) {
         ValidateRequiredReferences();
 
         if (battleManager.usableDeckManager == null) {
             throw new MissingReferenceException("[BattleDeckViewer] battleManager.usableDeckManager 참조가 비어 있습니다 TrainingBattleManager 연결을 확인하세요");
         }
 
-        List<Card> drawPileCards = battleManager.usableDeckManager.GetDrawPile();
+        List<Card> cards = viewType switch
+        {
+            DeckPanelViewType.DrawPile => battleManager.usableDeckManager.GetDrawPile(),
+            DeckPanelViewType.DiscardPile => battleManager.usableDeckManager.GetDiscardPile(),
+            DeckPanelViewType.ExhaustPile => battleManager.usableDeckManager.GetExhaustPile(),
+            _ => new List<Card>()
+        };
 
-        // 기존 UI를 비우고 현재 덱 카드로 다시 채움
         cardContainerManager.ClearHand();
         cardContainerManager.SetCardClickHandler(null);
-        if (drawPileCards == null || drawPileCards.Count == 0) {
+        currentViewType = viewType;
+        if (cards == null || cards.Count == 0) {
             return;
         }
 
         // 캐릭터북과 동일하게 입력 비활성 카드 UI 사용
-        cardContainerManager.AddCardWithoutInputController(drawPileCards);
+        cardContainerManager.AddCardWithoutInputController(cards);
     }
 
     private void HandleSelectableCardClicked(CardController controller) {
@@ -187,6 +198,7 @@ public class BattleDeckViewer : MonoBehaviour
         if (deckPanelRoot != null) {
             deckPanelRoot.SetActive(false);
         }
+        currentViewType = DeckPanelViewType.None;
 
         callback?.Invoke(result ?? new List<Card>());
     }
