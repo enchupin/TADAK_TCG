@@ -5,6 +5,8 @@ public static class BuffCardUtility
 {
     public const string BasePotionGroupName = "isla_potion_even_base_pool";
     public const string JokerUpgradeGroupName = "enforce_102040";
+    private const int BaseFeatherCardId = 203080;
+    private const int EnhancedFeatherCardId = 203081;
 
     public static bool IsPotionCard(Card card)
     {
@@ -14,6 +16,16 @@ public static class BuffCardUtility
     public static bool IsPotionCardId(int cardId)
     {
         return cardId >= 101080 && cardId <= 101087;
+    }
+
+    public static bool IsFeatherCard(Card card)
+    {
+        return card != null && IsFeatherCardId(card.cardId);
+    }
+
+    public static bool IsFeatherCardId(int cardId)
+    {
+        return cardId == BaseFeatherCardId || cardId == EnhancedFeatherCardId;
     }
 
     public static List<Card> CreateRandomCardsFromGroup(string groupName, int count)

@@ -594,10 +594,6 @@ public static class CardDescriptionFormatter
                 CollectOnActionAmounts(changeStatEffect.onActions, battleManager, sourceCard, amounts);
                 return;
 
-            case OnAttackGainStrengthEffect onAttackGainStrengthEffect:
-                AddAmount(amounts, ResolveOnAttackGainStrengthAmount(onAttackGainStrengthEffect, battleManager));
-                return;
-
             case MoveEffect moveEffect:
                 if (TryResolveMoveAmount(moveEffect, battleManager, out int moveAmount))
                 {
@@ -1132,16 +1128,6 @@ public static class CardDescriptionFormatter
 
         amount = singleDrawAmount * repeatCount;
         return amount > 0;
-    }
-
-    private static int ResolveOnAttackGainStrengthAmount(OnAttackGainStrengthEffect effect, TrainingBattleManager battleManager)
-    {
-        if (effect == null)
-        {
-            return 0;
-        }
-
-        return Mathf.Max(0, ResolveCardValueAmount(effect.amount, effect.amountFormula, battleManager, 0));
     }
 
     private static int ResolveCardValueAmount(int amount, string amountFormula, TrainingBattleManager battleManager, int forwardedAmount)

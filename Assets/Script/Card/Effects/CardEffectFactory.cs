@@ -374,13 +374,6 @@ public static class CardEffectFactory
                     amountFormula = effectData.amountFormula
                 };
 
-            case EffectType.OnAttackGainStrength:
-                return new OnAttackGainStrengthEffect
-                {
-                    amount = effectData.amount,
-                    amountFormula = effectData.amountFormula
-                };
-
             case EffectType.TransformCards:
                 return new TransformCardsEffect
                 {

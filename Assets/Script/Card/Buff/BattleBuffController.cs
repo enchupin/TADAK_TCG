@@ -9,7 +9,6 @@ public class BattleBuffController
     private readonly MonsterBuffRuntimeService monsterBuffRuntimeService;
     private readonly FeatherBuffScript featherBuffScript;
     private readonly HashSet<Monster> monsterHpLossHealPlayerTargetsThisTurn = new();
-    private int pendingStrengthGainThisTurn;
 
     public BattleBuffController(TrainingBattleManager battleManager)
     {
@@ -21,7 +20,6 @@ public class BattleBuffController
 
     public void ResetForCombat()
     {
-        pendingStrengthGainThisTurn = 0;
         monsterHpLossHealPlayerTargetsThisTurn.Clear();
         playerBuffRuntimeService.ResetForCombat();
         featherBuffScript.ResetForCombat();
@@ -29,7 +27,6 @@ public class BattleBuffController
 
     public void ApplyPlayerTurnStartEffects()
     {
-        pendingStrengthGainThisTurn = 0;
         monsterHpLossHealPlayerTargetsThisTurn.Clear();
         playerBuffRuntimeService.OnPlayerTurnStart();
         featherBuffScript.OnTurnStart();
@@ -40,7 +37,6 @@ public class BattleBuffController
         playerBuffRuntimeService.OnPlayerTurnEnd();
         playerBuffRuntimeService.ReplayTurnEndTriggeredEffects();
         monsterBuffRuntimeService.OnPlayerTurnEnd();
-        pendingStrengthGainThisTurn = 0;
         monsterHpLossHealPlayerTargetsThisTurn.Clear();
     }
 
@@ -209,14 +205,6 @@ public class BattleBuffController
         return playerBuffRuntimeService.ConsumeRepeatCount(playedCard, isRepeatedEffect);
     }
 
-    public void RegisterAttackGainStrengthThisTurn(int amount)
-    {
-        if (amount > 0)
-        {
-            pendingStrengthGainThisTurn += amount;
-        }
-    }
-
     public void RegisterMonsterHpLossHealPlayerThisTurn(Monster monster)
     {
         if (monster == null || monster.IsDead())
@@ -229,12 +217,6 @@ public class BattleBuffController
 
     public void HandlePlayerAttackResolved(Monster targetMonster, int barrierBefore, int barrierAfter)
     {
-        if (targetMonster != null && battleManager.playerData != null && pendingStrengthGainThisTurn > 0)
-        {
-            battleManager.ApplyBuffToPlayer(StrengthBuffId, pendingStrengthGainThisTurn);
-            battleManager.ApplyBuffToPlayer(StrengthDecayBuffId, pendingStrengthGainThisTurn);
-        }
-
         playerBuffRuntimeService.OnPlayerAttackResolved(targetMonster, barrierBefore, barrierAfter);
     }
 

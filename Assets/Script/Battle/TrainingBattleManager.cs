@@ -639,8 +639,6 @@ public class TrainingBattleManager : MonoBehaviour
                 return effect is RepeatEffect;
             case EffectType.Trigger:
                 return effect is TriggerEffect;
-            case EffectType.OnAttackGainStrength:
-                return effect is OnAttackGainStrengthEffect;
             case EffectType.Kill:
                 return effect is KillEffect;
             case EffectType.ChangeStat:
@@ -1135,11 +1133,6 @@ public class TrainingBattleManager : MonoBehaviour
     public int ConsumeRepeatedPlayCount(Card playedCard, bool isRepeatedEffect)
     {
         return battleBuffController != null ? battleBuffController.ConsumeRepeatedPlayCount(playedCard, isRepeatedEffect) : 0;
-    }
-
-    public void RegisterAttackGainStrengthThisTurn(int amount)
-    {
-        battleBuffController?.RegisterAttackGainStrengthThisTurn(amount);
     }
 
     public void HandlePlayerAttackResolved(Monster targetMonster, int barrierBefore, int barrierAfter)
