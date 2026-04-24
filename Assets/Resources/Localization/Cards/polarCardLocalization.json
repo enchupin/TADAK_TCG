@@ -408,17 +408,17 @@
         {
             "cardId": 301071,
             "koName": "보호 동결 +",
-            "koDescription": "(예방)을 1 얻습니다. 보존: 결속만큼 보호막을 얻습니다.",
+            "koDescription": "(예방)을 1 얻습니다. 보존: (결속)만큼 보호막을 얻습니다.",
             "enName": "Protective Freeze +",
-            "enDescription": "Gain 1 (Prevention). Retain: Gain Block equal to Bond.",
+            "enDescription": "Gain 1 (Prevention). Retain: Gain Block equal to (Bond).",
             "jaName": "防護凍結 +",
-            "jaDescription": "(予防)を1得る。保持: 絆に等しいバリアを得る。",
+            "jaDescription": "(予防)を1得る。保持: (絆)に等しいバリアを得る。",
             "zhHantName": "防護凍結 +",
-            "zhHantDescription": "獲得1層(預防)。保留: 獲得等同於羈絆層數的護盾。",
+            "zhHantDescription": "獲得1層(預防)。保留: 獲得等同於(羈絆)層數的護盾。",
             "zhHansName": "防护冻结 +",
-            "zhHansDescription": "获得1层(预防)。保留: 获得等同于羁绊层数的护盾。",
+            "zhHansDescription": "获得1层(预防)。保留: 获得等同于(羁绊)层数的护盾。",
             "ruName": "Защитная заморозка +",
-            "ruDescription": "Получает 1 (Предотвращения). Сохранение: получает барьер, равный Связи."
+            "ruDescription": "Получает 1 (Предотвращения). Сохранение: получает барьер, равный (Связи)."
         },
         {
             "cardId": 301072,

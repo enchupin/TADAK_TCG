@@ -48,17 +48,17 @@
         {
             "cardId": 30,
             "koName": "공허의 부름",
-            "koDescription": "턴 종료 시 약화를 2 얻습니다.",
+            "koDescription": "턴 종료 시 (약화)를 2 얻습니다.",
             "enName": "Call of the Void",
-            "enDescription": "Gain 2 Weak at the end of the turn.",
+            "enDescription": "Gain 2 (Weak) at the end of the turn.",
             "jaName": "虚空の呼び声",
-            "jaDescription": "ターン終了時に弱体を2得る。",
+            "jaDescription": "ターン終了時に(弱体)を2得る。",
             "zhHantName": "虛空的呼喚",
-            "zhHantDescription": "回合結束時，獲得2層虛弱。",
+            "zhHantDescription": "回合結束時，獲得2層(虛弱)。",
             "zhHansName": "虚空的呼唤",
-            "zhHansDescription": "回合结束时，获得2层虚弱。",
+            "zhHansDescription": "回合结束时，获得2层(虚弱)。",
             "ruName": "Зов пустоты",
-            "ruDescription": "В конце хода получает 2 Слабости."
+            "ruDescription": "В конце хода получает 2 (Слабости)."
         },
         {
             "cardId": 40,

@@ -123,7 +123,7 @@
         {
             "cardId": 103040,
             "koName": "정당한 계약",
-            "koDescription": "(계약:카드)를 {amount} 얻습니다.",
+            "koDescription": "(계약: 카드)를 {amount} 얻습니다.",
             "enName": "Righteous Contract",
             "enDescription": "Gain {amount} (Contract: Cards).",
             "jaName": "正当な契約",
@@ -138,7 +138,7 @@
         {
             "cardId": 103041,
             "koName": "정당한 계약 +",
-            "koDescription": "(계약:카드)를 {amount} 얻습니다.",
+            "koDescription": "(계약: 카드)를 {amount} 얻습니다.",
             "enName": "Righteous Contract +",
             "enDescription": "Gain {amount} (Contract: Cards).",
             "jaName": "正当な契約 +",
@@ -153,7 +153,7 @@
         {
             "cardId": 103042,
             "koName": "정당한 계약 +",
-            "koDescription": "(계약:카드)를 {amount} 얻습니다.",
+            "koDescription": "(계약: 카드)를 {amount} 얻습니다.",
             "enName": "Righteous Contract +",
             "enDescription": "Gain {amount} (Contract: Cards).",
             "jaName": "正当な契約 +",
@@ -168,7 +168,7 @@
         {
             "cardId": 103043,
             "koName": "정당한 계약 +",
-            "koDescription": "(계약:힘)을 {amount} 얻습니다.",
+            "koDescription": "(계약: 힘)을 {amount} 얻습니다.",
             "enName": "Righteous Contract +",
             "enDescription": "Gain {amount} (Contract: Strength).",
             "jaName": "正当な契約 +",

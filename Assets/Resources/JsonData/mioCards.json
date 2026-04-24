@@ -54,7 +54,7 @@
             "name": "역류 +",
             "characterId": 204,
             "cost": 1,
-            "description": "피해를 8 입힙니다. 입힌 피해량만큼 익사를 부여합니다.",
+            "description": "피해를 8 입힙니다. 입힌 피해량만큼 (익사)를 부여합니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -144,7 +144,7 @@
             "keywords": [
                 4
             ],
-            "description": "적에게 해로운 효과를 부여할 때마다 대상에게 익사를 7 부여합니다.",
+            "description": "적에게 해로운 효과를 부여할 때마다 대상에게 (익사)를 7 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -175,7 +175,7 @@
             "name": "팽창 +",
             "characterId": 204,
             "cost": 1,
-            "description": "대상이 보유한 익사 10당 익사를 5 부여합니다. 익사를 5 더 부여합니다.",
+            "description": "대상이 보유한 (익사) 10당 (익사)를 5 부여합니다. (익사)를 5 더 부여합니다.",
             "effects": [
                 {
                     "type": "ApplyBuffByTargetStack",
@@ -257,7 +257,7 @@
             "keywords": [
                 3
             ],
-            "description": "대상의 익사를 2배로 만듭니다. 익사가 적의 최대 체력보다 높다면, 즉시 발동합니다.",
+            "description": "대상의 (익사)를 2배로 만듭니다. (익사)가 적의 최대 체력보다 높다면, 즉시 발동합니다.",
             "effects": [
                 {
                     "type": "ChangeStat",
@@ -320,7 +320,7 @@
             "name": "물안개 +",
             "characterId": 204,
             "cost": 1,
-            "description": "보호막을 8 얻습니다. 이번 턴에 적에게 익사를 부여했다면 2배로 얻습니다.",
+            "description": "보호막을 8 얻습니다. 이번 턴에 적에게 (익사)를 부여했다면 2배로 얻습니다.",
             "effects": [
                 {
                     "condition": {
@@ -501,7 +501,7 @@
             "name": "해일 +",
             "characterId": 204,
             "cost": 2,
-            "description": "모든 적이 각자 보유한 익사만큼 피해를 입습니다.",
+            "description": "모든 적이 각자 보유한 (익사)만큼 피해를 입습니다.",
             "effects": [
                 {
                     "type": "DamageByBuffStack",
@@ -623,7 +623,7 @@
             "keywords": [
                 4
             ],
-            "description": "힘을 2 잃습니다. (기력 초과)를 1 얻습니다.",
+            "description": "(힘)을 2 잃습니다. (기력 초과)를 1 얻습니다.",
             "effects": [
                 {
                     "type": "ChangeStat",
