@@ -10,7 +10,7 @@ public class UIHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 {
     [Header("호버 설정")]
     [SerializeField] protected float hoverScale = 1.2f;
-    [SerializeField] protected float animationDuration = 0.2f;
+    [SerializeField] protected float animationDuration = 0.01f;
     
     protected Vector3 originalScale;
     protected Coroutine currentAnimation;
