@@ -171,7 +171,7 @@
                 8,
                 4
             ],
-            "description": "(계약:카드)를 {amount} 얻습니다.",
+            "description": "(계약: 카드)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -191,7 +191,7 @@
                 8,
                 4
             ],
-            "description": "(계약:카드)를 {amount} 얻습니다.",
+            "description": "(계약: 카드)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -210,7 +210,7 @@
                 1,
                 4
             ],
-            "description": "(계약:카드)를 {amount} 얻습니다.",
+            "description": "(계약: 카드)를 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -228,7 +228,7 @@
             "keywords": [
                 4
             ],
-            "description": "(계약:힘)을 {amount} 얻습니다.",
+            "description": "(계약: 힘)을 {amount} 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",

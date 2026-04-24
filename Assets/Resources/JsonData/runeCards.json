@@ -146,7 +146,7 @@
             "name": "프로토콜: 보호",
             "characterId": 302,
             "cost": 1,
-            "description": "우피가 보호 모드로 전환됩니다.",
+            "description": "우피가 (우피: 보호) 모드로 전환됩니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -162,7 +162,7 @@
             "name": "프로토콜: 보호 +",
             "characterId": 302,
             "cost": 1,
-            "description": "{동력}을 {amount} 얻습니다. 우피가 보호 모드로 전환됩니다.",
+            "description": "{동력}을 {amount} 얻습니다. 우피가 (우피: 보호) 모드로 전환됩니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -264,7 +264,7 @@
             "name": "프로토콜: 공격",
             "characterId": 302,
             "cost": 2,
-            "description": "우피가 공격 모드로 전환됩니다.",
+            "description": "우피가 (우피: 공격) 모드로 전환됩니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -283,7 +283,7 @@
             "keywords": [
                 5
             ],
-            "description": "우피가 공격 모드로 전환됩니다. 피해를 {amount2} 입힙니다.",
+            "description": "우피가 (우피: 공격) 모드로 전환됩니다. 피해를 {amount2} 입힙니다.",
             "effects": [
                 {
                     "type": "Buff",
@@ -303,7 +303,7 @@
             "name": "프로토콜: 공격 +",
             "characterId": 302,
             "cost": 2,
-            "description": "{동력}을 {amount} 얻습니다. 우피가 공격 모드로 전환됩니다.",
+            "description": "{동력}을 {amount} 얻습니다. 우피가 (우피: 공격) 모드로 전환됩니다.",
             "effects": [
                 {
                     "type": "Buff",

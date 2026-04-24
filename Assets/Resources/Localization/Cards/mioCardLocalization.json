@@ -48,17 +48,17 @@
         {
             "cardId": 204031,
             "koName": "역류 +",
-            "koDescription": "피해를 8 입힙니다. 입힌 피해량만큼 익사를 부여합니다.",
+            "koDescription": "피해를 8 입힙니다. 입힌 피해량만큼 (익사)를 부여합니다.",
             "enName": "Backflow +",
-            "enDescription": "Deal 8 damage. Apply Drowning equal to the damage dealt.",
+            "enDescription": "Deal 8 damage. Apply (Drowning) equal to the damage dealt.",
             "jaName": "逆流 +",
-            "jaDescription": "8ダメージを与える。与えたダメージ分の溺死を付与する。",
+            "jaDescription": "8ダメージを与える。与えたダメージ分の(溺死)を付与する。",
             "zhHantName": "逆流 +",
-            "zhHantDescription": "造成8點傷害。施加等同於造成傷害量的溺水。",
+            "zhHantDescription": "造成8點傷害。施加等同於造成傷害量的(溺水)。",
             "zhHansName": "逆流 +",
-            "zhHansDescription": "造成8点伤害。施加等同于造成伤害量的溺水。",
+            "zhHansDescription": "造成8点伤害。施加等同于造成伤害量的(溺水)。",
             "ruName": "Обратное течение +",
-            "ruDescription": "Наносит 8 урона. Накладывает Утопление, равное нанесённому урону."
+            "ruDescription": "Наносит 8 урона. Накладывает (Утопление), равное нанесённому урону."
         },
         {
             "cardId": 204032,
@@ -108,17 +108,17 @@
         {
             "cardId": 204035,
             "koName": "역류 +",
-            "koDescription": "적에게 해로운 효과를 부여할 때마다 대상에게 익사를 7 부여합니다.",
+            "koDescription": "적에게 해로운 효과를 부여할 때마다 대상에게 (익사)를 7 부여합니다.",
             "enName": "Backflow +",
-            "enDescription": "Whenever you apply a harmful effect to an enemy, apply 7 Drowning to that target.",
+            "enDescription": "Whenever you apply a harmful effect to an enemy, apply 7 (Drowning) to that target.",
             "jaName": "逆流 +",
-            "jaDescription": "敵に有害効果を付与するたび、その対象に溺死を7付与する。",
+            "jaDescription": "敵に有害効果を付与するたび、その対象に(溺死)を7付与する。",
             "zhHantName": "逆流 +",
-            "zhHantDescription": "每當你對敵人施加有害效果時，對該目標施加7層溺水。",
+            "zhHantDescription": "每當你對敵人施加有害效果時，對該目標施加7層(溺水)。",
             "zhHansName": "逆流 +",
-            "zhHansDescription": "每当你对敌人施加有害效果时，对该目标施加7层溺水。",
+            "zhHansDescription": "每当你对敌人施加有害效果时，对该目标施加7层(溺水)。",
             "ruName": "Обратное течение +",
-            "ruDescription": "Каждый раз, когда вы накладываете вредный эффект на врага, накладывает на эту цель 7 Утопления."
+            "ruDescription": "Каждый раз, когда вы накладываете вредный эффект на врага, накладывает на эту цель 7 (Утопления)."
         },
         {
             "cardId": 204040,
@@ -138,17 +138,17 @@
         {
             "cardId": 204041,
             "koName": "팽창 +",
-            "koDescription": "대상이 보유한 익사 10당 익사를 5 부여합니다. 익사를 5 더 부여합니다.",
+            "koDescription": "대상이 보유한 (익사) 10당 (익사)를 5 부여합니다. (익사)를 5 더 부여합니다.",
             "enName": "Swell +",
-            "enDescription": "For every 10 Drowning the target has, apply 5 Drowning. Apply 5 more Drowning.",
+            "enDescription": "For every 10 (Drowning) the target has, apply 5 (Drowning). Apply 5 more (Drowning).",
             "jaName": "膨張 +",
-            "jaDescription": "対象が持つ溺死10ごとに溺死を5付与する。さらに溺死を5付与する。",
+            "jaDescription": "対象が持つ(溺死)10ごとに(溺死)を5付与する。さらに(溺死)を5付与する。",
             "zhHantName": "膨脹 +",
-            "zhHantDescription": "目標每擁有10層溺水，施加5層溺水。再額外施加5層溺水。",
+            "zhHantDescription": "目標每擁有10層(溺水)，施加5層(溺水)。再額外施加5層(溺水)。",
             "zhHansName": "膨胀 +",
-            "zhHansDescription": "目标每拥有10层溺水，施加5层溺水。再额外施加5层溺水。",
+            "zhHansDescription": "目标每拥有10层(溺水)，施加5层(溺水)。再额外施加5层(溺水)。",
             "ruName": "Набухание +",
-            "ruDescription": "За каждые 10 Утопления у цели накладывает 5 Утопления. Накладывает ещё 5 Утопления."
+            "ruDescription": "За каждые 10 (Утопления) у цели накладывает 5 (Утопления). Накладывает ещё 5 (Утопления)."
         },
         {
             "cardId": 204042,
@@ -198,17 +198,17 @@
         {
             "cardId": 204045,
             "koName": "팽창 +",
-            "koDescription": "대상의 익사를 2배로 만듭니다. 익사가 적의 최대 체력보다 높다면, 즉시 발동합니다.",
+            "koDescription": "대상의 (익사)를 2배로 만듭니다. (익사)가 적의 최대 체력보다 높다면, 즉시 발동합니다.",
             "enName": "Swell +",
-            "enDescription": "Double the target's Drowning. If Drowning is higher than the enemy's max HP, trigger it immediately.",
+            "enDescription": "Double the target's (Drowning). If (Drowning) is higher than the enemy's max HP, trigger it immediately.",
             "jaName": "膨張 +",
-            "jaDescription": "対象の溺死を2倍にする。溺死が敵の最大体力より高い場合、ただちに発動する。",
+            "jaDescription": "対象の(溺死)を2倍にする。(溺死)が敵の最大体力より高い場合、ただちに発動する。",
             "zhHantName": "膨脹 +",
-            "zhHantDescription": "使目標的溺水變為2倍。若溺水高於敵人的最大生命值，立即觸發。",
+            "zhHantDescription": "使目標的(溺水)變為2倍。若(溺水)高於敵人的最大生命值，立即觸發。",
             "zhHansName": "膨胀 +",
-            "zhHansDescription": "使目标的溺水变为2倍。若溺水高于敌人的最大生命值，立即触发。",
+            "zhHansDescription": "使目标的(溺水)变为2倍。若(溺水)高于敌人的最大生命值，立即触发。",
             "ruName": "Набухание +",
-            "ruDescription": "Удваивает Утопление цели. Если Утопление выше максимального здоровья врага, сработает немедленно."
+            "ruDescription": "Удваивает (Утопление) цели. Если (Утопление) выше максимального здоровья врага, сработает немедленно."
         },
         {
             "cardId": 204050,
@@ -243,17 +243,17 @@
         {
             "cardId": 204052,
             "koName": "물안개 +",
-            "koDescription": "보호막을 8 얻습니다. 이번 턴에 적에게 익사를 부여했다면 2배로 얻습니다.",
+            "koDescription": "보호막을 8 얻습니다. 이번 턴에 적에게 (익사)를 부여했다면 2배로 얻습니다.",
             "enName": "Mist +",
-            "enDescription": "Gain 8 Block. If you applied Drowning to an enemy this turn, gain twice as much.",
+            "enDescription": "Gain 8 Block. If you applied (Drowning) to an enemy this turn, gain twice as much.",
             "jaName": "水霧 +",
-            "jaDescription": "バリアを8得る。このターンに敵へ溺死を付与していたなら、2倍得る。",
+            "jaDescription": "バリアを8得る。このターンに敵へ(溺死)を付与していたなら、2倍得る。",
             "zhHantName": "水霧 +",
-            "zhHantDescription": "獲得8點護盾。若本回合曾對敵人施加溺水，獲得量變為2倍。",
+            "zhHantDescription": "獲得8點護盾。若本回合曾對敵人施加(溺水)，獲得量變為2倍。",
             "zhHansName": "水雾 +",
-            "zhHansDescription": "获得8点护盾。若本回合曾对敌人施加溺水，获得量变为2倍。",
+            "zhHansDescription": "获得8点护盾。若本回合曾对敌人施加(溺水)，获得量变为2倍。",
             "ruName": "Водяной туман +",
-            "ruDescription": "Получает 8 барьера. Если в этот ход вы наложили Утопление на врага, получает вдвое больше."
+            "ruDescription": "Получает 8 барьера. Если в этот ход вы наложили (Утопление) на врага, получает вдвое больше."
         },
         {
             "cardId": 204053,
@@ -378,17 +378,17 @@
         {
             "cardId": 204065,
             "koName": "해일 +",
-            "koDescription": "모든 적이 각자 보유한 익사만큼 피해를 입습니다.",
+            "koDescription": "모든 적이 각자 보유한 (익사)만큼 피해를 입습니다.",
             "enName": "Tide +",
-            "enDescription": "Each enemy takes damage equal to its Drowning.",
+            "enDescription": "Each enemy takes damage equal to its (Drowning).",
             "jaName": "津波 +",
-            "jaDescription": "すべての敵が、それぞれの溺死に等しいダメージを受ける。",
+            "jaDescription": "すべての敵が、それぞれの(溺死)に等しいダメージを受ける。",
             "zhHantName": "海嘯 +",
-            "zhHantDescription": "每個敵人受到等同於自身溺水層數的傷害。",
+            "zhHantDescription": "每個敵人受到等同於自身(溺水)層數的傷害。",
             "zhHansName": "海啸 +",
-            "zhHansDescription": "每个敌人受到等同于自身溺水层数的伤害。",
+            "zhHansDescription": "每个敌人受到等同于自身(溺水)层数的伤害。",
             "ruName": "Приливная волна +",
-            "ruDescription": "Каждый враг получает урон, равный своему Утоплению."
+            "ruDescription": "Каждый враг получает урон, равный своему (Утоплению)."
         },
         {
             "cardId": 204070,
@@ -468,17 +468,17 @@
         {
             "cardId": 204075,
             "koName": "근원 +",
-            "koDescription": "힘을 2 잃습니다. (기력 초과)를 1 얻습니다.",
+            "koDescription": "(힘)을 2 잃습니다. (기력 초과)를 1 얻습니다.",
             "enName": "Source +",
-            "enDescription": "Lose 2 Strength. Gain 1 Energy Overflow.",
+            "enDescription": "Lose 2 (Strength). Gain 1 (Energy Overflow).",
             "jaName": "根源 +",
-            "jaDescription": "力を2失う。(気力超過)を1得る。",
+            "jaDescription": "(力)を2失う。(気力超過)を1得る。",
             "zhHantName": "根源 +",
-            "zhHantDescription": "失去2層力量。獲得1層能量超載。",
+            "zhHantDescription": "失去2層(力量)。獲得1層(氣力超載)。",
             "zhHansName": "根源 +",
-            "zhHansDescription": "失去2层力量。获得1层能量超载。",
+            "zhHansDescription": "失去2层(力量)。获得1层(气力超载)。",
             "ruName": "Исток +",
-            "ruDescription": "Теряет 2 Силы. Получает 1 Переполнение энергии."
+            "ruDescription": "Теряет 2 (Силы). Получает 1 (Перезаряд)."
         }
     ]
 }

@@ -511,7 +511,7 @@
             "name": "혈투",
             "characterId": 303,
             "cost": 1,
-            "description": "피해를 {amount} 입힙니다. 이 수치는 이번 전투 동안 내 카드로 잃은 체력입니다.",
+            "description": "이번 전투 동안 내 카드로 잃은 체력만큼 피해를 입힙니다. 피해량은 {amount}입니다.",
             "effects": [
                 {
                     "type": "Attack",
@@ -526,7 +526,7 @@
             "name": "혈투 +",
             "characterId": 303,
             "cost": 0,
-            "description": "피해를 {amount} 입힙니다. 이 수치는 이번 전투 동안 내 카드로 잃은 체력입니다.",
+            "description": "이번 전투 동안 내 카드로 잃은 체력만큼 피해를 입힙니다. 피해량은 {amount}입니다.",
             "effects": [
                 {
                     "type": "Attack",
