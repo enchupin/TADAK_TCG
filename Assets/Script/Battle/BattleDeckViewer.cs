@@ -21,6 +21,9 @@ public class BattleDeckViewer : MonoBehaviour
     [SerializeField] private GameObject deckPanelRoot;
     [SerializeField] private CardContainerManager cardContainerManager;
     [SerializeField] private Button selectionConfirmButton;
+    [SerializeField] private GameObject cardDetailPanelRoot;
+    [SerializeField] private Transform cardDetailCardParent;
+    [SerializeField] private GameObject cardDetailCardPrefab;
 
     [Header("참조")]
     [SerializeField] private TrainingBattleManager battleManager;
@@ -31,10 +34,12 @@ public class BattleDeckViewer : MonoBehaviour
     private readonly List<Card> selectedCards = new List<Card>();
     private readonly List<CardController> selectedControllers = new List<CardController>();
     private DeckPanelViewType currentViewType;
-
+    private CardController cardDetailPreviewController;
+    private CardUI cardDetailPreviewUI;
     private void Awake() {
         ValidateRequiredReferences();
         deckPanelRoot.SetActive(false);
+        CloseCardDetailPanel();
         UpdateConfirmButtonState();
     }
 
@@ -94,6 +99,7 @@ public class BattleDeckViewer : MonoBehaviour
 
         if (deckPanelRoot.activeSelf && currentViewType == viewType) {
             deckPanelRoot.SetActive(false);
+            CloseCardDetailPanel();
             currentViewType = DeckPanelViewType.None;
             return;
         }
@@ -117,6 +123,7 @@ public class BattleDeckViewer : MonoBehaviour
         onSelectionCompleted = onComplete;
         selectedCards.Clear();
         selectedControllers.Clear();
+        CloseCardDetailPanel();
         UpdateConfirmButtonState();
 
         cardContainerManager.ClearHand();
@@ -147,8 +154,13 @@ public class BattleDeckViewer : MonoBehaviour
             _ => new List<Card>()
         };
 
+        if (viewType == DeckPanelViewType.DrawPile) {
+            cards.Sort(CompareCardsById);
+        }
+
+        CloseCardDetailPanel();
         cardContainerManager.ClearHand();
-        cardContainerManager.SetCardClickHandler(null);
+        cardContainerManager.SetCardClickHandler(HandleViewedCardClicked);
         currentViewType = viewType;
         if (cards == null || cards.Count == 0) {
             return;
@@ -156,6 +168,27 @@ public class BattleDeckViewer : MonoBehaviour
 
         // 캐릭터북과 동일하게 입력 비활성 카드 UI 사용
         cardContainerManager.AddCardWithoutInputController(cards);
+    }
+
+    private static int CompareCardsById(Card left, Card right) {
+        if (ReferenceEquals(left, right)) {
+            return 0;
+        }
+
+        if (left == null) {
+            return 1;
+        }
+
+        if (right == null) {
+            return -1;
+        }
+
+        int cardIdCompare = left.cardId.CompareTo(right.cardId);
+        if (cardIdCompare != 0) {
+            return cardIdCompare;
+        }
+
+        return string.Compare(left.cardName, right.cardName, StringComparison.Ordinal);
     }
 
     private void HandleSelectableCardClicked(CardController controller) {
@@ -182,6 +215,14 @@ public class BattleDeckViewer : MonoBehaviour
         UpdateConfirmButtonState();
     }
 
+    private void HandleViewedCardClicked(CardController controller) {
+        if (isSelectionMode || controller == null || controller.Card == null) {
+            return;
+        }
+
+        OpenCardDetailPanel(controller);
+    }
+
     private void CompleteSelection(List<Card> result) {
         Action<List<Card>> callback = onSelectionCompleted;
 
@@ -191,6 +232,7 @@ public class BattleDeckViewer : MonoBehaviour
         onSelectionCompleted = null;
         selectedCards.Clear();
         selectedControllers.Clear();
+        CloseCardDetailPanel();
         UpdateConfirmButtonState();
 
         cardContainerManager.SetCardClickHandler(null);
@@ -201,6 +243,105 @@ public class BattleDeckViewer : MonoBehaviour
         currentViewType = DeckPanelViewType.None;
 
         callback?.Invoke(result ?? new List<Card>());
+    }
+
+    public void CloseCardDetailPanel() {
+        ResolveCardDetailPreviewUI()?.HideBuffTooltip();
+        if (cardDetailPanelRoot != null) {
+            cardDetailPanelRoot.SetActive(false);
+        }
+    }
+
+    private void OpenCardDetailPanel(CardController sourceController) {
+        if (sourceController == null || sourceController.Card == null) {
+            return;
+        }
+
+        if (!TryEnsureCardDetailPreview()) {
+            return;
+        }
+
+        if (cardDetailPanelRoot != null) {
+            cardDetailPanelRoot.SetActive(true);
+        }
+
+        if (cardDetailPreviewController != null) {
+            cardDetailPreviewController.Initialize(sourceController.Card);
+            cardDetailPreviewController.isPlayable = true;
+        } else if (cardDetailPreviewUI != null) {
+            cardDetailPreviewUI.UpdateDisplay(sourceController.Card);
+            cardDetailPreviewUI.SetPlayable(true);
+        }
+
+        CardUI detailPreviewUI = ResolveCardDetailPreviewUI();
+        if (detailPreviewUI != null) {
+            Canvas.ForceUpdateCanvases();
+            detailPreviewUI.ShowBuffTooltip();
+        }
+    }
+
+    private bool TryEnsureCardDetailPreview() {
+        if (cardDetailPreviewController != null || cardDetailPreviewUI != null) {
+            return true;
+        }
+
+        Transform previewParent = cardDetailCardParent != null ? cardDetailCardParent : cardDetailPanelRoot != null ? cardDetailPanelRoot.transform : null;
+        if (previewParent == null) {
+            Debug.LogWarning("[BattleDeckViewer] 카드 상세 패널 부모가 연결되지 않았습니다");
+            return false;
+        }
+
+        if (cardDetailCardPrefab == null) {
+            Debug.LogError("[BattleDeckViewer] 카드 상세 프리뷰 프리팹이 연결되지 않았습니다");
+            return false;
+        }
+
+        GameObject detailCardObject = Instantiate(cardDetailCardPrefab, previewParent);
+        cardDetailPreviewController = detailCardObject.GetComponent<CardController>();
+        cardDetailPreviewUI = detailCardObject.GetComponent<CardUI>();
+
+        RectTransform detailCardRect = detailCardObject.transform as RectTransform;
+        if (detailCardRect != null) {
+            detailCardRect.anchorMin = new Vector2(0.5f, 0.5f);
+            detailCardRect.anchorMax = new Vector2(0.5f, 0.5f);
+            detailCardRect.pivot = new Vector2(0.5f, 0.5f);
+            detailCardRect.anchoredPosition = Vector2.zero;
+            detailCardRect.localRotation = Quaternion.identity;
+            detailCardRect.localScale = Vector3.one;
+        }
+
+        if (cardDetailPreviewController != null) {
+            cardDetailPreviewController.useInteractionHandler = false;
+
+            if (cardDetailPreviewController.interactionHandler != null) {
+                cardDetailPreviewController.interactionHandler.showPlayThreshold = false;
+                cardDetailPreviewController.interactionHandler.enabled = false;
+            }
+        }
+
+        CardSelectionClickHandler clickHandler = detailCardObject.GetComponent<CardSelectionClickHandler>();
+        if (clickHandler != null) {
+            Destroy(clickHandler);
+        }
+
+        if (cardDetailPreviewController == null && cardDetailPreviewUI == null) {
+            Debug.LogWarning("[BattleDeckViewer] 카드 상세 프리뷰 프리팹에 CardController 또는 CardUI가 없습니다");
+            return false;
+        }
+
+        return true;
+    }
+
+    private CardUI ResolveCardDetailPreviewUI() {
+        if (cardDetailPreviewUI != null) {
+            return cardDetailPreviewUI;
+        }
+
+        if (cardDetailPreviewController != null) {
+            return cardDetailPreviewController.cardUI;
+        }
+
+        return null;
     }
 
     private static void SetSelectedVisual(CardController controller, bool isSelected) {

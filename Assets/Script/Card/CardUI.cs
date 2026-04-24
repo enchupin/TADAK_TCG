@@ -16,7 +16,6 @@ public class CardUI : MonoBehaviour
     private static readonly Regex BuffTooltipPlaceholderPattern = new(@"\{(?<content>[^{}]+)\}", RegexOptions.Compiled);
     private static readonly Regex BuffTooltipMultipleWhitespacePattern = new(@"\s{2,}", RegexOptions.Compiled);
     private static readonly Regex BuffTooltipWhitespaceBeforePunctuationPattern = new(@"\s+([.,!?])", RegexOptions.Compiled);
-
     [Header("UI Components")]
     [SerializeField] private TextMeshProUGUI cardNameText;
     [SerializeField] private TextMeshProUGUI costText;
@@ -84,7 +83,19 @@ public class CardUI : MonoBehaviour
     {
         CacheTooltipReferences();
 
-        if (tooltipPanel == null || tooltipText == null || currentCard == null)
+        if (tooltipPanel == null)
+        {
+            HideBuffTooltip();
+            return;
+        }
+
+        if (tooltipText == null)
+        {
+            HideBuffTooltip();
+            return;
+        }
+
+        if (currentCard == null)
         {
             HideBuffTooltip();
             return;
@@ -379,10 +390,38 @@ public class CardUI : MonoBehaviour
 
         if (tooltipText == null)
         {
-            Transform tooltipTextTransform = FindChildTransform(transform, "TooltipText");
+            Transform tooltipTextTransform = tooltipPanel != null
+                ? FindChildTransform(tooltipPanel.transform, "TooltipText")
+                : FindChildTransform(transform, "TooltipText");
             if (tooltipTextTransform != null)
             {
                 tooltipText = tooltipTextTransform.GetComponent<TextMeshProUGUI>();
+            }
+        }
+
+        if (tooltipPanel == null)
+        {
+            Canvas[] tooltipCanvases = GetComponentsInChildren<Canvas>(true);
+            foreach (Canvas candidateCanvas in tooltipCanvases)
+            {
+                if (candidateCanvas != null && candidateCanvas.gameObject.name == "TooltipPanel")
+                {
+                    tooltipPanel = candidateCanvas.gameObject;
+                    break;
+                }
+            }
+        }
+
+        if (tooltipText == null)
+        {
+            TextMeshProUGUI[] tooltipTexts = GetComponentsInChildren<TextMeshProUGUI>(true);
+            foreach (TextMeshProUGUI candidateText in tooltipTexts)
+            {
+                if (candidateText != null && candidateText.gameObject.name == "TooltipText")
+                {
+                    tooltipText = candidateText;
+                    break;
+                }
             }
         }
 

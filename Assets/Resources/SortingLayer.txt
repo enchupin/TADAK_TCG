@@ -1,4 +1,6 @@
 SortingLayer
 
 10 : SettingPanel
-9 : SelectPanel
+9 : DetailPanel_BuffToolTip
+8 : DetailPanel
+7 : SelectPanel

@@ -28,7 +28,7 @@ public class CardInteractionHandler : UIHoverEffect,
 
     [Header("Hover Settings")]
     private readonly float cardHoverScale = 1.4f;
-    private readonly float cardHoverDuration = 0.15f;
+    private readonly float cardHoverDuration = 0.1f;
 
     [Header("Drag Components")]
     private RectTransform rectTransform;
@@ -68,20 +68,19 @@ public class CardInteractionHandler : UIHoverEffect,
 
         if (canvasGroup == null) canvasGroup = gameObject.AddComponent<CanvasGroup>();
         if (layoutElement == null) layoutElement = gameObject.AddComponent<LayoutElement>();
-
-        GameObject arrowObj = new GameObject("TargetingArrow");
-        targetingArrow = arrowObj.AddComponent<TargetingArrow>();
-        targetingArrow.Initialize();
     }
 
     private void Start()
     {
         Invoke(nameof(CheckAndCreateThresholdLine), 0.01f);
+    }
 
-        if (targetingArrow != null && canvas != null)
+    private void OnDestroy()
+    {
+        if (targetingArrow != null)
         {
-            targetingArrow.transform.SetParent(canvas.transform, false);
-            targetingArrow.transform.SetAsLastSibling();
+            Destroy(targetingArrow.gameObject);
+            targetingArrow = null;
         }
     }
 
@@ -99,14 +98,12 @@ public class CardInteractionHandler : UIHoverEffect,
         {
             BringToFrontOnHover();
             base.OnPointerEnter(eventData);
-            cardUI?.ShowBuffTooltip();
         }
     }
 
     public override void OnPointerExit(PointerEventData eventData)
     {
         RestoreSiblingAfterHover();
-        cardUI?.HideBuffTooltip();
         base.OnPointerExit(eventData);
     }
 
@@ -233,7 +230,6 @@ public class CardInteractionHandler : UIHoverEffect,
     {
         if (!CanStartDrag()) return;
 
-        cardUI?.HideBuffTooltip();
         isDragging = true;
         isAnyCardDragging = true;
         originalParent = rectTransform.parent;
@@ -249,6 +245,7 @@ public class CardInteractionHandler : UIHoverEffect,
 
         if (isTargetingMode)
         {
+            EnsureTargetingArrow();
             canvasGroup.blocksRaycasts = false;
             if (targetingArrow != null)
             {
@@ -587,5 +584,23 @@ public class CardInteractionHandler : UIHoverEffect,
         rt.pivot = new Vector2(0.5f, 0.5f);
         rt.sizeDelta = new Vector2(0f, 4f);
         rt.anchoredPosition = Vector2.zero;
+    }
+
+    private void EnsureTargetingArrow()
+    {
+        if (targetingArrow != null)
+        {
+            return;
+        }
+
+        GameObject arrowObj = new GameObject("TargetingArrow");
+        targetingArrow = arrowObj.AddComponent<TargetingArrow>();
+        targetingArrow.Initialize();
+
+        if (canvas != null)
+        {
+            targetingArrow.transform.SetParent(canvas.transform, false);
+            targetingArrow.transform.SetAsLastSibling();
+        }
     }
 }
