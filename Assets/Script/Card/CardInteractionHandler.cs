@@ -40,7 +40,10 @@ public class CardInteractionHandler : UIHoverEffect,
     [Header("Targeting")]
     private bool isTargetingMode = false;
     private TargetingArrow targetingArrow;
+    private HandManager handManager;
 
+    private int hoverSiblingIndex = -1;
+    private bool isHoverSiblingOverridden = false;
     private int originalSiblingIndex;
     private Transform originalParent;
     private Vector2 originalAnchoredPosition;
@@ -61,6 +64,7 @@ public class CardInteractionHandler : UIHoverEffect,
         canvasGroup = GetComponent<CanvasGroup>();
         layoutElement = GetComponent<LayoutElement>();
         cardUI = GetComponent<CardUI>();
+        handManager = GetComponentInParent<HandManager>();
 
         if (canvasGroup == null) canvasGroup = gameObject.AddComponent<CanvasGroup>();
         if (layoutElement == null) layoutElement = gameObject.AddComponent<LayoutElement>();
@@ -93,6 +97,7 @@ public class CardInteractionHandler : UIHoverEffect,
     {
         if (!isDragging && !isAnyCardDragging)
         {
+            BringToFrontOnHover();
             base.OnPointerEnter(eventData);
             cardUI?.ShowBuffTooltip();
         }
@@ -100,6 +105,7 @@ public class CardInteractionHandler : UIHoverEffect,
 
     public override void OnPointerExit(PointerEventData eventData)
     {
+        RestoreSiblingAfterHover();
         cardUI?.HideBuffTooltip();
         base.OnPointerExit(eventData);
     }
@@ -231,7 +237,7 @@ public class CardInteractionHandler : UIHoverEffect,
         isDragging = true;
         isAnyCardDragging = true;
         originalParent = rectTransform.parent;
-        originalSiblingIndex = transform.GetSiblingIndex();
+        originalSiblingIndex = ConsumeHoverSiblingIndex();
         originalAnchoredPosition = rectTransform.anchoredPosition;
         originalLocalPosition = rectTransform.localPosition;
 
@@ -473,8 +479,43 @@ public class CardInteractionHandler : UIHoverEffect,
         }
 
         rectTransform.SetSiblingIndex(siblingIndex);
+        if (handManager != null)
+        {
+            handManager.UpdateHandCardPositions();
+            return;
+        }
+
         rectTransform.anchoredPosition = originalAnchoredPosition;
         rectTransform.localPosition = originalLocalPosition;
+    }
+
+    private void BringToFrontOnHover()
+    {
+        if (rectTransform == null || rectTransform.parent == null || isHoverSiblingOverridden)
+            return;
+
+        hoverSiblingIndex = rectTransform.GetSiblingIndex();
+        isHoverSiblingOverridden = true;
+        rectTransform.SetAsLastSibling();
+    }
+
+    private void RestoreSiblingAfterHover()
+    {
+        if (isDragging || rectTransform == null || rectTransform.parent == null || !isHoverSiblingOverridden)
+            return;
+
+        int siblingIndex = Mathf.Clamp(hoverSiblingIndex, 0, rectTransform.parent.childCount - 1);
+        rectTransform.SetSiblingIndex(siblingIndex);
+        hoverSiblingIndex = -1;
+        isHoverSiblingOverridden = false;
+    }
+
+    private int ConsumeHoverSiblingIndex()
+    {
+        int siblingIndex = isHoverSiblingOverridden ? hoverSiblingIndex : transform.GetSiblingIndex();
+        hoverSiblingIndex = -1;
+        isHoverSiblingOverridden = false;
+        return siblingIndex;
     }
 
     private bool CanStartDrag()
