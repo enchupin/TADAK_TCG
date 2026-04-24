@@ -16,6 +16,7 @@ public class CardUI : MonoBehaviour
     private static readonly Regex BuffTooltipPlaceholderPattern = new(@"\{(?<content>[^{}]+)\}", RegexOptions.Compiled);
     private static readonly Regex BuffTooltipMultipleWhitespacePattern = new(@"\s{2,}", RegexOptions.Compiled);
     private static readonly Regex BuffTooltipWhitespaceBeforePunctuationPattern = new(@"\s+([.,!?])", RegexOptions.Compiled);
+    private static readonly Regex ReferencedBuffNamePattern = new(@"\((?<name>[^()]+)\)", RegexOptions.Compiled);
     [Header("UI Components")]
     [SerializeField] private TextMeshProUGUI cardNameText;
     [SerializeField] private TextMeshProUGUI costText;
@@ -310,14 +311,32 @@ public class CardUI : MonoBehaviour
             return;
         }
 
+        HashSet<int> appendedBuffIds = new();
         foreach (int buffId in buffIds)
         {
-            if (!BuffMetadataDatabase.TryGetBuffData(buffId, out BuffData buffData) || buffData == null)
-            {
-                continue;
-            }
+            AppendBuffTooltipEntryRecursive(builder, buffId, appendedBuffIds);
+        }
+    }
 
-            AppendTooltipEntry(builder, buffData.name, FormatBuffTooltipDescription(buffData.description));
+    private void AppendBuffTooltipEntryRecursive(StringBuilder builder, int buffId, HashSet<int> appendedBuffIds)
+    {
+        if (builder == null || appendedBuffIds == null || buffId <= 0 || appendedBuffIds.Contains(buffId))
+        {
+            return;
+        }
+
+        if (!BuffMetadataDatabase.TryGetBuffData(buffId, out BuffData buffData) || buffData == null)
+        {
+            return;
+        }
+
+        appendedBuffIds.Add(buffId);
+        AppendTooltipEntry(builder, buffData.name, FormatBuffTooltipDescription(buffData.description));
+
+        List<int> referencedBuffIds = ExtractReferencedBuffIds(buffData.description);
+        foreach (int referencedBuffId in referencedBuffIds)
+        {
+            AppendBuffTooltipEntryRecursive(builder, referencedBuffId, appendedBuffIds);
         }
     }
 
@@ -375,6 +394,34 @@ public class CardUI : MonoBehaviour
         string cleaned = BuffTooltipMultipleWhitespacePattern.Replace(text, " ");
         cleaned = BuffTooltipWhitespaceBeforePunctuationPattern.Replace(cleaned, "$1");
         return cleaned.Trim();
+    }
+
+    private static List<int> ExtractReferencedBuffIds(string text)
+    {
+        List<int> referencedBuffIds = new();
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return referencedBuffIds;
+        }
+
+        MatchCollection matches = ReferencedBuffNamePattern.Matches(text);
+        foreach (Match match in matches)
+        {
+            string buffName = match.Groups["name"].Value.Trim();
+            if (string.IsNullOrWhiteSpace(buffName))
+            {
+                continue;
+            }
+
+            if (!BuffMetadataDatabase.TryGetBuffId(buffName, out int buffId) || referencedBuffIds.Contains(buffId))
+            {
+                continue;
+            }
+
+            referencedBuffIds.Add(buffId);
+        }
+
+        return referencedBuffIds;
     }
 
     private void CacheTooltipReferences()
@@ -460,6 +507,7 @@ public class CardUI : MonoBehaviour
 public static class CardDescriptionFormatter
 {
     private static readonly Regex AmountPlaceholderPattern = new(@"\{amount(?<index>\d*)\}", RegexOptions.Compiled);
+    private static readonly Regex ReferencedBuffNamePattern = new(@"\((?<name>[^()]+)\)", RegexOptions.Compiled);
 
     public static string Format(Card card, TrainingBattleManager battleManager)
     {
@@ -470,7 +518,7 @@ public static class CardDescriptionFormatter
 
         if (card.description.IndexOf("{amount", System.StringComparison.Ordinal) < 0)
         {
-            return card.description;
+            return RemoveReferencedBuffParentheses(card.description);
         }
 
         List<int> amounts = ResolveAmounts(card.effects, battleManager, card);
@@ -479,7 +527,7 @@ public static class CardDescriptionFormatter
             amounts.Add(0);
         }
 
-        return AmountPlaceholderPattern.Replace(card.description, match =>
+        string formattedDescription = AmountPlaceholderPattern.Replace(card.description, match =>
         {
             string indexText = match.Groups["index"].Value;
             int resolvedIndex = 1;
@@ -496,6 +544,18 @@ public static class CardDescriptionFormatter
 
             return amounts[amountIndex].ToString();
         });
+
+        return RemoveReferencedBuffParentheses(formattedDescription);
+    }
+
+    private static string RemoveReferencedBuffParentheses(string description)
+    {
+        if (string.IsNullOrWhiteSpace(description))
+        {
+            return string.Empty;
+        }
+
+        return ReferencedBuffNamePattern.Replace(description, "${name}");
     }
 
     private static List<int> ResolveAmounts(List<ICardEffect> effects, TrainingBattleManager battleManager, Card sourceCard)
