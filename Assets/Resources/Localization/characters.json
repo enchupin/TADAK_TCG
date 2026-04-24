@@ -1,12 +1,12 @@
-{
+﻿{
   "characters": [
     {
       "characterId": 101,
       "koName": "아일라",
       "enName": "Isla",
       "jaName": "アイラ",
-      "zhHantName": "伊斯拉",
-      "zhHansName": "伊斯拉",
+      "zhHantName": "艾拉",
+      "zhHansName": "艾拉",
       "ruName": "Айла"
     },
     {
@@ -23,8 +23,8 @@
       "koName": "이그니아",
       "enName": "Ignia",
       "jaName": "イグニア",
-      "zhHantName": "伊格尼亞",
-      "zhHansName": "伊格尼亚",
+      "zhHantName": "伊格妮亞",
+      "zhHansName": "伊格妮亚",
       "ruName": "Игния"
     },
     {
@@ -41,8 +41,8 @@
       "koName": "메렐",
       "enName": "Merel",
       "jaName": "メレル",
-      "zhHantName": "梅雷爾",
-      "zhHansName": "梅雷尔",
+      "zhHantName": "梅蕾爾",
+      "zhHansName": "梅蕾尔",
       "ruName": "Мерел"
     },
     {
@@ -59,8 +59,8 @@
       "koName": "폴라",
       "enName": "Polar",
       "jaName": "ポーラー",
-      "zhHantName": "波拉",
-      "zhHansName": "波拉",
+      "zhHantName": "珀拉",
+      "zhHansName": "珀拉",
       "ruName": "Полар"
     },
     {
@@ -68,8 +68,8 @@
       "koName": "룬",
       "enName": "Rune",
       "jaName": "ルーン",
-      "zhHantName": "露恩",
-      "zhHansName": "露恩",
+      "zhHantName": "魯恩",
+      "zhHansName": "鲁恩",
       "ruName": "Рун"
     },
     {
@@ -77,18 +77,18 @@
       "koName": "크림",
       "enName": "Cream",
       "jaName": "クリーム",
-      "zhHantName": "克里姆",
-      "zhHansName": "克里姆",
+      "zhHantName": "可莉姆",
+      "zhHansName": "可莉姆",
       "ruName": "Крим"
     },
     {
       "characterId": 303,
       "koName": "칸",
       "enName": "Khan",
-      "jaName": "",
-      "zhHantName": "",
-      "zhHansName": "",
-      "ruName": ""
+      "jaName": "カーン",
+      "zhHantName": "汗",
+      "zhHansName": "汗",
+      "ruName": "Хан"
     }
   ]
 }
