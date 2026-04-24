@@ -64,6 +64,7 @@ public class CombatResolver
         Debug.Log($"[Player] 카드 사용: {playedCard.cardName}");
 
         battleManager.battleContext?.OnCardPlayed(playedCard);
+        battleManager.ChargeIdentityGauge(playedCard.character);
 
         Monster originalTarget = eventData.targetMonster;
         battleManager.currentTarget = originalTarget;

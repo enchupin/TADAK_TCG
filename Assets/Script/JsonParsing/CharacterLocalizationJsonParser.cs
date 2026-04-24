@@ -12,11 +12,17 @@ public sealed class CharacterLocalizationJsonEntry
     public string zhHantName = string.Empty;
     public string zhHansName = string.Empty;
     public string ruName = string.Empty;
+    public string koIdentityDescription = string.Empty;
+    public string enIdentityDescription = string.Empty;
+    public string jaIdentityDescription = string.Empty;
+    public string zhHantIdentityDescription = string.Empty;
+    public string zhHansIdentityDescription = string.Empty;
+    public string ruIdentityDescription = string.Empty;
 }
 
 public static class CharacterLocalizationJsonParser
 {
-    private const string CharacterLocalizationResourcePath = "Localization/characters";
+    private const string CharacterLocalizationResourcePath = "Localization/characterLocalization";
 
     public static bool TryLoad(out List<CharacterLocalizationJsonEntry> characters)
     {
@@ -25,7 +31,7 @@ public static class CharacterLocalizationJsonParser
         TextAsset jsonFile = Resources.Load<TextAsset>(CharacterLocalizationResourcePath);
         if (jsonFile == null)
         {
-            Debug.LogWarning("[CharacterLocalizationJsonParser] characters.json을 불러오지 못했습니다");
+            Debug.LogWarning("[CharacterLocalizationJsonParser] characterLocalization.json을 불러오지 못했습니다");
             return false;
         }
 
@@ -36,13 +42,13 @@ public static class CharacterLocalizationJsonParser
         }
         catch
         {
-            Debug.LogWarning("[CharacterLocalizationJsonParser] characters.json 파싱에 실패했습니다");
+            Debug.LogWarning("[CharacterLocalizationJsonParser] characterLocalization.json 파싱에 실패했습니다");
             return false;
         }
 
         if (root?.characters == null || root.characters.Count == 0)
         {
-            Debug.LogWarning("[CharacterLocalizationJsonParser] characters.json이 비어 있습니다");
+            Debug.LogWarning("[CharacterLocalizationJsonParser] characterLocalization.json이 비어 있습니다");
             return false;
         }
 

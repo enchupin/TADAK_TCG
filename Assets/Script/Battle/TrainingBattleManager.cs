@@ -107,12 +107,14 @@ public class TrainingBattleManager : MonoBehaviour
     private CombatResolver combatResolver;
     private EncounterSystem encounterSystem;
     private BattleBuffController battleBuffController;
+    private CharacterIdentityService characterIdentityService;
     private bool hasResolvedBattleResult;
     private Button instantWinButton;
     private readonly List<PendingMonsterRevive> pendingMonsterRevives = new List<PendingMonsterRevive>();
 
     public float EnemyActionDelay => enemyActionDelay;
     public int MaxHandCardCount => Mathf.Max(0, maxHandCardCount);
+    public CharacterIdentityService CharacterIdentityService => characterIdentityService;
 
     private void Awake()
     {
@@ -130,6 +132,7 @@ public class TrainingBattleManager : MonoBehaviour
         turnSystem = new TurnSystem(this);
         combatResolver = new CombatResolver(this);
         battleBuffController = new BattleBuffController(this);
+        characterIdentityService = new CharacterIdentityService(this);
 
         if (battleDeckViewer == null)
         {
@@ -318,6 +321,7 @@ public class TrainingBattleManager : MonoBehaviour
         }
 
         playerData.Initialize(totalMaxHp, totalDefense, playerBaseEnergyPerTurn);
+        characterIdentityService?.Initialize(SelectedButtonControl.selectedCharacterList);
 
         if (TrainingRunState.IsRunActive)
         {
@@ -1591,6 +1595,128 @@ public class TrainingBattleManager : MonoBehaviour
         {
             ApplyBuffToMonster(monster, buffId, amount);
         }
+    }
+
+    public void ChargeIdentityGauge(Character character, int amount = 1)
+    {
+        if (amount <= 0 || character == Character.Monster || characterIdentityService == null)
+        {
+            return;
+        }
+
+        characterIdentityService.AddGauge(character, amount);
+    }
+
+    public void AddIdentityGaugeToOtherCharacters(Character sourceCharacter, int amount)
+    {
+        if (amount <= 0 || characterIdentityService == null)
+        {
+            return;
+        }
+
+        characterIdentityService.AddGaugeToOtherCharacters(sourceCharacter, amount);
+    }
+
+    public bool CanUseIdentitySkill(Character character)
+    {
+        return character != Character.Monster
+            && CanPlayerPlayCard()
+            && characterIdentityService != null
+            && characterIdentityService.CanUse(character);
+    }
+
+    public bool TryUseIdentitySkill(Character character)
+    {
+        if (!CanUseIdentitySkill(character))
+        {
+            return false;
+        }
+
+        bool used = characterIdentityService.TryUse(character);
+        if (!used)
+        {
+            return false;
+        }
+
+        RefreshHandPlayableState();
+        UpdateAllUI();
+        TryHandleCombatEnd();
+        return true;
+    }
+
+    public bool TryUseIdentitySkill(int characterId)
+    {
+        return TryUseIdentitySkill(CharacterManager.GetCharacterEnumById(characterId));
+    }
+
+    public bool CanUseIdentitySkillBySlot(int slotIndex)
+    {
+        if (!TryGetSelectedCharacterBySlot(slotIndex, out Character character))
+        {
+            return false;
+        }
+
+        return CanUseIdentitySkill(character);
+    }
+
+    public bool TryUseIdentitySkillBySlot(int slotIndex)
+    {
+        if (!TryGetSelectedCharacterBySlot(slotIndex, out Character character))
+        {
+            return false;
+        }
+
+        return TryUseIdentitySkill(character);
+    }
+
+    public void OnClickUseFirstIdentitySkill()
+    {
+        TryUseIdentitySkillBySlot(0);
+    }
+
+    public void OnClickUseSecondIdentitySkill()
+    {
+        TryUseIdentitySkillBySlot(1);
+    }
+
+    public void OnClickUseThirdIdentitySkill()
+    {
+        TryUseIdentitySkillBySlot(2);
+    }
+
+    public int GetIdentityGauge(Character character)
+    {
+        return characterIdentityService != null ? characterIdentityService.GetGauge(character) : 0;
+    }
+
+    public int GetIdentityCost(Character character)
+    {
+        return characterIdentityService != null ? characterIdentityService.GetCost(character) : 0;
+    }
+
+    public string GetIdentityDescription(Character character)
+    {
+        return characterIdentityService != null ? characterIdentityService.GetDescription(character) : string.Empty;
+    }
+
+    public IReadOnlyList<CharacterIdentityState> GetIdentityStates()
+    {
+        return characterIdentityService != null
+            ? characterIdentityService.GetStates()
+            : Array.Empty<CharacterIdentityState>();
+    }
+
+    private static bool TryGetSelectedCharacterBySlot(int slotIndex, out Character character)
+    {
+        character = Character.Monster;
+
+        if (slotIndex < 0 || SelectedButtonControl.selectedCharacterList == null || slotIndex >= SelectedButtonControl.selectedCharacterList.Count)
+        {
+            return false;
+        }
+
+        character = SelectedButtonControl.selectedCharacterList[slotIndex];
+        return character != Character.Monster;
     }
 
 

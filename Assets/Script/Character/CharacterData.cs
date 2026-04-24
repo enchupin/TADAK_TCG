@@ -6,5 +6,5 @@ public class CharacterData : ScriptableObject
     public int characterId;
     public string characterName;
     public int maxHp;
-    public string characterColor;
+    public CharacterIdentityDefinition identity = new CharacterIdentityDefinition();
 }

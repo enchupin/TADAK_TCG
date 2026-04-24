@@ -920,6 +920,10 @@ public class CardJSONConverter : EditorWindow
             case "SwapCardCosts": return EffectType.SwapCardCosts;
             case "MultiplyEnemyDebuffs": return EffectType.MultiplyEnemyDebuffs;
             case "ScaleIntent": return EffectType.ScaleIntent;
+            case "ReplanIntent": return EffectType.ReplanIntent;
+            case "ReplayExhaustedCards": return EffectType.ReplayExhaustedCards;
+            case "UseTopDeckCards": return EffectType.UseTopDeckCards;
+            case "BindCard": return EffectType.BindCard;
             case "EnemyHpLossHealPlayer": return EffectType.EnemyHpLossHealPlayer;
             case "Party": return EffectType.Party;
             case "CopyEnemyDebuffs": return EffectType.CopyEnemyDebuffs;
