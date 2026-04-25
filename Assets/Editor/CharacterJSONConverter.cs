@@ -142,7 +142,6 @@ public class CharacterJSONConverter : EditorWindow
         data.characterId = jsonCharacter.characterId;
         data.characterName = jsonCharacter.name ?? string.Empty;
         data.maxHp = jsonCharacter.maxHp;
-        data.characterColor = jsonCharacter.characterColor ?? string.Empty;
     }
 
     private Dictionary<int, CharacterData> BuildIndexById()
@@ -222,5 +221,4 @@ public class CharacterJsonData
     public int characterId;
     public string name;
     public int maxHp;
-    public string characterColor;
 }

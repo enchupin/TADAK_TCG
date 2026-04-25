@@ -20,6 +20,11 @@ public class BattleUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI drawPileCountText;
     [SerializeField] private TextMeshProUGUI discardPileCountText;
     [SerializeField] private TextMeshProUGUI handCountText;
+    
+    [Header("아이덴티티 게이지 UI")]
+    [SerializeField] private Slider firstIdentityGaugeSlider;
+    [SerializeField] private Slider secondIdentityGaugeSlider;
+    [SerializeField] private Slider thirdIdentityGaugeSlider;
 
     [Header("데이터 참조")]
     [SerializeField] private TrainingBattleManager battleManager;
@@ -94,6 +99,13 @@ public class BattleUI : MonoBehaviour
             handCountText.text = $"Hand : {battleManager.handManager.GetHandCount()}";
         }
     }
+    
+    public void UpdateIdentityGauges()
+    {
+        UpdateIdentityGaugeSlider(firstIdentityGaugeSlider, 0);
+        UpdateIdentityGaugeSlider(secondIdentityGaugeSlider, 1);
+        UpdateIdentityGaugeSlider(thirdIdentityGaugeSlider, 2);
+    }
 
     /// <summary>
     /// 모든 UI 업데이트
@@ -104,6 +116,7 @@ public class BattleUI : MonoBehaviour
         UpdateEnergy();
         UpdatePlayerDefense();
         UpdateDeckPileCount();
+        UpdateIdentityGauges();
     }
 
     private void CacheHPFillDefaultColor()
@@ -133,6 +146,33 @@ public class BattleUI : MonoBehaviour
         playerHPFillImage.color = playerData.defense > 0
             ? barrierHPFillColor
             : defaultHPFillColor;
+    }
+    
+    private void UpdateIdentityGaugeSlider(Slider targetSlider, int slotIndex)
+    {
+        if (targetSlider == null)
+        {
+            return;
+        }
+
+        if (battleManager == null ||
+            SelectedButtonControl.selectedCharacterList == null ||
+            slotIndex < 0 ||
+            slotIndex >= SelectedButtonControl.selectedCharacterList.Count)
+        {
+            targetSlider.minValue = 0f;
+            targetSlider.maxValue = 1f;
+            targetSlider.SetValueWithoutNotify(0f);
+            return;
+        }
+
+        Character character = SelectedButtonControl.selectedCharacterList[slotIndex];
+        int maxGauge = Mathf.Max(1, battleManager.GetIdentityCost(character));
+        int currentGauge = Mathf.Clamp(battleManager.GetIdentityGauge(character), 0, maxGauge);
+
+        targetSlider.minValue = 0f;
+        targetSlider.maxValue = maxGauge;
+        targetSlider.SetValueWithoutNotify(currentGauge);
     }
 
 }

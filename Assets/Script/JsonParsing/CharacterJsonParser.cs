@@ -8,7 +8,7 @@ public sealed class CharacterJsonEntry
     public int characterId = 0;
     public string name = string.Empty;
     public int maxHp = 0;
-    public string characterColor = string.Empty;
+    public int identityCost = 0;
 }
 
 public static class CharacterJsonParser

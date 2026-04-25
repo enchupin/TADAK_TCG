@@ -43,7 +43,7 @@ public static class CharacterManager
             runtimeCharacter.characterId = sourceCharacter.characterId;
             runtimeCharacter.characterName = sourceCharacter.name ?? string.Empty;
             runtimeCharacter.maxHp = sourceCharacter.maxHp;
-            runtimeCharacter.characterColor = sourceCharacter.characterColor ?? string.Empty;
+            ApplyIdentityData(runtimeCharacter, sourceCharacter.identityCost);
 
             if (!characterCache.ContainsKey(runtimeCharacter.characterId))
             {
@@ -164,12 +164,25 @@ public static class CharacterManager
 
             if (localizedCharacterNameById.ContainsKey(localizedCharacter.characterId))
             {
-                Debug.LogWarning($"[CharacterManager] 중복된 캐릭터 로컬라이징 ID가 있습니다: {localizedCharacter.characterId}");
+                Debug.LogWarning($"[CharacterManager] 중복된 캐릭터 로컬라이즈 ID가 있습니다: {localizedCharacter.characterId}");
                 continue;
             }
 
             localizedCharacterNameById[localizedCharacter.characterId] = localizedCharacter;
         }
+    }
+
+    private static void ApplyIdentityData(CharacterData runtimeCharacter, int identityCost)
+    {
+        if (runtimeCharacter == null)
+        {
+            return;
+        }
+
+        runtimeCharacter.identity ??= new CharacterIdentityDefinition();
+        runtimeCharacter.identity.cost = 0;
+        runtimeCharacter.identity.description = string.Empty;
+        runtimeCharacter.identity.cost = Mathf.Max(0, identityCost);
     }
 
     private static void ApplyCurrentLanguage()
@@ -188,6 +201,7 @@ public static class CharacterManager
             }
 
             entry.Value.characterName = ResolveLocalizedCharacterName(currentLanguage, entry.Key, entry.Value.characterName);
+            entry.Value.identity.description = ResolveLocalizedIdentityDescription(currentLanguage, entry.Key, entry.Value.identity.description);
         }
     }
 
@@ -213,6 +227,24 @@ public static class CharacterManager
             localizedCharacter.zhHansName,
             localizedCharacter.ruName,
             defaultCharacterName);
+    }
+
+    private static string ResolveLocalizedIdentityDescription(LocalizationLanguage currentLanguage, int characterId, string fallbackText)
+    {
+        if (!localizedCharacterNameById.TryGetValue(characterId, out CharacterLocalizationJsonEntry localizedCharacter) || localizedCharacter == null)
+        {
+            return fallbackText ?? string.Empty;
+        }
+
+        return LocalizationManager.ResolveLocalizedText(
+            currentLanguage,
+            localizedCharacter.koIdentityDescription,
+            localizedCharacter.enIdentityDescription,
+            localizedCharacter.jaIdentityDescription,
+            localizedCharacter.zhHantIdentityDescription,
+            localizedCharacter.zhHansIdentityDescription,
+            localizedCharacter.ruIdentityDescription,
+            fallbackText ?? string.Empty);
     }
 
     private static bool IsStarterDeckSupported(int characterId)
