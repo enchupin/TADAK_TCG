@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 43c7c97c28a214344a80ca8dfa381f96
+guid: 47bcc994b4d318c44abbc18f7b9ff611
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2239209567570664152
-    second: BattleStanding_Ignia_0
+      213: 4963487473173652716
+    second: IdentityFrame_Jack_0
+  - first:
+      213: -1014135971794909038
+    second: IdentityFrame_Jack_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -75,7 +78,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -113,13 +116,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: BattleStanding_Ignia_0
+      name: IdentityFrame_Jack_0
       rect:
         serializedVersion: 2
-        x: 60
-        y: 40
-        width: 747
-        height: 1648
+        x: 11
+        y: 0
+        width: 1503
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +131,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8256b4b13cabce0e0800000000000000
-      internalID: -2239209567570664152
+      spriteID: ce4ed952f89d1e440800000000000000
+      internalID: 4963487473173652716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IdentityFrame_Jack_1
+      rect:
+        serializedVersion: 2
+        x: 994
+        y: 200
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 298083fe4b01de1f0800000000000000
+      internalID: -1014135971794909038
       vertices: []
       indices: 
       edges: []
@@ -148,7 +173,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      BattleStanding_Ignia_0: -2239209567570664152
+      IdentityFrame_Jack_0: 4963487473173652716
+      IdentityFrame_Jack_1: -1014135971794909038
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
