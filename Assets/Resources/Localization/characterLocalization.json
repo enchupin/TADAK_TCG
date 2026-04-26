@@ -70,7 +70,7 @@
       "ruName": "Мерел",
       "koIdentityDescription": "강화된 깃털을 3장 생성합니다. 정밀을 3 얻습니다.",
       "enIdentityDescription": "Create 3 upgraded Feather cards. Gain 3 Precision.",
-      "jaIdentityDescription": "強化された羽カードを3枚生成する。精密を3得る。",
+      "jaIdentityDescription": "強化羽カードを3枚生成する。精密を3得る。",
       "zhHantIdentityDescription": "生成3張強化羽毛牌。獲得3層精準。",
       "zhHansIdentityDescription": "生成3张强化羽毛牌。获得3层精准。",
       "ruIdentityDescription": "Создаёт 3 улучшенные карты Пера. Получает 3 Точности."
@@ -85,7 +85,7 @@
       "ruName": "Мио",
       "koIdentityDescription": "모든 적에게 익사를 15 부여합니다. 익사가 적의 최대 체력보다 높다면, 즉시 발동합니다.",
       "enIdentityDescription": "Apply 15 Drowning to all enemies. If Drowning is higher than the enemy's max HP, trigger it immediately.",
-      "jaIdentityDescription": "すべての敵に溺死を15付与する。溺死が敵の最大体力より高い場合、ただちに発動する。",
+      "jaIdentityDescription": "すべての敵に溺死を15付与する。溺死が敵の最大HPより高い場合、ただちに発動する。",
       "zhHantIdentityDescription": "對所有敵人施加15層溺水。若溺水高於敵人的最大生命值，立即觸發。",
       "zhHansIdentityDescription": "对所有敌人施加15层溺水。若溺水高于敌人的最大生命值，立即触发。",
       "ruIdentityDescription": "Накладывает 15 Утопления на всех врагов. Если Утопление выше максимального здоровья врага, активирует его немедленно."
@@ -115,7 +115,7 @@
       "ruName": "Рун",
       "koIdentityDescription": "{동력}을 5 얻습니다. 내 턴 종료 시 효과들을 1회 발동합니다.",
       "enIdentityDescription": "Gain 5 {Charge}. Trigger your effects once at the end of your turn.",
-      "jaIdentityDescription": "{チャージ}を5得る。自分のターン終了時、効果を1回発動する。",
+      "jaIdentityDescription": "{チャージ}を5得る。ターン終了時に発動する自分の効果を1回発動する。",
       "zhHantIdentityDescription": "獲得5層{充能}。在自己的回合結束時，觸發效果1次。",
       "zhHansIdentityDescription": "获得5层{充能}。在自己的回合结束时，触发效果1次。",
       "ruIdentityDescription": "Получает 5 {Заряд}. В конце вашего хода активирует эффекты 1 раз."
