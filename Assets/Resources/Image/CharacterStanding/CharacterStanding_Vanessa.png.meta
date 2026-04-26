@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: dfbb33437691b7a4295ebd285d7e48ca
+guid: 671064c71c489754097452f520b3a7ca
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8744454668911484557
-    second: "\uCE90\uB9AD\uD130 \uC2A4\uD0E0\uB529_\uC774\uADF8\uB2C8\uC544_0"
+      213: -6988617316125007962
+    second: CharacterStanding_Vanessa_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -97,33 +97,7 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
     buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: iOS
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -139,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\uCE90\uB9AD\uD130 \uC2A4\uD0E0\uB529_\uC774\uADF8\uB2C8\uC544_0"
+      name: CharacterStanding_Vanessa_0
       rect:
         serializedVersion: 2
-        x: 21
-        y: 58
-        width: 880
-        height: 2603
+        x: 32
+        y: 48
+        width: 1648
+        height: 2617
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d8e99f6f03b8a5970800000000000000
-      internalID: 8744454668911484557
+      spriteID: 6af99390491730f90800000000000000
+      internalID: -6988617316125007962
       vertices: []
       indices: 
       edges: []
@@ -174,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\uCE90\uB9AD\uD130 \uC2A4\uD0E0\uB529_\uC774\uADF8\uB2C8\uC544_0": 8744454668911484557
+      CharacterStanding_Vanessa_0: -6988617316125007962
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
