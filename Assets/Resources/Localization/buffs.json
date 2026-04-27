@@ -1370,7 +1370,7 @@
             "name": "깃털",
             "description": "현재 (깃털)이 {stack} 중첩되어 있습니다. 발동될 때마다 중첩만큼 피해를 입히고 1 감소합니다.",
             "enName": "Feather",
-            "enDescription": "You currently have (Feathers). Whenever they trigger, they deal damage equal to their stacks and then are reduced by 1.",
+            "enDescription": "You currently have {stack} Feathers. Whenever they trigger, they deal damage equal to their stacks and then are reduced by 1.",
             "jaName": "羽",
             "jaDescription": "現在(羽)が{stack}蓄積されている。発動するたびにスタック数分のダメージを与え、1減少する。",
             "zhHantName": "羽",
