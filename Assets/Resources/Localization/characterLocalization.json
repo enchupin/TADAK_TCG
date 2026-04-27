@@ -8,12 +8,12 @@
       "zhHantName": "艾拉",
       "zhHansName": "艾拉",
       "ruName": "Айла",
-      "koIdentityDescription": "카드를 2장 뽑습니다. 모든 적에게 부식을 3 부여합니다.",
-      "enIdentityDescription": "Draw 2 cards. Apply 3 Corrosion to all enemies.",
-      "jaIdentityDescription": "カードを2枚引く。すべての敵に腐食を3付与する。",
-      "zhHantIdentityDescription": "抽2張牌。對所有敵人施加3層腐蝕。",
-      "zhHansIdentityDescription": "抽2张牌。对所有敌人施加3层腐蚀。",
-      "ruIdentityDescription": "Берет 2 карты. Накладывает 3 Коррозии на всех врагов."
+      "koIdentityDescription": "카드를 2장 뽑습니다. 모든 적에게 (부식)을 3 부여합니다.",
+      "enIdentityDescription": "Draw 2 cards. Apply 3 (Corrosion) to all enemies.",
+      "jaIdentityDescription": "カードを2枚引く。すべての敵に(腐食)を3付与する。",
+      "zhHantIdentityDescription": "抽2張牌。對所有敵人施加3層(腐蝕)。",
+      "zhHansIdentityDescription": "抽2张牌。对所有敌人施加3层(腐蚀)。",
+      "ruIdentityDescription": "Берет 2 карты. Накладывает 3 (Коррозии) на всех врагов."
     },
     {
       "characterId": 102,
@@ -38,12 +38,12 @@
       "zhHantName": "伊格妮亞",
       "zhHansName": "伊格妮亚",
       "ruName": "Игния",
-      "koIdentityDescription": "강공을 20 얻습니다.",
-      "enIdentityDescription": "Gain 20 Heavy Strike.",
-      "jaIdentityDescription": "強攻を20得る。",
-      "zhHantIdentityDescription": "獲得20層強攻。",
-      "zhHansIdentityDescription": "获得20层强攻。",
-      "ruIdentityDescription": "Получает 20 Тяжёлого удара."
+      "koIdentityDescription": "(강공)을 20 얻습니다.",
+      "enIdentityDescription": "Gain 20 (Heavy Strike).",
+      "jaIdentityDescription": "(強攻)を20得る。",
+      "zhHantIdentityDescription": "獲得20層(強攻)。",
+      "zhHansIdentityDescription": "获得20层(强攻)。",
+      "ruIdentityDescription": "Получает 20 (Тяжёлого удара)."
     },
     {
       "characterId": 202,
@@ -53,12 +53,12 @@
       "zhHantName": "瓦妮莎",
       "zhHansName": "瓦妮莎",
       "ruName": "Ванесса",
-      "koIdentityDescription": "가시를 7 얻습니다.",
-      "enIdentityDescription": "Gain 7 Thorns.",
-      "jaIdentityDescription": "茨を7得る。",
-      "zhHantIdentityDescription": "獲得7層荊棘。",
-      "zhHansIdentityDescription": "获得7层荆棘。",
-      "ruIdentityDescription": "Получает 7 Шипов."
+      "koIdentityDescription": "(가시)를 7 얻습니다.",
+      "enIdentityDescription": "Gain 7 (Thorns).",
+      "jaIdentityDescription": "(茨)を7得る。",
+      "zhHantIdentityDescription": "獲得7層(荊棘)。",
+      "zhHansIdentityDescription": "获得7层(荆棘)。",
+      "ruIdentityDescription": "Получает 7 (Шипов)."
     },
     {
       "characterId": 203,
@@ -68,12 +68,12 @@
       "zhHantName": "梅蕾爾",
       "zhHansName": "梅蕾尔",
       "ruName": "Мерел",
-      "koIdentityDescription": "강화된 깃털을 3장 생성합니다. 정밀을 3 얻습니다.",
-      "enIdentityDescription": "Create 3 upgraded Feather cards. Gain 3 Precision.",
-      "jaIdentityDescription": "強化された羽カードを3枚生成する。精密を3得る。",
-      "zhHantIdentityDescription": "生成3張強化羽毛牌。獲得3層精準。",
-      "zhHansIdentityDescription": "生成3张强化羽毛牌。获得3层精准。",
-      "ruIdentityDescription": "Создаёт 3 улучшенные карты Пера. Получает 3 Точности."
+      "koIdentityDescription": "강화된 깃털 카드를 3장 생성합니다. (정밀)을 3 얻습니다.",
+      "enIdentityDescription": "Create 3 upgraded Feather cards. Gain 3 (Precision).",
+      "jaIdentityDescription": "強化された羽カードを3枚生成する。(精密)を3得る。",
+      "zhHantIdentityDescription": "生成3張強化羽毛牌。獲得3層(精準)。",
+      "zhHansIdentityDescription": "生成3张强化羽毛牌。获得3层(精准)。",
+      "ruIdentityDescription": "Создаёт 3 улучшенные карты Пера. Получает 3 (Точности)."
     },
     {
       "characterId": 204,
@@ -83,12 +83,12 @@
       "zhHantName": "米奧",
       "zhHansName": "米奥",
       "ruName": "Мио",
-      "koIdentityDescription": "모든 적에게 익사를 15 부여합니다. 익사가 적의 최대 체력보다 높다면, 즉시 발동합니다.",
-      "enIdentityDescription": "Apply 15 Drowning to all enemies. If Drowning is higher than the enemy's max HP, trigger it immediately.",
-      "jaIdentityDescription": "すべての敵に溺死を15付与する。溺死が敵の最大体力より高い場合、ただちに発動する。",
-      "zhHantIdentityDescription": "對所有敵人施加15層溺水。若溺水高於敵人的最大生命值，立即觸發。",
-      "zhHansIdentityDescription": "对所有敌人施加15层溺水。若溺水高于敌人的最大生命值，立即触发。",
-      "ruIdentityDescription": "Накладывает 15 Утопления на всех врагов. Если Утопление выше максимального здоровья врага, активирует его немедленно."
+      "koIdentityDescription": "모든 적에게 (익사)를 15 부여합니다. (익사)가 적의 최대 체력보다 높다면, 즉시 발동합니다.",
+      "enIdentityDescription": "Apply 15 (Drowning) to all enemies. If (Drowning) is higher than the enemy's max HP, trigger it immediately.",
+      "jaIdentityDescription": "すべての敵に(溺死)を15付与する。(溺死)が敵の最大体力より高い場合、ただちに発動する。",
+      "zhHantIdentityDescription": "對所有敵人施加15層(溺水)。若(溺水)高於敵人的最大生命值，立即觸發。",
+      "zhHansIdentityDescription": "对所有敌人施加15层(溺水)。若(溺水)高于敌人的最大生命值，立即触发。",
+      "ruIdentityDescription": "Накладывает 15 (Утопления) на всех врагов. Если (Утопление) выше максимального здоровья врага, активирует его немедленно."
     },
     {
       "characterId": 301,
@@ -98,12 +98,12 @@
       "zhHantName": "珀拉",
       "zhHansName": "珀拉",
       "ruName": "Полар",
-      "koIdentityDescription": "보호막을 10 얻습니다. 모든 적에게 빙결을 2 부여합니다.",
-      "enIdentityDescription": "Gain 10 Block. Apply 2 Freeze to all enemies.",
-      "jaIdentityDescription": "バリアを10得る。すべての敵に凍結を2付与する。",
-      "zhHantIdentityDescription": "獲得10點護盾。對所有敵人施加2層凍結。",
-      "zhHansIdentityDescription": "获得10点护盾。对所有敌人施加2层冻结。",
-      "ruIdentityDescription": "Получает 10 барьера. Накладывает 2 Заморозки на всех врагов."
+      "koIdentityDescription": "보호막을 10 얻습니다. 모든 적에게 (빙결)을 2 부여합니다.",
+      "enIdentityDescription": "Gain 10 Block. Apply 2 (Freeze) to all enemies.",
+      "jaIdentityDescription": "バリアを10得る。すべての敵に(凍結)を2付与する。",
+      "zhHantIdentityDescription": "獲得10點護盾。對所有敵人施加2層(凍結)。",
+      "zhHansIdentityDescription": "获得10点护盾。对所有敌人施加2层(冻结)。",
+      "ruIdentityDescription": "Получает 10 барьера. Накладывает 2 (Заморозки) на всех врагов."
     },
     {
       "characterId": 302,
@@ -128,12 +128,12 @@
       "zhHantName": "可莉姆",
       "zhHansName": "可莉姆",
       "ruName": "Крим",
-      "koIdentityDescription": "다른 캐릭터의 아이덴티티 게이지를 3씩 채웁니다.",
-      "enIdentityDescription": "Fill the Identity Gauge of other characters by 3.",
-      "jaIdentityDescription": "他のキャラクターのアイデンティティゲージを3ずつ満たす。",
-      "zhHantIdentityDescription": "使其他角色的身分量表各增加3點。",
-      "zhHansIdentityDescription": "使其他角色的身份量表各增加3点。",
-      "ruIdentityDescription": "Заполняет шкалу идентичности других персонажей на 3."
+      "koIdentityDescription": "다른 캐릭터들이 아이덴티티 포인트를 3씩 획득합니다.",
+      "enIdentityDescription": "Other characters each gain 3 Identity Points.",
+      "jaIdentityDescription": "他のキャラクター達がアイデンティティポイントを3ずつ得る。",
+      "zhHantIdentityDescription": "其他角色各獲得3點身分點數。",
+      "zhHansIdentityDescription": "其他角色各获得3点身份点数。",
+      "ruIdentityDescription": "Другие персонажи получают по 3 очка идентичности."
     },
     {
       "characterId": 303,
