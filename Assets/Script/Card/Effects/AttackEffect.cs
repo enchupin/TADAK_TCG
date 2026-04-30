@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Globalization;
-using static BattleRuntimeDefinitions;
 
 public class AttackEffect : ICardEffect
 {
@@ -14,106 +13,180 @@ public class AttackEffect : ICardEffect
 
     public void Execute(TrainingBattleManager battleManager)
     {
-        int attackBoost = battleManager?.playerData != null
-            ? battleManager.playerData.GetBuffStack(AttackBoostBuffId)
+        ExecuteInternal(battleManager, amount);
+    }
+
+    public void Execute(TrainingBattleManager battleManager, int forwardedAmount)
+    {
+        ExecuteInternal(battleManager, forwardedAmount);
+    }
+
+    private void ExecuteInternal(TrainingBattleManager battleManager, int forwardedAmount)
+    {
+        int attackBoostStack = battleManager?.playerData != null
+            ? Mathf.Max(0, battleManager.playerData.GetBuffStack(BattleRuntimeDefinitions.AttackBoostBuffId))
             : 0;
+        int finalAmount = BuildFinalDamageAmount(battleManager, forwardedAmount);
+        int totalDamageDealt = 0;
 
-        // 최종 공격 피해
-        int finalAmount = BuildFinalDamageAmount(battleManager, attackBoost);
-        int totalDamageDealt = 0; // 총 누적 피해
-
-        switch (target) {
-            case TargetType.AllEnemies: // 모든 적에게 피해
-                if (battleManager.spawnedMonsters.Count <= 0) {
+        switch (target)
+        {
+            case TargetType.AllEnemies:
+                if (battleManager.spawnedMonsters.Count <= 0)
+                {
                     Debug.LogWarning("[AttackEffect] No enemies available for AllEnemies target. Effect cancelled.");
                     break;
                 }
 
                 List<Monster> targets = new(battleManager.spawnedMonsters);
-                if (targets == null) {
+                if (targets == null)
+                {
                     Debug.LogWarning("[AttackEffect] EnemiesList is missing. Effect cancelled.");
                     return;
                 }
 
-                foreach (Monster monster in targets) {
-                    if (monster == null || monster.IsDead()) {
+                bool hasValidTarget = false;
+                foreach (Monster monster in targets)
+                {
+                    if (monster != null && !monster.IsDead())
+                    {
+                        hasValidTarget = true;
+                        break;
+                    }
+                }
+
+                if (!hasValidTarget)
+                {
+                    Debug.LogWarning("[AttackEffect] No living enemies available for AllEnemies target. Effect cancelled.");
+                    break;
+                }
+
+                ConsumeAttackBoost(battleManager, attackBoostStack);
+
+                foreach (Monster monster in targets)
+                {
+                    if (monster == null || monster.IsDead())
+                    {
                         continue;
                     }
 
                     int barrierBefore = monster.defense;
-                    totalDamageDealt += monster.TakeDamage(finalAmount, 0);
+                    int dealtDamage = monster.TakeDamage(finalAmount, 0);
+                    totalDamageDealt += dealtDamage;
+                    battleManager.HandlePlayerDamageDealt(monster, dealtDamage);
                     battleManager.HandlePlayerAttackResolved(monster, barrierBefore, monster.defense);
                 }
                 break;
 
-            case TargetType.SingleEnemy: // 단일 적에게 피해
-                if (battleManager.spawnedMonsters.Count <= 0) {
+            case TargetType.SingleEnemy:
+                if (battleManager.spawnedMonsters.Count <= 0)
+                {
                     Debug.LogWarning("[AttackEffect] No enemies available for SingleEnemy target. Effect cancelled.");
                     break;
                 }
 
                 Monster targetMonster = battleManager.currentTarget;
-                if (targetMonster == null) {
-                    // If only one enemy exists, auto-select it.
+                if (targetMonster == null)
+                {
                     List<Monster> livingMonsters = battleManager.GetLivingMonsters();
-                    if (livingMonsters != null && livingMonsters.Count == 1) {
+                    if (livingMonsters != null && livingMonsters.Count == 1)
+                    {
                         targetMonster = livingMonsters[0];
                     }
                 }
-                if (targetMonster == null) {
+                if (targetMonster == null)
+                {
                     Debug.LogWarning("[AttackEffect] SingleEnemy target is missing. Effect cancelled.");
                     return;
                 }
 
+                ConsumeAttackBoost(battleManager, attackBoostStack);
                 int targetBarrierBefore = targetMonster.defense;
-                totalDamageDealt += targetMonster.TakeDamage(finalAmount, 0);
+                int targetDamage = targetMonster.TakeDamage(finalAmount, 0);
+                totalDamageDealt += targetDamage;
+                battleManager.HandlePlayerDamageDealt(targetMonster, targetDamage);
                 battleManager.HandlePlayerAttackResolved(targetMonster, targetBarrierBefore, targetMonster.defense);
                 break;
 
-            case TargetType.Self: // 자신에게 피해
-                if (battleManager.playerData == null) {
+            case TargetType.RandomEnemy:
+                List<Monster> randomTargets = battleManager.GetLivingMonsters();
+                if (randomTargets == null || randomTargets.Count == 0)
+                {
+                    Debug.LogWarning("[AttackEffect] No enemies available for RandomEnemy target. Effect cancelled.");
+                    return;
+                }
+
+                Monster randomTarget = randomTargets[Random.Range(0, randomTargets.Count)];
+                ConsumeAttackBoost(battleManager, attackBoostStack);
+                int randomBarrierBefore = randomTarget.defense;
+                int randomDamage = randomTarget.TakeDamage(finalAmount, 0);
+                totalDamageDealt += randomDamage;
+                battleManager.HandlePlayerDamageDealt(randomTarget, randomDamage);
+                battleManager.HandlePlayerAttackResolved(randomTarget, randomBarrierBefore, randomTarget.defense);
+                break;
+
+            case TargetType.Self:
+                if (battleManager.playerData == null)
+                {
                     Debug.LogWarning("[AttackEffect] PlayerData is missing. Self target effect cancelled.");
                     return;
                 }
 
-                battleManager.playerData.TakeDamage(finalAmount);
+                ConsumeAttackBoost(battleManager, attackBoostStack);
+                int selfDamage = battleManager.playerData.TakeDamage(finalAmount);
+                battleManager.battleContext?.OnPlayerCardHpLost(selfDamage);
                 break;
         }
 
         battleManager.battleContext?.OnDamageDealt(totalDamageDealt);
-        if (attackBoost > 0)
-        {
-            battleManager.playerData?.ConsumeBuffStack(AttackBoostBuffId, attackBoost);
-        }
         if (totalDamageDealt > 0 && battleManager.battleContext != null)
         {
             Debug.Log($"[AttackEffect] Damage dealt: {totalDamageDealt}, LastDamage: {battleManager.battleContext.lastDamageDealt}, ThisTurnTotal: {battleManager.battleContext.totalDamageDealt}");
         }
 
-        if (onActions != null) {
-            foreach (ICardEffect onAction in onActions) {
+        if (onActions != null)
+        {
+            foreach (ICardEffect onAction in onActions)
+            {
                 onAction?.Execute(battleManager, totalDamageDealt);
             }
         }
     }
 
-    private int BuildFinalDamageAmount(TrainingBattleManager battleManager, int attackBoost)
+    private int BuildFinalDamageAmount(TrainingBattleManager battleManager, int forwardedAmount)
     {
-        ResolveAttackAmount(battleManager, out int baseAmount, out float cardMultiplier);
-        baseAmount += Mathf.Max(0, attackBoost);
+        Card sourceCard = battleManager?.battleContext?.GetContextCard("ThisCard")
+            ?? battleManager?.battleContext?.GetLastPlayedCard();
+        ResolveAttackAmount(battleManager, forwardedAmount, out int baseAmount, out float cardMultiplier);
+        baseAmount += Mathf.Max(0, battleManager != null ? battleManager.GetCardBaseDamageBonus(sourceCard, true) : 0);
 
         if (battleManager.playerData == null)
         {
-            return Mathf.Max(0, Mathf.FloorToInt(baseAmount * Mathf.Max(0f, cardMultiplier)));
+            int fallbackDamage = Mathf.Max(0, Mathf.FloorToInt(baseAmount * Mathf.Max(0f, cardMultiplier)));
+            return battleManager != null
+                ? battleManager.ApplyCardDamageRuntimeModifiers(sourceCard, fallbackDamage)
+                : fallbackDamage;
         }
 
-        return battleManager.playerData.CalculateCardDamage(baseAmount, ampMultiplier, cardMultiplier);
+        int resolvedDamage = battleManager.playerData.CalculateCardDamage(baseAmount, ampMultiplier, cardMultiplier);
+        return battleManager.ApplyCardDamageRuntimeModifiers(sourceCard, resolvedDamage);
     }
 
-    private void ResolveAttackAmount(TrainingBattleManager battleManager, out int baseAmount, out float cardMultiplier)
+    private static void ConsumeAttackBoost(TrainingBattleManager battleManager, int attackBoostStack)
+    {
+        if (battleManager?.playerData == null || attackBoostStack <= 0)
+        {
+            return;
+        }
+
+        battleManager.playerData.ConsumeBuffStack(BattleRuntimeDefinitions.AttackBoostBuffId, attackBoostStack);
+    }
+
+    private void ResolveAttackAmount(TrainingBattleManager battleManager, int forwardedAmount, out int baseAmount, out float cardMultiplier)
     {
         cardMultiplier = 1f;
-        baseAmount = amount;
+        baseAmount = amount > 0 ? amount : Mathf.Max(0, forwardedAmount);
+        int formulaBaseValue = forwardedAmount > 0 ? forwardedAmount : amount;
 
         if (string.IsNullOrWhiteSpace(amountFormula))
         {
@@ -126,7 +199,7 @@ public class AttackEffect : ICardEffect
             return;
         }
 
-        baseAmount = FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, cardIdList, amount);
+        baseAmount = FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, cardIdList, formulaBaseValue);
     }
 
     private bool TryParseMultiplierFormula(string formula, out float multiplier)

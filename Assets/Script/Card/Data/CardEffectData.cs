@@ -25,7 +25,7 @@ public class CardEffectData
     public string stat;
     public int buffId;
     public int duration;
-    public List<int> buffTypes;
+    public List<int> buffFilterIds;
     public bool random;
     public string change;
 
@@ -55,6 +55,9 @@ public class CardEffectData
     [Header("Targeting / Selection")]
     public int count;
     public List<int> formulaCardIdFilter;
+    public string characterFilter;
+    public bool allowFewerSelection;
+    public bool upgradeableOnly;
 
     [Header("Keyword")]
     public string keyword;

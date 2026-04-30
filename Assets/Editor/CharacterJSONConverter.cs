@@ -4,9 +4,6 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-/// <summary>
-/// Character JSON to ScriptableObject converter.
-/// </summary>
 public class CharacterJSONConverter : EditorWindow
 {
     private const string DefaultJsonFilePath = "Assets/Resources/JsonData/characters.json";
@@ -145,52 +142,6 @@ public class CharacterJSONConverter : EditorWindow
         data.characterId = jsonCharacter.characterId;
         data.characterName = jsonCharacter.name ?? string.Empty;
         data.maxHp = jsonCharacter.maxHp;
-        data.cost = jsonCharacter.cost;
-        data.characterColor = jsonCharacter.characterColor ?? string.Empty;
-
-        data.artworkAddress = jsonCharacter.addressables?.artwork ?? string.Empty;
-        data.effectAddress = jsonCharacter.addressables?.effect ?? string.Empty;
-        data.soundAddress = jsonCharacter.addressables?.sound ?? string.Empty;
-
-        data.startDeckCardIds = jsonCharacter.startDeck != null
-            ? new List<int>(jsonCharacter.startDeck)
-            : new List<int>();
-
-        data.identity = BuildIdentity(jsonCharacter.identity);
-    }
-
-    private static IdentitySkillData BuildIdentity(CharacterIdentityJsonData identityJson)
-    {
-        if (identityJson == null || identityJson.effects == null || identityJson.effects.Count == 0)
-        {
-            return null;
-        }
-
-        IdentitySkillData identity = new IdentitySkillData
-        {
-            cost = identityJson.cost,
-            description = identityJson.description ?? string.Empty,
-            effects = new List<IdentityEffectData>()
-        };
-
-        foreach (CharacterEffectJsonData effectJson in identityJson.effects)
-        {
-            if (effectJson == null)
-            {
-                continue;
-            }
-
-            identity.effects.Add(new IdentityEffectData
-            {
-                type = ParseIdentityEffectType(effectJson.type),
-                amount = effectJson.amount,
-                target = ParseIdentityTargetType(effectJson.target),
-                buffType = effectJson.buffType ?? string.Empty,
-                cardId = effectJson.cardId
-            });
-        }
-
-        return identity;
     }
 
     private Dictionary<int, CharacterData> BuildIndexById()
@@ -256,31 +207,6 @@ public class CharacterJSONConverter : EditorWindow
             Directory.CreateDirectory(path);
         }
     }
-
-    private static IdentityEffectType ParseIdentityEffectType(string type)
-    {
-        switch (type)
-        {
-            case "Draw": return IdentityEffectType.Draw;
-            case "GenerateCard": return IdentityEffectType.GenerateCard;
-            case "Damage": return IdentityEffectType.Damage;
-            case "Heal": return IdentityEffectType.Heal;
-            case "Buff":
-            default: return IdentityEffectType.Buff;
-        }
-    }
-
-    private static IdentityTargetType ParseIdentityTargetType(string target)
-    {
-        switch (target)
-        {
-            case "AllEnemies": return IdentityTargetType.AllEnemies;
-            case "RandomEnemy": return IdentityTargetType.RandomEnemy;
-            case "Hand": return IdentityTargetType.Hand;
-            case "Self":
-            default: return IdentityTargetType.Self;
-        }
-    }
 }
 
 [Serializable]
@@ -295,36 +221,4 @@ public class CharacterJsonData
     public int characterId;
     public string name;
     public int maxHp;
-    public int cost;
-    public CharacterIdentityJsonData identity;
-    public CharacterAddressablesJsonData addressables;
-    public string characterColor;
-    public List<int> startDeck;
 }
-
-[Serializable]
-public class CharacterIdentityJsonData
-{
-    public int cost;
-    public List<CharacterEffectJsonData> effects;
-    public string description;
-}
-
-[Serializable]
-public class CharacterEffectJsonData
-{
-    public string type;
-    public string buffType;
-    public int amount;
-    public string target;
-    public int cardId;
-}
-
-[Serializable]
-public class CharacterAddressablesJsonData
-{
-    public string artwork;
-    public string effect;
-    public string sound;
-}
-

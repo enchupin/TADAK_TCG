@@ -7,7 +7,6 @@ public class GiantFlowerSpiderBossMonster : Monster
 
     private int plannedPatternIdForTurn;
     private int lastPatternId;
-    private int accumulatedHpLoss;
     private bool hasUsedOpeningPattern;
 
     public override int MonsterId => 301;
@@ -20,30 +19,7 @@ public class GiantFlowerSpiderBossMonster : Monster
         AddBuff(BattleRuntimeDefinitions.EightLegsBuffId, MaxLegCount);
         plannedPatternIdForTurn = 0;
         lastPatternId = 0;
-        accumulatedHpLoss = 0;
         hasUsedOpeningPattern = false;
-    }
-
-    protected override void OnAfterTakeDamage(int incomingDamage, int damageAfterDefense)
-    {
-        if (damageAfterDefense <= 0)
-        {
-            return;
-        }
-
-        accumulatedHpLoss += damageAfterDefense;
-
-        int targetLostLegCount = Mathf.Min(MaxLegCount, accumulatedHpLoss / 50);
-        int currentLegCount = Mathf.Max(0, GetBuffStack(BattleRuntimeDefinitions.EightLegsBuffId));
-        int desiredLegCount = Mathf.Max(0, MaxLegCount - targetLostLegCount);
-        int legLossCount = Mathf.Max(0, currentLegCount - desiredLegCount);
-        if (legLossCount <= 0)
-        {
-            return;
-        }
-
-        ConsumeBuffStack(BattleRuntimeDefinitions.EightLegsBuffId, legLossCount);
-        AddBuff(BattleRuntimeDefinitions.DamageAmplifyBuffId, legLossCount * 3);
     }
 
     protected override void BuildNextAction()
@@ -95,8 +71,8 @@ public class GiantFlowerSpiderBossMonster : Monster
                 break;
             case 30103:
                 DealDamage(target, 21);
-                AddCardToPlayerDiscard(CardManager.GetCardAsCard(BattleRuntimeDefinitions.WoundCardId));
-                AddCardToPlayerDiscard(CardManager.GetCardAsCard(BattleRuntimeDefinitions.WoundCardId));
+                AddCardToPlayerDiscard(CardManager.GetCardAsCard(10));
+                AddCardToPlayerDiscard(CardManager.GetCardAsCard(10));
                 break;
             default:
                 AddDefense(8);
@@ -128,6 +104,6 @@ public class GiantFlowerSpiderBossMonster : Monster
 
     private int GetPreviewDamage(int baseDamage)
     {
-        return Mathf.Max(0, baseDamage + GetBuffStack(BattleRuntimeDefinitions.DamageAmplifyBuffId));
+        return PreviewOutgoingDamage(baseDamage);
     }
 }

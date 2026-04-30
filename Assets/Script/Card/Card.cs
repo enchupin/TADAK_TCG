@@ -6,6 +6,14 @@ using UnityEngine;
 /// 순수 C# 객체로 카드의 런타임 상태를 관리
 /// </summary>
 [System.Serializable]
+public enum CardCostType
+{
+    Energy,
+    Barrier,
+    Rune
+}
+
+[System.Serializable]
 public class Card
 {
     // 기본 정보
@@ -13,6 +21,7 @@ public class Card
     public string cardName;
     public Character character;
     public int cost;
+    public CardCostType costType = CardCostType.Energy;
     public int baseCost;
     public string description;  // 카드 설명
 
@@ -22,12 +31,15 @@ public class Card
 
     // 실행 효과 목록
     public List<ICardEffect> effects = new();
+    public List<ICardEffect> onDrawEffects = new();
 
     // 보존 시 실행 효과 목록
     public List<ICardEffect> keepEffects = new();
 
     // 손에 남았을 때 턴 종료 시 실행 효과 목록
     public List<ICardEffect> endTurnInHandEffects = new();
+    public List<int> boundCardIds = new();
+    public List<int> pendingBoundCardIds = new();
 
     private int turnCostDelta;
     private bool hasTurnCostOverride;
@@ -51,10 +63,46 @@ public class Card
     public void Play(TrainingBattleManager battlemanager)
     {
         Debug.Log($"[{cardName}] 카드 사용!");
+        PromotePendingBoundCardIds();
+
+        if (battlemanager?.battleContext != null)
+        {
+            List<Card> contextCards = new List<Card> { this };
+            battlemanager.battleContext.SetContextCards("ThisCard", contextCards);
+            battlemanager.battleContext.SetContextCards("Self", contextCards);
+        }
 
         foreach (ICardEffect effect in effects)
         {
             effect.Execute(battlemanager);
+        }
+
+        if (boundCardIds != null && boundCardIds.Count > 0)
+        {
+            List<int> boundCardIdSnapshot = new List<int>(boundCardIds);
+            foreach (int boundCardId in boundCardIdSnapshot)
+            {
+                Card boundCard = CardManager.GetCardAsCard(boundCardId);
+                if (boundCard == null)
+                {
+                    continue;
+                }
+
+                TriggeredCardExecutionUtility.ExecuteTriggeredCard(
+                    battlemanager,
+                    boundCard,
+                    battlemanager != null ? battlemanager.currentTarget : null,
+                    resolveDestination: false,
+                    triggerPowerEffects: false,
+                    allowRepeats: false,
+                    applyPostPlayKeywords: false);
+            }
+        }
+
+        if (battlemanager?.battleContext != null)
+        {
+            battlemanager.battleContext.ClearContextCards("ThisCard");
+            battlemanager.battleContext.ClearContextCards("Self");
         }
     }
 
@@ -120,6 +168,7 @@ public class Card
         clonedCard.cardId = cardId;
         clonedCard.cardName = cardName;
         clonedCard.character = character;
+        clonedCard.costType = costType;
         clonedCard.description = description;
         clonedCard.enforceCardIds = enforceCardIds != null
             ? new List<int>(enforceCardIds)
@@ -130,12 +179,21 @@ public class Card
         clonedCard.effects = effects != null
             ? new List<ICardEffect>(effects)
             : new List<ICardEffect>();
+        clonedCard.onDrawEffects = onDrawEffects != null
+            ? new List<ICardEffect>(onDrawEffects)
+            : new List<ICardEffect>();
         clonedCard.keepEffects = keepEffects != null
             ? new List<ICardEffect>(keepEffects)
             : new List<ICardEffect>();
         clonedCard.endTurnInHandEffects = endTurnInHandEffects != null
             ? new List<ICardEffect>(endTurnInHandEffects)
             : new List<ICardEffect>();
+        clonedCard.boundCardIds = boundCardIds != null
+            ? new List<int>(boundCardIds)
+            : new List<int>();
+        clonedCard.pendingBoundCardIds = pendingBoundCardIds != null
+            ? new List<int>(pendingBoundCardIds)
+            : new List<int>();
         clonedCard.baseCost = Mathf.Max(0, baseCost);
         clonedCard.cost = Mathf.Max(0, cost);
         clonedCard.turnCostDelta = turnCostDelta;
@@ -159,6 +217,26 @@ public class Card
             effect?.Execute(battleManager);
         }
 
+        battleManager.battleContext.ClearContextCards("ThisCard");
+        battleManager.battleContext.ClearContextCards("Self");
+    }
+
+    public void ExecuteOnDrawEffects(TrainingBattleManager battleManager)
+    {
+        if (battleManager?.battleContext == null || onDrawEffects == null || onDrawEffects.Count == 0) {
+            return;
+        }
+
+        List<Card> contextCards = new List<Card> { this };
+        battleManager.battleContext.SetContextCards("ThisCard", contextCards);
+        battleManager.battleContext.SetContextCards("Self", contextCards);
+        battleManager.battleContext.SetContextCards("DrawnCard", contextCards);
+
+        foreach (ICardEffect effect in onDrawEffects) {
+            effect?.Execute(battleManager);
+        }
+
+        battleManager.battleContext.ClearContextCards("DrawnCard");
         battleManager.battleContext.ClearContextCards("ThisCard");
         battleManager.battleContext.ClearContextCards("Self");
     }
@@ -218,6 +296,18 @@ public class Card
         hasTurnCostOverride = false;
         turnCostOverride = 0;
         RecalculateCost();
+
+    }
+
+    public void AddPendingBoundCardId(int cardId)
+    {
+        if (cardId <= 0)
+        {
+            return;
+        }
+
+        pendingBoundCardIds ??= new List<int>();
+        pendingBoundCardIds.Add(cardId);
     }
 
     public void ApplyTemplate(Card templateCard)
@@ -229,6 +319,7 @@ public class Card
         cardId = templateCard.cardId;
         cardName = templateCard.cardName;
         character = templateCard.character;
+        costType = templateCard.costType;
         description = templateCard.description;
         enforceCardIds = templateCard.enforceCardIds != null
             ? new List<int>(templateCard.enforceCardIds)
@@ -239,18 +330,35 @@ public class Card
         effects = templateCard.effects != null
             ? new List<ICardEffect>(templateCard.effects)
             : new List<ICardEffect>();
+        onDrawEffects = templateCard.onDrawEffects != null
+            ? new List<ICardEffect>(templateCard.onDrawEffects)
+            : new List<ICardEffect>();
         keepEffects = templateCard.keepEffects != null
             ? new List<ICardEffect>(templateCard.keepEffects)
             : new List<ICardEffect>();
         endTurnInHandEffects = templateCard.endTurnInHandEffects != null
             ? new List<ICardEffect>(templateCard.endTurnInHandEffects)
             : new List<ICardEffect>();
+        boundCardIds = new List<int>();
+        pendingBoundCardIds = new List<int>();
 
         baseCost = Mathf.Max(0, templateCard.baseCost);
         turnCostDelta = 0;
         hasTurnCostOverride = false;
         turnCostOverride = 0;
         RecalculateCost();
+    }
+
+    private void PromotePendingBoundCardIds()
+    {
+        if (pendingBoundCardIds == null || pendingBoundCardIds.Count == 0)
+        {
+            return;
+        }
+
+        boundCardIds ??= new List<int>();
+        boundCardIds.AddRange(pendingBoundCardIds);
+        pendingBoundCardIds.Clear();
     }
 
     private void RecalculateCost()

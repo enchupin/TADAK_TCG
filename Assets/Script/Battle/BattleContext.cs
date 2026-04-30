@@ -21,9 +21,15 @@ public class BattleContext
     // 데미지 관련
     public int lastDamageDealt;
     public int totalDamageDealt;
+    public int playerCardHpLostThisCombat;
+
+    // 에너지 관련
+    public int energySpentThisTurn;
 
     // 보호막 관련
     public int defenseConsumed;
+
+    private readonly HashSet<int> enemyDebuffsAppliedThisTurn = new HashSet<int>();
 
     // 선택된 카드 (Choice -> Effect 연계용)
     private List<Card> selectedCards = new List<Card>();
@@ -103,6 +109,8 @@ public class BattleContext
         cardsDrawnThisTurn = 0;
         totalDamageDealt = 0;
         defenseConsumed = 0;
+        energySpentThisTurn = 0;
+        enemyDebuffsAppliedThisTurn.Clear();
         ClearSelectedCards();
         ClearAllContextCards();
     }
@@ -116,6 +124,7 @@ public class BattleContext
         cardsPlayedThisCombatList.Clear();
         deckShuffleCountThisCombat = 0;
         totalDamageDealt = 0;
+        playerCardHpLostThisCombat = 0;
         OnTurnStart();
     }
 
@@ -166,6 +175,21 @@ public class BattleContext
         return count;
     }
 
+    public void OnEnemyDebuffApplied(int buffId)
+    {
+        if (buffId <= 0)
+        {
+            return;
+        }
+
+        enemyDebuffsAppliedThisTurn.Add(buffId);
+    }
+
+    public bool WasEnemyDebuffAppliedThisTurn(int buffId)
+    {
+        return buffId > 0 && enemyDebuffsAppliedThisTurn.Contains(buffId);
+    }
+
     public Card GetLastPlayedCard()
     {
         if (cardsPlayedThisTurnList == null || cardsPlayedThisTurnList.Count == 0) {
@@ -213,8 +237,26 @@ public class BattleContext
         totalDamageDealt += amount;
     }
 
+    public void OnPlayerCardHpLost(int amount)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        playerCardHpLostThisCombat += amount;
+    }
+
     public void OnDefenseConsumed(int amount)
     {
         defenseConsumed += amount;
+    }
+
+    public void OnEnergySpent(int amount)
+    {
+        if (amount <= 0)
+            return;
+
+        energySpentThisTurn += amount;
     }
 }

@@ -16,8 +16,19 @@ public class BuffEffect : ICardEffect
 
     public void Execute(TrainingBattleManager battleManager)
     {
+        ExecuteInternal(battleManager, 0);
+    }
+
+    public void Execute(TrainingBattleManager battleManager, int forwardedAmount)
+    {
+        ExecuteInternal(battleManager, forwardedAmount);
+    }
+
+    private void ExecuteInternal(TrainingBattleManager battleManager, int forwardedAmount)
+    {
+        Monster formulaTargetMonster = CardEffectRuntimeUtility.ResolveSingleEnemyTarget(battleManager);
         int finalAmount = string.IsNullOrWhiteSpace(amountFormula)
-            ? amount : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData);
+            ? amount : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, formulaTargetMonster, forwardedAmount);
 
         if (buffId > 0 && string.IsNullOrWhiteSpace(amountFormula) && finalAmount <= 0)
         {
@@ -30,7 +41,7 @@ public class BuffEffect : ICardEffect
             return;
         }
 
-        // Apply by BuffID using BuffManager
+        // 버프 ID 기준으로 런타임 버프 서비스를 통해 적용
         ApplyBuff(battleManager, finalAmount);
         battleManager.UpdateAllUI();
     }
@@ -70,6 +81,20 @@ public class BuffEffect : ICardEffect
                 {
                     manager.ApplyBuffToMonster(monster, buffId, finalAmount);
                 }
+            }
+        }
+        else if (target == TargetType.RandomEnemy)
+        {
+            List<Monster> livingMonsters = manager.GetLivingMonsters();
+            if (livingMonsters == null || livingMonsters.Count == 0)
+            {
+                return;
+            }
+
+            Monster randomTarget = livingMonsters[Random.Range(0, livingMonsters.Count)];
+            if (randomTarget != null && !randomTarget.IsDead())
+            {
+                manager.ApplyBuffToMonster(randomTarget, buffId, finalAmount);
             }
         }
     }

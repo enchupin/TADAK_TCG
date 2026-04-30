@@ -17,25 +17,22 @@ public class BuildingDeck
         deckList.Clear();
         foreach (var character in characters)
         {
-            CharacterData data = CharacterManager.GetCharacterByEnum(character);
-            if (data != null && data.startDeckCardIds != null)
+            List<int> starterCardIds = CharacterManager.GetStarterCardIds(character);
+            foreach (int cardId in starterCardIds)
             {
-                foreach (int cardId in data.startDeckCardIds)
+                Card newCard = CardManager.GetCardAsCard(cardId);
+                if (newCard == null)
                 {
-                    Card newCard = CardManager.GetCardAsCard(cardId);
-                    if (newCard == null)
-                    {
-                        continue;
-                    }
-
-                    if (ViolatesUniqueRule(newCard))
-                    {
-                        Debug.LogWarning($"[BuildingDeck] 유일 키워드로 인해 중복 카드를 건너뜁니다: {newCard.cardName}");
-                        continue;
-                    }
-
-                    deckList.Add(newCard);
+                    continue;
                 }
+
+                if (ViolatesUniqueRule(newCard))
+                {
+                    Debug.LogWarning($"[BuildingDeck] 유일 키워드로 인해 중복 카드를 건너뜁니다: {newCard.cardName}");
+                    continue;
+                }
+
+                deckList.Add(newCard);
             }
         }
 
@@ -170,6 +167,8 @@ public class BuildingDeck
                 ? new List<int>(sourceCard.keywords)
                 : new List<int>();
 
+            LocalizationManager.ApplyToRuntimeCard(clonedCard);
+
             copiedDeck.Add(clonedCard);
         }
 
@@ -191,6 +190,14 @@ public class BuildingDeck
         }
 
         return cardIds;
+    }
+
+    public void RefreshLocalizedTexts()
+    {
+        foreach (Card card in deckList)
+        {
+            LocalizationManager.ApplyToRuntimeCard(card);
+        }
     }
 
     private bool ViolatesUniqueRule(Card newCard, int ignoredIndex = -1)
@@ -326,7 +333,7 @@ public static class TrainingRunDeckPersistence
             CharacterDeckLibrarySave library = ProfileSaveManager.GetOrCreateLibrary(character);
             if (library == null)
             {
-                mergedCardIds.AddRange(CharacterManager.GetStartDeck(character));
+                mergedCardIds.AddRange(CharacterManager.GetStarterCardIds(character));
                 continue;
             }
 
@@ -369,7 +376,7 @@ public static class TrainingRunDeckPersistence
             return null;
         }
 
-        CharacterDeckSave starterDeck = CharacterDeckSave.Create(DefaultDeckName, CharacterManager.GetStartDeck(character));
+        CharacterDeckSave starterDeck = CharacterDeckSave.Create(DefaultDeckName, CharacterManager.GetStarterCardIds(character));
         library.decks.Add(starterDeck);
         library.selectedDeckId = starterDeck.deckId;
         return starterDeck;

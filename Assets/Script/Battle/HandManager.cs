@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Manages hand cards and corresponding UI objects.
@@ -12,6 +13,10 @@ public class HandManager : MonoBehaviour
 
     [Header("Layout")]
     [SerializeField] private Transform handContainer;
+    [SerializeField] private float maxHandWidth = 1100f;
+    [SerializeField] private float baseCardSpacing = 170f;
+    [SerializeField] private float curveHeight = 45f;
+    [SerializeField] private float maxCardRotation = 12f;
 
     [Header("Hand")]
     private readonly List<Card> handCardList = new List<Card>();
@@ -27,8 +32,12 @@ public class HandManager : MonoBehaviour
             return;
         }
 
+        card = TrainingBattleManager.Instance != null
+            ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
+            : card;
         handCardList.Add(card);
         InstantiateCardUI(card);
+        UpdateHandCardPositions();
     }
 
     public void AddCard(List<Card> cards)
@@ -47,9 +56,14 @@ public class HandManager : MonoBehaviour
             if (card == null)
                 continue;
 
-            handCardList.Add(card);
-            InstantiateCardUI(card);
+            Card processedCard = TrainingBattleManager.Instance != null
+                ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
+                : card;
+            handCardList.Add(processedCard);
+            InstantiateCardUI(processedCard);
         }
+
+        UpdateHandCardPositions();
     }
 
     private void InstantiateCardUI(Card card)
@@ -86,9 +100,14 @@ public class HandManager : MonoBehaviour
             if (card == null)
                 continue;
 
-            handCardList.Add(card);
-            InstantiateCardUIWithoutInputController(card);
+            Card processedCard = TrainingBattleManager.Instance != null
+                ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
+                : card;
+            handCardList.Add(processedCard);
+            InstantiateCardUIWithoutInputController(processedCard);
         }
+
+        UpdateHandCardPositions();
     }
 
     private void InstantiateCardUIWithoutInputController(Card card)
@@ -106,6 +125,53 @@ public class HandManager : MonoBehaviour
             Debug.LogWarning("[HandManager] CardController is missing on card prefab.");
         }
     }
+
+    public void UpdateHandCardPositions()
+    {
+        if (handContainer == null)
+            return;
+
+        List<RectTransform> handCardRects = new List<RectTransform>(handCardList.Count);
+        foreach (Transform child in handContainer)
+        {
+            CardController controller = child.GetComponent<CardController>();
+            if (controller == null || controller.Card == null || !handCardList.Contains(controller.Card))
+                continue;
+
+            if (child is RectTransform rectTransform)
+            {
+                handCardRects.Add(rectTransform);
+            }
+        }
+
+        int cardCount = handCardRects.Count;
+        if (cardCount == 0)
+            return;
+
+        float spacing = 0f;
+        if (cardCount > 1)
+        {
+            float widthLimitedSpacing = maxHandWidth / (cardCount - 1);
+            spacing = Mathf.Min(baseCardSpacing, widthLimitedSpacing);
+        }
+
+        float centerIndex = (cardCount - 1) * 0.5f;
+        for (int i = 0; i < cardCount; i++)
+        {
+            RectTransform cardRect = handCardRects[i];
+            float normalized = cardCount == 1 ? 0f : (i / (cardCount - 1f)) * 2f - 1f;
+            float x = (i - centerIndex) * spacing;
+            float y = curveHeight * (1f - normalized * normalized) - curveHeight;
+            float rotationZ = -normalized * maxCardRotation;
+
+            cardRect.anchorMin = new Vector2(0.5f, 0.5f);
+            cardRect.anchorMax = new Vector2(0.5f, 0.5f);
+            cardRect.pivot = new Vector2(0.5f, 0.5f);
+            cardRect.anchoredPosition = new Vector2(x, y);
+            cardRect.localRotation = Quaternion.Euler(0f, 0f, rotationZ);
+        }
+    }
+
 
     public void RemoveCardFromHand(CardUI cardUI)
     {
@@ -128,6 +194,7 @@ public class HandManager : MonoBehaviour
         {
             handCardList.Remove(card);
             Debug.Log($"[HandManager] Removed from hand: {card.cardName}");
+            UpdateHandCardPositions();
         }
 
         Destroy(cardUI.gameObject);
@@ -144,6 +211,7 @@ public class HandManager : MonoBehaviour
         }
 
         handCardList.Remove(card);
+        UpdateHandCardPositions();
 
         CardUI cardUI = GetCardUI(card);
         if (cardUI != null) {

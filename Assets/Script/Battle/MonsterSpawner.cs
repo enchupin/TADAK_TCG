@@ -92,6 +92,8 @@ public class MonsterSpawner : MonoBehaviour
     [SerializeField] private GameObject jackORipperPrefab;
     [SerializeField] private GameObject giantFlowerSpiderPrefab;
     [SerializeField] private GameObject prophetPrefab;
+    [SerializeField] private GameObject iceAndFireBossPrefab;
+    [SerializeField] private GameObject voidLordBossPrefab;
     [SerializeField] private GameObject stoneShieldGolemPrefab;
     [SerializeField] private GameObject stoneThrowGolemPrefab;
     [SerializeField] private GameObject stoneStealGolemPrefab;
@@ -413,9 +415,9 @@ public class MonsterSpawner : MonoBehaviour
             case SpawnMonsterType.Prophet:
                 return prophetPrefab;
             case SpawnMonsterType.IceAndFireBoss:
-                return LoadMonsterPrefabFromResources("IceAndFireBoss");
+                return iceAndFireBossPrefab;
             case SpawnMonsterType.VoidLordBoss:
-                return LoadMonsterPrefabFromResources("VoidLordBoss");
+                return voidLordBossPrefab;
             case SpawnMonsterType.StoneShieldGolem:
                 return stoneShieldGolemPrefab;
             case SpawnMonsterType.StoneThrowGolem:
@@ -437,15 +439,5 @@ public class MonsterSpawner : MonoBehaviour
             default:
                 return null;
         }
-    }
-
-    private static GameObject LoadMonsterPrefabFromResources(string prefabName)
-    {
-        if (string.IsNullOrWhiteSpace(prefabName))
-        {
-            return null;
-        }
-
-        return Resources.Load<GameObject>($"MonsterPrefabs/{prefabName}");
     }
 }

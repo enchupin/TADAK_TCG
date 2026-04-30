@@ -1,6 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public enum MonsterIntentIconType
 {
@@ -20,14 +22,14 @@ public enum MonsterIntentIconType
 /// <summary>
 /// Holds monster battle data and turn hooks.
 /// </summary>
-public abstract class Monster : MonoBehaviour
+public abstract class Monster : MonoBehaviour, IPointerClickHandler
 {
+    private static readonly Color SelectionTintColor = new Color(0.45f, 0.75f, 1f, 1f);
+
     [Header("UI Reference")]
     [SerializeField] private TextMeshProUGUI hpText;
     [SerializeField] private TextMeshProUGUI defenseText;
     [SerializeField] private TextMeshProUGUI intentText;
-    [SerializeField] private TextMeshProUGUI corrosionText;
-    [SerializeField] private TextMeshProUGUI freezeText;
 
     [Header("Stats")]
     public int hp;
@@ -46,6 +48,10 @@ public abstract class Monster : MonoBehaviour
     private bool hasTriggeredDeath = false;
     private bool hasLeftCombat = false;
     private bool hasInitializedBattleStart = false;
+    private bool isSelectionHighlighted = false;
+    private int lastSelectionClickFrame = -1;
+    private readonly Dictionary<Graphic, Color> originalGraphicColors = new();
+    private readonly Dictionary<SpriteRenderer, Color> originalSpriteColors = new();
 
     public bool HasAttackIntent => hasAttackIntent;
     public int PlannedIntentValue => plannedIntentValue;
@@ -57,6 +63,7 @@ public abstract class Monster : MonoBehaviour
     protected virtual int BaseAttackPower => 0;
     protected virtual int BaseDefense => 0;
     protected virtual bool IsBossMonster => false;
+    public bool IsBoss => IsBossMonster;
 
     protected virtual void Awake()
     {
@@ -78,6 +85,8 @@ public abstract class Monster : MonoBehaviour
 
     protected virtual void OnDestroy()
     {
+        SetSelectionHighlight(false);
+
         if (TrainingBattleManager.Instance != null)
         {
             TrainingBattleManager.Instance.UnregisterMonster(this);
@@ -93,8 +102,6 @@ public abstract class Monster : MonoBehaviour
             defenseText.text = defense > 0 ? $"DEF {defense}" : string.Empty;
 
         UpdateIntentUI();
-        UpdateCorrosionUI();
-        UpdateFreezeUI();
     }
 
     public void EnsureBattleStartInitialized()
@@ -158,16 +165,20 @@ public abstract class Monster : MonoBehaviour
 
     public int TakeDamage(int amount, int playerStrength = 0)
     {
+        TrainingBattleManager battleManager = TrainingBattleManager.Instance;
         int finalDamage = amount + playerStrength;
-        finalDamage = ApplyIncomingDamageMultiplier(finalDamage);
+        finalDamage = battleManager != null
+            ? battleManager.ResolveMonsterIncomingDamage(this, finalDamage)
+            : Mathf.Max(0, finalDamage);
         if (finalDamage > 0)
         {
-            if (!CanReceiveDamage(finalDamage))
+            if (!CanReceiveDamage(finalDamage) || !(battleManager?.CanMonsterReceiveDamage(this, finalDamage) ?? true))
             {
                 UpdateUI();
                 return 0;
             }
 
+            battleManager?.HandleMonsterBeforeTakeDamage(this, finalDamage);
             OnBeforeTakeDamage(finalDamage);
         }
         int defenseBeforeHit = defense;
@@ -183,9 +194,32 @@ public abstract class Monster : MonoBehaviour
         }
 
         OnAfterTakeDamage(finalDamage, damageAfterDefense);
+        if (finalDamage > 0)
+        {
+            battleManager?.HandleMonsterAfterTakeDamage(this, finalDamage, damageAfterDefense);
+        }
+        if (finalDamage > 0)
+        {
+            battleManager?.ConsumeMonsterIncomingDamageBuffs(this, finalDamage);
+        }
         HandleDeathIfNeeded();
         UpdateUI();
         return damageAfterDefense;
+    }
+
+    public int LoseHp(int amount)
+    {
+        int lostAmount = Mathf.Clamp(amount, 0, hp);
+        if (lostAmount <= 0)
+        {
+            return 0;
+        }
+
+        hp -= lostAmount;
+        TrainingBattleManager.Instance?.HandleMonsterHpLost(this, lostAmount);
+        HandleDeathIfNeeded();
+        UpdateUI();
+        return lostAmount;
     }
 
     public void Kill()
@@ -234,13 +268,26 @@ public abstract class Monster : MonoBehaviour
 
         TrainingBattleManager.Instance?.RegisterMonster(this);
         OnRevivedTriggered();
+        TrainingBattleManager.Instance?.HandleMonsterRevived(this);
         UpdateUI();
     }
 
     public void AddDefense(int amount)
     {
-        defense += amount;
-        Debug.Log($"{name} defense +{amount} (now: {defense})");
+        int finalAmount = amount;
+        TrainingBattleManager battleManager = TrainingBattleManager.Instance;
+        if (battleManager != null)
+        {
+            finalAmount = battleManager.ResolveMonsterBarrierGain(this, amount);
+        }
+
+        if (finalAmount <= 0)
+        {
+            return;
+        }
+
+        defense += finalAmount;
+        Debug.Log($"{name} defense +{finalAmount} (now: {defense})");
         UpdateUI();
     }
 
@@ -270,85 +317,57 @@ public abstract class Monster : MonoBehaviour
             return;
         }
 
-        BuffData data = BuffManager.Instance != null ? BuffManager.Instance.GetBuffData(buffId) : null;
-        if (data == null)
-        {
-            data = new BuffData
-            {
-                buffId = buffId,
-                name = $"버프 {buffId}",
-                buffType = BuffData.GetPolarityBuffType(buffId),
-                description = string.Empty
-            };
-        }
+        bool isNonStackable = IsNonStackableBuff(buffId);
+        int appliedAmount = isNonStackable ? 1 : amount;
 
-        Buff existingBuff = currentBuffs.Find(b => b.data.buffId == buffId);
+        BuffData data = BuffMetadataResolver.Resolve(buffId);
+
+        Buff existingBuff = currentBuffs.Find(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
         if (existingBuff != null)
         {
-            if (IsNonStackableBuff(buffId))
+            existingBuff.data = data;
+            if (isNonStackable)
             {
-                existingBuff.stack = Mathf.Max(existingBuff.stack, 1);
+                existingBuff.stack = 1;
             }
             else
             {
-                existingBuff.stack += amount;
+                existingBuff.stack += appliedAmount;
             }
-            Debug.Log($"[Monster Buff Stack] {data.name} (+{amount}) -> {existingBuff.stack}");
+            Debug.Log($"[Monster Buff Stack] {data.name} (+{appliedAmount}) -> {existingBuff.stack}");
         }
         else
         {
-            int initialStack = IsNonStackableBuff(buffId) ? 1 : amount;
-            Buff newBuff = new Buff(data, initialStack, 0);
+            Buff newBuff = new Buff(data, appliedAmount);
             currentBuffs.Add(newBuff);
-            Debug.Log($"[Monster Buff Added] {data.name} ({initialStack})");
+            Debug.Log($"[Monster Buff Added] {data.name} ({appliedAmount})");
         }
 
         // 디버프/버프 스택 변경 즉시 UI 반영
-        if (buffId == BattleRuntimeDefinitions.FreezeBuffId)
-        {
-            ResolveFreezeThresholdIfNeeded();
-        }
+        TrainingBattleManager.Instance?.HandleMonsterBuffApplied(this, buffId, appliedAmount);
 
         UpdateUI();
     }
 
     public void OnTurnStart()
     {
-        ClearDefenseOnTurnStart();
-        OnTurnStarted();
-        ResolveFreezeThresholdIfNeeded();
-        UpdateUI();
-        int freezeStack = GetBuffStack(BattleRuntimeDefinitions.FreezeBuffId);
-        freezeStack = Mathf.Min(freezeStack, 6);
-        if (freezeStack >= 7)
+        TrainingBattleManager battleManager = TrainingBattleManager.Instance;
+        if (defense > 0 && !(battleManager?.ShouldKeepMonsterBarrierOnTurnStart(this) ?? false))
         {
-            DecreaseBuffStack(BattleRuntimeDefinitions.FreezeBuffId, 7);
-            skipCurrentTurnAction = true;
-            ClearPlannedAction();
-            Debug.Log($"[Monster] {name} 빙결 7스택으로 기절 상태가 되어 이번 턴 행동을 쉽니다.");
+            defense = 0;
+            Debug.Log($"[Monster] {name} 턴 시작으로 보호막이 제거됩니다.");
         }
-
+        OnTurnStarted();
+        battleManager?.ApplyMonsterTurnStartEffects(this);
         UpdateUI();
     }
 
     public void OnTurnEnd()
     {
-        int regeneration = GetBuffStack(3001);
-        if (regeneration > 0)
-        {
-            Heal(regeneration);
-            DecreaseBuffStack(3001, 1);
-        }
-
-        int burn = GetBuffStack(4003);
-        if (burn > 0)
-        {
-            TakeDamage(burn, 0);
-        }
-
-        // 부식(4001), 강화부식(4002)은 턴 종료 시 지속 턴 1 감소
-        DecreaseBuffStack(BattleRuntimeDefinitions.CorrosionBuffId, 1);
-        DecreaseBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1);
+        TrainingBattleManager battleManager = TrainingBattleManager.Instance;
+        battleManager?.ApplyMonsterTurnEndEffects(this);
         OnTurnEnded();
         UpdateUI();
     }
@@ -368,13 +387,62 @@ public abstract class Monster : MonoBehaviour
 
     public int GetBuffStack(int buffId)
     {
-        Buff buff = currentBuffs.Find(b => b.data != null && b.data.buffId == buffId);
+        Buff buff = currentBuffs.Find(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
         return buff != null ? buff.stack : 0;
     }
 
     public void ConsumeBuffStack(int buffId, int amount)
     {
         DecreaseBuffStack(buffId, amount);
+        UpdateUI();
+    }
+
+    public void RemoveBuffStack(int buffId)
+    {
+        RemoveBuff(buffId);
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        TryHandleSelectionClick();
+    }
+
+    public void SetSelectionHighlight(bool isHighlighted)
+    {
+        if (isSelectionHighlighted == isHighlighted)
+        {
+            return;
+        }
+
+        isSelectionHighlighted = isHighlighted;
+        ApplySelectionHighlight();
+    }
+
+    public void SkipCurrentTurnActionOnce()
+    {
+        skipCurrentTurnAction = true;
+        ClearPlannedAction();
+    }
+
+    public void SetStunIntent()
+    {
+        skipCurrentTurnAction = true;
+        SetIntent("기절합니다.");
+        SetPlannedPattern(0, MonsterIntentIconType.Stun);
+    }
+
+    public void ScalePlannedIntent(float multiplier)
+    {
+        if (multiplier < 0f || !hasAttackIntent || plannedIntentValue <= 0)
+        {
+            return;
+        }
+
+        int previousValue = plannedIntentValue;
+        plannedIntentValue = Mathf.Max(0, Mathf.FloorToInt(plannedIntentValue * multiplier));
+        plannedIntentDescription = ReplaceIntentValue(plannedIntentDescription, previousValue, plannedIntentValue);
         UpdateUI();
     }
 
@@ -422,7 +490,22 @@ public abstract class Monster : MonoBehaviour
 
         int finalDamage = ApplyOutgoingDamageModifier(baseDamage);
         Debug.Log($"[Enemy Turn] {name} attacks for {finalDamage}");
-        return target.TakeDamage(finalDamage, this);
+        int hpDamage = target.TakeDamage(finalDamage, this);
+        TrainingBattleManager.Instance?.HandleMonsterAttackResolved(this, target, finalDamage, hpDamage);
+        return hpDamage;
+    }
+
+    protected int PreviewOutgoingDamage(int baseDamage)
+    {
+        return ApplyOutgoingDamageModifier(baseDamage);
+    }
+
+    protected int PreviewBarrierGain(int baseAmount)
+    {
+        int safeAmount = Mathf.Max(0, baseAmount);
+        return TrainingBattleManager.Instance != null
+            ? TrainingBattleManager.Instance.ResolveMonsterBarrierGain(this, safeAmount)
+            : safeAmount;
     }
 
     protected void AddCardToPlayerDiscard(Card card)
@@ -463,62 +546,14 @@ public abstract class Monster : MonoBehaviour
         }
     }
 
-    private void UpdateCorrosionUI()
-    {
-        if (corrosionText == null)
-            return;
-
-        int enhancedCorrosionStack = GetBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId);
-        int corrosionStack = GetBuffStack(BattleRuntimeDefinitions.CorrosionBuffId);
-
-        if (enhancedCorrosionStack > 0)
-        {
-            corrosionText.text = $"EcorrosionStack : {enhancedCorrosionStack}";
-            return;
-        }
-
-        corrosionText.text = $"corrosionStack : {corrosionStack}";
-    }
-
-    private void UpdateFreezeUI()
-    {
-        if (freezeText == null)
-            return;
-
-        int freezeStack = GetBuffStack(BattleRuntimeDefinitions.FreezeBuffId);
-        freezeText.text = $"FreezeStack : {freezeStack}";
-    }
-
-    private int ApplyIncomingDamageMultiplier(int incomingDamage)
-    {
-        if (incomingDamage <= 0)
-            return 0;
-
-        float multiplier = 1f;
-
-        // 강화부식이 있으면 50%, 아니면 부식 25%
-        if (GetBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId) > 0)
-        {
-            multiplier = BuffManager.Instance != null
-                ? BuffManager.Instance.GetIncomingDamageMultiplier(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1.5f)
-                : 1.5f;
-        }
-        else if (GetBuffStack(BattleRuntimeDefinitions.CorrosionBuffId) > 0)
-        {
-            multiplier = BuffManager.Instance != null
-                ? BuffManager.Instance.GetIncomingDamageMultiplier(BattleRuntimeDefinitions.CorrosionBuffId, 1.25f)
-                : 1.25f;
-        }
-
-        return Mathf.FloorToInt(incomingDamage * multiplier);
-    }
-
     private void DecreaseBuffStack(int buffId, int amount)
     {
         if (amount <= 0)
             return;
 
-        Buff buff = currentBuffs.Find(b => b.data != null && b.data.buffId == buffId);
+        Buff buff = currentBuffs.Find(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
         if (buff == null)
             return;
 
@@ -531,34 +566,9 @@ public abstract class Monster : MonoBehaviour
 
     private void RemoveBuff(int buffId)
     {
-        currentBuffs.RemoveAll(buff => buff.data != null && buff.data.buffId == buffId);
-    }
-
-    private void ResolveFreezeThresholdIfNeeded()
-    {
-        int freezeStack = GetBuffStack(BattleRuntimeDefinitions.FreezeBuffId);
-        if (freezeStack < 7)
-        {
-            return;
-        }
-
-        while (freezeStack >= 7 && !IsDead())
-        {
-            DecreaseBuffStack(BattleRuntimeDefinitions.FreezeBuffId, 7);
-            freezeStack -= 7;
-
-            if (IsBossMonster)
-            {
-                Debug.Log($"[Monster] {name}은 빙결 7스택으로 대신 20 피해를 받습니다.");
-                TakeDamage(20, 0);
-                continue;
-            }
-
-            skipCurrentTurnAction = true;
-            ClearPlannedAction();
-            Debug.Log($"[Monster] {name} 빙결 7스택으로 기절 상태가 되어 이번 턴 행동을 쉽니다.");
-            break;
-        }
+        currentBuffs.RemoveAll(buff =>
+            buff.data != null &&
+            buff.data.buffId == buffId);
     }
 
     private void InitializeMonsterState()
@@ -602,41 +612,108 @@ public abstract class Monster : MonoBehaviour
         plannedIntentIcons.Clear();
     }
 
+    private static string ReplaceIntentValue(string description, int previousValue, int nextValue)
+    {
+        if (string.IsNullOrWhiteSpace(description) || previousValue < 0)
+        {
+            return description;
+        }
+
+        string previousText = previousValue.ToString();
+        int replaceIndex = description.IndexOf(previousText, System.StringComparison.Ordinal);
+        if (replaceIndex < 0)
+        {
+            return description;
+        }
+
+        return description.Substring(0, replaceIndex)
+            + nextValue
+            + description.Substring(replaceIndex + previousText.Length);
+    }
+
     private void SetDefenseValue(int amount)
     {
         int previousDefense = defense;
         defense = Mathf.Max(0, amount);
-        HandleRootedBarrierBreak(previousDefense);
+        TrainingBattleManager.Instance?.HandleMonsterDefenseChanged(this, previousDefense, defense);
     }
 
-    private void ClearDefenseOnTurnStart()
+    private void OnMouseDown()
     {
-        if (defense <= 0 || GetBuffStack(BattleRuntimeDefinitions.RootedBuffId) > 0)
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
         {
             return;
         }
 
-        defense = 0;
-        Debug.Log($"[Monster] {name} 턴 시작으로 보호막이 제거됩니다.");
+        TryHandleSelectionClick();
     }
 
-    private void HandleRootedBarrierBreak(int previousDefense)
+    private void TryHandleSelectionClick()
     {
-        if (previousDefense <= 0 || defense > 0 || hp <= 0)
+        if (lastSelectionClickFrame == Time.frameCount)
         {
             return;
         }
 
-        if (GetBuffStack(BattleRuntimeDefinitions.RootedBuffId) <= 0)
-        {
-            return;
-        }
+        lastSelectionClickFrame = Time.frameCount;
+        TrainingBattleManager.Instance?.HandleMonsterClicked(this);
+    }
 
-        RemoveBuff(BattleRuntimeDefinitions.RootedBuffId);
-        skipCurrentTurnAction = true;
-        SetIntent("기절합니다.");
-        SetPlannedPattern(0, MonsterIntentIconType.Stun);
-        Debug.Log($"[Monster] {name} 뿌리내림을 잃고 기절합니다.");
+    private void ApplySelectionHighlight()
+    {
+        ApplyGraphicSelectionHighlight();
+        ApplySpriteSelectionHighlight();
+    }
+
+    private void ApplyGraphicSelectionHighlight()
+    {
+        Graphic[] graphics = GetComponentsInChildren<Graphic>(true);
+        foreach (Graphic graphic in graphics)
+        {
+            if (graphic == null)
+            {
+                continue;
+            }
+
+            if (!originalGraphicColors.ContainsKey(graphic))
+            {
+                originalGraphicColors[graphic] = graphic.color;
+            }
+
+            Color originalColor = originalGraphicColors[graphic];
+            graphic.color = isSelectionHighlighted
+                ? BlendSelectionColor(originalColor)
+                : originalColor;
+        }
+    }
+
+    private void ApplySpriteSelectionHighlight()
+    {
+        SpriteRenderer[] spriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
+        foreach (SpriteRenderer spriteRenderer in spriteRenderers)
+        {
+            if (spriteRenderer == null)
+            {
+                continue;
+            }
+
+            if (!originalSpriteColors.ContainsKey(spriteRenderer))
+            {
+                originalSpriteColors[spriteRenderer] = spriteRenderer.color;
+            }
+
+            Color originalColor = originalSpriteColors[spriteRenderer];
+            spriteRenderer.color = isSelectionHighlighted
+                ? BlendSelectionColor(originalColor)
+                : originalColor;
+        }
+    }
+
+    private static Color BlendSelectionColor(Color originalColor)
+    {
+        Color tintedColor = Color.Lerp(originalColor, SelectionTintColor, 0.65f);
+        tintedColor.a = originalColor.a;
+        return tintedColor;
     }
 
     private int ApplyOutgoingDamageModifier(int baseDamage)
@@ -646,7 +723,9 @@ public abstract class Monster : MonoBehaviour
             return 0;
         }
 
-        return Mathf.Max(0, baseDamage + GetBuffStack(BattleRuntimeDefinitions.DamageAmplifyBuffId));
+        return TrainingBattleManager.Instance != null
+            ? TrainingBattleManager.Instance.ModifyMonsterOutgoingDamage(this, baseDamage)
+            : Mathf.Max(0, baseDamage);
     }
 
     private void EnsureIntentTextReference()
@@ -656,7 +735,7 @@ public abstract class Monster : MonoBehaviour
             return;
         }
 
-        TextMeshProUGUI sourceText = hpText != null ? hpText : corrosionText;
+        TextMeshProUGUI sourceText = hpText != null ? hpText : defenseText;
         if (sourceText == null)
         {
             return;
@@ -681,7 +760,7 @@ public abstract class Monster : MonoBehaviour
 
     protected virtual bool IsNonStackableBuff(int buffId)
     {
-        return false;
+        return BuffData.IsNonStackableBuffId(buffId);
     }
 
     protected virtual void OnBattleStart()

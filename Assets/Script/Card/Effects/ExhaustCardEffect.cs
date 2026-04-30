@@ -29,7 +29,7 @@ public class ExhaustCardEffect : ICardEffect
             return;
         }
 
-        int exhaustedCount = 0;
+        List<Card> exhaustedCards = new List<Card>();
         foreach (Card card in cardsToExhaust)
         {
             if (card == null)
@@ -42,16 +42,16 @@ public class ExhaustCardEffect : ICardEffect
                 continue;
             }
 
-            exhaustedCount++;
+            exhaustedCards.Add(card);
         }
 
-        if (exhaustedCount <= 0)
+        if (exhaustedCards.Count <= 0)
         {
             return;
         }
 
-        battleManager.battleContext?.OnCardsExhausted(exhaustedCount);
-
+        int exhaustedCount = exhaustedCards.Count;
+        battleManager.MoveCardsToExhaust(exhaustedCards);
         if (onActions != null)
         {
             foreach (ICardEffect onAction in onActions)

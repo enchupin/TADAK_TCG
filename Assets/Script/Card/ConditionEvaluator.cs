@@ -58,6 +58,23 @@ public static class ConditionEvaluator
             return Compare(barrier, op, check.value);
         }
 
+        if (check.subject == "UseCardInTurn" || check.property == "UseCardInTurn")
+        {
+            int cardsPlayed = battleManager.battleContext != null
+                ? battleManager.battleContext.GetCardsPlayedThisTurnCount(null)
+                : 0;
+            return Compare(cardsPlayed, op, check.value);
+        }
+
+        if (check.subject == "EnemyDebuffAppliedThisTurn")
+        {
+            int buffId = 0;
+            int.TryParse(check.param, out buffId);
+            bool wasApplied = battleManager.battleContext != null
+                && battleManager.battleContext.WasEnemyDebuffAppliedThisTurn(buffId);
+            return Compare(wasApplied ? 1f : 0f, op, check.value);
+        }
+
         object subjectObj = GetSubject(check.subject, battleManager);
         if (subjectObj == null) return false;
 
@@ -68,9 +85,13 @@ public static class ConditionEvaluator
     private static object GetSubject(string subjectType, TrainingBattleManager bm)
     {
         if (bm?.battleContext != null && !string.IsNullOrWhiteSpace(subjectType)) {
-            Card contextCard = bm.battleContext.GetContextCard(subjectType);
-            if (contextCard != null) {
-                return contextCard;
+            List<Card> contextCards = bm.battleContext.GetContextCards(subjectType);
+            if (contextCards.Count > 1) {
+                return contextCards;
+            }
+
+            if (contextCards.Count == 1) {
+                return contextCards[0];
             }
         }
 
@@ -112,6 +133,23 @@ public static class ConditionEvaluator
                 case "Cost": return card.cost;
                 case "CharacterId": return (int)card.character;
                 case "IsPotion": return IsPotionCard(card) ? 1f : 0f;
+                case "HasKeyword":
+                    return card.HasKeyword(ResolveKeywordId(param)) ? 1f : 0f;
+            }
+        }
+
+        if (subject is List<Card> cards)
+        {
+            switch (property)
+            {
+                case "Count":
+                    return cards.Count;
+                case "HasCharacterId":
+                    if (int.TryParse(param, out int characterId))
+                    {
+                        return cards.Exists(card => card != null && (int)card.character == characterId) ? 1f : 0f;
+                    }
+                    return 0f;
             }
         }
 
@@ -126,12 +164,10 @@ public static class ConditionEvaluator
                 case "Energy": return player.energy;
                 case "Buff":
                     int playerBuffId = int.Parse(param);
-                    Buff playerBuff = player.currentBuffs.Find(b => b.data.buffId == playerBuffId);
-                    return playerBuff != null ? playerBuff.stack : 0;
+                    return player.GetBuffStack(playerBuffId);
                 case "HasBuff":
                     int playerHasBuffId = int.Parse(param);
-                    Buff playerHasBuff = player.currentBuffs.Find(b => b.data.buffId == playerHasBuffId);
-                    return playerHasBuff != null && playerHasBuff.stack > 0 ? 1f : 0f;
+                    return player.GetBuffStack(playerHasBuffId) > 0 ? 1f : 0f;
             }
         }
         else if (subject is Monster monster)
@@ -143,12 +179,10 @@ public static class ConditionEvaluator
                 case "HasAttackIntent": return monster.HasAttackIntent ? 1f : 0f;
                 case "Buff":
                     int monsterBuffId = int.Parse(param);
-                    Buff monsterBuff = monster.currentBuffs.Find(b => b.data.buffId == monsterBuffId);
-                    return monsterBuff != null ? monsterBuff.stack : 0;
+                    return monster.GetBuffStack(monsterBuffId);
                 case "HasBuff":
                     int monsterHasBuffId = int.Parse(param);
-                    Buff monsterHasBuff = monster.currentBuffs.Find(b => b.data.buffId == monsterHasBuffId);
-                    return monsterHasBuff != null && monsterHasBuff.stack > 0 ? 1f : 0f;
+                    return monster.GetBuffStack(monsterHasBuffId) > 0 ? 1f : 0f;
             }
         }
         else if (subject is HandManager hand)
@@ -167,8 +201,29 @@ public static class ConditionEvaluator
         if (card == null) return false;
         if (card.character != Character.Isla) return false;
 
-        return (card.cardId >= 101050 && card.cardId <= 101055)
-            || (card.cardId >= 101080 && card.cardId <= 101087);
+        return card.cardId >= 101080 && card.cardId <= 101087;
+    }
+
+    private static int ResolveKeywordId(string rawKeyword)
+    {
+        if (int.TryParse(rawKeyword, out int keywordId))
+        {
+            return keywordId;
+        }
+
+        switch (rawKeyword)
+        {
+            case "Keep": return CardKeywordIds.Keep;
+            case "Unplayable": return CardKeywordIds.Unplayable;
+            case "Exhaust": return CardKeywordIds.Exhaust;
+            case "Power": return CardKeywordIds.Power;
+            case "Opening": return CardKeywordIds.Opening;
+            case "Shadow": return CardKeywordIds.Shadow;
+            case "Finale": return CardKeywordIds.Finale;
+            case "Ghost": return CardKeywordIds.Ghost;
+            case "Unique": return CardKeywordIds.Unique;
+            default: return 0;
+        }
     }
 
     private static bool Compare(float actual, string op, string targetStr)

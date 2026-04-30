@@ -107,6 +107,14 @@ public class TurnSystem
         }
 
         battleManager.ApplyPlayerTurnStartEffects();
+        if (battleManager.TryHandleCombatEnd())
+        {
+            battleManager.UpdateEndTurnButtonState();
+            battleManager.RefreshHandPlayableState();
+            battleManager.UpdateAllUI();
+            return;
+        }
+
         battleManager.ProcessPendingMonsterRevives();
         if (replanEnemyActions)
         {
@@ -306,14 +314,12 @@ public class TurnSystem
         }
         if (exhaustedCards.Count > 0)
         {
-            if (battleManager.battleContext != null)
-            {
-                battleManager.battleContext.OnCardsExhausted(exhaustedCards.Count);
-            }
             foreach (Card exhaustedCard in exhaustedCards)
             {
                 battleManager.handManager.RemoveCard(exhaustedCard);
             }
+
+            battleManager.MoveCardsToExhaust(exhaustedCards);
         }
         foreach (Card retainedCard in retainedCards)
         {
@@ -431,6 +437,7 @@ public class TurnSystem
         ClearTurnModifiers(battleManager.handManager?.GetHandCards());
         ClearTurnModifiers(battleManager.usableDeckManager?.GetDrawPile());
         ClearTurnModifiers(battleManager.usableDeckManager?.GetDiscardPile());
+        ClearTurnModifiers(battleManager.usableDeckManager?.GetExhaustPile());
     }
 
     private static void ClearTurnModifiers(List<Card> cards)

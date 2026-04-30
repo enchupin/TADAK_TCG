@@ -14,6 +14,7 @@ using UnityEngine;
 public class CardJSONConverter : EditorWindow
 {
     private const string DefaultJsonFolderPath = "Assets/Resources/JsonData";
+    private const string DefaultLocalizationFolderPath = "Assets/Resources/Localization/Cards";
     private const string DefaultOutputPath = "Assets/Data/Cards";
     private const string CardCollectionPath = "Assets/Resources/CardCollection.asset";
     private const string CardGroupsFileName = "cardGroups.json";
@@ -21,6 +22,7 @@ public class CardJSONConverter : EditorWindow
     private string jsonFolderPath = DefaultJsonFolderPath;
     private string outputPath = DefaultOutputPath;
     private Dictionary<string, List<int>> cardGroups = new();
+    private Dictionary<int, CardLocalizationEntry> cardLocalizations = new();
 
     [MenuItem("Tools/TCG/Card JSON Converter")]
     public static void ShowWindow()
@@ -171,6 +173,7 @@ public class CardJSONConverter : EditorWindow
             Directory.CreateDirectory(outputPath);
         }
         cardGroups = LoadCardGroups();
+        cardLocalizations = LoadCardLocalizations();
 
         // CardCollection SO 로드
         CardCollection collection = GetOrCreateCardCollection();
@@ -279,7 +282,7 @@ public class CardJSONConverter : EditorWindow
         }
 
         // 예상 경로에서 에셋 로드 시도
-        string candidatePath = BuildCardAssetPath(cardId, ReadJsonString(cardObject, "name"));
+        string candidatePath = BuildCardAssetPath(cardId, ResolveLocalizedCardName(cardId));
         CardData loaded = AssetDatabase.LoadAssetAtPath<CardData>(candidatePath);
         if (loaded != null) {
             return loaded;
@@ -296,10 +299,33 @@ public class CardJSONConverter : EditorWindow
     private void UpdateCardData(CardData cardData, JObject cardObject)
     {
         cardData.cardId = ReadRequiredJsonInt(cardObject, "cardId");
-        cardData.cardName = ReadRequiredJsonString(cardObject, "name");
         cardData.character = CharacterManager.GetCharacterEnumById(ReadRequiredJsonInt(cardObject, "characterId"));
         cardData.cost = ReadRequiredJsonInt(cardObject, "cost");
-        cardData.description = ReadRequiredJsonString(cardObject, "description");
+        cardData.costType = ParseCardCostType(ReadJsonString(cardObject, "costType", "Energy"));
+
+        if (cardLocalizations.TryGetValue(cardData.cardId, out CardLocalizationEntry localizationEntry))
+        {
+            if (!string.IsNullOrWhiteSpace(localizationEntry.koName))
+            {
+                cardData.cardName = localizationEntry.koName;
+            }
+
+            if (!string.IsNullOrWhiteSpace(localizationEntry.koDescription))
+            {
+                cardData.description = localizationEntry.koDescription;
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"[CardJSONConverter] 카드 로컬라이징을 찾지 못했습니다: {cardData.cardId}");
+        }
+
+        if (string.IsNullOrWhiteSpace(cardData.cardName))
+        {
+            cardData.cardName = cardData.cardId.ToString();
+        }
+
+        cardData.description ??= string.Empty;
 
         cardData.enforceCardIds.Clear();
         string enforceGroup = ReadJsonString(cardObject, "enforceGroup");
@@ -338,6 +364,21 @@ public class CardJSONConverter : EditorWindow
             }
         }
 
+        cardData.onDrawEffects ??= new List<CardEffectData>();
+        cardData.onDrawEffects.Clear();
+        if (cardObject["onDrawEffects"] is JArray onDrawEffectsArray) {
+            foreach (JToken token in onDrawEffectsArray) {
+                if (token is not JObject effectObject) {
+                    continue;
+                }
+
+                CardEffectData effect = ReadEffect(effectObject);
+                if (effect != null) {
+                    cardData.onDrawEffects.Add(effect);
+                }
+            }
+        }
+
         cardData.endTurnInHandEffects ??= new List<CardEffectData>();
         cardData.endTurnInHandEffects.Clear();
         if (cardObject["endTurnInHandEffects"] is JArray endTurnInHandEffectsArray) {
@@ -352,6 +393,93 @@ public class CardJSONConverter : EditorWindow
                 }
             }
         }
+    }
+
+    private string ResolveLocalizedCardName(int cardId)
+    {
+        if (cardLocalizations.TryGetValue(cardId, out CardLocalizationEntry localizationEntry)
+            && !string.IsNullOrWhiteSpace(localizationEntry?.koName))
+        {
+            return localizationEntry.koName;
+        }
+
+        return cardId.ToString();
+    }
+
+    private Dictionary<int, CardLocalizationEntry> LoadCardLocalizations()
+    {
+        Dictionary<int, CardLocalizationEntry> map = new();
+        if (!Directory.Exists(DefaultLocalizationFolderPath))
+        {
+            Debug.LogWarning($"[CardJSONConverter] Localization folder not found: {DefaultLocalizationFolderPath}");
+            return map;
+        }
+
+        string[] localizationFiles = Directory.GetFiles(DefaultLocalizationFolderPath, "*.json");
+        foreach (string filePath in localizationFiles)
+        {
+            string jsonText;
+            try
+            {
+                jsonText = File.ReadAllText(filePath);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[CardJSONConverter] Could not read localization file {filePath}: {ex.Message}");
+                continue;
+            }
+
+            JObject root;
+            try
+            {
+                root = JObject.Parse(jsonText);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[CardJSONConverter] Invalid localization JSON in {filePath}: {ex.Message}");
+                continue;
+            }
+
+            if (root["cards"] is not JArray cardsArray)
+            {
+                Debug.LogWarning($"[CardJSONConverter] Missing 'cards' array in localization file: {filePath}");
+                continue;
+            }
+
+            foreach (JToken token in cardsArray)
+            {
+                if (token is not JObject cardObject)
+                {
+                    continue;
+                }
+
+                int cardId = ReadRequiredJsonInt(cardObject, "cardId");
+                if (cardId <= 0)
+                {
+                    continue;
+                }
+
+                map[cardId] = new CardLocalizationEntry
+                {
+                    cardId = cardId,
+                    koName = ReadJsonString(cardObject, "koName"),
+                    koDescription = ReadJsonString(cardObject, "koDescription"),
+                    enName = ReadJsonString(cardObject, "enName"),
+                    enDescription = ReadJsonString(cardObject, "enDescription"),
+                    jaName = ReadJsonString(cardObject, "jaName"),
+                    jaDescription = ReadJsonString(cardObject, "jaDescription"),
+                    zhHantName = ReadJsonString(cardObject, "zhHantName"),
+                    zhHantDescription = ReadJsonString(cardObject, "zhHantDescription"),
+                    zhHansName = ReadJsonString(cardObject, "zhHansName"),
+                    zhHansDescription = ReadJsonString(cardObject, "zhHansDescription"),
+                    ruName = ReadJsonString(cardObject, "ruName"),
+                    ruDescription = ReadJsonString(cardObject, "ruDescription")
+                };
+            }
+        }
+
+        Debug.Log($"[CardJSONConverter] Loaded card localizations: {map.Count}");
+        return map;
     }
 
 
@@ -383,7 +511,7 @@ public class CardJSONConverter : EditorWindow
         }
 
         // onAction이 있으면 바깥 effect에 subject가 반드시 있어야 함
-        if (hasOnAction && string.IsNullOrWhiteSpace(ReadJsonString(effectObject, "subject"))) {
+        if (hasOnAction && !isOnActionContext && string.IsNullOrWhiteSpace(ReadJsonString(effectObject, "subject"))) {
             throw new ArgumentException("[CardJSONConverter] Effect with onAction requires outer 'subject'.");
         }
         
@@ -408,15 +536,19 @@ public class CardJSONConverter : EditorWindow
             durationText = ReadJsonString(effectObject, "duration"),
             effectIndex = ReadJsonInt(effectObject, "effectIndex", -1),
             ampMultiplier = ReadJsonFloat(effectObject, "ampMultiplier", 1f),
+            multiplier = ReadJsonFloat(effectObject, "multiplier", 0f),
             count = ReadJsonInt(effectObject, "count"),
             stat = ReadJsonString(effectObject, "stat"),
             change = ReadJsonString(effectObject, "change"),
             buffId = ReadJsonInt(effectObject, "buffId"),
-            buffTypes = ReadJsonIntList(effectObject, "buffType"),
+            buffFilterIds = ReadJsonIntList(effectObject, "buffIds"),
             random = ReadJsonBool(effectObject, "random"),
+            allowFewerSelection = ReadJsonBool(effectObject, "allowFewer"),
+            upgradeableOnly = ReadJsonBool(effectObject, "upgradeableOnly"),
             duration = ReadJsonInt(effectObject, "duration"),
             cardId = ReadJsonString(effectObject, "cardId"),
             subject = ReadJsonString(effectObject, "subject"),
+            characterFilter = ReadJsonString(effectObject, "character", ReadJsonString(effectObject, "characterFilter")),
             timing = ReadJsonString(effectObject, "timing"),
             repeatNextEffect = string.Equals(effectTypeRaw, "Repeat", StringComparison.OrdinalIgnoreCase)
         };
@@ -749,10 +881,12 @@ public class CardJSONConverter : EditorWindow
             case "Damage": return EffectType.Damage;
             case "Barrier": return EffectType.Barrier;
             case "Draw": return EffectType.Draw;
+            case "DrawUntilHandFull": return EffectType.DrawUntilHandFull;
             case "DrawBasic": return EffectType.DrawBasic;
             case "DrawCharacter": return EffectType.DrawCharacter;
             case "Buff": return EffectType.Buff;
             case "Heal": return EffectType.Heal;
+            case "HpLoss": return EffectType.HpLoss;
             case "GenerateCard": return EffectType.GenerateCard;
             case "ExhaustCard": return EffectType.ExhaustCard;
             case "Conditional": return EffectType.Conditional;
@@ -780,9 +914,43 @@ public class CardJSONConverter : EditorWindow
             case "Trigger": return EffectType.Trigger;
             case "RemoveBuff": return EffectType.RemoveBuff;
             case "Scry": return EffectType.Scry;
+            case "TransformCards":
+            case "TransformMonsterCards": return EffectType.TransformCards;
+            case "UpgradeCards": return EffectType.UpgradeCards;
+            case "SwapCardCosts": return EffectType.SwapCardCosts;
+            case "MultiplyEnemyDebuffs": return EffectType.MultiplyEnemyDebuffs;
+            case "ScaleIntent": return EffectType.ScaleIntent;
+            case "ReplanIntent": return EffectType.ReplanIntent;
+            case "ReplayExhaustedCards": return EffectType.ReplayExhaustedCards;
+            case "UseTopDeckCards": return EffectType.UseTopDeckCards;
+            case "BindCard": return EffectType.BindCard;
+            case "EnemyHpLossHealPlayer": return EffectType.EnemyHpLossHealPlayer;
+            case "Party": return EffectType.Party;
+            case "CopyEnemyDebuffs": return EffectType.CopyEnemyDebuffs;
+            case "ApplyBuffByTargetStack": return EffectType.ApplyBuffByTargetStack;
+            case "ResolveDrowningLethal": return EffectType.ResolveDrowningLethal;
+            case "DamageByBuffStack": return EffectType.DamageByBuffStack;
+            case "IncreaseBeneficialBuffStacks": return EffectType.IncreaseBeneficialBuffStacks;
 
             default:
                 throw new ArgumentException($"[CardJSONConverter] Unsupported effect type: {type}");
+        }
+    }
+
+    private static CardCostType ParseCardCostType(string type)
+    {
+        if (string.IsNullOrWhiteSpace(type)) {
+            return CardCostType.Energy;
+        }
+
+        switch (type)
+        {
+            case "Energy": return CardCostType.Energy;
+            case "Barrier": return CardCostType.Barrier;
+            case "Rune": return CardCostType.Rune;
+            default:
+                Debug.LogWarning($"[CardJSONConverter] Unknown cost type: {type}. Fallback to Energy.");
+                return CardCostType.Energy;
         }
     }
 
@@ -803,9 +971,9 @@ public class CardJSONConverter : EditorWindow
         switch (target)
         {
             case "AllEnemies": return TargetType.AllEnemies;
-            case "SingleEnemy":
+            case "SingleEnemy": return TargetType.SingleEnemy;
             case "RandomEnemy":
-            case "RandEnemy": return TargetType.SingleEnemy;
+            case "RandEnemy": return TargetType.RandomEnemy;
             case "Self": return TargetType.Self;
             case "ThisCard": return TargetType.None;
             case "Hand": return TargetType.Hand;
@@ -1040,15 +1208,25 @@ public class CardJSONConverter : EditorWindow
 
     private static List<int> ReadJsonIntList(JObject obj, string key)
     {
+        if (obj == null)
+        {
+            return new List<int>();
+        }
+
+        return ReadJsonIntList(obj[key]);
+    }
+
+    private static List<int> ReadJsonIntList(JToken token)
+    {
         List<int> values = new List<int>();
-        if (obj == null || obj[key] is not JArray array)
+        if (token is not JArray array)
         {
             return values;
         }
 
-        foreach (JToken token in array)
+        foreach (JToken item in array)
         {
-            int parsed = ReadJsonInt(token, int.MinValue);
+            int parsed = ReadJsonInt(item, int.MinValue);
             if (parsed != int.MinValue)
             {
                 values.Add(parsed);

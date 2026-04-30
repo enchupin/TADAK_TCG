@@ -8,12 +8,16 @@ public class KeywordData
     public int keywordId;
     public string name;
     public string description;
-}
-
-[System.Serializable]
-public class KeywordList
-{
-    public List<KeywordData> keywords;
+    public string enName;
+    public string enDescription;
+    public string jaName;
+    public string jaDescription;
+    public string zhHantName;
+    public string zhHantDescription;
+    public string zhHansName;
+    public string zhHansDescription;
+    public string ruName;
+    public string ruDescription;
 }
 
 public static class KeywordDatabase
@@ -25,9 +29,19 @@ public static class KeywordDatabase
     public static string GetKeywordName(int keywordId)
     {
         EnsureLoaded();
-        return keywordById.TryGetValue(keywordId, out KeywordData keywordData) && !string.IsNullOrWhiteSpace(keywordData?.name)
-            ? keywordData.name
-            : string.Empty;
+        if (!keywordById.TryGetValue(keywordId, out KeywordData keywordData) || keywordData == null)
+        {
+            return string.Empty;
+        }
+
+        return LocalizationManager.ResolveLocalizedText(
+            keywordData.name,
+            keywordData.enName,
+            keywordData.jaName,
+            keywordData.zhHantName,
+            keywordData.zhHansName,
+            keywordData.ruName,
+            keywordData.name);
     }
 
     public static bool TryGetKeywordId(string keywordName, out int keywordId)
@@ -45,9 +59,19 @@ public static class KeywordDatabase
     public static string GetKeywordDescription(int keywordId)
     {
         EnsureLoaded();
-        return keywordById.TryGetValue(keywordId, out KeywordData keywordData) && !string.IsNullOrWhiteSpace(keywordData?.description)
-            ? keywordData.description
-            : string.Empty;
+        if (!keywordById.TryGetValue(keywordId, out KeywordData keywordData) || keywordData == null)
+        {
+            return string.Empty;
+        }
+
+        return LocalizationManager.ResolveLocalizedText(
+            keywordData.description,
+            keywordData.enDescription,
+            keywordData.jaDescription,
+            keywordData.zhHantDescription,
+            keywordData.zhHansDescription,
+            keywordData.ruDescription,
+            keywordData.description);
     }
 
     private static void EnsureLoaded()
@@ -61,21 +85,12 @@ public static class KeywordDatabase
         keywordById.Clear();
         keywordIdByName.Clear();
 
-        TextAsset jsonFile = Resources.Load<TextAsset>("JsonData/keywords");
-        if (jsonFile == null)
+        if (!KeywordJsonParser.TryLoad(out List<KeywordData> keywords))
         {
-            Debug.LogWarning("[KeywordDatabase] JsonData/keywords.json을 불러오지 못했습니다");
             return;
         }
 
-        KeywordList keywordList = JsonUtility.FromJson<KeywordList>(jsonFile.text);
-        if (keywordList?.keywords == null)
-        {
-            Debug.LogWarning("[KeywordDatabase] keywords.json 형식이 올바르지 않습니다");
-            return;
-        }
-
-        foreach (KeywordData keywordData in keywordList.keywords)
+        foreach (KeywordData keywordData in keywords)
         {
             if (keywordData == null || keywordData.keywordId <= 0)
             {
@@ -83,10 +98,22 @@ public static class KeywordDatabase
             }
 
             keywordById[keywordData.keywordId] = keywordData;
-            if (!string.IsNullOrWhiteSpace(keywordData.name))
-            {
-                keywordIdByName[keywordData.name.Trim()] = keywordData.keywordId;
-            }
+            RegisterKeywordName(keywordData.name, keywordData.keywordId);
+            RegisterKeywordName(keywordData.enName, keywordData.keywordId);
+            RegisterKeywordName(keywordData.jaName, keywordData.keywordId);
+            RegisterKeywordName(keywordData.zhHantName, keywordData.keywordId);
+            RegisterKeywordName(keywordData.zhHansName, keywordData.keywordId);
+            RegisterKeywordName(keywordData.ruName, keywordData.keywordId);
         }
+    }
+
+    private static void RegisterKeywordName(string keywordName, int keywordId)
+    {
+        if (string.IsNullOrWhiteSpace(keywordName))
+        {
+            return;
+        }
+
+        keywordIdByName[keywordName.Trim()] = keywordId;
     }
 }

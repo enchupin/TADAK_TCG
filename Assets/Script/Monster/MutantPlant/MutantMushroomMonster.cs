@@ -11,21 +11,6 @@ public class MutantMushroomMonster : Monster
         AddBuff(BattleRuntimeDefinitions.PoisonousMushroomBuffId, 1);
     }
 
-    protected override bool IsNonStackableBuff(int buffId)
-    {
-        return buffId == BattleRuntimeDefinitions.PoisonousMushroomBuffId || base.IsNonStackableBuff(buffId);
-    }
-
-    protected override void OnDeathTriggered()
-    {
-        if (GetBuffStack(BattleRuntimeDefinitions.PoisonousMushroomBuffId) <= 0)
-        {
-            return;
-        }
-
-        TrainingBattleManager.Instance?.playerData?.AddBuff(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 2);
-    }
-
     protected override void BuildNextAction()
     {
         if (useDrainAttack)

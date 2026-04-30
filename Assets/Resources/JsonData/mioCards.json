@@ -1,0 +1,645 @@
+﻿{
+    "cards": [
+        {
+            "cardId": 204010,
+            "name": "펌프",
+            "characterId": 204,
+            "cost": 1,
+            "description": "피해를 6 입힙니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amount": 6,
+                    "target": "SingleEnemy"
+                }
+            ]
+        },
+        {
+            "cardId": 204020,
+            "name": "물방울",
+            "characterId": 204,
+            "cost": 1,
+            "description": "보호막을 6 얻습니다.",
+            "effects": [
+                {
+                    "type": "Barrier",
+                    "amount": 6,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 204030,
+            "name": "역류",
+            "characterId": 204,
+            "cost": 1,
+            "description": "피해를 8 입힙니다. (익사)를 8 부여합니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amount": 8,
+                    "target": "SingleEnemy"
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3054,
+                    "amount": 8,
+                    "target": "SingleEnemy"
+                }
+            ],
+            "enforceGroup": "enforce_204030"
+        },
+        {
+            "cardId": 204031,
+            "name": "역류 +",
+            "characterId": 204,
+            "cost": 1,
+            "description": "피해를 8 입힙니다. 입힌 피해량만큼 (익사)를 부여합니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amount": 8,
+                    "target": "SingleEnemy",
+                    "subject": "UnblockedDamage",
+                    "onAction": {
+                        "type": "Buff",
+                        "buffId": 3054,
+                        "amountFormula": "UnblockedDamage",
+                        "target": "SingleEnemy"
+                    }
+                }
+            ]
+        },
+        {
+            "cardId": 204032,
+            "name": "역류 +",
+            "characterId": 204,
+            "cost": 1,
+            "description": "피해를 8 입힙니다. 버린 카드 더미에서 카드를 1장 선택해 손으로 가져옵니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amount": 8,
+                    "target": "SingleEnemy"
+                },
+                {
+                    "type": "SelectCard",
+                    "from": "DiscardPile",
+                    "count": 1,
+                    "subject": "Selected",
+                    "onAction": {
+                        "type": "Move",
+                        "from": "Source",
+                        "to": "Hand"
+                    }
+                }
+            ]
+        },
+        {
+            "cardId": 204033,
+            "name": "역류 +",
+            "characterId": 204,
+            "cost": 1,
+            "description": "피해를 8 입힙니다. (예고)를 1 얻습니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amount": 8,
+                    "target": "SingleEnemy"
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3027,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 204034,
+            "name": "역류 +",
+            "characterId": 204,
+            "cost": 0,
+            "keywords": [
+                3
+            ],
+            "description": "피해를 5 입힙니다. 대상이 보유한 해로운 효과를 다른 모든 적에게 부여합니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amount": 5,
+                    "target": "SingleEnemy"
+                },
+                {
+                    "type": "CopyEnemyDebuffs",
+                    "target": "SingleEnemy"
+                }
+            ]
+        },
+        {
+            "cardId": 204035,
+            "name": "역류 +",
+            "characterId": 204,
+            "cost": 2,
+            "keywords": [
+                4
+            ],
+            "description": "적에게 해로운 효과를 부여할 때마다 대상에게 (익사)를 7 부여합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3059,
+                    "amount": 7,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 204040,
+            "name": "팽창",
+            "characterId": 204,
+            "cost": 2,
+            "description": "(익사)를 20 부여합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3054,
+                    "amount": 20,
+                    "target": "SingleEnemy"
+                }
+            ],
+            "enforceGroup": "enforce_204040"
+        },
+        {
+            "cardId": 204041,
+            "name": "팽창 +",
+            "characterId": 204,
+            "cost": 1,
+            "description": "대상이 보유한 (익사) 10당 (익사)를 5 부여합니다. (익사)를 5 더 부여합니다.",
+            "effects": [
+                {
+                    "type": "ApplyBuffByTargetStack",
+                    "buffId": 3054,
+                    "amount": 5,
+                    "count": 10,
+                    "duration": 5,
+                    "target": "SingleEnemy"
+                }
+            ]
+        },
+        {
+            "cardId": 204042,
+            "name": "팽창 +",
+            "characterId": 204,
+            "cost": 1,
+            "description": "(익사)를 13 부여합니다. 카드를 2장 뽑습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3054,
+                    "amount": 13,
+                    "target": "SingleEnemy"
+                },
+                {
+                    "type": "Draw",
+                    "amount": 2
+                }
+            ]
+        },
+        {
+            "cardId": 204043,
+            "name": "팽창 +",
+            "characterId": 204,
+            "cost": 1,
+            "keywords": [
+                6
+            ],
+            "description": "(익사)를 12 부여합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3054,
+                    "amount": 12,
+                    "target": "SingleEnemy"
+                }
+            ]
+        },
+        {
+            "cardId": 204044,
+            "name": "팽창 +",
+            "characterId": 204,
+            "cost": 0,
+            "keywords": [
+                8
+            ],
+            "description": "(익사)를 6 부여합니다. 이 카드를 복사하여 버린 카드 더미에 넣습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3054,
+                    "amount": 6,
+                    "target": "SingleEnemy"
+                },
+                {
+                    "type": "Copy",
+                    "from": "Source",
+                    "to": "DiscardPile",
+                    "amount": 1,
+                    "subject": "ThisCard"
+                }
+            ]
+        },
+        {
+            "cardId": 204045,
+            "name": "팽창 +",
+            "characterId": 204,
+            "cost": 1,
+            "keywords": [
+                3
+            ],
+            "description": "대상의 (익사)를 2배로 만듭니다. (익사)가 적의 최대 체력보다 높다면, 즉시 발동합니다.",
+            "effects": [
+                {
+                    "type": "ChangeStat",
+                    "stat": "Buff",
+                    "change": "Multiply",
+                    "buffId": 3054,
+                    "amount": 2,
+                    "target": "SingleEnemy"
+                },
+                {
+                    "type": "ResolveDrowningLethal",
+                    "buffId": 3054,
+                    "target": "SingleEnemy"
+                }
+            ]
+        },
+        {
+            "cardId": 204050,
+            "name": "물안개",
+            "characterId": 204,
+            "cost": 1,
+            "description": "보호막을 8 얻습니다. (익사)를 7 부여합니다.",
+            "effects": [
+                {
+                    "type": "Barrier",
+                    "amount": 8,
+                    "target": "Self"
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3054,
+                    "amount": 7,
+                    "target": "SingleEnemy"
+                }
+            ],
+            "enforceGroup": "enforce_204050"
+        },
+        {
+            "cardId": 204051,
+            "name": "물안개 +",
+            "characterId": 204,
+            "cost": 1,
+            "description": "보호막을 8 얻습니다. (약화)를 2 부여합니다.",
+            "effects": [
+                {
+                    "type": "Barrier",
+                    "amount": 8,
+                    "target": "Self"
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 4008,
+                    "amount": 2,
+                    "target": "SingleEnemy"
+                }
+            ]
+        },
+        {
+            "cardId": 204052,
+            "name": "물안개 +",
+            "characterId": 204,
+            "cost": 1,
+            "description": "보호막을 8 얻습니다. 이번 턴에 적에게 (익사)를 부여했다면 2배로 얻습니다.",
+            "effects": [
+                {
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "EnemyDebuffAppliedThisTurn",
+                                "param": "3054",
+                                "operator": "Eq",
+                                "value": true
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "Barrier",
+                                "amount": 16,
+                                "target": "Self"
+                            }
+                        ],
+                        "elseEffects": [
+                            {
+                                "type": "Barrier",
+                                "amount": 8,
+                                "target": "Self"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "cardId": 204053,
+            "name": "물안개 +",
+            "characterId": 204,
+            "cost": 0,
+            "keywords": [
+                4
+            ],
+            "description": "(수중 호흡)을 3 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3056,
+                    "amount": 3,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 204054,
+            "name": "물안개 +",
+            "characterId": 204,
+            "cost": 1,
+            "keywords": [
+                4
+            ],
+            "description": "(잠식)을 6 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3057,
+                    "amount": 6,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 204055,
+            "name": "물안개 +",
+            "characterId": 204,
+            "cost": 1,
+            "keywords": [
+                4
+            ],
+            "description": "(수면 상승)을 3 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3058,
+                    "amount": 3,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 204060,
+            "name": "해일",
+            "characterId": 204,
+            "cost": 1,
+            "description": "모든 적에게 (소용돌이)를 8 부여합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3055,
+                    "amount": 8,
+                    "target": "AllEnemies"
+                }
+            ],
+            "enforceGroup": "enforce_204060"
+        },
+        {
+            "cardId": 204061,
+            "name": "해일 +",
+            "characterId": 204,
+            "cost": 1,
+            "description": "모든 적에게 (소용돌이)를 12 부여합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3055,
+                    "amount": 12,
+                    "target": "AllEnemies"
+                }
+            ]
+        },
+        {
+            "cardId": 204062,
+            "name": "해일 +",
+            "characterId": 204,
+            "cost": 2,
+            "description": "모든 적에게 (익사)를 33 부여합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3054,
+                    "amount": 33,
+                    "target": "AllEnemies"
+                }
+            ]
+        },
+        {
+            "cardId": 204063,
+            "name": "해일 +",
+            "characterId": 204,
+            "cost": 1,
+            "keywords": [
+                3
+            ],
+            "description": "(익사)를 8 부여합니다. 이 카드를 사용할 때마다 영구적으로 (익사) 부여량이 3 늘어납니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3054,
+                    "amount": 8,
+                    "target": "SingleEnemy"
+                },
+                {
+                    "type": "ModifyCard",
+                    "source": "ThisCard",
+                    "param": "EffectAmount",
+                    "effectIndex": 0,
+                    "operation": "Add",
+                    "amount": 3
+                }
+            ]
+        },
+        {
+            "cardId": 204064,
+            "name": "해일 +",
+            "characterId": 204,
+            "cost": 2,
+            "description": "모든 적에게 피해를 21 입힙니다. 모든 적에게 (부식)을 2 부여합니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amount": 21,
+                    "target": "AllEnemies"
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 4001,
+                    "amount": 2,
+                    "target": "AllEnemies"
+                }
+            ]
+        },
+        {
+            "cardId": 204065,
+            "name": "해일 +",
+            "characterId": 204,
+            "cost": 2,
+            "description": "모든 적이 각자 보유한 (익사)만큼 피해를 입습니다.",
+            "effects": [
+                {
+                    "type": "DamageByBuffStack",
+                    "buffId": 3054,
+                    "target": "AllEnemies"
+                }
+            ]
+        },
+        {
+            "cardId": 204070,
+            "name": "근원",
+            "characterId": 204,
+            "cost": 2,
+            "description": "(재생)을 4 얻습니다. 보호막을 8 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3001,
+                    "amount": 4,
+                    "target": "Self"
+                },
+                {
+                    "type": "Barrier",
+                    "amount": 8,
+                    "target": "Self"
+                }
+            ],
+            "enforceGroup": "enforce_204070"
+        },
+        {
+            "cardId": 204071,
+            "name": "근원 +",
+            "characterId": 204,
+            "cost": 1,
+            "keywords": [
+                3
+            ],
+            "description": "손에서 카드를 2장 선택해서 1장씩 복사합니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "Hand",
+                    "count": 2,
+                    "subject": "Selected",
+                    "onAction": {
+                        "type": "Copy",
+                        "from": "Source",
+                        "to": "Hand",
+                        "amountFormula": "all"
+                    }
+                }
+            ]
+        },
+        {
+            "cardId": 204072,
+            "name": "근원 +",
+            "characterId": 204,
+            "cost": 0,
+            "description": "내 모든 중첩 가능한 이로운 효과를 1씩 더 얻습니다.",
+            "effects": [
+                {
+                    "type": "IncreaseBeneficialBuffStacks",
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 204073,
+            "name": "근원 +",
+            "characterId": 204,
+            "cost": 0,
+            "description": "피해를 5 입힙니다. 이번 턴에 제일 먼저 사용했다면, 카드를 2장 뽑습니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "amount": 5,
+                    "target": "SingleEnemy"
+                },
+                {
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "UseCardInTurn",
+                                "operator": "Eq",
+                                "value": 1
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "Draw",
+                                "amount": 2
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "cardId": 204074,
+            "name": "근원 +",
+            "characterId": 204,
+            "cost": 1,
+            "description": "(재사용)을 1 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3023,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ]
+        },
+        {
+            "cardId": 204075,
+            "name": "근원 +",
+            "characterId": 204,
+            "cost": 2,
+            "keywords": [
+                4
+            ],
+            "description": "(힘)을 2 잃습니다. (기력 초과)를 1 얻습니다.",
+            "effects": [
+                {
+                    "type": "ChangeStat",
+                    "stat": "Buff",
+                    "change": "Decrease",
+                    "buffId": 3002,
+                    "amount": 2,
+                    "target": "Self"
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3053,
+                    "amount": 1,
+                    "target": "Self"
+                }
+            ]
+        }
+    ]
+}

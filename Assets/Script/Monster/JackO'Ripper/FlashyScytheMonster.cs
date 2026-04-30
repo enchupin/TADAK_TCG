@@ -6,7 +6,7 @@ public class FlashyScytheMonster : Monster
     private int patternIndex;
 
     public override int MonsterId => 105;
-    protected override string MonsterName => "현란한 낫";
+    protected override string MonsterName => "?꾨?????";
     protected override int BaseMaxHp => 21;
 
     protected override void BuildNextAction()
@@ -14,15 +14,16 @@ public class FlashyScytheMonster : Monster
         switch (patternIndex)
         {
             case 0:
-                SetIntent("모든 아군이 피해 증폭을 2 얻습니다.");
+                SetIntent("모든 아군이 힘을 2 얻습니다.");
                 SetPlannedPattern(10501, MonsterIntentIconType.BeneficialEffect);
                 break;
             case 1:
-                SetIntent("잭 오 리퍼에게 보호막을 7 부여합니다.");
+                SetIntent("????由ы띁?먭쾶 蹂댄샇留됱쓣 7 遺?ы빀?덈떎.");
                 SetPlannedPattern(10502, MonsterIntentIconType.Protection);
                 break;
             default:
-                SetAttackIntent(4, "피해를 4 입힙니다.");
+                int previewDamage = PreviewOutgoingDamage(4);
+                SetAttackIntent(previewDamage, $"?쇳빐瑜?{previewDamage} ?낇옓?덈떎.");
                 SetPlannedPattern(10503, MonsterIntentIconType.Attack);
                 break;
         }
@@ -33,7 +34,7 @@ public class FlashyScytheMonster : Monster
         switch (patternIndex)
         {
             case 0:
-                ApplyDamageAmplifyToAllAllies();
+                ApplyStrengthToAllAllies();
                 break;
             case 1:
                 FindJackORipper()?.AddDefense(7);
@@ -46,7 +47,7 @@ public class FlashyScytheMonster : Monster
         patternIndex = GetNextPatternIndex();
     }
 
-    private void ApplyDamageAmplifyToAllAllies()
+    private void ApplyStrengthToAllAllies()
     {
         List<Monster> livingMonsters = TrainingBattleManager.Instance != null
             ? TrainingBattleManager.Instance.GetLivingMonsters()
@@ -58,7 +59,7 @@ public class FlashyScytheMonster : Monster
 
         foreach (Monster monster in livingMonsters)
         {
-            monster?.AddBuff(BattleRuntimeDefinitions.DamageAmplifyBuffId, 2);
+            monster?.AddBuff(BattleRuntimeDefinitions.StrengthBuffId, 2);
         }
     }
 

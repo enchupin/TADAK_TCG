@@ -6,7 +6,7 @@ public class IceAndFireBossMonster : Monster
     private bool hasHarmony;
 
     public override int MonsterId => 303;
-    protected override string MonsterName => "\uC5BC\uC74C\uACFC \uBD88";
+    protected override string MonsterName => "얼음과 불";
     protected override int BaseMaxHp => 300;
     protected override bool IsBossMonster => true;
 
@@ -33,15 +33,15 @@ public class IceAndFireBossMonster : Monster
         {
             case 30301:
                 int previewDamage = GetPreviewDamage(2);
-                SetAttackIntent(previewDamage, $"\uD53C\uD574\uB97C {previewDamage}\uC529 10\uD68C \uC785\uD799\uB2C8\uB2E4.");
+                SetAttackIntent(previewDamage, $"피해를 {previewDamage}씩 10회 입힙니다.");
                 SetPlannedPattern(30301, MonsterIntentIconType.Attack);
                 break;
             case 30302:
-                SetIntent("\uC801\uC5D0\uAC8C \uBE48\uC57D, \uBD80\uC2DD, \uC57D\uD654\uB97C 99\uC529 \uBD80\uC5EC\uD569\uB2C8\uB2E4.");
+                SetIntent("적에게 빈약, 부식, 약화를 99씩 부여합니다.");
                 SetPlannedPattern(30302, MonsterIntentIconType.HarmfulEffect);
                 break;
             default:
-                SetIntent("\uD53C\uD574 \uC99D\uD3ED\uC744 3 \uC5BB\uC2B5\uB2C8\uB2E4.");
+                SetIntent("힘을 3 얻습니다.");
                 SetPlannedPattern(30303, MonsterIntentIconType.BeneficialEffect);
                 break;
         }
@@ -60,7 +60,7 @@ public class IceAndFireBossMonster : Monster
                 target?.AddBuff(BattleRuntimeDefinitions.WeakBuffId, 99);
                 break;
             default:
-                AddBuff(BattleRuntimeDefinitions.DamageAmplifyBuffId, 3);
+                AddBuff(BattleRuntimeDefinitions.StrengthBuffId, 3);
                 break;
         }
     }
@@ -84,6 +84,6 @@ public class IceAndFireBossMonster : Monster
 
     private int GetPreviewDamage(int baseDamage)
     {
-        return Mathf.Max(0, baseDamage + GetBuffStack(BattleRuntimeDefinitions.DamageAmplifyBuffId));
+        return PreviewOutgoingDamage(baseDamage);
     }
 }

@@ -43,15 +43,15 @@ public class CombatResolver
             return;
         }
 
-        if (battleManager.playerData.energy < effectiveCost)
+        if (!battleManager.CanPayCardCost(playedCard))
         {
-            Debug.LogWarning($"[CombatResolver] Not enough energy for {playedCard.cardName}. Needed: {effectiveCost}, Current: {battleManager.playerData.energy}");
+            Debug.LogWarning($"[CombatResolver] 카드 비용을 지불할 수 없습니다: {playedCard.cardName} ({effectiveCost})");
             battleManager.RefreshHandPlayableState();
             battleManager.UpdateAllUI();
             return;
         }
 
-        bool spent = battleManager.playerData.UseEnergy(effectiveCost);
+        bool spent = battleManager.TryPayCardCost(playedCard);
         if (!spent)
         {
             battleManager.RefreshHandPlayableState();
@@ -61,11 +61,10 @@ public class CombatResolver
 
         int repeatCount = battleManager.ConsumeRepeatedPlayCount(playedCard, false);
         int cardUseAllEnemiesDamage = battleManager.GetCardUseAllEnemiesDamage();
-        bool shouldConsumeFreeCost = battleManager.playerData.GetBuffStack(BattleRuntimeDefinitions.NextCardFreeBuffId) > 0;
-
-        Debug.Log($"[Player] Used card: {playedCard.cardName} (Energy now: {battleManager.playerData.energy})");
+        Debug.Log($"[Player] 카드 사용: {playedCard.cardName}");
 
         battleManager.battleContext?.OnCardPlayed(playedCard);
+        battleManager.ChargeIdentityGauge(playedCard.character);
 
         Monster originalTarget = eventData.targetMonster;
         battleManager.currentTarget = originalTarget;
@@ -77,11 +76,6 @@ public class CombatResolver
             battleManager.ApplyCardUseAllEnemiesDamage(cardUseAllEnemiesDamage);
         }
         ReplayCardEffectsIfNeeded(playedCard, originalTarget, repeatCount);
-
-        if (shouldConsumeFreeCost)
-        {
-            battleManager.playerData.ConsumeBuffStack(BattleRuntimeDefinitions.NextCardFreeBuffId, 1);
-        }
 
         if (battleManager.handManager != null)
         {
@@ -118,22 +112,40 @@ public class CombatResolver
 
         if (playedCard.ShouldExhaustWhenPlayed())
         {
-            battleManager.battleContext?.OnCardsExhausted(1);
+            battleManager.MoveCardToExhaust(playedCard);
             return;
         }
 
         if (battleManager.ShouldExhaustUnlockedUnplayableCard(playedCard))
         {
-            battleManager.battleContext?.OnCardsExhausted(1);
+            battleManager.MoveCardToExhaust(playedCard);
             return;
         }
 
         if (playedCard.ShouldLeaveCombatWhenPlayed())
         {
+            battleManager.RemoveCardFromCombat(playedCard);
+            return;
+        }
+
+        if (HasResolvedCardDestination(playedCard))
+        {
             return;
         }
 
         battleManager.usableDeckManager?.AddToDiscard(playedCard);
+    }
+
+    private bool HasResolvedCardDestination(Card playedCard)
+    {
+        if (playedCard == null || battleManager?.usableDeckManager == null)
+        {
+            return false;
+        }
+
+        return battleManager.usableDeckManager.GetDrawPile().Contains(playedCard)
+            || battleManager.usableDeckManager.GetDiscardPile().Contains(playedCard)
+            || battleManager.usableDeckManager.GetExhaustPile().Contains(playedCard);
     }
 
     private void ApplyPostPlayKeywords(Card playedCard)

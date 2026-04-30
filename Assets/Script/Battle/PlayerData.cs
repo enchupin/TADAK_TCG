@@ -1,9 +1,16 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 
 /// <summary>
 /// 플레이어의 전투 관련 데이터를 관리하는 클래스
 /// </summary>
+public enum WuppiModeState
+{
+    Normal,
+    Guard,
+    Attack
+}
+
 public class PlayerData : MonoBehaviour
 {
     /// <summary>싱글톤 인스턴스 (TrainingBattleManager.InitializeBattle()에서 생성)</summary>
@@ -61,10 +68,12 @@ public class PlayerData : MonoBehaviour
 
     // 에너지
     public int energy;
+    public int baseMaxEnergy;
     public int maxEnergy;
 
     // 버프/디버프
     public List<Buff> currentBuffs = new List<Buff>();
+    public WuppiModeState wuppiMode = WuppiModeState.Normal;
 
     /// <summary>
     /// 플레이어의 전투 시작 스탯을 초기화
@@ -76,9 +85,11 @@ public class PlayerData : MonoBehaviour
         hpLostThisTurn = 0;
         hasLostHpThisTurn = false;
         defense = startDefense;
-        maxEnergy = startMaxEnergy;
+        baseMaxEnergy = startMaxEnergy;
+        maxEnergy = baseMaxEnergy;
         energy = maxEnergy;
         currentBuffs.Clear();
+        wuppiMode = WuppiModeState.Normal;
         
         Debug.Log($"플레이어 초기화 완료 - HP: {hp}/{maxHP}, 방어력: {defense}, 에너지: {energy}/{maxEnergy}");
     }
@@ -92,12 +103,7 @@ public class PlayerData : MonoBehaviour
         TrainingBattleManager battleManager = TrainingBattleManager.Instance;
         if (battleManager != null)
         {
-            finalAmount += battleManager.GetAdditionalBarrierGain();
-        }
-
-        if (GetBuffStack(BattleRuntimeDefinitions.FrailBuffId) > 0)
-        {
-            finalAmount = Mathf.FloorToInt(finalAmount * 0.5f);
+            finalAmount = battleManager.ResolvePlayerBarrierGain(finalAmount);
         }
 
         if (finalAmount <= 0)
@@ -133,29 +139,43 @@ public class PlayerData : MonoBehaviour
     /// </summary>
     public void AddBuff(int buffId, int amount)
     {
-        BuffData data = BuffManager.Instance != null ? BuffManager.Instance.GetBuffData(buffId) : null;
-        if (data == null)
+        if (amount <= 0)
         {
-            data = new BuffData
-            {
-                buffId = buffId,
-                name = $"버프 {buffId}",
-                buffType = BuffData.GetPolarityBuffType(buffId),
-                description = string.Empty
-            };
+            return;
         }
 
-        Buff existingBuff = currentBuffs.Find(b => b.data.buffId == buffId);
+        bool isNonStackable = BuffData.IsNonStackableBuffId(buffId);
+        int appliedAmount = isNonStackable ? 1 : amount;
+        amount = appliedAmount;
+
+        BuffData data = BuffMetadataResolver.Resolve(buffId);
+
+        Buff existingBuff = currentBuffs.Find(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
         if (existingBuff != null)
         {
-            existingBuff.stack += amount;
+            existingBuff.data = data;
+            if (isNonStackable)
+            {
+                existingBuff.stack = 1;
+            }
+            else
+            {
+                existingBuff.stack += appliedAmount;
+            }
             Debug.Log($"버프 중첩: {data.name} (+{amount}) -> {existingBuff.stack}");
         }
         else
         {
-            Buff newBuff = new Buff(data, amount, 0); // Duration logic TBD
+            Buff newBuff = new Buff(data, appliedAmount);
             currentBuffs.Add(newBuff);
             Debug.Log($"버프 획득: {data.name} ({amount})");
+        }
+
+        if (buffId == CreamBuffRuntimeUtility.EnergyOverflowBuffId)
+        {
+            CreamBuffRuntimeUtility.SyncEnergyOverflow(this);
         }
     }
 
@@ -164,8 +184,26 @@ public class PlayerData : MonoBehaviour
     /// </summary>
     public void AddEnergy(int amount)
     {
-        energy = Mathf.Min(energy + amount, maxEnergy);
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        energy = Mathf.Clamp(energy + amount, 0, maxEnergy);
         Debug.Log($"에너지 +{amount} (현재: {energy}/{maxEnergy})");
+    }
+
+    public int LoseEnergy(int amount)
+    {
+        int lostAmount = Mathf.Clamp(amount, 0, energy);
+        if (lostAmount <= 0)
+        {
+            return 0;
+        }
+
+        energy -= lostAmount;
+        Debug.Log($"에너지 -{lostAmount} (현재: {energy}/{maxEnergy})");
+        return lostAmount;
     }
 
     /// <summary>
@@ -187,13 +225,11 @@ public class PlayerData : MonoBehaviour
     /// </summary>
     public int TakeDamage(int amount, Monster attacker = null)
     {
-        int finalDamage = ApplyIncomingDamageMultiplier(amount);
-        finalDamage = ApplyDamageClamp(finalDamage);
-        if (TryConsumeEvade(finalDamage, attacker))
-        {
-            return 0;
-        }
-        if (TryConsumeLavaBarrier(finalDamage, attacker))
+        TrainingBattleManager battleManager = TrainingBattleManager.Instance;
+        int finalDamage = battleManager != null
+            ? battleManager.ResolvePlayerIncomingDamage(amount, attacker)
+            : Mathf.Max(0, amount);
+        if (battleManager != null && battleManager.TryPreventPlayerIncomingDamage(finalDamage, attacker))
         {
             return 0;
         }
@@ -205,6 +241,7 @@ public class PlayerData : MonoBehaviour
         if (damageAfterDefense > 0)
         {
             hasLostHpThisTurn = true;
+            battleManager?.HandlePlayerHpLost(damageAfterDefense);
         }
         if (blockedDamage > 0)
         {
@@ -212,52 +249,39 @@ public class PlayerData : MonoBehaviour
         }
 
         Debug.Log($"플레이어가 {damageAfterDefense} 데미지를 받았습니다! (HP: {hp}/{maxHP})");
+        TryConsumeSoulProtection();
+        if (finalDamage > 0)
+        {
+            battleManager?.ConsumePlayerIncomingDamageBuffs(attacker, finalDamage);
+        }
         if (attacker != null && finalDamage > 0)
         {
-            TrainingBattleManager.Instance?.HandlePlayerHit(attacker, blockedDamage, damageAfterDefense);
+            battleManager?.HandlePlayerHit(attacker, blockedDamage, damageAfterDefense);
         }
 
         return damageAfterDefense;
     }
 
-    private int ApplyDamageClamp(int finalDamage)
+    public int LoseHp(int amount)
     {
-        if (finalDamage <= 0 || GetBuffStack(BattleRuntimeDefinitions.DamageClampToOneBuffId) <= 0)
+        int lostAmount = Mathf.Clamp(amount, 0, hp);
+        if (lostAmount <= 0)
         {
-            return finalDamage;
+            return 0;
         }
 
-        return 1;
+        hp -= lostAmount;
+        hpLostThisTurn += lostAmount;
+        hasLostHpThisTurn = true;
+        TrainingBattleManager.Instance?.HandlePlayerHpLost(lostAmount);
+        TryConsumeSoulProtection();
+
+        return lostAmount;
     }
 
-    private bool TryConsumeEvade(int finalDamage, Monster attacker)
+    private void TryConsumeSoulProtection()
     {
-        if (attacker == null || finalDamage <= 0 || GetBuffStack(BattleRuntimeDefinitions.EvadeBuffId) <= 0)
-        {
-            return false;
-        }
-
-        DecreaseBuffStack(BattleRuntimeDefinitions.EvadeBuffId, 1);
-        Debug.Log("회피가 발동해 공격을 피했습니다");
-        TrainingBattleManager.Instance?.HandlePlayerHit(attacker, 0, 0);
-        return true;
-    }
-
-    private bool TryConsumeLavaBarrier(int finalDamage, Monster attacker)
-    {
-        if (finalDamage <= 0 || GetBuffStack(BattleRuntimeDefinitions.LavaBarrierBuffId) <= 0)
-        {
-            return false;
-        }
-
-        DecreaseBuffStack(BattleRuntimeDefinitions.LavaBarrierBuffId, 1);
-        Debug.Log("용암 보호막이 발동해 피해를 받지 않았습니다");
-        if (attacker != null)
-        {
-            TrainingBattleManager.Instance?.HandlePlayerHit(attacker, 0, 0);
-        }
-
-        return true;
+        TrainingBattleManager.Instance?.TryConsumeSoulProtection();
     }
 
     /// <summary>
@@ -277,16 +301,14 @@ public class PlayerData : MonoBehaviour
     {
         hpLostThisTurn = 0;
         hasLostHpThisTurn = false;
-        bool keepBarrier = ConsumeBarrierRetentionOnTurnStart();
+        TrainingBattleManager battleManager = TrainingBattleManager.Instance;
+        bool keepBarrier = battleManager != null && battleManager.ShouldRetainPlayerBarrierOnTurnStart();
         if (!keepBarrier)
         {
-            if (GetBuffStack(BattleRuntimeDefinitions.EfficientBarrierBuffId) > 0)
+            int removeAmount = battleManager != null ? battleManager.GetPlayerTurnStartBarrierLoss(defense) : defense;
+            if (removeAmount > 0)
             {
-                RemoveDefense(15, false);
-            }
-            else if (defense > 0)
-            {
-                RemoveDefense(defense, false);
+                RemoveDefense(removeAmount, false);
             }
         }
         energy = maxEnergy; // 에너지 회복
@@ -298,125 +320,34 @@ public class PlayerData : MonoBehaviour
     /// <summary>
     /// 턴 종료 시 처리
     /// </summary>
-    public void OnTurnEnd()
-    {
-        int regeneration = GetBuffStack(BattleRuntimeDefinitions.RegenerationBuffId);
-        if (regeneration > 0)
-        {
-            Heal(regeneration);
-            DecreaseBuffStack(BattleRuntimeDefinitions.RegenerationBuffId, 1);
-        }
-
-        int burn = GetBuffStack(BattleRuntimeDefinitions.BurnBuffId);
-        if (burn > 0)
-        {
-            TakeDamage(burn);
-        }
-
-        int overheatDecay = GetBuffStack(4007);
-        if (overheatDecay > 0)
-        {
-            DecreaseBuffStack(3017, overheatDecay);
-            RemoveBuff(4007);
-        }
-
-        int counterattackDecay = GetBuffStack(BattleRuntimeDefinitions.CounterattackDecayBuffId);
-        if (counterattackDecay > 0)
-        {
-            DecreaseBuffStack(3021, counterattackDecay);
-            RemoveBuff(BattleRuntimeDefinitions.CounterattackDecayBuffId);
-        }
-
-        int damageAmplifyDecay = GetBuffStack(BattleRuntimeDefinitions.DamageAmplifyDecayBuffId);
-        if (damageAmplifyDecay > 0)
-        {
-            DecreaseBuffStack(3002, damageAmplifyDecay);
-            RemoveBuff(BattleRuntimeDefinitions.DamageAmplifyDecayBuffId);
-        }
-
-        DecreaseBuffStack(BattleRuntimeDefinitions.CardUseAllEnemiesDamageBuffId, 1);
-        DecreaseBuffStack(BattleRuntimeDefinitions.DamageClampToOneBuffId, 1);
-        RemoveBuff(BattleRuntimeDefinitions.DrawLockBuffId);
-
-        DecreaseBuffStack(BattleRuntimeDefinitions.CorrosionBuffId, 1);
-        DecreaseBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1);
-        DecreaseBuffStack(BattleRuntimeDefinitions.WeakBuffId, 1);
-        DecreaseBuffStack(BattleRuntimeDefinitions.FrailBuffId, 1);
-    }
-
     public int GetBuffStack(int buffId)
     {
-        Buff buff = currentBuffs.Find(b => b.data != null && b.data.buffId == buffId);
+        Buff buff = currentBuffs.Find(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
         return buff != null ? buff.stack : 0;
-    }
-
-    private bool ConsumeBarrierRetentionOnTurnStart()
-    {
-        if (TrainingBattleManager.Instance != null && TrainingBattleManager.Instance.HasPermanentBarrierRetention())
-        {
-            return true;
-        }
-
-        if (GetBuffStack(BattleRuntimeDefinitions.BarrierRetentionBuffId) <= 0)
-        {
-            return false;
-        }
-
-        DecreaseBuffStack(BattleRuntimeDefinitions.BarrierRetentionBuffId, 1);
-        return true;
     }
 
     public float GetOutgoingDamageMultiplier()
     {
-        if (GetBuffStack(BattleRuntimeDefinitions.WeakBuffId) > 0)
-        {
-            return BuffManager.Instance != null
-                ? BuffManager.Instance.GetOutgoingDamageMultiplier(BattleRuntimeDefinitions.WeakBuffId, 0.75f)
-                : 0.75f;
-        }
-
-        return 1f;
+        TrainingBattleManager battleManager = TrainingBattleManager.Instance;
+        return battleManager != null ? battleManager.GetPlayerOutgoingDamageMultiplier() : 1f;
     }
 
-    public int CalculateCardDamage(int baseDamage, float damageAmplifyMultiplier = 1f, float cardBaseDamageMultiplier = 1f)
+    public int CalculateCardDamage(int baseDamage, float strengthMultiplier = 1f, float cardBaseDamageMultiplier = 1f)
     {
         int safeBaseDamage = Mathf.Max(0, baseDamage);
-        float safeDamageAmplifyMultiplier = Mathf.Max(0f, damageAmplifyMultiplier);
+        float safeStrengthMultiplier = Mathf.Max(0f, strengthMultiplier);
         float safeCardBaseDamageMultiplier = Mathf.Max(0f, cardBaseDamageMultiplier);
-        int damageAmplifyBonus = Mathf.Max(0, Mathf.FloorToInt(
-            GetBuffStack(BattleRuntimeDefinitions.DamageAmplifyBuffId) * safeDamageAmplifyMultiplier));
-        float overheatMultiplier = Mathf.Max(0, GetBuffStack(BattleRuntimeDefinitions.OverheatBuffId)) * 0.1f;
-        float totalMultiplier = safeCardBaseDamageMultiplier + overheatMultiplier;
-        int amplifiedDamage = Mathf.Max(0, Mathf.FloorToInt((safeBaseDamage + damageAmplifyBonus) * totalMultiplier));
-        return Mathf.Max(0, Mathf.FloorToInt(amplifiedDamage * GetOutgoingDamageMultiplier()));
-    }
-
-    private int ApplyIncomingDamageMultiplier(int incomingDamage)
-    {
-        if (incomingDamage <= 0)
-        {
-            return 0;
-        }
-
-        float multiplier = 1f;
-        if (GetBuffStack(BattleRuntimeDefinitions.EnhancedCorrosionBuffId) > 0)
-        {
-            multiplier = Mathf.Max(
-                multiplier,
-                BuffManager.Instance != null
-                    ? BuffManager.Instance.GetIncomingDamageMultiplier(BattleRuntimeDefinitions.EnhancedCorrosionBuffId, 1.5f)
-                    : 1.5f);
-        }
-        else if (GetBuffStack(BattleRuntimeDefinitions.CorrosionBuffId) > 0)
-        {
-            multiplier = Mathf.Max(
-                multiplier,
-                BuffManager.Instance != null
-                    ? BuffManager.Instance.GetIncomingDamageMultiplier(BattleRuntimeDefinitions.CorrosionBuffId, 1.25f)
-                    : 1.25f);
-        }
-
-        return Mathf.FloorToInt(incomingDamage * multiplier);
+        TrainingBattleManager battleManager = TrainingBattleManager.Instance;
+        int strengthBonus = battleManager != null
+            ? battleManager.GetPlayerCalculatedCardDamageBonus(safeStrengthMultiplier)
+            : 0;
+        float totalMultiplier = battleManager != null
+            ? battleManager.GetPlayerCalculatedCardBaseMultiplier(safeCardBaseDamageMultiplier)
+            : safeCardBaseDamageMultiplier;
+        totalMultiplier *= GetOutgoingDamageMultiplier();
+        return Mathf.Max(0, Mathf.FloorToInt((safeBaseDamage + strengthBonus) * totalMultiplier));
     }
 
     private void DecreaseBuffStack(int buffId, int amount)
@@ -424,7 +355,9 @@ public class PlayerData : MonoBehaviour
         if (amount <= 0)
             return;
 
-        Buff buff = currentBuffs.Find(b => b.data != null && b.data.buffId == buffId);
+        Buff buff = currentBuffs.Find(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
         if (buff == null)
             return;
 
@@ -433,11 +366,56 @@ public class PlayerData : MonoBehaviour
         {
             currentBuffs.Remove(buff);
         }
+
+        if (buffId == CreamBuffRuntimeUtility.EnergyOverflowBuffId)
+        {
+            CreamBuffRuntimeUtility.SyncEnergyOverflow(this);
+        }
     }
 
     public void ConsumeBuffStack(int buffId, int amount)
     {
         DecreaseBuffStack(buffId, amount);
+    }
+
+    public void SetBuffStack(int buffId, int amount)
+    {
+        Buff existingBuff = currentBuffs.Find(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
+
+        if (amount <= 0)
+        {
+            if (existingBuff != null)
+            {
+                currentBuffs.Remove(existingBuff);
+            }
+
+            if (buffId == CreamBuffRuntimeUtility.EnergyOverflowBuffId)
+            {
+                CreamBuffRuntimeUtility.SyncEnergyOverflow(this);
+            }
+            return;
+        }
+
+        BuffData data = BuffMetadataResolver.Resolve(buffId);
+        if (existingBuff != null)
+        {
+            existingBuff.data = data;
+            existingBuff.stack = amount;
+            if (buffId == CreamBuffRuntimeUtility.EnergyOverflowBuffId)
+            {
+                CreamBuffRuntimeUtility.SyncEnergyOverflow(this);
+            }
+            return;
+        }
+
+        currentBuffs.Add(new Buff(data, amount));
+
+        if (buffId == CreamBuffRuntimeUtility.EnergyOverflowBuffId)
+        {
+            CreamBuffRuntimeUtility.SyncEnergyOverflow(this);
+        }
     }
 
     public void RemoveBuffStack(int buffId)
@@ -447,7 +425,14 @@ public class PlayerData : MonoBehaviour
 
     private void RemoveBuff(int buffId)
     {
-        currentBuffs.RemoveAll(b => b.data != null && b.data.buffId == buffId);
+        currentBuffs.RemoveAll(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
+
+        if (buffId == CreamBuffRuntimeUtility.EnergyOverflowBuffId)
+        {
+            CreamBuffRuntimeUtility.SyncEnergyOverflow(this);
+        }
     }
 
     /// <summary>

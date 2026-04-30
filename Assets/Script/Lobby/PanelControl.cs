@@ -74,8 +74,32 @@ namespace Lobby
 
         private void SetPanel(GameObject panel, bool active)
         {
-            if (panel != null)
-                panel.SetActive(active);
+            if (panel == null)
+            {
+                return;
+            }
+
+            if (!active && panel.activeSelf)
+            {
+                ResetHoverStates(panel);
+            }
+
+            panel.SetActive(active);
+        }
+
+        private static void ResetHoverStates(GameObject panel)
+        {
+            UIHoverEffect[] hoverEffects = panel.GetComponentsInChildren<UIHoverEffect>(true);
+            foreach (UIHoverEffect hoverEffect in hoverEffects)
+            {
+                hoverEffect?.ResetHoverState();
+            }
+
+            UIHoverEffectAdvanced[] advancedHoverEffects = panel.GetComponentsInChildren<UIHoverEffectAdvanced>(true);
+            foreach (UIHoverEffectAdvanced hoverEffect in advancedHoverEffects)
+            {
+                hoverEffect?.ResetHoverState();
+            }
         }
     }
 }

@@ -52,7 +52,9 @@ public class DamageEffect : ICardEffect
                     break;
                 }
 
-                totalDamageDealt += singleTarget.TakeDamage(finalAmount, 0);
+                int singleDamage = singleTarget.TakeDamage(finalAmount, 0);
+                totalDamageDealt += singleDamage;
+                battleManager.HandlePlayerDamageDealt(singleTarget, singleDamage);
                 break;
 
             case TargetType.AllEnemies: // 모든 적 대상
@@ -64,8 +66,23 @@ public class DamageEffect : ICardEffect
                 List<Monster> allMonsters = new List<Monster>(battleManager.spawnedMonsters);
                 foreach (var m in allMonsters)
                 {
-                    totalDamageDealt += m.TakeDamage(finalAmount, 0);
+                    int dealtDamage = m.TakeDamage(finalAmount, 0);
+                    totalDamageDealt += dealtDamage;
+                    battleManager.HandlePlayerDamageDealt(m, dealtDamage);
                 }
+                break;
+
+            case TargetType.RandomEnemy:
+                List<Monster> randomTargets = battleManager.GetLivingMonsters();
+                if (randomTargets == null || randomTargets.Count == 0) {
+                    Debug.LogWarning("[DamageEffect] No enemies available for RandomEnemy target. Effect cancelled.");
+                    break;
+                }
+
+                Monster randomTarget = randomTargets[Random.Range(0, randomTargets.Count)];
+                int randomDamage = randomTarget.TakeDamage(finalAmount, 0);
+                totalDamageDealt += randomDamage;
+                battleManager.HandlePlayerDamageDealt(randomTarget, randomDamage);
                 break;
 
             case TargetType.Self: // 플레이어 자신 대상
@@ -75,7 +92,8 @@ public class DamageEffect : ICardEffect
                     break;
                 }
 
-                battleManager.playerData.TakeDamage(finalAmount);
+                int selfDamage = battleManager.playerData.TakeDamage(finalAmount);
+                battleManager.battleContext?.OnPlayerCardHpLost(selfDamage);
                 break;
         }
 
@@ -92,12 +110,17 @@ public class DamageEffect : ICardEffect
 
     private int BuildFinalDamageAmount(TrainingBattleManager battleManager, int baseAmount, float cardMultiplier)
     {
+        Card sourceCard = battleManager?.battleContext?.GetLastPlayedCard();
         if (battleManager.playerData == null)
         {
-            return Mathf.Max(0, Mathf.FloorToInt(baseAmount * Mathf.Max(0f, cardMultiplier)));
+            int fallbackDamage = Mathf.Max(0, Mathf.FloorToInt(baseAmount * Mathf.Max(0f, cardMultiplier)));
+            return battleManager != null
+                ? battleManager.ApplyCardDamageRuntimeModifiers(sourceCard, fallbackDamage)
+                : fallbackDamage;
         }
 
-        return battleManager.playerData.CalculateCardDamage(baseAmount, ampMultiplier, cardMultiplier);
+        int resolvedDamage = battleManager.playerData.CalculateCardDamage(baseAmount, ampMultiplier, cardMultiplier);
+        return battleManager.ApplyCardDamageRuntimeModifiers(sourceCard, resolvedDamage);
     }
 
     private void ResolveDamageAmount(TrainingBattleManager battleManager, int forwardedAmount, out int baseAmount, out float cardMultiplier)
@@ -125,7 +148,7 @@ public class DamageEffect : ICardEffect
                 amountFormula,
                 battleManager.battleContext,
                 battleManager.playerData,
-                null,
+                (List<int>)null,
                 formulaBaseValue));
             return;
         }
@@ -178,5 +201,6 @@ public enum TargetType
     Hand,
     Discard,
     Deck,
-    None
+    None,
+    RandomEnemy
 }

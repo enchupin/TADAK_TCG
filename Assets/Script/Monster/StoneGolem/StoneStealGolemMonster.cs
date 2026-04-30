@@ -24,38 +24,11 @@ public class StoneStealGolemMonster : StoneGolemMonsterBase
     {
         for (int hitIndex = 0; hitIndex < 2; hitIndex++)
         {
-            int hpDamage = DealDamage(target, 7);
-            if (hpDamage > 0)
-            {
-                StealMaxHp(target, 1);
-            }
-
+            DealDamage(target, 7);
             if (target != null && target.IsDead())
             {
                 break;
             }
         }
-    }
-
-    private void StealMaxHp(PlayerData target, int amount)
-    {
-        if (target == null || amount <= 0)
-        {
-            return;
-        }
-
-        target.maxHP = Mathf.Max(1, target.maxHP - amount);
-        target.hp = Mathf.Min(target.hp, target.maxHP);
-
-        maxHP += amount;
-        hp = Mathf.Min(maxHP, hp + amount);
-
-        if (TrainingRunState.IsRunActive)
-        {
-            TrainingRunState.SetPlayerHealthState(target.hp, target.maxHP);
-        }
-
-        UpdateUI();
-        TrainingBattleManager.Instance?.UpdateAllUI();
     }
 }
