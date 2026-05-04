@@ -844,6 +844,23 @@ public class TrainingBattleManager : MonoBehaviour
             ? "[BattleManager] Victory. All enemies are dead."
             : "[BattleManager] Defeat. Player is dead.");
 
+        if (!isVictory)
+        {
+            if (battleUI != null)
+            {
+                battleUI.ShowDefeatPanel();
+            }
+            else
+            {
+                buildingDeck = null;
+                PlayerData.Reset();
+                TrainingRunState.ResetRun();
+                SceneManager.LoadScene("LobbyScene");
+            }
+
+            return;
+        }
+
         if (TrainingRunState.IsRunActive)
         {
             StartCoroutine(HandleTrainingRunBattleResult(isVictory));

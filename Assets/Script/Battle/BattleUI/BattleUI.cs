@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 using static BattleRuntimeDefinitions;
 
 /// <summary>
@@ -28,12 +29,15 @@ public class BattleUI : MonoBehaviour
 
     [Header("데이터 참조")]
     [SerializeField] private TrainingBattleManager battleManager;
+    [SerializeField] private GameObject defeatPanel;
+    [SerializeField] private string lobbySceneName = "LobbyScene";
     private Color defaultHPFillColor = Color.white;
     private bool hasDefaultHPFillColor;
 
     private void Awake()
     {
         CacheHPFillDefaultColor();
+        HideDefeatPanel();
     }
 
 
@@ -119,6 +123,26 @@ public class BattleUI : MonoBehaviour
         UpdateIdentityGauges();
     }
 
+    public void ShowDefeatPanel()
+    {
+        if (defeatPanel != null)
+        {
+            defeatPanel.SetActive(true);
+            return;
+        }
+
+        OnClickReturnToLobbyAfterDefeat();
+    }
+
+    public void OnClickReturnToLobbyAfterDefeat()
+    {
+        HideDefeatPanel();
+        TrainingBattleManager.buildingDeck = null;
+        PlayerData.Reset();
+        TrainingRunState.ResetRun();
+        SceneManager.LoadScene(string.IsNullOrEmpty(lobbySceneName) ? "LobbyScene" : lobbySceneName);
+    }
+
     private void CacheHPFillDefaultColor()
     {
         if (playerHPFillImage == null)
@@ -146,6 +170,14 @@ public class BattleUI : MonoBehaviour
         playerHPFillImage.color = playerData.defense > 0
             ? barrierHPFillColor
             : defaultHPFillColor;
+    }
+
+    private void HideDefeatPanel()
+    {
+        if (defeatPanel != null)
+        {
+            defeatPanel.SetActive(false);
+        }
     }
     
     private void UpdateIdentityGaugeSlider(Slider targetSlider, int slotIndex)
