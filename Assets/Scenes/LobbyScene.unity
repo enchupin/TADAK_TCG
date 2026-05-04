@@ -2249,7 +2249,7 @@ GameObject:
   - component: {fileID: 1149410157}
   - component: {fileID: 1149410156}
   m_Layer: 5
-  m_Name: Scroll View
+  m_Name: CardScrollView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2610,6 +2610,7 @@ MonoBehaviour:
     startPosition: {x: 160, y: 0, z: 0}
     buttonSpacing: 240
     trailingPadding: 160
+    scrollSensitivity: 0
     scrolltype: 0
   characterBookPanelConfig:
     content: {fileID: 2086427587}
@@ -2618,6 +2619,7 @@ MonoBehaviour:
     startPosition: {x: 160, y: 0, z: 0}
     buttonSpacing: 240
     trailingPadding: 160
+    scrollSensitivity: 0
     scrolltype: 0
 --- !u!1 &1243342143
 GameObject:
@@ -3294,7 +3296,7 @@ GameObject:
   - component: {fileID: 1496946431}
   - component: {fileID: 1496946430}
   m_Layer: 5
-  m_Name: Scroll View
+  m_Name: CharacterScrollView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
