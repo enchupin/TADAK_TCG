@@ -13,16 +13,24 @@ using static BattleRuntimeDefinitions;
 /// </summary>
 public class CardUI : MonoBehaviour
 {
+    private const string CharacterBackgroundResourcePath = "Image/CardBase/CardBackGround/CardBackGround02_";
+    private const string CharacterBarResourcePath = "Image/CardBase/CardBar/CardBar_";
+    private const string CharacterCostResourcePath = "Image/CardBase/CardCost/Cost_";
     private static readonly Regex BuffTooltipPlaceholderPattern = new(@"\{(?<content>[^{}]+)\}", RegexOptions.Compiled);
     private static readonly Regex BuffTooltipMultipleWhitespacePattern = new(@"\s{2,}", RegexOptions.Compiled);
     private static readonly Regex BuffTooltipWhitespaceBeforePunctuationPattern = new(@"\s+([.,!?])", RegexOptions.Compiled);
     private static readonly Regex ReferencedBuffNamePattern = new(@"\((?<name>[^()]+)\)", RegexOptions.Compiled);
+    private static readonly Dictionary<Character, Sprite> CharacterBackgroundCache = new();
+    private static readonly Dictionary<Character, Sprite> CharacterBarCache = new();
+    private static readonly Dictionary<Character, Sprite> CharacterCostCache = new();
     [Header("UI Components")]
     [SerializeField] private TextMeshProUGUI cardNameText;
     [SerializeField] private TextMeshProUGUI costText;
     [SerializeField] private TextMeshProUGUI keywordText;
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private Image backgroundImage;
+    [SerializeField] private Image barImage;
+    [SerializeField] private Image costImage;
     [SerializeField] private Image cardArtwork;
     [SerializeField] private GameObject tooltipPanel;
     [SerializeField] private TextMeshProUGUI tooltipText;
@@ -37,6 +45,7 @@ public class CardUI : MonoBehaviour
 
     private void Awake()
     {
+        CacheVisualReferences();
         CacheTooltipReferences();
         HideBuffTooltip();
     }
@@ -58,6 +67,7 @@ public class CardUI : MonoBehaviour
         }
 
         currentCard = card;
+        CacheVisualReferences();
         CacheTooltipReferences();
         HideBuffTooltip();
 
@@ -77,6 +87,7 @@ public class CardUI : MonoBehaviour
         if (descriptionText != null)
             descriptionText.text = CardDescriptionFormatter.Format(card, TrainingBattleManager.Instance);
 
+        ApplyCharacterBackground(card);
         ApplyPlayableVisual();
     }
 
@@ -133,6 +144,31 @@ public class CardUI : MonoBehaviour
             return;
 
         backgroundImage.color = isPlayable ? normalColor : unplayableColor;
+    }
+
+    private void ApplyCharacterBackground(Card card)
+    {
+        if (card == null)
+        {
+            return;
+        }
+
+        CacheVisualReferences();
+
+        if (backgroundImage != null)
+        {
+            backgroundImage.sprite = LoadCharacterBackground(card.character);
+        }
+
+        if (barImage != null)
+        {
+            barImage.sprite = LoadCharacterBar(card.character);
+        }
+
+        if (costImage != null)
+        {
+            costImage.sprite = LoadCharacterCost(card.character);
+        }
     }
 
     private static string BuildKeywordText(Card card)
@@ -477,6 +513,68 @@ public class CardUI : MonoBehaviour
             tooltipText.font = cardNameText.font;
             tooltipText.fontSharedMaterial = cardNameText.fontSharedMaterial;
         }
+    }
+
+    private void CacheVisualReferences()
+    {
+        if (backgroundImage == null)
+        {
+            backgroundImage = GetComponent<Image>();
+        }
+        
+        if (barImage == null)
+        {
+            Transform barTransform = FindChildTransform(transform, "Bar");
+            if (barTransform != null)
+            {
+                barImage = barTransform.GetComponent<Image>();
+            }
+        }
+
+        if (costImage == null)
+        {
+            Transform costTransform = FindChildTransform(transform, "Cost");
+            if (costTransform != null)
+            {
+                costImage = costTransform.GetComponent<Image>();
+            }
+        }
+    }
+
+    private static Sprite LoadCharacterBackground(Character character)
+    {
+        return LoadCharacterSprite(CharacterBackgroundCache, CharacterBackgroundResourcePath, character);
+    }
+
+    private static Sprite LoadCharacterBar(Character character)
+    {
+        return LoadCharacterSprite(CharacterBarCache, CharacterBarResourcePath, character);
+    }
+
+    private static Sprite LoadCharacterCost(Character character)
+    {
+        return LoadCharacterSprite(CharacterCostCache, CharacterCostResourcePath, character);
+    }
+
+    private static Sprite LoadCharacterSprite(Dictionary<Character, Sprite> cache, string resourcePath, Character character)
+    {
+        if (cache.TryGetValue(character, out Sprite cachedSprite))
+        {
+            return cachedSprite;
+        }
+
+        string backgroundSuffix = GetCharacterBackgroundSuffix(character);
+        Sprite loadedSprite = string.IsNullOrWhiteSpace(backgroundSuffix)
+            ? null
+            : Resources.Load<Sprite>(resourcePath + backgroundSuffix);
+
+        cache[character] = loadedSprite;
+        return loadedSprite;
+    }
+
+    private static string GetCharacterBackgroundSuffix(Character character)
+    {
+        return character.ToString();
     }
 
     private Transform FindChildTransform(Transform parent, string childName)

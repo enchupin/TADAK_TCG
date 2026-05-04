@@ -75,9 +75,17 @@ public class SFXControl : MonoBehaviour
     /// </summary>
     public void PlaySFX(AudioClip clip)
     {
+        PlaySFX(clip, 1f);
+    }
+
+    /// <summary>
+    /// 특정 효과음을 재생 (설정된 볼륨과 개별 배율 적용)
+    /// </summary>
+    public void PlaySFX(AudioClip clip, float volumeScale)
+    {
         if (clip != null && sfxAudioSource != null)
         {
-            sfxAudioSource.PlayOneShot(clip, currentSFXVolume);
+            sfxAudioSource.PlayOneShot(clip, volumeScale);
         }
     }
 

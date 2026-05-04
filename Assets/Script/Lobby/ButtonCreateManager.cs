@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,6 +19,7 @@ public class ButtonCreateManager : MonoBehaviour {
         [HideInInspector] public Vector3 startPosition;
         [HideInInspector] public float buttonSpacing;
         [HideInInspector] public float trailingPadding;
+        [HideInInspector] public float scrollSensitivity;
         [HideInInspector] public Scrolltype scrolltype;
     }
 
@@ -29,10 +29,8 @@ public class ButtonCreateManager : MonoBehaviour {
     [SerializeField] private ButtonPanelConfig trainingPanelConfig;
     [SerializeField] private ButtonPanelConfig characterBookPanelConfig;
 
-    private static readonly FieldInfo CharacterTypeField = typeof(SelectedButtonControl).GetField("characterType", BindingFlags.Instance | BindingFlags.NonPublic);
-    private static readonly FieldInfo CharacterBookField = typeof(CharacterBookButton).GetField("character", BindingFlags.Instance | BindingFlags.NonPublic);
-    private static readonly FieldInfo CharacterBookManagerField = typeof(CharacterBookButton).GetField("cardManager", BindingFlags.Instance | BindingFlags.NonPublic);
     private readonly HashSet<RectTransform> createdContents = new();
+    private CardContainerManager characterBookCardManager;
 
     private void Start() {
         InitiatePanelCofig();
@@ -53,11 +51,13 @@ public class ButtonCreateManager : MonoBehaviour {
         trainingPanelConfig.startPosition = new Vector3(160f, 0f, 0f);
         trainingPanelConfig.buttonSpacing = 240f;
         trainingPanelConfig.trailingPadding = 80f;
+        trainingPanelConfig.scrollSensitivity = 7.5f;
         trainingPanelConfig.scrolltype = Scrolltype.horizontal;
 
         characterBookPanelConfig.startPosition = new Vector3(186.5f, -60f, 0f);
         characterBookPanelConfig.buttonSpacing = 80f;
         characterBookPanelConfig.trailingPadding = 35f;
+        characterBookPanelConfig.scrollSensitivity = 5.5f;
         characterBookPanelConfig.scrolltype = Scrolltype.vertical;
     }
 
@@ -66,6 +66,7 @@ public class ButtonCreateManager : MonoBehaviour {
         if (!ValidatePanelConfig(buttonPanelConfig)) {
             return;
         }
+        SetupScrollView(buttonPanelConfig);
         if (!createdContents.Add(buttonPanelConfig.content)) {
             return;
         }
@@ -113,6 +114,31 @@ public class ButtonCreateManager : MonoBehaviour {
             return false;
         }
         return true;
+    }
+
+    private static void SetupScrollView(ButtonPanelConfig buttonPanelConfig) {
+        ScrollRect scrollRect = buttonPanelConfig.scrollView.GetComponent<ScrollRect>();
+        if (scrollRect == null) {
+            Debug.LogWarning("[ButtonCreateManager] ScrollRect 컴포넌트를 찾을 수 없습니다");
+            return;
+        }
+
+        scrollRect.scrollSensitivity = buttonPanelConfig.scrollSensitivity;
+
+        RectTransform wheelTarget = scrollRect.viewport != null ? scrollRect.viewport : buttonPanelConfig.scrollView;
+        ScrollRectWheelRouter wheelRouter = wheelTarget.GetComponent<ScrollRectWheelRouter>();
+        if (buttonPanelConfig.scrolltype == Scrolltype.horizontal) {
+            if (wheelRouter == null) {
+                wheelRouter = wheelTarget.gameObject.AddComponent<ScrollRectWheelRouter>();
+            }
+            wheelRouter.Bind(scrollRect);
+            wheelRouter.enabled = true;
+            return;
+        }
+
+        if (wheelRouter != null) {
+            wheelRouter.enabled = false;
+        }
     }
 
     private static void SetButtonPosition(RectTransform buttonRect, ButtonPanelConfig buttonPanelConfig, int createdButtonCount) {
@@ -175,30 +201,30 @@ public class ButtonCreateManager : MonoBehaviour {
         if (selectedButtonControl == null) {
             return;
         }
-        if (CharacterTypeField == null) {
-            Debug.LogError("[ButtonCreateManager] SelectedButtonControl의 characterType 필드를 찾을 수 없습니다");
-            return;
-        }
-        CharacterTypeField.SetValue(selectedButtonControl, character);
+        selectedButtonControl.Initialize(character);
     }
 
-    private static void BindCharacterBookButton(GameObject buttonObject, Character character) {
+    private void BindCharacterBookButton(GameObject buttonObject, Character character) {
         CharacterBookButton characterBookButton = buttonObject.GetComponent<CharacterBookButton>();
         if (characterBookButton == null) {
             return;
         }
-        if (CharacterBookField == null || CharacterBookManagerField == null) {
-            Debug.LogError("[ButtonCreateManager] CharacterBookButton 필드를 찾을 수 없습니다");
-            return;
-        }
-        CardContainerManager cardManager = FindCardContainerManager();
+        CardContainerManager cardManager = GetCharacterBookCardManager();
         if (cardManager == null) {
             Debug.LogError("[ButtonCreateManager] CharacterBook용 CardContainerManager를 찾을 수 없습니다");
             return;
         }
 
-        CharacterBookField.SetValue(characterBookButton, character);
-        CharacterBookManagerField.SetValue(characterBookButton, cardManager);
+        characterBookButton.Initialize(character, cardManager);
+    }
+
+    private CardContainerManager GetCharacterBookCardManager() {
+        if (characterBookCardManager != null) {
+            return characterBookCardManager;
+        }
+
+        characterBookCardManager = FindCardContainerManager();
+        return characterBookCardManager;
     }
 
     private static CardContainerManager FindCardContainerManager() {
@@ -247,9 +273,6 @@ public class ButtonCreateManager : MonoBehaviour {
 
         float lastButtonBottomEdge = buttonPanelConfig.startPosition.y - (buttonPanelConfig.buttonSpacing * (buttonCount - 1)) - (buttonHeight * 0.5f);
         float requiredHeight = Mathf.Max(scrollViewHeight, - lastButtonBottomEdge + buttonPanelConfig.trailingPadding);
-        Debug.Log(lastButtonBottomEdge);
-        Debug.Log("asdgasdg");
-        Debug.Log(requiredHeight);
         buttonPanelConfig.content.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
         buttonPanelConfig.content.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, requiredHeight);
     }

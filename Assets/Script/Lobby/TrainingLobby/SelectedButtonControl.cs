@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 public class SelectedButtonControl : MonoBehaviour
 {
+    private const string ButtonClickSoundPath = "Sound/click5";
+    private const float ButtonClickSoundVolumeScale = 1.25f;
+
     // 정적 변수
     public static List<Character> selectedCharacterList = new List<Character>();
     private const int MAX_SELECTION = 3;
@@ -15,11 +18,9 @@ public class SelectedButtonControl : MonoBehaviour
     public static event Action<int> OnSelectionChanged;
 
 
-    [SerializeField]
     private Character characterType;
-
-    [SerializeField]
-    private AudioClip buttonClickSound; // 로드된 버튼 클릭음
+    private static AudioClip buttonClickSound; // 버튼 클릭음
+    private static bool isButtonClickSoundLoadTried;
 
     private bool isSelected = false;
 
@@ -50,6 +51,8 @@ public class SelectedButtonControl : MonoBehaviour
 
     private void Awake()
     {
+        LoadButtonClickSound();
+
         // 임시코드
         characterImage = GetComponent<Image>();
         if (characterImage == null)
@@ -61,6 +64,24 @@ public class SelectedButtonControl : MonoBehaviour
         // 정적 리스트이므로 한 번만 초기화하거나, 매니저에서 관리하는 게 안전함.
         // 여기서는 제거 (Manager가 관리하거나, 최초 진입 시 초기화 필요)
         // ClearSelection(); 
+    }
+
+    private static void LoadButtonClickSound()
+    {
+        if (isButtonClickSoundLoadTried) {
+            return;
+        }
+
+        isButtonClickSoundLoadTried = true;
+        buttonClickSound = Resources.Load<AudioClip>(ButtonClickSoundPath);
+        if (buttonClickSound == null) {
+            Debug.LogError($"[SelectedButtonControl] 버튼 클릭음을 불러오지 못했습니다: {ButtonClickSoundPath}");
+        }
+    }
+
+    public void Initialize(Character targetCharacterType)
+    {
+        characterType = targetCharacterType;
     }
 
 
@@ -93,7 +114,7 @@ public class SelectedButtonControl : MonoBehaviour
 
         // 버튼 클릭 효과음 재생
         if (SFXControl.Instance != null) {
-            SFXControl.Instance.PlaySFX(buttonClickSound);
+            SFXControl.Instance.PlaySFX(buttonClickSound, ButtonClickSoundVolumeScale);
         }
 
         // 리스트에 추가

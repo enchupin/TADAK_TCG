@@ -10,7 +10,7 @@ public class BuffUI : MonoBehaviour
     [Header("버프 아이콘 설정")]
     [SerializeField] private RectTransform buffRoot;
     [SerializeField] private Vector2 firstIconPosition = new Vector2(30f, -30f);
-    [SerializeField] private Vector2 iconSize = new Vector2(50f, 50f);
+    [SerializeField] private Vector2 iconSize = new Vector2(30f, 30f);
     [SerializeField] private float iconSpacing = 60f;
     [SerializeField] private int iconsPerRow = 7;
 

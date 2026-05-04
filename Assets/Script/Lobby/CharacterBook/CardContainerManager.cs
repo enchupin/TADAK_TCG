@@ -182,6 +182,8 @@ public class CardContainerManager : MonoBehaviour {
         
         // 카드 크기 조정
         cardObj.transform.localScale = Vector3.one * cardScale;
+        UIHoverEffect hoverEffect = cardObj.GetComponent<UIHoverEffect>();
+        hoverEffect?.CaptureCurrentScaleAsOriginal();
 
         // CardController를 통해 초기화
         CardController controller = cardObj.GetComponent<CardController>();
@@ -230,6 +232,8 @@ public class CardContainerManager : MonoBehaviour {
         
         // 카드 크기 조정
         cardObj.transform.localScale = Vector3.one * cardScale;
+        UIHoverEffect hoverEffect = cardObj.GetComponent<UIHoverEffect>();
+        hoverEffect?.CaptureCurrentScaleAsOriginal();
         Debug.Log($"[CardContainerManager] 카드 크기 조정: {cardScale}");
 
         // CardController를 통해 초기화

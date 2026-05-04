@@ -72,6 +72,22 @@ public class SettingsManager : MonoBehaviour
         settingsPanel.SetActive(shouldOpen);
     }
 
+    public void OpenSettingsPanel()
+    {
+        if (settingsPanel == null || settingsPanel.activeSelf) {
+            return;
+        }
+
+        SyncSoundSliders();
+        BindResolutionButtons();
+        settingsPanel.SetActive(true);
+    }
+
+    public bool IsSettingsPanelOpen()
+    {
+        return settingsPanel != null && settingsPanel.activeSelf;
+    }
+
     private void SyncSoundSliders()
     {
         if (bgmSlider != null && BGMControl.Instance != null) {
