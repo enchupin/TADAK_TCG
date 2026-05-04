@@ -6,7 +6,7 @@ namespace RankingMode
     /// 랭킹 모드 씬에서 캐릭터 선택 버튼
     /// CharButtonManager에 의해 관리됨
     /// </summary>
-    public class CharacterSelectBtn : MonoBehaviour
+    public class CharacterSelectButton_RankingScene : MonoBehaviour
     {
         [Header("캐릭터 설정")]
         [SerializeField] private Character character; // 이 버튼이 담당하는 캐릭터

@@ -147,7 +147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SelectedButtonControl
   characterType: 0
-  buttonClickSound: {fileID: 8300000, guid: 82af027809aaa624dace286eb760e8a2, type: 3}
+  buttonClickSound: {fileID: 8300000, guid: 52a3279df4d881644adca1487c8b9cc7, type: 3}
 --- !u!1 &6486638747072497124
 GameObject:
   m_ObjectHideFlags: 0

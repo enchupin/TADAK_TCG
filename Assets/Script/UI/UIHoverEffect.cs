@@ -45,6 +45,11 @@ public class UIHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         animationDuration = duration;
     }
 
+    public void CaptureCurrentScaleAsOriginal()
+    {
+        originalScale = transform.localScale;
+    }
+
     public void StopAnimation()
     {
         if (currentAnimation != null) 

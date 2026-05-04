@@ -8,12 +8,45 @@ using UnityEngine.UI;
 /// </summary>
 public class CharacterBookButton : MonoBehaviour
 {
-    [SerializeField] private Character character; // 이 버튼이 담당하는 캐릭터
-    [SerializeField] private CardContainerManager cardManager; // 매니저 참조
+    private const string ButtonClickSoundPath = "Sound/click5";
+    private const float ButtonClickSoundVolumeScale = 1.25f;
+
+    private Character character; // 이 버튼이 담당하는 캐릭터
+    private CardContainerManager cardManager; // 매니저 참조
+    private static AudioClip buttonClickSound; // 버튼 클릭음
+    private static bool isButtonClickSoundLoadTried;
+
+    private void Awake()
+    {
+        LoadButtonClickSound();
+    }
+
+
+    public void Initialize(Character targetCharacter, CardContainerManager targetCardManager)
+    {
+        character = targetCharacter;
+        cardManager = targetCardManager;
+    }
+
+    private static void LoadButtonClickSound()
+    {
+        if (isButtonClickSoundLoadTried) {
+            return;
+        }
+
+        isButtonClickSoundLoadTried = true;
+        buttonClickSound = Resources.Load<AudioClip>(ButtonClickSoundPath);
+        if (buttonClickSound == null) {
+            Debug.LogError($"[CharacterBookButton] 버튼 클릭음을 불러오지 못했습니다: {ButtonClickSoundPath}");
+        }
+    }
 
 
     public void OnButtonClick()
     {
+        if (SFXControl.Instance != null) {
+            SFXControl.Instance.PlaySFX(buttonClickSound, ButtonClickSoundVolumeScale);
+        }
         if (cardManager != null) {
             List<CardData> characterCards = CardManager.GetCardsByCharacter(character);
             List<Card> cardObjects = new List<Card>();

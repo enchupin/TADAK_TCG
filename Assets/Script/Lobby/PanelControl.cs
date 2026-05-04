@@ -4,6 +4,9 @@ namespace Lobby
 {
     public class PanelControl : MonoBehaviour
     {
+        private const string ButtonClickSoundPath = "Sound/click5";
+        private const float ButtonClickSoundVolumeScale = 1.25f;
+
         [Header("패널 오브젝트")]
         [SerializeField] private GameObject mainPanel;
         [SerializeField] private GameObject rankingModePanel;
@@ -11,15 +14,20 @@ namespace Lobby
         [SerializeField] private GameObject characterBookPanel;
         [SerializeField] private GameObject settingsPanel;
 
+        private static AudioClip buttonClickSound; // 버튼 클릭음
+        private static bool isButtonClickSoundLoadTried;
 
+
+
+        private void Awake()
+        {
+            LoadButtonClickSound();
+        }
 
         private void Start()
         {
             ShowMainPanel();
         }
-
-
-
 
         // ─── 열기 ────────────────────────────────
 
@@ -31,24 +39,33 @@ namespace Lobby
 
         public void ShowRankingModePanel()
         {
+            PlayButtonClickSound();
             SetAllPanels(false);
             SetPanel(rankingModePanel, true);
         }
 
         public void ShowTrainingModePanel()
         {
+            PlayButtonClickSound();
             SetAllPanels(false);
             SetPanel(trainingModePanel, true);
         }
 
         public void ShowCharacterBookPanel()
         {
+            PlayButtonClickSound();
             SetAllPanels(false);
             SetPanel(characterBookPanel, true);
         }
 
         public void ShowSettingsPanel()
         {
+            PlayButtonClickSound();
+            if (SettingsManager.Instance != null) {
+                SettingsManager.Instance.OpenSettingsPanel();
+                return;
+            }
+
             SetAllPanels(false);
             SetPanel(settingsPanel, true);
         }
@@ -99,6 +116,26 @@ namespace Lobby
             foreach (UIHoverEffectAdvanced hoverEffect in advancedHoverEffects)
             {
                 hoverEffect?.ResetHoverState();
+            }
+        }
+
+        private static void LoadButtonClickSound()
+        {
+            if (isButtonClickSoundLoadTried) {
+                return;
+            }
+
+            isButtonClickSoundLoadTried = true;
+            buttonClickSound = Resources.Load<AudioClip>(ButtonClickSoundPath);
+            if (buttonClickSound == null) {
+                Debug.LogError($"[PanelControl] 버튼 클릭음을 불러오지 못했습니다: {ButtonClickSoundPath}");
+            }
+        }
+
+        private static void PlayButtonClickSound()
+        {
+            if (SFXControl.Instance != null) {
+                SFXControl.Instance.PlaySFX(buttonClickSound, ButtonClickSoundVolumeScale);
             }
         }
     }

@@ -12,13 +12,13 @@ namespace RankingMode
         [Header("레이아웃 설정")]
         private readonly float expandShiftAmount = 160f; // 버튼 클릭 시 뒤 버튼들이 이동하는 거리
 
-        private List<CharacterSelectBtn> currentExpandedBtnList = new(); // 현재 활성화된 선택창 오브젝트
+        private List<CharacterSelectButton_RankingScene> currentExpandedBtnList = new(); // 현재 활성화된 선택창 오브젝트
 
 
         /// <summary>
         /// 버튼 클릭 시 호출되는 함수
         /// </summary>
-        public void OnCharacterButtonClicked(CharacterSelectBtn clickedButton)
+        public void OnCharacterButtonClicked(CharacterSelectButton_RankingScene clickedButton)
         {
             // 이미 열려있는 버튼을 다시 누르면 닫기
             if (currentExpandedBtnList.Contains(clickedButton))
@@ -45,14 +45,14 @@ namespace RankingMode
         /// <summary>
         /// 클릭한 버튼보다 뒤에 있는 버튼들을 X축으로 shiftAmount만큼 이동
         /// </summary>
-        private void ShiftButtonsAfter(CharacterSelectBtn clickedButton, float shiftAmount)
+        private void ShiftButtonsAfter(CharacterSelectButton_RankingScene clickedButton, float shiftAmount)
         {
             // 클릭한 버튼의 인덱스를 찾음
             int clickedIndex = -1;
             for (int i = 0; i < characterButtons.Count; i++)
             {
                 if (characterButtons[i] == null) continue;
-                var comp = characterButtons[i].GetComponent<CharacterSelectBtn>();
+                var comp = characterButtons[i].GetComponent<CharacterSelectButton_RankingScene>();
                 if (comp == clickedButton)
                 {
                     clickedIndex = i;
