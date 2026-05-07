@@ -35,15 +35,20 @@ public class GiantFlowerSpiderBossMonster : Monster
                 SetPlannedPattern(30101, MonsterIntentIconType.Attack);
                 break;
             case 30102:
-                SetIntent("적에게 약화, 부식, 빈약을 3씩 부여합니다.");
+                int debuffAmount = PreviewPlayerDebuffAmount(BattleRuntimeDefinitions.WeakBuffId, 3);
+                SetIntent($"적에게 약화, 부식, 빈약을 {debuffAmount}씩 부여합니다.");
                 SetPlannedPattern(30102, MonsterIntentIconType.HarmfulEffect);
                 break;
             case 30103:
-                SetAttackIntent(GetPreviewDamage(21), $"피해를 {GetPreviewDamage(21)} 입힙니다. 버린 카드 더미에 자상을 2장 생성합니다.");
+                int woundDamage = GetPreviewDamage(21);
+                SetAttackIntent(woundDamage, $"피해를 {woundDamage} 입힙니다. 버린 카드 더미에 자상을 2장 생성합니다.");
                 SetPlannedPattern(30103, MonsterIntentIconType.Attack, MonsterIntentIconType.DisruptCard);
                 break;
             default:
-                SetAttackIntent(GetPreviewDamage(8), $"보호막을 8 얻습니다. 피해를 {GetPreviewDamage(8)} 입힙니다. 체력을 8 회복합니다.");
+                int barrierGain = PreviewBarrierGain(8);
+                int attackDamage = GetPreviewDamage(8);
+                int healAmount = ScaleInfiniteMonsterValue(8);
+                SetAttackIntent(attackDamage, $"보호막을 {barrierGain} 얻습니다. 피해를 {attackDamage} 입힙니다. 체력을 {healAmount} 회복합니다.");
                 SetPlannedPattern(30104, MonsterIntentIconType.Attack, MonsterIntentIconType.Protection, MonsterIntentIconType.Heal);
                 break;
         }
@@ -65,9 +70,9 @@ public class GiantFlowerSpiderBossMonster : Monster
                 }
                 break;
             case 30102:
-                target?.AddBuff(BattleRuntimeDefinitions.WeakBuffId, 3);
-                target?.AddBuff(BattleRuntimeDefinitions.CorrosionBuffId, 3);
-                target?.AddBuff(BattleRuntimeDefinitions.FrailBuffId, 3);
+                AddDebuffToPlayer(target, BattleRuntimeDefinitions.WeakBuffId, 3);
+                AddDebuffToPlayer(target, BattleRuntimeDefinitions.CorrosionBuffId, 3);
+                AddDebuffToPlayer(target, BattleRuntimeDefinitions.FrailBuffId, 3);
                 break;
             case 30103:
                 DealDamage(target, 21);
@@ -77,7 +82,7 @@ public class GiantFlowerSpiderBossMonster : Monster
             default:
                 AddDefense(8);
                 DealDamage(target, 8);
-                Heal(8);
+                Heal(8, true);
                 break;
         }
 

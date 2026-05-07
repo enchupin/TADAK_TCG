@@ -37,11 +37,13 @@ public class IceAndFireBossMonster : Monster
                 SetPlannedPattern(30301, MonsterIntentIconType.Attack);
                 break;
             case 30302:
-                SetIntent("적에게 빈약, 부식, 약화를 99씩 부여합니다.");
+                int debuffAmount = PreviewPlayerDebuffAmount(BattleRuntimeDefinitions.FrailBuffId, 99);
+                SetIntent($"적에게 빈약, 부식, 약화를 {debuffAmount}씩 부여합니다.");
                 SetPlannedPattern(30302, MonsterIntentIconType.HarmfulEffect);
                 break;
             default:
-                SetIntent("힘을 3 얻습니다.");
+                int strengthAmount = PreviewMonsterBuffAmount(BattleRuntimeDefinitions.StrengthBuffId, 3);
+                SetIntent($"힘을 {strengthAmount} 얻습니다.");
                 SetPlannedPattern(30303, MonsterIntentIconType.BeneficialEffect);
                 break;
         }
@@ -55,9 +57,9 @@ public class IceAndFireBossMonster : Monster
                 ExecuteHarmonyAttack(target);
                 break;
             case 30302:
-                target?.AddBuff(BattleRuntimeDefinitions.FrailBuffId, 99);
-                target?.AddBuff(BattleRuntimeDefinitions.CorrosionBuffId, 99);
-                target?.AddBuff(BattleRuntimeDefinitions.WeakBuffId, 99);
+                AddDebuffToPlayer(target, BattleRuntimeDefinitions.FrailBuffId, 99);
+                AddDebuffToPlayer(target, BattleRuntimeDefinitions.CorrosionBuffId, 99);
+                AddDebuffToPlayer(target, BattleRuntimeDefinitions.WeakBuffId, 99);
                 break;
             default:
                 AddBuff(BattleRuntimeDefinitions.StrengthBuffId, 3);
@@ -72,7 +74,7 @@ public class IceAndFireBossMonster : Monster
             int dealtDamage = DealDamage(target, 2);
             if (hasHarmony && dealtDamage > 0)
             {
-                AddDefense(dealtDamage);
+                AddDefense(dealtDamage, false);
             }
 
             if (target != null && target.IsDead())

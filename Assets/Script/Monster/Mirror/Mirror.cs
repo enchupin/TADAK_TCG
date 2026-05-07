@@ -21,7 +21,8 @@ public class Mirror : Monster
             return;
         }
 
-        SetIntent("빈약, 약화를 2씩 부여합니다.");
+        int debuffAmount = PreviewPlayerDebuffAmount(BattleRuntimeDefinitions.FrailBuffId, 2);
+        SetIntent($"빈약, 약화를 {debuffAmount}씩 부여합니다.");
         SetPlannedPattern(11402, MonsterIntentIconType.HarmfulEffect);
     }
 
@@ -33,8 +34,8 @@ public class Mirror : Monster
         }
         else
         {
-            target?.AddBuff(BattleRuntimeDefinitions.FrailBuffId, 2);
-            target?.AddBuff(BattleRuntimeDefinitions.WeakBuffId, 2);
+            AddDebuffToPlayer(target, BattleRuntimeDefinitions.FrailBuffId, 2);
+            AddDebuffToPlayer(target, BattleRuntimeDefinitions.WeakBuffId, 2);
         }
 
         patternIndex = (patternIndex + 1) % 3;

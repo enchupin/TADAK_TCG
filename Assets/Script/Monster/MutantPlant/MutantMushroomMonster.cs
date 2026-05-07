@@ -15,12 +15,15 @@ public class MutantMushroomMonster : Monster
     {
         if (useDrainAttack)
         {
-            SetAttackIntent(7, "피해를 7 입힙니다. 입힌 피해만큼 회복합니다.");
+            int attackDamage = PreviewOutgoingDamage(7);
+            SetAttackIntent(attackDamage, $"피해를 {attackDamage} 입힙니다. 입힌 피해만큼 회복합니다.");
             SetPlannedPattern(10301, MonsterIntentIconType.Attack);
             return;
         }
 
-        SetIntent("보호막을 12 얻습니다. 약화를 2 부여합니다.");
+        int barrierGain = PreviewBarrierGain(12);
+        int weakAmount = PreviewPlayerDebuffAmount(BattleRuntimeDefinitions.WeakBuffId, 2);
+        SetIntent($"보호막을 {barrierGain} 얻습니다. 약화를 {weakAmount} 부여합니다.");
         SetPlannedPattern(10302, MonsterIntentIconType.Protection, MonsterIntentIconType.HarmfulEffect);
     }
 
@@ -37,7 +40,7 @@ public class MutantMushroomMonster : Monster
         else
         {
             AddDefense(12);
-            target?.AddBuff(BattleRuntimeDefinitions.WeakBuffId, 2);
+            AddDebuffToPlayer(target, BattleRuntimeDefinitions.WeakBuffId, 2);
         }
 
         useDrainAttack = !useDrainAttack;

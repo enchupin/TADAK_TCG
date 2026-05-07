@@ -24,11 +24,14 @@ public class MushroomHostMonster : Monster
                 SetPlannedPattern(20301, MonsterIntentIconType.DisruptCard);
                 break;
             case 20302:
-                SetAttackIntent(16, "피해를 16 입힙니다. 빈약을 2 부여합니다.");
+                int attackDamage = PreviewOutgoingDamage(16);
+                int frailAmount = PreviewPlayerDebuffAmount(BattleRuntimeDefinitions.FrailBuffId, 2);
+                SetAttackIntent(attackDamage, $"피해를 {attackDamage} 입힙니다. 빈약을 {frailAmount} 부여합니다.");
                 SetPlannedPattern(20302, MonsterIntentIconType.Attack, MonsterIntentIconType.HarmfulEffect);
                 break;
             case 20303:
-                SetAttackIntent(21, "피해를 21 입힙니다.");
+                int heavyAttackDamage = PreviewOutgoingDamage(21);
+                SetAttackIntent(heavyAttackDamage, $"피해를 {heavyAttackDamage} 입힙니다.");
                 SetPlannedPattern(20303, MonsterIntentIconType.Attack);
                 break;
             default:
@@ -47,7 +50,7 @@ public class MushroomHostMonster : Monster
                 break;
             case 20302:
                 DealDamage(target, 16);
-                target?.AddBuff(BattleRuntimeDefinitions.FrailBuffId, 2);
+                AddDebuffToPlayer(target, BattleRuntimeDefinitions.FrailBuffId, 2);
                 break;
             case 20303:
                 DealDamage(target, 21);

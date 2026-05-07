@@ -14,7 +14,8 @@ public class FlashyScytheMonster : Monster
         switch (patternIndex)
         {
             case 0:
-                SetIntent("모든 아군이 힘을 2 얻습니다.");
+                int strengthAmount = PreviewMonsterBuffAmount(BattleRuntimeDefinitions.StrengthBuffId, 2);
+                SetIntent($"모든 아군이 힘을 {strengthAmount} 얻습니다.");
                 SetPlannedPattern(10501, MonsterIntentIconType.BeneficialEffect);
                 break;
             case 1:

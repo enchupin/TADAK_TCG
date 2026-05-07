@@ -2081,13 +2081,16 @@ public class TrainingBattleManager : MonoBehaviour
         if (!TrainingRunState.HasMapData)
             yield break;
 
-        bool shouldPersistRunDeck = false;
+        bool isBossVictory = false;
         if (isVictory
             && TrainingRunState.PendingNodeId.HasValue
             && TrainingRunState.TryGetNode(TrainingRunState.PendingNodeId.Value, out TrainingMapNodeData pendingNode))
         {
-            shouldPersistRunDeck = pendingNode.nodeType == TrainingNodeType.Boss;
+            isBossVictory = pendingNode.nodeType == TrainingNodeType.Boss;
         }
+
+        bool shouldStartNextInfiniteMap = isBossVictory && InfiniteMode.IsInfiniteMode;
+        bool shouldPersistRunDeck = isBossVictory && !shouldStartNextInfiniteMap;
 
         if (PlayerData.Instance != null)
         {
@@ -2103,6 +2106,12 @@ public class TrainingBattleManager : MonoBehaviour
         }
 
         TrainingRunState.CompletePendingNode(isVictory);
+
+        if (shouldStartNextInfiniteMap && !TrainingRunState.IsRunFailed)
+        {
+            InfiniteMode.AdvanceMap();
+            TrainingRunState.StartNextInfiniteMap();
+        }
 
         if (!isVictory || TrainingRunState.IsRunCompleted || TrainingRunState.IsRunFailed)
         {

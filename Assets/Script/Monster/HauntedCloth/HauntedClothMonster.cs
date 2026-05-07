@@ -43,7 +43,9 @@ public class HauntedClothMonster : Monster
                 SetPlannedPattern(11001, MonsterIntentIconType.HarmfulEffect);
                 break;
             case 11002:
-                SetAttackIntent(11, "피해를 11 입힙니다. 보호막을 8 얻습니다.");
+                int attackDamage = PreviewOutgoingDamage(11);
+                int barrierGain = PreviewBarrierGain(8);
+                SetAttackIntent(attackDamage, $"피해를 {attackDamage} 입힙니다. 보호막을 {barrierGain} 얻습니다.");
                 SetPlannedPattern(11002, MonsterIntentIconType.Attack, MonsterIntentIconType.Protection);
                 break;
             default:

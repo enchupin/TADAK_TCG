@@ -46,6 +46,18 @@ namespace Lobby
 
         public void ShowTrainingModePanel()
         {
+            InfiniteMode.SetMode(false);
+            OpenTrainingModePanel();
+        }
+
+        public void ShowInfiniteModePanel()
+        {
+            InfiniteMode.SetMode(true);
+            OpenTrainingModePanel();
+        }
+
+        private void OpenTrainingModePanel()
+        {
             PlayButtonClickSound();
             SetAllPanels(false);
             SetPanel(trainingModePanel, true);

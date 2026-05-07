@@ -23,11 +23,13 @@ public class VoidBeastMonster : Monster
                 SetPlannedPattern(20401, MonsterIntentIconType.Attack);
                 break;
             case 1:
-                SetIntent("적의 힘을 2 감소시키고, 힘을 2 얻습니다.");
+                int strengthAmount = ScaleInfiniteMonsterValue(2);
+                SetIntent($"적의 힘을 {strengthAmount} 감소시키고, 힘을 {strengthAmount} 얻습니다.");
                 SetPlannedPattern(20402, MonsterIntentIconType.HarmfulEffect, MonsterIntentIconType.BeneficialEffect);
                 break;
             default:
-                SetIntent("공허 껍질을 3 얻습니다.");
+                int voidShellAmount = PreviewMonsterBuffAmount(BattleRuntimeDefinitions.VoidShellBuffId, 3);
+                SetIntent($"공허 껍질을 {voidShellAmount} 얻습니다.");
                 SetPlannedPattern(20403, MonsterIntentIconType.BeneficialEffect);
                 break;
         }
@@ -50,7 +52,7 @@ public class VoidBeastMonster : Monster
                 attackHitCount++;
                 break;
             case 1:
-                target?.ConsumeBuffStack(BattleRuntimeDefinitions.StrengthBuffId, 2);
+                target?.ConsumeBuffStack(BattleRuntimeDefinitions.StrengthBuffId, ScaleInfiniteMonsterValue(2));
                 AddBuff(BattleRuntimeDefinitions.StrengthBuffId, 2);
                 break;
             default:

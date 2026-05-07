@@ -16,12 +16,15 @@ public class StoneShieldGolemMonster : StoneGolemMonsterBase
         useSupportPattern = HasOtherLivingStoneGolem();
         if (useSupportPattern)
         {
-            SetIntent("적에게 약화를 2 부여합니다. 모든 아군이 보호막을 8 얻습니다.");
+            int weakAmount = PreviewPlayerDebuffAmount(BattleRuntimeDefinitions.WeakBuffId, 2);
+            int barrierGain = PreviewBarrierGain(8);
+            SetIntent($"적에게 약화를 {weakAmount} 부여합니다. 모든 아군이 보호막을 {barrierGain} 얻습니다.");
             SetPlannedPattern(10601, MonsterIntentIconType.Protection, MonsterIntentIconType.HarmfulEffect);
             return;
         }
 
-        SetAttackIntent(20, "피해를 20 입히고 전투에서 이탈합니다.");
+        int attackDamage = PreviewOutgoingDamage(20);
+        SetAttackIntent(attackDamage, $"피해를 {attackDamage} 입히고 전투에서 이탈합니다.");
         SetPlannedPattern(10602, MonsterIntentIconType.Bomb);
     }
 
@@ -29,7 +32,7 @@ public class StoneShieldGolemMonster : StoneGolemMonsterBase
     {
         if (useSupportPattern)
         {
-            target?.AddBuff(BattleRuntimeDefinitions.WeakBuffId, 2);
+            AddDebuffToPlayer(target, BattleRuntimeDefinitions.WeakBuffId, 2);
             ApplyBarrierToAllAllies();
             return;
         }

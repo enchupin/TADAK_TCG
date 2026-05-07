@@ -11,11 +11,15 @@ public class RotwoodWardenMonster : Monster
         switch (patternIndex)
         {
             case 0:
-                SetIntent("체력을 15 회복합니다. 적에게 빈약을 3 부여합니다.");
+                int healAmount = ScaleInfiniteMonsterValue(15);
+                int frailAmount = PreviewPlayerDebuffAmount(BattleRuntimeDefinitions.FrailBuffId, 3);
+                SetIntent($"체력을 {healAmount} 회복합니다. 적에게 빈약을 {frailAmount} 부여합니다.");
                 SetPlannedPattern(20101, MonsterIntentIconType.Heal, MonsterIntentIconType.HarmfulEffect);
                 break;
             case 1:
-                SetIntent("체력을 15 회복합니다. 적에게 드로우 방해를 1 부여합니다.");
+                int interferenceHealAmount = ScaleInfiniteMonsterValue(15);
+                int drawInterferenceAmount = PreviewPlayerDebuffAmount(BattleRuntimeDefinitions.DrawInterferenceBuffId, 1);
+                SetIntent($"체력을 {interferenceHealAmount} 회복합니다. 적에게 드로우 방해를 {drawInterferenceAmount} 부여합니다.");
                 SetPlannedPattern(20102, MonsterIntentIconType.Heal, MonsterIntentIconType.HarmfulEffect);
                 break;
             case 2:
@@ -23,7 +27,8 @@ public class RotwoodWardenMonster : Monster
                 SetPlannedPattern(20103, MonsterIntentIconType.Stun);
                 break;
             default:
-                SetAttackIntent(45, "피해를 45 입힙니다.");
+                int attackDamage = PreviewOutgoingDamage(45);
+                SetAttackIntent(attackDamage, $"피해를 {attackDamage} 입힙니다.");
                 SetPlannedPattern(20104, MonsterIntentIconType.Attack);
                 break;
         }
@@ -34,12 +39,12 @@ public class RotwoodWardenMonster : Monster
         switch (patternIndex)
         {
             case 0:
-                Heal(15);
-                target?.AddBuff(BattleRuntimeDefinitions.FrailBuffId, 3);
+                Heal(15, true);
+                AddDebuffToPlayer(target, BattleRuntimeDefinitions.FrailBuffId, 3);
                 break;
             case 1:
-                Heal(15);
-                target?.AddBuff(BattleRuntimeDefinitions.DrawInterferenceBuffId, 1);
+                Heal(15, true);
+                AddDebuffToPlayer(target, BattleRuntimeDefinitions.DrawInterferenceBuffId, 1);
                 break;
             case 2:
                 break;

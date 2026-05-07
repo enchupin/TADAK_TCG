@@ -51,6 +51,6 @@ public sealed class VoidShellMonsterBuffScript : MonsterBuffScript
             return;
         }
 
-        monster.AddDefense(stack);
+        monster.AddDefense(stack, false);
     }
 }

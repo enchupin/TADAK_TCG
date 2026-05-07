@@ -16,7 +16,8 @@ public class StoneStealGolemMonster : StoneGolemMonsterBase
 
     protected override void BuildNextAction()
     {
-        SetAttackIntent(7, "피해를 7씩 2회 입힙니다.");
+        int attackDamage = PreviewOutgoingDamage(7);
+        SetAttackIntent(attackDamage, $"피해를 {attackDamage}씩 2회 입힙니다.");
         SetPlannedPattern(10801, MonsterIntentIconType.Attack);
     }
 

@@ -11,6 +11,6 @@ public sealed class ParasiticMushroomMonsterBuffScript : MonsterBuffScript
             return;
         }
 
-        BuffCombatUtility.ReducePlayerMaxHp(target, stack * 2);
+        BuffCombatUtility.ReducePlayerMaxHp(target, InfiniteMode.ScaleMonsterValue(stack * 2));
     }
 }

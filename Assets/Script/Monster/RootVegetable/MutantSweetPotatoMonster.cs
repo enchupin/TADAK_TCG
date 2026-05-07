@@ -36,7 +36,8 @@ public class MutantSweetPotatoMonster : Monster
         switch (plannedPatternIdForTurn)
         {
             case RootPatternId:
-                SetIntent($"뿌리내림을 얻습니다. 보호막을 {RootBarrierAmount} 얻습니다.");
+                int rootBarrierGain = PreviewBarrierGain(RootBarrierAmount);
+                SetIntent($"뿌리내림을 얻습니다. 보호막을 {rootBarrierGain} 얻습니다.");
                 SetPlannedPattern(RootPatternId, MonsterIntentIconType.Protection, MonsterIntentIconType.BeneficialEffect);
                 break;
             case MultiHitPatternId:
@@ -46,12 +47,13 @@ public class MutantSweetPotatoMonster : Monster
                 SetPlannedPattern(MultiHitPatternId, MonsterIntentIconType.Attack);
                 break;
             case PowerUpPatternId:
-                SetIntent($"힘을 {StrengthAmount} 얻습니다.");
+                int strengthAmount = PreviewMonsterBuffAmount(BattleRuntimeDefinitions.StrengthBuffId, StrengthAmount);
+                SetIntent($"힘을 {strengthAmount} 얻습니다.");
                 SetPlannedPattern(PowerUpPatternId, MonsterIntentIconType.BeneficialEffect);
                 break;
             default:
                 int attackDamage = GetPreviewDamage(IsRooted() ? AttackRootedDamage : AttackBaseDamage);
-                int debuffStack = IsRooted() ? AttackRootedDebuffStack : AttackBaseDebuffStack;
+                int debuffStack = PreviewPlayerDebuffAmount(BattleRuntimeDefinitions.FrailBuffId, IsRooted() ? AttackRootedDebuffStack : AttackBaseDebuffStack);
                 SetAttackIntent(attackDamage, $"피해를 {attackDamage} 입힙니다. 빈약을 {debuffStack} 부여합니다.");
                 SetPlannedPattern(AttackDebuffPatternId, MonsterIntentIconType.Attack, MonsterIntentIconType.HarmfulEffect);
                 break;
@@ -83,7 +85,7 @@ public class MutantSweetPotatoMonster : Monster
                 break;
             default:
                 DealDamage(target, IsRooted() ? AttackRootedDamage : AttackBaseDamage);
-                target?.AddBuff(BattleRuntimeDefinitions.FrailBuffId, IsRooted() ? AttackRootedDebuffStack : AttackBaseDebuffStack);
+                AddDebuffToPlayer(target, BattleRuntimeDefinitions.FrailBuffId, IsRooted() ? AttackRootedDebuffStack : AttackBaseDebuffStack);
                 break;
         }
 

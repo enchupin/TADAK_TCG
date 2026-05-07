@@ -51,7 +51,8 @@ public class VoidLordBossMonster : Monster
                 SetPlannedPattern(30401, MonsterIntentIconType.DisruptCard);
                 break;
             case 30402:
-                SetIntent("모든 아군이 공허 껍질을 4 얻습니다.");
+                int voidShellAmount = PreviewMonsterBuffAmount(BattleRuntimeDefinitions.VoidShellBuffId, 4);
+                SetIntent($"모든 아군이 공허 껍질을 {voidShellAmount} 얻습니다.");
                 SetPlannedPattern(30402, MonsterIntentIconType.BeneficialEffect);
                 break;
             case 30403:
@@ -68,7 +69,8 @@ public class VoidLordBossMonster : Monster
                 SetPlannedPattern(30405, MonsterIntentIconType.Stun);
                 break;
             default:
-                SetIntent("공격 강화를 6 얻습니다.");
+                int attackBoost = ScaleInfiniteMonsterValue(6);
+                SetIntent($"공격 강화를 {attackBoost} 얻습니다.");
                 SetPlannedPattern(30406, MonsterIntentIconType.BeneficialEffect);
                 break;
         }

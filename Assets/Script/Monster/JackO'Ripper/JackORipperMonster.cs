@@ -22,7 +22,8 @@ public class JackORipperMonster : Monster
             return;
         }
 
-        SetAttackIntent(6, "피해를 1 x 6 입힙니다.");
+        int hitDamage = PreviewOutgoingDamage(1);
+        SetAttackIntent(hitDamage, $"피해를 {hitDamage} x 6 입힙니다.");
         SetPlannedPattern(10401, MonsterIntentIconType.Attack);
     }
 
