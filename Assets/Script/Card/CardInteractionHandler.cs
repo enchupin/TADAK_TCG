@@ -505,6 +505,10 @@ public class CardInteractionHandler : UIHoverEffect,
         rectTransform.SetSiblingIndex(siblingIndex);
         hoverSiblingIndex = -1;
         isHoverSiblingOverridden = false;
+        if (handManager != null)
+        {
+            handManager.UpdateHandCardPositions();
+        }
     }
 
     private int ConsumeHoverSiblingIndex()

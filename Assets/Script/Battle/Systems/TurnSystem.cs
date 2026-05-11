@@ -92,6 +92,15 @@ public class TurnSystem
         if (battleManager.CurrentTurnState == BattleTurnState.CombatEnd)
             return;
 
+        if (IsTurnTransitioning)
+            return;
+
+        battleManager.StartCoroutine(RunPlayerTurnStartSequence(replanEnemyActions));
+    }
+
+    private IEnumerator RunPlayerTurnStartSequence(bool replanEnemyActions)
+    {
+        IsTurnTransitioning = true;
         turnNumber++;
         battleManager.SetState(BattleTurnState.PlayerTurnStart);
 
@@ -112,7 +121,8 @@ public class TurnSystem
             battleManager.UpdateEndTurnButtonState();
             battleManager.RefreshHandPlayableState();
             battleManager.UpdateAllUI();
-            return;
+            IsTurnTransitioning = false;
+            yield break;
         }
 
         battleManager.ProcessPendingMonsterRevives();
@@ -127,11 +137,12 @@ public class TurnSystem
         }
         else
         {
-            battleManager.DrawCards(GetTurnStartDrawCount(), true);
+            yield return battleManager.DrawCardsCoroutine(GetTurnStartDrawCount(), true);
         }
 
         battleManager.SetState(BattleTurnState.PlayerAction);
         battleManager.ResolveDeferredTurnStartPowerEffects();
+        IsTurnTransitioning = false;
         battleManager.UpdateEndTurnButtonState();
         battleManager.RefreshHandPlayableState();
         battleManager.UpdateAllUI();

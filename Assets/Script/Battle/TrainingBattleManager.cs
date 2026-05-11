@@ -403,6 +403,15 @@ public class TrainingBattleManager : MonoBehaviour
         return DrawCardsSequentially(count, ignoreRootAbsorption, () => usableDeckManager?.DrawCard());
     }
 
+    public System.Collections.IEnumerator DrawCardsCoroutine(int count, bool ignoreRootAbsorption = false, Action<List<Card>> onComplete = null)
+    {
+        yield return DrawCardsSequentiallyCoroutine(
+            count,
+            ignoreRootAbsorption,
+            () => usableDeckManager?.DrawCard(),
+            onComplete);
+    }
+
     public void DrawBasicCards(int count, Character? characterFilter = null, bool ignoreRootAbsorption = false)
     {
         DrawBasicCardsAndGet(count, characterFilter, ignoreRootAbsorption);
@@ -415,6 +424,19 @@ public class TrainingBattleManager : MonoBehaviour
             List<Card> drawnCards = usableDeckManager?.DrawBasicCards(1, characterFilter);
             return drawnCards != null && drawnCards.Count > 0 ? drawnCards[0] : null;
         });
+    }
+
+    public System.Collections.IEnumerator DrawBasicCardsCoroutine(int count, Character? characterFilter = null, bool ignoreRootAbsorption = false, Action<List<Card>> onComplete = null)
+    {
+        yield return DrawCardsSequentiallyCoroutine(
+            count,
+            ignoreRootAbsorption,
+            () =>
+            {
+                List<Card> drawnCards = usableDeckManager?.DrawBasicCards(1, characterFilter);
+                return drawnCards != null && drawnCards.Count > 0 ? drawnCards[0] : null;
+            },
+            onComplete);
     }
 
     public void DrawCharacterCards(int count, Character? characterFilter = null, bool ignoreRootAbsorption = false)
@@ -434,6 +456,24 @@ public class TrainingBattleManager : MonoBehaviour
             List<Card> drawnCards = usableDeckManager?.DrawCharacterCards(1, characterFilter);
             return drawnCards != null && drawnCards.Count > 0 ? drawnCards[0] : null;
         });
+    }
+
+    public System.Collections.IEnumerator DrawCharacterCardsCoroutine(int count, Character? characterFilter = null, bool ignoreRootAbsorption = false, Action<List<Card>> onComplete = null)
+    {
+        yield return DrawCardsSequentiallyCoroutine(
+            count,
+            ignoreRootAbsorption,
+            () =>
+            {
+                if (!characterFilter.HasValue)
+                {
+                    return null;
+                }
+
+                List<Card> drawnCards = usableDeckManager?.DrawCharacterCards(1, characterFilter);
+                return drawnCards != null && drawnCards.Count > 0 ? drawnCards[0] : null;
+            },
+            onComplete);
     }
 
     [ContextMenu("Debug Draw Matching Cards")]
@@ -2037,7 +2077,7 @@ public class TrainingBattleManager : MonoBehaviour
             }
 
             drawnCards.Add(drawnCard);
-            handManager.AddCard(drawnCard);
+            handManager.AddCard(drawnCard, true);
             drawnCard.ExecuteOnDrawEffects(this);
 
             if (!ignoreRootAbsorption && drawnCard.cardId == 40)
@@ -2046,6 +2086,67 @@ public class TrainingBattleManager : MonoBehaviour
             }
         }
 
+        CompleteDrawSequence(drawnCards);
+        return drawnCards;
+    }
+
+    private System.Collections.IEnumerator DrawCardsSequentiallyCoroutine(
+        int count,
+        bool ignoreRootAbsorption,
+        Func<Card> drawCard,
+        Action<List<Card>> onComplete)
+    {
+        List<Card> drawnCards = new List<Card>();
+        if (count <= 0 || drawCard == null || handManager == null || usableDeckManager == null)
+        {
+            onComplete?.Invoke(drawnCards);
+            yield break;
+        }
+
+        if (!CanStartDraw(ignoreRootAbsorption))
+        {
+            onComplete?.Invoke(drawnCards);
+            yield break;
+        }
+
+        for (int drawIndex = 0; drawIndex < count; drawIndex++)
+        {
+            if (!ignoreRootAbsorption && HasRootAbsorptionInHand())
+            {
+                break;
+            }
+
+            Card drawnCard = drawCard();
+            if (drawnCard == null)
+            {
+                break;
+            }
+
+            drawnCards.Add(drawnCard);
+            Coroutine drawAnimation = handManager.AddCard(drawnCard, true);
+            drawnCard.ExecuteOnDrawEffects(this);
+
+            if (drawAnimation != null)
+            {
+                yield return drawAnimation;
+            }
+            else
+            {
+                yield return null;
+            }
+
+            if (!ignoreRootAbsorption && drawnCard.cardId == 40)
+            {
+                break;
+            }
+        }
+
+        CompleteDrawSequence(drawnCards);
+        onComplete?.Invoke(drawnCards);
+    }
+
+    private void CompleteDrawSequence(List<Card> drawnCards)
+    {
         if (battleContext != null && drawnCards.Count > 0)
         {
             battleContext.OnCardsDrawn(drawnCards.Count);
@@ -2053,7 +2154,6 @@ public class TrainingBattleManager : MonoBehaviour
 
         RefreshHandPlayableState();
         UpdateAllUI();
-        return drawnCards;
     }
 
     private bool CanStartDraw(bool ignoreRootAbsorption)
