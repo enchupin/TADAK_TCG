@@ -12,7 +12,7 @@ public sealed class FuturePredationMonsterBuffScript : MonsterBuffScript
         }
 
         BuffCombatUtility.RemoveRandomBeneficialBuff(monster);
-        monster.Heal(50);
+        monster.Heal(50, true);
         monster.AddBuff(StrengthBuffId, 2);
     }
 }

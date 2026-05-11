@@ -6811,8 +6811,8 @@ MonoBehaviour:
   jackORipperPrefab: {fileID: 5506351440769215535, guid: daaa8abfc9ff4507b17464a40d1ab0e7, type: 3}
   giantFlowerSpiderPrefab: {fileID: 5506351440769215535, guid: 47ddd5f6ef944d22ae66b3e793b358c6, type: 3}
   prophetPrefab: {fileID: 5506351440769215535, guid: 8ca66e8c908d4e65beb5ae1e53eeda22, type: 3}
-  iceAndFireBossPrefab: {fileID: 0}
-  voidLordBossPrefab: {fileID: 0}
+  iceAndFireBossPrefab: {fileID: 5506351440769215535, guid: c3030f8c7b584a64bd3d6c8842aa0303, type: 3}
+  voidLordBossPrefab: {fileID: 5506351440769215535, guid: d3041f9a1c9c43b9af65d7447d330404, type: 3}
   stoneShieldGolemPrefab: {fileID: 5506351440769215535, guid: 1e3186626ac4403498767e6910a4ac2b, type: 3}
   stoneThrowGolemPrefab: {fileID: 5506351440769215535, guid: e5b1ab556cc846618015100713dc0921, type: 3}
   stoneStealGolemPrefab: {fileID: 5506351440769215535, guid: da84d7cb182d44f09bd0848263415cb6, type: 3}

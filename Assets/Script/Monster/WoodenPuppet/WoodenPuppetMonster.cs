@@ -22,19 +22,24 @@ public class WoodenPuppetMonster : Monster
         switch (plannedPatternIdForTurn)
         {
             case 11601:
-                SetAttackIntent(6, "피해를 6 입힙니다. 버린 카드 더미에 뿌리 흡수를 2장 생성합니다.");
+                int rootAbsorptionDamage = PreviewOutgoingDamage(6);
+                SetAttackIntent(rootAbsorptionDamage, $"피해를 {rootAbsorptionDamage} 입힙니다. 버린 카드 더미에 뿌리 흡수를 2장 생성합니다.");
                 SetPlannedPattern(11601, MonsterIntentIconType.Attack, MonsterIntentIconType.DisruptCard);
                 break;
             case 11602:
-                SetAttackIntent(9, "피해를 9 입힙니다. 보호막을 8 얻습니다.");
+                int attackDamage = PreviewOutgoingDamage(9);
+                int barrierGain = PreviewBarrierGain(8);
+                SetAttackIntent(attackDamage, $"피해를 {attackDamage} 입힙니다. 보호막을 {barrierGain} 얻습니다.");
                 SetPlannedPattern(11602, MonsterIntentIconType.Attack, MonsterIntentIconType.Protection);
                 break;
             case 11603:
-                SetIntent("빈약을 3 부여합니다.");
+                int frailAmount = PreviewPlayerDebuffAmount(BattleRuntimeDefinitions.FrailBuffId, 3);
+                SetIntent($"빈약을 {frailAmount} 부여합니다.");
                 SetPlannedPattern(11603, MonsterIntentIconType.HarmfulEffect);
                 break;
             default:
-                SetIntent("약화를 3 부여합니다.");
+                int weakAmount = PreviewPlayerDebuffAmount(BattleRuntimeDefinitions.WeakBuffId, 3);
+                SetIntent($"약화를 {weakAmount} 부여합니다.");
                 SetPlannedPattern(11604, MonsterIntentIconType.HarmfulEffect);
                 break;
         }
@@ -53,10 +58,10 @@ public class WoodenPuppetMonster : Monster
                 AddDefense(8);
                 break;
             case 11603:
-                target?.AddBuff(BattleRuntimeDefinitions.FrailBuffId, 3);
+                AddDebuffToPlayer(target, BattleRuntimeDefinitions.FrailBuffId, 3);
                 break;
             case 11604:
-                target?.AddBuff(BattleRuntimeDefinitions.WeakBuffId, 3);
+                AddDebuffToPlayer(target, BattleRuntimeDefinitions.WeakBuffId, 3);
                 break;
         }
     }

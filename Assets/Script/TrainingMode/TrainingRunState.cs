@@ -88,6 +88,7 @@ public static class TrainingRunState
     public static void StartNewRun(string mapSceneName, string battleSceneName)
     {
         ResetRun();
+        InfiniteMode.ResetProgress();
 
         MapSceneName = mapSceneName;
         BattleSceneName = battleSceneName;
@@ -98,6 +99,40 @@ public static class TrainingRunState
         IsRunActive = true;
 
         Debug.Log("[TrainingRunState] New run started.");
+    }
+
+    public static void StartNextInfiniteMap()
+    {
+        string mapSceneName = MapSceneName;
+        string battleSceneName = BattleSceneName;
+        bool hasPlayerHealthState = HasPlayerHealthState;
+        int playerCurrentHp = PlayerCurrentHp;
+        int playerMaxHp = PlayerMaxHp;
+
+        nodesById.Clear();
+        orderedNodes.Clear();
+        selectableNodeIds.Clear();
+        clearedNodeIds.Clear();
+
+        CurrentNodeId = null;
+        PendingNodeId = null;
+
+        MapSceneName = mapSceneName;
+        BattleSceneName = battleSceneName;
+
+        IsRunActive = true;
+        IsRunCompleted = false;
+        IsRunFailed = false;
+
+        BuildSimpleMap();
+        InitializeRunStartState();
+
+        if (hasPlayerHealthState)
+        {
+            SetPlayerHealthState(playerCurrentHp, playerMaxHp);
+        }
+
+        Debug.Log($"[TrainingRunState] 무한모드 {InfiniteMode.CurrentMapIndex}번째 맵을 시작했습니다");
     }
 
     public static void ResetRun()

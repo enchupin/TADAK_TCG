@@ -42,7 +42,8 @@ public class ProphetBossMonster : Monster
                 SetPlannedPattern(30202, MonsterIntentIconType.Attack);
                 break;
             case 30203:
-                SetIntent("빈약을 2 부여합니다.");
+                int frailAmount = PreviewPlayerDebuffAmount(BattleRuntimeDefinitions.FrailBuffId, 2);
+                SetIntent($"빈약을 {frailAmount} 부여합니다.");
                 SetPlannedPattern(30203, MonsterIntentIconType.HarmfulEffect);
                 break;
             case 30204:
@@ -51,7 +52,8 @@ public class ProphetBossMonster : Monster
                 SetPlannedPattern(30204, MonsterIntentIconType.Attack);
                 break;
             default:
-                SetIntent("부식을 2 부여합니다.");
+                int corrosionAmount = PreviewPlayerDebuffAmount(BattleRuntimeDefinitions.CorrosionBuffId, 2);
+                SetIntent($"부식을 {corrosionAmount} 부여합니다.");
                 SetPlannedPattern(30205, MonsterIntentIconType.HarmfulEffect);
                 break;
         }
@@ -78,7 +80,7 @@ public class ProphetBossMonster : Monster
                 routeStage = 2;
                 break;
             case 30203:
-                target?.AddBuff(BattleRuntimeDefinitions.FrailBuffId, 2);
+                AddDebuffToPlayer(target, BattleRuntimeDefinitions.FrailBuffId, 2);
                 routeStage = 0;
                 break;
             case 30204:
@@ -86,7 +88,7 @@ public class ProphetBossMonster : Monster
                 routeStage = 2;
                 break;
             default:
-                target?.AddBuff(BattleRuntimeDefinitions.CorrosionBuffId, 2);
+                AddDebuffToPlayer(target, BattleRuntimeDefinitions.CorrosionBuffId, 2);
                 routeStage = 0;
                 break;
         }

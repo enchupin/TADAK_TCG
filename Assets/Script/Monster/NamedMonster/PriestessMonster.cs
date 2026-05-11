@@ -42,7 +42,7 @@ public class PriestessMonster : Monster
         {
             case 0:
                 DealDamage(target, 13);
-                AddDefense(GetBarrierGain(8));
+                AddDefense(8);
                 break;
             case 1:
                 for (int hitIndex = 0; hitIndex < 2; hitIndex++)
@@ -55,7 +55,7 @@ public class PriestessMonster : Monster
                 }
                 break;
             case 2:
-                AddDefense(GetBarrierGain(12));
+                AddDefense(12);
                 break;
             default:
                 DealDamage(target, 25);

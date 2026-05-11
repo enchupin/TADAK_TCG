@@ -20,12 +20,14 @@ public class CactusMonster : Monster
 
         if (plannedPatternIdForTurn == 11501)
         {
-            SetAttackIntent(7, "피해를 7 입힙니다. 보호막을 12 얻습니다.");
+            int attackDamage = PreviewOutgoingDamage(7);
+            int barrierGain = PreviewBarrierGain(12);
+            SetAttackIntent(attackDamage, $"피해를 {attackDamage} 입힙니다. 보호막을 {barrierGain} 얻습니다.");
             SetPlannedPattern(11501, MonsterIntentIconType.Attack, MonsterIntentIconType.Protection);
             return;
         }
 
-        int thornGain = GetThornGainAmount(2);
+        int thornGain = PreviewMonsterBuffAmount(BattleRuntimeDefinitions.ThornBuffId, GetThornGainAmount(2));
         SetIntent($"가시를 {thornGain} 얻습니다.");
         SetPlannedPattern(11502, MonsterIntentIconType.BeneficialEffect);
     }

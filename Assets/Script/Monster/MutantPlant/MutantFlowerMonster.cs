@@ -11,15 +11,19 @@ public class MutantFlowerMonster : Monster
         switch (patternIndex)
         {
             case 0:
-                SetAttackIntent(9, "피해를 9 입힙니다.");
+                int attackDamage = PreviewOutgoingDamage(9);
+                SetAttackIntent(attackDamage, $"피해를 {attackDamage} 입힙니다.");
                 SetPlannedPattern(10101, MonsterIntentIconType.Attack);
                 break;
             case 1:
-                SetAttackIntent(6, "피해를 6 입힙니다. 보호막을 7 얻습니다.");
+                int guardedAttackDamage = PreviewOutgoingDamage(6);
+                int barrierGain = PreviewBarrierGain(7);
+                SetAttackIntent(guardedAttackDamage, $"피해를 {guardedAttackDamage} 입힙니다. 보호막을 {barrierGain} 얻습니다.");
                 SetPlannedPattern(10102, MonsterIntentIconType.Attack, MonsterIntentIconType.Protection);
                 break;
             default:
-                SetIntent("부식을 2 부여합니다.");
+                int corrosionAmount = PreviewPlayerDebuffAmount(BattleRuntimeDefinitions.CorrosionBuffId, 2);
+                SetIntent($"부식을 {corrosionAmount} 부여합니다.");
                 SetPlannedPattern(10103, MonsterIntentIconType.HarmfulEffect);
                 break;
         }
@@ -37,7 +41,7 @@ public class MutantFlowerMonster : Monster
                 AddDefense(7);
                 break;
             default:
-                target?.AddBuff(BattleRuntimeDefinitions.CorrosionBuffId, 2);
+                AddDebuffToPlayer(target, BattleRuntimeDefinitions.CorrosionBuffId, 2);
                 break;
         }
 

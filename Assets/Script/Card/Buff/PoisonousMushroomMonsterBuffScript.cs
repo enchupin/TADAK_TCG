@@ -11,6 +11,6 @@ public sealed class PoisonousMushroomMonsterBuffScript : MonsterBuffScript
             return;
         }
 
-        battleManager.playerData.AddBuff(EnhancedCorrosionBuffId, stack * 2);
+        battleManager.playerData.AddBuff(EnhancedCorrosionBuffId, stack * 2, true);
     }
 }

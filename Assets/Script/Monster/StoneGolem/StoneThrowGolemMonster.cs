@@ -16,7 +16,9 @@ public class StoneThrowGolemMonster : StoneGolemMonsterBase
         useSupportPattern = HasOtherLivingStoneGolem();
         if (useSupportPattern)
         {
-            SetIntent("적에게 부식을 2 부여합니다. 모든 아군이 힘을 1 얻습니다.");
+            int corrosionAmount = PreviewPlayerDebuffAmount(BattleRuntimeDefinitions.CorrosionBuffId, 2);
+            int strengthAmount = PreviewMonsterBuffAmount(BattleRuntimeDefinitions.StrengthBuffId, 1);
+            SetIntent($"적에게 부식을 {corrosionAmount} 부여합니다. 모든 아군이 힘을 {strengthAmount} 얻습니다.");
             SetPlannedPattern(10701, MonsterIntentIconType.BeneficialEffect, MonsterIntentIconType.HarmfulEffect);
             return;
         }
@@ -30,7 +32,7 @@ public class StoneThrowGolemMonster : StoneGolemMonsterBase
     {
         if (useSupportPattern)
         {
-            target?.AddBuff(BattleRuntimeDefinitions.CorrosionBuffId, 2);
+            AddDebuffToPlayer(target, BattleRuntimeDefinitions.CorrosionBuffId, 2);
             ApplyStrengthToAllAllies();
             return;
         }

@@ -31,7 +31,8 @@ public class FireSpiritMonster : Monster
         switch (plannedPatternIdForTurn)
         {
             case 11101:
-                SetIntent("힘을 2 얻습니다.");
+                int strengthAmount = PreviewMonsterBuffAmount(BattleRuntimeDefinitions.StrengthBuffId, 2);
+                SetIntent($"힘을 {strengthAmount} 얻습니다.");
                 SetPlannedPattern(11101, MonsterIntentIconType.BeneficialEffect);
                 break;
             case 11102:

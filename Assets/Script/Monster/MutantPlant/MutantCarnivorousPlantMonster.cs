@@ -16,7 +16,8 @@ public class MutantCarnivorousPlantMonster : Monster
                 SetPlannedPattern(10202, MonsterIntentIconType.Attack);
                 break;
             case 1:
-                SetIntent("힘을 2 얻습니다.");
+                int strengthAmount = PreviewMonsterBuffAmount(BattleRuntimeDefinitions.StrengthBuffId, 2);
+                SetIntent($"힘을 {strengthAmount} 얻습니다.");
                 SetPlannedPattern(10201, MonsterIntentIconType.BeneficialEffect);
                 break;
             default:
