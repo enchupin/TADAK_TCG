@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -7,6 +8,7 @@ using UnityEngine;
 public class CombatResolver
 {
     private readonly TrainingBattleManager battleManager;
+    private bool isResolvingCardPlay;
 
     public CombatResolver(TrainingBattleManager battleManager)
     {
@@ -15,6 +17,12 @@ public class CombatResolver
 
     public void TryPlayCard(CardPlayEventData eventData)
     {
+        if (isResolvingCardPlay)
+        {
+            Debug.LogWarning("[CombatResolver] 카드 처리 중에는 다른 카드를 사용할 수 없습니다");
+            return;
+        }
+
         if (!battleManager.CanPlayerPlayCard())
         {
             Debug.LogWarning("[CombatResolver] Cannot play card right now. Not in player action state.");
@@ -63,6 +71,7 @@ public class CombatResolver
         int cardUseAllEnemiesDamage = battleManager.GetCardUseAllEnemiesDamage();
         Debug.Log($"[Player] 카드 사용: {playedCard.cardName}");
 
+        isResolvingCardPlay = true;
         battleManager.battleContext?.OnCardPlayed(playedCard);
         battleManager.ChargeIdentityGauge(playedCard.character);
 
@@ -77,9 +86,24 @@ public class CombatResolver
         }
         ReplayCardEffectsIfNeeded(playedCard, originalTarget, repeatCount);
 
+        battleManager.RefreshHandPlayableState();
+        battleManager.UpdateAllUI();
+        battleManager.StartCoroutine(FinishPlayedCardSequence(controller.cardUI, playedCard));
+    }
+
+    private IEnumerator FinishPlayedCardSequence(CardUI playedCardUI, Card playedCard)
+    {
+        yield return null;
+
+        Coroutine useAnimation = null;
         if (battleManager.handManager != null)
         {
-            battleManager.handManager.RemoveCardFromHand(controller.cardUI);
+            useAnimation = battleManager.handManager.RemoveCardFromHandWithUseAnimation(playedCardUI);
+        }
+
+        if (useAnimation != null)
+        {
+            yield return useAnimation;
         }
 
         ResolvePlayedCardDestination(playedCard);
@@ -87,7 +111,8 @@ public class CombatResolver
         {
             battleManager.RefreshHandPlayableState();
             battleManager.UpdateAllUI();
-            return;
+            isResolvingCardPlay = false;
+            yield break;
         }
 
         ApplyPostPlayKeywords(playedCard);
@@ -95,6 +120,7 @@ public class CombatResolver
         battleManager.RefreshHandPlayableState();
         battleManager.UpdateAllUI();
         battleManager.TryHandleCombatEnd();
+        isResolvingCardPlay = false;
     }
 
     private void ResolvePlayedCardDestination(Card playedCard)

@@ -11,6 +11,10 @@ public class HandManager : MonoBehaviour
     [Header("Prefab")]
     [SerializeField] private GameObject cardUIPrefab;
 
+    [Header("Draw Animation")]
+    [SerializeField] private DrawUI drawUI;
+    [SerializeField] private bool playDrawAnimation = true;
+
     [Header("Layout")]
     [SerializeField] private Transform handContainer;
     [SerializeField] private float maxHandWidth = 1100f;
@@ -20,27 +24,40 @@ public class HandManager : MonoBehaviour
 
     [Header("Hand")]
     private readonly List<Card> handCardList = new List<Card>();
+    private int drawAnimationFrame = -1;
+    private int drawAnimationSequenceIndex;
 
     public void AddCard(Card card)
     {
+        AddCard(card, false);
+    }
+
+    public Coroutine AddCard(Card card, bool animateDraw)
+    {
         if (card == null)
-            return;
+            return null;
 
         if (cardUIPrefab == null || handContainer == null)
         {
             Debug.LogError("[HandManager] CardUI prefab or hand container is missing.");
-            return;
+            return null;
         }
 
         card = TrainingBattleManager.Instance != null
             ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
             : card;
         handCardList.Add(card);
-        InstantiateCardUI(card);
+        GameObject cardObj = InstantiateCardUI(card);
         UpdateHandCardPositions();
+        return TryPlayDrawAnimation(cardObj, animateDraw);
     }
 
     public void AddCard(List<Card> cards)
+    {
+        AddCard(cards, false);
+    }
+
+    public void AddCard(List<Card> cards, bool animateDraw)
     {
         if (cards == null || cards.Count == 0)
             return;
@@ -51,6 +68,7 @@ public class HandManager : MonoBehaviour
             return;
         }
 
+        List<GameObject> createdCardObjects = animateDraw ? new List<GameObject>() : null;
         foreach (Card card in cards)
         {
             if (card == null)
@@ -60,13 +78,24 @@ public class HandManager : MonoBehaviour
                 ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
                 : card;
             handCardList.Add(processedCard);
-            InstantiateCardUI(processedCard);
+            GameObject cardObj = InstantiateCardUI(processedCard);
+            createdCardObjects?.Add(cardObj);
         }
 
         UpdateHandCardPositions();
+
+        if (createdCardObjects == null)
+        {
+            return;
+        }
+
+        foreach (GameObject cardObj in createdCardObjects)
+        {
+            TryPlayDrawAnimation(cardObj, true);
+        }
     }
 
-    private void InstantiateCardUI(Card card)
+    private GameObject InstantiateCardUI(Card card)
     {
         GameObject cardObj = Instantiate(cardUIPrefab, handContainer);
         CardController controller = cardObj.GetComponent<CardController>();
@@ -79,6 +108,8 @@ public class HandManager : MonoBehaviour
         {
             Debug.LogWarning("[HandManager] CardController is missing on card prefab.");
         }
+
+        return cardObj;
     }
 
     /// <summary>
@@ -126,23 +157,33 @@ public class HandManager : MonoBehaviour
         }
     }
 
+    private Coroutine TryPlayDrawAnimation(GameObject cardObj, bool animateDraw)
+    {
+        if (!animateDraw || !playDrawAnimation || cardObj == null || drawUI == null)
+        {
+            return null;
+        }
+
+        return drawUI.PlayMove(cardObj, GetNextDrawAnimationSequenceIndex());
+    }
+
+    private int GetNextDrawAnimationSequenceIndex()
+    {
+        if (drawAnimationFrame != Time.frameCount)
+        {
+            drawAnimationFrame = Time.frameCount;
+            drawAnimationSequenceIndex = 0;
+        }
+
+        return drawAnimationSequenceIndex++;
+    }
+
     public void UpdateHandCardPositions()
     {
         if (handContainer == null)
             return;
 
-        List<RectTransform> handCardRects = new List<RectTransform>(handCardList.Count);
-        foreach (Transform child in handContainer)
-        {
-            CardController controller = child.GetComponent<CardController>();
-            if (controller == null || controller.Card == null || !handCardList.Contains(controller.Card))
-                continue;
-
-            if (child is RectTransform rectTransform)
-            {
-                handCardRects.Add(rectTransform);
-            }
-        }
+        List<RectTransform> handCardRects = GetHandCardRectsInHandOrder();
 
         int cardCount = handCardRects.Count;
         if (cardCount == 0)
@@ -167,9 +208,49 @@ public class HandManager : MonoBehaviour
             cardRect.anchorMin = new Vector2(0.5f, 0.5f);
             cardRect.anchorMax = new Vector2(0.5f, 0.5f);
             cardRect.pivot = new Vector2(0.5f, 0.5f);
+            cardRect.SetSiblingIndex(i);
             cardRect.anchoredPosition = new Vector2(x, y);
             cardRect.localRotation = Quaternion.Euler(0f, 0f, rotationZ);
         }
+    }
+
+    private List<RectTransform> GetHandCardRectsInHandOrder()
+    {
+        List<RectTransform> handCardRects = new List<RectTransform>(handCardList.Count);
+        List<RectTransform> usedRects = new List<RectTransform>(handCardList.Count);
+
+        foreach (Card handCard in handCardList)
+        {
+            RectTransform rectTransform = FindUnusedCardRect(handCard, usedRects);
+            if (rectTransform == null)
+                continue;
+
+            handCardRects.Add(rectTransform);
+            usedRects.Add(rectTransform);
+        }
+
+        return handCardRects;
+    }
+
+    private RectTransform FindUnusedCardRect(Card card, List<RectTransform> usedRects)
+    {
+        if (card == null)
+            return null;
+
+        foreach (Transform child in handContainer)
+        {
+            RectTransform rectTransform = child as RectTransform;
+            if (rectTransform == null || usedRects.Contains(rectTransform))
+                continue;
+
+            CardController controller = child.GetComponent<CardController>();
+            if (controller != null && ReferenceEquals(controller.Card, card))
+            {
+                return rectTransform;
+            }
+        }
+
+        return null;
     }
 
 
@@ -198,6 +279,42 @@ public class HandManager : MonoBehaviour
         }
 
         Destroy(cardUI.gameObject);
+    }
+
+    public Coroutine RemoveCardFromHandWithUseAnimation(CardUI cardUI)
+    {
+        if (cardUI == null)
+        {
+            Debug.LogWarning("[HandManager] CardUI is null.");
+            return null;
+        }
+
+        CardController controller = cardUI.GetComponent<CardController>();
+        if (controller == null || controller.Card == null)
+        {
+            Debug.LogWarning("[HandManager] CardController or Card is missing.");
+            Destroy(cardUI.gameObject);
+            return null;
+        }
+
+        Card card = controller.Card;
+        if (handCardList.Contains(card))
+        {
+            handCardList.Remove(card);
+            Debug.Log($"[HandManager] Removed from hand: {card.cardName}");
+            UpdateHandCardPositions();
+        }
+
+        Coroutine useAnimation = drawUI != null
+            ? drawUI.PlayUseToDiscard(cardUI.gameObject)
+            : null;
+
+        if (useAnimation == null)
+        {
+            Destroy(cardUI.gameObject);
+        }
+
+        return useAnimation;
     }
 
     public bool RemoveCard(Card card)
