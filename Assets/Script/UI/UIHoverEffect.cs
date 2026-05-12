@@ -67,6 +67,13 @@ public class UIHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     
     protected virtual IEnumerator AnimateScale(Vector3 target)
     {
+        if (animationDuration <= 0f)
+        {
+            transform.localScale = target;
+            currentAnimation = null;
+            yield break;
+        }
+
         Vector3 start = transform.localScale;
         float elapsedTime = 0f;
 

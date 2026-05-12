@@ -28,7 +28,7 @@ public class CardInteractionHandler : UIHoverEffect,
 
     [Header("Hover Settings")]
     private readonly float cardHoverScale = 1.4f;
-    private readonly float cardHoverDuration = 0.1f;
+    private readonly float cardHoverDuration = 0f;
 
     [Header("Drag Components")]
     private RectTransform rectTransform;
@@ -105,6 +105,11 @@ public class CardInteractionHandler : UIHoverEffect,
 
     public override void OnPointerExit(PointerEventData eventData)
     {
+        if (isDragging)
+        {
+            return;
+        }
+
         RestoreSiblingAfterHover();
         base.OnPointerExit(eventData);
     }
@@ -240,7 +245,7 @@ public class CardInteractionHandler : UIHoverEffect,
         originalLocalPosition = rectTransform.localPosition;
 
         StopAnimation();
-        transform.localScale = originalScale;
+        transform.localScale = originalScale * cardHoverScale;
 
         isTargetingMode = RequiresTargeting();
         ClearPreviewTarget();

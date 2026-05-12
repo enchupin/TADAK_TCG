@@ -27,6 +27,18 @@ public class HandManager : MonoBehaviour
     private int drawAnimationFrame = -1;
     private int drawAnimationSequenceIndex;
 
+    private readonly struct HandCardSortEntry
+    {
+        public readonly Card Card;
+        public readonly int OriginalIndex;
+
+        public HandCardSortEntry(Card card, int originalIndex)
+        {
+            Card = card;
+            OriginalIndex = originalIndex;
+        }
+    }
+
     public void AddCard(Card card)
     {
         AddCard(card, false);
@@ -46,7 +58,7 @@ public class HandManager : MonoBehaviour
         card = TrainingBattleManager.Instance != null
             ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
             : card;
-        handCardList.Add(card);
+        InsertCardInHandOrder(card);
         GameObject cardObj = InstantiateCardUI(card);
         UpdateHandCardPositions();
         return TryPlayDrawAnimation(cardObj, animateDraw);
@@ -77,7 +89,7 @@ public class HandManager : MonoBehaviour
             Card processedCard = TrainingBattleManager.Instance != null
                 ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
                 : card;
-            handCardList.Add(processedCard);
+            InsertCardInHandOrder(processedCard);
             GameObject cardObj = InstantiateCardUI(processedCard);
             createdCardObjects?.Add(cardObj);
         }
@@ -134,7 +146,7 @@ public class HandManager : MonoBehaviour
             Card processedCard = TrainingBattleManager.Instance != null
                 ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
                 : card;
-            handCardList.Add(processedCard);
+            InsertCardInHandOrder(processedCard);
             InstantiateCardUIWithoutInputController(processedCard);
         }
 
@@ -183,6 +195,7 @@ public class HandManager : MonoBehaviour
         if (handContainer == null)
             return;
 
+        SortHandCardsByCharacterOrder();
         List<RectTransform> handCardRects = GetHandCardRectsInHandOrder();
 
         int cardCount = handCardRects.Count;
@@ -251,6 +264,89 @@ public class HandManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    private void InsertCardInHandOrder(Card card)
+    {
+        if (card == null)
+        {
+            return;
+        }
+
+        SortHandCardsByCharacterOrder();
+
+        int targetOrder = GetCharacterSortOrder(card.character);
+        int insertIndex = handCardList.Count;
+        for (int i = 0; i < handCardList.Count; i++)
+        {
+            Card handCard = handCardList[i];
+            if (handCard == null)
+            {
+                continue;
+            }
+
+            if (GetCharacterSortOrder(handCard.character) > targetOrder)
+            {
+                insertIndex = i;
+                break;
+            }
+        }
+
+        handCardList.Insert(insertIndex, card);
+    }
+
+    private void SortHandCardsByCharacterOrder()
+    {
+        if (handCardList.Count <= 1)
+        {
+            return;
+        }
+
+        List<HandCardSortEntry> sortEntries = new List<HandCardSortEntry>(handCardList.Count);
+        for (int i = 0; i < handCardList.Count; i++)
+        {
+            sortEntries.Add(new HandCardSortEntry(handCardList[i], i));
+        }
+
+        sortEntries.Sort(CompareHandCardSortEntry);
+
+        handCardList.Clear();
+        foreach (HandCardSortEntry sortEntry in sortEntries)
+        {
+            handCardList.Add(sortEntry.Card);
+        }
+    }
+
+    private int CompareHandCardSortEntry(HandCardSortEntry a, HandCardSortEntry b)
+    {
+        int orderCompare = GetCharacterSortOrder(a.Card?.character ?? Character.Monster)
+            .CompareTo(GetCharacterSortOrder(b.Card?.character ?? Character.Monster));
+        if (orderCompare != 0)
+        {
+            return orderCompare;
+        }
+
+        return a.OriginalIndex.CompareTo(b.OriginalIndex);
+    }
+
+    private int GetCharacterSortOrder(Character character)
+    {
+        if (character == Character.Monster)
+        {
+            return int.MaxValue;
+        }
+
+        List<Character> selectedCharacters = SelectedButtonControl.selectedCharacterList;
+        if (selectedCharacters != null)
+        {
+            int selectedIndex = selectedCharacters.IndexOf(character);
+            if (selectedIndex >= 0)
+            {
+                return selectedIndex;
+            }
+        }
+
+        return 1000 + (int)character;
     }
 
 
