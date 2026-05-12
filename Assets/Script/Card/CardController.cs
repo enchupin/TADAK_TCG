@@ -18,6 +18,7 @@ public class CardController : MonoBehaviour
 
     private Card card;
     public Card Card => card;
+    public bool LastPlayRequestAccepted { get; private set; }
     
     private void Start()
     {
@@ -63,6 +64,8 @@ public class CardController : MonoBehaviour
     /// </summary>
     private void HandleCardPlayRequest(Monster targetMonster = null)
     {
+        LastPlayRequestAccepted = false;
+
         if (card == null) {
             Debug.LogWarning("[CardController] Card is null, cannot play card");
             return;
@@ -70,5 +73,21 @@ public class CardController : MonoBehaviour
         // CardController가 직접 이벤트 발행
         CardPlayEventData eventData = new CardPlayEventData(this, targetMonster);
         CardPlayEvents.RaiseCardPlayed(eventData);
+        LastPlayRequestAccepted = eventData.playAccepted;
+    }
+
+    public void ResetLastPlayRequestResult()
+    {
+        LastPlayRequestAccepted = false;
+    }
+
+    public void PrepareAcceptedPlayAnimationStart()
+    {
+        if (interactionHandler == null)
+        {
+            interactionHandler = GetComponent<CardInteractionHandler>();
+        }
+
+        interactionHandler?.PrepareAcceptedPlayAnimationStart();
     }
 }

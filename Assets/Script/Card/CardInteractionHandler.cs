@@ -36,6 +36,7 @@ public class CardInteractionHandler : UIHoverEffect,
     private CanvasGroup canvasGroup;
     private LayoutElement layoutElement;
     private CardUI cardUI;
+    private CardController cardController;
 
     [Header("Targeting")]
     private bool isTargetingMode = false;
@@ -64,6 +65,7 @@ public class CardInteractionHandler : UIHoverEffect,
         canvasGroup = GetComponent<CanvasGroup>();
         layoutElement = GetComponent<LayoutElement>();
         cardUI = GetComponent<CardUI>();
+        cardController = GetComponent<CardController>();
         handManager = GetComponentInParent<HandManager>();
 
         if (canvasGroup == null) canvasGroup = gameObject.AddComponent<CanvasGroup>();
@@ -300,6 +302,7 @@ public class CardInteractionHandler : UIHoverEffect,
 
         isDragging = false;
         isAnyCardDragging = false;
+        bool playAccepted = false;
 
         if (isTargetingMode)
         {
@@ -314,33 +317,39 @@ public class CardInteractionHandler : UIHoverEffect,
 
             if (targetMonster != null)
             {
-                onCardPlayRequested?.Invoke(targetMonster);
+                playAccepted = RequestCardPlay(targetMonster);
             }
 
-            // Always restore transform after a play request.
-            // If play succeeds, card object is destroyed by battle manager.
-            if (this != null && gameObject != null && rectTransform != null)
+            if (playAccepted)
+            {
+                canvasGroup.blocksRaycasts = false;
+            }
+            else if (this != null && gameObject != null && rectTransform != null)
             {
                 ReturnToHand();
             }
         }
         else
         {
-            canvasGroup.blocksRaycasts = true;
-            layoutElement.ignoreLayout = false;
             DestroyPlaceholder();
 
             if (eventData.position.y > Screen.height * playThresholdYRatio)
             {
-                onCardPlayRequested?.Invoke(null);
+                playAccepted = RequestCardPlay(null);
+            }
+
+            if (playAccepted)
+            {
+                canvasGroup.blocksRaycasts = false;
+            }
+            else
+            {
+                canvasGroup.blocksRaycasts = true;
+                layoutElement.ignoreLayout = false;
                 if (this != null && gameObject != null && rectTransform != null)
                 {
                     ReturnToHand();
                 }
-            }
-            else
-            {
-                ReturnToHand();
             }
         }
 
@@ -348,7 +357,55 @@ public class CardInteractionHandler : UIHoverEffect,
             return;
 
         StopAnimation();
-        StartCoroutine(AnimateScale(originalScale));
+        if (playAccepted)
+        {
+            transform.localScale = originalScale;
+        }
+        else
+        {
+            StartCoroutine(AnimateScale(originalScale));
+        }
+    }
+
+    private bool RequestCardPlay(Monster targetMonster)
+    {
+        if (cardController != null)
+        {
+            cardController.ResetLastPlayRequestResult();
+        }
+
+        onCardPlayRequested?.Invoke(targetMonster);
+        return cardController != null && cardController.LastPlayRequestAccepted;
+    }
+
+    public void PrepareAcceptedPlayAnimationStart()
+    {
+        if (rectTransform == null)
+        {
+            return;
+        }
+
+        Vector3 playStartWorldPosition = rectTransform.position;
+
+        if (layoutElement != null)
+        {
+            layoutElement.ignoreLayout = true;
+        }
+
+        if (canvasGroup != null)
+        {
+            canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = false;
+        }
+
+        if (canvas != null && rectTransform.parent != canvas.transform)
+        {
+            rectTransform.SetParent(canvas.transform, true);
+        }
+
+        rectTransform.position = playStartWorldPosition;
+
+        transform.SetAsLastSibling();
     }
 
     private void UpdatePreviewTarget(PointerEventData eventData)
