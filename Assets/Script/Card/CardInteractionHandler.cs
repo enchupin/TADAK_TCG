@@ -28,7 +28,7 @@ public class CardInteractionHandler : UIHoverEffect,
 
     [Header("Hover Settings")]
     private readonly float cardHoverScale = 1.4f;
-    private readonly float cardHoverDuration = 0.1f;
+    private readonly float cardHoverDuration = 0f;
 
     [Header("Drag Components")]
     private RectTransform rectTransform;
@@ -36,6 +36,7 @@ public class CardInteractionHandler : UIHoverEffect,
     private CanvasGroup canvasGroup;
     private LayoutElement layoutElement;
     private CardUI cardUI;
+    private CardController cardController;
 
     [Header("Targeting")]
     private bool isTargetingMode = false;
@@ -64,7 +65,8 @@ public class CardInteractionHandler : UIHoverEffect,
         canvasGroup = GetComponent<CanvasGroup>();
         layoutElement = GetComponent<LayoutElement>();
         cardUI = GetComponent<CardUI>();
-        handManager = GetComponentInParent<HandManager>();
+        cardController = GetComponent<CardController>();
+        handManager = ResolveHandManager();
 
         if (canvasGroup == null) canvasGroup = gameObject.AddComponent<CanvasGroup>();
         if (layoutElement == null) layoutElement = gameObject.AddComponent<LayoutElement>();
@@ -77,6 +79,8 @@ public class CardInteractionHandler : UIHoverEffect,
 
     private void OnDestroy()
     {
+        ResolveHandManager()?.ClearHoveredCard(rectTransform, false);
+
         if (targetingArrow != null)
         {
             Destroy(targetingArrow.gameObject);
@@ -96,6 +100,7 @@ public class CardInteractionHandler : UIHoverEffect,
     {
         if (!isDragging && !isAnyCardDragging)
         {
+            ResolveHandManager()?.SetHoveredCard(rectTransform);
             BringToFrontOnHover();
             base.OnPointerEnter(eventData);
         }
@@ -103,8 +108,30 @@ public class CardInteractionHandler : UIHoverEffect,
 
     public override void OnPointerExit(PointerEventData eventData)
     {
+        if (isDragging)
+        {
+            return;
+        }
+
         RestoreSiblingAfterHover();
+        ResolveHandManager()?.ClearHoveredCard(rectTransform);
         base.OnPointerExit(eventData);
+    }
+
+    private HandManager ResolveHandManager()
+    {
+        if (handManager != null)
+        {
+            return handManager;
+        }
+
+        handManager = GetComponentInParent<HandManager>();
+        if (handManager == null && rectTransform != null)
+        {
+            handManager = HandManager.FindOwningHandManager(rectTransform);
+        }
+
+        return handManager;
     }
 
     private bool RequiresTargeting()
@@ -234,11 +261,12 @@ public class CardInteractionHandler : UIHoverEffect,
         isAnyCardDragging = true;
         originalParent = rectTransform.parent;
         originalSiblingIndex = ConsumeHoverSiblingIndex();
+        ResolveHandManager()?.ClearHoveredCard(rectTransform, false);
         originalAnchoredPosition = rectTransform.anchoredPosition;
         originalLocalPosition = rectTransform.localPosition;
 
         StopAnimation();
-        transform.localScale = originalScale;
+        transform.localScale = originalScale * cardHoverScale;
 
         isTargetingMode = RequiresTargeting();
         ClearPreviewTarget();
@@ -300,6 +328,7 @@ public class CardInteractionHandler : UIHoverEffect,
 
         isDragging = false;
         isAnyCardDragging = false;
+        bool playAccepted = false;
 
         if (isTargetingMode)
         {
@@ -314,33 +343,39 @@ public class CardInteractionHandler : UIHoverEffect,
 
             if (targetMonster != null)
             {
-                onCardPlayRequested?.Invoke(targetMonster);
+                playAccepted = RequestCardPlay(targetMonster);
             }
 
-            // Always restore transform after a play request.
-            // If play succeeds, card object is destroyed by battle manager.
-            if (this != null && gameObject != null && rectTransform != null)
+            if (playAccepted)
+            {
+                canvasGroup.blocksRaycasts = false;
+            }
+            else if (this != null && gameObject != null && rectTransform != null)
             {
                 ReturnToHand();
             }
         }
         else
         {
-            canvasGroup.blocksRaycasts = true;
-            layoutElement.ignoreLayout = false;
             DestroyPlaceholder();
 
             if (eventData.position.y > Screen.height * playThresholdYRatio)
             {
-                onCardPlayRequested?.Invoke(null);
+                playAccepted = RequestCardPlay(null);
+            }
+
+            if (playAccepted)
+            {
+                canvasGroup.blocksRaycasts = false;
+            }
+            else
+            {
+                canvasGroup.blocksRaycasts = true;
+                layoutElement.ignoreLayout = false;
                 if (this != null && gameObject != null && rectTransform != null)
                 {
                     ReturnToHand();
                 }
-            }
-            else
-            {
-                ReturnToHand();
             }
         }
 
@@ -348,7 +383,55 @@ public class CardInteractionHandler : UIHoverEffect,
             return;
 
         StopAnimation();
-        StartCoroutine(AnimateScale(originalScale));
+        if (playAccepted)
+        {
+            transform.localScale = originalScale;
+        }
+        else
+        {
+            StartCoroutine(AnimateScale(originalScale));
+        }
+    }
+
+    private bool RequestCardPlay(Monster targetMonster)
+    {
+        if (cardController != null)
+        {
+            cardController.ResetLastPlayRequestResult();
+        }
+
+        onCardPlayRequested?.Invoke(targetMonster);
+        return cardController != null && cardController.LastPlayRequestAccepted;
+    }
+
+    public void PrepareAcceptedPlayAnimationStart()
+    {
+        if (rectTransform == null)
+        {
+            return;
+        }
+
+        Vector3 playStartWorldPosition = rectTransform.position;
+
+        if (layoutElement != null)
+        {
+            layoutElement.ignoreLayout = true;
+        }
+
+        if (canvasGroup != null)
+        {
+            canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = false;
+        }
+
+        if (canvas != null && rectTransform.parent != canvas.transform)
+        {
+            rectTransform.SetParent(canvas.transform, true);
+        }
+
+        rectTransform.position = playStartWorldPosition;
+
+        transform.SetAsLastSibling();
     }
 
     private void UpdatePreviewTarget(PointerEventData eventData)
@@ -505,10 +588,6 @@ public class CardInteractionHandler : UIHoverEffect,
         rectTransform.SetSiblingIndex(siblingIndex);
         hoverSiblingIndex = -1;
         isHoverSiblingOverridden = false;
-        if (handManager != null)
-        {
-            handManager.UpdateHandCardPositions();
-        }
     }
 
     private int ConsumeHoverSiblingIndex()

@@ -31,11 +31,17 @@ public class CardPlayEventData
 {
     public CardController cardController;
     public Monster targetMonster;
+    public bool playAccepted;
 
     // CardController를 받는 생성자
     public CardPlayEventData(CardController cardController, Monster targetMonster = null) {
         this.cardController = cardController;
         this.targetMonster = targetMonster;
+    }
+
+    public void MarkAccepted()
+    {
+        playAccepted = true;
     }
 
 }

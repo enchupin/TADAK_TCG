@@ -67,6 +67,9 @@ public class CombatResolver
             return;
         }
 
+        eventData.MarkAccepted();
+        controller.PrepareAcceptedPlayAnimationStart();
+
         int repeatCount = battleManager.ConsumeRepeatedPlayCount(playedCard, false);
         int cardUseAllEnemiesDamage = battleManager.GetCardUseAllEnemiesDamage();
         Debug.Log($"[Player] 카드 사용: {playedCard.cardName}");

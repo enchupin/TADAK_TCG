@@ -1908,7 +1908,7 @@ MonoBehaviour:
   secondDrawPosition: {fileID: 809297189}
   playCenterPosition: {fileID: 2117404276}
   discardTargetPosition: {fileID: 502347057}
-  firstDiscardPosition: {fileID: 584888245}
+  firstDiscardPosition: {fileID: 2027167622}
   secondDiscardPosition: {fileID: 186307467}
   playCenterMoveDuration: 0.2
   playCenterPauseDuration: 0.2
