@@ -8,6 +8,8 @@ using UnityEngine.UI;
 /// </summary>
 public class HandManager : MonoBehaviour
 {
+    private static readonly List<HandManager> ActiveManagers = new List<HandManager>();
+
     [Header("Prefab")]
     [SerializeField] private GameObject cardUIPrefab;
 
@@ -22,10 +24,58 @@ public class HandManager : MonoBehaviour
     [SerializeField] private float curveHeight = 45f;
     [SerializeField] private float maxCardRotation = 12f;
 
+    [Header("Hover Layout")]
+    [SerializeField] private float hoverSpreadOffset = 45f;
+    [SerializeField] private float secondHoverSpreadOffset = 30f;
+    [SerializeField] private float thirdHoverSpreadOffset = 15f;
+    [SerializeField] private float hoverSpreadDuration = 0.08f;
+
     [Header("Hand")]
     private readonly List<Card> handCardList = new List<Card>();
     private int drawAnimationFrame = -1;
     private int drawAnimationSequenceIndex;
+    private RectTransform hoveredCardRect;
+    private Coroutine handLayoutAnimation;
+
+    private void OnEnable()
+    {
+        if (!ActiveManagers.Contains(this))
+        {
+            ActiveManagers.Add(this);
+        }
+    }
+
+    private void OnDisable()
+    {
+        ActiveManagers.Remove(this);
+        hoveredCardRect = null;
+        StopHandLayoutAnimation();
+    }
+
+    public static HandManager FindOwningHandManager(RectTransform cardRect)
+    {
+        if (cardRect == null)
+        {
+            return null;
+        }
+
+        for (int i = ActiveManagers.Count - 1; i >= 0; i--)
+        {
+            HandManager manager = ActiveManagers[i];
+            if (manager == null)
+            {
+                ActiveManagers.RemoveAt(i);
+                continue;
+            }
+
+            if (manager.OwnsCardRect(cardRect))
+            {
+                return manager;
+            }
+        }
+
+        return null;
+    }
 
     private readonly struct HandCardSortEntry
     {
@@ -192,15 +242,43 @@ public class HandManager : MonoBehaviour
 
     public void UpdateHandCardPositions()
     {
+        UpdateHandCardPositions(false);
+    }
+
+    private void UpdateHandCardPositions(bool animatePositions)
+    {
         if (handContainer == null)
+        {
+            hoveredCardRect = null;
+            StopHandLayoutAnimation();
             return;
+        }
 
         SortHandCardsByCharacterOrder();
         List<RectTransform> handCardRects = GetHandCardRectsInHandOrder();
 
         int cardCount = handCardRects.Count;
         if (cardCount == 0)
+        {
+            hoveredCardRect = null;
+            StopHandLayoutAnimation();
             return;
+        }
+
+        int hoveredIndex = GetHoveredCardIndex(handCardRects);
+        if (hoveredIndex < 0)
+        {
+            hoveredCardRect = null;
+        }
+
+        bool shouldAnimate = animatePositions && hoverSpreadDuration > 0f && Application.isPlaying;
+        List<Vector2> targetPositions = shouldAnimate ? new List<Vector2>(cardCount) : null;
+        List<Quaternion> targetRotations = shouldAnimate ? new List<Quaternion>(cardCount) : null;
+
+        if (!shouldAnimate)
+        {
+            StopHandLayoutAnimation();
+        }
 
         float spacing = 0f;
         if (cardCount > 1)
@@ -218,13 +296,178 @@ public class HandManager : MonoBehaviour
             float y = curveHeight * (1f - normalized * normalized) - curveHeight;
             float rotationZ = -normalized * maxCardRotation;
 
+            x += GetHoverSpreadOffset(i, hoveredIndex);
+
             cardRect.anchorMin = new Vector2(0.5f, 0.5f);
             cardRect.anchorMax = new Vector2(0.5f, 0.5f);
             cardRect.pivot = new Vector2(0.5f, 0.5f);
             cardRect.SetSiblingIndex(i);
-            cardRect.anchoredPosition = new Vector2(x, y);
-            cardRect.localRotation = Quaternion.Euler(0f, 0f, rotationZ);
+
+            Vector2 targetPosition = new Vector2(x, y);
+            Quaternion targetRotation = Quaternion.Euler(0f, 0f, rotationZ);
+
+            if (shouldAnimate)
+            {
+                targetPositions.Add(targetPosition);
+                targetRotations.Add(targetRotation);
+            }
+            else
+            {
+                cardRect.anchoredPosition = targetPosition;
+                cardRect.localRotation = targetRotation;
+            }
         }
+
+        if (shouldAnimate)
+        {
+            StartHandLayoutAnimation(handCardRects, targetPositions, targetRotations);
+        }
+    }
+
+    public void SetHoveredCard(RectTransform cardRect)
+    {
+        if (!OwnsCardRect(cardRect))
+        {
+            return;
+        }
+
+        if (hoveredCardRect == cardRect)
+        {
+            return;
+        }
+
+        hoveredCardRect = cardRect;
+        UpdateHandCardPositions(true);
+    }
+
+    public void ClearHoveredCard(RectTransform cardRect, bool animatePositions = true)
+    {
+        if (hoveredCardRect != cardRect)
+        {
+            return;
+        }
+
+        hoveredCardRect = null;
+        UpdateHandCardPositions(animatePositions);
+    }
+
+    private int GetHoveredCardIndex(List<RectTransform> handCardRects)
+    {
+        if (hoveredCardRect == null || handCardRects == null)
+        {
+            return -1;
+        }
+
+        return handCardRects.IndexOf(hoveredCardRect);
+    }
+
+    private bool OwnsCardRect(RectTransform cardRect)
+    {
+        return cardRect != null && handContainer != null && cardRect.parent == handContainer;
+    }
+
+    private float GetHoverSpreadOffset(int cardIndex, int hoveredIndex)
+    {
+        if (hoveredIndex < 0 || cardIndex == hoveredIndex)
+        {
+            return 0f;
+        }
+
+        int distance = Mathf.Abs(cardIndex - hoveredIndex);
+        if (distance > 3)
+        {
+            return 0f;
+        }
+
+        float offset = distance switch
+        {
+            1 => hoverSpreadOffset,
+            2 => secondHoverSpreadOffset,
+            3 => thirdHoverSpreadOffset,
+            _ => 0f
+        };
+
+        return cardIndex < hoveredIndex ? -offset : offset;
+    }
+
+    private void StartHandLayoutAnimation(
+        List<RectTransform> cardRects,
+        List<Vector2> targetPositions,
+        List<Quaternion> targetRotations)
+    {
+        StopHandLayoutAnimation();
+        handLayoutAnimation = StartCoroutine(AnimateHandLayout(cardRects, targetPositions, targetRotations));
+    }
+
+    private void StopHandLayoutAnimation()
+    {
+        if (handLayoutAnimation == null)
+        {
+            return;
+        }
+
+        StopCoroutine(handLayoutAnimation);
+        handLayoutAnimation = null;
+    }
+
+    private System.Collections.IEnumerator AnimateHandLayout(
+        List<RectTransform> cardRects,
+        List<Vector2> targetPositions,
+        List<Quaternion> targetRotations)
+    {
+        if (cardRects == null || targetPositions == null || targetRotations == null)
+        {
+            handLayoutAnimation = null;
+            yield break;
+        }
+
+        int cardCount = Mathf.Min(cardRects.Count, Mathf.Min(targetPositions.Count, targetRotations.Count));
+        List<Vector2> startPositions = new List<Vector2>(cardCount);
+        List<Quaternion> startRotations = new List<Quaternion>(cardCount);
+
+        for (int i = 0; i < cardCount; i++)
+        {
+            RectTransform cardRect = cardRects[i];
+            startPositions.Add(cardRect != null ? cardRect.anchoredPosition : Vector2.zero);
+            startRotations.Add(cardRect != null ? cardRect.localRotation : Quaternion.identity);
+        }
+
+        float elapsedTime = 0f;
+        float duration = Mathf.Max(0.01f, hoverSpreadDuration);
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsedTime / duration));
+
+            for (int i = 0; i < cardCount; i++)
+            {
+                RectTransform cardRect = cardRects[i];
+                if (cardRect == null)
+                {
+                    continue;
+                }
+
+                cardRect.anchoredPosition = Vector2.LerpUnclamped(startPositions[i], targetPositions[i], t);
+                cardRect.localRotation = Quaternion.Lerp(startRotations[i], targetRotations[i], t);
+            }
+
+            yield return null;
+        }
+
+        for (int i = 0; i < cardCount; i++)
+        {
+            RectTransform cardRect = cardRects[i];
+            if (cardRect == null)
+            {
+                continue;
+            }
+
+            cardRect.anchoredPosition = targetPositions[i];
+            cardRect.localRotation = targetRotations[i];
+        }
+
+        handLayoutAnimation = null;
     }
 
     private List<RectTransform> GetHandCardRectsInHandOrder()
@@ -438,6 +681,8 @@ public class HandManager : MonoBehaviour
     {
         List<Card> discardedCards = new List<Card>(handCardList);
         handCardList.Clear();
+        hoveredCardRect = null;
+        StopHandLayoutAnimation();
 
         foreach (Transform child in handContainer)
         {

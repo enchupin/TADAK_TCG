@@ -66,7 +66,7 @@ public class CardInteractionHandler : UIHoverEffect,
         layoutElement = GetComponent<LayoutElement>();
         cardUI = GetComponent<CardUI>();
         cardController = GetComponent<CardController>();
-        handManager = GetComponentInParent<HandManager>();
+        handManager = ResolveHandManager();
 
         if (canvasGroup == null) canvasGroup = gameObject.AddComponent<CanvasGroup>();
         if (layoutElement == null) layoutElement = gameObject.AddComponent<LayoutElement>();
@@ -79,6 +79,8 @@ public class CardInteractionHandler : UIHoverEffect,
 
     private void OnDestroy()
     {
+        ResolveHandManager()?.ClearHoveredCard(rectTransform, false);
+
         if (targetingArrow != null)
         {
             Destroy(targetingArrow.gameObject);
@@ -98,6 +100,7 @@ public class CardInteractionHandler : UIHoverEffect,
     {
         if (!isDragging && !isAnyCardDragging)
         {
+            ResolveHandManager()?.SetHoveredCard(rectTransform);
             BringToFrontOnHover();
             base.OnPointerEnter(eventData);
         }
@@ -111,7 +114,24 @@ public class CardInteractionHandler : UIHoverEffect,
         }
 
         RestoreSiblingAfterHover();
+        ResolveHandManager()?.ClearHoveredCard(rectTransform);
         base.OnPointerExit(eventData);
+    }
+
+    private HandManager ResolveHandManager()
+    {
+        if (handManager != null)
+        {
+            return handManager;
+        }
+
+        handManager = GetComponentInParent<HandManager>();
+        if (handManager == null && rectTransform != null)
+        {
+            handManager = HandManager.FindOwningHandManager(rectTransform);
+        }
+
+        return handManager;
     }
 
     private bool RequiresTargeting()
@@ -241,6 +261,7 @@ public class CardInteractionHandler : UIHoverEffect,
         isAnyCardDragging = true;
         originalParent = rectTransform.parent;
         originalSiblingIndex = ConsumeHoverSiblingIndex();
+        ResolveHandManager()?.ClearHoveredCard(rectTransform, false);
         originalAnchoredPosition = rectTransform.anchoredPosition;
         originalLocalPosition = rectTransform.localPosition;
 
@@ -567,10 +588,6 @@ public class CardInteractionHandler : UIHoverEffect,
         rectTransform.SetSiblingIndex(siblingIndex);
         hoverSiblingIndex = -1;
         isHoverSiblingOverridden = false;
-        if (handManager != null)
-        {
-            handManager.UpdateHandCardPositions();
-        }
     }
 
     private int ConsumeHoverSiblingIndex()
