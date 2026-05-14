@@ -287,6 +287,8 @@ public static class TrainingRunDeckPersistence
             }
 
             deckSave.cardIds = ExtractCardIdsForCharacter(runCards, character);
+            deckSave.isRunSavedDeck = true;
+            deckSave.runSavedAtUtc = System.DateTime.UtcNow.ToString("o");
             hasChanges = true;
         }
 

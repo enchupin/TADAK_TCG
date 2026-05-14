@@ -157,9 +157,10 @@ public class SelectedButtonControl : MonoBehaviour
     }
 
     // 선택 상태 초기화 (씬 전환 시 등에 사용)
-    private static void ClearSelection()
+    public static void ClearSelection()
     {
         selectedCharacterList.Clear();
+        OnSelectionChanged?.Invoke(selectedCharacterList.Count);
     }
 
 }

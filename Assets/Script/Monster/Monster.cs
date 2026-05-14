@@ -631,6 +631,14 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
             return;
         }
 
+        if (!CanDie())
+        {
+            hp = Mathf.Max(1, maxHP);
+            defense = 0;
+            ClearPlannedAction();
+            return;
+        }
+
         hasTriggeredDeath = true;
         defense = 0;
         ClearPlannedAction();
@@ -860,6 +868,11 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     }
 
     protected virtual bool CanReceiveDamage(int incomingDamage)
+    {
+        return true;
+    }
+
+    protected virtual bool CanDie()
     {
         return true;
     }

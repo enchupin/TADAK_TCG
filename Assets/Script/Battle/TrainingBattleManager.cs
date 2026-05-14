@@ -156,7 +156,10 @@ public class TrainingBattleManager : MonoBehaviour
 
         InitializeCharacterSelection();
         InitializeBattle();
-        CreateInstantWinButton();
+        if (!RankingModeSession.IsActive)
+        {
+            CreateInstantWinButton();
+        }
 
         battleUI?.UpdateAllUI();
         StartGame();
@@ -280,6 +283,12 @@ public class TrainingBattleManager : MonoBehaviour
 
     private void InitializeCharacterSelection()
     {
+        if (RankingModeSession.IsActive && RankingModeSession.HasValidSelectedCharacters())
+        {
+            SelectedButtonControl.selectedCharacterList = RankingModeSession.CopySelectedCharacters();
+            return;
+        }
+
         if (SelectedButtonControl.selectedCharacterList == null ||
             SelectedButtonControl.selectedCharacterList.Count != 3)
         {
@@ -350,8 +359,16 @@ public class TrainingBattleManager : MonoBehaviour
         bool shouldRebuildDeck = buildingDeck == null || !TrainingRunState.IsRunActive;
         if (shouldRebuildDeck)
         {
-            Debug.Log("[BattleManager] 현재 캐릭터 선택 기준으로 런 덱을 다시 구성합니다");
-            buildingDeck = TrainingRunDeckPersistence.CreateRunDeck(SelectedButtonControl.selectedCharacterList);
+            if (RankingModeSession.IsActive)
+            {
+                Debug.Log("[BattleManager] 랭킹모드에서 선택한 저장덱으로 전투 덱을 구성합니다");
+                buildingDeck = RankingModeSession.CreateBattleDeck();
+            }
+            else
+            {
+                Debug.Log("[BattleManager] 현재 캐릭터 선택 기준으로 런 덱을 다시 구성합니다");
+                buildingDeck = TrainingRunDeckPersistence.CreateRunDeck(SelectedButtonControl.selectedCharacterList);
+            }
         }
         else
         {
@@ -884,6 +901,12 @@ public class TrainingBattleManager : MonoBehaviour
             ? "[BattleManager] Victory. All enemies are dead."
             : "[BattleManager] Defeat. Player is dead.");
 
+        if (RankingModeSession.IsActive)
+        {
+            StartCoroutine(HandleRankingModeBattleResult());
+            return;
+        }
+
         if (!isVictory)
         {
             if (battleUI != null)
@@ -1223,6 +1246,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void HandlePlayerDamageDealt(Monster monster, int dealtDamage)
     {
+        RankingModeSession.AddDamage(dealtDamage);
         battleBuffController?.HandlePlayerDamageDealt(monster, dealtDamage);
     }
 
@@ -1289,6 +1313,17 @@ public class TrainingBattleManager : MonoBehaviour
     public bool CanMonsterReceiveDamage(Monster monster, int incomingDamage)
     {
         return battleBuffController == null || battleBuffController.CanMonsterReceiveDamage(monster, incomingDamage);
+    }
+
+    public bool TryResolveRankingTurnLimit(int completedTurnNumber)
+    {
+        if (!RankingModeSession.IsActive || hasResolvedBattleResult || completedTurnNumber < RankingModeSession.TurnLimit)
+        {
+            return false;
+        }
+
+        ResolveBattleResult(true);
+        return true;
     }
 
     public void HandleCardsExhausted(int count)
@@ -1992,9 +2027,11 @@ public class TrainingBattleManager : MonoBehaviour
         }
 
         TrainingMapNodeData encounterNode = ResolveCurrentEncounterNode();
-        List<Monster> encounterMonsters = encounterNode != null && encounterNode.HasPlannedEncounter
-            ? monsterSpawner.SpawnEncounter(encounterNode.plannedEncounter)
-            : monsterSpawner.SpawnEncounter(encounterNode != null ? encounterNode.nodeType : TrainingNodeType.Monster);
+        List<Monster> encounterMonsters = RankingModeSession.IsActive
+            ? monsterSpawner.SpawnRankingScareCrow()
+            : encounterNode != null && encounterNode.HasPlannedEncounter
+                ? monsterSpawner.SpawnEncounter(encounterNode.plannedEncounter)
+                : monsterSpawner.SpawnEncounter(encounterNode != null ? encounterNode.nodeType : TrainingNodeType.Monster);
 
         foreach (Monster monster in encounterMonsters)
         {
@@ -2169,6 +2206,23 @@ public class TrainingBattleManager : MonoBehaviour
     private bool HasRootAbsorptionInHand()
     {
         return HasCardInHand(40);
+    }
+
+    private System.Collections.IEnumerator HandleRankingModeBattleResult()
+    {
+        if (battleResultTransitionDelay > 0f)
+        {
+            yield return new WaitForSeconds(battleResultTransitionDelay);
+        }
+
+        RankingModeResult result = RankingModeSession.CompleteAndSaveBestDamage();
+        Debug.Log($"[RankingMode] 랭킹모드 종료 총 피해: {result.totalDamage}, 최고 피해: {result.bestDamage}");
+
+        buildingDeck = null;
+        SelectedButtonControl.ClearSelection();
+        PlayerData.Reset();
+        TrainingRunState.ResetRun();
+        SceneManager.LoadScene("LobbyScene");
     }
 
     private System.Collections.IEnumerator HandleTrainingRunBattleResult(bool isVictory)

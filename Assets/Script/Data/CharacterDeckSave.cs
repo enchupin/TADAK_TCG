@@ -8,6 +8,8 @@ public class CharacterDeckSave
     public string deckId = string.Empty;
     public string name = string.Empty;
     public string createdAtUtc = string.Empty;
+    public bool isRunSavedDeck = false;
+    public string runSavedAtUtc = string.Empty;
     public List<int> cardIds = new();
 
     public static CharacterDeckSave Create(string deckName, List<int> sourceCardIds = null)
