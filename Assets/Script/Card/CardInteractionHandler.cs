@@ -11,7 +11,7 @@ public class CardPlayEvent : UnityEvent<Monster> { }
 /// Handles card hover, drag, targeting, and play request events.
 /// </summary>
 public class CardInteractionHandler : UIHoverEffect,
-    IBeginDragHandler, IDragHandler, IEndDragHandler
+    IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerDownHandler, IPointerUpHandler
 {
     [Header("Events")]
     [SerializeField] private CardPlayEvent onCardPlayRequested;
@@ -49,6 +49,8 @@ public class CardInteractionHandler : UIHoverEffect,
     private Transform originalParent;
     private Vector2 originalAnchoredPosition;
     private Vector3 originalLocalPosition;
+    private float originalLocalRotationZ;
+    private bool hasOriginalLocalRotationZ = false;
     private GameObject placeholder;
 
     public CardPlayEvent OnCardPlayRequested => onCardPlayRequested;
@@ -75,6 +77,14 @@ public class CardInteractionHandler : UIHoverEffect,
     private void Start()
     {
         Invoke(nameof(CheckAndCreateThresholdLine), 0.01f);
+    }
+
+    private void LateUpdate()
+    {
+        if (hasOriginalLocalRotationZ)
+        {
+            LockDragRotationZ();
+        }
     }
 
     private void OnDestroy()
@@ -264,6 +274,7 @@ public class CardInteractionHandler : UIHoverEffect,
         ResolveHandManager()?.ClearHoveredCard(rectTransform, false);
         originalAnchoredPosition = rectTransform.anchoredPosition;
         originalLocalPosition = rectTransform.localPosition;
+        CaptureDragRotationZ();
 
         StopAnimation();
         transform.localScale = originalScale * cardHoverScale;
@@ -293,10 +304,29 @@ public class CardInteractionHandler : UIHoverEffect,
         }
     }
 
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (!CanStartDrag()) return;
+
+        CaptureDragRotationZ();
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        if (isDragging)
+        {
+            return;
+        }
+
+        RestoreDragRotationZ();
+    }
+
     public void OnDrag(PointerEventData eventData)
     {
         if (!isDragging)
             return;
+
+        LockDragRotationZ();
 
         if (canvas == null) return;
 
@@ -381,6 +411,8 @@ public class CardInteractionHandler : UIHoverEffect,
 
         if (this == null || gameObject == null)
             return;
+
+        RestoreDragRotationZ();
 
         StopAnimation();
         if (playAccepted)
@@ -567,6 +599,51 @@ public class CardInteractionHandler : UIHoverEffect,
 
         rectTransform.anchoredPosition = originalAnchoredPosition;
         rectTransform.localPosition = originalLocalPosition;
+        RestoreDragRotationZ();
+    }
+
+    private void CaptureDragRotationZ()
+    {
+        if (rectTransform == null)
+        {
+            return;
+        }
+
+        if (!hasOriginalLocalRotationZ)
+        {
+            originalLocalRotationZ = rectTransform.localEulerAngles.z;
+            hasOriginalLocalRotationZ = true;
+        }
+
+        LockDragRotationZ();
+    }
+
+    private void LockDragRotationZ()
+    {
+        SetLocalRotationZ(0f);
+    }
+
+    private void RestoreDragRotationZ()
+    {
+        if (!hasOriginalLocalRotationZ)
+        {
+            return;
+        }
+
+        SetLocalRotationZ(originalLocalRotationZ);
+        hasOriginalLocalRotationZ = false;
+    }
+
+    private void SetLocalRotationZ(float rotationZ)
+    {
+        if (rectTransform == null)
+        {
+            return;
+        }
+
+        Vector3 localEulerAngles = rectTransform.localEulerAngles;
+        localEulerAngles.z = rotationZ;
+        rectTransform.localEulerAngles = localEulerAngles;
     }
 
     private void BringToFrontOnHover()

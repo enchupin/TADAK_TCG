@@ -101,6 +101,7 @@ public class RankingModeManager : MonoBehaviour
                 SetButtonPosition(button.transform as RectTransform, createdCount);
 
                 Character character = CharacterManager.GetCharacterEnumById(characterData.characterId);
+                CharacterStandingButtonImageUtility.Apply(button.gameObject, character);
                 string label = CreateDeckLabel(characterData.characterId, deck);
                 SavedDeckButtonBinding binding = new SavedDeckButtonBinding
                 {

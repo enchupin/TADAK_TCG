@@ -48,13 +48,6 @@ namespace Lobby
 
         public void ShowTrainingModePanel()
         {
-            InfiniteMode.SetMode(false);
-            OpenTrainingModePanel();
-        }
-
-        public void ShowInfiniteModePanel()
-        {
-            InfiniteMode.SetMode(true);
             OpenTrainingModePanel();
         }
 
