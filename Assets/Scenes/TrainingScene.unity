@@ -1844,6 +1844,8 @@ MonoBehaviour:
   iconSize: {x: 50, y: 50}
   iconSpacing: 60
   iconsPerRow: 7
+  target: 0
+  targetMonster: {fileID: 0}
 --- !u!114 &508993668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4400,6 +4402,10 @@ MonoBehaviour:
   baseCardSpacing: 170
   curveHeight: 45
   maxCardRotation: 12
+  hoverSpreadOffset: 45
+  secondHoverSpreadOffset: 30
+  thirdHoverSpreadOffset: 15
+  hoverSpreadDuration: 0.08
 --- !u!1 &1236081818
 GameObject:
   m_ObjectHideFlags: 0
@@ -7240,6 +7246,7 @@ MonoBehaviour:
   priestessPrefab: {fileID: 5506351440769215535, guid: f340cc2a574eae64c9c2e9859721f69f, type: 3}
   mushroomHostPrefab: {fileID: 5506351440769215535, guid: d6aac48a633d75a4094e298385a9c55d, type: 3}
   voidBeastPrefab: {fileID: 5506351440769215535, guid: 4d82d425e2724c0cbcab76a44d64f8d1, type: 3}
+  scareCrowPrefab: {fileID: 0}
   spawnPoints:
   - {fileID: 600931958}
   - {fileID: 1405018969}

@@ -5,6 +5,12 @@ using UnityEngine.UI;
 
 public class BuffUI : MonoBehaviour
 {
+    private enum BuffTarget
+    {
+        Player,
+        Monster
+    }
+
     private const int DefaultBuffIconId = 1000;
 
     [Header("버프 아이콘 설정")]
@@ -13,6 +19,8 @@ public class BuffUI : MonoBehaviour
     [SerializeField] private Vector2 iconSize = new Vector2(30f, 30f);
     [SerializeField] private float iconSpacing = 60f;
     [SerializeField] private int iconsPerRow = 7;
+    [SerializeField] private BuffTarget target = BuffTarget.Player;
+    [SerializeField] private Monster targetMonster;
 
     private readonly List<Image> createdIcons = new();
     private readonly Dictionary<int, Sprite> iconCache = new();
@@ -49,6 +57,24 @@ public class BuffUI : MonoBehaviour
         currentBuffSignature = BuildBuffSignature(activeBuffIds);
     }
 
+    public void BindMonster(Monster monster, RectTransform root = null)
+    {
+        target = BuffTarget.Monster;
+        if (root != null)
+        {
+            buffRoot = root;
+        }
+
+        if (targetMonster == monster)
+        {
+            return;
+        }
+
+        targetMonster = monster;
+        currentBuffSignature = null;
+        RefreshIfNeeded();
+    }
+
     private void RefreshIfNeeded()
     {
         List<int> activeBuffIds = CollectActiveBuffIds();
@@ -65,13 +91,13 @@ public class BuffUI : MonoBehaviour
     private List<int> CollectActiveBuffIds()
     {
         List<int> activeBuffIds = new();
-        PlayerData player = PlayerData.Instance;
-        if (player == null || player.currentBuffs == null)
+        List<Buff> sourceBuffs = ResolveSourceBuffs();
+        if (sourceBuffs == null)
         {
             return activeBuffIds;
         }
 
-        foreach (Buff buff in player.currentBuffs)
+        foreach (Buff buff in sourceBuffs)
         {
             int buffId = GetBuffId(buff);
             if (buffId > 0)
@@ -81,6 +107,17 @@ public class BuffUI : MonoBehaviour
         }
 
         return activeBuffIds;
+    }
+
+    private List<Buff> ResolveSourceBuffs()
+    {
+        if (target == BuffTarget.Monster)
+        {
+            return targetMonster != null ? targetMonster.currentBuffs : null;
+        }
+
+        PlayerData player = PlayerData.Instance;
+        return player != null ? player.currentBuffs : null;
     }
 
     private static int GetBuffId(Buff buff)
