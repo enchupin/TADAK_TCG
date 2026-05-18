@@ -54,6 +54,9 @@ public class SettingsManager : MonoBehaviour
         if (!Keyboard.current.escapeKey.wasPressedThisFrame) {
             return;
         }
+        if (RestSceneController.IsEventEscapeContextActive) {
+            return;
+        }
         ToggleSettingPanel();
     }
 

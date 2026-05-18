@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MonsterSpawner : MonoBehaviour
 {
@@ -106,6 +108,9 @@ public class MonsterSpawner : MonoBehaviour
     [SerializeField] private GameObject mushroomHostPrefab;
     [SerializeField] private GameObject voidBeastPrefab;
 
+    [Header("랭킹모드 몬스터 프리팹")]
+    [SerializeField] private GameObject scareCrowPrefab;
+
     [Header("스폰 위치")]
     [SerializeField] private List<Transform> spawnPoints = new List<Transform>();
 
@@ -139,6 +144,21 @@ public class MonsterSpawner : MonoBehaviour
             {
                 spawnedMonsters.Add(spawnedMonster);
             }
+        }
+
+        return spawnedMonsters;
+    }
+
+    public List<Monster> SpawnRankingScareCrow()
+    {
+        List<Monster> spawnedMonsters = new List<Monster>(1);
+        Monster scareCrow = scareCrowPrefab != null
+            ? SpawnMonsterToAvailableSlot(scareCrowPrefab)
+            : SpawnRuntimeScareCrow();
+
+        if (scareCrow != null)
+        {
+            spawnedMonsters.Add(scareCrow);
         }
 
         return spawnedMonsters;
@@ -318,6 +338,77 @@ public class MonsterSpawner : MonoBehaviour
         }
 
         return monster;
+    }
+
+    private Monster SpawnRuntimeScareCrow()
+    {
+        if (!TryGetAvailableSpawnPoint(out Transform spawnPoint))
+        {
+            Debug.LogWarning("[MonsterSpawner] 남은 스폰 위치가 없어 허수아비 생성이 취소되었습니다");
+            return null;
+        }
+
+        Debug.LogWarning("[MonsterSpawner] 허수아비 프리팹이 없어 런타임 허수아비를 생성합니다");
+
+        GameObject scareCrowObject = new GameObject(
+            "ScareCrow",
+            typeof(RectTransform),
+            typeof(CanvasRenderer),
+            typeof(Image),
+            typeof(ScareCrowMonster));
+        scareCrowObject.transform.SetParent(spawnPoint, false);
+        scareCrowObject.transform.localPosition = Vector3.zero;
+        scareCrowObject.transform.localRotation = Quaternion.identity;
+        scareCrowObject.transform.localScale = Vector3.one;
+
+        RectTransform rectTransform = scareCrowObject.transform as RectTransform;
+        if (rectTransform != null)
+        {
+            rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+            rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            rectTransform.sizeDelta = new Vector2(180f, 240f);
+            rectTransform.anchoredPosition = Vector2.zero;
+        }
+
+        Image image = scareCrowObject.GetComponent<Image>();
+        if (image != null)
+        {
+            image.color = new Color32(190, 150, 85, 255);
+        }
+
+        AddRuntimeScareCrowLabel(scareCrowObject.transform);
+        return scareCrowObject.GetComponent<ScareCrowMonster>();
+    }
+
+    private static void AddRuntimeScareCrowLabel(Transform parent)
+    {
+        if (parent == null)
+        {
+            return;
+        }
+
+        GameObject labelObject = new GameObject("ScareCrowLabel", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+        labelObject.transform.SetParent(parent, false);
+
+        RectTransform labelRect = labelObject.transform as RectTransform;
+        if (labelRect != null)
+        {
+            labelRect.anchorMin = new Vector2(0f, 0f);
+            labelRect.anchorMax = new Vector2(1f, 0f);
+            labelRect.pivot = new Vector2(0.5f, 0f);
+            labelRect.anchoredPosition = new Vector2(0f, 18f);
+            labelRect.sizeDelta = new Vector2(0f, 40f);
+        }
+
+        TextMeshProUGUI label = labelObject.GetComponent<TextMeshProUGUI>();
+        if (label != null)
+        {
+            label.text = "허수아비";
+            label.alignment = TextAlignmentOptions.Center;
+            label.fontSize = 24f;
+            label.color = Color.black;
+        }
     }
 
     private bool TryGetAvailableSpawnPoint(out Transform availableSpawnPoint)

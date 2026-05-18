@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -39,6 +40,9 @@ public class RestSceneController : MonoBehaviour
     private RestSceneMode sceneMode;
     private List<RestDeckEnhanceCandidate> enhanceCandidates = new List<RestDeckEnhanceCandidate>();
     private RestSceneEnhanceSlotLayoutView enhanceListView;
+    private bool isEscaping;
+
+    public static bool IsEventEscapeContextActive { get; private set; }
 
     private void Start()
     {
@@ -49,6 +53,7 @@ public class RestSceneController : MonoBehaviour
         }
 
         sceneMode = ResolveSceneMode(pendingNode.nodeType);
+        IsEventEscapeContextActive = sceneMode == RestSceneMode.Event;
         EnsureRunDeck();
 
         enhanceListView = new RestSceneEnhanceSlotLayoutView(
@@ -64,6 +69,26 @@ public class RestSceneController : MonoBehaviour
         RefreshEnhanceCandidates();
         RefreshHpText();
         RefreshActionButtons();
+    }
+
+    private void Update()
+    {
+        if (!IsEventEscapeContextActive || isEscaping || Keyboard.current == null)
+        {
+            return;
+        }
+
+        if (!Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            return;
+        }
+
+        OnClickEscape();
+    }
+
+    private void OnDestroy()
+    {
+        IsEventEscapeContextActive = false;
     }
 
     public void OnClickHeal()
@@ -120,10 +145,12 @@ public class RestSceneController : MonoBehaviour
 
     public void OnClickEscape()
     {
-        if (sceneMode != RestSceneMode.Event)
+        if (sceneMode != RestSceneMode.Event || isEscaping)
         {
             return;
         }
+
+        isEscaping = true;
 
         if (TrainingBattleManager.buildingDeck != null)
         {

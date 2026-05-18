@@ -87,7 +87,7 @@ public class ButtonCreateManager : MonoBehaviour {
             RectTransform buttonRect = createdButton.GetComponent<RectTransform>();
             SetButtonPosition(buttonRect, buttonPanelConfig, createdButtonCount);
 
-            BindCharacterData(createdButton, characterData);
+            BindCharacterData(createdButton, characterData, ShouldApplyStandingImage(buttonPanelConfig));
             createdButtonCount++;
         }
 
@@ -171,7 +171,11 @@ public class ButtonCreateManager : MonoBehaviour {
         return left.characterId.CompareTo(right.characterId);
     }
 
-    private void BindCharacterData(GameObject buttonObject, CharacterData characterData) {
+    private bool ShouldApplyStandingImage(ButtonPanelConfig buttonPanelConfig) {
+        return ReferenceEquals(buttonPanelConfig, trainingPanelConfig);
+    }
+
+    private void BindCharacterData(GameObject buttonObject, CharacterData characterData, bool shouldApplyStandingImage) {
         BindCharacterLabel(buttonObject, characterData);
         SetButtonText(buttonObject, characterData.characterName);
         if (!Enum.IsDefined(typeof(Character), characterData.characterId)) {
@@ -179,6 +183,9 @@ public class ButtonCreateManager : MonoBehaviour {
             return;
         }
         Character character = (Character)characterData.characterId;
+        if (shouldApplyStandingImage) {
+            CharacterStandingButtonImageUtility.Apply(buttonObject, character);
+        }
         BindTrainingButton(buttonObject, character);
         BindCharacterBookButton(buttonObject, character);
     }

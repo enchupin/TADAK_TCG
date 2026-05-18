@@ -13,9 +13,10 @@ using static BattleRuntimeDefinitions;
 /// </summary>
 public class CardUI : MonoBehaviour
 {
-    private const string CharacterBackgroundResourcePath = "Image/CardBase/CardBackGround/CardBackGround02_";
+    private const string CharacterBackgroundResourcePath = "Image/CardBase/CardBackGround/CardBackGround_";
     private const string CharacterBarResourcePath = "Image/CardBase/CardBar/CardBar_";
     private const string CharacterCostResourcePath = "Image/CardBase/CardCost/Cost_";
+    private const string CardArtworkResourcePath = "Image/CardBase/CardImage/CardImage_";
     private static readonly Regex BuffTooltipPlaceholderPattern = new(@"\{(?<content>[^{}]+)\}", RegexOptions.Compiled);
     private static readonly Regex BuffTooltipMultipleWhitespacePattern = new(@"\s{2,}", RegexOptions.Compiled);
     private static readonly Regex BuffTooltipWhitespaceBeforePunctuationPattern = new(@"\s+([.,!?])", RegexOptions.Compiled);
@@ -23,6 +24,7 @@ public class CardUI : MonoBehaviour
     private static readonly Dictionary<Character, Sprite> CharacterBackgroundCache = new();
     private static readonly Dictionary<Character, Sprite> CharacterBarCache = new();
     private static readonly Dictionary<Character, Sprite> CharacterCostCache = new();
+    private static readonly Dictionary<int, Sprite> CardArtworkCache = new();
     [Header("UI Components")]
     [SerializeField] private TextMeshProUGUI cardNameText;
     [SerializeField] private TextMeshProUGUI costText;
@@ -45,8 +47,6 @@ public class CardUI : MonoBehaviour
 
     private void Awake()
     {
-        CacheVisualReferences();
-        CacheTooltipReferences();
         HideBuffTooltip();
     }
 
@@ -67,8 +67,6 @@ public class CardUI : MonoBehaviour
         }
 
         currentCard = card;
-        CacheVisualReferences();
-        CacheTooltipReferences();
         HideBuffTooltip();
 
         if (cardNameText != null)
@@ -88,13 +86,12 @@ public class CardUI : MonoBehaviour
             descriptionText.text = CardDescriptionFormatter.Format(card, TrainingBattleManager.Instance);
 
         ApplyCharacterBackground(card);
+        ApplyCardArtwork(card);
         ApplyPlayableVisual();
     }
 
     public void ShowBuffTooltip()
     {
-        CacheTooltipReferences();
-
         if (tooltipPanel == null)
         {
             HideBuffTooltip();
@@ -153,8 +150,6 @@ public class CardUI : MonoBehaviour
             return;
         }
 
-        CacheVisualReferences();
-
         if (backgroundImage != null)
         {
             backgroundImage.sprite = LoadCharacterBackground(card.character);
@@ -169,6 +164,18 @@ public class CardUI : MonoBehaviour
         {
             costImage.sprite = LoadCharacterCost(card.character);
         }
+    }
+
+    private void ApplyCardArtwork(Card card)
+    {
+        if (cardArtwork == null)
+        {
+            return;
+        }
+
+        Sprite artworkSprite = card != null ? LoadCardArtwork(card.cardId) : null;
+        cardArtwork.sprite = artworkSprite;
+        cardArtwork.enabled = artworkSprite != null;
     }
 
     private static string BuildKeywordText(Card card)
@@ -460,87 +467,6 @@ public class CardUI : MonoBehaviour
         return referencedBuffIds;
     }
 
-    private void CacheTooltipReferences()
-    {
-        if (tooltipPanel == null)
-        {
-            Transform tooltipPanelTransform = FindChildTransform(transform, "TooltipPanel");
-            if (tooltipPanelTransform != null)
-            {
-                tooltipPanel = tooltipPanelTransform.gameObject;
-            }
-        }
-
-        if (tooltipText == null)
-        {
-            Transform tooltipTextTransform = tooltipPanel != null
-                ? FindChildTransform(tooltipPanel.transform, "TooltipText")
-                : FindChildTransform(transform, "TooltipText");
-            if (tooltipTextTransform != null)
-            {
-                tooltipText = tooltipTextTransform.GetComponent<TextMeshProUGUI>();
-            }
-        }
-
-        if (tooltipPanel == null)
-        {
-            Canvas[] tooltipCanvases = GetComponentsInChildren<Canvas>(true);
-            foreach (Canvas candidateCanvas in tooltipCanvases)
-            {
-                if (candidateCanvas != null && candidateCanvas.gameObject.name == "TooltipPanel")
-                {
-                    tooltipPanel = candidateCanvas.gameObject;
-                    break;
-                }
-            }
-        }
-
-        if (tooltipText == null)
-        {
-            TextMeshProUGUI[] tooltipTexts = GetComponentsInChildren<TextMeshProUGUI>(true);
-            foreach (TextMeshProUGUI candidateText in tooltipTexts)
-            {
-                if (candidateText != null && candidateText.gameObject.name == "TooltipText")
-                {
-                    tooltipText = candidateText;
-                    break;
-                }
-            }
-        }
-
-        if (tooltipText != null && cardNameText != null && tooltipText.font != cardNameText.font)
-        {
-            tooltipText.font = cardNameText.font;
-            tooltipText.fontSharedMaterial = cardNameText.fontSharedMaterial;
-        }
-    }
-
-    private void CacheVisualReferences()
-    {
-        if (backgroundImage == null)
-        {
-            backgroundImage = GetComponent<Image>();
-        }
-        
-        if (barImage == null)
-        {
-            Transform barTransform = FindChildTransform(transform, "Bar");
-            if (barTransform != null)
-            {
-                barImage = barTransform.GetComponent<Image>();
-            }
-        }
-
-        if (costImage == null)
-        {
-            Transform costTransform = FindChildTransform(transform, "Cost");
-            if (costTransform != null)
-            {
-                costImage = costTransform.GetComponent<Image>();
-            }
-        }
-    }
-
     private static Sprite LoadCharacterBackground(Character character)
     {
         return LoadCharacterSprite(CharacterBackgroundCache, CharacterBackgroundResourcePath, character);
@@ -554,6 +480,29 @@ public class CardUI : MonoBehaviour
     private static Sprite LoadCharacterCost(Character character)
     {
         return LoadCharacterSprite(CharacterCostCache, CharacterCostResourcePath, character);
+    }
+
+    private static Sprite LoadCardArtwork(int cardId)
+    {
+        int baseCardId = GetBaseCardArtworkId(cardId);
+        if (baseCardId <= 0)
+        {
+            return null;
+        }
+
+        if (CardArtworkCache.TryGetValue(baseCardId, out Sprite cachedSprite))
+        {
+            return cachedSprite;
+        }
+
+        Sprite loadedSprite = Resources.Load<Sprite>(CardArtworkResourcePath + baseCardId.ToString(CultureInfo.InvariantCulture));
+        CardArtworkCache[baseCardId] = loadedSprite;
+        return loadedSprite;
+    }
+
+    private static int GetBaseCardArtworkId(int cardId)
+    {
+        return cardId/10;
     }
 
     private static Sprite LoadCharacterSprite(Dictionary<Character, Sprite> cache, string resourcePath, Character character)
@@ -575,30 +524,6 @@ public class CardUI : MonoBehaviour
     private static string GetCharacterBackgroundSuffix(Character character)
     {
         return character.ToString();
-    }
-
-    private Transform FindChildTransform(Transform parent, string childName)
-    {
-        if (parent == null || string.IsNullOrWhiteSpace(childName))
-        {
-            return null;
-        }
-
-        foreach (Transform child in parent)
-        {
-            if (child.name == childName)
-            {
-                return child;
-            }
-
-            Transform foundChild = FindChildTransform(child, childName);
-            if (foundChild != null)
-            {
-                return foundChild;
-            }
-        }
-
-        return null;
     }
 }
 

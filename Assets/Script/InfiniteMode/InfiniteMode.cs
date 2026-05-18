@@ -10,11 +10,6 @@ public class InfiniteMode : MonoBehaviour
         ? 1f + Mathf.Max(0, CurrentMapIndex - 1) * MonsterScalePerMap
         : 1f;
 
-    public void SetInfiniteMode(bool isInfiniteMode)
-    {
-        SetMode(isInfiniteMode);
-    }
-
     public static void SetMode(bool isInfiniteMode)
     {
         IsInfiniteMode = isInfiniteMode;
