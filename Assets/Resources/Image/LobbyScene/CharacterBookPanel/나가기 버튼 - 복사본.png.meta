@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e94f42e04298c58458540834cc714240
+guid: 77ab2e22a1fbceb4d9230ca78ba7a2dc
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5754236139421729029
-    second: CardBackGround_Isla03_0
+      213: 3470477575645669700
+    second: "\uB098\uAC00\uAE30 \uBC84\uD2BC - \uBCF5\uC0AC\uBCF8_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: CardBackGround_Isla03_0
+      name: "\uB098\uAC00\uAE30 \uBC84\uD2BC - \uBCF5\uC0AC\uBCF8_0"
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 941
-        height: 1672
+        y: 447
+        width: 1082
+        height: 454
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 50182f318472bdf40800000000000000
-      internalID: 5754236139421729029
+      spriteID: 449a159b7fc992030800000000000000
+      internalID: 3470477575645669700
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      CardBackGround_Isla03_0: 5754236139421729029
+      "\uB098\uAC00\uAE30 \uBC84\uD2BC - \uBCF5\uC0AC\uBCF8_0": 3470477575645669700
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
