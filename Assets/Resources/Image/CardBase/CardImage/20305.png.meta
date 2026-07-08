@@ -1,13 +1,25 @@
 fileFormatVersion: 2
-guid: 05d97e7a867d7174c8344dda57ca76e8
+guid: 8960e9e9f803cf649a2909eb0437ad63
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6842191267702495967
-    second: "\uC720\uC800\uC815\uBCF4_0"
+      213: -778366101286460488
+    second: 20305_0
   - first:
-      213: 6494353212761353430
-    second: "\uC720\uC800\uC815\uBCF4_1"
+      213: 4137804819633941374
+    second: 20305_1
+  - first:
+      213: -6164813070857086293
+    second: 20305_2
+  - first:
+      213: 2059765646534150197
+    second: 20305_3
+  - first:
+      213: 3912787011478790219
+    second: 20305_4
+  - first:
+      213: -1876952331896152362
+    second: 20305_5
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -75,7 +87,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 256
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -116,13 +128,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\uC720\uC800\uC815\uBCF4_0"
+      name: 20305_0
       rect:
         serializedVersion: 2
-        x: 506
-        y: 442
-        width: 1317
-        height: 489
+        x: 0
+        y: 440
+        width: 997
+        height: 814
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -131,20 +143,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 12520532b47ab01a0800000000000000
-      internalID: -6842191267702495967
+      spriteID: 8b36d93a720b235f0800000000000000
+      internalID: -778366101286460488
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uC720\uC800\uC815\uBCF4_1"
+      name: 20305_1
       rect:
         serializedVersion: 2
-        x: 831
-        y: 0
-        width: 8
-        height: 13
+        x: 511
+        y: 1001
+        width: 258
+        height: 111
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -153,8 +165,96 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6dcae84a6d3902a50800000000000000
-      internalID: 6494353212761353430
+      spriteID: e7b2e287f8f6c6930800000000000000
+      internalID: 4137804819633941374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20305_2
+      rect:
+        serializedVersion: 2
+        x: 516
+        y: 0
+        width: 738
+        height: 1254
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: baad0e4bc2f227aa0800000000000000
+      internalID: -6164813070857086293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20305_3
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 898
+        width: 218
+        height: 170
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 538883241f1c59c10800000000000000
+      internalID: 2059765646534150197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20305_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 878
+        height: 643
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b40a4fc5e030d4630800000000000000
+      internalID: 3912787011478790219
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20305_5
+      rect:
+        serializedVersion: 2
+        x: 348
+        y: 155
+        width: 558
+        height: 181
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6de1df47cc9b3f5e0800000000000000
+      internalID: -1876952331896152362
       vertices: []
       indices: 
       edges: []
@@ -173,8 +273,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\uC720\uC800\uC815\uBCF4_0": -6842191267702495967
-      "\uC720\uC800\uC815\uBCF4_1": 6494353212761353430
+      20305_0: -778366101286460488
+      20305_1: 4137804819633941374
+      20305_2: -6164813070857086293
+      20305_3: 2059765646534150197
+      20305_4: 3912787011478790219
+      20305_5: -1876952331896152362
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

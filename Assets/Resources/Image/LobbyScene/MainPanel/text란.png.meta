@@ -73,7 +73,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteBorder: {x: 676, y: 547, z: 815, w: 632}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -137,174 +137,20 @@ TextureImporter:
       name: "text\uB780_0"
       rect:
         serializedVersion: 2
-        x: 714
-        y: 776
-        width: 11
-        height: 9
+        x: 744
+        y: 535
+        width: 1006
+        height: 273
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: e24af251e890d5a50800000000000000
-      internalID: 6511371142093055022
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: "text\uB780_1"
-      rect:
-        serializedVersion: 2
-        x: 793
-        y: 769
-        width: 906
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 649f2d07da768fbe0800000000000000
-      internalID: -1443289685952366266
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: "text\uB780_2"
-      rect:
-        serializedVersion: 2
-        x: 804
-        y: 666
-        width: 63
-        height: 41
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 30bf7fcde2c260fe0800000000000000
-      internalID: -1223241668997154045
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: "text\uB780_3"
-      rect:
-        serializedVersion: 2
-        x: 865
-        y: 674
-        width: 21
-        height: 25
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 275c645dc20d4fa20800000000000000
-      internalID: 3095327734885696882
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: "text\uB780_4"
-      rect:
-        serializedVersion: 2
-        x: 879
-        y: 690
-        width: 8
-        height: 8
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 3a2a14af2d112ef00800000000000000
-      internalID: 1144496853144937123
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: "text\uB780_5"
-      rect:
-        serializedVersion: 2
-        x: 1606
-        y: 663
-        width: 81
-        height: 39
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 29c3f205eb048eca0800000000000000
-      internalID: -5987464518455837550
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: "text\uB780_6"
-      rect:
-        serializedVersion: 2
-        x: 847
-        y: 666
-        width: 10
-        height: 11
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d8b2df46c49d2a390800000000000000
-      internalID: -7808439881771963507
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: "text\uB780_7"
-      rect:
-        serializedVersion: 2
-        x: 782
-        y: 567
-        width: 912
-        height: 28
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 93ccabfc88cd092e0800000000000000
-      internalID: -2120952944332714951
+      spriteID: 6f846f7d960824642b48965333dbe167
+      internalID: -141315395
       vertices: []
       indices: 
       edges: []
@@ -313,24 +159,27 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
-    internalID: 0
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 1537655665
     vertices: []
     indices: 
     edges: []
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceOnImport
+        value: False
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      "text\uB780_0": 6511371142093055022
-      "text\uB780_1": -1443289685952366266
-      "text\uB780_2": -1223241668997154045
-      "text\uB780_3": 3095327734885696882
-      "text\uB780_4": 1144496853144937123
-      "text\uB780_5": -5987464518455837550
-      "text\uB780_6": -7808439881771963507
-      "text\uB780_7": -2120952944332714951
+      "text\uB780_0": -141315395
+      "text\uB780_1": -1892886823
+      "text\uB780_2": -1543982284
+      "text\uB780_3": 1872063896
+      "text\uB780_4": 650107899
+      "text\uB780_5": -284234542
+      "text\uB780_6": 774211954
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

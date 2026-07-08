@@ -1,13 +1,28 @@
 fileFormatVersion: 2
-guid: 05d97e7a867d7174c8344dda57ca76e8
+guid: e98336653e0a7db4692fe8c3b6b6f276
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6842191267702495967
-    second: "\uC720\uC800\uC815\uBCF4_0"
+      213: 4617868805304329429
+    second: 20202_0
   - first:
-      213: 6494353212761353430
-    second: "\uC720\uC800\uC815\uBCF4_1"
+      213: 3494797835190632391
+    second: 20202_1
+  - first:
+      213: -5111648347372323254
+    second: 20202_2
+  - first:
+      213: 8340372011856557675
+    second: 20202_3
+  - first:
+      213: -2789085679494048052
+    second: 20202_4
+  - first:
+      213: -2906457196367691158
+    second: 20202_5
+  - first:
+      213: -3618417266380198990
+    second: 20202_6
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -75,7 +90,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 256
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -116,13 +131,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\uC720\uC800\uC815\uBCF4_0"
+      name: 20202_0
       rect:
         serializedVersion: 2
-        x: 506
-        y: 442
-        width: 1317
-        height: 489
+        x: 229
+        y: 115
+        width: 585
+        height: 931
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -131,20 +146,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 12520532b47ab01a0800000000000000
-      internalID: -6842191267702495967
+      spriteID: 5d4a58f3637f51040800000000000000
+      internalID: 4617868805304329429
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uC720\uC800\uC815\uBCF4_1"
+      name: 20202_1
       rect:
         serializedVersion: 2
-        x: 831
-        y: 0
-        width: 8
-        height: 13
+        x: 782
+        y: 840
+        width: 255
+        height: 295
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -153,8 +168,118 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6dcae84a6d3902a50800000000000000
-      internalID: 6494353212761353430
+      spriteID: 7cf77586d14008030800000000000000
+      internalID: 3494797835190632391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20202_2
+      rect:
+        serializedVersion: 2
+        x: 819
+        y: 756
+        width: 330
+        height: 169
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4ef82629e6cf09b0800000000000000
+      internalID: -5111648347372323254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20202_3
+      rect:
+        serializedVersion: 2
+        x: 179
+        y: 675
+        width: 68
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b66f155d724feb370800000000000000
+      internalID: 8340372011856557675
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20202_4
+      rect:
+        serializedVersion: 2
+        x: 1070
+        y: 729
+        width: 25
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc6d0a90a5d2b49d0800000000000000
+      internalID: -2789085679494048052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20202_5
+      rect:
+        serializedVersion: 2
+        x: 821
+        y: 623
+        width: 287
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6240a734903aa7d0800000000000000
+      internalID: -2906457196367691158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 20202_6
+      rect:
+        serializedVersion: 2
+        x: 899
+        y: 506
+        width: 25
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2bba44cdaacc8cdc0800000000000000
+      internalID: -3618417266380198990
       vertices: []
       indices: 
       edges: []
@@ -173,8 +298,13 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\uC720\uC800\uC815\uBCF4_0": -6842191267702495967
-      "\uC720\uC800\uC815\uBCF4_1": 6494353212761353430
+      20202_0: 4617868805304329429
+      20202_1: 3494797835190632391
+      20202_2: -5111648347372323254
+      20202_3: 8340372011856557675
+      20202_4: -2789085679494048052
+      20202_5: -2906457196367691158
+      20202_6: -3618417266380198990
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
