@@ -26,33 +26,6 @@ TextureImporter:
   - first:
       213: -2716494637250062141
     second: 20207_7
-  - first:
-      213: 3958730314201369058
-    second: 20207_8
-  - first:
-      213: -652738064241311291
-    second: 20207_9
-  - first:
-      213: -6545552126423412531
-    second: 20207_10
-  - first:
-      213: -6995569600546550352
-    second: 20207_11
-  - first:
-      213: -1260337609717249661
-    second: 20207_12
-  - first:
-      213: -2788575459106012574
-    second: 20207_13
-  - first:
-      213: 3431894394184682812
-    second: 20207_14
-  - first:
-      213: -7108747772699060948
-    second: 20207_15
-  - first:
-      213: -4211247200061066453
-    second: 20207_16
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -94,7 +67,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -120,7 +93,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 256
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -274,10 +247,10 @@ TextureImporter:
       name: 20207_5
       rect:
         serializedVersion: 2
-        x: 237
-        y: 666
-        width: 10
-        height: 11
+        x: 247
+        y: 435
+        width: 52
+        height: 121
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -296,10 +269,10 @@ TextureImporter:
       name: 20207_6
       rect:
         serializedVersion: 2
-        x: 955
-        y: 594
-        width: 83
-        height: 102
+        x: 795
+        y: 295
+        width: 157
+        height: 145
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -318,10 +291,10 @@ TextureImporter:
       name: 20207_7
       rect:
         serializedVersion: 2
-        x: 181
-        y: 639
-        width: 10
-        height: 9
+        x: 310
+        y: 298
+        width: 136
+        height: 116
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -336,209 +309,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: 20207_8
-      rect:
-        serializedVersion: 2
-        x: 217
-        y: 633
-        width: 20
-        height: 20
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 2e90b8b1f3c30f630800000000000000
-      internalID: 3958730314201369058
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 20207_9
-      rect:
-        serializedVersion: 2
-        x: 924
-        y: 639
-        width: 11
-        height: 10
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5c1458d503201f6f0800000000000000
-      internalID: -652738064241311291
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 20207_10
-      rect:
-        serializedVersion: 2
-        x: 1062
-        y: 639
-        width: 10
-        height: 9
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: dc0dab555078925a0800000000000000
-      internalID: -6545552126423412531
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 20207_11
-      rect:
-        serializedVersion: 2
-        x: 237
-        y: 608
-        width: 10
-        height: 11
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0bdc6ed238ebaee90800000000000000
-      internalID: -6995569600546550352
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 20207_12
-      rect:
-        serializedVersion: 2
-        x: 247
-        y: 435
-        width: 52
-        height: 121
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 3890dbb1f91628ee0800000000000000
-      internalID: -1260337609717249661
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 20207_13
-      rect:
-        serializedVersion: 2
-        x: 971
-        y: 493
-        width: 11
-        height: 11
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 2624d9af46dfc49d0800000000000000
-      internalID: -2788575459106012574
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 20207_14
-      rect:
-        serializedVersion: 2
-        x: 957
-        y: 457
-        width: 13
-        height: 19
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c3d4800c4c980af20800000000000000
-      internalID: 3431894394184682812
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 20207_15
-      rect:
-        serializedVersion: 2
-        x: 310
-        y: 298
-        width: 136
-        height: 116
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c255c628097a85d90800000000000000
-      internalID: -7108747772699060948
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 20207_16
-      rect:
-        serializedVersion: 2
-        x: 795
-        y: 295
-        width: 157
-        height: 145
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: b237003dbf4ae85c0800000000000000
-      internalID: -4211247200061066453
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -550,21 +325,12 @@ TextureImporter:
     nameFileIdTable:
       20207_0: -8895878374936238624
       20207_1: -7368278890227922373
-      20207_10: -6545552126423412531
-      20207_11: -6995569600546550352
-      20207_12: -1260337609717249661
-      20207_13: -2788575459106012574
-      20207_14: 3431894394184682812
-      20207_15: -7108747772699060948
-      20207_16: -4211247200061066453
       20207_2: -7153843845093273518
       20207_3: 5281486191484638755
       20207_4: -1193688658118038818
       20207_5: -4152097871932281524
       20207_6: -888575861880714118
       20207_7: -2716494637250062141
-      20207_8: 3958730314201369058
-      20207_9: -652738064241311291
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

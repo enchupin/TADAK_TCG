@@ -17,18 +17,6 @@ TextureImporter:
   - first:
       213: -5959588359752579770
     second: 10106_4
-  - first:
-      213: -472186054797390332
-    second: 10106_5
-  - first:
-      213: 4170587860932720255
-    second: 10106_6
-  - first:
-      213: -1076697545597061986
-    second: 10106_7
-  - first:
-      213: 6204046889035914157
-    second: 10106_8
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -70,7 +58,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -96,7 +84,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 256
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -162,10 +150,10 @@ TextureImporter:
       name: 10106_1
       rect:
         serializedVersion: 2
-        x: 568
-        y: 944
-        width: 55
-        height: 55
+        x: 354
+        y: 168
+        width: 565
+        height: 762
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -228,10 +216,10 @@ TextureImporter:
       name: 10106_4
       rect:
         serializedVersion: 2
-        x: 219
-        y: 837
-        width: 76
-        height: 75
+        x: 165
+        y: 444
+        width: 135
+        height: 202
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -246,99 +234,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: 10106_5
-      rect:
-        serializedVersion: 2
-        x: 354
-        y: 168
-        width: 565
-        height: 762
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 40e88efe8457279f0800000000000000
-      internalID: -472186054797390332
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 10106_6
-      rect:
-        serializedVersion: 2
-        x: 275
-        y: 765
-        width: 41
-        height: 41
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f7673731097e0e930800000000000000
-      internalID: 4170587860932720255
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 10106_7
-      rect:
-        serializedVersion: 2
-        x: 990
-        y: 657
-        width: 43
-        height: 43
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: e94f620794dce01f0800000000000000
-      internalID: -1076697545597061986
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 10106_8
-      rect:
-        serializedVersion: 2
-        x: 165
-        y: 444
-        width: 135
-        height: 202
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: dab5ade66c3391650800000000000000
-      internalID: 6204046889035914157
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -353,10 +253,6 @@ TextureImporter:
       10106_2: -1659074125504082949
       10106_3: -3577072443198547889
       10106_4: -5959588359752579770
-      10106_5: -472186054797390332
-      10106_6: 4170587860932720255
-      10106_7: -1076697545597061986
-      10106_8: 6204046889035914157
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

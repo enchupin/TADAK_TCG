@@ -26,12 +26,6 @@ TextureImporter:
   - first:
       213: 159510263191714895
     second: 30204_7
-  - first:
-      213: 6686580001650060049
-    second: 30204_8
-  - first:
-      213: 8525703015988502650
-    second: 30204_9
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -73,7 +67,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -99,7 +93,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 256
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -145,7 +139,7 @@ TextureImporter:
         serializedVersion: 2
         x: 247
         y: 346
-        width: 713
+        width: 735
         height: 588
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -187,10 +181,10 @@ TextureImporter:
       name: 30204_2
       rect:
         serializedVersion: 2
-        x: 915
-        y: 908
-        width: 32
-        height: 31
+        x: 240
+        y: 727
+        width: 82
+        height: 125
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -209,10 +203,10 @@ TextureImporter:
       name: 30204_3
       rect:
         serializedVersion: 2
-        x: 240
-        y: 727
-        width: 82
-        height: 125
+        x: 221
+        y: 565
+        width: 49
+        height: 152
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -231,10 +225,10 @@ TextureImporter:
       name: 30204_4
       rect:
         serializedVersion: 2
-        x: 978
-        y: 746
-        width: 52
-        height: 50
+        x: 940
+        y: 431
+        width: 90
+        height: 256
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -253,10 +247,10 @@ TextureImporter:
       name: 30204_5
       rect:
         serializedVersion: 2
-        x: 221
-        y: 565
-        width: 49
-        height: 152
+        x: 310
+        y: 206
+        width: 512
+        height: 168
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -275,10 +269,10 @@ TextureImporter:
       name: 30204_6
       rect:
         serializedVersion: 2
-        x: 940
-        y: 431
-        width: 90
-        height: 256
+        x: 841
+        y: 303
+        width: 73
+        height: 75
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -297,10 +291,10 @@ TextureImporter:
       name: 30204_7
       rect:
         serializedVersion: 2
-        x: 310
-        y: 206
-        width: 512
-        height: 168
+        x: 895
+        y: 363
+        width: 67
+        height: 76
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -315,55 +309,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: 30204_8
-      rect:
-        serializedVersion: 2
-        x: 841
-        y: 303
-        width: 73
-        height: 75
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 11b2590a5118bcc50800000000000000
-      internalID: 6686580001650060049
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 30204_9
-      rect:
-        serializedVersion: 2
-        x: 895
-        y: 363
-        width: 67
-        height: 76
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: a70a870d8b1615670800000000000000
-      internalID: 8525703015988502650
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -381,8 +331,6 @@ TextureImporter:
       30204_5: -9184375400991587864
       30204_6: 3819513358868601282
       30204_7: 159510263191714895
-      30204_8: 6686580001650060049
-      30204_9: 8525703015988502650
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

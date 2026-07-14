@@ -1,31 +1,10 @@
 fileFormatVersion: 2
-guid: 4ab19e2fbb690a9429257d1a1315fc90
+guid: af57248c72c063e4ca5c406189c0dc93
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6511371142093055022
-    second: "text\uB780_0"
-  - first:
-      213: -1443289685952366266
-    second: "text\uB780_1"
-  - first:
-      213: -1223241668997154045
-    second: "text\uB780_2"
-  - first:
-      213: 3095327734885696882
-    second: "text\uB780_3"
-  - first:
-      213: 1144496853144937123
-    second: "text\uB780_4"
-  - first:
-      213: -5987464518455837550
-    second: "text\uB780_5"
-  - first:
-      213: -7808439881771963507
-    second: "text\uB780_6"
-  - first:
-      213: -2120952944332714951
-    second: "text\uB780_7"
+      213: 2194261848241945907
+    second: BattleStanding_Marrel_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -73,7 +52,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 676, y: 547, z: 815, w: 632}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -134,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "text\uB780_0"
+      name: BattleStanding_Marrel_0
       rect:
         serializedVersion: 2
-        x: 744
-        y: 535
-        width: 1006
-        height: 273
+        x: 112
+        y: 23
+        width: 654
+        height: 1558
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 6f846f7d960824642b48965333dbe167
-      internalID: -141315395
+      spriteID: 33d37a87685937e10800000000000000
+      internalID: 2194261848241945907
       vertices: []
       indices: 
       edges: []
@@ -159,27 +138,17 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    spriteID: 
+    internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceOnImport
-        value: False
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      "text\uB780_0": -141315395
-      "text\uB780_1": -1892886823
-      "text\uB780_2": -1543982284
-      "text\uB780_3": 1872063896
-      "text\uB780_4": 650107899
-      "text\uB780_5": -284234542
-      "text\uB780_6": 774211954
+      BattleStanding_Marrel_0: 2194261848241945907
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

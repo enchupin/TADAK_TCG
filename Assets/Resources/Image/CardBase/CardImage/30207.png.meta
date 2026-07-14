@@ -29,18 +29,6 @@ TextureImporter:
   - first:
       213: 6984143044541562570
     second: 30207_8
-  - first:
-      213: 3446807086421995426
-    second: 30207_9
-  - first:
-      213: 1492827452787746908
-    second: 30207_10
-  - first:
-      213: -2464564837460409330
-    second: 30207_11
-  - first:
-      213: 5683244226427167547
-    second: 30207_12
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -82,7 +70,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -108,7 +96,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 256
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -306,10 +294,10 @@ TextureImporter:
       name: 30207_7
       rect:
         serializedVersion: 2
-        x: 703
-        y: 918
-        width: 36
-        height: 35
+        x: 143
+        y: 605
+        width: 88
+        height: 101
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -328,10 +316,10 @@ TextureImporter:
       name: 30207_8
       rect:
         serializedVersion: 2
-        x: 158
-        y: 799
-        width: 32
-        height: 32
+        x: 170
+        y: 194
+        width: 929
+        height: 711
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -346,99 +334,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: 30207_9
-      rect:
-        serializedVersion: 2
-        x: 170
-        y: 194
-        width: 929
-        height: 711
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 2af6b7b78c485df20800000000000000
-      internalID: 3446807086421995426
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 30207_10
-      rect:
-        serializedVersion: 2
-        x: 143
-        y: 605
-        width: 88
-        height: 101
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c586d52b8a697b410800000000000000
-      internalID: 1492827452787746908
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 30207_11
-      rect:
-        serializedVersion: 2
-        x: 160
-        y: 471
-        width: 41
-        height: 41
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: e040141965b1ccdd0800000000000000
-      internalID: -2464564837460409330
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 30207_12
-      rect:
-        serializedVersion: 2
-        x: 1116
-        y: 385
-        width: 29
-        height: 29
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: b332bf74380fede40800000000000000
-      internalID: 5683244226427167547
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -450,9 +350,6 @@ TextureImporter:
     nameFileIdTable:
       30207_0: -7822807769159758469
       30207_1: -3695978721911970622
-      30207_10: 1492827452787746908
-      30207_11: -2464564837460409330
-      30207_12: 5683244226427167547
       30207_2: 8290384724231571207
       30207_3: 2148034057569090893
       30207_4: -6366260416687332540
@@ -460,7 +357,6 @@ TextureImporter:
       30207_6: -1244220197910170806
       30207_7: 8615853128159151049
       30207_8: 6984143044541562570
-      30207_9: 3446807086421995426
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

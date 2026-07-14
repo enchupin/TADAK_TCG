@@ -26,9 +26,6 @@ TextureImporter:
   - first:
       213: 777060641598436305
     second: 30205_7
-  - first:
-      213: 5714573173018791470
-    second: 30205_8
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -70,7 +67,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -96,7 +93,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 256
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -184,10 +181,10 @@ TextureImporter:
       name: 30205_2
       rect:
         serializedVersion: 2
-        x: 950
-        y: 889
-        width: 33
-        height: 34
+        x: 197
+        y: 706
+        width: 92
+        height: 146
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -206,10 +203,10 @@ TextureImporter:
       name: 30205_3
       rect:
         serializedVersion: 2
-        x: 197
-        y: 706
-        width: 92
-        height: 146
+        x: 963
+        y: 714
+        width: 91
+        height: 143
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -228,10 +225,10 @@ TextureImporter:
       name: 30205_4
       rect:
         serializedVersion: 2
-        x: 963
-        y: 714
-        width: 91
-        height: 143
+        x: 186
+        y: 534
+        width: 57
+        height: 157
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -250,10 +247,10 @@ TextureImporter:
       name: 30205_5
       rect:
         serializedVersion: 2
-        x: 186
+        x: 1009
         y: 534
         width: 57
-        height: 157
+        height: 164
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -272,10 +269,10 @@ TextureImporter:
       name: 30205_6
       rect:
         serializedVersion: 2
-        x: 1009
-        y: 534
-        width: 57
-        height: 164
+        x: 314
+        y: 187
+        width: 583
+        height: 174
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -294,10 +291,10 @@ TextureImporter:
       name: 30205_7
       rect:
         serializedVersion: 2
-        x: 314
-        y: 187
-        width: 583
-        height: 174
+        x: 931
+        y: 358
+        width: 114
+        height: 164
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -312,33 +309,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: 30205_8
-      rect:
-        serializedVersion: 2
-        x: 931
-        y: 358
-        width: 114
-        height: 164
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: e2e03c4160e3e4f40800000000000000
-      internalID: 5714573173018791470
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -356,7 +331,6 @@ TextureImporter:
       30205_5: 8836941980596725482
       30205_6: 3933391134335984594
       30205_7: 777060641598436305
-      30205_8: 5714573173018791470
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

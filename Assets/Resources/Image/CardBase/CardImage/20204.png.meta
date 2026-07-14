@@ -23,9 +23,6 @@ TextureImporter:
   - first:
       213: 4257837704169241643
     second: 20204_6
-  - first:
-      213: -5093653041006971892
-    second: 20204_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -67,7 +64,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -93,7 +90,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 256
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -203,10 +200,10 @@ TextureImporter:
       name: 20204_3
       rect:
         serializedVersion: 2
-        x: 956
-        y: 603
-        width: 42
-        height: 52
+        x: 993
+        y: 485
+        width: 53
+        height: 263
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -225,10 +222,10 @@ TextureImporter:
       name: 20204_4
       rect:
         serializedVersion: 2
-        x: 993
-        y: 485
-        width: 53
-        height: 263
+        x: 1014
+        y: 612
+        width: 64
+        height: 193
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -247,10 +244,10 @@ TextureImporter:
       name: 20204_5
       rect:
         serializedVersion: 2
-        x: 1014
-        y: 612
-        width: 64
-        height: 193
+        x: 183
+        y: 382
+        width: 118
+        height: 168
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -269,10 +266,10 @@ TextureImporter:
       name: 20204_6
       rect:
         serializedVersion: 2
-        x: 183
+        x: 950
         y: 382
-        width: 118
-        height: 168
+        width: 119
+        height: 171
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -287,33 +284,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: 20204_7
-      rect:
-        serializedVersion: 2
-        x: 950
-        y: 382
-        width: 119
-        height: 171
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c04f0b9eb85bf49b0800000000000000
-      internalID: -5093653041006971892
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -330,7 +305,6 @@ TextureImporter:
       20204_4: -4995261936884604776
       20204_5: -2459119027811335423
       20204_6: 4257837704169241643
-      20204_7: -5093653041006971892
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -17,24 +17,6 @@ TextureImporter:
   - first:
       213: 235153681547190759
     second: 10201_4
-  - first:
-      213: -9103705296755457279
-    second: 10201_5
-  - first:
-      213: -2487146361867343670
-    second: 10201_6
-  - first:
-      213: 2052493444956547122
-    second: 10201_7
-  - first:
-      213: 5602479519623488649
-    second: 10201_8
-  - first:
-      213: 5988741402511730117
-    second: 10201_9
-  - first:
-      213: -3565746368053079277
-    second: 10201_10
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -76,7 +58,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -102,7 +84,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 256
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -146,10 +128,10 @@ TextureImporter:
       name: 10201_0
       rect:
         serializedVersion: 2
-        x: 486
-        y: 1109
-        width: 26
-        height: 27
+        x: 420
+        y: 871
+        width: 109
+        height: 134
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -168,10 +150,10 @@ TextureImporter:
       name: 10201_1
       rect:
         serializedVersion: 2
-        x: 550
-        y: 898
-        width: 225
-        height: 222
+        x: 436
+        y: 786
+        width: 103
+        height: 166
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -190,10 +172,10 @@ TextureImporter:
       name: 10201_2
       rect:
         serializedVersion: 2
-        x: 420
-        y: 871
-        width: 109
-        height: 134
+        x: 470
+        y: 503
+        width: 372
+        height: 411
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -212,10 +194,10 @@ TextureImporter:
       name: 10201_3
       rect:
         serializedVersion: 2
-        x: 436
-        y: 786
-        width: 103
-        height: 166
+        x: 550
+        y: 898
+        width: 225
+        height: 222
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -234,10 +216,10 @@ TextureImporter:
       name: 10201_4
       rect:
         serializedVersion: 2
-        x: 470
-        y: 503
-        width: 372
-        height: 411
+        x: 449
+        y: 99
+        width: 324
+        height: 673
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -252,143 +234,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: 10201_5
-      rect:
-        serializedVersion: 2
-        x: 803
-        y: 907
-        width: 43
-        height: 59
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 1038c0f144429a180800000000000000
-      internalID: -9103705296755457279
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 10201_6
-      rect:
-        serializedVersion: 2
-        x: 397
-        y: 680
-        width: 57
-        height: 81
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: ac8ed74bf81eb7dd0800000000000000
-      internalID: -2487146361867343670
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 10201_7
-      rect:
-        serializedVersion: 2
-        x: 449
-        y: 99
-        width: 324
-        height: 673
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 238e372e9ebeb7c10800000000000000
-      internalID: 2052493444956547122
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 10201_8
-      rect:
-        serializedVersion: 2
-        x: 790
-        y: 723
-        width: 74
-        height: 99
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 9842f8c907100cd40800000000000000
-      internalID: 5602479519623488649
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 10201_9
-      rect:
-        serializedVersion: 2
-        x: 392
-        y: 541
-        width: 25
-        height: 27
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5c5e26c63984c1350800000000000000
-      internalID: 5988741402511730117
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 10201_10
-      rect:
-        serializedVersion: 2
-        x: 810
-        y: 485
-        width: 25
-        height: 26
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 3139e05029ce38ec0800000000000000
-      internalID: -3565746368053079277
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -400,15 +250,9 @@ TextureImporter:
     nameFileIdTable:
       10201_0: 4248894997995786967
       10201_1: -6018703366448931238
-      10201_10: -3565746368053079277
       10201_2: -1777830234329354921
       10201_3: -3360347671284833780
       10201_4: 235153681547190759
-      10201_5: -9103705296755457279
-      10201_6: -2487146361867343670
-      10201_7: 2052493444956547122
-      10201_8: 5602479519623488649
-      10201_9: 5988741402511730117
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

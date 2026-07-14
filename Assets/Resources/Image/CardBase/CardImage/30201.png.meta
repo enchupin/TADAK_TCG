@@ -11,18 +11,6 @@ TextureImporter:
   - first:
       213: -3586840907849677086
     second: 30201_2
-  - first:
-      213: -824794208075924948
-    second: 30201_3
-  - first:
-      213: 2422508934622756686
-    second: 30201_4
-  - first:
-      213: -4515062133052942804
-    second: 30201_5
-  - first:
-      213: 4226713712984707468
-    second: 30201_6
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -64,7 +52,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -90,7 +78,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 256
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -134,10 +122,10 @@ TextureImporter:
       name: 30201_0
       rect:
         serializedVersion: 2
-        x: 514
-        y: 671
-        width: 357
-        height: 393
+        x: 402
+        y: 615
+        width: 74
+        height: 85
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -156,10 +144,10 @@ TextureImporter:
       name: 30201_1
       rect:
         serializedVersion: 2
-        x: 899
-        y: 993
-        width: 28
-        height: 27
+        x: 514
+        y: 671
+        width: 357
+        height: 393
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -178,10 +166,10 @@ TextureImporter:
       name: 30201_2
       rect:
         serializedVersion: 2
-        x: 438
-        y: 856
-        width: 28
-        height: 28
+        x: 0
+        y: 0
+        width: 704
+        height: 656
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -196,99 +184,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: 30201_3
-      rect:
-        serializedVersion: 2
-        x: 402
-        y: 615
-        width: 74
-        height: 85
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c2ab5d6a90ebd84f0800000000000000
-      internalID: -824794208075924948
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 30201_4
-      rect:
-        serializedVersion: 2
-        x: 756
-        y: 578
-        width: 62
-        height: 84
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: e4f36618a0b7e9120800000000000000
-      internalID: 2422508934622756686
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 30201_5
-      rect:
-        serializedVersion: 2
-        x: 859
-        y: 661
-        width: 75
-        height: 93
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c26df8c69e64751c0800000000000000
-      internalID: -4515062133052942804
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 30201_6
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 704
-        height: 656
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c81d9b55abd48aa30800000000000000
-      internalID: 4226713712984707468
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -301,10 +201,6 @@ TextureImporter:
       30201_0: 592910642020748266
       30201_1: 3187450078443805057
       30201_2: -3586840907849677086
-      30201_3: -824794208075924948
-      30201_4: 2422508934622756686
-      30201_5: -4515062133052942804
-      30201_6: 4226713712984707468
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

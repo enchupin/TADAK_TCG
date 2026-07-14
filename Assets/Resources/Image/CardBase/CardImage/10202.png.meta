@@ -14,15 +14,6 @@ TextureImporter:
   - first:
       213: 4414436257900090486
     second: 10202_3
-  - first:
-      213: -2545428204323458076
-    second: 10202_4
-  - first:
-      213: 2871215502507547570
-    second: 10202_5
-  - first:
-      213: -3680415681634329855
-    second: 10202_6
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -64,7 +55,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -90,7 +81,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 256
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -134,10 +125,10 @@ TextureImporter:
       name: 10202_0
       rect:
         serializedVersion: 2
-        x: 682
-        y: 1054
-        width: 29
-        height: 41
+        x: 245
+        y: 299
+        width: 765
+        height: 711
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -156,10 +147,10 @@ TextureImporter:
       name: 10202_1
       rect:
         serializedVersion: 2
-        x: 245
-        y: 299
-        width: 765
-        height: 711
+        x: 248
+        y: 774
+        width: 250
+        height: 254
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -178,10 +169,10 @@ TextureImporter:
       name: 10202_2
       rect:
         serializedVersion: 2
-        x: 248
-        y: 774
-        width: 250
-        height: 254
+        x: 909
+        y: 650
+        width: 116
+        height: 206
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -200,10 +191,10 @@ TextureImporter:
       name: 10202_3
       rect:
         serializedVersion: 2
-        x: 767
-        y: 1009
-        width: 21
-        height: 21
+        x: 586
+        y: 265
+        width: 423
+        height: 332
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -218,77 +209,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: 10202_4
-      rect:
-        serializedVersion: 2
-        x: 909
-        y: 650
-        width: 116
-        height: 206
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4e33a00d882dcacd0800000000000000
-      internalID: -2545428204323458076
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 10202_5
-      rect:
-        serializedVersion: 2
-        x: 223
-        y: 587
-        width: 31
-        height: 45
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 2bb9e84894b98d720800000000000000
-      internalID: 2871215502507547570
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 10202_6
-      rect:
-        serializedVersion: 2
-        x: 586
-        y: 265
-        width: 423
-        height: 332
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 10b986eef698cecc0800000000000000
-      internalID: -3680415681634329855
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -302,9 +227,6 @@ TextureImporter:
       10202_1: -18764073870963039
       10202_2: -6296039043130476743
       10202_3: 4414436257900090486
-      10202_4: -2545428204323458076
-      10202_5: 2871215502507547570
-      10202_6: -3680415681634329855
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

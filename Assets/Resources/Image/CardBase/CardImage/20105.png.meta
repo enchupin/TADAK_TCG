@@ -11,9 +11,6 @@ TextureImporter:
   - first:
       213: 7506609124644248266
     second: 20105_2
-  - first:
-      213: -295237862444065837
-    second: 20105_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -55,7 +52,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -81,7 +78,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 256
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -127,7 +124,7 @@ TextureImporter:
         serializedVersion: 2
         x: 173
         y: 180
-        width: 927
+        width: 928
         height: 907
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -187,33 +184,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: 20105_3
-      rect:
-        serializedVersion: 2
-        x: 1098
-        y: 598
-        width: 41
-        height: 62
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 3db96c47aba17ebf0800000000000000
-      internalID: -295237862444065837
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -226,7 +201,6 @@ TextureImporter:
       20105_0: 2726007724895168523
       20105_1: -241194842737448762
       20105_2: 7506609124644248266
-      20105_3: -295237862444065837
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
