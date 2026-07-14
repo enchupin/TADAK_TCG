@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 04625fa112c514e4eb496f4014aaa211
+guid: bd2c4ff9885fbf541967d7241264bbea
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8428729425269545947
-    second: CardBase_Vanessa_0
+      213: -5631316347237161185
+    second: 7441427792a5dbe0_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -72,7 +72,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 256
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: CardBase_Vanessa_0
+      name: 7441427792a5dbe0_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1024
-        height: 1536
+        width: 824
+        height: 1224
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bdbd21541ccd8f470800000000000000
-      internalID: 8428729425269545947
+      spriteID: f1724114e9b89d1b0800000000000000
+      internalID: -5631316347237161185
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: ef9f5fd6807d9c6419fdcf257b8137c9
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      CardBase_Vanessa_0: 8428729425269545947
+      7441427792a5dbe0_0: -5631316347237161185
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

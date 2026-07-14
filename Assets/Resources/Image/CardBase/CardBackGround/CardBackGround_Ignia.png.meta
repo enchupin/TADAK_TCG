@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 24b56ccd0781160439e9fbd7cddd4418
+guid: 433c490be1a3b4a4fa63ee45a4e5096e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6406940250581070713
-    second: CardBase_Ignia_0
+      213: 6633973563906522568
+    second: 7e86e4e48bbfc920_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -72,7 +72,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 256
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: CardBase_Ignia_0
+      name: 7e86e4e48bbfc920_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1024
-        height: 1536
+        width: 824
+        height: 1224
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 973790566360ae850800000000000000
-      internalID: 6406940250581070713
+      spriteID: 8cdfafddecb901c50800000000000000
+      internalID: 6633973563906522568
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 603c5e6452094784c90099a616dae261
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      CardBase_Ignia_0: 6406940250581070713
+      7e86e4e48bbfc920_0: 6633973563906522568
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

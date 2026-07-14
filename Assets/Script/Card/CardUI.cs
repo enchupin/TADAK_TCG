@@ -16,7 +16,7 @@ public class CardUI : MonoBehaviour
     private const string CharacterBackgroundResourcePath = "Image/CardBase/CardBackGround/CardBackGround_";
     private const string CharacterBarResourcePath = "Image/CardBase/CardBar/CardBar_";
     private const string CharacterCostResourcePath = "Image/CardBase/CardCost/Cost_";
-    private const string CardArtworkResourcePath = "Image/CardBase/CardImage/CardImage_";
+    private const string CardArtworkResourcePath = "Image/CardBase/CardImage/";
     private static readonly Regex BuffTooltipPlaceholderPattern = new(@"\{(?<content>[^{}]+)\}", RegexOptions.Compiled);
     private static readonly Regex BuffTooltipMultipleWhitespacePattern = new(@"\s{2,}", RegexOptions.Compiled);
     private static readonly Regex BuffTooltipWhitespaceBeforePunctuationPattern = new(@"\s+([.,!?])", RegexOptions.Compiled);
