@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 425224320246794245}
   - component: {fileID: 9178011243559094876}
   - component: {fileID: 8947926882913876343}
-  - component: {fileID: 3024651634524755685}
   m_Layer: 5
   m_Name: CharacterSelectButton_RankingScene
   m_TagString: Untagged
@@ -121,34 +120,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 9178011243559094876}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3024651634524755685}
-        m_TargetAssemblyTypeName: CharacterSelectButton_RankingScene, Assembly-CSharp
-        m_MethodName: OnButtonClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &3024651634524755685
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 190741038153893105}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5f73dd0f206889458fbd9c2d79338a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterSelectButton_RankingScene
-  character: 0
-  deckSelectButtonPrefab: {fileID: 2404577217928703557, guid: 2676329a26cfa964bb1443ed2b68b8a0, type: 3}
-  manager: {fileID: 0}
+      m_Calls: []
 --- !u!1 &6486638747072497124
 GameObject:
   m_ObjectHideFlags: 0
