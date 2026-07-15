@@ -256,6 +256,7 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
         float resolvedScale = ResolveCardScale(cardSize, rootSize, cardCount);
         SetupCardTransform(cardRect, cardIndex, cardSize, resolvedScale);
         SetupCardController(cardObject, card);
+        CaptureCardScale(cardObject);
     }
 
     private Vector2 ResolveCardSize(RectTransform cardRect)
@@ -361,6 +362,26 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
         }
 
         Debug.LogWarning("[RankingModeSavedDeckPanel] 카드 프리팹에서 CardController 또는 CardUI를 찾을 수 없습니다");
+    }
+
+    private void CaptureCardScale(GameObject cardObject)
+    {
+        if (cardObject == null)
+        {
+            return;
+        }
+
+        UIHoverEffect[] hoverEffects = cardObject.GetComponentsInChildren<UIHoverEffect>(true);
+        foreach (UIHoverEffect hoverEffect in hoverEffects)
+        {
+            if (hoverEffect == null)
+            {
+                continue;
+            }
+
+            hoverEffect.StopAnimation();
+            hoverEffect.CaptureCurrentScaleAsOriginal();
+        }
     }
 
     private void DisableCardRaycasts(GameObject cardObject)

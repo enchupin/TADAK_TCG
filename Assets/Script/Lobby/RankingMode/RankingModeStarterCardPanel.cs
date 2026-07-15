@@ -94,6 +94,7 @@ public class RankingModeStarterCardPanel : MonoBehaviour
         float resolvedScale = ResolveCardScale(cardSize, panelSize);
         SetupCardTransform(cardRect, cardIndex, cardSize, resolvedScale, panelSize);
         SetupCardController(cardObject, card);
+        CaptureCardScale(cardObject);
 
         createdCards.Add(cardObject);
     }
@@ -198,5 +199,25 @@ public class RankingModeStarterCardPanel : MonoBehaviour
         }
 
         Debug.LogWarning("[RankingModeStarterCardPanel] 카드 프리팹에서 CardController 또는 CardUI를 찾을 수 없습니다");
+    }
+
+    private void CaptureCardScale(GameObject cardObject)
+    {
+        if (cardObject == null)
+        {
+            return;
+        }
+
+        UIHoverEffect[] hoverEffects = cardObject.GetComponentsInChildren<UIHoverEffect>(true);
+        foreach (UIHoverEffect hoverEffect in hoverEffects)
+        {
+            if (hoverEffect == null)
+            {
+                continue;
+            }
+
+            hoverEffect.StopAnimation();
+            hoverEffect.CaptureCurrentScaleAsOriginal();
+        }
     }
 }
