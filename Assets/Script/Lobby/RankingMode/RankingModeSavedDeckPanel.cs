@@ -20,12 +20,16 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
     [SerializeField] private Vector2 cardPadding = new Vector2(8f, 0f);
     [SerializeField] private Color selectedPanelColor = new Color(0.35f, 0.85f, 1f, 1f);
 
+    [Header("저장덱 이름 변경 설정")]
+    [SerializeField] private TMP_InputField[] renameInputFields = new TMP_InputField[MaxDeckPanelCount];
+
     private sealed class DeckPanelBinding
     {
         public RectTransform panel;
         public Image panelImage;
         public Color defaultColor;
         public RectTransform cardRoot;
+        public TMP_InputField renameInputField;
         public Character character;
         public CharacterDeckSave deck;
     }
@@ -33,9 +37,21 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
     private readonly List<DeckPanelBinding> panelBindings = new List<DeckPanelBinding>();
     private readonly Dictionary<RectTransform, Color> defaultPanelColors = new Dictionary<RectTransform, Color>();
     private readonly Dictionary<Character, CharacterDeckSave> selectedDecksByCharacter = new Dictionary<Character, CharacterDeckSave>();
+    private DeckPanelBinding activeRenameBinding;
+    private TMP_InputField activeRenameInputField;
 
     public int SelectedDeckCount => selectedDecksByCharacter.Count;
     public bool HasRequiredSelectionCount => selectedDecksByCharacter.Count == RequiredSelectionCount;
+
+    private void Awake()
+    {
+        HideRenameInputFields();
+    }
+
+    private void OnDestroy()
+    {
+        UnbindActiveRenameInput();
+    }
 
     public void ShowSavedDecks(Character character)
     {
@@ -44,6 +60,7 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
             return;
         }
 
+        CancelRename();
         PreparePanelBindings();
         ClearPanelBindings();
 
@@ -115,7 +132,8 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
                 panel = panel,
                 panelImage = panelImage,
                 defaultColor = defaultColor,
-                cardRoot = ResolveCardRoot(panel)
+                cardRoot = ResolveCardRoot(panel),
+                renameInputField = renameInputFields != null && i < renameInputFields.Length ? renameInputFields[i] : null
             };
 
             BindPanelClick(panel, binding);
@@ -141,6 +159,11 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
         binding.character = Character.Monster;
         binding.deck = null;
         SetPanelText(binding.panel, string.Empty);
+        if (binding.renameInputField != null)
+        {
+            binding.renameInputField.SetTextWithoutNotify(string.Empty);
+            binding.renameInputField.gameObject.SetActive(false);
+        }
 
         if (binding.panelImage != null)
         {
@@ -189,6 +212,12 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
         binding.character = character;
         binding.deck = deck;
         SetPanelText(binding.panel, ResolveDeckName(deck));
+        if (binding.renameInputField != null)
+        {
+            binding.renameInputField.SetTextWithoutNotify(ResolveDeckName(deck));
+            binding.renameInputField.gameObject.SetActive(false);
+        }
+
         CreateDeckCards(binding, deck);
     }
 
@@ -361,7 +390,7 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
         Graphic[] graphics = panel.GetComponentsInChildren<Graphic>(true);
         foreach (Graphic graphic in graphics)
         {
-            if (graphic == null || graphic == panelGraphic)
+            if (graphic == null || graphic == panelGraphic || graphic.GetComponentInParent<Selectable>(true) != null)
             {
                 continue;
             }
@@ -469,6 +498,181 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
         }
 
         clickHandler.Bind(() => SelectDeck(binding));
+    }
+
+    public void BeginRename(int panelIndex)
+    {
+        if (panelIndex < 0 || panelIndex >= panelBindings.Count)
+        {
+            Debug.LogWarning($"[RankingModeSavedDeckPanel] 이름을 변경할 저장덱 패널 인덱스가 올바르지 않습니다: {panelIndex}");
+            return;
+        }
+
+        DeckPanelBinding binding = panelBindings[panelIndex];
+        if (binding?.deck == null)
+        {
+            return;
+        }
+
+        if (binding.renameInputField == null)
+        {
+            Debug.LogWarning("[RankingModeSavedDeckPanel] 이름 변경 입력 필드가 연결되지 않았습니다");
+            return;
+        }
+
+        CancelRename();
+        activeRenameBinding = binding;
+        activeRenameInputField = binding.renameInputField;
+        activeRenameInputField.onEndEdit.RemoveListener(CompleteRenameFromInput);
+        activeRenameInputField.onEndEdit.AddListener(CompleteRenameFromInput);
+        activeRenameInputField.lineType = TMP_InputField.LineType.SingleLine;
+        activeRenameInputField.SetTextWithoutNotify(ResolveDeckName(binding.deck));
+        activeRenameInputField.gameObject.SetActive(true);
+
+        SetDeckNameTextActive(binding.panel, false);
+        activeRenameInputField.Select();
+        activeRenameInputField.ActivateInputField();
+        activeRenameInputField.MoveTextEnd(false);
+    }
+
+    public void ConfirmRename()
+    {
+        if (activeRenameInputField == null)
+        {
+            return;
+        }
+
+        CompleteRename(activeRenameInputField.text, activeRenameInputField.wasCanceled);
+    }
+
+    public void CancelRename()
+    {
+        if (activeRenameBinding == null && activeRenameInputField == null)
+        {
+            return;
+        }
+
+        DeckPanelBinding binding = activeRenameBinding;
+        TMP_InputField inputField = activeRenameInputField;
+        UnbindActiveRenameInput();
+        activeRenameBinding = null;
+        activeRenameInputField = null;
+
+        if (binding != null)
+        {
+            SetDeckNameTextActive(binding.panel, true);
+            if (binding.renameInputField != null)
+            {
+                binding.renameInputField.SetTextWithoutNotify(ResolveDeckName(binding.deck));
+                binding.renameInputField.gameObject.SetActive(false);
+            }
+
+            return;
+        }
+
+        if (inputField != null)
+        {
+            inputField.gameObject.SetActive(false);
+        }
+    }
+
+    private void CompleteRenameFromInput(string newName)
+    {
+        CompleteRename(newName, activeRenameInputField != null && activeRenameInputField.wasCanceled);
+    }
+
+    private void CompleteRename(string newName, bool isCanceled)
+    {
+        DeckPanelBinding binding = activeRenameBinding;
+        if (binding?.deck == null)
+        {
+            CancelRename();
+            return;
+        }
+
+        if (isCanceled)
+        {
+            CancelRename();
+            return;
+        }
+
+        string deckName = string.IsNullOrWhiteSpace(newName)
+            ? string.Empty
+            : newName.Replace("\r", " ").Replace("\n", " ").Trim();
+        if (string.IsNullOrWhiteSpace(deckName))
+        {
+            Debug.LogWarning("[RankingModeSavedDeckPanel] 저장덱 이름은 비워둘 수 없습니다");
+            if (binding.renameInputField != null)
+            {
+                binding.renameInputField.SetTextWithoutNotify(ResolveDeckName(binding.deck));
+                binding.renameInputField.gameObject.SetActive(true);
+            }
+
+            activeRenameInputField?.ActivateInputField();
+            return;
+        }
+
+        UnbindActiveRenameInput();
+        activeRenameBinding = null;
+        activeRenameInputField = null;
+
+        if (!string.Equals(binding.deck.name, deckName, StringComparison.Ordinal))
+        {
+            binding.deck.name = deckName;
+            ProfileSaveManager.Save();
+            Debug.Log($"[RankingModeSavedDeckPanel] 저장덱 이름을 변경했습니다: {deckName}");
+        }
+
+        SetPanelText(binding.panel, ResolveDeckName(binding.deck));
+        SetDeckNameTextActive(binding.panel, true);
+        if (binding.renameInputField != null)
+        {
+            binding.renameInputField.SetTextWithoutNotify(ResolveDeckName(binding.deck));
+            binding.renameInputField.gameObject.SetActive(false);
+        }
+    }
+
+    private void HideRenameInputFields()
+    {
+        if (renameInputFields == null)
+        {
+            return;
+        }
+
+        foreach (TMP_InputField inputField in renameInputFields)
+        {
+            if (inputField != null)
+            {
+                inputField.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    private void UnbindActiveRenameInput()
+    {
+        if (activeRenameInputField == null)
+        {
+            return;
+        }
+
+        activeRenameInputField.onEndEdit.RemoveListener(CompleteRenameFromInput);
+        activeRenameInputField.DeactivateInputField();
+    }
+
+    private void SetDeckNameTextActive(RectTransform panel, bool isActive)
+    {
+        TMP_Text tmpText = FindDeckNameText<TMP_Text>(panel);
+        if (tmpText != null)
+        {
+            tmpText.gameObject.SetActive(isActive);
+            return;
+        }
+
+        Text legacyText = FindDeckNameText<Text>(panel);
+        if (legacyText != null)
+        {
+            legacyText.gameObject.SetActive(isActive);
+        }
     }
 
     private void SetPanelText(RectTransform panel, string text)
