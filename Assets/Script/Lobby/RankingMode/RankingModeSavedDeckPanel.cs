@@ -90,6 +90,65 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
         return selectedDecksByCharacter.TryGetValue(character, out deck);
     }
 
+    public void DeleteDeck(int panelIndex)
+    {
+        if (panelIndex < 0 || panelIndex >= panelBindings.Count)
+        {
+            Debug.LogWarning($"[RankingModeSavedDeckPanel] 삭제할 저장덱 패널 인덱스가 올바르지 않습니다: {panelIndex}");
+            return;
+        }
+
+        DeckPanelBinding binding = panelBindings[panelIndex];
+        if (binding?.deck == null)
+        {
+            return;
+        }
+
+        PlayerProfileSave profile = ProfileSaveManager.CurrentProfile;
+        CharacterDeckLibrarySave library = profile?.FindLibrary(CharacterManager.GetIdByCharacterEnum(binding.character));
+        if (library?.decks == null)
+        {
+            Debug.LogWarning("[RankingModeSavedDeckPanel] 삭제할 저장덱 라이브러리를 찾을 수 없습니다");
+            return;
+        }
+
+        CharacterDeckSave deleteTarget = binding.deck;
+        bool removed = false;
+        for (int i = library.decks.Count - 1; i >= 0; i--)
+        {
+            if (!IsSameDeck(library.decks[i], deleteTarget))
+            {
+                continue;
+            }
+
+            library.decks.RemoveAt(i);
+            removed = true;
+            break;
+        }
+
+        if (!removed)
+        {
+            Debug.LogWarning("[RankingModeSavedDeckPanel] 삭제할 저장덱을 찾을 수 없습니다");
+            return;
+        }
+
+        if (selectedDecksByCharacter.TryGetValue(binding.character, out CharacterDeckSave selectedDeck)
+            && IsSameDeck(selectedDeck, deleteTarget))
+        {
+            selectedDecksByCharacter.Remove(binding.character);
+        }
+
+        if (!string.IsNullOrWhiteSpace(deleteTarget.deckId)
+            && string.Equals(library.selectedDeckId, deleteTarget.deckId, StringComparison.Ordinal))
+        {
+            library.selectedDeckId = string.Empty;
+        }
+
+        ProfileSaveManager.Save(profile);
+        Debug.Log($"[RankingModeSavedDeckPanel] 저장덱을 삭제했습니다: {ResolveDeckName(deleteTarget)}");
+        ShowSavedDecks(binding.character);
+    }
+
     private bool ValidateReferences()
     {
         if (cardPanels == null || cardPanels.Length == 0)
