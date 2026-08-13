@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: ac9c952e908243943a3bd06717432e26
+guid: a83a641690022564d89371c6b6f1c571
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7410237166023830312
-    second: BattleStanding_Polar_0
+      213: -1079254302447200952
+    second: 01.SD__0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: BattleStanding_Polar_0
+      name: 01.SD__0
       rect:
         serializedVersion: 2
-        x: 65
+        x: 128
         y: 47
-        width: 996
-        height: 1769
+        width: 650
+        height: 1587
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8d490c10f8c892990800000000000000
-      internalID: -7410237166023830312
+      spriteID: 84592581ee7b501f0800000000000000
+      internalID: -1079254302447200952
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      BattleStanding_Polar_0: -7410237166023830312
+      01.SD__0: -1079254302447200952
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
