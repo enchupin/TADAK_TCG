@@ -83,11 +83,6 @@ public class MonsterSpawner : MonoBehaviour
         new[] { SpawnMonsterType.VoidBug, SpawnMonsterType.VoidBeast, SpawnMonsterType.VoidLordBoss }
     };
 
-    private static readonly SpawnMonsterType[][] test1 =
-    {
-        new[] { SpawnMonsterType.MutantSweetPotato }
-    };
-
     [Header("스폰 위치")]
     [SerializeField] private List<Transform> spawnPoints = new List<Transform>();
 
@@ -98,9 +93,7 @@ public class MonsterSpawner : MonoBehaviour
     /// </summary>
     public List<Monster> SpawnEncounter(TrainingNodeType nodeType)
     {
-        // 테스트를 위해 변이 고구마만 스폰
-        // return SpawnEncounter(CreateEncounterPlan(nodeType, ResolveCurrentFloorNumber()));
-        return SpawnEncounter(test1[0]);
+        return SpawnEncounter(CreateEncounterPlan(nodeType, ResolveCurrentFloorNumber()));
     }
 
     /// <summary>
@@ -108,12 +101,6 @@ public class MonsterSpawner : MonoBehaviour
     /// </summary>
     public List<Monster> SpawnEncounter(IReadOnlyList<SpawnMonsterType> encounter)
     {
-        // 테스트를 위해 전달받은 인카운터 대신 변이 고구마만 스폰
-        // if (encounter == null || encounter.Count == 0)
-        // {
-        //     return new List<Monster>();
-        // }
-        encounter = test1[0];
 
         if (encounter == null || encounter.Count == 0)
         {
