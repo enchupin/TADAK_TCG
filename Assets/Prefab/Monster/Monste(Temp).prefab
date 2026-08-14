@@ -375,7 +375,7 @@ GameObject:
   - component: {fileID: 9206268205039629673}
   - component: {fileID: 5423006137283878154}
   - component: {fileID: 2113793905883819493}
-  - component: {fileID: 8113176476185616848}
+  - component: {fileID: 4254154861600049717}
   m_Layer: 5
   m_Name: Monste(Temp)
   m_TagString: Untagged
@@ -444,7 +444,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8113176476185616848
+--- !u!114 &4254154861600049717
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -453,17 +453,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 5506351440769215535}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a6f93b3af4e4d4b8cb09a2f1f0c7e11, type: 3}
+  m_Script: {fileID: 11500000, guid: a86de081b18c2f34382810a01def4059, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MutantFlowerMonster
-  hpText: {fileID: 2532405729148732153}
-  defenseText: {fileID: 1137208144515008067}
-  intentText: {fileID: 3636331439371411414}
-  hp: 40
-  maxHP: 40
-  defense: 0
-  attackPower: 0
-  name: "\uBCC0\uC774 \uAF43"
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterStateController
+  animator: {fileID: 0}
+  idleTriggerName: Idle
+  attackTriggerName: Attack
+  hitTriggerName: Hit
+  autoReturnToIdle: 1
+  attackStateDuration: 0.35
+  hitStateDuration: 0.25
+  targetImage: {fileID: 2113793905883819493}
+  targetSpriteRenderer: {fileID: 0}
+  monsterImageNameOverride: 
+  imageResourceFolder: Image/Monster
+  idleImageSuffix: Idle
+  attackImageSuffix: Attack
+  hitImageSuffix: Hit
+  preserveImageAspect: 1
+  logMissingImage: 1
+  attackSound: {fileID: 0}
+  hitSound: {fileID: 0}
+  attackSoundVolumeScale: 1
+  hitSoundVolumeScale: 1
 --- !u!1 &6768735362962587451
 GameObject:
   m_ObjectHideFlags: 0

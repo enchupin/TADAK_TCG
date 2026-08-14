@@ -1,9 +1,5 @@
-using UnityEngine;
-
 public class JackORipperMonster : Monster
 {
-    [SerializeField] private GameObject flashyScythePrefab;
-
     private bool useMultiHitAttack = true;
     private bool willUseSummonPattern;
 
@@ -49,11 +45,6 @@ public class JackORipperMonster : Monster
 
     private bool TryReserveSummonPattern()
     {
-        if (flashyScythePrefab == null)
-        {
-            return false;
-        }
-
         MonsterSpawner monsterSpawner = TrainingBattleManager.Instance != null
             ? TrainingBattleManager.Instance.monsterSpawner
             : null;
@@ -62,11 +53,6 @@ public class JackORipperMonster : Monster
 
     private void SummonFlashyScythe() // 추후 수정 필요
     {
-        if (flashyScythePrefab == null)
-        {
-            return;
-        }
-
         TrainingBattleManager battleManager = TrainingBattleManager.Instance;
         MonsterSpawner monsterSpawner = battleManager != null ? battleManager.monsterSpawner : null;
         if (monsterSpawner == null)
@@ -74,7 +60,7 @@ public class JackORipperMonster : Monster
             return;
         }
 
-        Monster summonedMonster = monsterSpawner.SpawnSummonedMonster(flashyScythePrefab);
+        Monster summonedMonster = monsterSpawner.SpawnSummonedMonster(MonsterSpawner.SpawnMonsterType.FlashyScythe);
         if (summonedMonster == null)
         {
             return;
