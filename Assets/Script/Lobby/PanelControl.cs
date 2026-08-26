@@ -16,7 +16,6 @@ namespace Lobby
 
         private static AudioClip buttonClickSound; // 버튼 클릭음
         private static bool isButtonClickSoundLoadTried;
-        private RankingModeManager rankingModeManager;
 
 
 
@@ -43,7 +42,6 @@ namespace Lobby
             PlayButtonClickSound();
             SetAllPanels(false);
             SetPanel(rankingModePanel, true);
-            RefreshRankingModePanel();
         }
 
         public void ShowTrainingModePanel()
@@ -146,14 +144,5 @@ namespace Lobby
             }
         }
 
-        private void RefreshRankingModePanel()
-        {
-            if (rankingModeManager == null)
-            {
-                rankingModeManager = FindAnyObjectByType<RankingModeManager>();
-            }
-
-            rankingModeManager?.OpenRankingMode();
-        }
     }
 }

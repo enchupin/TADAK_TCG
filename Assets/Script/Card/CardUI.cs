@@ -14,16 +14,12 @@ using static BattleRuntimeDefinitions;
 public class CardUI : MonoBehaviour
 {
     private const string CharacterBackgroundResourcePath = "Image/CardBase/CardBackGround/CardBackGround_";
-    private const string CharacterBarResourcePath = "Image/CardBase/CardBar/CardBar_";
-    private const string CharacterCostResourcePath = "Image/CardBase/CardCost/Cost_";
     private const string CardArtworkResourcePath = "Image/CardBase/CardImage/";
     private static readonly Regex BuffTooltipPlaceholderPattern = new(@"\{(?<content>[^{}]+)\}", RegexOptions.Compiled);
     private static readonly Regex BuffTooltipMultipleWhitespacePattern = new(@"\s{2,}", RegexOptions.Compiled);
     private static readonly Regex BuffTooltipWhitespaceBeforePunctuationPattern = new(@"\s+([.,!?])", RegexOptions.Compiled);
     private static readonly Regex ReferencedBuffNamePattern = new(@"\((?<name>[^()]+)\)", RegexOptions.Compiled);
     private static readonly Dictionary<Character, Sprite> CharacterBackgroundCache = new();
-    private static readonly Dictionary<Character, Sprite> CharacterBarCache = new();
-    private static readonly Dictionary<Character, Sprite> CharacterCostCache = new();
     private static readonly Dictionary<int, Sprite> CardArtworkCache = new();
     [Header("UI Components")]
     [SerializeField] private TextMeshProUGUI cardNameText;
@@ -31,8 +27,6 @@ public class CardUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI keywordText;
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private Image backgroundImage;
-    [SerializeField] private Image barImage;
-    [SerializeField] private Image costImage;
     [SerializeField] private Image cardArtwork;
     [SerializeField] private GameObject tooltipPanel;
     [SerializeField] private TextMeshProUGUI tooltipText;
@@ -153,16 +147,6 @@ public class CardUI : MonoBehaviour
         if (backgroundImage != null)
         {
             backgroundImage.sprite = LoadCharacterBackground(card.character);
-        }
-
-        if (barImage != null)
-        {
-            barImage.sprite = LoadCharacterBar(card.character);
-        }
-
-        if (costImage != null)
-        {
-            costImage.sprite = LoadCharacterCost(card.character);
         }
     }
 
@@ -470,16 +454,6 @@ public class CardUI : MonoBehaviour
     private static Sprite LoadCharacterBackground(Character character)
     {
         return LoadCharacterSprite(CharacterBackgroundCache, CharacterBackgroundResourcePath, character);
-    }
-
-    private static Sprite LoadCharacterBar(Character character)
-    {
-        return LoadCharacterSprite(CharacterBarCache, CharacterBarResourcePath, character);
-    }
-
-    private static Sprite LoadCharacterCost(Character character)
-    {
-        return LoadCharacterSprite(CharacterCostCache, CharacterCostResourcePath, character);
     }
 
     private static Sprite LoadCardArtwork(int cardId)

@@ -967,7 +967,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 85, y: 60.440002}
+  m_AnchoredPosition: {x: 286, y: 56.56}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &348479877
@@ -1098,8 +1098,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 175, y: 0}
-  m_SizeDelta: {x: 200, y: 35}
+  m_AnchoredPosition: {x: 54.700623, y: 0}
+  m_SizeDelta: {x: 109.4012, y: 35}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &366052855
 MonoBehaviour:
@@ -1121,7 +1121,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: Energy
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3580,8 +3580,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 13.910999, y: 53}
-  m_SizeDelta: {x: 145.2661, y: 50}
+  m_AnchoredPosition: {x: -0.0000050068, y: -5.9}
+  m_SizeDelta: {x: 86.3313, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1061278474
 GameObject:
@@ -3866,8 +3866,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 205.59, y: -612.44}
-  m_SizeDelta: {x: 380.8572, y: 60}
+  m_AnchoredPosition: {x: 292.09, y: -552.44}
+  m_SizeDelta: {x: 112.1836, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1133701492
 GameObject:
@@ -7223,30 +7223,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34755c71d3b8e7d45a173ccf16f63beb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterSpawner
-  mutantFlowerPrefab: {fileID: 5506351440769215535, guid: 7610934366e5700489efa72e882351a2, type: 3}
-  mutantCarnivorousPlantPrefab: {fileID: 5506351440769215535, guid: b9b223d43f2f4c3eaeb7d4c17d0d7f41, type: 3}
-  mutantMushroomPrefab: {fileID: 5506351440769215535, guid: 0dcf70d4a2a34984b4a4e7d45b567e89, type: 3}
-  mutantSweetPotatoPrefab: {fileID: 5506351440769215535, guid: 3348bb0c411d4ba28da82b226b6681f2, type: 3}
-  mutantCarrotPrefab: {fileID: 5506351440769215535, guid: 44406c3ade21452ba03c0da559c1fdcf, type: 3}
-  mirrorPrefab: {fileID: 5506351440769215535, guid: 4b7ad84e85304e1e808ba7bdab71c08a, type: 3}
-  cactusPrefab: {fileID: 5506351440769215535, guid: e608bcd923e143b3853b680cc814810e, type: 3}
-  woodenPuppetPrefab: {fileID: 5506351440769215535, guid: 1b9b4eac15264117b99856976f5d8664, type: 3}
-  voidBugPrefab: {fileID: 5506351440769215535, guid: c91401c2e1ce493eb5d065c68f7d387f, type: 3}
-  jackORipperPrefab: {fileID: 5506351440769215535, guid: daaa8abfc9ff4507b17464a40d1ab0e7, type: 3}
-  giantFlowerSpiderPrefab: {fileID: 5506351440769215535, guid: 47ddd5f6ef944d22ae66b3e793b358c6, type: 3}
-  prophetPrefab: {fileID: 5506351440769215535, guid: 8ca66e8c908d4e65beb5ae1e53eeda22, type: 3}
-  iceAndFireBossPrefab: {fileID: 5506351440769215535, guid: c3030f8c7b584a64bd3d6c8842aa0303, type: 3}
-  voidLordBossPrefab: {fileID: 5506351440769215535, guid: d3041f9a1c9c43b9af65d7447d330404, type: 3}
-  stoneShieldGolemPrefab: {fileID: 5506351440769215535, guid: 1e3186626ac4403498767e6910a4ac2b, type: 3}
-  stoneThrowGolemPrefab: {fileID: 5506351440769215535, guid: e5b1ab556cc846618015100713dc0921, type: 3}
-  stoneStealGolemPrefab: {fileID: 5506351440769215535, guid: da84d7cb182d44f09bd0848263415cb6, type: 3}
-  hauntedClothPrefab: {fileID: 5506351440769215535, guid: a3d7ac6b3f7c4e9b8ff0b7f49d3b51a1, type: 3}
-  fireSpiritPrefab: {fileID: 5506351440769215535, guid: e65c889ef51d46e4846e74feb65ecded, type: 3}
-  rotwoodWardenPrefab: {fileID: 5506351440769215535, guid: 581e4fd5a1fb3b545ac60c7e59fcdf81, type: 3}
-  priestessPrefab: {fileID: 5506351440769215535, guid: f340cc2a574eae64c9c2e9859721f69f, type: 3}
-  mushroomHostPrefab: {fileID: 5506351440769215535, guid: d6aac48a633d75a4094e298385a9c55d, type: 3}
-  voidBeastPrefab: {fileID: 5506351440769215535, guid: 4d82d425e2724c0cbcab76a44d64f8d1, type: 3}
-  scareCrowPrefab: {fileID: 0}
+  monsterPrefabFactory:
+    baseMonsterPrefab: {fileID: 5506351440769215535, guid: 456ed1c64d7c6cb4f9e47eff964eb7f1, type: 3}
   spawnPoints:
   - {fileID: 600931958}
   - {fileID: 1405018969}
@@ -7341,7 +7319,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 76.139, y: 128.83}
+  m_AnchoredPosition: {x: 80, y: -252.53}
   m_SizeDelta: {x: 100, y: 135}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2117404275

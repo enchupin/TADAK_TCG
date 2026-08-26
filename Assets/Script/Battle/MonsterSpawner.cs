@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class MonsterSpawner : MonoBehaviour
 {
@@ -33,8 +31,12 @@ public class MonsterSpawner : MonoBehaviour
         RotwoodWarden,
         Priestess,
         MushroomHost,
-        VoidBeast
+        VoidBeast,
+        FlashyScythe
     }
+
+    [Header("몬스터 생성 프리팹")]
+    [SerializeField] private MonsterPrefabFactory monsterPrefabFactory = new MonsterPrefabFactory();
 
     private static readonly SpawnMonsterType[][] earlyNormalNodeEncounterTable =
     {
@@ -81,48 +83,25 @@ public class MonsterSpawner : MonoBehaviour
         new[] { SpawnMonsterType.VoidBug, SpawnMonsterType.VoidBeast, SpawnMonsterType.VoidLordBoss }
     };
 
-    [Header("일반 몬스터 프리팹")]
-    [SerializeField] private GameObject mutantFlowerPrefab;
-    [SerializeField] private GameObject mutantCarnivorousPlantPrefab;
-    [SerializeField] private GameObject mutantMushroomPrefab;
-    [SerializeField] private GameObject mutantSweetPotatoPrefab;
-    [SerializeField] private GameObject mutantCarrotPrefab;
-    [SerializeField] private GameObject mirrorPrefab;
-    [SerializeField] private GameObject cactusPrefab;
-    [SerializeField] private GameObject woodenPuppetPrefab;
-    [SerializeField] private GameObject voidBugPrefab;
-    [SerializeField] private GameObject jackORipperPrefab;
-    [SerializeField] private GameObject giantFlowerSpiderPrefab;
-    [SerializeField] private GameObject prophetPrefab;
-    [SerializeField] private GameObject iceAndFireBossPrefab;
-    [SerializeField] private GameObject voidLordBossPrefab;
-    [SerializeField] private GameObject stoneShieldGolemPrefab;
-    [SerializeField] private GameObject stoneThrowGolemPrefab;
-    [SerializeField] private GameObject stoneStealGolemPrefab;
-    [SerializeField] private GameObject hauntedClothPrefab;
-    [SerializeField] private GameObject fireSpiritPrefab;
-
-    [Header("네임드 몬스터 프리팹")]
-    [SerializeField] private GameObject rotwoodWardenPrefab;
-    [SerializeField] private GameObject priestessPrefab;
-    [SerializeField] private GameObject mushroomHostPrefab;
-    [SerializeField] private GameObject voidBeastPrefab;
-
-    [Header("랭킹모드 몬스터 프리팹")]
-    [SerializeField] private GameObject scareCrowPrefab;
-
     [Header("스폰 위치")]
     [SerializeField] private List<Transform> spawnPoints = new List<Transform>();
 
     private int reservedSummonCount;
 
+    /// <summary>
+    /// 노드 타입에 맞는 인카운터를 계산해 몬스터를 스폰합니다
+    /// </summary>
     public List<Monster> SpawnEncounter(TrainingNodeType nodeType)
     {
         return SpawnEncounter(CreateEncounterPlan(nodeType, ResolveCurrentFloorNumber()));
     }
 
+    /// <summary>
+    /// 전달받은 몬스터 타입 목록을 실제 전투 몬스터 인스턴스로 생성합니다
+    /// </summary>
     public List<Monster> SpawnEncounter(IReadOnlyList<SpawnMonsterType> encounter)
     {
+
         if (encounter == null || encounter.Count == 0)
         {
             return new List<Monster>();
@@ -132,14 +111,7 @@ public class MonsterSpawner : MonoBehaviour
 
         for (int i = 0; i < encounter.Count; i++)
         {
-            GameObject monsterPrefab = ResolveMonsterPrefab(encounter[i]);
-            if (monsterPrefab == null)
-            {
-                Debug.LogError($"[MonsterSpawner] 몬스터 프리팹이 설정되지 않았습니다. type={encounter[i]}");
-                continue;
-            }
-
-            Monster spawnedMonster = SpawnMonsterToAvailableSlot(monsterPrefab);
+            Monster spawnedMonster = SpawnMonsterToAvailableSlot(encounter[i]);
             if (spawnedMonster != null)
             {
                 spawnedMonsters.Add(spawnedMonster);
@@ -149,12 +121,13 @@ public class MonsterSpawner : MonoBehaviour
         return spawnedMonsters;
     }
 
+    /// <summary>
+    /// 랭킹 모드 테스트용 허수아비 몬스터를 생성합니다
+    /// </summary>
     public List<Monster> SpawnRankingScareCrow()
     {
         List<Monster> spawnedMonsters = new List<Monster>(1);
-        Monster scareCrow = scareCrowPrefab != null
-            ? SpawnMonsterToAvailableSlot(scareCrowPrefab)
-            : SpawnRuntimeScareCrow();
+        Monster scareCrow = SpawnMonsterToAvailableSlot(typeof(ScareCrowMonster));
 
         if (scareCrow != null)
         {
@@ -164,12 +137,18 @@ public class MonsterSpawner : MonoBehaviour
         return spawnedMonsters;
     }
 
+    /// <summary>
+    /// 노드 타입과 층수에 맞는 몬스터 조합 계획을 생성합니다
+    /// </summary>
     public static List<SpawnMonsterType> CreateEncounterPlan(TrainingNodeType nodeType, int floorNumber)
     {
         SpawnMonsterType[] encounter = ResolveEncounter(nodeType, floorNumber);
         return new List<SpawnMonsterType>(encounter);
     }
 
+    /// <summary>
+    /// 노드 타입과 층수에서 등장 가능한 몬스터 조합 후보를 반환합니다
+    /// </summary>
     public static List<List<SpawnMonsterType>> GetEncounterCandidates(TrainingNodeType nodeType, int floorNumber)
     {
         SpawnMonsterType[][] encounterTable = ResolveEncounterTable(nodeType, floorNumber);
@@ -182,6 +161,9 @@ public class MonsterSpawner : MonoBehaviour
         return candidates;
     }
 
+    /// <summary>
+    /// 몬스터 조합을 순서와 무관하게 비교할 수 있는 문자열 키로 변환합니다
+    /// </summary>
     public static string BuildEncounterSignature(IReadOnlyList<SpawnMonsterType> encounter)
     {
         if (encounter == null || encounter.Count == 0)
@@ -211,6 +193,9 @@ public class MonsterSpawner : MonoBehaviour
         return signatureBuilder.ToString();
     }
 
+    /// <summary>
+    /// 선택된 몬스터 조합이 후보 목록에서 몇 번째 조합인지 반환합니다
+    /// </summary>
     public static int GetEncounterDisplayIndex(TrainingNodeType nodeType, int floorNumber, IReadOnlyList<SpawnMonsterType> encounter)
     {
         if (encounter == null || encounter.Count == 0)
@@ -236,17 +221,17 @@ public class MonsterSpawner : MonoBehaviour
         return 0;
     }
 
-    public Monster SpawnSummonedMonster(GameObject monsterPrefab)
+    /// <summary>
+    /// 전투 중 소환되는 몬스터를 빈 스폰 위치에 생성합니다
+    /// </summary>
+    public Monster SpawnSummonedMonster(SpawnMonsterType monsterType)
     {
-        if (monsterPrefab == null)
-        {
-            Debug.LogError("[MonsterSpawner] 소환할 몬스터 프리팹이 비어 있습니다");
-            return null;
-        }
-
-        return SpawnMonsterToAvailableSlot(monsterPrefab);
+        return SpawnMonsterToAvailableSlot(monsterType);
     }
 
+    /// <summary>
+    /// 이번 행동에서 소환 가능한 자리를 미리 예약합니다
+    /// </summary>
     public bool TryReserveSummonSlot()
     {
         if (GetRemainingSummonCapacity() <= 0)
@@ -258,16 +243,25 @@ public class MonsterSpawner : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// 계획 단계에서 예약된 소환 슬롯 수를 초기화합니다
+    /// </summary>
     public void ResetSummonReservations()
     {
         reservedSummonCount = 0;
     }
 
+    /// <summary>
+    /// 노드 타입과 층수에 맞는 후보 테이블에서 실제 등장 조합을 선택합니다
+    /// </summary>
     private static SpawnMonsterType[] ResolveEncounter(TrainingNodeType nodeType, int floorNumber)
     {
         return PickRandomEncounter(ResolveEncounterTable(nodeType, floorNumber));
     }
 
+    /// <summary>
+    /// 노드 타입과 층수에 대응하는 인카운터 후보 테이블을 반환합니다
+    /// </summary>
     private static SpawnMonsterType[][] ResolveEncounterTable(TrainingNodeType nodeType, int floorNumber)
     {
         switch (nodeType)
@@ -285,6 +279,9 @@ public class MonsterSpawner : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 후보 테이블에서 무작위 몬스터 조합 하나를 선택합니다
+    /// </summary>
     private static SpawnMonsterType[] PickRandomEncounter(SpawnMonsterType[][] encounterTable)
     {
         if (encounterTable == null || encounterTable.Length == 0)
@@ -295,11 +292,17 @@ public class MonsterSpawner : MonoBehaviour
         return encounterTable[UnityEngine.Random.Range(0, encounterTable.Length)];
     }
 
+    /// <summary>
+    /// 현재 층수가 후반부 일반 전투 테이블을 사용할 구간인지 확인합니다
+    /// </summary>
     private static bool IsLateGameEncounterFloor(int floorNumber)
     {
         return floorNumber >= 9;
     }
 
+    /// <summary>
+    /// 현재 진행 상태에서 전투가 발생한 층 번호를 계산합니다
+    /// </summary>
     private static int ResolveCurrentFloorNumber()
     {
         if (TrainingRunState.PendingNodeId.HasValue
@@ -317,100 +320,49 @@ public class MonsterSpawner : MonoBehaviour
         return 1;
     }
 
-    private Monster SpawnMonsterToAvailableSlot(GameObject monsterPrefab)
+    /// <summary>
+    /// 몬스터 타입을 공통 프리팹 기반으로 생성해 빈 스폰 위치에 배치합니다
+    /// </summary>
+    private Monster SpawnMonsterToAvailableSlot(SpawnMonsterType monsterType)
     {
         if (!TryGetAvailableSpawnPoint(out Transform spawnPoint))
         {
-            Debug.LogWarning($"[MonsterSpawner] 남은 스폰 위치가 없어 '{monsterPrefab.name}' 생성이 취소되었습니다");
+            Debug.LogWarning($"[MonsterSpawner] 남은 스폰 위치가 없어 '{monsterType}' 생성이 취소되었습니다");
             return null;
         }
 
-        GameObject spawnedObject = Instantiate(monsterPrefab, spawnPoint, false);
-        spawnedObject.transform.localPosition = Vector3.zero;
-        spawnedObject.transform.localRotation = Quaternion.identity;
-        spawnedObject.transform.localScale = Vector3.one;
-
-        if (!spawnedObject.TryGetComponent(out Monster monster))
+        Monster spawnedMonster = monsterPrefabFactory.CreateMonster(monsterType, spawnPoint);
+        if (spawnedMonster == null)
         {
-            Debug.LogError($"[MonsterSpawner] 생성된 프리팹 '{spawnedObject.name}'에 Monster 컴포넌트가 없습니다");
-            Destroy(spawnedObject);
             return null;
         }
 
-        return monster;
+        return spawnedMonster;
     }
 
-    private Monster SpawnRuntimeScareCrow()
+    /// <summary>
+    /// 런타임에 직접 지정한 몬스터 컴포넌트 타입을 빈 스폰 위치에 생성합니다
+    /// </summary>
+    private Monster SpawnMonsterToAvailableSlot(Type monsterComponentType)
     {
         if (!TryGetAvailableSpawnPoint(out Transform spawnPoint))
         {
-            Debug.LogWarning("[MonsterSpawner] 남은 스폰 위치가 없어 허수아비 생성이 취소되었습니다");
+            Debug.LogWarning($"[MonsterSpawner] 남은 스폰 위치가 없어 '{monsterComponentType?.Name}' 생성이 취소되었습니다");
             return null;
         }
 
-        Debug.LogWarning("[MonsterSpawner] 허수아비 프리팹이 없어 런타임 허수아비를 생성합니다");
-
-        GameObject scareCrowObject = new GameObject(
-            "ScareCrow",
-            typeof(RectTransform),
-            typeof(CanvasRenderer),
-            typeof(Image),
-            typeof(ScareCrowMonster));
-        scareCrowObject.transform.SetParent(spawnPoint, false);
-        scareCrowObject.transform.localPosition = Vector3.zero;
-        scareCrowObject.transform.localRotation = Quaternion.identity;
-        scareCrowObject.transform.localScale = Vector3.one;
-
-        RectTransform rectTransform = scareCrowObject.transform as RectTransform;
-        if (rectTransform != null)
+        Monster spawnedMonster = monsterPrefabFactory.CreateMonster(monsterComponentType, spawnPoint);
+        if (spawnedMonster == null)
         {
-            rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
-            rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-            rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            rectTransform.sizeDelta = new Vector2(180f, 240f);
-            rectTransform.anchoredPosition = Vector2.zero;
+            return null;
         }
 
-        Image image = scareCrowObject.GetComponent<Image>();
-        if (image != null)
-        {
-            image.color = new Color32(190, 150, 85, 255);
-        }
-
-        AddRuntimeScareCrowLabel(scareCrowObject.transform);
-        return scareCrowObject.GetComponent<ScareCrowMonster>();
+        return spawnedMonster;
     }
 
-    private static void AddRuntimeScareCrowLabel(Transform parent)
-    {
-        if (parent == null)
-        {
-            return;
-        }
-
-        GameObject labelObject = new GameObject("ScareCrowLabel", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
-        labelObject.transform.SetParent(parent, false);
-
-        RectTransform labelRect = labelObject.transform as RectTransform;
-        if (labelRect != null)
-        {
-            labelRect.anchorMin = new Vector2(0f, 0f);
-            labelRect.anchorMax = new Vector2(1f, 0f);
-            labelRect.pivot = new Vector2(0.5f, 0f);
-            labelRect.anchoredPosition = new Vector2(0f, 18f);
-            labelRect.sizeDelta = new Vector2(0f, 40f);
-        }
-
-        TextMeshProUGUI label = labelObject.GetComponent<TextMeshProUGUI>();
-        if (label != null)
-        {
-            label.text = "허수아비";
-            label.alignment = TextAlignmentOptions.Center;
-            label.fontSize = 24f;
-            label.color = Color.black;
-        }
-    }
-
+    /// <summary>
+    /// 현재 사용할 수 있는 비어 있는 스폰 위치를 찾습니다
+    /// </summary>
     private bool TryGetAvailableSpawnPoint(out Transform availableSpawnPoint)
     {
         availableSpawnPoint = null;
@@ -437,6 +389,9 @@ public class MonsterSpawner : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// 현재 전투에서 추가 소환 가능한 남은 슬롯 수를 계산합니다
+    /// </summary>
     private int GetRemainingSummonCapacity()
     {
         if (spawnPoints == null || spawnPoints.Count == 0)
@@ -457,6 +412,9 @@ public class MonsterSpawner : MonoBehaviour
         return Mathf.Max(0, spawnPointCount - occupiedCount - reservedSummonCount);
     }
 
+    /// <summary>
+    /// 지정한 스폰 위치에 살아 있는 몬스터가 이미 있는지 확인합니다
+    /// </summary>
     private bool IsSpawnPointOccupied(Transform spawnPoint)
     {
         if (spawnPoint == null)
@@ -477,58 +435,4 @@ public class MonsterSpawner : MonoBehaviour
         return false;
     }
 
-    private GameObject ResolveMonsterPrefab(SpawnMonsterType monsterType)
-    {
-        switch (monsterType)
-        {
-            case SpawnMonsterType.MutantFlower:
-                return mutantFlowerPrefab;
-            case SpawnMonsterType.MutantCarnivorousPlant:
-                return mutantCarnivorousPlantPrefab;
-            case SpawnMonsterType.MutantMushroom:
-                return mutantMushroomPrefab;
-            case SpawnMonsterType.MutantSweetPotato:
-                return mutantSweetPotatoPrefab;
-            case SpawnMonsterType.MutantCarrot:
-                return mutantCarrotPrefab;
-            case SpawnMonsterType.Mirror:
-                return mirrorPrefab;
-            case SpawnMonsterType.Cactus:
-                return cactusPrefab;
-            case SpawnMonsterType.WoodenPuppet:
-                return woodenPuppetPrefab;
-            case SpawnMonsterType.VoidBug:
-                return voidBugPrefab;
-            case SpawnMonsterType.JackORipper:
-                return jackORipperPrefab;
-            case SpawnMonsterType.GiantFlowerSpider:
-                return giantFlowerSpiderPrefab;
-            case SpawnMonsterType.Prophet:
-                return prophetPrefab;
-            case SpawnMonsterType.IceAndFireBoss:
-                return iceAndFireBossPrefab;
-            case SpawnMonsterType.VoidLordBoss:
-                return voidLordBossPrefab;
-            case SpawnMonsterType.StoneShieldGolem:
-                return stoneShieldGolemPrefab;
-            case SpawnMonsterType.StoneThrowGolem:
-                return stoneThrowGolemPrefab;
-            case SpawnMonsterType.StoneStealGolem:
-                return stoneStealGolemPrefab;
-            case SpawnMonsterType.HauntedCloth:
-                return hauntedClothPrefab;
-            case SpawnMonsterType.FireSpirit:
-                return fireSpiritPrefab;
-            case SpawnMonsterType.RotwoodWarden:
-                return rotwoodWardenPrefab;
-            case SpawnMonsterType.Priestess:
-                return priestessPrefab;
-            case SpawnMonsterType.MushroomHost:
-                return mushroomHostPrefab;
-            case SpawnMonsterType.VoidBeast:
-                return voidBeastPrefab;
-            default:
-                return null;
-        }
-    }
 }

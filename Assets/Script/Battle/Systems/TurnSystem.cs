@@ -173,12 +173,6 @@ public class TurnSystem
             yield break;
         }
 
-        if (battleManager.TryResolveRankingTurnLimit(turnNumber))
-        {
-            IsTurnTransitioning = false;
-            yield break;
-        }
-
         if (pendingExtraTurns > 0)
         {
             pendingExtraTurns--;

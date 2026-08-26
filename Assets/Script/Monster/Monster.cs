@@ -40,6 +40,9 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     [SerializeField] private BuffUI buffUI;
     [SerializeField] private Color barrierHPFillColor = new Color32(135, 206, 235, 255);
 
+    [Header("상태 컨트롤러")]
+    [SerializeField] private MonsterStateController stateController;
+
     [Header("Stats")]
     public int hp;
     public int maxHP;
@@ -68,8 +71,11 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     public int PlannedIntentValue => plannedIntentValue;
     public int PlannedPatternId => plannedPatternId;
     public IReadOnlyList<MonsterIntentIconType> PlannedIntentIcons => plannedIntentIcons;
+    public MonsterStateType CurrentState => stateController != null
+        ? stateController.CurrentState
+        : throw new System.InvalidOperationException($"[Monster] {gameObject.name}의 MonsterStateController가 인스펙터에 연결되지 않았습니다");
     public abstract int MonsterId { get; }
-    protected abstract string MonsterName { get; }
+    protected virtual string MonsterName => GetType().Name;
     protected abstract int BaseMaxHp { get; }
     protected virtual int BaseAttackPower => 0;
     protected virtual int BaseDefense => 0;
@@ -80,10 +86,16 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     protected virtual void Awake()
     {
         InitializeMonsterState();
+        if (stateController != null)
+        {
+            BindStateController();
+            stateController.EnterIdle();
+        }
     }
 
     protected virtual void Start()
     {
+        BindStateController();
         EnsureIntentTextReference();
         EnsureStatusUIReferences();
 
@@ -119,6 +131,18 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         UpdateHealthBarUI();
         UpdateBuffUI();
         UpdateIntentUI();
+    }
+
+    public void SetStateController(MonsterStateController controller)
+    {
+        if (controller == null)
+        {
+            throw new System.ArgumentNullException(nameof(controller), "[Monster] MonsterStateController가 비어 있습니다");
+        }
+
+        stateController = controller;
+        BindStateController();
+        stateController.EnterIdle();
     }
 
     public void EnsureBattleStartInitialized()
@@ -174,6 +198,11 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
             return;
         }
 
+        if (hasAttackIntent)
+        {
+            stateController.EnterAttack();
+        }
+
         ExecuteAction(target);
 
         ClearPlannedAction();
@@ -205,6 +234,11 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         SetDefenseValue(defenseBeforeHit - finalDamage);
 
         Debug.Log($"{name} took {damageAfterDefense} damage. (HP: {hp}/{maxHP})");
+        if (finalDamage > 0)
+        {
+            stateController.EnterHit();
+        }
+
         if (damageAfterDefense > 0)
         {
             TrainingBattleManager.Instance?.HandleMonsterHpLost(this, damageAfterDefense);
@@ -278,6 +312,8 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         }
 
         InitializeMonsterState();
+        BindStateController();
+        stateController.EnterIdle();
         if (!gameObject.activeSelf)
         {
             gameObject.SetActive(true);
@@ -606,6 +642,16 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         CacheHPFillDefaultColor();
     }
 
+    private void BindStateController()
+    {
+        if (stateController == null)
+        {
+            throw new System.InvalidOperationException($"[Monster] {gameObject.name}의 MonsterStateController가 인스펙터에 연결되지 않았습니다");
+        }
+
+        stateController.SetMonsterImageName(name);
+    }
+
     private void EnsureHpSliderReference()
     {
         if (hpSlider != null)
@@ -878,7 +924,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         hp = maxHP;
         defense = ScaleInfiniteMonsterValue(BaseDefense);
         attackPower = ScaleInfiniteMonsterValue(BaseAttackPower);
-        name = MonsterName;
+        name = GetType().Name;
 
         skipCurrentTurnAction = false;
         hasTriggeredDeath = false;

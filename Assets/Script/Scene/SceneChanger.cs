@@ -49,7 +49,6 @@ public class SceneChanger : MonoBehaviour
 
     private void StartTrainingRun(bool isInfiniteMode)
     {
-        RankingModeSession.ResetSession();
         TrainingBattleManager.buildingDeck = null;
         PlayerData.Reset();
         InfiniteMode.SetMode(isInfiniteMode);
