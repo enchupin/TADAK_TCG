@@ -14,8 +14,8 @@ public static class TrainingRunState
     private const int StartStageIndex = 0;
     private const int FirstCombatStageIndex = 1;
     private const int MidTowerSingleNodeStageIndex = 8;
-    private const int BossStageIndex = DefaultFloorCount;
-    private const int ForcedRestStageIndex = DefaultFloorCount - 1;
+    private const int FinalEscapeStageIndex = DefaultFloorCount;
+    private const int PreFinalEscapeMonsterStageIndex = DefaultFloorCount - 1;
     private const int SingleNodeFloorNodeCount = 1;
     private const int MinNodesPerRegularFloor = 2;
     private const int MapBuildRetryWarningInterval = 100;
@@ -243,10 +243,7 @@ public static class TrainingRunState
         if (stage == StartStageIndex)
             return TrainingNodeType.Start;
 
-        if (stage == BossStageIndex)
-            return TrainingNodeType.Boss;
-
-        if (stage == MidTowerSingleNodeStageIndex)
+        if (stage == MidTowerSingleNodeStageIndex || stage == FinalEscapeStageIndex)
             return TrainingNodeType.Event;
 
         return TrainingNodeType.Monster;
@@ -254,19 +251,12 @@ public static class TrainingRunState
 
     private static bool TryAssignRestNodeTypes(IReadOnlyList<List<int>> stageNodeIds)
     {
-        if (stageNodeIds == null || stageNodeIds.Count <= ForcedRestStageIndex)
+        if (stageNodeIds == null || stageNodeIds.Count <= FinalEscapeStageIndex)
         {
             return false;
         }
 
-        int forcedRestNodeCount = stageNodeIds[ForcedRestStageIndex].Count;
-        int targetOptionalRestNodeCount = RequiredRestNodeCount - forcedRestNodeCount;
-        if (targetOptionalRestNodeCount < 0)
-        {
-            return false;
-        }
-
-        if (GetMaximumRestNodeCountBeforeForcedStage(stageNodeIds, FirstCombatStageIndex) < targetOptionalRestNodeCount)
+        if (GetMaximumRestNodeCountBeforeFinalEscapeStage(stageNodeIds, FirstCombatStageIndex) < RequiredRestNodeCount)
         {
             return false;
         }
@@ -281,7 +271,7 @@ public static class TrainingRunState
                 0,
                 startRestFreeMask,
                 0,
-                targetOptionalRestNodeCount,
+                RequiredRestNodeCount,
                 restMaskByStage,
                 failedStateKeys))
         {
@@ -302,7 +292,7 @@ public static class TrainingRunState
         Dictionary<int, int> restMaskByStage,
         HashSet<int> failedStateKeys)
     {
-        if (stageIndex >= ForcedRestStageIndex)
+        if (stageIndex >= FinalEscapeStageIndex)
         {
             return previousRestFreeMask == 0 && assignedRestNodeCount == targetRestNodeCount;
         }
@@ -323,7 +313,7 @@ public static class TrainingRunState
                 continue;
             }
 
-            if (nextAssignedRestNodeCount + GetMaximumRestNodeCountBeforeForcedStage(stageNodeIds, stageIndex + 1) < targetRestNodeCount)
+            if (nextAssignedRestNodeCount + GetMaximumRestNodeCountBeforeFinalEscapeStage(stageNodeIds, stageIndex + 1) < targetRestNodeCount)
             {
                 continue;
             }
@@ -355,11 +345,11 @@ public static class TrainingRunState
         return stageIndex | (previousRestMask << 8) | (previousRestFreeMask << 16) | (assignedRestNodeCount << 24);
     }
 
-    private static int GetMaximumRestNodeCountBeforeForcedStage(IReadOnlyList<List<int>> stageNodeIds, int startStageIndex)
+    private static int GetMaximumRestNodeCountBeforeFinalEscapeStage(IReadOnlyList<List<int>> stageNodeIds, int startStageIndex)
     {
         int maxRestNodeCount = 0;
         int clampedStartStageIndex = Mathf.Max(startStageIndex, FirstCombatStageIndex);
-        int lastOptionalRestStageIndex = Mathf.Min(ForcedRestStageIndex - 1, stageNodeIds.Count - 1);
+        int lastOptionalRestStageIndex = Mathf.Min(FinalEscapeStageIndex - 1, stageNodeIds.Count - 1);
 
         for (int stageIndex = clampedStartStageIndex; stageIndex <= lastOptionalRestStageIndex; stageIndex++)
         {
@@ -422,14 +412,9 @@ public static class TrainingRunState
 
         if (stageIndex <= NoSpecialNodeUntilStageIndex
             || stageIndex == MidTowerSingleNodeStageIndex
-            || stageIndex == ForcedRestStageIndex - 1)
+            || stageIndex == PreFinalEscapeMonsterStageIndex - 1
+            || stageIndex == PreFinalEscapeMonsterStageIndex)
         {
-            return true;
-        }
-
-        if (stageIndex == ForcedRestStageIndex)
-        {
-            fixedRestMask = (1 << nodeCount) - 1;
             return true;
         }
 
@@ -515,18 +500,6 @@ public static class TrainingRunState
 
     private static void ApplyRestNodeTypes(IReadOnlyList<List<int>> stageNodeIds, IReadOnlyDictionary<int, int> restMaskByStage)
     {
-        if (stageNodeIds.Count > ForcedRestStageIndex)
-        {
-            List<int> forcedRestNodeIds = stageNodeIds[ForcedRestStageIndex];
-            for (int i = 0; i < forcedRestNodeIds.Count; i++)
-            {
-                if (nodesById.TryGetValue(forcedRestNodeIds[i], out TrainingMapNodeData forcedRestNode))
-                {
-                    forcedRestNode.nodeType = TrainingNodeType.Rest;
-                }
-            }
-        }
-
         foreach (KeyValuePair<int, int> restMaskEntry in restMaskByStage)
         {
             List<int> stageNodeIdList = stageNodeIds[restMaskEntry.Key];
@@ -612,6 +585,7 @@ public static class TrainingRunState
         {
             TrainingMapNodeData node = orderedNodes[i];
             if (node.stageIndex <= NoSpecialNodeUntilStageIndex
+                || node.stageIndex == PreFinalEscapeMonsterStageIndex
                 || node.nodeType != TrainingNodeType.Monster
                 || blockedNodeIds.Contains(node.nodeId))
             {
@@ -966,7 +940,7 @@ public static class TrainingRunState
         {
             StartStageIndex,
             MidTowerSingleNodeStageIndex,
-            BossStageIndex
+            FinalEscapeStageIndex
         };
     }
 
