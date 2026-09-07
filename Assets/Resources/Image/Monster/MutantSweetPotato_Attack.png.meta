@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e1c24712df2f8624e8157b38fbc92ce0
+guid: e75f8cb5184a50d4989fef3acb25ba29
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 9191676805659180382
-    second: MutantSweetPotato_Attack_0
+      213: 4592475865429627662
+    second: "\uBCC0\uC774 \uACE0\uAD6C\uB9C8_Attack_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -113,7 +113,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: MutantSweetPotato_Attack_0
+      name: "\uBCC0\uC774 \uACE0\uAD6C\uB9C8_Attack_0"
       rect:
         serializedVersion: 2
         x: 305
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e5d338bea556f8f70800000000000000
-      internalID: 9191676805659180382
+      spriteID: e03dc76b770cbbf30800000000000000
+      internalID: 4592475865429627662
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      MutantSweetPotato_Attack_0: 9191676805659180382
+      "\uBCC0\uC774 \uACE0\uAD6C\uB9C8_Attack_0": 4592475865429627662
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 280954e0968d8b84098f74edc067635b
+guid: ca335af017dfb3949b811fa7508fec10
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 252097122868390252
-    second: MutantCarrot_Idle_0
+      213: 6959351052515252414
+    second: "\uBCC0\uC774 \uB2F9\uADFC_Idle_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -113,7 +113,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: MutantCarrot_Idle_0
+      name: "\uBCC0\uC774 \uB2F9\uADFC_Idle_0"
       rect:
         serializedVersion: 2
         x: 146
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c69e7716ff0af7300800000000000000
-      internalID: 252097122868390252
+      spriteID: eb89968f8e4949060800000000000000
+      internalID: 6959351052515252414
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      MutantCarrot_Idle_0: 252097122868390252
+      "\uBCC0\uC774 \uB2F9\uADFC_Idle_0": 6959351052515252414
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

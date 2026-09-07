@@ -1,37 +1,37 @@
 fileFormatVersion: 2
-guid: 8a257b4966eead14c9d7eab378332101
+guid: d6e3a06b7ee3a244d9d9b7bc06965ce0
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -9186563107134190312
-    second: MutantFlower_Hit_0
+      213: -395475139835400450
+    second: "\uBCC0\uC774 \uAF43_Hit_0"
   - first:
-      213: -1264983035415016064
-    second: MutantFlower_Hit_1
+      213: -6889548127198082629
+    second: "\uBCC0\uC774 \uAF43_Hit_1"
   - first:
-      213: -3493782211129189903
-    second: MutantFlower_Hit_2
+      213: 3139211574710766430
+    second: "\uBCC0\uC774 \uAF43_Hit_2"
   - first:
-      213: 4081560200142161611
-    second: MutantFlower_Hit_3
+      213: -3449612564496618676
+    second: "\uBCC0\uC774 \uAF43_Hit_3"
   - first:
-      213: 5945446985392238743
-    second: MutantFlower_Hit_4
+      213: 1168123207728111640
+    second: "\uBCC0\uC774 \uAF43_Hit_4"
   - first:
-      213: -4732734210976494369
-    second: MutantFlower_Hit_5
+      213: -3500577510240442864
+    second: "\uBCC0\uC774 \uAF43_Hit_5"
   - first:
-      213: -7146317217962048208
-    second: MutantFlower_Hit_6
+      213: -6418993017223576560
+    second: "\uBCC0\uC774 \uAF43_Hit_6"
   - first:
-      213: 5793873844914466322
-    second: MutantFlower_Hit_7
+      213: 5201788154888499167
+    second: "\uBCC0\uC774 \uAF43_Hit_7"
   - first:
-      213: 1096951026410029722
-    second: MutantFlower_Hit_8
+      213: 1100776478904570121
+    second: "\uBCC0\uC774 \uAF43_Hit_8"
   - first:
-      213: 3746481050617775057
-    second: MutantFlower_Hit_9
+      213: -5266190556732774374
+    second: "\uBCC0\uC774 \uAF43_Hit_9"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -73,7 +73,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -140,7 +140,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: MutantFlower_Hit_0
+      name: "\uBCC0\uC774 \uAF43_Hit_0"
       rect:
         serializedVersion: 2
         x: 546
@@ -155,14 +155,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 81dce8cc685c28080800000000000000
-      internalID: -9186563107134190312
+      spriteID: efeec94a47df28af0800000000000000
+      internalID: -395475139835400450
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MutantFlower_Hit_1
+      name: "\uBCC0\uC774 \uAF43_Hit_1"
       rect:
         serializedVersion: 2
         x: 638
@@ -177,14 +177,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 08d4137a1a0e17ee0800000000000000
-      internalID: -1264983035415016064
+      spriteID: bb9866f0b786360a0800000000000000
+      internalID: -6889548127198082629
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MutantFlower_Hit_2
+      name: "\uBCC0\uC774 \uAF43_Hit_2"
       rect:
         serializedVersion: 2
         x: 730
@@ -199,14 +199,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1f9d01ff697938fc0800000000000000
-      internalID: -3493782211129189903
+      spriteID: e5b0e618b48b09b20800000000000000
+      internalID: 3139211574710766430
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MutantFlower_Hit_3
+      name: "\uBCC0\uC774 \uAF43_Hit_3"
       rect:
         serializedVersion: 2
         x: 750
@@ -221,14 +221,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bc688d2806d94a830800000000000000
-      internalID: 4081560200142161611
+      spriteID: c4b647046a38020d0800000000000000
+      internalID: -3449612564496618676
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MutantFlower_Hit_4
+      name: "\uBCC0\uC774 \uAF43_Hit_4"
       rect:
         serializedVersion: 2
         x: 416
@@ -243,14 +243,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 790b83b6888728250800000000000000
-      internalID: 5945446985392238743
+      spriteID: 81026825ed1063010800000000000000
+      internalID: 1168123207728111640
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MutantFlower_Hit_5
+      name: "\uBCC0\uC774 \uAF43_Hit_5"
       rect:
         serializedVersion: 2
         x: 431
@@ -265,14 +265,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fdc486a6f43f15eb0800000000000000
-      internalID: -4732734210976494369
+      spriteID: 016a5612d437b6fc0800000000000000
+      internalID: -3500577510240442864
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MutantFlower_Hit_6
+      name: "\uBCC0\uC774 \uAF43_Hit_6"
       rect:
         serializedVersion: 2
         x: 419
@@ -287,14 +287,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0354d136a5e23dc90800000000000000
-      internalID: -7146317217962048208
+      spriteID: 0140da03cd72be6a0800000000000000
+      internalID: -6418993017223576560
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MutantFlower_Hit_7
+      name: "\uBCC0\uC774 \uAF43_Hit_7"
       rect:
         serializedVersion: 2
         x: 348
@@ -309,14 +309,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 21ead8f8099f76050800000000000000
-      internalID: 5793873844914466322
+      spriteID: fdfa6f044c6703840800000000000000
+      internalID: 5201788154888499167
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MutantFlower_Hit_8
+      name: "\uBCC0\uC774 \uAF43_Hit_8"
       rect:
         serializedVersion: 2
         x: 330
@@ -331,14 +331,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a928b298527293f00800000000000000
-      internalID: 1096951026410029722
+      spriteID: 901563a106eb64f00800000000000000
+      internalID: 1100776478904570121
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MutantFlower_Hit_9
+      name: "\uBCC0\uC774 \uAF43_Hit_9"
       rect:
         serializedVersion: 2
         x: 416
@@ -353,8 +353,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1d30ec37aac2ef330800000000000000
-      internalID: 3746481050617775057
+      spriteID: a182d62179bbae6b0800000000000000
+      internalID: -5266190556732774374
       vertices: []
       indices: 
       edges: []
@@ -363,7 +363,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -373,16 +373,16 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      MutantFlower_Hit_0: -9186563107134190312
-      MutantFlower_Hit_1: -1264983035415016064
-      MutantFlower_Hit_2: -3493782211129189903
-      MutantFlower_Hit_3: 4081560200142161611
-      MutantFlower_Hit_4: 5945446985392238743
-      MutantFlower_Hit_5: -4732734210976494369
-      MutantFlower_Hit_6: -7146317217962048208
-      MutantFlower_Hit_7: 5793873844914466322
-      MutantFlower_Hit_8: 1096951026410029722
-      MutantFlower_Hit_9: 3746481050617775057
+      "\uBCC0\uC774 \uAF43_Hit_0": -395475139835400450
+      "\uBCC0\uC774 \uAF43_Hit_1": -6889548127198082629
+      "\uBCC0\uC774 \uAF43_Hit_2": 3139211574710766430
+      "\uBCC0\uC774 \uAF43_Hit_3": -3449612564496618676
+      "\uBCC0\uC774 \uAF43_Hit_4": 1168123207728111640
+      "\uBCC0\uC774 \uAF43_Hit_5": -3500577510240442864
+      "\uBCC0\uC774 \uAF43_Hit_6": -6418993017223576560
+      "\uBCC0\uC774 \uAF43_Hit_7": 5201788154888499167
+      "\uBCC0\uC774 \uAF43_Hit_8": 1100776478904570121
+      "\uBCC0\uC774 \uAF43_Hit_9": -5266190556732774374
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
