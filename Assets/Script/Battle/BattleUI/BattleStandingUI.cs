@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class BattleStandingUI : MonoBehaviour
 {
-    private const float RuneStandingImageSizeMultiplier = 1.25f;
+    private const float RuneStandingImageSizeMultiplier = 1.1f;
     private const float RuneStandingImageXOffset = -15f;
     private const float RuneStandingImageYOffset = 24.39f;
 
