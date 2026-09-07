@@ -5,12 +5,18 @@ using UnityEngine.UI;
 
 public class BattleStandingUI : MonoBehaviour
 {
+    private const float RuneStandingImageSizeMultiplier = 1.25f;
+    private const float RuneStandingImageXOffset = -15f;
+    private const float RuneStandingImageYOffset = 24.39f;
+
     [Header("캐릭터 스탠딩 이미지")]
     [SerializeField] private Image firstStandingImage;
     [SerializeField] private Image secondStandingImage;
     [SerializeField] private Image thirdStandingImage;
 
     private readonly Dictionary<Character, Sprite> spriteCache = new();
+    private readonly Dictionary<Image, Vector2> originalImageSizes = new();
+    private readonly Dictionary<Image, Vector2> originalImagePositions = new();
     private string currentSelectionSignature;
 
     private void OnEnable()
@@ -60,16 +66,42 @@ public class BattleStandingUI : MonoBehaviour
 
         if (selectedCharacters == null || index < 0 || index >= selectedCharacters.Count)
         {
+            ApplyStandingImageTransform(targetImage, false);
             targetImage.sprite = null;
             targetImage.enabled = false;
             return;
         }
 
         Character character = selectedCharacters[index];
+        ApplyStandingImageTransform(targetImage, character == Character.Rune);
         Sprite standingSprite = LoadStandingSprite(character);
         targetImage.sprite = standingSprite;
         targetImage.enabled = standingSprite != null;
         targetImage.preserveAspect = true;
+    }
+
+    private void ApplyStandingImageTransform(Image targetImage, bool shouldEnlarge)
+    {
+        RectTransform rectTransform = targetImage.rectTransform;
+        if (rectTransform == null)
+        {
+            return;
+        }
+
+        if (!originalImageSizes.TryGetValue(targetImage, out Vector2 originalSize))
+        {
+            originalSize = rectTransform.sizeDelta;
+            originalImageSizes[targetImage] = originalSize;
+        }
+
+        if (!originalImagePositions.TryGetValue(targetImage, out Vector2 originalPosition))
+        {
+            originalPosition = rectTransform.anchoredPosition;
+            originalImagePositions[targetImage] = originalPosition;
+        }
+
+        rectTransform.sizeDelta = originalSize * (shouldEnlarge ? RuneStandingImageSizeMultiplier : 1f);
+        rectTransform.anchoredPosition = originalPosition + (shouldEnlarge ? new Vector2(RuneStandingImageXOffset, RuneStandingImageYOffset) : Vector2.zero);
     }
 
     private Sprite LoadStandingSprite(Character character)
