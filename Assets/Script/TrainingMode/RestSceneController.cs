@@ -41,6 +41,7 @@ public class RestSceneController : MonoBehaviour
     private List<RestDeckEnhanceCandidate> enhanceCandidates = new List<RestDeckEnhanceCandidate>();
     private RestSceneEnhanceSlotLayoutView enhanceListView;
     private bool isEscaping;
+    private bool isFinalEventNode;
 
     public static bool IsEventEscapeContextActive { get; private set; }
 
@@ -53,6 +54,7 @@ public class RestSceneController : MonoBehaviour
         }
 
         sceneMode = ResolveSceneMode(pendingNode.nodeType);
+        isFinalEventNode = sceneMode == RestSceneMode.Event && IsTerminalNode(pendingNode);
         IsEventEscapeContextActive = sceneMode == RestSceneMode.Event;
         EnsureRunDeck();
 
@@ -134,6 +136,11 @@ public class RestSceneController : MonoBehaviour
 
     public void OnClickNext()
     {
+        if (sceneMode == RestSceneMode.Event && isFinalEventNode)
+        {
+            return;
+        }
+
         if (sceneMode == RestSceneMode.Rest && !actionResolved)
         {
             return;
@@ -258,11 +265,16 @@ public class RestSceneController : MonoBehaviour
         {
             escapeButton.gameObject.SetActive(isEvent);
             escapeButton.interactable = isEvent;
+            if (isFinalEventNode)
+            {
+                SetButtonLabel(escapeButton, "덱 저장");
+            }
         }
 
         if (nextButton != null)
         {
-            nextButton.interactable = isEvent || actionResolved;
+            nextButton.gameObject.SetActive(!isFinalEventNode);
+            nextButton.interactable = !isFinalEventNode && (isEvent || actionResolved);
             SetButtonLabel(nextButton, isEvent ? "계속 진행" : "다음");
         }
 
@@ -350,5 +362,10 @@ public class RestSceneController : MonoBehaviour
         {
             legacyText.text = label ?? string.Empty;
         }
+    }
+
+    private static bool IsTerminalNode(TrainingMapNodeData node)
+    {
+        return node == null || node.nextNodeIds == null || node.nextNodeIds.Count == 0;
     }
 }

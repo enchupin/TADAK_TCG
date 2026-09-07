@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e45896908cceb4e4a88fa460d0335653
+guid: b9f1c4d4dba091b448ed7b63723542ef
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -140674827390939686
-    second: "MutantCarrot_\uBFCC\uB9AC\uB0B4\uB9BC_0"
+      213: 9163278833759295603
+    second: "\uB3CC \uB358\uC838 \uACE8\uB818_Attack_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "MutantCarrot_\uBFCC\uB9AC\uB0B4\uB9BC_0"
+      name: "\uB3CC \uB358\uC838 \uACE8\uB818_Attack_0"
       rect:
         serializedVersion: 2
-        x: 328
-        y: 317
-        width: 914
-        height: 362
+        x: 100
+        y: 23
+        width: 300
+        height: 398
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: add06846df83c0ef0800000000000000
-      internalID: -140674827390939686
+      spriteID: 3781418dc818a2f70800000000000000
+      internalID: 9163278833759295603
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "MutantCarrot_\uBFCC\uB9AC\uB0B4\uB9BC_0": -140674827390939686
+      "\uB3CC \uB358\uC838 \uACE8\uB818_Attack_0": 9163278833759295603
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
