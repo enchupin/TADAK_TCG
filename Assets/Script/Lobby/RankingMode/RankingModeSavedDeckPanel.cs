@@ -40,6 +40,8 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
     private DeckPanelBinding activeRenameBinding;
     private TMP_InputField activeRenameInputField;
 
+    public event Action SelectionChanged;
+
     public int SelectedDeckCount => selectedDecksByCharacter.Count;
     public bool HasRequiredSelectionCount => selectedDecksByCharacter.Count == RequiredSelectionCount;
 
@@ -83,6 +85,31 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
     public List<CharacterDeckSave> CopySelectedDecks()
     {
         return new List<CharacterDeckSave>(selectedDecksByCharacter.Values);
+    }
+
+    public List<RankingModeSelectedDeck> CopySelectedRankingDecks()
+    {
+        List<Character> selectedCharacters = new List<Character>(selectedDecksByCharacter.Keys);
+        selectedCharacters.Sort((left, right) => left.CompareTo(right));
+
+        List<RankingModeSelectedDeck> selectedDecks = new List<RankingModeSelectedDeck>(selectedCharacters.Count);
+        foreach (Character character in selectedCharacters)
+        {
+            if (selectedDecksByCharacter.TryGetValue(character, out CharacterDeckSave deck))
+            {
+                selectedDecks.Add(new RankingModeSelectedDeck(character, deck));
+            }
+        }
+
+        return selectedDecks;
+    }
+
+    public void ClearSelectedDecks()
+    {
+        selectedDecksByCharacter.Clear();
+        CancelRename();
+        RefreshSelectionView();
+        SelectionChanged?.Invoke();
     }
 
     public bool TryGetSelectedDeck(Character character, out CharacterDeckSave deck)
@@ -136,6 +163,7 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
             && IsSameDeck(selectedDeck, deleteTarget))
         {
             selectedDecksByCharacter.Remove(binding.character);
+            SelectionChanged?.Invoke();
         }
 
         if (!string.IsNullOrWhiteSpace(deleteTarget.deckId)
@@ -491,6 +519,7 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
         {
             selectedDecksByCharacter.Remove(binding.character);
             RefreshSelectionView();
+            SelectionChanged?.Invoke();
             return;
         }
 
@@ -503,6 +532,7 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
 
         selectedDecksByCharacter[binding.character] = binding.deck;
         RefreshSelectionView();
+        SelectionChanged?.Invoke();
     }
 
     private void RefreshSelectionView()
