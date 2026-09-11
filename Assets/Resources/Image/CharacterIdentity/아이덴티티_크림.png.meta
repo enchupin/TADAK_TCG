@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 1b604e42885c9934aaf8714731fbb668
+guid: 832583265dcbc0f4caa89bd3ad59ab3b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -413733681782369633
-    second: IdentityFrame_Ignia_0
+      213: -6432538787763453478
+    second: "\uC544\uC774\uB374\uD2F0\uD2F0_\uD06C\uB9BC_0"
+  - first:
+      213: 518314384308898526
+    second: "\uC544\uC774\uB374\uD2F0\uD2F0_\uD06C\uB9BC_1"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +49,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -96,30 +99,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: IdentityFrame_Ignia_0
+      name: "\uC544\uC774\uB374\uD2F0\uD2F0_\uD06C\uB9BC_0"
       rect:
         serializedVersion: 2
-        x: 11
-        y: 0
-        width: 1502
-        height: 1024
+        x: 20
+        y: 174
+        width: 45
+        height: 114
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +118,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f925fb1986f124af0800000000000000
-      internalID: -413733681782369633
+      spriteID: ad10077bd080bb6a0800000000000000
+      internalID: -6432538787763453478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\uC544\uC774\uB374\uD2F0\uD2F0_\uD06C\uB9BC_1"
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 0
+        width: 641
+        height: 288
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eda05b6bf2c613700800000000000000
+      internalID: 518314384308898526
       vertices: []
       indices: 
       edges: []
@@ -138,7 +150,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +160,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      IdentityFrame_Ignia_0: -413733681782369633
+      "\uC544\uC774\uB374\uD2F0\uD2F0_\uD06C\uB9BC_0": -6432538787763453478
+      "\uC544\uC774\uB374\uD2F0\uD2F0_\uD06C\uB9BC_1": 518314384308898526
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

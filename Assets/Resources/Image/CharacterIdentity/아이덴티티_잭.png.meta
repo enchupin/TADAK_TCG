@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: fbfb7f0f1177dc849b0dd1465468ca7e
+guid: 0fbd5fb551d0d71479b22b0e8e4d5358
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1059105291436353160
-    second: IdentityFrame_Pola_0
+      213: 3844126317868230471
+    second: "\uC544\uC774\uB374\uD2F0\uD2F0_\uC7AD_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -96,30 +96,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: IdentityFrame_Pola_0
+      name: "\uC544\uC774\uB374\uD2F0\uD2F0_\uC7AD_0"
       rect:
         serializedVersion: 2
-        x: 6
+        x: 43
         y: 0
-        width: 1530
-        height: 1024
+        width: 717
+        height: 340
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 886ecc3b6a2b2be00800000000000000
-      internalID: 1059105291436353160
+      spriteID: 7472440e484195530800000000000000
+      internalID: 3844126317868230471
       vertices: []
       indices: 
       edges: []
@@ -138,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      IdentityFrame_Pola_0: 1059105291436353160
+      "\uC544\uC774\uB374\uD2F0\uD2F0_\uC7AD_0": 3844126317868230471
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

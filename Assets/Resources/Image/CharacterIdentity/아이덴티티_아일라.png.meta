@@ -1,16 +1,10 @@
 fileFormatVersion: 2
-guid: bc731cc568cf88949862e86d02061fd8
+guid: 7aaa1a50aff51ec4d9d8cb7a12403425
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2869987275830207481
-    second: IdentityFrame_Isia_0
-  - first:
-      213: 7941393556042045602
-    second: IdentityFrame_Isia_1
-  - first:
-      213: 5272836498192059884
-    second: IdentityFrame_Isia_2
+      213: -437359567992313137
+    second: "\uC544\uC774\uB374\uD2F0\uD2F0_\uC544\uC77C\uB77C_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -52,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -102,30 +96,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: IdentityFrame_Isia_0
+      name: "\uC544\uC774\uB374\uD2F0\uD2F0_\uC544\uC77C\uB77C_0"
       rect:
         serializedVersion: 2
-        x: 3
+        x: 94
         y: 0
-        width: 1523
-        height: 1024
+        width: 777
+        height: 360
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -134,52 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9f320c5b83e34d720800000000000000
-      internalID: 2869987275830207481
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: IdentityFrame_Isia_1
-      rect:
-        serializedVersion: 2
-        x: 82
-        y: 807
-        width: 7
-        height: 6
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 2a856792d5f753e60800000000000000
-      internalID: 7941393556042045602
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: IdentityFrame_Isia_2
-      rect:
-        serializedVersion: 2
-        x: 994
-        y: 200
-        width: 6
-        height: 6
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: cedc371cbd0ec2940800000000000000
-      internalID: 5272836498192059884
+      spriteID: fca23b64acf2ee9f0800000000000000
+      internalID: -437359567992313137
       vertices: []
       indices: 
       edges: []
@@ -188,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -198,9 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      IdentityFrame_Isia_0: 2869987275830207481
-      IdentityFrame_Isia_1: 7941393556042045602
-      IdentityFrame_Isia_2: 5272836498192059884
+      "\uC544\uC774\uB374\uD2F0\uD2F0_\uC544\uC77C\uB77C_0": -437359567992313137
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
