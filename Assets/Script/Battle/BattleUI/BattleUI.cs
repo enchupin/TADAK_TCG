@@ -53,7 +53,7 @@ public class BattleUI : MonoBehaviour
         if (playerData == null) return;
 
         if (playerHPText != null)
-            playerHPText.text = $"HP : {playerData.hp}/{playerData.maxHP}";
+            playerHPText.text = $"{playerData.hp}/{playerData.maxHP}";
 
         if (playerHPSlider != null)
         {
@@ -73,7 +73,7 @@ public class BattleUI : MonoBehaviour
     {
         if (PlayerData.Instance == null) return;
         if (playerEnergyText != null)
-            playerEnergyText.text = $"Energy : {PlayerData.Instance.energy}/{PlayerData.Instance.maxEnergy}";
+            playerEnergyText.text = $"{PlayerData.Instance.energy}/{PlayerData.Instance.maxEnergy}";
     }
 
     /// <summary>
