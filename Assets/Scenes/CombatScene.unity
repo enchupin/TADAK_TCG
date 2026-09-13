@@ -1324,6 +1324,7 @@ GameObject:
   - component: {fileID: 380076999}
   - component: {fileID: 380076998}
   - component: {fileID: 380076997}
+  - component: {fileID: 380077000}
   m_Layer: 5
   m_Name: DeckButton
   m_TagString: Untagged
@@ -1424,6 +1425,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &380077000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 380076995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8a26f1d912a4d8590963d457ff68d32, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::UIHoverSpriteEffect
+  hoverSprite: {fileID: 0}
 --- !u!222 &380076999
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2905,6 +2919,7 @@ GameObject:
   - component: {fileID: 732822069}
   - component: {fileID: 732822068}
   - component: {fileID: 732822067}
+  - component: {fileID: 732822070}
   m_Layer: 5
   m_Name: SettingButton
   m_TagString: Untagged
@@ -3005,6 +3020,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &732822070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 732822065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8a26f1d912a4d8590963d457ff68d32, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::UIHoverSpriteEffect
+  hoverSprite: {fileID: 0}
 --- !u!222 &732822069
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5359,6 +5387,7 @@ GameObject:
   - component: {fileID: 1381567911}
   - component: {fileID: 1381567910}
   - component: {fileID: 1381567909}
+  - component: {fileID: 1381567912}
   m_Layer: 5
   m_Name: MapButton
   m_TagString: Untagged
@@ -5459,6 +5488,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1381567912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1381567907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8a26f1d912a4d8590963d457ff68d32, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::UIHoverSpriteEffect
+  hoverSprite: {fileID: 0}
 --- !u!222 &1381567911
 CanvasRenderer:
   m_ObjectHideFlags: 0
