@@ -1763,16 +1763,17 @@ public class TrainingBattleManager : MonoBehaviour
             : Array.Empty<CharacterIdentityState>();
     }
 
-    private static bool TryGetSelectedCharacterBySlot(int slotIndex, out Character character)
+    public bool TryGetSelectedCharacterBySlot(int slotIndex, out Character character)
     {
         character = Character.Monster;
 
-        if (slotIndex < 0 || SelectedButtonControl.selectedCharacterList == null || slotIndex >= SelectedButtonControl.selectedCharacterList.Count)
+        IReadOnlyList<CharacterIdentityState> identityStates = GetIdentityStates();
+        if (slotIndex < 0 || slotIndex >= identityStates.Count)
         {
             return false;
         }
 
-        character = SelectedButtonControl.selectedCharacterList[slotIndex];
+        character = identityStates[slotIndex].Character;
         return character != Character.Monster;
     }
 

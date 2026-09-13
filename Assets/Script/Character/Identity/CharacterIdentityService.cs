@@ -37,6 +37,7 @@ public sealed class CharacterIdentityService
             stateByCharacter.Add(character, state);
             states.Add(state);
         }
+        states.Sort((left, right) => ((int)left.Character).CompareTo((int)right.Character));
     }
 
     public IReadOnlyList<CharacterIdentityState> GetStates()

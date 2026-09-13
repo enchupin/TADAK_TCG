@@ -26,6 +26,9 @@ public class BattleUI : MonoBehaviour
     [SerializeField] private Slider firstIdentityGaugeSlider;
     [SerializeField] private Slider secondIdentityGaugeSlider;
     [SerializeField] private Slider thirdIdentityGaugeSlider;
+    [SerializeField] private Image firstIdentityImage;
+    [SerializeField] private Image secondIdentityImage;
+    [SerializeField] private Image thirdIdentityImage;
 
     [Header("데이터 참조")]
     [SerializeField] private TrainingBattleManager battleManager;
@@ -106,9 +109,9 @@ public class BattleUI : MonoBehaviour
     
     public void UpdateIdentityGauges()
     {
-        UpdateIdentityGaugeSlider(firstIdentityGaugeSlider, 0);
-        UpdateIdentityGaugeSlider(secondIdentityGaugeSlider, 1);
-        UpdateIdentityGaugeSlider(thirdIdentityGaugeSlider, 2);
+        UpdateIdentityGaugeSlider(firstIdentityGaugeSlider, firstIdentityImage, 0);
+        UpdateIdentityGaugeSlider(secondIdentityGaugeSlider, secondIdentityImage, 1);
+        UpdateIdentityGaugeSlider(thirdIdentityGaugeSlider, thirdIdentityImage, 2);
     }
 
     /// <summary>
@@ -180,31 +183,40 @@ public class BattleUI : MonoBehaviour
         }
     }
     
-    private void UpdateIdentityGaugeSlider(Slider targetSlider, int slotIndex)
+    private void UpdateIdentityGaugeSlider(Slider targetSlider, Image identityImage, int slotIndex)
     {
         if (targetSlider == null)
         {
             return;
         }
 
-        if (battleManager == null ||
-            SelectedButtonControl.selectedCharacterList == null ||
-            slotIndex < 0 ||
-            slotIndex >= SelectedButtonControl.selectedCharacterList.Count)
+        targetSlider.interactable = false;
+        targetSlider.wholeNumbers = false;
+        targetSlider.minValue = 0f;
+        targetSlider.maxValue = 1f;
+
+        if (battleManager == null || !battleManager.TryGetSelectedCharacterBySlot(slotIndex, out Character character))
         {
-            targetSlider.minValue = 0f;
-            targetSlider.maxValue = 1f;
-            targetSlider.SetValueWithoutNotify(0f);
+            targetSlider.SetValueWithoutNotify(1f);
+            if (identityImage != null)
+            {
+                identityImage.sprite = null;
+                identityImage.enabled = false;
+            }
             return;
         }
 
-        Character character = SelectedButtonControl.selectedCharacterList[slotIndex];
+        if (identityImage != null)
+        {
+            identityImage.sprite = CharacterManager.GetCharacterByEnum(character)?.IdentitySprite;
+            identityImage.enabled = identityImage.sprite != null;
+        }
+
         int maxGauge = Mathf.Max(1, battleManager.GetIdentityCost(character));
         int currentGauge = Mathf.Clamp(battleManager.GetIdentityGauge(character), 0, maxGauge);
 
-        targetSlider.minValue = 0f;
-        targetSlider.maxValue = maxGauge;
-        targetSlider.SetValueWithoutNotify(currentGauge);
+        // 충전될수록 검은색 필터가 사라지도록 남은 비율을 표시
+        targetSlider.SetValueWithoutNotify(1f - (float)currentGauge / maxGauge);
     }
 
 }

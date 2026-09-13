@@ -14,7 +14,7 @@ public class TrainingMapController : MonoBehaviour
     private static readonly Vector2 defaultNodeSpacing = new Vector2(260f, 170f);
 
     [Header("Run Setup")]
-    [SerializeField] private string battleSceneName = "TrainingScene";
+    [SerializeField] private string battleSceneName = "CombatScene";
     [SerializeField] private string restSceneName = "TrainingRestScene";
     [SerializeField] private string eventSceneName = "TrainingRestScene";
     [SerializeField] private bool autoStartRunIfMissing = true;
