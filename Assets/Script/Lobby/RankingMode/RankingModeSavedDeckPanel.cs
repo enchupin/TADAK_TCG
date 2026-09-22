@@ -2,23 +2,15 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class RankingModeSavedDeckPanel : MonoBehaviour
 {
     private const int MaxDeckPanelCount = 5;
-    private const int RequiredSelectionCount = 3;
-    private const string CardRootName = "RankingModeSavedDeckCardRoot";
-    private const float CardAreaHeightRatio = 0.8f;
 
     [Header("저장덱 패널 설정")]
     [SerializeField] private RectTransform[] cardPanels = new RectTransform[MaxDeckPanelCount];
     [SerializeField] private GameObject cardPrefab;
-    [SerializeField] private float cardScale = 0.28f;
-    [SerializeField] private Vector2 cardSpacing = new Vector2(6f, 0f);
-    [SerializeField] private Vector2 cardPadding = new Vector2(8f, 0f);
-    [SerializeField] private Color selectedPanelColor = new Color(0.35f, 0.85f, 1f, 1f);
 
     [Header("저장덱 이름 변경 설정")]
     [SerializeField] private TMP_InputField[] renameInputFields = new TMP_InputField[MaxDeckPanelCount];
@@ -26,24 +18,16 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
     private sealed class DeckPanelBinding
     {
         public RectTransform panel;
-        public Image panelImage;
-        public Color defaultColor;
-        public RectTransform cardRoot;
+        public DictionaryCardLayout cardLayout;
+        public readonly List<GameObject> createdCards = new List<GameObject>();
         public TMP_InputField renameInputField;
         public Character character;
         public CharacterDeckSave deck;
     }
 
     private readonly List<DeckPanelBinding> panelBindings = new List<DeckPanelBinding>();
-    private readonly Dictionary<RectTransform, Color> defaultPanelColors = new Dictionary<RectTransform, Color>();
-    private readonly Dictionary<Character, CharacterDeckSave> selectedDecksByCharacter = new Dictionary<Character, CharacterDeckSave>();
     private DeckPanelBinding activeRenameBinding;
     private TMP_InputField activeRenameInputField;
-
-    public event Action SelectionChanged;
-
-    public int SelectedDeckCount => selectedDecksByCharacter.Count;
-    public bool HasRequiredSelectionCount => selectedDecksByCharacter.Count == RequiredSelectionCount;
 
     private void Awake()
     {
@@ -63,6 +47,7 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
         }
 
         CancelRename();
+        ClearPanelBindings();
         PreparePanelBindings();
         ClearPanelBindings();
 
@@ -78,43 +63,6 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
         {
             Debug.LogWarning($"[RankingModeSavedDeckPanel] 표시 가능한 저장덱 수를 초과했습니다: {decks.Count}/{MaxDeckPanelCount}");
         }
-
-        RefreshSelectionView();
-    }
-
-    public List<CharacterDeckSave> CopySelectedDecks()
-    {
-        return new List<CharacterDeckSave>(selectedDecksByCharacter.Values);
-    }
-
-    public List<RankingModeSelectedDeck> CopySelectedRankingDecks()
-    {
-        List<Character> selectedCharacters = new List<Character>(selectedDecksByCharacter.Keys);
-        selectedCharacters.Sort((left, right) => left.CompareTo(right));
-
-        List<RankingModeSelectedDeck> selectedDecks = new List<RankingModeSelectedDeck>(selectedCharacters.Count);
-        foreach (Character character in selectedCharacters)
-        {
-            if (selectedDecksByCharacter.TryGetValue(character, out CharacterDeckSave deck))
-            {
-                selectedDecks.Add(new RankingModeSelectedDeck(character, deck));
-            }
-        }
-
-        return selectedDecks;
-    }
-
-    public void ClearSelectedDecks()
-    {
-        selectedDecksByCharacter.Clear();
-        CancelRename();
-        RefreshSelectionView();
-        SelectionChanged?.Invoke();
-    }
-
-    public bool TryGetSelectedDeck(Character character, out CharacterDeckSave deck)
-    {
-        return selectedDecksByCharacter.TryGetValue(character, out deck);
     }
 
     public void DeleteDeck(int panelIndex)
@@ -159,13 +107,6 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
             return;
         }
 
-        if (selectedDecksByCharacter.TryGetValue(binding.character, out CharacterDeckSave selectedDeck)
-            && IsSameDeck(selectedDeck, deleteTarget))
-        {
-            selectedDecksByCharacter.Remove(binding.character);
-            SelectionChanged?.Invoke();
-        }
-
         if (!string.IsNullOrWhiteSpace(deleteTarget.deckId)
             && string.Equals(library.selectedDeckId, deleteTarget.deckId, StringComparison.Ordinal))
         {
@@ -191,6 +132,21 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
             return false;
         }
 
+        foreach (RectTransform panel in cardPanels)
+        {
+            if (panel == null)
+            {
+                continue;
+            }
+
+            DictionaryCardLayout layout = panel.GetComponent<DictionaryCardLayout>();
+            if (layout == null || !layout.HasCardPositions)
+            {
+                Debug.LogError("[RankingModeSavedDeckPanel] 씬 카드 배치 위치가 연결되지 않았습니다", panel);
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -206,24 +162,13 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
                 continue;
             }
 
-            Image panelImage = ResolvePanelImage(panel);
-            DisablePanelChildRaycasts(panel, panelImage);
-            if (!defaultPanelColors.TryGetValue(panel, out Color defaultColor))
-            {
-                defaultColor = panelImage != null ? panelImage.color : Color.white;
-                defaultPanelColors[panel] = defaultColor;
-            }
-
             DeckPanelBinding binding = new DeckPanelBinding
             {
                 panel = panel,
-                panelImage = panelImage,
-                defaultColor = defaultColor,
-                cardRoot = ResolveCardRoot(panel),
+                cardLayout = panel.GetComponent<DictionaryCardLayout>(),
                 renameInputField = renameInputFields != null && i < renameInputFields.Length ? renameInputFields[i] : null
             };
 
-            BindPanelClick(panel, binding);
             panelBindings.Add(binding);
         }
     }
@@ -252,20 +197,16 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
             binding.renameInputField.gameObject.SetActive(false);
         }
 
-        if (binding.panelImage != null)
+        foreach (GameObject card in binding.createdCards)
         {
-            binding.panelImage.color = binding.defaultColor;
+            if (card != null)
+            {
+                card.SetActive(false);
+                Destroy(card);
+            }
         }
 
-        if (binding.cardRoot == null)
-        {
-            return;
-        }
-
-        for (int i = binding.cardRoot.childCount - 1; i >= 0; i--)
-        {
-            Destroy(binding.cardRoot.GetChild(i).gameObject);
-        }
+        binding.createdCards.Clear();
     }
 
     private List<CharacterDeckSave> CollectDecks(Character character)
@@ -310,7 +251,12 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
 
     private void CreateDeckCards(DeckPanelBinding binding, CharacterDeckSave deck)
     {
-        if (binding?.cardRoot == null || deck?.cardIds == null)
+        if (deck?.cardIds == null || deck.cardIds.Count != DictionaryCardLayout.RequiredCardCount)
+        {
+            throw new InvalidOperationException($"[RankingModeSavedDeckPanel] 저장덱은 정확히 {DictionaryCardLayout.RequiredCardCount}장이어야 합니다: {ResolveDeckName(deck)}");
+        }
+
+        if (binding?.cardLayout == null)
         {
             return;
         }
@@ -327,102 +273,27 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
                 continue;
             }
 
-            CreateCard(binding.cardRoot, card, i, sortedCardIds.Count);
+            CreateCard(binding, card, i);
         }
     }
 
-    private void CreateCard(RectTransform cardRoot, Card card, int cardIndex, int cardCount)
+    private void CreateCard(DeckPanelBinding binding, Card card, int cardIndex)
     {
-        GameObject cardObject = Instantiate(cardPrefab, cardRoot, false);
+        GameObject cardObject = Instantiate(cardPrefab, binding.cardLayout.transform, false);
         cardObject.name = $"RankingModeSavedDeckCard_{card.cardId}";
         DisableCardRaycasts(cardObject);
 
         RectTransform cardRect = cardObject.transform as RectTransform;
-        Vector2 cardSize = ResolveCardSize(cardRect);
-        Vector2 rootSize = ResolveRectSize(cardRoot);
-        float resolvedScale = ResolveCardScale(cardSize, rootSize, cardCount);
-        SetupCardTransform(cardRect, cardIndex, cardSize, resolvedScale);
-        SetupCardController(cardObject, card);
-        CaptureCardScale(cardObject);
-    }
-
-    private Vector2 ResolveCardSize(RectTransform cardRect)
-    {
-        if (cardRect == null)
+        if (!binding.cardLayout.PlaceCard(cardRect, cardIndex))
         {
-            return new Vector2(200f, 280f);
-        }
-
-        Vector2 size = cardRect.rect.size;
-        if (size.x <= 0f || size.y <= 0f)
-        {
-            size = cardRect.sizeDelta;
-        }
-
-        if (size.x <= 0f || size.y <= 0f)
-        {
-            return new Vector2(200f, 280f);
-        }
-
-        return size;
-    }
-
-    private Vector2 ResolveRectSize(RectTransform rectTransform)
-    {
-        if (rectTransform == null)
-        {
-            return Vector2.zero;
-        }
-
-        Vector2 size = rectTransform.rect.size;
-        if (size.x <= 0f || size.y <= 0f)
-        {
-            size = rectTransform.sizeDelta;
-        }
-
-        if ((size.x <= 0f || size.y <= 0f) && rectTransform.parent is RectTransform parentRect)
-        {
-            Vector2 parentSize = ResolveRectSize(parentRect);
-            Vector2 anchorSize = rectTransform.anchorMax - rectTransform.anchorMin;
-            size = new Vector2(
-                size.x > 0f ? size.x : parentSize.x * anchorSize.x,
-                size.y > 0f ? size.y : parentSize.y * anchorSize.y);
-        }
-
-        return size;
-    }
-
-    private float ResolveCardScale(Vector2 cardSize, Vector2 rootSize, int cardCount)
-    {
-        if (cardCount <= 0 || cardSize.x <= 0f || cardSize.y <= 0f || rootSize.x <= 0f || rootSize.y <= 0f)
-        {
-            return Mathf.Max(0.01f, cardScale);
-        }
-
-        float availableWidth = rootSize.x - cardPadding.x * 2f - cardSpacing.x * Mathf.Max(0, cardCount - 1);
-        float availableHeight = rootSize.y - cardPadding.y * 2f;
-        float widthScale = availableWidth / (cardSize.x * cardCount);
-        float heightScale = availableHeight / cardSize.y;
-        float fitScale = Mathf.Min(widthScale, heightScale);
-
-        return Mathf.Max(0.01f, Mathf.Min(cardScale, fitScale));
-    }
-
-    private void SetupCardTransform(RectTransform cardRect, int cardIndex, Vector2 cardSize, float resolvedScale)
-    {
-        if (cardRect == null)
-        {
+            cardObject.SetActive(false);
+            Destroy(cardObject);
             return;
         }
 
-        float scaledWidth = cardSize.x * resolvedScale;
-        cardRect.anchorMin = new Vector2(0f, 0.5f);
-        cardRect.anchorMax = new Vector2(0f, 0.5f);
-        cardRect.pivot = new Vector2(0f, 0.5f);
-        cardRect.anchoredPosition = new Vector2(
-            cardPadding.x + cardIndex * (scaledWidth + cardSpacing.x),
-            0f);
-        cardRect.localScale = Vector3.one * resolvedScale;
+        binding.createdCards.Add(cardObject);
+        SetupCardController(cardObject, card);
+        CaptureCardScale(cardObject);
     }
 
     private void SetupCardController(GameObject cardObject, Card card)
@@ -488,69 +359,6 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
         }
     }
 
-    private void DisablePanelChildRaycasts(RectTransform panel, Graphic panelGraphic)
-    {
-        if (panel == null)
-        {
-            return;
-        }
-
-        Graphic[] graphics = panel.GetComponentsInChildren<Graphic>(true);
-        foreach (Graphic graphic in graphics)
-        {
-            if (graphic == null || graphic == panelGraphic || graphic.GetComponentInParent<Selectable>(true) != null)
-            {
-                continue;
-            }
-
-            graphic.raycastTarget = false;
-        }
-    }
-
-    private void SelectDeck(DeckPanelBinding binding)
-    {
-        if (binding?.deck == null)
-        {
-            return;
-        }
-
-        if (selectedDecksByCharacter.TryGetValue(binding.character, out CharacterDeckSave selectedDeck)
-            && IsSameDeck(selectedDeck, binding.deck))
-        {
-            selectedDecksByCharacter.Remove(binding.character);
-            RefreshSelectionView();
-            SelectionChanged?.Invoke();
-            return;
-        }
-
-        if (!selectedDecksByCharacter.ContainsKey(binding.character)
-            && selectedDecksByCharacter.Count >= RequiredSelectionCount)
-        {
-            Debug.LogWarning("[RankingModeSavedDeckPanel] 랭킹모드는 저장덱 3개까지만 선택할 수 있습니다");
-            return;
-        }
-
-        selectedDecksByCharacter[binding.character] = binding.deck;
-        RefreshSelectionView();
-        SelectionChanged?.Invoke();
-    }
-
-    private void RefreshSelectionView()
-    {
-        foreach (DeckPanelBinding binding in panelBindings)
-        {
-            if (binding?.panelImage == null)
-            {
-                continue;
-            }
-
-            bool isSelected = binding.deck != null
-                && selectedDecksByCharacter.TryGetValue(binding.character, out CharacterDeckSave selectedDeck)
-                && IsSameDeck(selectedDeck, binding.deck);
-            binding.panelImage.color = isSelected ? selectedPanelColor : binding.defaultColor;
-        }
-    }
-
     private bool IsSameDeck(CharacterDeckSave left, CharacterDeckSave right)
     {
         if (left == null || right == null)
@@ -564,50 +372,6 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
         }
 
         return ReferenceEquals(left, right);
-    }
-
-    private Image ResolvePanelImage(RectTransform panel)
-    {
-        Image image = panel.GetComponent<Image>();
-        if (image == null)
-        {
-            image = panel.gameObject.AddComponent<Image>();
-            image.color = Color.clear;
-        }
-
-        image.raycastTarget = true;
-        return image;
-    }
-
-    private RectTransform ResolveCardRoot(RectTransform panel)
-    {
-        Transform existingRoot = panel.Find(CardRootName);
-        RectTransform root = existingRoot as RectTransform;
-        if (root == null)
-        {
-            GameObject rootObject = new GameObject(CardRootName, typeof(RectTransform));
-            root = rootObject.transform as RectTransform;
-            root.SetParent(panel, false);
-        }
-
-        root.anchorMin = Vector2.zero;
-        root.anchorMax = new Vector2(1f, CardAreaHeightRatio);
-        root.pivot = new Vector2(0.5f, 0.5f);
-        root.offsetMin = Vector2.zero;
-        root.offsetMax = Vector2.zero;
-        root.localScale = Vector3.one;
-        return root;
-    }
-
-    private void BindPanelClick(RectTransform panel, DeckPanelBinding binding)
-    {
-        RankingModeDeckPanelClickHandler clickHandler = panel.GetComponent<RankingModeDeckPanelClickHandler>();
-        if (clickHandler == null)
-        {
-            clickHandler = panel.gameObject.AddComponent<RankingModeDeckPanelClickHandler>();
-        }
-
-        clickHandler.Bind(() => SelectDeck(binding));
     }
 
     public void BeginRename(int panelIndex)
@@ -830,25 +594,5 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
         }
 
         return deck.name;
-    }
-}
-
-public class RankingModeDeckPanelClickHandler : MonoBehaviour, IPointerClickHandler
-{
-    private Action onClicked;
-
-    public void Bind(Action clickAction)
-    {
-        onClicked = clickAction;
-    }
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        if (eventData == null || eventData.button != PointerEventData.InputButton.Left)
-        {
-            return;
-        }
-
-        onClicked?.Invoke();
     }
 }

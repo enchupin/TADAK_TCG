@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public static class CharacterStandingButtonImageUtility
 {
     private const string StandingImageObjectName = "CharacterStandingImage";
-    private const string StandingImageResourcePath = "Image/CharacterStanding/CharacterStanding_";
+    private const string StandingImageResourcePath = "Image/Character/CharacterStanding/CharacterStanding_";
 
     private static readonly Dictionary<Character, Sprite> spriteCache = new Dictionary<Character, Sprite>();
 

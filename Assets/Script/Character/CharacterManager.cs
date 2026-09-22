@@ -44,6 +44,8 @@ public static class CharacterManager
             runtimeCharacter.characterName = sourceCharacter.name ?? string.Empty;
             runtimeCharacter.maxHp = sourceCharacter.maxHp;
             ApplyIdentityData(runtimeCharacter, sourceCharacter.identityCost);
+            runtimeCharacter.IdentitySprite = Resources.Load<Sprite>(
+                $"Image/Character/CharacterIdentity/Identity_{(Character)sourceCharacter.characterId}");
 
             if (!characterCache.ContainsKey(runtimeCharacter.characterId))
             {

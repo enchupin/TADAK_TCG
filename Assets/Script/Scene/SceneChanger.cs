@@ -7,7 +7,7 @@ public class SceneChanger : MonoBehaviour
 {
     [Header("Training Run Flow")]
     [SerializeField] private string trainingMapSceneName = "TrainingMapScene";
-    [SerializeField] private string trainingBattleSceneName = "TrainingScene";
+    [SerializeField] private string trainingBattleSceneName = "CombatScene";
 
     [Header("Training Mode Options")]
     [SerializeField] private Button infiniteModeButton;

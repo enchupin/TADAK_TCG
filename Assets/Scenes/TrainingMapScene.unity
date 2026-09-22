@@ -778,7 +778,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c701e191cd409b41993adfeb32fa099, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrainingMapController
-  battleSceneName: TrainingScene
+  battleSceneName: CombatScene
   restSceneName: TrainingRestScene
   autoStartRunIfMissing: 1
   nodeRoot: {fileID: 1929906177}

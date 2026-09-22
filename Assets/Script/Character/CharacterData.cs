@@ -7,4 +7,5 @@ public class CharacterData : ScriptableObject
     public string characterName;
     public int maxHp;
     public CharacterIdentityDefinition identity = new CharacterIdentityDefinition();
+    public Sprite IdentitySprite { get; internal set; }
 }

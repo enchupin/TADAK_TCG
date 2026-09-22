@@ -72,7 +72,7 @@ public class TrainingBattleManager : MonoBehaviour
     [SerializeField] private int playerBaseEnergyPerTurn = 3;
     [SerializeField] private float enemyActionDelay = 0.2f;
     [SerializeField] private Button endTurnButton;
-    [SerializeField] private bool showInstantWinButton = true;
+    [SerializeField] private Button instantWinButton;
     [SerializeField] private bool enableKeyboardEndTurn = true;
 
     [Header("Run Flow")]
@@ -109,7 +109,6 @@ public class TrainingBattleManager : MonoBehaviour
     private BattleBuffController battleBuffController;
     private CharacterIdentityService characterIdentityService;
     private bool hasResolvedBattleResult;
-    private Button instantWinButton;
     private readonly List<PendingMonsterRevive> pendingMonsterRevives = new List<PendingMonsterRevive>();
 
     public float EnemyActionDelay => enemyActionDelay;
@@ -156,7 +155,7 @@ public class TrainingBattleManager : MonoBehaviour
 
         InitializeCharacterSelection();
         InitializeBattle();
-        CreateInstantWinButton();
+        InitializeInstantWinButton();
 
         battleUI?.UpdateAllUI();
         StartGame();
@@ -190,35 +189,15 @@ public class TrainingBattleManager : MonoBehaviour
         UpdateAllUI();
     }
 
-    private void CreateInstantWinButton()
+    private void InitializeInstantWinButton()
     {
-        if (!showInstantWinButton || instantWinButton != null || endTurnButton == null)
+        if (instantWinButton == null)
         {
             return;
         }
 
-        RectTransform parent = endTurnButton.transform.parent as RectTransform;
-        RectTransform endTurnRect = endTurnButton.transform as RectTransform;
-        if (parent == null || endTurnRect == null)
-        {
-            return;
-        }
-
-        instantWinButton = Instantiate(endTurnButton, parent);
-        instantWinButton.name = "InstantWinButton";
-        instantWinButton.onClick.RemoveAllListeners();
+        instantWinButton.onClick.RemoveListener(OnClickInstantWin);
         instantWinButton.onClick.AddListener(OnClickInstantWin);
-
-        RectTransform instantWinRect = instantWinButton.transform as RectTransform;
-        if (instantWinRect != null)
-        {
-            instantWinRect.anchorMin = endTurnRect.anchorMin;
-            instantWinRect.anchorMax = endTurnRect.anchorMax;
-            instantWinRect.pivot = endTurnRect.pivot;
-            instantWinRect.sizeDelta = endTurnRect.sizeDelta;
-            instantWinRect.anchoredPosition = endTurnRect.anchoredPosition + new Vector2(-180f, 0f);
-            instantWinRect.localScale = Vector3.one;
-        }
 
         SetButtonLabel(instantWinButton, "승리");
         UpdateEndTurnButtonState();
@@ -1763,16 +1742,17 @@ public class TrainingBattleManager : MonoBehaviour
             : Array.Empty<CharacterIdentityState>();
     }
 
-    private static bool TryGetSelectedCharacterBySlot(int slotIndex, out Character character)
+    public bool TryGetSelectedCharacterBySlot(int slotIndex, out Character character)
     {
         character = Character.Monster;
 
-        if (slotIndex < 0 || SelectedButtonControl.selectedCharacterList == null || slotIndex >= SelectedButtonControl.selectedCharacterList.Count)
+        IReadOnlyList<CharacterIdentityState> identityStates = GetIdentityStates();
+        if (slotIndex < 0 || slotIndex >= identityStates.Count)
         {
             return false;
         }
 
-        character = SelectedButtonControl.selectedCharacterList[slotIndex];
+        character = identityStates[slotIndex].Character;
         return character != Character.Monster;
     }
 
