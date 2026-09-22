@@ -401,9 +401,9 @@ RectTransform:
   - {fileID: 3636883638952862668}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 0, y: 402}
   m_SizeDelta: {x: 150, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5423006137283878154
@@ -466,10 +466,6 @@ MonoBehaviour:
   targetImage: {fileID: 2113793905883819493}
   targetSpriteRenderer: {fileID: 0}
   monsterImageNameOverride: 
-  imageResourceFolder: Image/Monster
-  idleImageSuffix: Idle
-  attackImageSuffix: Attack
-  hitImageSuffix: Hit
   preserveImageAspect: 1
   logMissingImage: 1
   attackSound: {fileID: 0}
