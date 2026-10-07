@@ -21,7 +21,6 @@ public static class RankingModeSession
 {
     public const int RequiredSelectionCount = 3;
     public const int TurnLimit = 10;
-    public const string BestDamagePlayerPrefsKey = "RankingModeBestDamage";
 
     private static readonly List<RankingModeSelectedDeck> selectedDecks = new List<RankingModeSelectedDeck>();
 
@@ -105,14 +104,15 @@ public static class RankingModeSession
 
     public static RankingModeResult CompleteAndSaveBestDamage()
     {
-        int previousBestDamage = PlayerPrefs.GetInt(BestDamagePlayerPrefsKey, 0);
+        PlayerProfileSave profile = ProfileSaveManager.CurrentProfile;
+        int previousBestDamage = profile.rankingBestDamage;
         int bestDamage = Mathf.Max(previousBestDamage, TotalDamage);
         bool isNewBest = bestDamage > previousBestDamage;
 
         if (isNewBest)
         {
-            PlayerPrefs.SetInt(BestDamagePlayerPrefsKey, bestDamage);
-            PlayerPrefs.Save();
+            profile.rankingBestDamage = bestDamage;
+            ProfileSaveManager.Save(profile);
         }
 
         RankingModeResult result = new RankingModeResult(TotalDamage, bestDamage, isNewBest);

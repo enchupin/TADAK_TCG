@@ -10,6 +10,15 @@ public sealed class SteamBuildTools : IPreprocessBuildWithReport, IPostprocessBu
 {
     public int callbackOrder => 1000;
 
+    [MenuItem("Tools/Steam/현재 프로필 경로 출력", true)]
+    private static bool CanPrintProfilePath() => EditorApplication.isPlaying;
+
+    [MenuItem("Tools/Steam/현재 프로필 경로 출력")]
+    private static void PrintProfilePath()
+    {
+        Debug.Log($"[SteamBuildTools] 현재 프로필 경로: {ProfileSaveManager.ProfileFilePath}");
+    }
+
     [MenuItem("Tools/Steam/에디터 테스트 App ID 파일 준비")]
     private static void PrepareEditorAppId()
     {

@@ -1,18 +1,31 @@
-// ReSharper disable CheckNamespace
+﻿// ReSharper disable CheckNamespace
 using System;
 using System.Collections.Generic;
 
 [Serializable]
 public class PlayerProfileSave
 {
-    public const int CurrentProfileVersion = 1;
-
+    // 데이터 구조 버전 2
+    public const int CurrentProfileVersion = 2;
     public int profileVersion = CurrentProfileVersion;
-    public string playerId = string.Empty;
-    public string updatedAtUtc = string.Empty;
-    public List<CharacterDeckLibrarySave> characters = new();
 
-    public CharacterDeckLibrarySave FindLibrary(int characterId)
+    // 플레이어 아이디
+    public string playerId = string.Empty;
+
+    // 저장 파일이 어느 Steam 계정에 속하는지 기록
+    public string ownerSteamId = string.Empty;
+
+    // 랭킹모드 최고 피해량 기록
+    public int rankingBestDamage;
+
+    // 현재 시각
+    public string updatedAtUtc = string.Empty;
+
+    // 플레이어가 소유중인 직업별 저장 덱
+    public List<CharacterDeckListSave> characters = new();
+
+    // 특정 직업의 덱 리스트를 반환
+    public CharacterDeckListSave FindLibrary(int characterId)
     {
         if (characters == null)
         {
@@ -21,21 +34,22 @@ public class PlayerProfileSave
 
         for (int i = 0; i < characters.Count; i++)
         {
-            CharacterDeckLibrarySave library = characters[i];
+            CharacterDeckListSave library = characters[i];
             if (library == null)
             {
                 continue;
             }
-
             if (library.characterId == characterId)
             {
                 return library;
-            }
+            } 
         }
 
         return null;
     }
 
+
+    // 현재 시각을 updatedAtUtc에 기록
     public void TouchUpdatedAtUtc()
     {
         updatedAtUtc = DateTime.UtcNow.ToString("o");

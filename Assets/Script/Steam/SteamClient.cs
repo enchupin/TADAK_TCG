@@ -54,7 +54,12 @@ public sealed class SteamClient : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Bootstrap()
     {
-        if (instance == null)
+        EnsureInitialized();
+    }
+
+    public static void EnsureInitialized()
+    {
+        if (instance == null && State == SteamClientState.NotStarted)
         {
             new GameObject(nameof(SteamClient)).AddComponent<SteamClient>();
         }

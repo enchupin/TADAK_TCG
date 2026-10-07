@@ -101,7 +101,6 @@ InitTestScene*.unity*
 # Personal Settings
 .vscode/extensions.json
 .vscode/launch.json
-.vscode/settings.json
 TADAK_TCG.slnx
 ProjectSettings/EditorBuildSettings.asset
 ProjectSettings/ShaderGraphSettings.asset

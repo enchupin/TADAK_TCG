@@ -1,4 +1,5 @@
 [*.cs]
+charset = utf-8-bom
 csharp_style_implicit_object_creation_when_type_is_apparent = false
 dotnet_diagnostic.IDE0090.severity = none
 dotnet_diagnostic.IDE0083.severity = none
