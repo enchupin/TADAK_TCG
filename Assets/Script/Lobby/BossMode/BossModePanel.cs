@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public class RankingModePanel : MonoBehaviour
+public class BossModePanel : MonoBehaviour
 {
-    [SerializeField] private RankingModeStarterCardPanel starterCardPanel;
-    [SerializeField] private RankingModeSavedDeckPanel savedDeckPanel;
+    [SerializeField] private BossModeStarterCardPanel starterCardPanel;
+    [SerializeField] private BossModeSavedDeckPanel savedDeckPanel;
 
     public void ShowCharacterDeckInfo(int characterId)
     {
@@ -14,7 +14,7 @@ public class RankingModePanel : MonoBehaviour
 
     private void ShowStarterCards(Character character)
     {
-        RankingModeStarterCardPanel panel = ResolveStarterCardPanel();
+        BossModeStarterCardPanel panel = ResolveStarterCardPanel();
         if (panel == null)
         {
             Debug.LogWarning("[RankingModePanel] 기본카드 표시 패널을 찾을 수 없습니다");
@@ -26,7 +26,7 @@ public class RankingModePanel : MonoBehaviour
 
     private void ShowSavedDecks(Character character)
     {
-        RankingModeSavedDeckPanel panel = ResolveSavedDeckPanel();
+        BossModeSavedDeckPanel panel = ResolveSavedDeckPanel();
         if (panel == null)
         {
             Debug.LogWarning("[RankingModePanel] 저장덱 표시 패널을 찾을 수 없습니다");
@@ -36,12 +36,12 @@ public class RankingModePanel : MonoBehaviour
         panel.ShowSavedDecks(character);
     }
 
-    private RankingModeStarterCardPanel ResolveStarterCardPanel()
+    private BossModeStarterCardPanel ResolveStarterCardPanel()
     {
         return starterCardPanel;
     }
 
-    private RankingModeSavedDeckPanel ResolveSavedDeckPanel()
+    private BossModeSavedDeckPanel ResolveSavedDeckPanel()
     {
         return savedDeckPanel;
     }

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 9178011243559094876}
   - component: {fileID: 8947926882913876343}
   m_Layer: 5
-  m_Name: CharacterSelectButton_RankingScene
+  m_Name: CharacterSelectButton_BossMode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

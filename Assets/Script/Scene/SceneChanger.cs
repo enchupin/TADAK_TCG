@@ -10,57 +10,59 @@ public class SceneChanger : MonoBehaviour
     [SerializeField] private string trainingBattleSceneName = "CombatScene";
 
     [Header("Training Mode Options")]
-    [SerializeField] private Button infiniteModeButton;
-    [SerializeField] private Color infiniteModeSelectedColor = new Color(0.4f, 0.9f, 1f, 1f);
+    [UnityEngine.Serialization.FormerlySerializedAs("infiniteModeButton")]
+    [SerializeField] private Button bossModeButton;
+    [UnityEngine.Serialization.FormerlySerializedAs("infiniteModeSelectedColor")]
+    [SerializeField] private Color bossModeSelectedColor = new Color(0.4f, 0.9f, 1f, 1f);
 
-    private bool isInfiniteModeSelected;
-    private bool hasInfiniteModeDefaultColors;
-    private ColorBlock infiniteModeDefaultColors;
+    private bool isBossModeSelected;
+    private bool hasBossModeDefaultColors;
+    private ColorBlock bossModeDefaultColors;
 
     private void Awake()
     {
-        CaptureInfiniteModeButtonColors();
-        RefreshInfiniteModeButton();
+        CaptureBossModeButtonColors();
+        RefreshBossModeButton();
     }
 
     public void StartTrainingRun()
     {
-        StartTrainingRun(isInfiniteModeSelected);
+        StartTrainingRun(isBossModeSelected);
     }
 
-    public void StartInfiniteTrainingRun()
+    public void StartBossTrainingRun()
     {
-        SetInfiniteModeSelected(true);
+        SetBossModeSelected(true);
         StartTrainingRun(true);
     }
 
-    public void ToggleInfiniteMode()
+    public void ToggleBossMode()
     {
-        SetInfiniteModeSelected(!isInfiniteModeSelected);
+        SetBossModeSelected(!isBossModeSelected);
     }
 
-    public void SetInfiniteModeSelected(bool isSelected)
+    public void SetBossModeSelected(bool isSelected)
     {
-        isInfiniteModeSelected = isSelected;
-        ResolveInfiniteModeButtonFromEvent();
-        CaptureInfiniteModeButtonColors();
-        RefreshInfiniteModeButton();
+        isBossModeSelected = isSelected;
+        ResolveBossModeButtonFromEvent();
+        CaptureBossModeButtonColors();
+        RefreshBossModeButton();
     }
 
-    private void StartTrainingRun(bool isInfiniteMode)
+    private void StartTrainingRun(bool isBossMode)
     {
         TrainingBattleManager.buildingDeck = null;
         PlayerData.Reset();
-        InfiniteMode.SetMode(isInfiniteMode);
+        BossMode.SetMode(isBossMode);
         TrainingRunState.StartNewRun(
             trainingMapSceneName,
             trainingBattleSceneName);
         SceneManager.LoadScene(trainingMapSceneName);
     }
 
-    private void ResolveInfiniteModeButtonFromEvent()
+    private void ResolveBossModeButtonFromEvent()
     {
-        if (infiniteModeButton != null || EventSystem.current == null)
+        if (bossModeButton != null || EventSystem.current == null)
         {
             return;
         }
@@ -68,50 +70,50 @@ public class SceneChanger : MonoBehaviour
         GameObject selectedObject = EventSystem.current.currentSelectedGameObject;
         if (selectedObject != null)
         {
-            infiniteModeButton = selectedObject.GetComponent<Button>();
+            bossModeButton = selectedObject.GetComponent<Button>();
         }
     }
 
-    private void CaptureInfiniteModeButtonColors()
+    private void CaptureBossModeButtonColors()
     {
-        if (hasInfiniteModeDefaultColors || infiniteModeButton == null)
+        if (hasBossModeDefaultColors || bossModeButton == null)
         {
             return;
         }
 
-        infiniteModeDefaultColors = infiniteModeButton.colors;
-        hasInfiniteModeDefaultColors = true;
+        bossModeDefaultColors = bossModeButton.colors;
+        hasBossModeDefaultColors = true;
     }
 
-    private void RefreshInfiniteModeButton()
+    private void RefreshBossModeButton()
     {
-        if (infiniteModeButton == null)
+        if (bossModeButton == null)
         {
             return;
         }
 
-        if (hasInfiniteModeDefaultColors)
+        if (hasBossModeDefaultColors)
         {
-            infiniteModeButton.colors = infiniteModeDefaultColors;
+            bossModeButton.colors = bossModeDefaultColors;
         }
 
-        Color targetColor = hasInfiniteModeDefaultColors
-            ? infiniteModeDefaultColors.normalColor
+        Color targetColor = hasBossModeDefaultColors
+            ? bossModeDefaultColors.normalColor
             : Color.white;
 
-        if (isInfiniteModeSelected)
+        if (isBossModeSelected)
         {
-            ColorBlock colors = infiniteModeButton.colors;
-            colors.normalColor = infiniteModeSelectedColor;
-            colors.highlightedColor = infiniteModeSelectedColor;
-            colors.selectedColor = infiniteModeSelectedColor;
-            infiniteModeButton.colors = colors;
-            targetColor = infiniteModeSelectedColor;
+            ColorBlock colors = bossModeButton.colors;
+            colors.normalColor = bossModeSelectedColor;
+            colors.highlightedColor = bossModeSelectedColor;
+            colors.selectedColor = bossModeSelectedColor;
+            bossModeButton.colors = colors;
+            targetColor = bossModeSelectedColor;
         }
 
-        if (infiniteModeButton.targetGraphic != null)
+        if (bossModeButton.targetGraphic != null)
         {
-            infiniteModeButton.targetGraphic.color = targetColor;
+            bossModeButton.targetGraphic.color = targetColor;
         }
     }
 }

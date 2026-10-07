@@ -260,7 +260,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 189580529525327452}
-        m_TargetAssemblyTypeName: CharacterBookButton, Assembly-CSharp
+        m_TargetAssemblyTypeName: DictionaryButton, Assembly-CSharp
         m_MethodName: OnButtonClick
         m_Mode: 1
         m_Arguments:
@@ -282,6 +282,6 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69c97a87d3d9d0840a3ebd0cdf202231, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterBookButton
+  m_EditorClassIdentifier: Assembly-CSharp::DictionaryButton
   character: 0
   cardManager: {fileID: 0}

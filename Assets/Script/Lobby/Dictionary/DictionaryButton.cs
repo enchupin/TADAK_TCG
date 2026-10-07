@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// 캐릭터 도감에서 캐릭터 선택 버튼에 부착되는 스크립트
 /// 클릭 시 해당 캐릭터의 카드를 보여주도록 매니저에게 요청
 /// </summary>
-public class CharacterBookButton : MonoBehaviour
+public class DictionaryButton : MonoBehaviour
 {
     private const string ButtonClickSoundPath = "Sound/click5";
     private const float ButtonClickSoundVolumeScale = 1.25f;
@@ -59,7 +59,7 @@ public class CharacterBookButton : MonoBehaviour
             cardManager.AddCardWithoutInputController(cardObjects);
         }
         else {
-            Debug.LogError("[CharacterBookButton] HandManager reference is missing!");
+            Debug.LogError("[DictionaryButton] HandManager reference is missing!");
         }
     }
 }

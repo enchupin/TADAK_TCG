@@ -975,7 +975,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 471877320}
-        m_TargetAssemblyTypeName: RankingModePanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: BossModePanel, Assembly-CSharp
         m_MethodName: ShowCharacterDeckInfo
         m_Mode: 3
         m_Arguments:
@@ -1447,7 +1447,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c8db51b494f4395bd65fc753aff89d2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RankingModeStarterCardPanel
+  m_EditorClassIdentifier: Assembly-CSharp::BossModeStarterCardPanel
   cardPanel: {fileID: 215074580}
   cardPrefab: {fileID: 3192966017208014355, guid: df592ae6592a32d4b8266e0a5479e78e, type: 3}
   cardLayout: {fileID: 215074584}
@@ -2933,7 +2933,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 777104185}
-        m_TargetAssemblyTypeName: RankingModeSavedDeckPanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: BossModeSavedDeckPanel, Assembly-CSharp
         m_MethodName: BeginRename
         m_Mode: 3
         m_Arguments:
@@ -3284,7 +3284,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e09b1c777f8047278cc63f21aca9c3b4, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RankingModePanel
+  m_EditorClassIdentifier: Assembly-CSharp::BossModePanel
   starterCardPanel: {fileID: 215074583}
   savedDeckPanel: {fileID: 777104185}
 --- !u!1 &481329872
@@ -3691,7 +3691,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 777104185}
-        m_TargetAssemblyTypeName: RankingModeSavedDeckPanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: BossModeSavedDeckPanel, Assembly-CSharp
         m_MethodName: DeleteDeck
         m_Mode: 3
         m_Arguments:
@@ -4190,7 +4190,7 @@ GameObject:
   - component: {fileID: 566019337}
   - component: {fileID: 566019336}
   m_Layer: 5
-  m_Name: InfiniteMode
+  m_Name: BossMode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4262,7 +4262,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2094119972}
         m_TargetAssemblyTypeName: SceneChanger, Assembly-CSharp
-        m_MethodName: ToggleInfiniteMode
+        m_MethodName: ToggleBossMode
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4469,7 +4469,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 777104185}
-        m_TargetAssemblyTypeName: RankingModeSavedDeckPanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: BossModeSavedDeckPanel, Assembly-CSharp
         m_MethodName: BeginRename
         m_Mode: 3
         m_Arguments:
@@ -5662,7 +5662,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 777104185}
-        m_TargetAssemblyTypeName: RankingModeSavedDeckPanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: BossModeSavedDeckPanel, Assembly-CSharp
         m_MethodName: DeleteDeck
         m_Mode: 3
         m_Arguments:
@@ -5955,7 +5955,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c52b604a07184f59b71035670d1c9891, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RankingModeSavedDeckPanel
+  m_EditorClassIdentifier: Assembly-CSharp::BossModeSavedDeckPanel
   cardPanels:
   - {fileID: 624599195}
   - {fileID: 0}
@@ -6203,7 +6203,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 777104185}
-        m_TargetAssemblyTypeName: RankingModeSavedDeckPanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: BossModeSavedDeckPanel, Assembly-CSharp
         m_MethodName: BeginRename
         m_Mode: 3
         m_Arguments:
@@ -6614,7 +6614,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 777104185}
-        m_TargetAssemblyTypeName: RankingModeSavedDeckPanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: BossModeSavedDeckPanel, Assembly-CSharp
         m_MethodName: DeleteDeck
         m_Mode: 3
         m_Arguments:
@@ -7120,7 +7120,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 777104185}
-        m_TargetAssemblyTypeName: RankingModeSavedDeckPanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: BossModeSavedDeckPanel, Assembly-CSharp
         m_MethodName: BeginRename
         m_Mode: 3
         m_Arguments:
@@ -7956,7 +7956,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 777104185}
-        m_TargetAssemblyTypeName: RankingModeSavedDeckPanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: BossModeSavedDeckPanel, Assembly-CSharp
         m_MethodName: BeginRename
         m_Mode: 3
         m_Arguments:
@@ -8240,11 +8240,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2339061262503458450, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_text
-      value: CharacterBook
+      value: Dictionary
       objectReference: {fileID: 0}
     - target: {fileID: 3430380190081702258, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_Name
-      value: CharacterBook
+      value: Dictionary
       objectReference: {fileID: 0}
     - target: {fileID: 3564281530495826182, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_SizeDelta.x
@@ -8300,7 +8300,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ShowRankingModePanel
+      value: ShowBossModePanel
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -9061,7 +9061,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 777104185}
-        m_TargetAssemblyTypeName: RankingModeSavedDeckPanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: BossModeSavedDeckPanel, Assembly-CSharp
         m_MethodName: DeleteDeck
         m_Mode: 3
         m_Arguments:
@@ -9967,7 +9967,7 @@ MonoBehaviour:
     trailingPadding: 160
     scrollSensitivity: 0
     scrolltype: 0
-  characterBookPanelConfig:
+  dictionaryPanelConfig:
     content: {fileID: 2086427587}
     scrollView: {fileID: 1496946429}
     buttonPrefab: {fileID: 7372152510007238235, guid: a015c61eb1273184fb8f364f2ebacb8e, type: 3}
@@ -10081,9 +10081,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lobby.PanelControl
   mainPanel: {fileID: 2079744162}
-  rankingModePanel: {fileID: 471877318}
+  bossModePanel: {fileID: 471877318}
   trainingModePanel: {fileID: 1651407983}
-  characterBookPanel: {fileID: 683795860}
+  dictionaryPanel: {fileID: 683795860}
   settingsPanel: {fileID: 0}
 --- !u!4 &1243342145
 Transform:
@@ -12436,7 +12436,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ShowCharacterBookPanel
+      value: ShowDictionaryPanel
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -12444,7 +12444,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
-      value: CharacterBookScene
+      value: DictionaryScene
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -12667,7 +12667,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: InfiniteMode
+  m_text: BossMode
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -14571,7 +14571,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 777104185}
-        m_TargetAssemblyTypeName: RankingModeSavedDeckPanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: BossModeSavedDeckPanel, Assembly-CSharp
         m_MethodName: DeleteDeck
         m_Mode: 3
         m_Arguments:
@@ -15707,8 +15707,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SceneChanger
   trainingMapSceneName: TrainingMapScene
   trainingBattleSceneName: CombatScene
-  infiniteModeButton: {fileID: 566019336}
-  infiniteModeSelectedColor: {r: 0.4, g: 0.9, b: 1, a: 1}
+  bossModeButton: {fileID: 566019336}
+  bossModeSelectedColor: {r: 0.4, g: 0.9, b: 1, a: 1}
 --- !u!114 &2094119973
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16244,7 +16244,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 471877320}
-        m_TargetAssemblyTypeName: RankingModePanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: BossModePanel, Assembly-CSharp
         m_MethodName: ShowCharacterDeckInfo
         m_Mode: 3
         m_Arguments:
@@ -16377,7 +16377,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 471877320}
-        m_TargetAssemblyTypeName: RankingModePanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: BossModePanel, Assembly-CSharp
         m_MethodName: ShowCharacterDeckInfo
         m_Mode: 3
         m_Arguments:
@@ -16510,7 +16510,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 471877320}
-        m_TargetAssemblyTypeName: RankingModePanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: BossModePanel, Assembly-CSharp
         m_MethodName: ShowCharacterDeckInfo
         m_Mode: 3
         m_Arguments:
@@ -16643,7 +16643,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 471877320}
-        m_TargetAssemblyTypeName: RankingModePanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: BossModePanel, Assembly-CSharp
         m_MethodName: ShowCharacterDeckInfo
         m_Mode: 3
         m_Arguments:
@@ -16776,7 +16776,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 471877320}
-        m_TargetAssemblyTypeName: RankingModePanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: BossModePanel, Assembly-CSharp
         m_MethodName: ShowCharacterDeckInfo
         m_Mode: 3
         m_Arguments:
@@ -16909,7 +16909,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 471877320}
-        m_TargetAssemblyTypeName: RankingModePanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: BossModePanel, Assembly-CSharp
         m_MethodName: ShowCharacterDeckInfo
         m_Mode: 3
         m_Arguments:
@@ -17042,7 +17042,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 471877320}
-        m_TargetAssemblyTypeName: RankingModePanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: BossModePanel, Assembly-CSharp
         m_MethodName: ShowCharacterDeckInfo
         m_Mode: 3
         m_Arguments:
@@ -17175,7 +17175,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 471877320}
-        m_TargetAssemblyTypeName: RankingModePanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: BossModePanel, Assembly-CSharp
         m_MethodName: ShowCharacterDeckInfo
         m_Mode: 3
         m_Arguments:
@@ -17308,7 +17308,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 471877320}
-        m_TargetAssemblyTypeName: RankingModePanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: BossModePanel, Assembly-CSharp
         m_MethodName: ShowCharacterDeckInfo
         m_Mode: 3
         m_Arguments:

@@ -925,7 +925,7 @@ GameObject:
   - component: {fileID: 213810595}
   - component: {fileID: 213810594}
   m_Layer: 0
-  m_Name: RankingModeManager
+  m_Name: BossModeManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -942,7 +942,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 13f8a016f8464361a436fc2cafbc120d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RankingModeManager
+  m_EditorClassIdentifier: Assembly-CSharp::BossModeManager
   deckButtonPrefab: {fileID: 1634506444}
   buttonParent: {fileID: 2071293140}
   sceneChanger: {fileID: 0}
@@ -1245,7 +1245,7 @@ GameObject:
   m_Component:
   - component: {fileID: 471877319}
   m_Layer: 5
-  m_Name: RankingModePanel
+  m_Name: BossModePanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1526,7 +1526,7 @@ GameObject:
   m_Component:
   - component: {fileID: 683795861}
   m_Layer: 5
-  m_Name: CharacterBookPanel
+  m_Name: DictionaryPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1615,11 +1615,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2339061262503458450, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_text
-      value: InfiniteMode
+      value: BossMode
       objectReference: {fileID: 0}
     - target: {fileID: 3430380190081702258, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_Name
-      value: InfiniteMode
+      value: BossMode
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -1639,7 +1639,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ShowInfiniteModePanel
+      value: ShowBossModePanel
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -1819,11 +1819,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2339061262503458450, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_text
-      value: RankingMode
+      value: BossMode
       objectReference: {fileID: 0}
     - target: {fileID: 3430380190081702258, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_Name
-      value: RankingMode
+      value: BossMode
       objectReference: {fileID: 0}
     - target: {fileID: 3564281530495826182, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_SizeDelta.x
@@ -1851,7 +1851,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ShowRankingModePanel
+      value: ShowBossModePanel
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -2519,7 +2519,7 @@ MonoBehaviour:
     trailingPadding: 160
     scrollSensitivity: 0
     scrolltype: 0
-  characterBookPanelConfig:
+  dictionaryPanelConfig:
     content: {fileID: 2086427587}
     scrollView: {fileID: 1496946429}
     buttonPrefab: {fileID: 7372152510007238235, guid: a015c61eb1273184fb8f364f2ebacb8e, type: 3}
@@ -2558,9 +2558,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lobby.PanelControl
   mainPanel: {fileID: 2079744162}
-  rankingModePanel: {fileID: 471877318}
+  bossModePanel: {fileID: 471877318}
   trainingModePanel: {fileID: 1651407983}
-  characterBookPanel: {fileID: 683795860}
+  dictionaryPanel: {fileID: 683795860}
   settingsPanel: {fileID: 0}
 --- !u!4 &1243342145
 Transform:
@@ -3445,7 +3445,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2339061262503458450, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_text
-      value: CharacterBook
+      value: Dictionary
       objectReference: {fileID: 0}
     - target: {fileID: 3430380190081702258, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_Name
@@ -3477,7 +3477,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ShowCharacterBookPanel
+      value: ShowDictionaryPanel
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -3485,7 +3485,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
-      value: CharacterBookScene
+      value: DictionaryScene
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName

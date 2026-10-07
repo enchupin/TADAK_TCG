@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public sealed class RankingModeSelectedDeck
+public sealed class BossModeSelectedDeck
 {
     public Character character;
     public string deckId;
     public string deckName;
     public List<int> cardIds = new List<int>();
 
-    public RankingModeSelectedDeck(Character character, CharacterDeckSave deck)
+    public BossModeSelectedDeck(Character character, CharacterDeckSave deck)
     {
         this.character = character;
         deckId = deck != null ? deck.deckId : string.Empty;
@@ -17,17 +17,17 @@ public sealed class RankingModeSelectedDeck
     }
 }
 
-public static class RankingModeSession
+public static class BossModeSession
 {
     public const int RequiredSelectionCount = 3;
     public const int TurnLimit = 10;
 
-    private static readonly List<RankingModeSelectedDeck> selectedDecks = new List<RankingModeSelectedDeck>();
+    private static readonly List<BossModeSelectedDeck> selectedDecks = new List<BossModeSelectedDeck>();
 
     public static bool IsActive { get; private set; }
     public static int TotalDamage { get; private set; }
 
-    public static bool TryStartFromSelectedDecks(IReadOnlyList<RankingModeSelectedDeck> sourceDecks)
+    public static bool TryStartFromSelectedDecks(IReadOnlyList<BossModeSelectedDeck> sourceDecks)
     {
         if (!HasValidDeckSelection(sourceDecks))
         {
@@ -36,14 +36,14 @@ public static class RankingModeSession
         }
 
         selectedDecks.Clear();
-        foreach (RankingModeSelectedDeck sourceDeck in sourceDecks)
+        foreach (BossModeSelectedDeck sourceDeck in sourceDecks)
         {
             if (sourceDeck == null)
             {
                 continue;
             }
 
-            selectedDecks.Add(new RankingModeSelectedDeck(sourceDeck.character, null)
+            selectedDecks.Add(new BossModeSelectedDeck(sourceDeck.character, null)
             {
                 deckId = sourceDeck.deckId,
                 deckName = sourceDeck.deckName,
@@ -60,7 +60,7 @@ public static class RankingModeSession
     public static List<Character> CopySelectedCharacters()
     {
         List<Character> characters = new List<Character>(selectedDecks.Count);
-        foreach (RankingModeSelectedDeck selectedDeck in selectedDecks)
+        foreach (BossModeSelectedDeck selectedDeck in selectedDecks)
         {
             if (selectedDeck != null)
             {
@@ -79,7 +79,7 @@ public static class RankingModeSession
     public static BuildingDeck CreateBattleDeck()
     {
         List<int> mergedCardIds = new List<int>();
-        foreach (RankingModeSelectedDeck selectedDeck in selectedDecks)
+        foreach (BossModeSelectedDeck selectedDeck in selectedDecks)
         {
             if (selectedDeck?.cardIds != null)
             {
@@ -102,20 +102,20 @@ public static class RankingModeSession
         TotalDamage += damage;
     }
 
-    public static RankingModeResult CompleteAndSaveBestDamage()
+    public static BossModeResult CompleteAndSaveBestDamage()
     {
         PlayerProfileSave profile = ProfileSaveManager.CurrentProfile;
-        int previousBestDamage = profile.rankingBestDamage;
+        int previousBestDamage = profile.bossBestDamage;
         int bestDamage = Mathf.Max(previousBestDamage, TotalDamage);
         bool isNewBest = bestDamage > previousBestDamage;
 
         if (isNewBest)
         {
-            profile.rankingBestDamage = bestDamage;
+            profile.bossBestDamage = bestDamage;
             ProfileSaveManager.Save(profile);
         }
 
-        RankingModeResult result = new RankingModeResult(TotalDamage, bestDamage, isNewBest);
+        BossModeResult result = new BossModeResult(TotalDamage, bestDamage, isNewBest);
         ResetSession();
         return result;
     }
@@ -127,7 +127,7 @@ public static class RankingModeSession
         selectedDecks.Clear();
     }
 
-    private static bool HasValidDeckSelection(IReadOnlyList<RankingModeSelectedDeck> decks)
+    private static bool HasValidDeckSelection(IReadOnlyList<BossModeSelectedDeck> decks)
     {
         if (decks == null || decks.Count != RequiredSelectionCount)
         {
@@ -135,7 +135,7 @@ public static class RankingModeSession
         }
 
         HashSet<Character> selectedCharacters = new HashSet<Character>();
-        foreach (RankingModeSelectedDeck deck in decks)
+        foreach (BossModeSelectedDeck deck in decks)
         {
             if (deck == null || deck.cardIds == null || deck.cardIds.Count == 0)
             {
@@ -152,13 +152,13 @@ public static class RankingModeSession
     }
 }
 
-public readonly struct RankingModeResult
+public readonly struct BossModeResult
 {
     public readonly int totalDamage;
     public readonly int bestDamage;
     public readonly bool isNewBest;
 
-    public RankingModeResult(int totalDamage, int bestDamage, bool isNewBest)
+    public BossModeResult(int totalDamage, int bestDamage, bool isNewBest)
     {
         this.totalDamage = totalDamage;
         this.bestDamage = bestDamage;

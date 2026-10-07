@@ -2176,8 +2176,8 @@ public class TrainingBattleManager : MonoBehaviour
             isBossVictory = pendingNode.nodeType == TrainingNodeType.Boss;
         }
 
-        bool shouldStartNextInfiniteMap = isBossVictory && InfiniteMode.IsInfiniteMode;
-        bool shouldPersistRunDeck = isBossVictory && !shouldStartNextInfiniteMap;
+        bool shouldStartNextBossMap = isBossVictory && BossMode.IsBossMode;
+        bool shouldPersistRunDeck = isBossVictory && !shouldStartNextBossMap;
 
         if (PlayerData.Instance != null)
         {
@@ -2194,10 +2194,10 @@ public class TrainingBattleManager : MonoBehaviour
 
         TrainingRunState.CompletePendingNode(isVictory);
 
-        if (shouldStartNextInfiniteMap && !TrainingRunState.IsRunFailed)
+        if (shouldStartNextBossMap && !TrainingRunState.IsRunFailed)
         {
-            InfiniteMode.AdvanceMap();
-            TrainingRunState.StartNextInfiniteMap();
+            BossMode.AdvanceMap();
+            TrainingRunState.StartNextBossMap();
         }
 
         if (!isVictory || TrainingRunState.IsRunCompleted || TrainingRunState.IsRunFailed)

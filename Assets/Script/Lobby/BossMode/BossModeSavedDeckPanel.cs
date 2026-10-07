@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RankingModeSavedDeckPanel : MonoBehaviour
+public class BossModeSavedDeckPanel : MonoBehaviour
 {
     private const int MaxDeckPanelCount = 5;
 
@@ -280,7 +280,7 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
     private void CreateCard(DeckPanelBinding binding, Card card, int cardIndex)
     {
         GameObject cardObject = Instantiate(cardPrefab, binding.cardLayout.transform, false);
-        cardObject.name = $"RankingModeSavedDeckCard_{card.cardId}";
+        cardObject.name = $"BossModeSavedDeckCard_{card.cardId}";
         DisableCardRaycasts(cardObject);
 
         RectTransform cardRect = cardObject.transform as RectTransform;

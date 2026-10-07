@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RankingModeStarterCardPanel : MonoBehaviour
+public class BossModeStarterCardPanel : MonoBehaviour
 {
     private const int StarterCardCount = 7;
 
@@ -89,7 +89,7 @@ public class RankingModeStarterCardPanel : MonoBehaviour
     private void CreateCard(Card card, int cardIndex)
     {
         GameObject cardObject = Instantiate(cardPrefab, cardPanel, false);
-        cardObject.name = $"RankingModeStarterCard_{card.cardId}";
+        cardObject.name = $"BossModeStarterCard_{card.cardId}";
 
         RectTransform cardRect = cardObject.transform as RectTransform;
         if (!cardLayout.PlaceCard(cardRect, cardIndex))

@@ -1,20 +1,20 @@
 using UnityEngine;
 
-public class InfiniteMode : MonoBehaviour
+public class BossMode : MonoBehaviour
 {
     private const float MonsterScalePerMap = 0.2f;
 
-    public static bool IsInfiniteMode { get; private set; }
+    public static bool IsBossMode { get; private set; }
     public static int CurrentMapIndex { get; private set; } = 1;
-    public static float MonsterStatMultiplier => IsInfiniteMode
+    public static float MonsterStatMultiplier => IsBossMode
         ? 1f + Mathf.Max(0, CurrentMapIndex - 1) * MonsterScalePerMap
         : 1f;
 
-    public static void SetMode(bool isInfiniteMode)
+    public static void SetMode(bool isBossMode)
     {
-        IsInfiniteMode = isInfiniteMode;
+        IsBossMode = isBossMode;
         CurrentMapIndex = 1;
-        Debug.Log(isInfiniteMode
+        Debug.Log(isBossMode
             ? "[InfiniteMode] 무한모드를 시작합니다"
             : "[InfiniteMode] 무한모드를 해제합니다");
     }
@@ -26,7 +26,7 @@ public class InfiniteMode : MonoBehaviour
 
     public static void AdvanceMap()
     {
-        if (!IsInfiniteMode)
+        if (!IsBossMode)
         {
             return;
         }
@@ -37,7 +37,7 @@ public class InfiniteMode : MonoBehaviour
 
     public static int ScaleMonsterValue(int baseValue)
     {
-        if (!IsInfiniteMode || baseValue <= 0)
+        if (!IsBossMode || baseValue <= 0)
         {
             return Mathf.Max(0, baseValue);
         }
