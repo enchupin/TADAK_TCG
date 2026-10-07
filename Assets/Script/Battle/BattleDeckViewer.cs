@@ -28,6 +28,7 @@ public class BattleDeckViewer : MonoBehaviour
     [Header("참조")]
     [SerializeField] private TrainingBattleManager battleManager;
     private bool isSelectionMode;
+    public bool IsSelectionActive => isSelectionMode;
     private int requiredSelectionCount;
     private bool allowFewerSelection;
     private Action<List<Card>> onSelectionCompleted;

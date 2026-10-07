@@ -87,6 +87,7 @@ public sealed class SteamClient : MonoBehaviour
             {
                 State = SteamClientState.Disabled;
                 Debug.Log("[SteamClient] Steam 연동을 사용하지 않는 개발 모드입니다");
+                StatusChanged?.Invoke();
                 return;
             }
 
@@ -101,6 +102,7 @@ public sealed class SteamClient : MonoBehaviour
                 && SteamAPI.RestartAppIfNecessary(new AppId_t(settings.appId)))
             {
                 State = SteamClientState.RestartRequired;
+                StatusChanged?.Invoke();
                 Application.Quit();
                 return;
             }

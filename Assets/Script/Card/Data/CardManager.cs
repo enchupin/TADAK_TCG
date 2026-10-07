@@ -11,6 +11,14 @@ public static class CardManager
     private static Dictionary<int, CardData> cardCache;
     private static Dictionary<Character, List<CardData>> characterCache;
     private static bool isInitialized = false;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        cardCache = null;
+        characterCache = null;
+        isInitialized = false;
+    }
     
     /// <summary>
     /// 게임 시작 시 자동으로 초기화
@@ -23,7 +31,7 @@ public static class CardManager
         // CardCollection SO 로드
         CardCollection collection = Resources.Load<CardCollection>("CardCollection");
         
-        if (collection == null)
+        if (collection == null || collection.allCards == null)
         {
             Debug.LogError("[CardManager] CardCollection not found in Resources folder!");
             return;
@@ -35,6 +43,12 @@ public static class CardManager
         cardCache = new Dictionary<int, CardData>();
         foreach (var card in collection.allCards)
         {
+            if (card == null)
+            {
+                Debug.LogWarning("[CardManager] 비어 있는 카드 참조를 건너뜁니다");
+                continue;
+            }
+
             if (!cardCache.ContainsKey(card.cardId))
             {
                 cardCache[card.cardId] = card;
@@ -46,7 +60,7 @@ public static class CardManager
         }
         
         // 캐릭터별 캐싱 (빠른 필터링용)
-        characterCache = collection.allCards
+        characterCache = cardCache.Values
             .GroupBy(c => c.character)
             .ToDictionary(g => g.Key, g => g.ToList());
         
@@ -66,7 +80,7 @@ public static class CardManager
     {
         if (!isInitialized) Initialize();
         
-        if (cardCache.ContainsKey(cardId))
+        if (cardCache != null && cardCache.ContainsKey(cardId))
         {
             return cardCache[cardId];
         }
@@ -98,7 +112,7 @@ public static class CardManager
     {
         if (!isInitialized) Initialize();
         
-        if (characterCache.ContainsKey(character))
+        if (characterCache != null && characterCache.ContainsKey(character))
         {
             return characterCache[character];
         }
@@ -146,7 +160,7 @@ public static class CardManager
     {
         if (!isInitialized) Initialize();
         
-        return cardCache.Values.ToList();
+        return cardCache != null ? cardCache.Values.ToList() : new List<CardData>();
     }
     
     /// <summary>

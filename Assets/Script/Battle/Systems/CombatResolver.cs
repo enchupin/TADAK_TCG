@@ -9,6 +9,7 @@ public class CombatResolver
 {
     private readonly TrainingBattleManager battleManager;
     private bool isResolvingCardPlay;
+    public bool IsResolvingCardPlay => isResolvingCardPlay;
 
     public CombatResolver(TrainingBattleManager battleManager)
     {
@@ -75,55 +76,78 @@ public class CombatResolver
         Debug.Log($"[Player] 카드 사용: {playedCard.cardName}");
 
         isResolvingCardPlay = true;
-        battleManager.battleContext?.OnCardPlayed(playedCard);
-        battleManager.ChargeIdentityGauge(playedCard.character);
-
-        Monster originalTarget = eventData.targetMonster;
-        battleManager.currentTarget = originalTarget;
-        playedCard.Play(battleManager);
-        battleManager.currentTarget = null;
-        battleManager.HandlePlayedCardPowerEffects(playedCard, originalTarget, false);
-        if (cardUseAllEnemiesDamage > 0)
+        try
         {
-            battleManager.ApplyCardUseAllEnemiesDamage(cardUseAllEnemiesDamage);
-        }
-        ReplayCardEffectsIfNeeded(playedCard, originalTarget, repeatCount);
+            battleManager.UpdateEndTurnButtonState();
+            battleManager.battleContext?.OnCardPlayed(playedCard);
+            battleManager.ChargeIdentityGauge(playedCard.character);
 
-        battleManager.RefreshHandPlayableState();
-        battleManager.UpdateAllUI();
-        battleManager.StartCoroutine(FinishPlayedCardSequence(controller.cardUI, playedCard));
+            Monster originalTarget = eventData.targetMonster;
+            battleManager.currentTarget = originalTarget;
+            playedCard.Play(battleManager);
+            battleManager.currentTarget = null;
+            battleManager.HandlePlayedCardPowerEffects(playedCard, originalTarget, false);
+            if (cardUseAllEnemiesDamage > 0)
+            {
+                battleManager.ApplyCardUseAllEnemiesDamage(cardUseAllEnemiesDamage);
+            }
+            ReplayCardEffectsIfNeeded(playedCard, originalTarget, repeatCount);
+
+            battleManager.RefreshHandPlayableState();
+            battleManager.UpdateAllUI();
+            battleManager.StartCoroutine(FinishPlayedCardSequence(controller.cardUI, playedCard));
+        }
+        catch
+        {
+            battleManager.currentTarget = null;
+            CompleteCardResolution();
+            throw;
+        }
     }
 
     private IEnumerator FinishPlayedCardSequence(CardUI playedCardUI, Card playedCard)
     {
-        yield return null;
-
-        Coroutine useAnimation = null;
-        if (battleManager.handManager != null)
+        try
         {
-            useAnimation = battleManager.handManager.RemoveCardFromHandWithUseAnimation(playedCardUI);
-        }
+            yield return null;
 
-        if (useAnimation != null)
+            while (battleManager.HasPendingSelection && battleManager.CurrentTurnState != BattleTurnState.CombatEnd)
+            {
+                yield return null;
+            }
+
+            Coroutine useAnimation = null;
+            if (battleManager.handManager != null)
+            {
+                useAnimation = battleManager.handManager.RemoveCardFromHandWithUseAnimation(playedCardUI);
+            }
+
+            if (useAnimation != null)
+            {
+                yield return useAnimation;
+            }
+
+            ResolvePlayedCardDestination(playedCard);
+            if (battleManager.TryHandleCombatEnd())
+            {
+                yield break;
+            }
+
+            ApplyPostPlayKeywords(playedCard);
+            battleManager.TryHandleCombatEnd();
+        }
+        finally
         {
-            yield return useAnimation;
+            CompleteCardResolution();
         }
+    }
 
-        ResolvePlayedCardDestination(playedCard);
-        if (battleManager.TryHandleCombatEnd())
-        {
-            battleManager.RefreshHandPlayableState();
-            battleManager.UpdateAllUI();
-            isResolvingCardPlay = false;
-            yield break;
-        }
-
-        ApplyPostPlayKeywords(playedCard);
-
+    private void CompleteCardResolution()
+    {
+        isResolvingCardPlay = false;
+        battleManager.UpdateEndTurnButtonState();
         battleManager.RefreshHandPlayableState();
         battleManager.UpdateAllUI();
-        battleManager.TryHandleCombatEnd();
-        isResolvingCardPlay = false;
     }
 
     private void ResolvePlayedCardDestination(Card playedCard)
