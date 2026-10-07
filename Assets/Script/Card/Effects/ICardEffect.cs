@@ -12,4 +12,15 @@ public interface ICardEffect
     {
         Execute(battlemanager);
     }
+
+    System.Collections.IEnumerator ExecuteSequence(TrainingBattleManager battlemanager, int? amount = null)
+    {
+        if (amount.HasValue)
+            Execute(battlemanager, amount.Value);
+        else
+            Execute(battlemanager);
+
+        while (battlemanager.HasPendingSelection)
+            yield return null;
+    }
 }

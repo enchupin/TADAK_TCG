@@ -82,20 +82,8 @@ public class CombatResolver
             battleManager.battleContext?.OnCardPlayed(playedCard);
             battleManager.ChargeIdentityGauge(playedCard.character);
 
-            Monster originalTarget = eventData.targetMonster;
-            battleManager.currentTarget = originalTarget;
-            playedCard.Play(battleManager);
-            battleManager.currentTarget = null;
-            battleManager.HandlePlayedCardPowerEffects(playedCard, originalTarget, false);
-            if (cardUseAllEnemiesDamage > 0)
-            {
-                battleManager.ApplyCardUseAllEnemiesDamage(cardUseAllEnemiesDamage);
-            }
-            ReplayCardEffectsIfNeeded(playedCard, originalTarget, repeatCount);
-
-            battleManager.RefreshHandPlayableState();
-            battleManager.UpdateAllUI();
-            battleManager.StartCoroutine(FinishPlayedCardSequence(controller.cardUI, playedCard));
+            battleManager.StartCoroutine(CardEffectSequence.Run(
+                FinishPlayedCardSequence(controller.cardUI, playedCard, eventData.targetMonster, repeatCount, cardUseAllEnemiesDamage), battleManager));
         }
         catch
         {
@@ -105,16 +93,23 @@ public class CombatResolver
         }
     }
 
-    private IEnumerator FinishPlayedCardSequence(CardUI playedCardUI, Card playedCard)
+    private IEnumerator FinishPlayedCardSequence(CardUI playedCardUI, Card playedCard, Monster originalTarget, int repeatCount, int cardUseAllEnemiesDamage)
     {
         try
         {
-            yield return null;
+            battleManager.currentTarget = originalTarget;
+            yield return playedCard.PlaySequence(battleManager);
+            battleManager.currentTarget = null;
+            battleManager.HandlePlayedCardPowerEffects(playedCard, originalTarget, false);
+            if (cardUseAllEnemiesDamage > 0)
+                battleManager.ApplyCardUseAllEnemiesDamage(cardUseAllEnemiesDamage);
 
-            while (battleManager.HasPendingSelection && battleManager.CurrentTurnState != BattleTurnState.CombatEnd)
-            {
+            while (battleManager.HasPendingSelection)
                 yield return null;
-            }
+            yield return ReplayCardEffectsIfNeeded(playedCard, originalTarget, repeatCount);
+            battleManager.RefreshHandPlayableState();
+            battleManager.UpdateAllUI();
+            yield return null;
 
             Coroutine useAnimation = null;
             if (battleManager.handManager != null)
@@ -138,6 +133,7 @@ public class CombatResolver
         }
         finally
         {
+            battleManager.currentTarget = null;
             CompleteCardResolution();
         }
     }
@@ -237,14 +233,16 @@ public class CombatResolver
         battleManager.handManager.AddCard(shadowCopy);
     }
 
-    private void ReplayCardEffectsIfNeeded(Card playedCard, Monster originalTarget, int repeatCount)
+    private IEnumerator ReplayCardEffectsIfNeeded(Card playedCard, Monster originalTarget, int repeatCount)
     {
         for (int i = 0; i < repeatCount; i++)
         {
             battleManager.currentTarget = originalTarget;
-            playedCard.Play(battleManager);
+            yield return playedCard.PlaySequence(battleManager);
             battleManager.currentTarget = null;
             battleManager.HandlePlayedCardPowerEffects(playedCard, originalTarget, true);
+            while (battleManager.HasPendingSelection)
+                yield return null;
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class UseTopDeckCardsEffect : ICardEffect
@@ -12,15 +13,21 @@ public class UseTopDeckCardsEffect : ICardEffect
 
     public void Execute(TrainingBattleManager battleManager, int forwardedAmount)
     {
+        battleManager?.StartCoroutine(CardEffectSequence.Run(ExecuteSequence(battleManager, forwardedAmount), battleManager));
+    }
+
+    public IEnumerator ExecuteSequence(TrainingBattleManager battleManager, int? amount = null)
+    {
+        int forwardedAmount = amount ?? 0;
         if (battleManager?.usableDeckManager == null)
         {
-            return;
+            yield break;
         }
 
         int useCount = ResolveUseCount(battleManager, forwardedAmount);
         if (useCount <= 0)
         {
-            return;
+            yield break;
         }
 
         Monster currentTarget = battleManager.currentTarget;
@@ -32,7 +39,7 @@ public class UseTopDeckCardsEffect : ICardEffect
                 break;
             }
 
-            TriggeredCardExecutionUtility.ExecuteTriggeredCard(
+            yield return TriggeredCardExecutionUtility.ExecuteTriggeredCardSequence(
                 battleManager,
                 topDeckCard,
                 currentTarget,
