@@ -3486,6 +3486,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8e825d58aec523479c974e36e3bf4b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DictionaryCardLayout
+  requiredCardCount: 8
   debugCards:
   - {fileID: 1790434616}
   - {fileID: 1375309164}
@@ -3494,6 +3495,7 @@ MonoBehaviour:
   - {fileID: 1628135390}
   - {fileID: 1133294635}
   - {fileID: 970056176}
+  - {fileID: 1254973321}
 --- !u!114 &504445548
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4618,6 +4620,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8e825d58aec523479c974e36e3bf4b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DictionaryCardLayout
+  requiredCardCount: 8
   debugCards:
   - {fileID: 1986470827}
   - {fileID: 507769235}
@@ -4626,6 +4629,7 @@ MonoBehaviour:
   - {fileID: 1935898095}
   - {fileID: 1220646447}
   - {fileID: 1974980869}
+  - {fileID: 1279289388}
 --- !u!1 &638713555
 GameObject:
   m_ObjectHideFlags: 0
@@ -10237,6 +10241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8e825d58aec523479c974e36e3bf4b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DictionaryCardLayout
+  requiredCardCount: 8
   debugCards:
   - {fileID: 562827516}
   - {fileID: 138575945}
@@ -10245,6 +10250,7 @@ MonoBehaviour:
   - {fileID: 638713557}
   - {fileID: 1409900235}
   - {fileID: 1919271406}
+  - {fileID: 1408754667}
 --- !u!114 &1262522555
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11900,6 +11906,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8e825d58aec523479c974e36e3bf4b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DictionaryCardLayout
+  requiredCardCount: 8
   debugCards:
   - {fileID: 857038332}
   - {fileID: 532231371}
@@ -11908,6 +11915,7 @@ MonoBehaviour:
   - {fileID: 542218800}
   - {fileID: 1002611871}
   - {fileID: 391246063}
+  - {fileID: 708078188}
 --- !u!114 &1508608032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13815,6 +13823,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8e825d58aec523479c974e36e3bf4b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DictionaryCardLayout
+  requiredCardCount: 8
   debugCards:
   - {fileID: 989206042}
   - {fileID: 525945691}
@@ -13823,6 +13832,7 @@ MonoBehaviour:
   - {fileID: 1286419696}
   - {fileID: 1341125750}
   - {fileID: 17207802}
+  - {fileID: 2012492512}
 --- !u!114 &1766253744
 MonoBehaviour:
   m_ObjectHideFlags: 0

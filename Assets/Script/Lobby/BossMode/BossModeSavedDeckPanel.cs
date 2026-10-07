@@ -251,7 +251,7 @@ public class BossModeSavedDeckPanel : MonoBehaviour
 
     private void CreateDeckCards(DeckPanelBinding binding, CharacterDeckSave deck)
     {
-        if (deck?.cardIds == null || deck.cardIds.Count != DictionaryCardLayout.RequiredCardCount)
+        if (deck?.cardIds == null || !CharacterDeckSave.IsValidCardCount(deck.cardIds.Count))
         {
             throw new InvalidOperationException($"[RankingModeSavedDeckPanel] 저장덱은 정확히 {DictionaryCardLayout.RequiredCardCount}장이어야 합니다: {ResolveDeckName(deck)}");
         }

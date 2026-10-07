@@ -75,7 +75,7 @@ public static class ProfileSaveCodec
             }
             foreach (CharacterDeckSave deck in library.decks)
             {
-                if (deck?.cardIds == null || deck.cardIds.Count != 7)
+                if (deck?.cardIds == null || !CharacterDeckSave.IsValidCardCount(deck.cardIds.Count))
                 {
                     throw new InvalidDataException("저장 덱의 카드는 정확히 7장이어야 합니다");
                 }

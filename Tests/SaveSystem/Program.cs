@@ -91,6 +91,16 @@ public static class Program
         ProfileSaveCodec.Decode(JsonConvert.SerializeObject(first), first.ownerSteamId);
         passed++;
         first.characters[0].decks[0].cardIds.Add(8);
+        Check(ProfileSaveCodec.Decode(JsonConvert.SerializeObject(first), first.ownerSteamId)
+            .characters[0].decks[0].cardIds.Count == 8, "8장 저장덱 불러오기");
+        first.characters[0].decks[0].cardIds.Add(9);
+        Throws<InvalidDataException>(() => ProfileSaveCodec.Decode(JsonConvert.SerializeObject(first), first.ownerSteamId));
+        first.characters[0].decks[0].cardIds = new System.Collections.Generic.List<int> { 1 };
+        Check(ProfileSaveCodec.Decode(JsonConvert.SerializeObject(first), first.ownerSteamId)
+            .characters[0].decks[0].cardIds.Count == 1, "최대 장수 이하 저장덱 허용");
+        first.characters[0].decks[0].cardIds.Clear();
+        Throws<InvalidDataException>(() => ProfileSaveCodec.Decode(JsonConvert.SerializeObject(first), first.ownerSteamId));
+        first.characters[0].decks[0].cardIds = null;
         Throws<InvalidDataException>(() => ProfileSaveCodec.Decode(JsonConvert.SerializeObject(first), first.ownerSteamId));
         Console.WriteLine($"저장 시스템 검증 {passed}개 통과");
     }

@@ -137,7 +137,7 @@ public static class BossModeSession
         HashSet<Character> selectedCharacters = new HashSet<Character>();
         foreach (BossModeSelectedDeck deck in decks)
         {
-            if (deck == null || deck.cardIds == null || deck.cardIds.Count == 0)
+            if (deck == null || deck.cardIds == null || !CharacterDeckSave.IsValidCardCount(deck.cardIds.Count))
             {
                 return false;
             }

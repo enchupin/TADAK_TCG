@@ -7,6 +7,8 @@ public class DictionaryCardLayout : MonoBehaviour
 {
     public const int RequiredCardCount = 7;
 
+    [SerializeField] private int requiredCardCount = RequiredCardCount;
+
     [Header("씬 카드 배치 미리보기")]
     [Tooltip("카드 순서대로 연결하며 각 임시 카드의 RectTransform을 씬에서 조정")]
     [SerializeField] private Image[] debugCards;
@@ -65,12 +67,12 @@ public class DictionaryCardLayout : MonoBehaviour
             return;
         }
 
-        if (debugCards == null || debugCards.Length != RequiredCardCount)
+        if (debugCards == null || debugCards.Length != requiredCardCount)
         {
-            throw new System.InvalidOperationException($"[DictionaryCardLayout] 임시 카드는 정확히 {RequiredCardCount}개여야 합니다: {name}");
+            throw new System.InvalidOperationException($"[DictionaryCardLayout] 임시 카드는 정확히 {requiredCardCount}개여야 합니다: {name}");
         }
 
-        cardPositions = new CardPosition[RequiredCardCount];
+        cardPositions = new CardPosition[requiredCardCount];
         for (int i = 0; i < cardPositions.Length; i++)
         {
             Image preview = debugCards[i];
@@ -102,7 +104,7 @@ public class DictionaryCardLayout : MonoBehaviour
 
     public bool PlaceCard(RectTransform card, int index)
     {
-        if (card == null || !HasCardPositions || index < 0 || index >= RequiredCardCount)
+        if (card == null || !HasCardPositions || index < 0 || index >= cardPositions.Length)
         {
             Debug.LogError("[DictionaryCardLayout] 카드 배치 위치가 연결되지 않았습니다", this);
             return false;
