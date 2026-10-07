@@ -101,7 +101,6 @@ InitTestScene*.unity*
 # Personal Settings
 .vscode/extensions.json
 .vscode/launch.json
-.vscode/settings.json
 TADAK_TCG.slnx
 ProjectSettings/EditorBuildSettings.asset
 ProjectSettings/ShaderGraphSettings.asset
@@ -132,3 +131,5 @@ Assets/Resources/CardCollection.asset
 Assets/Resources/CardCollection.asset.meta
 Assets/Resources/CharacterCollection.asset
 Assets/Resources/CharacterCollection.asset.meta
+
+/steam_appid.txt

@@ -1,7 +1,8 @@
-// ReSharper disable CheckNamespace
+﻿// ReSharper disable CheckNamespace
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Globalization;
 using UnityEngine;
 
 public static class ProfileSaveManager
@@ -10,9 +11,65 @@ public static class ProfileSaveManager
 
     private static PlayerProfileSave currentProfile;
 
-    public static string ProfileFilePath => Path.Combine(Application.persistentDataPath, ProfileFileName);
+
+    // 현재 실행에서 사용 중인 저장 소유자
+    private static string currentOwner;
+
+    // 프로필 저장 파일 경로
+    public static string ProfileFilePath
+    {
+        get
+        {
+            // 경로를 만들기 전에 저장 소유자를 확인
+            string owner = ResolveOwner();
+
+            // 경로를 반환
+            return Path.Combine(
+                Application.persistentDataPath,
+                "Saves",
+                string.IsNullOrEmpty(owner) ? "Local" : owner,
+                ProfileFileName);
+        }
+    }
 
     public static PlayerProfileSave CurrentProfile => LoadOrCreate();
+
+    // ResetStatics() 호출, 호출 시점은 첫 씬이 로드되기 직전
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+
+    // 게임이 시작될 때 정적 변수 프로필 캐시와 계정 정보를 초기화
+    private static void ResetStatics()
+    {
+        currentProfile = null;
+        currentOwner = null;
+    }
+
+    // 현재 저장 소유자를 결정하고, 실행 중 계정 변경 검사
+    private static string ResolveOwner()
+    {
+        // StreamClient 초기화가 저장 시스템보다 늦게 실행되는 문제를 방지하기 위해 초기화 실행
+        SteamClient.EnsureInitialized();
+        string owner;
+        if (SteamClient.TryGetUser(out ulong userId, out _))
+        {
+            owner = userId.ToString(CultureInfo.InvariantCulture);
+        }
+        else if (SteamClient.State == SteamClientState.Disabled)
+        {
+            owner = string.Empty;
+        }
+        else
+        {
+            throw new InvalidOperationException("Steam 계정을 확인할 수 없어 프로필 접근을 중단합니다. Steam 실행 상태와 앱 권한을 확인하세요");
+        }
+
+        if (currentOwner != null && currentOwner != owner)
+        {
+            throw new InvalidOperationException("실행 중 Steam 계정이 변경되었습니다. 게임을 다시 시작하세요");
+        }
+        currentOwner = owner;
+        return owner;
+    }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Initialize()
@@ -22,6 +79,7 @@ public static class ProfileSaveManager
 
     public static PlayerProfileSave LoadOrCreate()
     {
+        ResolveOwner();
         if (currentProfile != null)
         {
             return currentProfile;
@@ -29,6 +87,13 @@ public static class ProfileSaveManager
 
         PlayerProfileSave loadedProfile = TryLoadFromDisk();
         bool shouldSave = false;
+
+        if (loadedProfile == null && string.IsNullOrEmpty(currentOwner))
+        {
+            string legacyPath = Path.Combine(Application.persistentDataPath, ProfileFileName);
+            loadedProfile = ProfileFileStore.Load(legacyPath, DecodeProfile);
+            shouldSave = loadedProfile != null;
+        }
 
         if (loadedProfile == null)
         {
@@ -42,12 +107,12 @@ public static class ProfileSaveManager
             shouldSave = true;
         }
 
-        currentProfile = loadedProfile;
-
         if (shouldSave)
         {
-            Save(currentProfile);
+            Save(loadedProfile);
         }
+
+        currentProfile = loadedProfile;
 
         return currentProfile;
     }
@@ -65,6 +130,8 @@ public static class ProfileSaveManager
             return;
         }
 
+        string owner = ResolveOwner();
+        ProfileSaveCodec.Validate(profile, owner);
         RepairProfileData(profile);
         profile.TouchUpdatedAtUtc();
 
@@ -75,17 +142,17 @@ public static class ProfileSaveManager
         }
 
         string json = JsonUtility.ToJson(profile, true);
-        File.WriteAllText(ProfileFilePath, json);
+        ProfileFileStore.Write(ProfileFilePath, json);
 
         currentProfile = profile;
 
         Debug.Log($"[ProfileSaveManager] 프로필 저장 완료: {ProfileFilePath}");
     }
 
-    public static CharacterDeckLibrarySave GetOrCreateLibrary(int characterId)
+    public static CharacterDeckListSave GetOrCreateLibrary(int characterId)
     {
         PlayerProfileSave profile = LoadOrCreate();
-        CharacterDeckLibrarySave library = profile.FindLibrary(characterId);
+        CharacterDeckListSave library = profile.FindLibrary(characterId);
         if (library != null)
         {
             return library;
@@ -103,40 +170,41 @@ public static class ProfileSaveManager
         return library;
     }
 
-    public static CharacterDeckLibrarySave GetOrCreateLibrary(Character character)
+    public static CharacterDeckListSave GetOrCreateLibrary(Character character)
     {
         return GetOrCreateLibrary(CharacterManager.GetIdByCharacterEnum(character));
     }
 
     private static PlayerProfileSave TryLoadFromDisk()
     {
-        if (!File.Exists(ProfileFilePath))
-        {
-            return null;
-        }
-
         try
         {
-            string json = File.ReadAllText(ProfileFilePath);
-            if (string.IsNullOrWhiteSpace(json))
-            {
-                Debug.LogWarning("[ProfileSaveManager] profile.json이 비어 있어 새 프로필을 생성합니다");
-                return null;
-            }
-
-            PlayerProfileSave profile = JsonUtility.FromJson<PlayerProfileSave>(json);
-            if (profile == null)
-            {
-                Debug.LogWarning("[ProfileSaveManager] profile.json 역직렬화에 실패해 새 프로필을 생성합니다");
-            }
-
-            return profile;
+            return ProfileFileStore.Load(ProfileFilePath, DecodeProfile);
         }
         catch (Exception ex)
         {
             Debug.LogWarning($"[ProfileSaveManager] profile.json 로드 중 예외가 발생했습니다: {ex.Message}");
-            return null;
+            throw;
         }
+    }
+
+    private static PlayerProfileSave DecodeProfile(string json)
+    {
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            Debug.LogWarning("[ProfileSaveManager] profile.json이 비어 있어 새 프로필을 생성합니다");
+            Debug.LogError("[ProfileSaveManager] 데이터 보호를 위해 새 프로필 생성 대신 복구를 시도합니다");
+            throw new InvalidDataException("프로필 파일이 비어 있습니다");
+        }
+
+        if (json.Trim() == "null")
+        {
+            Debug.LogWarning("[ProfileSaveManager] profile.json 역직렬화에 실패해 새 프로필을 생성합니다");
+            Debug.LogError("[ProfileSaveManager] 데이터 보호를 위해 새 프로필 생성 대신 복구를 시도합니다");
+            throw new InvalidDataException("프로필을 역직렬화할 수 없습니다");
+        }
+
+        return ProfileSaveCodec.Decode(json, currentOwner);
     }
 
     private static PlayerProfileSave CreateDefaultProfile()
@@ -144,11 +212,14 @@ public static class ProfileSaveManager
         PlayerProfileSave profile = new PlayerProfileSave
         {
             profileVersion = PlayerProfileSave.CurrentProfileVersion,
-            playerId = Guid.NewGuid().ToString("N")
+            playerId = Guid.NewGuid().ToString("N"),
+            ownerSteamId = currentOwner,
+            rankingBestDamage = string.IsNullOrEmpty(currentOwner)
+                ? Math.Max(0, PlayerPrefs.GetInt("RankingModeBestDamage", 0)) : 0
         };
 
         profile.TouchUpdatedAtUtc();
-        profile.characters = new List<CharacterDeckLibrarySave>();
+        profile.characters = new List<CharacterDeckListSave>();
 
         EnsureCharacterLibraries(profile);
         return profile;
@@ -158,8 +229,10 @@ public static class ProfileSaveManager
     {
         bool hasChanges = false;
 
-        if (profile.profileVersion <= 0)
+        if (profile.profileVersion < PlayerProfileSave.CurrentProfileVersion)
         {
+            profile.rankingBestDamage = Math.Max(profile.rankingBestDamage,
+                Math.Max(0, PlayerPrefs.GetInt("RankingModeBestDamage", 0)));
             profile.profileVersion = PlayerProfileSave.CurrentProfileVersion;
             hasChanges = true;
         }
@@ -172,7 +245,7 @@ public static class ProfileSaveManager
 
         if (profile.characters == null)
         {
-            profile.characters = new List<CharacterDeckLibrarySave>();
+            profile.characters = new List<CharacterDeckListSave>();
             hasChanges = true;
         }
 
@@ -195,14 +268,14 @@ public static class ProfileSaveManager
         return hasChanges;
     }
 
-    private static bool RepairLibraries(List<CharacterDeckLibrarySave> libraries)
+    private static bool RepairLibraries(List<CharacterDeckListSave> libraries)
     {
         bool hasChanges = false;
         HashSet<int> seenCharacterIds = new HashSet<int>();
 
         for (int i = libraries.Count - 1; i >= 0; i--)
         {
-            CharacterDeckLibrarySave library = libraries[i];
+            CharacterDeckListSave library = libraries[i];
             if (library == null)
             {
                 libraries.RemoveAt(i);
@@ -239,7 +312,7 @@ public static class ProfileSaveManager
         return hasChanges;
     }
 
-    private static bool RepairDecks(CharacterDeckLibrarySave library)
+    private static bool RepairDecks(CharacterDeckListSave library)
     {
         bool hasChanges = false;
         HashSet<string> seenDeckIds = new HashSet<string>(StringComparer.Ordinal);
@@ -319,9 +392,9 @@ public static class ProfileSaveManager
         return hasChanges;
     }
 
-    private static CharacterDeckLibrarySave CreateLibrary(int characterId)
+    private static CharacterDeckListSave CreateLibrary(int characterId)
     {
-        return new CharacterDeckLibrarySave
+        return new CharacterDeckListSave
         {
             characterId = characterId,
             selectedDeckId = string.Empty,

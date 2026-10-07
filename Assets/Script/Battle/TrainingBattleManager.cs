@@ -198,6 +198,7 @@ public class TrainingBattleManager : MonoBehaviour
 
         instantWinButton.onClick.RemoveListener(OnClickInstantWin);
         instantWinButton.onClick.AddListener(OnClickInstantWin);
+        instantWinButton.gameObject.SetActive(Application.isEditor || Debug.isDebugBuild);
 
         SetButtonLabel(instantWinButton, "승리");
         UpdateEndTurnButtonState();
@@ -205,7 +206,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     private void OnClickInstantWin()
     {
-        if (hasResolvedBattleResult)
+        if (hasResolvedBattleResult || !(Application.isEditor || Debug.isDebugBuild))
         {
             return;
         }
@@ -727,7 +728,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void EndTurn()
     {
-        if (!turnSystem.TryEndPlayerTurn())
+        if (!CanEndPlayerTurn() || !turnSystem.TryEndPlayerTurn())
         {
             Debug.LogWarning("[BattleManager] EndTurn ignored. It is not the player's actionable state.");
         }
@@ -891,19 +892,24 @@ public class TrainingBattleManager : MonoBehaviour
         return encounterSystem.GetLivingMonsters();
     }
 
+    public bool HasPendingSelection => isMonsterSelectionActive
+        || (battleDeckViewer != null && battleDeckViewer.IsSelectionActive);
+
     public bool CanPlayerPlayCard()
     {
-        return !isMonsterSelectionActive && turnSystem.CanPlayerPlayCard();
+        return !HasPendingSelection && !(combatResolver?.IsResolvingCardPlay ?? false)
+            && turnSystem.CanPlayerPlayCard();
     }
 
     public bool CanEndPlayerTurn()
     {
-        return !isMonsterSelectionActive && turnSystem.CanEndPlayerTurn();
+        return !HasPendingSelection && !(combatResolver?.IsResolvingCardPlay ?? false)
+            && turnSystem.CanEndPlayerTurn();
     }
 
     public bool CanInteractWithCards()
     {
-        return !isMonsterSelectionActive && turnSystem.CanPlayerPlayCard();
+        return CanPlayerPlayCard();
     }
 
     public void UpdateEndTurnButtonState()
@@ -915,7 +921,8 @@ public class TrainingBattleManager : MonoBehaviour
 
         if (instantWinButton != null)
         {
-            instantWinButton.interactable = !hasResolvedBattleResult && CurrentTurnState != BattleTurnState.CombatEnd;
+            instantWinButton.interactable = (Application.isEditor || Debug.isDebugBuild)
+                && !hasResolvedBattleResult && CurrentTurnState != BattleTurnState.CombatEnd;
         }
     }
 

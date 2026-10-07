@@ -80,7 +80,7 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
         }
 
         PlayerProfileSave profile = ProfileSaveManager.CurrentProfile;
-        CharacterDeckLibrarySave library = profile?.FindLibrary(CharacterManager.GetIdByCharacterEnum(binding.character));
+        CharacterDeckListSave library = profile?.FindLibrary(CharacterManager.GetIdByCharacterEnum(binding.character));
         if (library?.decks == null)
         {
             Debug.LogWarning("[RankingModeSavedDeckPanel] 삭제할 저장덱 라이브러리를 찾을 수 없습니다");
@@ -212,7 +212,7 @@ public class RankingModeSavedDeckPanel : MonoBehaviour
     private List<CharacterDeckSave> CollectDecks(Character character)
     {
         PlayerProfileSave profile = ProfileSaveManager.CurrentProfile;
-        CharacterDeckLibrarySave library = profile?.FindLibrary(CharacterManager.GetIdByCharacterEnum(character));
+        CharacterDeckListSave library = profile?.FindLibrary(CharacterManager.GetIdByCharacterEnum(character));
         List<CharacterDeckSave> decks = new List<CharacterDeckSave>();
         if (library?.decks == null)
         {

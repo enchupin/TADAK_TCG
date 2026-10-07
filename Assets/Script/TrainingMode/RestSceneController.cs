@@ -159,12 +159,21 @@ public class RestSceneController : MonoBehaviour
 
         isEscaping = true;
 
-        if (TrainingBattleManager.buildingDeck != null)
+        try
         {
-            TrainingRunDeckPersistence.SaveRunDeckAsPermanentDeck(
-                TrainingBattleManager.buildingDeck,
-                SelectedButtonControl.selectedCharacterList,
-                "이벤트 탈출로 저장덱을 갱신했습니다");
+            if (TrainingBattleManager.buildingDeck != null)
+            {
+                TrainingRunDeckPersistence.SaveRunDeckAsPermanentDeck(
+                    TrainingBattleManager.buildingDeck,
+                    SelectedButtonControl.selectedCharacterList,
+                    "이벤트 탈출로 저장덱을 갱신했습니다");
+            }
+        }
+        catch (System.Exception exception)
+        {
+            isEscaping = false;
+            Debug.LogError($"[RestSceneController] 덱 저장에 실패했습니다. 현재 진행을 유지하며 다시 시도할 수 있습니다: {exception.Message}");
+            return;
         }
 
         enhanceListView.Hide();

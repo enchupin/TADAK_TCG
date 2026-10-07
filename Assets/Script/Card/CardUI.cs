@@ -749,58 +749,10 @@ public static class CardDescriptionFormatter
             secondaryEffects = conditionalEffect.failEffects;
         }
 
+        // 조건 분기 결과를 카드 설명 수치에 반영하지 않음
         CollectResolvedAmounts(primaryEffects, battleManager, sourceCard, amounts);
+        // 조건 분기 결과를 카드 설명 수치에 반영하지 않음
         CollectResolvedAmounts(secondaryEffects, battleManager, sourceCard, amounts);
-    }
-
-    private static bool TryResolveAmount(List<ICardEffect> effects, TrainingBattleManager battleManager, Card sourceCard, out int amount)
-    {
-        amount = 0;
-        List<int> amounts = ResolveAmounts(effects, battleManager, sourceCard);
-        if (amounts == null || amounts.Count == 0)
-        {
-            return false;
-        }
-
-        amount = amounts[0];
-        return true;
-    }
-
-    private static bool TryResolveConditionalAmount(ConditionalEffect conditionalEffect, TrainingBattleManager battleManager, Card sourceCard, out int amount)
-    {
-        amount = 0;
-        if (conditionalEffect == null)
-        {
-            return false;
-        }
-
-        // 조건 분기 결과를 카드 설명 수치에 반영하지 않음
-        // 조건 분기 결과를 카드 설명 수치에 반영하지 않음
-        List<ICardEffect> primaryEffects = conditionalEffect.failEffects;
-        List<ICardEffect> secondaryEffects = conditionalEffect.successEffects;
-        if (primaryEffects == null || primaryEffects.Count == 0)
-        {
-            primaryEffects = conditionalEffect.successEffects;
-            secondaryEffects = conditionalEffect.failEffects;
-        }
-
-        if (TryResolveAmount(primaryEffects, battleManager, sourceCard, out amount))
-        {
-            return true;
-        }
-
-        return TryResolveAmount(secondaryEffects, battleManager, sourceCard, out amount);
-    }
-
-    private static bool TryResolveRepeatAmount(RepeatEffect repeatEffect, TrainingBattleManager battleManager, Card sourceCard, out int amount)
-    {
-        amount = 0;
-        if (repeatEffect?.effectToRepeat == null)
-        {
-            return false;
-        }
-
-        return TryResolveAmount(new List<ICardEffect> { repeatEffect.effectToRepeat }, battleManager, sourceCard, out amount);
     }
 
     private static int ResolveAttackAmount(AttackEffect effect, TrainingBattleManager battleManager, Card sourceCard)

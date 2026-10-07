@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 
+
+// 캐릭터 직업별 덱 리스트 클래스
 [Serializable]
-public class CharacterDeckLibrarySave
+public class CharacterDeckListSave
 {
     public int characterId;
     public string selectedDeckId = string.Empty;

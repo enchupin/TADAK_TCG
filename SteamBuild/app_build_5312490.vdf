@@ -1,0 +1,12 @@
+"AppBuild"
+{
+    "AppID" "5312490"
+    "Desc" "TADAK_TCG Windows"
+    "ContentRoot" "../Builds/Windows"
+    "BuildOutput" "../Temp/SteamPipe"
+    "Preview" "1"
+    "Depots"
+    {
+        "5312491" "depot_build_5312491.vdf"
+    }
+}

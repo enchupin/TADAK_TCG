@@ -24,7 +24,6 @@ public static class CharacterManager
 
         if (!CharacterJsonParser.TryLoad(out List<CharacterJsonEntry> characters))
         {
-            isInitialized = true;
             return;
         }
 
@@ -182,7 +181,6 @@ public static class CharacterManager
         }
 
         runtimeCharacter.identity ??= new CharacterIdentityDefinition();
-        runtimeCharacter.identity.cost = 0;
         runtimeCharacter.identity.description = string.Empty;
         runtimeCharacter.identity.cost = Mathf.Max(0, identityCost);
     }

@@ -274,7 +274,7 @@ public static class TrainingRunDeckPersistence
                 continue;
             }
 
-            CharacterDeckLibrarySave library = ProfileSaveManager.GetOrCreateLibrary(character);
+            CharacterDeckListSave library = ProfileSaveManager.GetOrCreateLibrary(character);
             if (library == null)
             {
                 continue;
@@ -320,7 +320,7 @@ public static class TrainingRunDeckPersistence
                 continue;
             }
 
-            CharacterDeckLibrarySave library = ProfileSaveManager.GetOrCreateLibrary(character);
+            CharacterDeckListSave library = ProfileSaveManager.GetOrCreateLibrary(character);
             if (library == null)
             {
                 mergedCardIds.AddRange(CharacterManager.GetStarterCardIds(character));
@@ -348,7 +348,7 @@ public static class TrainingRunDeckPersistence
         return mergedCardIds;
     }
 
-    private static CharacterDeckSave EnsureSelectedDeck(CharacterDeckLibrarySave library, Character character)
+    private static CharacterDeckSave EnsureSelectedDeck(CharacterDeckListSave library, Character character)
     {
         CharacterDeckSave selectedDeck = library?.GetSelectedDeck();
         if (selectedDeck != null)
@@ -359,7 +359,7 @@ public static class TrainingRunDeckPersistence
         return CreateStarterDeck(library, character);
     }
 
-    private static CharacterDeckSave CreateStarterDeck(CharacterDeckLibrarySave library, Character character)
+    private static CharacterDeckSave CreateStarterDeck(CharacterDeckListSave library, Character character)
     {
         if (library == null)
         {

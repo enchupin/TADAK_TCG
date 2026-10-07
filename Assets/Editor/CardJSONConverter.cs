@@ -174,6 +174,7 @@ public class CardJSONConverter : EditorWindow
         }
         cardGroups = LoadCardGroups();
         cardLocalizations = LoadCardLocalizations();
+        ValidateSourceFiles(jsonFiles);
 
         // CardCollection SO 로드
         CardCollection collection = GetOrCreateCardCollection();
@@ -390,6 +391,44 @@ public class CardJSONConverter : EditorWindow
                 CardEffectData effect = ReadEffect(effectObject);
                 if (effect != null) {
                     cardData.endTurnInHandEffects.Add(effect);
+                }
+            }
+        }
+    }
+
+    private void ValidateSourceFiles(string[] jsonFiles)
+    {
+        // 전체 입력 검증이 끝나기 전에는 기존 에셋과 컬렉션을 변경하지 않음
+        HashSet<int> cardIds = new HashSet<int>();
+        foreach (string path in jsonFiles)
+        {
+            JObject root = JObject.Parse(File.ReadAllText(path));
+            if (root["cards"] is not JArray cards)
+            {
+                throw new ArgumentException($"[CardJSONConverter] cards 배열이 없습니다: {path}");
+            }
+
+            foreach (JToken token in cards)
+            {
+                if (token is not JObject cardObject)
+                {
+                    throw new ArgumentException($"[CardJSONConverter] 카드 데이터가 객체가 아닙니다: {path}");
+                }
+
+                int cardId = ReadRequiredJsonInt(cardObject, "cardId");
+                if (cardId <= 0 || !cardIds.Add(cardId))
+                {
+                    throw new ArgumentException($"[CardJSONConverter] 유효하지 않거나 중복된 카드 ID입니다: {cardId}, {path}");
+                }
+
+                CardData candidate = ScriptableObject.CreateInstance<CardData>();
+                try
+                {
+                    UpdateCardData(candidate, cardObject);
+                }
+                finally
+                {
+                    DestroyImmediate(candidate);
                 }
             }
         }
