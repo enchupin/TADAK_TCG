@@ -137,9 +137,9 @@ public class PlayerData : MonoBehaviour
     /// <summary>
     /// 버프 추가
     /// </summary>
-    public void AddBuff(int buffId, int amount, bool applyInfiniteMonsterScaling = false)
+    public void AddBuff(int buffId, int amount, bool applyBossMonsterScaling = false)
     {
-        amount = ResolveIncomingMonsterBuffAmount(buffId, amount, applyInfiniteMonsterScaling);
+        amount = ResolveIncomingMonsterBuffAmount(buffId, amount, applyBossMonsterScaling);
         if (amount <= 0)
         {
             return;
@@ -180,7 +180,7 @@ public class PlayerData : MonoBehaviour
         }
     }
 
-    private int ResolveIncomingMonsterBuffAmount(int buffId, int amount, bool applyInfiniteMonsterScaling)
+    private int ResolveIncomingMonsterBuffAmount(int buffId, int amount, bool applyBossMonsterScaling)
     {
         if (amount <= 0)
         {
@@ -188,14 +188,14 @@ public class PlayerData : MonoBehaviour
         }
 
         TrainingBattleManager battleManager = TrainingBattleManager.Instance;
-        bool shouldScaleMonsterValue = applyInfiniteMonsterScaling
+        bool shouldScaleMonsterValue = applyBossMonsterScaling
             || (battleManager != null && battleManager.CurrentTurnState == BattleTurnState.EnemyAction);
         if (!shouldScaleMonsterValue || BuffData.IsBeneficialBuffId(buffId))
         {
             return amount;
         }
 
-        return InfiniteMode.ScaleMonsterValue(amount);
+        return BossMode.ScaleMonsterValue(amount);
     }
 
     /// <summary>

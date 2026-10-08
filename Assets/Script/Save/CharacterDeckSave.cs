@@ -5,6 +5,13 @@ using System.Collections.Generic;
 [Serializable]
 public class CharacterDeckSave
 {
+    public const int MaxCardCount = 8;
+
+    public static bool IsValidCardCount(int count)
+    {
+        return count > 0 && count <= MaxCardCount;
+    }
+
     public string deckId = string.Empty;
     public string name = string.Empty;
     public string createdAtUtc = string.Empty;

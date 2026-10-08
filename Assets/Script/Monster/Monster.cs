@@ -81,7 +81,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     protected virtual int BaseDefense => 0;
     protected virtual bool IsBossMonster => false;
     public bool IsBoss => IsBossMonster;
-    protected float InfiniteStatMultiplier => InfiniteMode.MonsterStatMultiplier;
+    protected float BossStatMultiplier => BossMode.MonsterStatMultiplier;
 
     protected virtual void Awake()
     {
@@ -325,7 +325,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         UpdateUI();
     }
 
-    public void AddDefense(int amount, bool applyInfiniteScaling = true)
+    public void AddDefense(int amount, bool applyBossScaling = true)
     {
         int finalAmount = Mathf.Max(0, amount);
         TrainingBattleManager battleManager = TrainingBattleManager.Instance;
@@ -334,9 +334,9 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
             finalAmount = battleManager.ResolveMonsterBarrierGain(this, finalAmount);
         }
 
-        if (applyInfiniteScaling)
+        if (applyBossScaling)
         {
-            finalAmount = ScaleInfiniteMonsterValue(finalAmount);
+            finalAmount = ScaleBossMonsterValue(finalAmount);
         }
 
         if (finalAmount <= 0)
@@ -436,9 +436,9 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         return hp <= 0;
     }
 
-    public void Heal(int amount, bool applyInfiniteScaling = false)
+    public void Heal(int amount, bool applyBossScaling = false)
     {
-        int finalAmount = applyInfiniteScaling ? ScaleInfiniteMonsterValue(amount) : Mathf.Max(0, amount);
+        int finalAmount = applyBossScaling ? ScaleBossMonsterValue(amount) : Mathf.Max(0, amount);
         int healAmount = Mathf.Min(finalAmount, maxHP - hp);
         hp += healAmount;
         Debug.Log($"{name} healed +{healAmount} (now: {hp}/{maxHP})");
@@ -557,7 +557,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     protected int PreviewOutgoingDamage(int baseDamage)
     {
-        return ScaleInfiniteMonsterValue(ApplyOutgoingDamageModifier(baseDamage));
+        return ScaleBossMonsterValue(ApplyOutgoingDamageModifier(baseDamage));
     }
 
     protected int PreviewBarrierGain(int baseAmount)
@@ -566,7 +566,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         int resolvedAmount = TrainingBattleManager.Instance != null
             ? TrainingBattleManager.Instance.ResolveMonsterBarrierGain(this, safeAmount)
             : safeAmount;
-        return ScaleInfiniteMonsterValue(resolvedAmount);
+        return ScaleBossMonsterValue(resolvedAmount);
     }
 
     protected int PreviewMonsterBuffAmount(int buffId, int amount)
@@ -588,7 +588,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
         return BuffData.IsBeneficialBuffId(buffId)
             ? Mathf.Max(0, amount)
-            : ScaleInfiniteMonsterValue(amount);
+            : ScaleBossMonsterValue(amount);
     }
 
     protected void AddDebuffToPlayer(PlayerData target, int buffId, int amount)
@@ -920,10 +920,10 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         currentBuffs ??= new List<Buff>();
         currentBuffs.Clear();
 
-        maxHP = ScaleInfiniteMonsterValue(BaseMaxHp);
+        maxHP = ScaleBossMonsterValue(BaseMaxHp);
         hp = maxHP;
-        defense = ScaleInfiniteMonsterValue(BaseDefense);
-        attackPower = ScaleInfiniteMonsterValue(BaseAttackPower);
+        defense = ScaleBossMonsterValue(BaseDefense);
+        attackPower = ScaleBossMonsterValue(BaseAttackPower);
         name = GetType().Name;
 
         skipCurrentTurnAction = false;
@@ -1080,9 +1080,9 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
             : Mathf.Max(0, baseDamage);
     }
 
-    protected int ScaleInfiniteMonsterValue(int value)
+    protected int ScaleBossMonsterValue(int value)
     {
-        return InfiniteMode.ScaleMonsterValue(value);
+        return BossMode.ScaleMonsterValue(value);
     }
 
     private int ResolveMonsterBuffAmount(int buffId, int amount, bool isNonStackable)
@@ -1098,7 +1098,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         }
 
         return ShouldScaleMonsterBuffAmount(buffId)
-            ? ScaleInfiniteMonsterValue(amount)
+            ? ScaleBossMonsterValue(amount)
             : amount;
     }
 

@@ -88,7 +88,7 @@ public static class TrainingRunState
     public static void StartNewRun(string mapSceneName, string battleSceneName)
     {
         ResetRun();
-        InfiniteMode.ResetProgress();
+        BossMode.ResetProgress();
 
         MapSceneName = mapSceneName;
         BattleSceneName = battleSceneName;
@@ -101,7 +101,7 @@ public static class TrainingRunState
         Debug.Log("[TrainingRunState] New run started.");
     }
 
-    public static void StartNextInfiniteMap()
+    public static void StartNextBossMap()
     {
         string mapSceneName = MapSceneName;
         string battleSceneName = BattleSceneName;
@@ -132,7 +132,7 @@ public static class TrainingRunState
             SetPlayerHealthState(playerCurrentHp, playerMaxHp);
         }
 
-        Debug.Log($"[TrainingRunState] 무한모드 {InfiniteMode.CurrentMapIndex}번째 맵을 시작했습니다");
+        Debug.Log($"[TrainingRunState] 무한모드 {BossMode.CurrentMapIndex}번째 맵을 시작했습니다");
     }
 
     public static void ResetRun()

@@ -9,9 +9,11 @@ namespace Lobby
 
         [Header("패널 오브젝트")]
         [SerializeField] private GameObject mainPanel;
-        [SerializeField] private GameObject rankingModePanel;
+        [UnityEngine.Serialization.FormerlySerializedAs("rankingModePanel")]
+        [SerializeField] private GameObject bossModePanel;
         [SerializeField] private GameObject trainingModePanel;
-        [SerializeField] private GameObject characterBookPanel;
+        [UnityEngine.Serialization.FormerlySerializedAs("characterBookPanel")]
+        [SerializeField] private GameObject dictionaryPanel;
         [SerializeField] private GameObject settingsPanel;
 
         private static AudioClip buttonClickSound; // 버튼 클릭음
@@ -37,11 +39,11 @@ namespace Lobby
             SetPanel(mainPanel, true);
         }
 
-        public void ShowRankingModePanel()
+        public void ShowBossModePanel()
         {
             PlayButtonClickSound();
             SetAllPanels(false);
-            SetPanel(rankingModePanel, true);
+            SetPanel(bossModePanel, true);
         }
 
         public void ShowTrainingModePanel()
@@ -56,11 +58,11 @@ namespace Lobby
             SetPanel(trainingModePanel, true);
         }
 
-        public void ShowCharacterBookPanel()
+        public void ShowDictionaryPanel()
         {
             PlayButtonClickSound();
             SetAllPanels(false);
-            SetPanel(characterBookPanel, true);
+            SetPanel(dictionaryPanel, true);
         }
 
         public void ShowSettingsPanel()
@@ -88,9 +90,9 @@ namespace Lobby
         private void SetAllPanels(bool active)
         {
             SetPanel(mainPanel, active);
-            SetPanel(rankingModePanel, active);
+            SetPanel(bossModePanel, active);
             SetPanel(trainingModePanel, active);
-            SetPanel(characterBookPanel, active);
+            SetPanel(dictionaryPanel, active);
             SetPanel(settingsPanel, active);
         }
 

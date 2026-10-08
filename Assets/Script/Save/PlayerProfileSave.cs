@@ -16,7 +16,9 @@ public class PlayerProfileSave
     public string ownerSteamId = string.Empty;
 
     // 랭킹모드 최고 피해량 기록
-    public int rankingBestDamage;
+    // 기존 저장 파일과 호환되도록 JSON 키는 유지
+    [Newtonsoft.Json.JsonProperty("rankingBestDamage")]
+    public int bossBestDamage;
 
     // 현재 시각
     public string updatedAtUtc = string.Empty;

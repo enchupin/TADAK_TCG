@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class RepeatEffect : ICardEffect
@@ -8,23 +9,24 @@ public class RepeatEffect : ICardEffect
 
     public void Execute(TrainingBattleManager battleManager)
     {
-        ExecuteInternal(battleManager, 0);
+        battleManager?.StartCoroutine(CardEffectSequence.Run(ExecuteSequence(battleManager), battleManager));
     }
 
     public void Execute(TrainingBattleManager battleManager, int amount)
     {
-        ExecuteInternal(battleManager, amount);
+        battleManager?.StartCoroutine(CardEffectSequence.Run(ExecuteSequence(battleManager, amount), battleManager));
     }
 
-    private void ExecuteInternal(TrainingBattleManager battleManager, int forwardedAmount)
+    public IEnumerator ExecuteSequence(TrainingBattleManager battleManager, int? amount = null)
     {
         if (battleManager == null || effectToRepeat == null) {
-            return;
+            yield break;
         }
 
+        int forwardedAmount = amount ?? 0;
         int repeatCount = ResolveRepeatCount(battleManager, forwardedAmount);
         for (int i = 0; i < repeatCount; i++) {
-            effectToRepeat.Execute(battleManager, forwardedAmount);
+            yield return effectToRepeat.ExecuteSequence(battleManager, forwardedAmount);
         }
     }
 

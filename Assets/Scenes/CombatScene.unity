@@ -4758,6 +4758,7 @@ GameObject:
   - component: {fileID: 1178847207}
   - component: {fileID: 1178847206}
   - component: {fileID: 1178847205}
+  - component: {fileID: 1178847208}
   m_Layer: 5
   m_Name: ExhaustPileBtn
   m_TagString: Untagged
@@ -4878,6 +4879,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1178847203}
   m_CullTransparentMesh: 1
+--- !u!114 &1178847208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1178847203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8a26f1d912a4d8590963d457ff68d32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIHoverSpriteEffect
+  hoverSprite: {fileID: 118611341925778174, guid: 74d5e4807371c8b4aa57ae5628d2befe, type: 3}
 --- !u!1 &1188217565
 GameObject:
   m_ObjectHideFlags: 0

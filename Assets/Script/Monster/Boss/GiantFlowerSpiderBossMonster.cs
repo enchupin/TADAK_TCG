@@ -47,7 +47,7 @@ public class GiantFlowerSpiderBossMonster : Monster
             default:
                 int barrierGain = PreviewBarrierGain(8);
                 int attackDamage = GetPreviewDamage(8);
-                int healAmount = ScaleInfiniteMonsterValue(8);
+                int healAmount = ScaleBossMonsterValue(8);
                 SetAttackIntent(attackDamage, $"보호막을 {barrierGain} 얻습니다. 피해를 {attackDamage} 입힙니다. 체력을 {healAmount} 회복합니다.");
                 SetPlannedPattern(30104, MonsterIntentIconType.Attack, MonsterIntentIconType.Protection, MonsterIntentIconType.Heal);
                 break;

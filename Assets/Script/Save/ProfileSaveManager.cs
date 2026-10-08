@@ -214,7 +214,7 @@ public static class ProfileSaveManager
             profileVersion = PlayerProfileSave.CurrentProfileVersion,
             playerId = Guid.NewGuid().ToString("N"),
             ownerSteamId = currentOwner,
-            rankingBestDamage = string.IsNullOrEmpty(currentOwner)
+            bossBestDamage = string.IsNullOrEmpty(currentOwner)
                 ? Math.Max(0, PlayerPrefs.GetInt("RankingModeBestDamage", 0)) : 0
         };
 
@@ -231,7 +231,7 @@ public static class ProfileSaveManager
 
         if (profile.profileVersion < PlayerProfileSave.CurrentProfileVersion)
         {
-            profile.rankingBestDamage = Math.Max(profile.rankingBestDamage,
+            profile.bossBestDamage = Math.Max(profile.bossBestDamage,
                 Math.Max(0, PlayerPrefs.GetInt("RankingModeBestDamage", 0)));
             profile.profileVersion = PlayerProfileSave.CurrentProfileVersion;
             hasChanges = true;

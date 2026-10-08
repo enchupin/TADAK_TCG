@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,21 +14,27 @@ public class ReplayExhaustedCardsEffect : ICardEffect
 
     public void Execute(TrainingBattleManager battleManager, int forwardedAmount)
     {
+        battleManager?.StartCoroutine(CardEffectSequence.Run(ExecuteSequence(battleManager, forwardedAmount), battleManager));
+    }
+
+    public IEnumerator ExecuteSequence(TrainingBattleManager battleManager, int? amount = null)
+    {
+        int forwardedAmount = amount ?? 0;
         if (battleManager?.usableDeckManager == null)
         {
-            return;
+            yield break;
         }
 
         List<Card> exhaustPile = battleManager.usableDeckManager.GetExhaustPile();
         if (exhaustPile == null || exhaustPile.Count == 0)
         {
-            return;
+            yield break;
         }
 
         int replayCount = ResolveReplayCount(battleManager, exhaustPile.Count, forwardedAmount);
         if (replayCount <= 0)
         {
-            return;
+            yield break;
         }
 
         List<Card> candidates = new List<Card>(exhaustPile);
@@ -43,7 +50,7 @@ public class ReplayExhaustedCardsEffect : ICardEffect
                 continue;
             }
 
-            TriggeredCardExecutionUtility.ExecuteTriggeredCard(
+            yield return TriggeredCardExecutionUtility.ExecuteTriggeredCardSequence(
                 battleManager,
                 replayCard,
                 currentTarget,

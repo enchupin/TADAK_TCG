@@ -220,7 +220,7 @@ GameObject:
   - component: {fileID: 86342010}
   - component: {fileID: 86342009}
   m_Layer: 0
-  m_Name: RankingModeManager
+  m_Name: BossModeManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -237,7 +237,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f725abf0ceee754791b5a6895ad9767, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RankingSceneButtonManager
+  m_EditorClassIdentifier: Assembly-CSharp::BossModeButtonManager
   characterButtons:
   - {fileID: 8671365174254741716}
   - {fileID: 1978274196}
@@ -1413,7 +1413,7 @@ GameObject:
   m_Component:
   - component: {fileID: 471877319}
   m_Layer: 5
-  m_Name: RankingModePanel
+  m_Name: BossModePanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1905,7 +1905,7 @@ GameObject:
   m_Component:
   - component: {fileID: 683795861}
   m_Layer: 5
-  m_Name: CharacterBookPanel
+  m_Name: DictionaryPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2372,7 +2372,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 190741038153893105, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
       propertyPath: m_Name
-      value: CharacterSelectButton_RankingScene
+      value: CharacterSelectButton_BossMode
       objectReference: {fileID: 0}
     - target: {fileID: 3024651634524755685, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
       propertyPath: manager
@@ -2498,11 +2498,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2339061262503458450, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_text
-      value: RankingMode
+      value: BossMode
       objectReference: {fileID: 0}
     - target: {fileID: 3430380190081702258, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_Name
-      value: RankingMode
+      value: BossMode
       objectReference: {fileID: 0}
     - target: {fileID: 3564281530495826182, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_SizeDelta.x
@@ -2530,7 +2530,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ShowRankingModePanel
+      value: ShowBossModePanel
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -3172,9 +3172,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lobby.PanelControl
   mainPanel: {fileID: 2079744162}
-  rankingModePanel: {fileID: 471877318}
+  bossModePanel: {fileID: 471877318}
   trainingModePanel: {fileID: 1651407983}
-  characterBookPanel: {fileID: 683795860}
+  dictionaryPanel: {fileID: 683795860}
   settingsPanel: {fileID: 0}
 --- !u!4 &1243342145
 Transform:
@@ -3563,7 +3563,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2339061262503458450, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_text
-      value: CharacterBook
+      value: Dictionary
       objectReference: {fileID: 0}
     - target: {fileID: 3430380190081702258, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_Name
@@ -3595,7 +3595,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ShowCharacterBookPanel
+      value: ShowDictionaryPanel
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -3603,7 +3603,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
-      value: CharacterBookScene
+      value: DictionaryScene
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -4871,7 +4871,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 190741038153893105, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
       propertyPath: m_Name
-      value: CharacterSelectButton_RankingScene
+      value: CharacterSelectButton_BossMode
       objectReference: {fileID: 0}
     - target: {fileID: 3024651634524755685, guid: 95f934699b9e85f439426490f7f65c4f, type: 3}
       propertyPath: manager

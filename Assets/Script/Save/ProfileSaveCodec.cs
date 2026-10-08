@@ -63,7 +63,7 @@ public static class ProfileSaveCodec
         {
             throw new InvalidOperationException("현재 Steam 계정과 프로필의 소유자가 다릅니다");
         }
-        if (profile.rankingBestDamage < 0 || profile.characters == null)
+        if (profile.bossBestDamage < 0 || profile.characters == null)
         {
             throw new InvalidDataException("프로필 기록 또는 캐릭터 목록이 올바르지 않습니다");
         }
@@ -75,7 +75,7 @@ public static class ProfileSaveCodec
             }
             foreach (CharacterDeckSave deck in library.decks)
             {
-                if (deck?.cardIds == null || deck.cardIds.Count != 7)
+                if (deck?.cardIds == null || !CharacterDeckSave.IsValidCardCount(deck.cardIds.Count))
                 {
                     throw new InvalidDataException("저장 덱의 카드는 정확히 7장이어야 합니다");
                 }

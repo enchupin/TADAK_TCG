@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 
 public static class TriggeredCardExecutionUtility
@@ -11,16 +12,29 @@ public static class TriggeredCardExecutionUtility
         bool allowRepeats = false,
         bool applyPostPlayKeywords = false)
     {
+        battleManager?.StartCoroutine(CardEffectSequence.Run(ExecuteTriggeredCardSequence(
+            battleManager, card, targetMonster, resolveDestination, triggerPowerEffects, allowRepeats, applyPostPlayKeywords), battleManager));
+    }
+
+    public static IEnumerator ExecuteTriggeredCardSequence(
+        TrainingBattleManager battleManager,
+        Card card,
+        Monster targetMonster = null,
+        bool resolveDestination = false,
+        bool triggerPowerEffects = false,
+        bool allowRepeats = false,
+        bool applyPostPlayKeywords = false)
+    {
         if (battleManager == null || card == null)
         {
-            return;
+            yield break;
         }
 
         Monster resolvedTarget = ResolveTarget(battleManager, targetMonster);
         int repeatCount = allowRepeats ? battleManager.ConsumeRepeatedPlayCount(card, false) : 0;
         int cardUseAllEnemiesDamage = triggerPowerEffects ? battleManager.GetCardUseAllEnemiesDamage() : 0;
 
-        ExecuteCardPlay(battleManager, card, resolvedTarget, true);
+        yield return ExecuteCardPlay(battleManager, card, resolvedTarget, true);
 
         if (triggerPowerEffects)
         {
@@ -34,13 +48,18 @@ public static class TriggeredCardExecutionUtility
 
         for (int i = 0; i < repeatCount; i++)
         {
-            ExecuteCardPlay(battleManager, card, resolvedTarget, false);
+            while (battleManager.HasPendingSelection)
+                yield return null;
+            yield return ExecuteCardPlay(battleManager, card, resolvedTarget, false);
 
             if (triggerPowerEffects)
             {
                 battleManager.HandlePlayedCardPowerEffects(card, resolvedTarget, true);
             }
         }
+
+        while (battleManager.HasPendingSelection)
+            yield return null;
 
         if (resolveDestination)
         {
@@ -53,7 +72,7 @@ public static class TriggeredCardExecutionUtility
         }
     }
 
-    private static void ExecuteCardPlay(TrainingBattleManager battleManager, Card card, Monster targetMonster, bool countAsPlayed)
+    private static IEnumerator ExecuteCardPlay(TrainingBattleManager battleManager, Card card, Monster targetMonster, bool countAsPlayed)
     {
         BattleContext context = battleManager?.battleContext;
         List<Card> previousThisCards = context?.GetContextCards("ThisCard") ?? new List<Card>();
@@ -68,15 +87,21 @@ public static class TriggeredCardExecutionUtility
             context?.OnCardPlayed(card);
         }
 
-        battleManager.currentTarget = targetMonster;
-        card.Play(battleManager);
-        battleManager.currentTarget = previousTarget;
+        try
+        {
+            battleManager.currentTarget = targetMonster;
+            yield return card.PlaySequence(battleManager);
+        }
+        finally
+        {
+            battleManager.currentTarget = previousTarget;
 
-        RestoreContext(context, "ThisCard", previousThisCards);
-        RestoreContext(context, "Self", previousSelfCards);
-        RestoreContext(context, "Selected", previousSelectedContextCards);
-        RestoreContext(context, "SelectedCard", previousSelectedCardContextCards);
-        context?.SetSelectedCards(previousSelectedCards);
+            RestoreContext(context, "ThisCard", previousThisCards);
+            RestoreContext(context, "Self", previousSelfCards);
+            RestoreContext(context, "Selected", previousSelectedContextCards);
+            RestoreContext(context, "SelectedCard", previousSelectedCardContextCards);
+            context?.SetSelectedCards(previousSelectedCards);
+        }
     }
 
     private static void RestoreContext(BattleContext context, string subject, List<Card> cards)

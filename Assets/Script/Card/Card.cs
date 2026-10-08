@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -62,47 +63,55 @@ public class Card
     /// </summary>
     public void Play(TrainingBattleManager battlemanager)
     {
+        battlemanager?.StartCoroutine(CardEffectSequence.Run(PlaySequence(battlemanager), battlemanager));
+    }
+
+    public IEnumerator PlaySequence(TrainingBattleManager battlemanager)
+    {
         Debug.Log($"[{cardName}] 카드 사용!");
         PromotePendingBoundCardIds();
 
-        if (battlemanager?.battleContext != null)
+        BattleContext context = battlemanager?.battleContext;
+        List<Card> previousThis = context?.GetContextCards("ThisCard");
+        List<Card> previousSelf = context?.GetContextCards("Self");
+        try
         {
-            List<Card> contextCards = new List<Card> { this };
-            battlemanager.battleContext.SetContextCards("ThisCard", contextCards);
-            battlemanager.battleContext.SetContextCards("Self", contextCards);
-        }
-
-        foreach (ICardEffect effect in effects)
-        {
-            effect.Execute(battlemanager);
-        }
-
-        if (boundCardIds != null && boundCardIds.Count > 0)
-        {
-            List<int> boundCardIdSnapshot = new List<int>(boundCardIds);
-            foreach (int boundCardId in boundCardIdSnapshot)
+            if (battlemanager?.battleContext != null)
             {
-                Card boundCard = CardManager.GetCardAsCard(boundCardId);
-                if (boundCard == null)
-                {
-                    continue;
-                }
-
-                TriggeredCardExecutionUtility.ExecuteTriggeredCard(
-                    battlemanager,
-                    boundCard,
-                    battlemanager != null ? battlemanager.currentTarget : null,
-                    resolveDestination: false,
-                    triggerPowerEffects: false,
-                    allowRepeats: false,
-                    applyPostPlayKeywords: false);
+                List<Card> contextCards = new List<Card> { this };
+                battlemanager.battleContext.SetContextCards("ThisCard", contextCards);
+                battlemanager.battleContext.SetContextCards("Self", contextCards);
             }
-        }
 
-        if (battlemanager?.battleContext != null)
+            yield return CardEffectSequence.Execute(effects, battlemanager);
+
+            if (boundCardIds != null && boundCardIds.Count > 0)
+            {
+                List<int> boundCardIdSnapshot = new List<int>(boundCardIds);
+                foreach (int boundCardId in boundCardIdSnapshot)
+                {
+                    Card boundCard = CardManager.GetCardAsCard(boundCardId);
+                    if (boundCard == null)
+                    {
+                        continue;
+                    }
+
+                    yield return TriggeredCardExecutionUtility.ExecuteTriggeredCardSequence(
+                        battlemanager,
+                        boundCard,
+                        battlemanager != null ? battlemanager.currentTarget : null,
+                        resolveDestination: false,
+                        triggerPowerEffects: false,
+                        allowRepeats: false,
+                        applyPostPlayKeywords: false);
+                }
+            }
+
+        }
+        finally
         {
-            battlemanager.battleContext.ClearContextCards("ThisCard");
-            battlemanager.battleContext.ClearContextCards("Self");
+            context?.SetContextCards("ThisCard", previousThis);
+            context?.SetContextCards("Self", previousSelf);
         }
     }
 

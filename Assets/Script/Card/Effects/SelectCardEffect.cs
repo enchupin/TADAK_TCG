@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using System.Collections.Generic;
 
 public class SelectCardEffect : ICardEffect
@@ -14,48 +15,51 @@ public class SelectCardEffect : ICardEffect
 
     public void Execute(TrainingBattleManager battleManager)
     {
-        ExecuteInternal(battleManager, count);
+        battleManager?.StartCoroutine(CardEffectSequence.Run(ExecuteSequence(battleManager), battleManager));
     }
 
     public void Execute(TrainingBattleManager battleManager, int amount)
     {
         int resolvedCount = amount >= 0 ? amount : count;
-        ExecuteInternal(battleManager, resolvedCount);
+        battleManager?.StartCoroutine(CardEffectSequence.Run(ExecuteSequence(battleManager, resolvedCount), battleManager));
     }
 
-    private void ExecuteInternal(TrainingBattleManager battleManager, int requestCount)
+    public IEnumerator ExecuteSequence(TrainingBattleManager battleManager, int? amount = null)
     {
-        if (battleManager == null || battleManager.battleContext == null || battleManager.usableDeckManager == null || battleManager.handManager == null) {
-            return;
-        }
+        if (battleManager == null || battleManager.battleContext == null || battleManager.usableDeckManager == null || battleManager.handManager == null)
+            yield break;
 
         List<Card> sourceCards = ResolveSourceCards(battleManager);
-        if (sourceCards.Count == 0) {
-            battleManager.battleContext.SetSelectedCards(new List<Card>());
-            battleManager.battleContext.ClearContextCards("Selected");
-            battleManager.battleContext.ClearContextCards("SelectedCard");
-            return;
-        }
-
+        int requestCount = amount.HasValue && amount.Value >= 0 ? amount.Value : count;
         int selectCount = Mathf.Clamp(requestCount, 0, sourceCards.Count);
-        if (random) {
-            ApplySelectionResult(battleManager, PickRandomCards(sourceCards, selectCount));
-            return;
-        }
-
-        if (battleManager.OpenSelectCardPanel(sourceCards, selectCount, selectedCards => ApplySelectionResult(battleManager, selectedCards), allowFewerSelection)) {
-            return;
-        }
-
-        List<Card> fallbackCards = new List<Card>();
-        for (int i = 0; i < selectCount; i++) {
-            Card selected = sourceCards[i];
-            if (selected != null) {
-                fallbackCards.Add(selected);
+        List<Card> result = new List<Card>();
+        if (selectCount > 0)
+        {
+            if (random)
+            {
+                result = PickRandomCards(sourceCards, selectCount);
+            }
+            else
+            {
+                bool confirmed = false;
+                bool opened = battleManager.OpenSelectCardPanel(sourceCards, selectCount, cards =>
+                {
+                    result = cards ?? new List<Card>();
+                    confirmed = true;
+                }, allowFewerSelection);
+                if (opened)
+                {
+                    while (!confirmed)
+                        yield return null;
+                }
+                else
+                {
+                    result = sourceCards.GetRange(0, selectCount);
+                }
             }
         }
 
-        ApplySelectionResult(battleManager, fallbackCards);
+        yield return ApplySelectionResult(battleManager, result);
     }
 
     private static List<Card> PickRandomCards(List<Card> sourceCards, int selectCount)
@@ -72,28 +76,28 @@ public class SelectCardEffect : ICardEffect
         return selectedCards;
     }
 
-    private void ApplySelectionResult(TrainingBattleManager battleManager, List<Card> selectedCards)
+    private IEnumerator ApplySelectionResult(TrainingBattleManager battleManager, List<Card> selectedCards)
     {
+        BattleContext context = battleManager.battleContext;
+        List<Card> previousSelected = context.GetSelectedCards();
+        List<Card> previousContext = context.GetContextCards("Selected");
+        List<Card> previousCardContext = context.GetContextCards("SelectedCard");
         List<Card> safeSelectedCards = selectedCards ?? new List<Card>();
-        battleManager.battleContext.SetSelectedCards(safeSelectedCards);
-        battleManager.battleContext.SetContextCards("Selected", safeSelectedCards);
-        battleManager.battleContext.SetContextCards("SelectedCard", safeSelectedCards);
+        context.SetSelectedCards(safeSelectedCards);
+        context.SetContextCards("Selected", safeSelectedCards);
+        context.SetContextCards("SelectedCard", safeSelectedCards);
         Debug.Log($"[SelectCard] {from}에서 {safeSelectedCards.Count}장 선택");
-
-        if (safeSelectedCards.Count == 0 || onActions == null) {
-            battleManager.battleContext.ClearContextCards("Selected");
-            battleManager.battleContext.ClearContextCards("SelectedCard");
-            battleManager.battleContext.SetSelectedCards(new List<Card>());
-            return;
+        try
+        {
+            if (safeSelectedCards.Count > 0)
+                yield return CardEffectSequence.Execute(onActions, battleManager, safeSelectedCards.Count);
         }
-
-        foreach (ICardEffect onAction in onActions) {
-            onAction?.Execute(battleManager, safeSelectedCards.Count);
+        finally
+        {
+            context.SetSelectedCards(previousSelected);
+            context.SetContextCards("Selected", previousContext);
+            context.SetContextCards("SelectedCard", previousCardContext);
         }
-
-        battleManager.battleContext.ClearContextCards("Selected");
-        battleManager.battleContext.ClearContextCards("SelectedCard");
-        battleManager.battleContext.SetSelectedCards(new List<Card>());
     }
 
     private List<Card> ResolveSourceCards(TrainingBattleManager battleManager)
@@ -181,7 +185,8 @@ public class SelectCardEffect : ICardEffect
     private static void AddHandCards(List<Card> target, TrainingBattleManager battleManager)
     {
         List<Card> handCards = battleManager.handManager.GetHandCards();
-        Card currentPlayedCard = battleManager.battleContext.GetLastPlayedCard();
+        Card currentPlayedCard = battleManager.battleContext.GetContextCard("ThisCard")
+            ?? battleManager.battleContext.GetLastPlayedCard();
         foreach (Card card in handCards) {
             if (card != null && card != currentPlayedCard) {
                 AddUnique(target, card);
@@ -208,7 +213,8 @@ public class SelectCardEffect : ICardEffect
             return;
         }
 
-        Card sourceCard = battleManager?.battleContext?.GetLastPlayedCard();
+        Card sourceCard = battleManager?.battleContext?.GetContextCard("ThisCard")
+            ?? battleManager?.battleContext?.GetLastPlayedCard();
         int excludedUniqueCardId = ResolveExcludedUniqueCardId(sourceCard);
 
         List<CardData> characterCards = CardManager.GetCardsByCharacter(sourceCharacter.Value);
@@ -268,7 +274,8 @@ public class SelectCardEffect : ICardEffect
             return null;
         }
 
-        Card lastPlayedCard = battleManager.battleContext.GetLastPlayedCard();
+        Card lastPlayedCard = battleManager.battleContext.GetContextCard("ThisCard")
+            ?? battleManager.battleContext.GetLastPlayedCard();
         if (lastPlayedCard == null) {
             return null;
         }

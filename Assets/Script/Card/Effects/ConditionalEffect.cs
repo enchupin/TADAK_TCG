@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -8,6 +9,11 @@ public class ConditionalEffect : ICardEffect
     public List<ICardEffect> failEffects = new List<ICardEffect>();
 
     public void Execute(TrainingBattleManager battleManager)
+    {
+        battleManager?.StartCoroutine(CardEffectSequence.Run(ExecuteSequence(battleManager), battleManager));
+    }
+
+    public IEnumerator ExecuteSequence(TrainingBattleManager battleManager, int? amount = null)
     {
         bool isMet;
         if (conditionData != null && conditionData.checks != null && conditionData.checks.Count > 0) {
@@ -21,14 +27,8 @@ public class ConditionalEffect : ICardEffect
         
         List<ICardEffect> effectsToRun = isMet ? successEffects : failEffects;
         
-        if (effectsToRun != null)
-        {
-            foreach (var effect in effectsToRun)
-            {
-                effect.Execute(battleManager);
-            }
-        }
-        
+        yield return CardEffectSequence.Execute(effectsToRun, battleManager);
+
         battleManager.UpdateAllUI();
     }
 }
