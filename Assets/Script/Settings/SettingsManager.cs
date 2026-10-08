@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class SettingsManager : MonoBehaviour
 {
+    private const string ButtonClickSoundPath = "Sound/click5";
+    private const float ButtonClickSoundVolumeScale = 1.25f;
     private const float ResolutionSnapDelay = 0.15f;
     private const float ResolutionWatchIgnoreDuration = 0.35f;
 
@@ -22,10 +24,12 @@ public class SettingsManager : MonoBehaviour
     public static SettingsManager Instance { get; private set; }
 
     [SerializeField] private GameObject settingsPanel;
+    [SerializeField] private Button openSettingsButton;
     [SerializeField] private Slider bgmSlider;
     [SerializeField] private Slider sfxSlider;
 
     private readonly HashSet<Button> boundResolutionButtons = new();
+    private AudioClip buttonClickSound;
     private Vector2Int lastObservedResolution;
     private Vector2Int pendingResizeResolution;
     private float pendingResizeChangedAt = -1f;
@@ -34,14 +38,42 @@ public class SettingsManager : MonoBehaviour
     private void Awake()
     {
         if (Instance != null && Instance != this) {
+            Instance.BindOpenSettingsButton(openSettingsButton);
             Destroy(gameObject);
             return;
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
+        BindOpenSettingsButton(openSettingsButton);
         BindResolutionButtons();
         InitializeResolutionState();
+    }
+
+    private void BindOpenSettingsButton(Button button)
+    {
+        if (button == null) {
+            return;
+        }
+
+        // 로비 재진입 시 유지 중인 매니저에 새 씬의 버튼을 연결
+        button.onClick.RemoveListener(OpenSettingsPanelFromButton);
+        button.onClick.AddListener(OpenSettingsPanelFromButton);
+    }
+
+    public void OpenSettingsPanelFromButton()
+    {
+        OpenSettingsPanel();
+    }
+
+    private void PlaySettingsOpenSound()
+    {
+        if (buttonClickSound == null) {
+            buttonClickSound = Resources.Load<AudioClip>(ButtonClickSoundPath);
+        }
+        if (buttonClickSound != null && SFXControl.Instance != null) {
+            SFXControl.Instance.PlaySFX(buttonClickSound, ButtonClickSoundVolumeScale);
+        }
     }
 
     private void Update()
@@ -66,13 +98,12 @@ public class SettingsManager : MonoBehaviour
             return;
         }
 
-        bool shouldOpen = !settingsPanel.activeSelf;
-        if (shouldOpen) {
-            SyncSoundSliders();
-            BindResolutionButtons();
+        if (!settingsPanel.activeSelf) {
+            OpenSettingsPanel();
+            return;
         }
 
-        settingsPanel.SetActive(shouldOpen);
+        settingsPanel.SetActive(false);
     }
 
     public void OpenSettingsPanel()
@@ -84,6 +115,7 @@ public class SettingsManager : MonoBehaviour
         SyncSoundSliders();
         BindResolutionButtons();
         settingsPanel.SetActive(true);
+        PlaySettingsOpenSound();
     }
 
     public bool IsSettingsPanelOpen()
