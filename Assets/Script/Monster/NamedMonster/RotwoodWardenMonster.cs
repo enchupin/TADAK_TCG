@@ -11,13 +11,13 @@ public class RotwoodWardenMonster : Monster
         switch (patternIndex)
         {
             case 0:
-                int healAmount = ScaleBossMonsterValue(15);
+                int healAmount = UnityEngine.Mathf.Max(0, 15);
                 int frailAmount = PreviewPlayerDebuffAmount(BattleRuntimeDefinitions.FrailBuffId, 3);
                 SetIntent($"체력을 {healAmount} 회복합니다. 적에게 빈약을 {frailAmount} 부여합니다.");
                 SetPlannedPattern(20101, MonsterIntentIconType.Heal, MonsterIntentIconType.HarmfulEffect);
                 break;
             case 1:
-                int interferenceHealAmount = ScaleBossMonsterValue(15);
+                int interferenceHealAmount = UnityEngine.Mathf.Max(0, 15);
                 int drawInterferenceAmount = PreviewPlayerDebuffAmount(BattleRuntimeDefinitions.DrawInterferenceBuffId, 1);
                 SetIntent($"체력을 {interferenceHealAmount} 회복합니다. 적에게 드로우 방해를 {drawInterferenceAmount} 부여합니다.");
                 SetPlannedPattern(20102, MonsterIntentIconType.Heal, MonsterIntentIconType.HarmfulEffect);
@@ -39,11 +39,11 @@ public class RotwoodWardenMonster : Monster
         switch (patternIndex)
         {
             case 0:
-                Heal(15, true);
+                Heal(15);
                 AddDebuffToPlayer(target, BattleRuntimeDefinitions.FrailBuffId, 3);
                 break;
             case 1:
-                Heal(15, true);
+                Heal(15);
                 AddDebuffToPlayer(target, BattleRuntimeDefinitions.DrawInterferenceBuffId, 1);
                 break;
             case 2:

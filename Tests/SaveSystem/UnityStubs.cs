@@ -18,7 +18,7 @@ namespace UnityEngine
     }
     public static class JsonUtility
     {
-        public static string ToJson(object value, bool pretty) => JsonConvert.SerializeObject(value);
+        public static string ToJson(object value, bool pretty) => throw new InvalidOperationException("저장 형식 검증은 실제 ProfileSaveCodec을 사용해야 합니다");
     }
     public static class PlayerPrefs
     {
@@ -43,4 +43,10 @@ public static class SteamClient
 public static class CharacterManager
 {
     public static int GetIdByCharacterEnum(Character character) => (int)character;
+    public static List<int> GetStarterCardIds(int characterId)
+    {
+        var ids = new List<int>();
+        for (int offset = 10; offset <= 70; offset += 10) ids.Add(characterId * 1000 + offset);
+        return ids;
+    }
 }

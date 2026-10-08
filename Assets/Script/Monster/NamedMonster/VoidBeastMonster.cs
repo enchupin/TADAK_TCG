@@ -23,7 +23,7 @@ public class VoidBeastMonster : Monster
                 SetPlannedPattern(20401, MonsterIntentIconType.Attack);
                 break;
             case 1:
-                int strengthAmount = ScaleBossMonsterValue(2);
+                int strengthAmount = UnityEngine.Mathf.Max(0, 2);
                 SetIntent($"적의 힘을 {strengthAmount} 감소시키고, 힘을 {strengthAmount} 얻습니다.");
                 SetPlannedPattern(20402, MonsterIntentIconType.HarmfulEffect, MonsterIntentIconType.BeneficialEffect);
                 break;
@@ -52,7 +52,7 @@ public class VoidBeastMonster : Monster
                 attackHitCount++;
                 break;
             case 1:
-                target?.ConsumeBuffStack(BattleRuntimeDefinitions.StrengthBuffId, ScaleBossMonsterValue(2));
+                target?.ConsumeBuffStack(BattleRuntimeDefinitions.StrengthBuffId, UnityEngine.Mathf.Max(0, 2));
                 AddBuff(BattleRuntimeDefinitions.StrengthBuffId, 2);
                 break;
             default:

@@ -137,8 +137,7 @@ public class DictionarySavedDeckPanel : MonoBehaviour
         }
 
         bool removed = false;
-        int removedIndex = -1;
-        CharacterDeckSave removedDeck = null;
+        List<CharacterDeckSave> previousDecks = new List<CharacterDeckSave>(library.decks);
         for (int i = library.decks.Count - 1; i >= 0; i--)
         {
             if (!IsSameDeck(library.decks[i], deleteTarget))
@@ -146,8 +145,6 @@ public class DictionarySavedDeckPanel : MonoBehaviour
                 continue;
             }
 
-            removedIndex = i;
-            removedDeck = library.decks[i];
             library.decks.RemoveAt(i);
             removed = true;
             break;
@@ -172,7 +169,8 @@ public class DictionarySavedDeckPanel : MonoBehaviour
         }
         catch (Exception exception)
         {
-            library.decks.Insert(removedIndex, removedDeck);
+            library.decks.Clear();
+            library.decks.AddRange(previousDecks);
             library.selectedDeckId = previousSelectedDeckId;
             Debug.LogError($"[BossModeSavedDeckPanel] 저장덱 삭제를 저장하지 못했습니다: {exception.Message}", this);
             return;
@@ -555,8 +553,25 @@ public class DictionarySavedDeckPanel : MonoBehaviour
 
         if (!string.Equals(binding.deck.name, deckName, StringComparison.Ordinal))
         {
+            string previousName = binding.deck.name;
             binding.deck.name = deckName;
-            ProfileSaveManager.Save();
+            try
+            {
+                ProfileSaveManager.Save();
+            }
+            catch (Exception exception)
+            {
+                binding.deck.name = previousName;
+                SetPanelText(binding.panel, previousName);
+                SetDeckNameTextActive(binding.panel, true);
+                if (binding.renameInputField != null)
+                {
+                    binding.renameInputField.SetTextWithoutNotify(previousName);
+                    binding.renameInputField.gameObject.SetActive(false);
+                }
+                Debug.LogError($"[DictionarySavedDeckPanel] 덱 이름을 저장하지 못했습니다: {exception.Message}", this);
+                return;
+            }
             Debug.Log($"[RankingModeSavedDeckPanel] 저장덱 이름을 변경했습니다: {deckName}");
         }
 

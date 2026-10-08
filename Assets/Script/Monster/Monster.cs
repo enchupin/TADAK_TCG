@@ -81,7 +81,6 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     protected virtual int BaseDefense => 0;
     protected virtual bool IsBossMonster => false;
     public bool IsBoss => IsBossMonster;
-    protected float BossStatMultiplier => BossMode.MonsterStatMultiplier;
 
     protected virtual void Awake()
     {
@@ -325,18 +324,13 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         UpdateUI();
     }
 
-    public void AddDefense(int amount, bool applyBossScaling = true)
+    public void AddDefense(int amount)
     {
         int finalAmount = Mathf.Max(0, amount);
         TrainingBattleManager battleManager = TrainingBattleManager.Instance;
         if (battleManager != null)
         {
             finalAmount = battleManager.ResolveMonsterBarrierGain(this, finalAmount);
-        }
-
-        if (applyBossScaling)
-        {
-            finalAmount = ScaleBossMonsterValue(finalAmount);
         }
 
         if (finalAmount <= 0)
@@ -376,7 +370,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         }
 
         bool isNonStackable = IsNonStackableBuff(buffId);
-        int resolvedAmount = ResolveMonsterBuffAmount(buffId, amount, isNonStackable);
+        int resolvedAmount = ResolveMonsterBuffAmount(amount, isNonStackable);
         int appliedAmount = isNonStackable ? 1 : resolvedAmount;
 
         BuffData data = BuffMetadataResolver.Resolve(buffId);
@@ -436,9 +430,9 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         return hp <= 0;
     }
 
-    public void Heal(int amount, bool applyBossScaling = false)
+    public void Heal(int amount)
     {
-        int finalAmount = applyBossScaling ? ScaleBossMonsterValue(amount) : Mathf.Max(0, amount);
+        int finalAmount = Mathf.Max(0, amount);
         int healAmount = Mathf.Min(finalAmount, maxHP - hp);
         hp += healAmount;
         Debug.Log($"{name} healed +{healAmount} (now: {hp}/{maxHP})");
@@ -557,7 +551,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     protected int PreviewOutgoingDamage(int baseDamage)
     {
-        return ScaleBossMonsterValue(ApplyOutgoingDamageModifier(baseDamage));
+        return UnityEngine.Mathf.Max(0, ApplyOutgoingDamageModifier(baseDamage));
     }
 
     protected int PreviewBarrierGain(int baseAmount)
@@ -566,12 +560,12 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         int resolvedAmount = TrainingBattleManager.Instance != null
             ? TrainingBattleManager.Instance.ResolveMonsterBarrierGain(this, safeAmount)
             : safeAmount;
-        return ScaleBossMonsterValue(resolvedAmount);
+        return UnityEngine.Mathf.Max(0, resolvedAmount);
     }
 
     protected int PreviewMonsterBuffAmount(int buffId, int amount)
     {
-        return ResolveMonsterBuffAmount(buffId, amount, IsNonStackableBuff(buffId));
+        return ResolveMonsterBuffAmount(amount, IsNonStackableBuff(buffId));
     }
 
     protected int PreviewPlayerDebuffAmount(int buffId, int amount)
@@ -586,14 +580,12 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
             return 1;
         }
 
-        return BuffData.IsBeneficialBuffId(buffId)
-            ? Mathf.Max(0, amount)
-            : ScaleBossMonsterValue(amount);
+        return Mathf.Max(0, amount);
     }
 
     protected void AddDebuffToPlayer(PlayerData target, int buffId, int amount)
     {
-        target?.AddBuff(buffId, amount, true);
+        target?.AddBuff(buffId, amount);
     }
 
     protected void AddCardToPlayerDiscard(Card card)
@@ -920,10 +912,10 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         currentBuffs ??= new List<Buff>();
         currentBuffs.Clear();
 
-        maxHP = ScaleBossMonsterValue(BaseMaxHp);
+        maxHP = UnityEngine.Mathf.Max(0, BaseMaxHp);
         hp = maxHP;
-        defense = ScaleBossMonsterValue(BaseDefense);
-        attackPower = ScaleBossMonsterValue(BaseAttackPower);
+        defense = UnityEngine.Mathf.Max(0, BaseDefense);
+        attackPower = UnityEngine.Mathf.Max(0, BaseAttackPower);
         name = GetType().Name;
 
         skipCurrentTurnAction = false;
@@ -1080,12 +1072,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
             : Mathf.Max(0, baseDamage);
     }
 
-    protected int ScaleBossMonsterValue(int value)
-    {
-        return BossMode.ScaleMonsterValue(value);
-    }
-
-    private int ResolveMonsterBuffAmount(int buffId, int amount, bool isNonStackable)
+    private int ResolveMonsterBuffAmount(int amount, bool isNonStackable)
     {
         if (amount <= 0)
         {
@@ -1097,15 +1084,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
             return 1;
         }
 
-        return ShouldScaleMonsterBuffAmount(buffId)
-            ? ScaleBossMonsterValue(amount)
-            : amount;
-    }
-
-    private static bool ShouldScaleMonsterBuffAmount(int buffId)
-    {
-        return BuffData.IsBeneficialBuffId(buffId)
-            && buffId != BattleRuntimeDefinitions.ThiefBuffId;
+        return amount;
     }
 
     private void EnsureIntentTextReference()

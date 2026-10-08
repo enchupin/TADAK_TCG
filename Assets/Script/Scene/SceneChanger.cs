@@ -1,7 +1,5 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class SceneChanger : MonoBehaviour
 {
@@ -13,7 +11,6 @@ public class SceneChanger : MonoBehaviour
     {
         TrainingBattleManager.buildingDeck = null;
         PlayerData.Reset();
-        BossMode.SetMode(false);
         TrainingRunState.StartNewRun(
             trainingMapSceneName,
             trainingBattleSceneName);
