@@ -975,7 +975,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 471877320}
-        m_TargetAssemblyTypeName: BossModePanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: DictionaryPanelController, Assembly-CSharp
         m_MethodName: ShowCharacterDeckInfo
         m_Mode: 3
         m_Arguments:
@@ -1447,7 +1447,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c8db51b494f4395bd65fc753aff89d2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BossModeStarterCardPanel
+  m_EditorClassIdentifier: Assembly-CSharp::DictionaryStarterCardPanel
   cardPanel: {fileID: 215074580}
   cardPrefab: {fileID: 3192966017208014355, guid: df592ae6592a32d4b8266e0a5479e78e, type: 3}
   cardLayout: {fileID: 215074584}
@@ -3285,7 +3285,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e09b1c777f8047278cc63f21aca9c3b4, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BossModePanel
+  m_EditorClassIdentifier: Assembly-CSharp::DictionaryPanelController
   starterCardPanel: {fileID: 215074583}
   savedDeckPanel: {fileID: 777104185}
 --- !u!1 &481329872
@@ -4198,7 +4198,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &566019335
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4262,19 +4262,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 566019337}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2094119972}
-        m_TargetAssemblyTypeName: SceneChanger, Assembly-CSharp
-        m_MethodName: ToggleBossMode
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &566019337
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8504,7 +8492,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ShowBossModePanel
+      value: ShowDictionaryPanel
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -10298,20 +10286,11 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 969351136c5c4caa836060b530380794, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TrainingPanelButtonCreateManager
+  m_EditorClassIdentifier: Assembly-CSharp::TrainingModeButtonCreateManager
   trainingPanelConfig:
     content: {fileID: 1099124565}
     scrollView: {fileID: 324155060}
     buttonPrefab: {fileID: 190741038153893105, guid: e3ef6995bf6c9c54392bfb9a720c2552, type: 3}
-    startPosition: {x: 160, y: 0, z: 0}
-    buttonSpacing: 240
-    trailingPadding: 160
-    scrollSensitivity: 0
-    scrolltype: 0
-  dictionaryPanelConfig:
-    content: {fileID: 2086427587}
-    scrollView: {fileID: 1496946429}
-    buttonPrefab: {fileID: 7372152510007238235, guid: a015c61eb1273184fb8f364f2ebacb8e, type: 3}
     startPosition: {x: 160, y: 0, z: 0}
     buttonSpacing: 240
     trailingPadding: 160
@@ -10422,9 +10401,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lobby.PanelControl
   mainPanel: {fileID: 2079744162}
-  bossModePanel: {fileID: 471877318}
   trainingModePanel: {fileID: 1651407983}
-  dictionaryPanel: {fileID: 683795860}
+  dictionaryPanel: {fileID: 471877318}
   settingsPanel: {fileID: 0}
 --- !u!4 &1243342145
 Transform:
@@ -13023,35 +13001,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1243342144}
-    - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ShowDictionaryPanel
-      objectReference: {fileID: 0}
-    - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Lobby.PanelControl, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
-      value: DictionaryScene
-      objectReference: {fileID: 0}
-    - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9117329575968734381, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_Pivot.x
@@ -13131,6 +13081,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9117329575968734381, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7398495566401001405, guid: 47d081f8920bd9e4bbc97aca9dd147af, type: 3}
+      propertyPath: m_Interactable
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -16312,8 +16266,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SceneChanger
   trainingMapSceneName: TrainingMapScene
   trainingBattleSceneName: CombatScene
-  bossModeButton: {fileID: 566019336}
-  bossModeSelectedColor: {r: 0.4, g: 0.9, b: 1, a: 1}
 --- !u!114 &2094119973
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16850,7 +16802,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 471877320}
-        m_TargetAssemblyTypeName: BossModePanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: DictionaryPanelController, Assembly-CSharp
         m_MethodName: ShowCharacterDeckInfo
         m_Mode: 3
         m_Arguments:
@@ -16983,7 +16935,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 471877320}
-        m_TargetAssemblyTypeName: BossModePanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: DictionaryPanelController, Assembly-CSharp
         m_MethodName: ShowCharacterDeckInfo
         m_Mode: 3
         m_Arguments:
@@ -17116,7 +17068,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 471877320}
-        m_TargetAssemblyTypeName: BossModePanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: DictionaryPanelController, Assembly-CSharp
         m_MethodName: ShowCharacterDeckInfo
         m_Mode: 3
         m_Arguments:
@@ -17249,7 +17201,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 471877320}
-        m_TargetAssemblyTypeName: BossModePanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: DictionaryPanelController, Assembly-CSharp
         m_MethodName: ShowCharacterDeckInfo
         m_Mode: 3
         m_Arguments:
@@ -17382,7 +17334,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 471877320}
-        m_TargetAssemblyTypeName: BossModePanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: DictionaryPanelController, Assembly-CSharp
         m_MethodName: ShowCharacterDeckInfo
         m_Mode: 3
         m_Arguments:
@@ -17515,7 +17467,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 471877320}
-        m_TargetAssemblyTypeName: BossModePanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: DictionaryPanelController, Assembly-CSharp
         m_MethodName: ShowCharacterDeckInfo
         m_Mode: 3
         m_Arguments:
@@ -17648,7 +17600,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 471877320}
-        m_TargetAssemblyTypeName: BossModePanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: DictionaryPanelController, Assembly-CSharp
         m_MethodName: ShowCharacterDeckInfo
         m_Mode: 3
         m_Arguments:
@@ -17781,7 +17733,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 471877320}
-        m_TargetAssemblyTypeName: BossModePanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: DictionaryPanelController, Assembly-CSharp
         m_MethodName: ShowCharacterDeckInfo
         m_Mode: 3
         m_Arguments:
@@ -17914,7 +17866,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 471877320}
-        m_TargetAssemblyTypeName: BossModePanel, Assembly-CSharp
+        m_TargetAssemblyTypeName: DictionaryPanelController, Assembly-CSharp
         m_MethodName: ShowCharacterDeckInfo
         m_Mode: 3
         m_Arguments:

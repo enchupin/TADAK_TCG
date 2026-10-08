@@ -9,8 +9,6 @@ namespace Lobby
 
         [Header("패널 오브젝트")]
         [SerializeField] private GameObject mainPanel;
-        [UnityEngine.Serialization.FormerlySerializedAs("rankingModePanel")]
-        [SerializeField] private GameObject bossModePanel;
         [SerializeField] private GameObject trainingModePanel;
         [UnityEngine.Serialization.FormerlySerializedAs("characterBookPanel")]
         [SerializeField] private GameObject dictionaryPanel;
@@ -37,13 +35,6 @@ namespace Lobby
         {
             SetAllPanels(false);
             SetPanel(mainPanel, true);
-        }
-
-        public void ShowBossModePanel()
-        {
-            PlayButtonClickSound();
-            SetAllPanels(false);
-            SetPanel(bossModePanel, true);
         }
 
         public void ShowTrainingModePanel()
@@ -90,7 +81,6 @@ namespace Lobby
         private void SetAllPanels(bool active)
         {
             SetPanel(mainPanel, active);
-            SetPanel(bossModePanel, active);
             SetPanel(trainingModePanel, active);
             SetPanel(dictionaryPanel, active);
             SetPanel(settingsPanel, active);

@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class BossModePanel : MonoBehaviour
+public class DictionaryPanelController : MonoBehaviour
 {
-    [SerializeField] private BossModeStarterCardPanel starterCardPanel;
+    [SerializeField] private DictionaryStarterCardPanel starterCardPanel;
     [SerializeField] private DictionarySavedDeckPanel savedDeckPanel;
 
     public void ShowCharacterDeckInfo(int characterId)
@@ -14,7 +14,7 @@ public class BossModePanel : MonoBehaviour
 
     private void ShowStarterCards(Character character)
     {
-        BossModeStarterCardPanel panel = ResolveStarterCardPanel();
+        DictionaryStarterCardPanel panel = ResolveStarterCardPanel();
         if (panel == null)
         {
             Debug.LogWarning("[RankingModePanel] 기본카드 표시 패널을 찾을 수 없습니다");
@@ -36,7 +36,7 @@ public class BossModePanel : MonoBehaviour
         panel.ShowSavedDecks(character);
     }
 
-    private BossModeStarterCardPanel ResolveStarterCardPanel()
+    private DictionaryStarterCardPanel ResolveStarterCardPanel()
     {
         return starterCardPanel;
     }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BossModeStarterCardPanel : MonoBehaviour
+public class DictionaryStarterCardPanel : MonoBehaviour
 {
     private const int StarterCardCount = 7;
 

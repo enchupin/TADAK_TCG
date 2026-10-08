@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ButtonCreateManager : MonoBehaviour {
+public class TrainingModeButtonCreateManager : MonoBehaviour {
     public enum Scrolltype {
         horizontal,
         vertical
@@ -27,11 +27,8 @@ public class ButtonCreateManager : MonoBehaviour {
     private const float DefaultScrollViewHeight = 370f;
 
     [SerializeField] private ButtonPanelConfig trainingPanelConfig;
-    [UnityEngine.Serialization.FormerlySerializedAs("characterBookPanelConfig")]
-    [SerializeField] private ButtonPanelConfig dictionaryPanelConfig;
 
     private readonly HashSet<RectTransform> createdContents = new();
-    private CardContainerManager dictionaryCardManager;
 
     private void Start() {
         InitiatePanelCofig();
@@ -42,12 +39,10 @@ public class ButtonCreateManager : MonoBehaviour {
         yield return null;
         Canvas.ForceUpdateCanvases();
         CreateButtons(trainingPanelConfig);
-        CreateButtons(dictionaryPanelConfig);
     }
 
     private void InitiatePanelCofig() {
         trainingPanelConfig ??= new ButtonPanelConfig();
-        dictionaryPanelConfig ??= new ButtonPanelConfig();
 
         trainingPanelConfig.startPosition = new Vector3(160f, 0f, 0f);
         trainingPanelConfig.buttonSpacing = 240f;
@@ -55,11 +50,6 @@ public class ButtonCreateManager : MonoBehaviour {
         trainingPanelConfig.scrollSensitivity = 7.5f;
         trainingPanelConfig.scrolltype = Scrolltype.horizontal;
 
-        dictionaryPanelConfig.startPosition = new Vector3(186.5f, -60f, 0f);
-        dictionaryPanelConfig.buttonSpacing = 80f;
-        dictionaryPanelConfig.trailingPadding = 35f;
-        dictionaryPanelConfig.scrollSensitivity = 5.5f;
-        dictionaryPanelConfig.scrolltype = Scrolltype.vertical;
     }
 
 
@@ -88,7 +78,7 @@ public class ButtonCreateManager : MonoBehaviour {
             RectTransform buttonRect = createdButton.GetComponent<RectTransform>();
             SetButtonPosition(buttonRect, buttonPanelConfig, createdButtonCount);
 
-            BindCharacterData(createdButton, characterData, ShouldApplyStandingImage(buttonPanelConfig));
+            BindCharacterData(createdButton, characterData, true);
             createdButtonCount++;
         }
 
@@ -172,10 +162,6 @@ public class ButtonCreateManager : MonoBehaviour {
         return left.characterId.CompareTo(right.characterId);
     }
 
-    private bool ShouldApplyStandingImage(ButtonPanelConfig buttonPanelConfig) {
-        return ReferenceEquals(buttonPanelConfig, trainingPanelConfig);
-    }
-
     private void BindCharacterData(GameObject buttonObject, CharacterData characterData, bool shouldApplyStandingImage) {
         BindCharacterLabel(buttonObject, characterData);
         SetButtonText(buttonObject, characterData.characterName);
@@ -188,7 +174,6 @@ public class ButtonCreateManager : MonoBehaviour {
             CharacterStandingButtonImageUtility.Apply(buttonObject, character);
         }
         BindTrainingButton(buttonObject, character);
-        BindDictionaryButton(buttonObject, character);
     }
 
     private static void BindCharacterLabel(GameObject buttonObject, CharacterData characterData) {
@@ -210,40 +195,6 @@ public class ButtonCreateManager : MonoBehaviour {
             return;
         }
         selectedButtonControl.Initialize(character);
-    }
-
-    private void BindDictionaryButton(GameObject buttonObject, Character character) {
-        DictionaryButton dictionaryButton = buttonObject.GetComponent<DictionaryButton>();
-        if (dictionaryButton == null) {
-            return;
-        }
-        CardContainerManager cardManager = GetDictionaryCardManager();
-        if (cardManager == null) {
-            Debug.LogError("[ButtonCreateManager] CharacterBook용 CardContainerManager를 찾을 수 없습니다");
-            return;
-        }
-
-        dictionaryButton.Initialize(character, cardManager);
-    }
-
-    private CardContainerManager GetDictionaryCardManager() {
-        if (dictionaryCardManager != null) {
-            return dictionaryCardManager;
-        }
-
-        dictionaryCardManager = FindCardContainerManager();
-        return dictionaryCardManager;
-    }
-
-    private static CardContainerManager FindCardContainerManager() {
-        CardContainerManager[] managers = Resources.FindObjectsOfTypeAll<CardContainerManager>();
-        foreach (CardContainerManager manager in managers) {
-            if (manager != null && manager.gameObject.scene.IsValid() && manager.gameObject.scene.isLoaded) {
-                return manager;
-            }
-        }
-
-        return null;
     }
 
     private static void SetButtonText(GameObject buttonObject, string characterName) {
