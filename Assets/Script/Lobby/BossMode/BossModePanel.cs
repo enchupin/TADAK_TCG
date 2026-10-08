@@ -3,7 +3,7 @@ using UnityEngine;
 public class BossModePanel : MonoBehaviour
 {
     [SerializeField] private BossModeStarterCardPanel starterCardPanel;
-    [SerializeField] private BossModeSavedDeckPanel savedDeckPanel;
+    [SerializeField] private DictionarySavedDeckPanel savedDeckPanel;
 
     public void ShowCharacterDeckInfo(int characterId)
     {
@@ -26,7 +26,7 @@ public class BossModePanel : MonoBehaviour
 
     private void ShowSavedDecks(Character character)
     {
-        BossModeSavedDeckPanel panel = ResolveSavedDeckPanel();
+        DictionarySavedDeckPanel panel = ResolveSavedDeckPanel();
         if (panel == null)
         {
             Debug.LogWarning("[RankingModePanel] 저장덱 표시 패널을 찾을 수 없습니다");
@@ -41,7 +41,7 @@ public class BossModePanel : MonoBehaviour
         return starterCardPanel;
     }
 
-    private BossModeSavedDeckPanel ResolveSavedDeckPanel()
+    private DictionarySavedDeckPanel ResolveSavedDeckPanel()
     {
         return savedDeckPanel;
     }

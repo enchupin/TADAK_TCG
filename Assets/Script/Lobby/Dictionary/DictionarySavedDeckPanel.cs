@@ -4,7 +4,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BossModeSavedDeckPanel : MonoBehaviour
+[UnityEngine.Scripting.APIUpdating.MovedFrom(true, sourceNamespace: null, sourceAssembly: "Assembly-CSharp", sourceClassName: "BossModeSavedDeckPanel")]
+public class DictionarySavedDeckPanel : MonoBehaviour
 {
     private const int MaxDeckPanelCount = 5;
 
@@ -14,6 +15,9 @@ public class BossModeSavedDeckPanel : MonoBehaviour
 
     [Header("저장덱 이름 변경 설정")]
     [SerializeField] private TMP_InputField[] renameInputFields = new TMP_InputField[MaxDeckPanelCount];
+
+    [Header("저장덱 삭제 확인 설정")]
+    [SerializeField] private GameObject deleteConfirmationPanel;
 
     private sealed class DeckPanelBinding
     {
@@ -28,10 +32,18 @@ public class BossModeSavedDeckPanel : MonoBehaviour
     private readonly List<DeckPanelBinding> panelBindings = new List<DeckPanelBinding>();
     private DeckPanelBinding activeRenameBinding;
     private TMP_InputField activeRenameInputField;
+    private CharacterDeckSave pendingDeleteDeck;
+    private Character pendingDeleteCharacter;
 
     private void Awake()
     {
         HideRenameInputFields();
+        CancelDeleteDeck();
+    }
+
+    private void OnDisable()
+    {
+        CancelDeleteDeck();
     }
 
     private void OnDestroy()
@@ -41,6 +53,7 @@ public class BossModeSavedDeckPanel : MonoBehaviour
 
     public void ShowSavedDecks(Character character)
     {
+        CancelDeleteDeck();
         if (!ValidateReferences())
         {
             return;
@@ -67,6 +80,7 @@ public class BossModeSavedDeckPanel : MonoBehaviour
 
     public void DeleteDeck(int panelIndex)
     {
+        CancelDeleteDeck();
         if (panelIndex < 0 || panelIndex >= panelBindings.Count)
         {
             Debug.LogWarning($"[RankingModeSavedDeckPanel] 삭제할 저장덱 패널 인덱스가 올바르지 않습니다: {panelIndex}");
@@ -79,16 +93,52 @@ public class BossModeSavedDeckPanel : MonoBehaviour
             return;
         }
 
+        if (deleteConfirmationPanel == null)
+        {
+            Debug.LogWarning("[BossModeSavedDeckPanel] 삭제 확인 패널이 연결되지 않았습니다", this);
+            return;
+        }
+
+        CancelRename();
+        pendingDeleteDeck = binding.deck;
+        pendingDeleteCharacter = binding.character;
+        deleteConfirmationPanel.SetActive(true);
+    }
+
+    public void CancelDeleteDeck()
+    {
+        pendingDeleteDeck = null;
+        pendingDeleteCharacter = Character.Monster;
+        if (deleteConfirmationPanel != null)
+        {
+            deleteConfirmationPanel.SetActive(false);
+        }
+    }
+
+    public void ConfirmDeleteDeck()
+    {
+        if (pendingDeleteDeck == null || deleteConfirmationPanel == null
+            || !deleteConfirmationPanel.activeInHierarchy)
+        {
+            CancelDeleteDeck();
+            return;
+        }
+
+        CharacterDeckSave deleteTarget = pendingDeleteDeck;
+        Character character = pendingDeleteCharacter;
+        CancelDeleteDeck();
+
         PlayerProfileSave profile = ProfileSaveManager.CurrentProfile;
-        CharacterDeckListSave library = profile?.FindLibrary(CharacterManager.GetIdByCharacterEnum(binding.character));
+        CharacterDeckListSave library = profile?.FindLibrary(CharacterManager.GetIdByCharacterEnum(character));
         if (library?.decks == null)
         {
             Debug.LogWarning("[RankingModeSavedDeckPanel] 삭제할 저장덱 라이브러리를 찾을 수 없습니다");
             return;
         }
 
-        CharacterDeckSave deleteTarget = binding.deck;
         bool removed = false;
+        int removedIndex = -1;
+        CharacterDeckSave removedDeck = null;
         for (int i = library.decks.Count - 1; i >= 0; i--)
         {
             if (!IsSameDeck(library.decks[i], deleteTarget))
@@ -96,6 +146,8 @@ public class BossModeSavedDeckPanel : MonoBehaviour
                 continue;
             }
 
+            removedIndex = i;
+            removedDeck = library.decks[i];
             library.decks.RemoveAt(i);
             removed = true;
             break;
@@ -107,15 +159,26 @@ public class BossModeSavedDeckPanel : MonoBehaviour
             return;
         }
 
+        string previousSelectedDeckId = library.selectedDeckId;
         if (!string.IsNullOrWhiteSpace(deleteTarget.deckId)
             && string.Equals(library.selectedDeckId, deleteTarget.deckId, StringComparison.Ordinal))
         {
             library.selectedDeckId = string.Empty;
         }
 
-        ProfileSaveManager.Save(profile);
+        try
+        {
+            ProfileSaveManager.Save(profile);
+        }
+        catch (Exception exception)
+        {
+            library.decks.Insert(removedIndex, removedDeck);
+            library.selectedDeckId = previousSelectedDeckId;
+            Debug.LogError($"[BossModeSavedDeckPanel] 저장덱 삭제를 저장하지 못했습니다: {exception.Message}", this);
+            return;
+        }
         Debug.Log($"[RankingModeSavedDeckPanel] 저장덱을 삭제했습니다: {ResolveDeckName(deleteTarget)}");
-        ShowSavedDecks(binding.character);
+        ShowSavedDecks(character);
     }
 
     private bool ValidateReferences()
