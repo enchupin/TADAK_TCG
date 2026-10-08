@@ -20,6 +20,10 @@ public class PlayerProfileSave
     [Newtonsoft.Json.JsonProperty("rankingBestDamage")]
     public int legacyBestDamage;
 
+    public long bossModeLastDamage;
+    public long bossModeBestDamage;
+    public string bossModeLastPlayedAtUtc = string.Empty;
+
     // 현재 시각
     public string updatedAtUtc = string.Empty;
 

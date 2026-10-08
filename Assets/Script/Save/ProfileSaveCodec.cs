@@ -14,7 +14,9 @@ public static class ProfileSaveCodec
     {
         try
         {
-            JObject document = JObject.Parse(json);
+            using StringReader textReader = new StringReader(json);
+            using JsonTextReader jsonReader = new JsonTextReader(textReader) { DateParseHandling = DateParseHandling.None };
+            JObject document = JObject.Load(jsonReader);
             JToken version = document["profileVersion"];
             if (version == null || version.Type != JTokenType.Integer)
             {
@@ -74,7 +76,8 @@ public static class ProfileSaveCodec
         {
             throw new InvalidOperationException("현재 Steam 계정과 프로필의 소유자가 다릅니다");
         }
-        if (profile.legacyBestDamage < 0 || profile.characters == null)
+        if (profile.legacyBestDamage < 0 || profile.bossModeLastDamage < 0
+            || profile.bossModeBestDamage < 0 || profile.characters == null)
         {
             throw new InvalidDataException("프로필 기록 또는 캐릭터 목록이 올바르지 않습니다");
         }

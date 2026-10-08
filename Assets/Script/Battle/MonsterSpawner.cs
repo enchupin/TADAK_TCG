@@ -343,7 +343,7 @@ public class MonsterSpawner : MonoBehaviour
     /// <summary>
     /// 런타임에 직접 지정한 몬스터 컴포넌트 타입을 빈 스폰 위치에 생성합니다
     /// </summary>
-    private Monster SpawnMonsterToAvailableSlot(Type monsterComponentType)
+    public Monster SpawnMonsterToAvailableSlot(Type monsterComponentType)
     {
         if (!TryGetAvailableSpawnPoint(out Transform spawnPoint))
         {

@@ -81,6 +81,9 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     protected virtual int BaseDefense => 0;
     protected virtual bool IsBossMonster => false;
     public bool IsBoss => IsBossMonster;
+    public virtual bool HasInfiniteHealth => false;
+    protected virtual string HealthLabel => null;
+    protected virtual string ImageName => name;
 
     protected virtual void Awake()
     {
@@ -121,7 +124,9 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     {
         EnsureStatusUIReferences();
 
-        if (hpText != null)
+        if (hpText != null && HealthLabel != null)
+            hpText.text = HealthLabel;
+        else if (hpText != null)
             hpText.text = $"HP : {hp}/{maxHP}";
 
         if (defenseText != null)
@@ -229,7 +234,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         int defenseBeforeHit = defense;
         int damageAfterDefense = Mathf.Max(0, finalDamage - defenseBeforeHit);
 
-        hp -= damageAfterDefense;
+        if (!HasInfiniteHealth) hp -= damageAfterDefense;
         SetDefenseValue(defenseBeforeHit - finalDamage);
 
         Debug.Log($"{name} took {damageAfterDefense} damage. (HP: {hp}/{maxHP})");
@@ -259,13 +264,13 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     public int LoseHp(int amount)
     {
-        int lostAmount = Mathf.Clamp(amount, 0, hp);
+        int lostAmount = HasInfiniteHealth ? Mathf.Max(0, amount) : Mathf.Clamp(amount, 0, hp);
         if (lostAmount <= 0)
         {
             return 0;
         }
 
-        hp -= lostAmount;
+        if (!HasInfiniteHealth) hp -= lostAmount;
         TrainingBattleManager.Instance?.HandleMonsterHpLost(this, lostAmount);
         HandleDeathIfNeeded();
         UpdateUI();
@@ -274,6 +279,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     public void Kill()
     {
+        if (HasInfiniteHealth) return;
         if (IsDead())
             return;
 
@@ -290,6 +296,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     public void LeaveCombat()
     {
+        if (HasInfiniteHealth) return;
         if (hasTriggeredDeath || hasLeftCombat)
         {
             return;
@@ -641,7 +648,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
             throw new System.InvalidOperationException($"[Monster] {gameObject.name}의 MonsterStateController가 인스펙터에 연결되지 않았습니다");
         }
 
-        stateController.SetMonsterImageName(name);
+        stateController.SetMonsterImageName(ImageName);
     }
 
     private void EnsureHpSliderReference()

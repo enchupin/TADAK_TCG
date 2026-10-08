@@ -5595,6 +5595,7 @@ GameObject:
   - component: {fileID: 460269689}
   - component: {fileID: 460269688}
   - component: {fileID: 460269687}
+  - component: {fileID: 2400000011}
   m_Layer: 5
   m_Name: CardPanel (1)
   m_TagString: Untagged
@@ -9365,6 +9366,7 @@ GameObject:
   - component: {fileID: 702238472}
   - component: {fileID: 702238471}
   - component: {fileID: 702238470}
+  - component: {fileID: 2400000013}
   m_Layer: 5
   m_Name: CardPanel (3)
   m_TagString: Untagged
@@ -9550,6 +9552,7 @@ GameObject:
   - component: {fileID: 708894257}
   - component: {fileID: 708894256}
   - component: {fileID: 708894255}
+  - component: {fileID: 2400000014}
   m_Layer: 5
   m_Name: CardPanel (4)
   m_TagString: Untagged
@@ -17434,6 +17437,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1249458563}
   - component: {fileID: 1249458564}
+  - component: {fileID: 2400000000}
   m_Layer: 5
   m_Name: BossModePanel
   m_TagString: Untagged
@@ -20652,6 +20656,7 @@ GameObject:
   - component: {fileID: 1504922134}
   - component: {fileID: 1504922133}
   - component: {fileID: 1504922132}
+  - component: {fileID: 2400000012}
   m_Layer: 5
   m_Name: CardPanel (2)
   m_TagString: Untagged
@@ -21309,6 +21314,7 @@ GameObject:
   - component: {fileID: 1528985782}
   - component: {fileID: 1528985781}
   - component: {fileID: 1528985780}
+  - component: {fileID: 2400000010}
   m_Layer: 5
   m_Name: CardPanel
   m_TagString: Untagged
@@ -21785,7 +21791,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1609162591}
   m_OnClick:
     m_PersistentCalls:
@@ -31043,6 +31049,102 @@ RectTransform:
   m_AnchoredPosition: {x: 721, y: 363.05}
   m_SizeDelta: {x: 182.4032, y: 185.7763}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2400000000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1249458562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdc4ed86497749a7a19f8d5f9147cdd1, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::BossModeDeckSelection
+  savedDeckPanel: {fileID: 2025408492}
+  startButton: {fileID: 1609162590}
+  deckSlots:
+  - {fileID: 2400000010}
+  - {fileID: 2400000011}
+  - {fileID: 2400000012}
+  - {fileID: 2400000013}
+  - {fileID: 2400000014}
+  battleSceneName: CombatScene
+--- !u!114 &2400000010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1528985778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4be3306cb7e4d40847dbea4b7ebf203, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::BossModeDeckSlot
+  selection: {fileID: 2400000000}
+  panelIndex: 0
+  background: {fileID: 1528985781}
+--- !u!114 &2400000011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 460269685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4be3306cb7e4d40847dbea4b7ebf203, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::BossModeDeckSlot
+  selection: {fileID: 2400000000}
+  panelIndex: 1
+  background: {fileID: 460269688}
+--- !u!114 &2400000012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1504922130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4be3306cb7e4d40847dbea4b7ebf203, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::BossModeDeckSlot
+  selection: {fileID: 2400000000}
+  panelIndex: 2
+  background: {fileID: 1504922133}
+--- !u!114 &2400000013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 702238468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4be3306cb7e4d40847dbea4b7ebf203, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::BossModeDeckSlot
+  selection: {fileID: 2400000000}
+  panelIndex: 3
+  background: {fileID: 702238471}
+--- !u!114 &2400000014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 708894253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4be3306cb7e4d40847dbea4b7ebf203, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::BossModeDeckSlot
+  selection: {fileID: 2400000000}
+  panelIndex: 4
+  background: {fileID: 708894256}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

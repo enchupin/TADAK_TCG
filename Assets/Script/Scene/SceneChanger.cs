@@ -9,6 +9,7 @@ public class SceneChanger : MonoBehaviour
 
     public void StartTrainingRun()
     {
+        BossModeSession.Reset();
         TrainingBattleManager.buildingDeck = null;
         PlayerData.Reset();
         TrainingRunState.StartNewRun(

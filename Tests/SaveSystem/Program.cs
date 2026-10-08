@@ -157,6 +157,19 @@ public static class Program
         Check(renameProfile.FindLibrary((int)Character.Mio).decks.Count == 1, "기존 빈 저장덱 라이브러리 자동 복구");
         Check(ProfileSaveCodec.Decode(File.ReadAllText(renamePath), renameProfile.ownerSteamId)
             .FindLibrary((int)Character.Mio).decks.Count == 1, "복구 결과 디스크 저장");
+        renameProfile.bossModeLastDamage = 3_000_000_000L;
+        renameProfile.bossModeBestDamage = 5_000_000_000L;
+        renameProfile.bossModeLastPlayedAtUtc = "2026-10-08T00:00:00.0000000Z";
+        ProfileSaveManager.Save(renameProfile);
+        Reset();
+        PlayerProfileSave bossProfile = ProfileSaveManager.CurrentProfile;
+        Check(bossProfile.bossModeLastDamage == 3_000_000_000L, "보스모드 최근 피해량 64비트 저장과 복원");
+        Check(bossProfile.bossModeBestDamage == 5_000_000_000L, "보스모드 최고 피해량 저장과 복원");
+        Check(DateTime.Parse(bossProfile.bossModeLastPlayedAtUtc).ToUniversalTime()
+            == new DateTime(2026, 10, 8, 0, 0, 0, DateTimeKind.Utc), "보스모드 기록 시각 저장과 복원");
+        Check(bossProfile.FindLibrary((int)Character.Mio).decks.Count == 1, "보스모드 기록 저장 후 덱 보존");
+        bossProfile.bossModeLastDamage = -1;
+        Throws<InvalidDataException>(() => ProfileSaveCodec.Validate(bossProfile, bossProfile.ownerSteamId));
         Console.WriteLine($"저장 시스템 검증 {passed}개 통과");
     }
 }

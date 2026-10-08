@@ -34,6 +34,17 @@ public class DictionarySavedDeckPanel : MonoBehaviour
     private TMP_InputField activeRenameInputField;
     private CharacterDeckSave pendingDeleteDeck;
     private Character pendingDeleteCharacter;
+    public event Action DecksChanged;
+
+    public bool TryGetDisplayedDeck(int index, out Character character, out CharacterDeckSave deck)
+    {
+        character = Character.Monster;
+        deck = null;
+        if (index < 0 || index >= panelBindings.Count) return false;
+        character = panelBindings[index].character;
+        deck = panelBindings[index].deck;
+        return deck != null;
+    }
 
     private void Awake()
     {
@@ -72,6 +83,7 @@ public class DictionarySavedDeckPanel : MonoBehaviour
             BindDeckToPanel(panelBindings[i], character, decks[i]);
         }
 
+        DecksChanged?.Invoke();
         if (decks.Count > MaxDeckPanelCount)
         {
             Debug.LogWarning($"[RankingModeSavedDeckPanel] 표시 가능한 저장덱 수를 초과했습니다: {decks.Count}/{MaxDeckPanelCount}");
