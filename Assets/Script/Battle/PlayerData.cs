@@ -137,9 +137,8 @@ public class PlayerData : MonoBehaviour
     /// <summary>
     /// 버프 추가
     /// </summary>
-    public void AddBuff(int buffId, int amount, bool applyBossMonsterScaling = false)
+    public void AddBuff(int buffId, int amount)
     {
-        amount = ResolveIncomingMonsterBuffAmount(buffId, amount, applyBossMonsterScaling);
         if (amount <= 0)
         {
             return;
@@ -178,24 +177,6 @@ public class PlayerData : MonoBehaviour
         {
             CreamBuffRuntimeUtility.SyncEnergyOverflow(this);
         }
-    }
-
-    private int ResolveIncomingMonsterBuffAmount(int buffId, int amount, bool applyBossMonsterScaling)
-    {
-        if (amount <= 0)
-        {
-            return 0;
-        }
-
-        TrainingBattleManager battleManager = TrainingBattleManager.Instance;
-        bool shouldScaleMonsterValue = applyBossMonsterScaling
-            || (battleManager != null && battleManager.CurrentTurnState == BattleTurnState.EnemyAction);
-        if (!shouldScaleMonsterValue || BuffData.IsBeneficialBuffId(buffId))
-        {
-            return amount;
-        }
-
-        return BossMode.ScaleMonsterValue(amount);
     }
 
     /// <summary>

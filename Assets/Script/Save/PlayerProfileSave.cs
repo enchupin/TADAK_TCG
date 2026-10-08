@@ -18,7 +18,11 @@ public class PlayerProfileSave
     // 랭킹모드 최고 피해량 기록
     // 기존 저장 파일과 호환되도록 JSON 키는 유지
     [Newtonsoft.Json.JsonProperty("rankingBestDamage")]
-    public int bossBestDamage;
+    public int legacyBestDamage;
+
+    public long bossModeLastDamage;
+    public long bossModeBestDamage;
+    public string bossModeLastPlayedAtUtc = string.Empty;
 
     // 현재 시각
     public string updatedAtUtc = string.Empty;

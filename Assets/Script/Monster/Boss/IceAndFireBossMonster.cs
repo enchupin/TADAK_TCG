@@ -74,7 +74,7 @@ public class IceAndFireBossMonster : Monster
             int dealtDamage = DealDamage(target, 2);
             if (hasHarmony && dealtDamage > 0)
             {
-                AddDefense(dealtDamage, false);
+                AddDefense(dealtDamage);
             }
 
             if (target != null && target.IsDead())

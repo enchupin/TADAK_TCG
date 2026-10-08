@@ -69,7 +69,7 @@ public class VoidLordBossMonster : Monster
                 SetPlannedPattern(30405, MonsterIntentIconType.Stun);
                 break;
             default:
-                int attackBoost = ScaleBossMonsterValue(6);
+                int attackBoost = UnityEngine.Mathf.Max(0, 6);
                 SetIntent($"공격 강화를 {attackBoost} 얻습니다.");
                 SetPlannedPattern(30406, MonsterIntentIconType.BeneficialEffect);
                 break;

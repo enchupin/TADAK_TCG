@@ -151,6 +151,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     private void Start()
     {
+        if (BossModeSession.IsActive) isDebugMode = false;
         CardPlayEvents.OnCardPlayed += HandleCardClicked;
 
         InitializeCharacterSelection();
@@ -174,8 +175,15 @@ public class TrainingBattleManager : MonoBehaviour
 #endif
     }
 
+    private void OnApplicationQuit()
+    {
+        BossModeSession.SaveResult();
+    }
+
     private void OnDestroy()
     {
+        BossModeSession.SaveResult();
+        BossModeSession.Reset();
         CardPlayEvents.OnCardPlayed -= HandleCardClicked;
         if (instantWinButton != null)
         {
@@ -198,7 +206,7 @@ public class TrainingBattleManager : MonoBehaviour
 
         instantWinButton.onClick.RemoveListener(OnClickInstantWin);
         instantWinButton.onClick.AddListener(OnClickInstantWin);
-        instantWinButton.gameObject.SetActive(Application.isEditor || Debug.isDebugBuild);
+        instantWinButton.gameObject.SetActive(!BossModeSession.IsActive && (Application.isEditor || Debug.isDebugBuild));
 
         SetButtonLabel(instantWinButton, "승리");
         UpdateEndTurnButtonState();
@@ -327,7 +335,8 @@ public class TrainingBattleManager : MonoBehaviour
             return;
         }
 
-        bool shouldRebuildDeck = buildingDeck == null || !TrainingRunState.IsRunActive;
+        if (BossModeSession.IsActive) buildingDeck = BossModeSession.CreateDeck();
+        bool shouldRebuildDeck = !BossModeSession.IsActive && (buildingDeck == null || !TrainingRunState.IsRunActive);
         if (shouldRebuildDeck)
         {
             Debug.Log("[BattleManager] 현재 캐릭터 선택 기준으로 런 덱을 다시 구성합니다");
@@ -344,7 +353,7 @@ public class TrainingBattleManager : MonoBehaviour
             return;
         }
 
-        List<Card> battleDeck = isDebugMode
+        List<Card> battleDeck = isDebugMode && !BossModeSession.IsActive
             ? BuildDebugBattleDeck()
             : buildingDeck.CopyDeck();
         usableDeckManager.SetDeck(battleDeck);
@@ -849,10 +858,12 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void ResolveBattleResult(bool isVictory)
     {
+        if (BossModeSession.IsActive && isVictory) return;
         if (hasResolvedBattleResult)
             return;
 
         hasResolvedBattleResult = true;
+        BossModeSession.SaveResult();
 
         SetState(BattleTurnState.CombatEnd);
         battleBuffController?.HandleBattleEnded(isVictory);
@@ -1199,6 +1210,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void HandleMonsterHpLost(Monster monster, int hpLoss)
     {
+        if (monster is InfiniteBossMonster) BossModeSession.AddDamage(hpLoss);
         battleBuffController?.HandleMonsterHpLost(monster, hpLoss);
     }
 
@@ -1978,6 +1990,12 @@ public class TrainingBattleManager : MonoBehaviour
             return;
         }
 
+        if (BossModeSession.IsActive)
+        {
+            RegisterMonster(monsterSpawner.SpawnMonsterToAvailableSlot(typeof(InfiniteBossMonster)));
+            return;
+        }
+
         TrainingMapNodeData encounterNode = ResolveCurrentEncounterNode();
         List<Monster> encounterMonsters = encounterNode != null && encounterNode.HasPlannedEncounter
             ? monsterSpawner.SpawnEncounter(encounterNode.plannedEncounter)
@@ -2176,8 +2194,7 @@ public class TrainingBattleManager : MonoBehaviour
             isBossVictory = pendingNode.nodeType == TrainingNodeType.Boss;
         }
 
-        bool shouldStartNextBossMap = isBossVictory && BossMode.IsBossMode;
-        bool shouldPersistRunDeck = isBossVictory && !shouldStartNextBossMap;
+        bool shouldPersistRunDeck = isBossVictory;
 
         if (PlayerData.Instance != null)
         {
@@ -2193,12 +2210,6 @@ public class TrainingBattleManager : MonoBehaviour
         }
 
         TrainingRunState.CompletePendingNode(isVictory);
-
-        if (shouldStartNextBossMap && !TrainingRunState.IsRunFailed)
-        {
-            BossMode.AdvanceMap();
-            TrainingRunState.StartNextBossMap();
-        }
 
         if (!isVictory || TrainingRunState.IsRunCompleted || TrainingRunState.IsRunFailed)
         {

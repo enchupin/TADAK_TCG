@@ -5,11 +5,18 @@ using Newtonsoft.Json.Linq;
 
 public static class ProfileSaveCodec
 {
+    public static string Encode(PlayerProfileSave profile)
+    {
+        return JsonConvert.SerializeObject(profile, Formatting.Indented);
+    }
+
     public static PlayerProfileSave Decode(string json, string ownerSteamId)
     {
         try
         {
-            JObject document = JObject.Parse(json);
+            using StringReader textReader = new StringReader(json);
+            using JsonTextReader jsonReader = new JsonTextReader(textReader) { DateParseHandling = DateParseHandling.None };
+            JObject document = JObject.Load(jsonReader);
             JToken version = document["profileVersion"];
             if (version == null || version.Type != JTokenType.Integer)
             {
@@ -27,6 +34,12 @@ public static class ProfileSaveCodec
                 || string.IsNullOrWhiteSpace(document.Value<string>("playerId")))
             {
                 throw new InvalidDataException("프로필 필수 데이터가 올바르지 않습니다");
+            }
+
+            // JsonUtility로 저장된 이전 파일도 같은 최고 기록 필드로 복원
+            if (document["rankingBestDamage"] == null && document["bossBestDamage"]?.Type == JTokenType.Integer)
+            {
+                document["rankingBestDamage"] = document["bossBestDamage"].DeepClone();
             }
 
             PlayerProfileSave profile = document.ToObject<PlayerProfileSave>();
@@ -63,7 +76,8 @@ public static class ProfileSaveCodec
         {
             throw new InvalidOperationException("현재 Steam 계정과 프로필의 소유자가 다릅니다");
         }
-        if (profile.bossBestDamage < 0 || profile.characters == null)
+        if (profile.legacyBestDamage < 0 || profile.bossModeLastDamage < 0
+            || profile.bossModeBestDamage < 0 || profile.characters == null)
         {
             throw new InvalidDataException("프로필 기록 또는 캐릭터 목록이 올바르지 않습니다");
         }

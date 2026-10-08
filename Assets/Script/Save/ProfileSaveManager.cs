@@ -141,7 +141,7 @@ public static class ProfileSaveManager
             Directory.CreateDirectory(directoryPath);
         }
 
-        string json = JsonUtility.ToJson(profile, true);
+        string json = ProfileSaveCodec.Encode(profile);
         ProfileFileStore.Write(ProfileFilePath, json);
 
         currentProfile = profile;
@@ -214,7 +214,7 @@ public static class ProfileSaveManager
             profileVersion = PlayerProfileSave.CurrentProfileVersion,
             playerId = Guid.NewGuid().ToString("N"),
             ownerSteamId = currentOwner,
-            bossBestDamage = string.IsNullOrEmpty(currentOwner)
+            legacyBestDamage = string.IsNullOrEmpty(currentOwner)
                 ? Math.Max(0, PlayerPrefs.GetInt("RankingModeBestDamage", 0)) : 0
         };
 
@@ -231,7 +231,7 @@ public static class ProfileSaveManager
 
         if (profile.profileVersion < PlayerProfileSave.CurrentProfileVersion)
         {
-            profile.bossBestDamage = Math.Max(profile.bossBestDamage,
+            profile.legacyBestDamage = Math.Max(profile.legacyBestDamage,
                 Math.Max(0, PlayerPrefs.GetInt("RankingModeBestDamage", 0)));
             profile.profileVersion = PlayerProfileSave.CurrentProfileVersion;
             hasChanges = true;
@@ -380,13 +380,18 @@ public static class ProfileSaveManager
                 continue;
             }
 
-            if (profile.FindLibrary(characterId) != null)
+            CharacterDeckListSave library = profile.FindLibrary(characterId);
+            if (library == null)
             {
-                continue;
+                library = CreateLibrary(characterId);
+                profile.characters.Add(library);
+                hasChanges = true;
             }
 
-            profile.characters.Add(CreateLibrary(characterId));
-            hasChanges = true;
+            if (EnsureStarterDeck(library))
+            {
+                hasChanges = true;
+            }
         }
 
         return hasChanges;
@@ -394,12 +399,33 @@ public static class ProfileSaveManager
 
     private static CharacterDeckListSave CreateLibrary(int characterId)
     {
-        return new CharacterDeckListSave
+        CharacterDeckListSave library = new CharacterDeckListSave
         {
             characterId = characterId,
             selectedDeckId = string.Empty,
             decks = new List<CharacterDeckSave>()
         };
+        EnsureStarterDeck(library);
+        return library;
+    }
+
+    private static bool EnsureStarterDeck(CharacterDeckListSave library)
+    {
+        if (library.decks.Count > 0)
+        {
+            return false;
+        }
+
+        List<int> starterCardIds = CharacterManager.GetStarterCardIds(library.characterId);
+        if (!CharacterDeckSave.IsValidCardCount(starterCardIds.Count))
+        {
+            throw new InvalidOperationException($"기본 덱 카드 구성이 올바르지 않습니다: {library.characterId}");
+        }
+
+        CharacterDeckSave starterDeck = CharacterDeckSave.Create("기본 덱", starterCardIds);
+        library.decks.Add(starterDeck);
+        library.selectedDeckId = starterDeck.deckId;
+        return true;
     }
 
     private static bool IsSupportedCharacterId(int characterId)
