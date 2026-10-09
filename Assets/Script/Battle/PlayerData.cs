@@ -97,13 +97,13 @@ public class PlayerData : MonoBehaviour
     /// <summary>
     /// 방어력 추가
     /// </summary>
-    public int AddDefense(int amount)
+    public int AddDefense(int amount, bool fromCard = false)
     {
         int finalAmount = Mathf.Max(0, amount);
         TrainingBattleManager battleManager = TrainingBattleManager.Instance;
         if (battleManager != null)
         {
-            finalAmount = battleManager.ResolvePlayerBarrierGain(finalAmount);
+            finalAmount = battleManager.ResolvePlayerBarrierGain(finalAmount, fromCard);
         }
 
         if (finalAmount <= 0)
@@ -236,6 +236,7 @@ public class PlayerData : MonoBehaviour
 
         int blockedDamage = Mathf.Min(defense, Mathf.Max(0, finalDamage));
         int damageAfterDefense = Mathf.Max(0, finalDamage - defense);
+        int hpBeforeHit = Mathf.Max(0, hp);
         hp -= damageAfterDefense;
         hpLostThisTurn += damageAfterDefense;
         if (damageAfterDefense > 0)
@@ -256,7 +257,8 @@ public class PlayerData : MonoBehaviour
         }
         if (attacker != null && finalDamage > 0)
         {
-            battleManager?.HandlePlayerHit(attacker, blockedDamage, damageAfterDefense);
+            int actualHpLoss = Mathf.Clamp(hpBeforeHit - Mathf.Max(0, hp), 0, damageAfterDefense);
+            battleManager?.HandlePlayerHit(attacker, blockedDamage, actualHpLoss);
         }
 
         return damageAfterDefense;
@@ -334,16 +336,16 @@ public class PlayerData : MonoBehaviour
         return battleManager != null ? battleManager.GetPlayerOutgoingDamageMultiplier() : 1f;
     }
 
-    public int CalculateCardDamage(int baseDamage, float strengthMultiplier = 1f, float cardBaseDamageMultiplier = 1f)
+    public int CalculateCardDamage(int baseDamage, float strengthMultiplier = 1f, float cardBaseDamageMultiplier = 1f, bool isAttackEffect = true)
     {
         int safeBaseDamage = Mathf.Max(0, baseDamage);
         float safeStrengthMultiplier = Mathf.Max(0f, strengthMultiplier);
         float safeCardBaseDamageMultiplier = Mathf.Max(0f, cardBaseDamageMultiplier);
         TrainingBattleManager battleManager = TrainingBattleManager.Instance;
-        int strengthBonus = battleManager != null
+        int strengthBonus = isAttackEffect && battleManager != null
             ? battleManager.GetPlayerCalculatedCardDamageBonus(safeStrengthMultiplier)
             : 0;
-        float totalMultiplier = battleManager != null
+        float totalMultiplier = isAttackEffect && battleManager != null
             ? battleManager.GetPlayerCalculatedCardBaseMultiplier(safeCardBaseDamageMultiplier)
             : safeCardBaseDamageMultiplier;
         totalMultiplier *= GetOutgoingDamageMultiplier();
@@ -380,6 +382,7 @@ public class PlayerData : MonoBehaviour
 
     public void SetBuffStack(int buffId, int amount)
     {
+        if (amount > 0 && BuffData.IsNonStackableBuffId(buffId)) amount = 1;
         Buff existingBuff = currentBuffs.Find(b =>
             b.data != null &&
             b.data.buffId == buffId);

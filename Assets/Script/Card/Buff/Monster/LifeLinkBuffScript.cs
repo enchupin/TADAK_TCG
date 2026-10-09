@@ -13,17 +13,22 @@ public sealed class LifeLinkBuffScript : MonsterBuffScript
             return;
         }
 
-        monster.ConsumeBuffStack(BuffId, 1);
+        monster.ConsumeBuffStack(BuffId, stack);
     }
 
-    public override void OnPlayerHpLost(TrainingBattleManager battleManager, Monster monster, int hpLoss, int stack)
+    public override void OnMonsterTurnEnd(TrainingBattleManager battleManager, Monster monster, int stack)
+    {
+        if (monster != null && stack > 0) monster.ConsumeBuffStack(BuffId, stack);
+    }
+
+    public override void OnMonsterHpLost(TrainingBattleManager battleManager, Monster monster, int hpLoss, int stack)
     {
         if (monster == null || hpLoss <= 0 || stack <= 0)
         {
             return;
         }
 
-        monster.Heal(hpLoss);
+        battleManager?.playerData?.Heal(hpLoss);
     }
 }
 }

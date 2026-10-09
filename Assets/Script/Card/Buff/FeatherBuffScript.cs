@@ -70,7 +70,7 @@ public sealed class FeatherBuffScript : PlayerBuffScript
 
     public int Trigger(TargetType target, int repeatCount)
     {
-        if (battleManager == null || repeatCount <= 0)
+        if (battleManager == null || repeatCount <= 0 || !HasFeatherTarget(target))
         {
             return 0;
         }
@@ -91,17 +91,19 @@ public sealed class FeatherBuffScript : PlayerBuffScript
 
     public int TriggerOnMonster(Monster monster, int repeatCount = 1)
     {
+        if (repeatCount <= 0 || !HasFeather(monster)) return 0;
         return TriggerOnMonsterInternal(monster, repeatCount, ConsumeDeadlyAmbushBonusIfNeeded());
     }
 
     public int TriggerOnPlayer(int repeatCount = 1)
     {
+        if (repeatCount <= 0 || !HasFeatherTarget(TargetType.Self)) return 0;
         return TriggerOnPlayerInternal(repeatCount, ConsumeDeadlyAmbushBonusIfNeeded());
     }
 
     public int TriggerUntilEmpty(TargetType target)
     {
-        if (battleManager == null)
+        if (battleManager == null || !HasFeatherTarget(target))
         {
             return 0;
         }
@@ -199,7 +201,8 @@ public sealed class FeatherBuffScript : PlayerBuffScript
         int autoTriggerCount = playerBuffRuntimeService != null
             ? playerBuffRuntimeService.GetFeatherAutoTriggerCount()
             : 0;
-        int triggerBonus = autoTriggerCount > 0 ? ConsumeDeadlyAmbushBonusIfNeeded() : 0;
+        int triggerBonus = autoTriggerCount > 0 && targets.Exists(monster => monster != null && !monster.IsDead())
+            ? ConsumeDeadlyAmbushBonusIfNeeded() : 0;
         int appliedTargetCount = 0;
 
         foreach (Monster monster in targets)
@@ -413,6 +416,26 @@ public sealed class FeatherBuffScript : PlayerBuffScript
     private bool ShouldApplyToAllEnemies()
     {
         return playerBuffRuntimeService != null && playerBuffRuntimeService.ShouldApplyFeatherToAllEnemies();
+    }
+
+    private static bool HasFeather(Monster monster)
+    {
+        return monster != null && !monster.IsDead() && monster.GetBuffStack(FeatherBuffId) > 0;
+    }
+
+    private bool HasFeatherTarget(TargetType target)
+    {
+        if (battleManager == null) return false;
+        switch (NormalizeTarget(target))
+        {
+            case TargetType.Self:
+                return battleManager.playerData != null && battleManager.playerData.hp > 0
+                    && battleManager.playerData.GetBuffStack(FeatherBuffId) > 0;
+            case TargetType.AllEnemies:
+                return battleManager.GetLivingMonsters().Exists(HasFeather);
+            default:
+                return HasFeather(ResolveSingleEnemyTarget());
+        }
     }
 
     private int ConsumeDeadlyAmbushBonusIfNeeded()

@@ -95,6 +95,7 @@ public class PlayerBuffRuntimeService
         Register(new ColdAirBuffScript());
         Register(new LavaBarrierBuffScript());
         Register(new ExhaustDrawContractBuffScript());
+        Register(new LifeLinkBuffScript());
         Register(new LastStandBuffScript());
         Register(new SoulProtectionBuffScript());
     }
@@ -127,7 +128,22 @@ public class PlayerBuffRuntimeService
 
     public void OnPlayerTurnStart()
     {
-        InvokeForActiveBuffs((script, player, stack) => script.OnPlayerTurnStart(battleManager, player, stack));
+        PlayerData player = battleManager?.playerData;
+        if (player == null) return;
+        foreach (PlayerBuffScript script in orderedScripts)
+        {
+            script.OnPlayerTurnStart(battleManager, player, script.GetRuntimeStack(battleManager, player));
+        }
+    }
+
+    public void PreparePlayerTurnEnd()
+    {
+        InvokeForActiveBuffs((script, player, stack) => script.PreparePlayerTurnEnd(battleManager, player, stack));
+    }
+
+    public void OnEnemyTurnEnd()
+    {
+        InvokeForActiveBuffs((script, player, stack) => script.OnEnemyTurnEnd(battleManager, player, stack));
     }
 
     public void OnPlayerTurnEnd()
@@ -418,6 +434,10 @@ public class PlayerBuffRuntimeService
 
     public int ConsumeRepeatCount(Card playedCard, bool isRepeatedEffect)
     {
+        if (!isRepeatedEffect && playedCard != null)
+        {
+            InvokeForActiveBuffs((script, player, stack) => script.OnCardPlayStarted(battleManager, player, playedCard, stack));
+        }
         int repeatCount = 0;
 
         InvokeForActiveBuffs((script, player, stack) =>

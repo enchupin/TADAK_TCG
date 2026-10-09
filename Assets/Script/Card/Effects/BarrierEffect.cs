@@ -25,7 +25,7 @@ public class BarrierEffect : ICardEffect
         // Barrier only applies to player when target is Self.
         if (target == TargetType.Self && battleManager.playerData != null)
         {
-            battleManager.playerData.AddDefense(finalAmount);
+            battleManager.playerData.AddDefense(finalAmount, true);
             battleManager.UpdateAllUI();
         }
 

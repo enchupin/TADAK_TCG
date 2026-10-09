@@ -876,6 +876,16 @@ public class TrainingBattleManager : MonoBehaviour
         battleBuffController?.ApplyPlayerTurnEndEffects();
     }
 
+    public void FinishEnemyTurnEndEffects()
+    {
+        battleBuffController?.FinishEnemyTurnEndEffects();
+    }
+
+    public void FinishPlayerTurnEndEffects()
+    {
+        battleBuffController?.FinishPlayerTurnEndEffects();
+    }
+
     public void ResolveAdditionalTurnEndTriggers()
     {
         battleBuffController?.ReplayAdditionalTurnEndTriggers();
@@ -1096,6 +1106,7 @@ public class TrainingBattleManager : MonoBehaviour
         int effectiveCost = GetEffectiveCardCost(card);
         if (effectiveCost <= 0)
         {
+            playerData.ConsumeBuffStack(BattleRuntimeDefinitions.NextCardFreeBuffId, 1);
             return true;
         }
 
@@ -1140,9 +1151,9 @@ public class TrainingBattleManager : MonoBehaviour
         return battleBuffController != null ? battleBuffController.GetAdditionalBarrierGain() : 0;
     }
 
-    public int ResolvePlayerBarrierGain(int amount)
+    public int ResolvePlayerBarrierGain(int amount, bool fromCard = false)
     {
-        return battleBuffController != null ? battleBuffController.ResolvePlayerBarrierGain(amount) : Mathf.Max(0, amount);
+        return battleBuffController != null ? battleBuffController.ResolvePlayerBarrierGain(amount, fromCard) : Mathf.Max(0, amount);
     }
 
     public bool ShouldRetainPlayerBarrierOnTurnStart()
@@ -1858,8 +1869,12 @@ public class TrainingBattleManager : MonoBehaviour
         return true;
     }
 
+    public int TurnSequence { get; private set; }
+
     public void SetState(BattleTurnState newState)
     {
+        if (newState == BattleTurnState.PlayerTurnStart || newState == BattleTurnState.EnemyTurnStart)
+            TurnSequence++;
         CurrentTurnState = newState;
     }
 

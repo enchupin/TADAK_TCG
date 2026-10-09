@@ -13,7 +13,7 @@ public sealed class LifeStealBuffScript : MonsterBuffScript
             return;
         }
 
-        BuffCombatUtility.TransferPlayerMaxHpToMonster(target, monster, stack);
+        BuffCombatUtility.TransferPlayerMaxHpToMonster(target, monster, 1);
     }
 }
 }

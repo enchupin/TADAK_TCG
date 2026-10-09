@@ -2,28 +2,28 @@ using static BattleRuntimeDefinitions;
 
 public sealed class HighCostRepeatBuffScript : PlayerBuffScript
 {
-    private int remainingRepeatCount;
+    private bool hasRepeatedThisTurn;
 
     public override int BuffId => HighCostRepeatBuffId;
 
     public override void ResetForCombat(TrainingBattleManager battleManager, PlayerData player)
     {
-        remainingRepeatCount = 0;
+        hasRepeatedThisTurn = false;
     }
 
     public override void OnPlayerTurnStart(TrainingBattleManager battleManager, PlayerData player, int stack)
     {
-        remainingRepeatCount = stack;
+        hasRepeatedThisTurn = false;
     }
 
     public override int ConsumeRepeatCount(TrainingBattleManager battleManager, PlayerData player, Card playedCard, bool isRepeatedEffect, int stack)
     {
-        if (playedCard == null || isRepeatedEffect || remainingRepeatCount <= 0 || playedCard.cost < 2)
+        if (playedCard == null || isRepeatedEffect || stack <= 0 || hasRepeatedThisTurn || playedCard.cost < 2)
         {
             return 0;
         }
 
-        remainingRepeatCount--;
+        hasRepeatedThisTurn = true;
         return 1;
     }
 }

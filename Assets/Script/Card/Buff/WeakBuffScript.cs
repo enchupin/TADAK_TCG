@@ -5,7 +5,7 @@ public sealed class WeakBuffScript : PlayerBuffScript
 {
     public override int BuffId => WeakBuffId;
 
-    public override float GetOutgoingDamageMultiplier(TrainingBattleManager battleManager, PlayerData player, int stack, float currentMultiplier)
+    public override float GetCalculatedCardBaseMultiplier(TrainingBattleManager battleManager, PlayerData player, int stack, float currentMultiplier)
     {
         if (stack <= 0)
         {

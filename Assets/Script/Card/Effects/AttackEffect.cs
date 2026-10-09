@@ -71,7 +71,8 @@ public class AttackEffect : ICardEffect
                     }
 
                     int barrierBefore = monster.defense;
-                    int dealtDamage = monster.TakeDamage(finalAmount, 0);
+                    int hitAmount = BuildFinalDamageAmount(battleManager, forwardedAmount, attackBoostStack);
+                    int dealtDamage = monster.TakeDamage(hitAmount, 0);
                     totalDamageDealt += dealtDamage;
                     battleManager.HandlePlayerDamageDealt(monster, dealtDamage);
                     battleManager.HandlePlayerAttackResolved(monster, barrierBefore, monster.defense);
@@ -153,12 +154,13 @@ public class AttackEffect : ICardEffect
         }
     }
 
-    private int BuildFinalDamageAmount(TrainingBattleManager battleManager, int forwardedAmount)
+    private int BuildFinalDamageAmount(TrainingBattleManager battleManager, int forwardedAmount, int consumedAttackBoost = 0)
     {
         Card sourceCard = battleManager?.battleContext?.GetContextCard("ThisCard")
             ?? battleManager?.battleContext?.GetLastPlayedCard();
         ResolveAttackAmount(battleManager, forwardedAmount, out int baseAmount, out float cardMultiplier);
         baseAmount += Mathf.Max(0, battleManager != null ? battleManager.GetCardBaseDamageBonus(sourceCard, true) : 0);
+        if (sourceCard != null) baseAmount += consumedAttackBoost;
 
         if (battleManager.playerData == null)
         {

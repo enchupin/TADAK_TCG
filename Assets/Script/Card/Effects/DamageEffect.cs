@@ -66,7 +66,8 @@ public class DamageEffect : ICardEffect
                 List<Monster> allMonsters = new List<Monster>(battleManager.spawnedMonsters);
                 foreach (var m in allMonsters)
                 {
-                    int dealtDamage = m.TakeDamage(finalAmount, 0);
+                    if (m == null || m.IsDead()) continue;
+                    int dealtDamage = m.TakeDamage(BuildFinalDamageAmount(battleManager, baseAmount, cardMultiplier), 0);
                     totalDamageDealt += dealtDamage;
                     battleManager.HandlePlayerDamageDealt(m, dealtDamage);
                 }
@@ -119,7 +120,7 @@ public class DamageEffect : ICardEffect
                 : fallbackDamage;
         }
 
-        int resolvedDamage = battleManager.playerData.CalculateCardDamage(baseAmount, ampMultiplier, cardMultiplier);
+        int resolvedDamage = battleManager.playerData.CalculateCardDamage(baseAmount, ampMultiplier, cardMultiplier, false);
         return battleManager.ApplyCardDamageRuntimeModifiers(sourceCard, resolvedDamage);
     }
 

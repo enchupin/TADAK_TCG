@@ -20,6 +20,10 @@ public abstract class PlayerBuffScript
     {
     }
 
+    public virtual void PreparePlayerTurnEnd(TrainingBattleManager battleManager, PlayerData player, int stack) { }
+
+    public virtual void OnEnemyTurnEnd(TrainingBattleManager battleManager, PlayerData player, int stack) { }
+
     public virtual void OnPlayerTurnEnd(TrainingBattleManager battleManager, PlayerData player, int stack)
     {
     }
@@ -157,6 +161,8 @@ public abstract class PlayerBuffScript
     {
         return currentMultiplier;
     }
+
+    public virtual void OnCardPlayStarted(TrainingBattleManager battleManager, PlayerData player, Card playedCard, int stack) { }
 
     public virtual int ConsumeRepeatCount(TrainingBattleManager battleManager, PlayerData player, Card playedCard, bool isRepeatedEffect, int stack)
     {

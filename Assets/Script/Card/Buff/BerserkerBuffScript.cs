@@ -18,7 +18,7 @@ public sealed class BerserkerBuffScript : PlayerBuffScript
         int totalDamageDealt = 0;
         foreach (Monster monster in battleManager.GetLivingMonsters())
         {
-            int dealtDamage = monster.TakeDamage(resolvedDamage, 0);
+            int dealtDamage = monster.TakeDamage(battleManager.ResolvePlayerEffectDamage(stack), 0);
             totalDamageDealt += dealtDamage;
             battleManager.HandlePlayerDamageDealt(monster, dealtDamage);
         }

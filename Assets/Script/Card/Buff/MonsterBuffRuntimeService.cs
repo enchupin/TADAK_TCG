@@ -22,6 +22,7 @@ public class MonsterBuffRuntimeService
         Register(new MonsterBuffs.OverheatBuffScript());
         Register(new MonsterBuffs.RootedBuffScript());
         Register(new MonsterBuffs.GlacierBondBuffScript());
+        Register(new MonsterBuffs.FrailBuffScript());
         Register(new MonsterBuffs.ThornBuffScript());
         Register(new MonsterBuffs.CrueltyBuffScript());
         Register(new MonsterBuffs.LifeLinkBuffScript());
@@ -218,6 +219,11 @@ public class MonsterBuffRuntimeService
         });
     }
 
+    public void OnAttackedByPlayer(Monster monster)
+    {
+        InvokeForActiveBuffs(monster, (script, stack) => script.OnAttackedByPlayer(battleManager, monster, stack));
+    }
+
     public void OnMonsterAfterTakeDamage(Monster monster, int incomingDamage, int damageAfterDefense)
     {
         if (monster == null || incomingDamage <= 0)
@@ -302,7 +308,7 @@ public class MonsterBuffRuntimeService
 
     public int ModifyOutgoingDamage(Monster monster, int damage)
     {
-        if (monster == null || damage <= 0)
+        if (monster == null || damage < 0)
         {
             return 0;
         }
@@ -436,7 +442,7 @@ public class MonsterBuffRuntimeService
         foreach (MonsterBuffScript script in orderedScripts)
         {
             int stack = monster.GetBuffStack(script.BuffId);
-            if (stack > 0)
+            if (script.IsActive(monster, stack))
             {
                 action(script, stack);
             }

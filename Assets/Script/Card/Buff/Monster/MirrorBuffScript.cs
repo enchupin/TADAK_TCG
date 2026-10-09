@@ -6,6 +6,8 @@ public sealed class MirrorBuffScript : MonsterBuffScript
 {
     public override int BuffId => MirrorBuffId;
 
+    public override bool IsActive(Monster monster, int stack) => monster is MirrorMonster || stack > 0;
+
     public override void OnMonsterHpLost(TrainingBattleManager battleManager, Monster monster, int hpLoss, int stack)
     {
         if (monster == null || hpLoss <= 0)
