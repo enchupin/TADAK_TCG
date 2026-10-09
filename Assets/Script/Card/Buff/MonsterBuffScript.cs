@@ -2,6 +2,12 @@ public abstract class MonsterBuffScript
 {
     public abstract int BuffId { get; }
 
+    public virtual int GetActivationCount(Monster monster) => 0;
+
+    public virtual void OnAttackActionStarted(Monster monster, int stack) { }
+
+    public virtual void OnAttackActionEnded(Monster monster) { }
+
     public virtual void OnBuffApplied(TrainingBattleManager battleManager, Monster monster, int appliedAmount, int stack)
     {
     }

@@ -42,6 +42,7 @@ public class BuffData
             || targetBuffId == ParasiticMushroomBuffId
             || targetBuffId == PoisonUpgradeBuffId
             || targetBuffId == RootedBuffId
+            || targetBuffId == HarmonyBuffId
             || targetBuffId == PoisonousMushroomBuffId;
     }
 

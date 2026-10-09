@@ -888,7 +888,6 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void ResolveBattleResult(bool isVictory)
     {
-        if (BossModeSession.IsActive && isVictory) return;
         if (hasResolvedBattleResult)
             return;
 
@@ -922,7 +921,11 @@ public class TrainingBattleManager : MonoBehaviour
             return;
         }
 
-        if (TrainingRunState.IsRunActive)
+        if (BossModeSession.IsActive)
+        {
+            StartCoroutine(ReturnToLobbyAfterBossVictory());
+        }
+        else if (TrainingRunState.IsRunActive)
         {
             StartCoroutine(HandleTrainingRunBattleResult(isVictory));
         }
@@ -931,6 +934,15 @@ public class TrainingBattleManager : MonoBehaviour
     public List<Monster> GetLivingMonsters()
     {
         return encounterSystem.GetLivingMonsters();
+    }
+
+    private System.Collections.IEnumerator ReturnToLobbyAfterBossVictory()
+    {
+        // 마지막 공격의 후속 효과 처리를 마친 뒤 전투 씬을 정리
+        yield return null;
+        buildingDeck = null;
+        PlayerData.Reset();
+        SceneManager.LoadScene("LobbyScene");
     }
 
     public bool HasPendingSelection => isMonsterSelectionActive
@@ -1242,7 +1254,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void HandleMonsterHpLost(Monster monster, int hpLoss)
     {
-        if (monster is InfiniteBossMonster) BossModeSession.AddDamage(hpLoss);
+        if (monster != null && monster.IsBoss) BossModeSession.AddDamage(hpLoss);
         battleBuffController?.HandleMonsterHpLost(monster, hpLoss);
     }
 
@@ -1265,6 +1277,15 @@ public class TrainingBattleManager : MonoBehaviour
     {
         battleBuffController?.ApplyMonsterTurnStartEffects(monster);
     }
+
+    public int GetMonsterBuffActivationCount(Monster monster, int buffId)
+        => battleBuffController?.GetMonsterBuffActivationCount(monster, buffId) ?? 0;
+
+    public void HandleMonsterAttackActionStarted(Monster monster)
+        => battleBuffController?.HandleMonsterAttackActionStarted(monster);
+
+    public void HandleMonsterAttackActionEnded(Monster monster)
+        => battleBuffController?.HandleMonsterAttackActionEnded(monster);
 
     public void ApplyMonsterTurnEndEffects(Monster monster)
     {
@@ -2024,7 +2045,7 @@ public class TrainingBattleManager : MonoBehaviour
 
         if (BossModeSession.IsActive)
         {
-            RegisterMonster(monsterSpawner.SpawnMonsterToAvailableSlot(typeof(InfiniteBossMonster)));
+            RegisterMonster(monsterSpawner.SpawnMonsterToAvailableSlot(BossModeSession.GetBossType(BossModeSession.SelectedBossId)));
             return;
         }
 

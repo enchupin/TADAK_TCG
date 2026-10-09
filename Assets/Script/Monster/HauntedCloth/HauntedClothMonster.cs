@@ -108,7 +108,7 @@ public class HauntedClothMonster : Monster
             return;
         }
 
-        ThiefMonsterBuffScript.RegisterStolenCard(this, candidate.Card);
+        MonsterBuffs.ThiefBuffScript.RegisterStolenCard(this, candidate.Card);
         AddBuff(BattleRuntimeDefinitions.ThiefBuffId, 1);
         battleManager.UpdateAllUI();
     }

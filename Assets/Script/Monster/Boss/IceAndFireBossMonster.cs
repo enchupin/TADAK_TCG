@@ -3,7 +3,6 @@ using UnityEngine;
 public class IceAndFireBossMonster : Monster
 {
     private int nextPatternId;
-    private bool hasHarmony;
 
     public override int MonsterId => 303;
     protected override string MonsterName => "얼음과 불";
@@ -12,7 +11,7 @@ public class IceAndFireBossMonster : Monster
 
     protected override void OnBattleStart()
     {
-        hasHarmony = true;
+        AddBuff(BattleRuntimeDefinitions.HarmonyBuffId, 1);
         nextPatternId = 30302;
         AddDefense(100);
     }
@@ -33,7 +32,7 @@ public class IceAndFireBossMonster : Monster
         {
             case 30301:
                 int previewDamage = GetPreviewDamage(2);
-                SetAttackIntent(previewDamage, $"피해를 {previewDamage}씩 10회 입힙니다.");
+                SetAttackIntent(previewDamage, $"피해를 {previewDamage}씩 5회 입힙니다.");
                 SetPlannedPattern(30301, MonsterIntentIconType.Attack);
                 break;
             case 30302:
@@ -54,7 +53,7 @@ public class IceAndFireBossMonster : Monster
         switch (nextPatternId)
         {
             case 30301:
-                ExecuteHarmonyAttack(target);
+                ExecuteMultiHitAttack(target);
                 break;
             case 30302:
                 AddDebuffToPlayer(target, BattleRuntimeDefinitions.FrailBuffId, 99);
@@ -67,15 +66,11 @@ public class IceAndFireBossMonster : Monster
         }
     }
 
-    private void ExecuteHarmonyAttack(PlayerData target)
+    private void ExecuteMultiHitAttack(PlayerData target)
     {
-        for (int hitIndex = 0; hitIndex < 10; hitIndex++)
+        for (int hitIndex = 0; hitIndex < 5; hitIndex++)
         {
-            int dealtDamage = DealDamage(target, 2);
-            if (hasHarmony && dealtDamage > 0)
-            {
-                AddDefense(dealtDamage);
-            }
+            DealDamage(target, 2);
 
             if (target != null && target.IsDead())
             {

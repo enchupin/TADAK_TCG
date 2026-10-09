@@ -349,6 +349,15 @@ public class BattleBuffController
         monsterBuffRuntimeService.OnMonsterTurnStart(monster);
     }
 
+    public int GetMonsterBuffActivationCount(Monster monster, int buffId)
+        => monsterBuffRuntimeService.GetActivationCount(monster, buffId);
+
+    public void HandleMonsterAttackActionStarted(Monster monster)
+        => monsterBuffRuntimeService.OnAttackActionStarted(monster);
+
+    public void HandleMonsterAttackActionEnded(Monster monster)
+        => monsterBuffRuntimeService.OnAttackActionEnded(monster);
+
     public void ApplyMonsterTurnEndEffects(Monster monster)
     {
         monsterBuffRuntimeService.OnMonsterTurnEnd(monster);

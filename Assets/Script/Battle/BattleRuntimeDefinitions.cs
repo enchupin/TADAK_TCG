@@ -110,6 +110,7 @@ public static class BattleRuntimeDefinitions
     public static int BurningFlameBuffId => GetBuffId(nameof(BurningFlameBuffId));
     public static int EightLegsBuffId => GetBuffId(nameof(EightLegsBuffId));
     public static int FuturePredationBuffId => GetBuffId(nameof(FuturePredationBuffId));
+    public static int HarmonyBuffId => GetBuffId(nameof(HarmonyBuffId));
     public static int RootedBuffId => GetBuffId(nameof(RootedBuffId));
     public static int MirrorBuffId => GetBuffId(nameof(MirrorBuffId));
     public static int PoisonousMushroomBuffId => GetBuffId(nameof(PoisonousMushroomBuffId));
@@ -238,6 +239,7 @@ public static class BattleRuntimeDefinitions
         Register(nameof(BurningFlameBuffId), "타오르는 불꽃", 5008);
         Register(nameof(EightLegsBuffId), "여덟 다리", 5009);
         Register(nameof(FuturePredationBuffId), "미래 포식", 5010);
+        Register(nameof(HarmonyBuffId), "조화", 5014);
         Register(nameof(RootedBuffId), "뿌리내림", 5011);
         Register(nameof(MirrorBuffId), "거울", 5012);
         Register(nameof(PoisonousMushroomBuffId), "독버섯", 5013);

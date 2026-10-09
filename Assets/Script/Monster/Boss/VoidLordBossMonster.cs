@@ -4,7 +4,6 @@ using UnityEngine;
 public class VoidLordBossMonster : Monster
 {
     private int nextPatternId;
-    private int pendingAttackBoost;
     private bool isInvulnerable;
     private bool recoverySequenceActive;
 
@@ -16,7 +15,6 @@ public class VoidLordBossMonster : Monster
     protected override void OnBattleStart()
     {
         nextPatternId = 30403;
-        pendingAttackBoost = 0;
         isInvulnerable = false;
         recoverySequenceActive = false;
         AddBuff(BattleRuntimeDefinitions.VoidShellBuffId, 11);
@@ -27,6 +25,11 @@ public class VoidLordBossMonster : Monster
         if (IsDead() || recoverySequenceActive)
         {
             return;
+        }
+
+        if (!HasOtherLivingAllies() && (nextPatternId == 30401 || nextPatternId == 30402))
+        {
+            nextPatternId = 30406;
         }
 
         if (BuffCombatUtility.CountDistinctNegativeBuffTypes(this) < 3)
@@ -70,7 +73,7 @@ public class VoidLordBossMonster : Monster
                 break;
             default:
                 int attackBoost = UnityEngine.Mathf.Max(0, 6);
-                SetIntent($"공격 강화를 {attackBoost} 얻습니다.");
+                SetIntent($"강공을 {attackBoost} 얻습니다.");
                 SetPlannedPattern(30406, MonsterIntentIconType.BeneficialEffect);
                 break;
         }
@@ -107,7 +110,7 @@ public class VoidLordBossMonster : Monster
                 nextPatternId = 30403;
                 break;
             default:
-                pendingAttackBoost += 6;
+                AddBuff(BattleRuntimeDefinitions.AttackBoostBuffId, 6);
                 nextPatternId = 30403;
                 break;
         }
@@ -115,17 +118,15 @@ public class VoidLordBossMonster : Monster
 
     private void ExecuteTripleAttack(PlayerData target)
     {
-        int boostedDamage = 14 + pendingAttackBoost;
         for (int hitIndex = 0; hitIndex < 3; hitIndex++)
         {
-            DealDamage(target, boostedDamage);
+            DealDamage(target, 14);
             if (target != null && target.IsDead())
             {
                 break;
             }
         }
 
-        pendingAttackBoost = 0;
     }
 
     private void AddVoidCallCards()
@@ -205,6 +206,6 @@ public class VoidLordBossMonster : Monster
 
     private int GetPreviewDamage(int baseDamage)
     {
-        return PreviewOutgoingDamage(baseDamage + pendingAttackBoost);
+        return PreviewOutgoingDamage(baseDamage);
     }
 }

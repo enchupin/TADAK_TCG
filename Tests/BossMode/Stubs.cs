@@ -3,6 +3,8 @@ using System.Collections.Generic;
 namespace UnityEngine {
  public class MonoBehaviour {}
  public class SerializeField : Attribute {}
+ public class TooltipAttribute : Attribute { public TooltipAttribute(string text) {} }
+ public struct Color { public Color(float r,float g,float b) {} public static Color white => new(); }
  public static class Debug { public static void LogError(object message) {} }
  public static class Application { public static bool CanStreamedLevelBeLoaded(string name) => true; }
 }
@@ -10,7 +12,8 @@ namespace UnityEngine.SceneManagement {
  public static class SceneManager { public static string Loaded; public static void LoadScene(string name) { Loaded = name; } }
 }
 namespace UnityEngine.UI {
- public class Button { public bool interactable; public ButtonEvent onClick = new(); }
+ public struct ColorBlock { public UnityEngine.Color normalColor,selectedColor,highlightedColor; }
+ public class Button { public bool interactable; public ColorBlock colors; public ButtonEvent onClick = new(); }
  public class ButtonEvent { public void AddListener(Action action) {} public void RemoveListener(Action action) {} }
 }
 public class BossModeDeckSlot { public void SetSelected(bool selected) {} }
@@ -40,20 +43,7 @@ public static class ProfileSaveManager {
  public static PlayerProfileSave CurrentProfile = new(); public static int Saves; public static bool Fail;
  public static void Save(PlayerProfileSave profile) { if(Fail) throw new Exception(); Saves++; }
 }
-public abstract class Monster {
- public abstract int MonsterId {get;}
- protected virtual string MonsterName => "";
- protected virtual string ImageName => "";
- protected abstract int BaseMaxHp {get;}
- protected virtual bool IsBossMonster => false;
- public virtual bool HasInfiniteHealth => false;
- protected virtual string HealthLabel => null;
- protected abstract void BuildNextAction();
- protected abstract void ExecuteAction(PlayerData target);
- protected virtual void OnTurnEnded() {}
- protected virtual bool CanDie()=>true;
- protected int PreviewOutgoingDamage(int damage)=>damage;
- protected void SetAttackIntent(int damage,string text) {}
- protected void DealDamage(PlayerData target,int damage) {target.LastDamage=damage;}
- public void Attack(PlayerData target) {BuildNextAction();ExecuteAction(target);OnTurnEnded();}
-}
+public class GiantFlowerSpiderBossMonster {}
+public class ProphetBossMonster {}
+public class IceAndFireBossMonster {}
+public class VoidLordBossMonster {}
