@@ -20,7 +20,7 @@ public sealed class BerserkerBuffScript : PlayerBuffScript
         {
             int dealtDamage = monster.TakeDamage(battleManager.ResolvePlayerEffectDamage(stack), 0);
             totalDamageDealt += dealtDamage;
-            battleManager.HandlePlayerDamageDealt(monster, dealtDamage);
+            battleManager.Buffs.Player.OnPlayerDamageDealt(monster, dealtDamage);
         }
 
         battleManager.battleContext?.OnDamageDealt(totalDamageDealt);

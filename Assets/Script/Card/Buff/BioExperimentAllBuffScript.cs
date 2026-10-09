@@ -25,7 +25,7 @@ public sealed class BioExperimentAllBuffScript : PlayerBuffScript
             }
 
             int dealtDamage = monster.TakeDamage(battleManager.ResolvePlayerEffectDamage(stack), 0);
-            battleManager.HandlePlayerDamageDealt(monster, dealtDamage);
+            battleManager.Buffs.Player.OnPlayerDamageDealt(monster, dealtDamage);
         }
     }
 }

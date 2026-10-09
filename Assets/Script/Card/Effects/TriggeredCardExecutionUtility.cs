@@ -3,19 +3,6 @@ using System.Collections.Generic;
 
 public static class TriggeredCardExecutionUtility
 {
-    public static void ExecuteTriggeredCard(
-        TrainingBattleManager battleManager,
-        Card card,
-        Monster targetMonster = null,
-        bool resolveDestination = false,
-        bool triggerPowerEffects = false,
-        bool allowRepeats = false,
-        bool applyPostPlayKeywords = false)
-    {
-        battleManager?.StartCoroutine(CardEffectSequence.Run(ExecuteTriggeredCardSequence(
-            battleManager, card, targetMonster, resolveDestination, triggerPowerEffects, allowRepeats, applyPostPlayKeywords), battleManager));
-    }
-
     public static IEnumerator ExecuteTriggeredCardSequence(
         TrainingBattleManager battleManager,
         Card card,
@@ -38,7 +25,7 @@ public static class TriggeredCardExecutionUtility
 
         if (triggerPowerEffects)
         {
-            battleManager.HandlePlayedCardPowerEffects(card, resolvedTarget, false);
+            battleManager.Buffs.Player.OnCardPlayed(card, resolvedTarget, false);
 
             if (cardUseAllEnemiesDamage > 0)
             {
@@ -54,7 +41,7 @@ public static class TriggeredCardExecutionUtility
 
             if (triggerPowerEffects)
             {
-                battleManager.HandlePlayedCardPowerEffects(card, resolvedTarget, true);
+                battleManager.Buffs.Player.OnCardPlayed(card, resolvedTarget, true);
             }
         }
 
@@ -63,12 +50,12 @@ public static class TriggeredCardExecutionUtility
 
         if (resolveDestination)
         {
-            ResolvePlayedCardDestination(battleManager, card);
+            CardPlayCompletion.ResolveDestination(battleManager, card);
         }
 
         if (applyPostPlayKeywords)
         {
-            ApplyPostPlayKeywords(battleManager, card);
+            CardPlayCompletion.ApplyKeywords(battleManager, card);
         }
     }
 
@@ -138,90 +125,4 @@ public static class TriggeredCardExecutionUtility
             : null;
     }
 
-    private static void ResolvePlayedCardDestination(TrainingBattleManager battleManager, Card playedCard)
-    {
-        if (battleManager == null || playedCard == null)
-        {
-            return;
-        }
-
-        if (battleManager.ShouldPotionGoToDiscardInsteadOfExhaust(playedCard))
-        {
-            battleManager.usableDeckManager?.AddToDiscard(playedCard);
-            return;
-        }
-
-        if (playedCard.ShouldExhaustWhenPlayed())
-        {
-            battleManager.MoveCardToExhaust(playedCard);
-            return;
-        }
-
-        if (battleManager.ShouldExhaustUnlockedUnplayableCard(playedCard))
-        {
-            battleManager.MoveCardToExhaust(playedCard);
-            return;
-        }
-
-        if (playedCard.ShouldLeaveCombatWhenPlayed())
-        {
-            battleManager.RemoveCardFromCombat(playedCard);
-            return;
-        }
-
-        if (HasResolvedCardDestination(battleManager, playedCard))
-        {
-            return;
-        }
-
-        battleManager.usableDeckManager?.AddToDiscard(playedCard);
-    }
-
-    private static bool HasResolvedCardDestination(TrainingBattleManager battleManager, Card playedCard)
-    {
-        if (playedCard == null || battleManager?.usableDeckManager == null)
-        {
-            return false;
-        }
-
-        return battleManager.usableDeckManager.GetDrawPile().Contains(playedCard)
-            || battleManager.usableDeckManager.GetDiscardPile().Contains(playedCard)
-            || battleManager.usableDeckManager.GetExhaustPile().Contains(playedCard);
-    }
-
-    private static void ApplyPostPlayKeywords(TrainingBattleManager battleManager, Card playedCard)
-    {
-        if (battleManager == null || playedCard == null)
-        {
-            return;
-        }
-
-        if (playedCard.HasKeyword(CardKeywordIds.Shadow))
-        {
-            CreateShadowCopy(battleManager, playedCard);
-        }
-
-        if (playedCard.HasKeyword(CardKeywordIds.Finale))
-        {
-            battleManager.ForceEndPlayerTurn();
-        }
-    }
-
-    private static void CreateShadowCopy(TrainingBattleManager battleManager, Card sourceCard)
-    {
-        if (sourceCard == null || battleManager?.handManager == null)
-        {
-            return;
-        }
-
-        Card shadowCopy = sourceCard.CloneForRuntimeCopy();
-        if (shadowCopy == null)
-        {
-            return;
-        }
-
-        shadowCopy.AddKeyword(CardKeywordIds.Ghost);
-        shadowCopy.SetCost(UnityEngine.Mathf.Max(1, sourceCard.cost - 1), false);
-        battleManager.handManager.AddCard(shadowCopy);
-    }
 }

@@ -16,7 +16,7 @@ public sealed class LavaBarrierBuffScript : PlayerBuffScript
         Debug.Log("용암 보호막이 발동해 피해를 받지 않았습니다");
         if (attacker != null)
         {
-            battleManager?.HandlePlayerHit(attacker, 0, 0);
+            battleManager?.Buffs.Player.OnPlayerHit(attacker, 0, 0);
         }
 
         return true;

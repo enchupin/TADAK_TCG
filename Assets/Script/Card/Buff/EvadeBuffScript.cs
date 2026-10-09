@@ -14,7 +14,7 @@ public sealed class EvadeBuffScript : PlayerBuffScript
 
         player.ConsumeBuffStack(BuffId, 1);
         Debug.Log("회피가 발동해 공격을 피했습니다");
-        battleManager?.HandlePlayerHit(attacker, 0, 0);
+        battleManager?.Buffs.Player.OnPlayerHit(attacker, 0, 0);
         return true;
     }
 }

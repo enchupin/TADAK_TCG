@@ -162,6 +162,7 @@ static class Program
             var c = new Card(); int count = 0; c.effects.Add(new ActionEffect(_ => count++)); var m = Setup(c);
             c.Play(m); Assert(count == 1 && m.battleContext.GetContextCard("ThisCard") == null, "동기 효과 호환");
         });
+        passed += CardCompletionTests.Run();
         Console.WriteLine($"{passed} tests passed");
     }
     sealed class ActionEffect : ICardEffect

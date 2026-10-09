@@ -61,16 +61,14 @@ public static class BuffCombatUtility {
 }
 public partial class TrainingBattleManager {
  public FeatherBuffScript feather;
+ public BattleBuffController Buffs=>battleBuffController;
  public Card ApplyPersistentUpgradeToCard(Card card)=>ApplyPersistentUpgradeToCard(card,0);
  public void RefreshHandPlayableState(){}
  public UnityEngine.Coroutine StartCoroutine(System.Collections.IEnumerator e){while(e.MoveNext()){}return new();}
  public int ConsumeRepeatedPlayCount(Card c,bool repeat)=>playerService.ConsumeRepeatCount(c,repeat);
  public int GetCardUseAllEnemiesDamage()=>0;public void ApplyCardUseAllEnemiesDamage(int n){}
- public void HandlePlayedCardPowerEffects(Card c,Monster m,bool repeat)=>playerService.OnCardPlayed(c,m,repeat);
  public bool ShouldPotionGoToDiscardInsteadOfExhaust(Card c)=>false;public bool ShouldExhaustUnlockedUnplayableCard(Card c)=>false;
  public void MoveCardToExhaust(Card c){}public void RemoveCardFromCombat(Card c){} public void ForceEndPlayerTurn(){}
- public void ApplyBuffToAllEnemies(int id,int amount){if(feather.TryApplyToAllEnemies(id,amount))return;foreach(var m in GetLivingMonsters())ApplyBuffToMonster(m,id,amount);}
-
  public void ResolveAdditionalTurnEndTriggers()=>playerService.ReplayTurnEndTriggeredEffects(); public int GetTurnEndRetainCount()=>0; public void MoveCardsToExhaust(List<Card> c){} public bool HasPendingSelection=>false; public BattleBuffController battleBuffController; public static TrainingBattleManager Instance; public BattleTurnState CurrentTurnState;
  public Monster currentTarget; public BattleContext battleContext=new(); public Piles usableDeckManager=new();
  public List<Monster> spawnedMonsters=>monsters;
@@ -85,15 +83,11 @@ public partial class TrainingBattleManager {
  public bool TryPreventPlayerIncomingDamage(int n,Monster m)=>playerService.TryPreventIncomingDamage(m,n);
  public void HandlePlayerHpLost(int n){playerService.OnPlayerHpLost(n);monsterService.OnPlayerHpLost(n);}
  public void TryConsumeSoulProtection()=>playerService.TryConsumeFatalDamage();
- public void ConsumePlayerIncomingDamageBuffs(Monster m,int n)=>playerService.ConsumeIncomingDamageBuff(m,n);
- public void HandlePlayerHit(Monster m,int blocked,int hp)=>playerService.OnPlayerHit(m,blocked,hp);
- public void HandlePlayerDamageDealt(Monster m,int n)=>playerService.OnPlayerDamageDealt(m,n);
  public void HandlePlayerAttackResolved(Monster m,int before,int after){monsterService.OnAttackedByPlayer(m);playerService.OnPlayerAttackResolved(m,before,after);}
- public void HandleEnemyDebuffApplied(Monster m,int id,int n,int previous)=>playerService.OnEnemyDebuffApplied(m,id,n,previous);
  public PlayerData playerData=new(); public Hand handManager=new(); public List<Monster> monsters=new();
  public int TurnSequence=1,draws,repeats; public bool duplicate,enhance;
  public PlayerBuffRuntimeService playerService; public MonsterBuffRuntimeService monsterService;
- public TrainingBattleManager(){Instance=this;playerService=new(this);battleBuffController=new(playerService,this);monsterService=new(this);feather=new(this,playerService);}
+ public TrainingBattleManager(){Instance=this;battleBuffController=new(this);playerService=battleBuffController.Player;monsterService=battleBuffController.Monsters;feather=new(this,playerService);}
  public void DrawCards(int n){if(playerService.CanDrawCards())draws+=n;}
  public List<Monster> GetLivingMonsters()=>monsters.Where(m=>!m.IsDead()).ToList();
  public bool CanGainCardsToHand()=>playerService.CanGainCardsToHand();
@@ -102,16 +96,13 @@ public partial class TrainingBattleManager {
   if(allow && duplicate)result.AddRange(result.Select(c=>c.CloneForRuntimeCopy()).ToList());return result;
  }
  public void UpdateAllUI(){}
- public void ApplyBuffToPlayer(int id,int n){playerData.AddBuff(id,n);battleBuffController.HandleBuffApplied(id);}
  public void AddTurnEndTriggerRepeat(int n)=>repeats+=n;
- public void ApplyBuffToMonster(Monster m,int id,int n){
-  if(feather.TryApplyToMonster(id,m,n))return;
-  m.AddBuff(id,n);monsterService.OnEnemyDebuffApplied(m,id,n,0);playerService.OnEnemyDebuffApplied(m,id,n,0);
- }
 }
 
 public class Piles { public List<Card> draw=new(),discard=new(),exhaust=new();public void AddToDiscard(List<Card> c)=>discard.AddRange(c);public void AddToDiscard(Card c)=>discard.Add(c);public List<Card> GetExhaustPile()=>exhaust;public List<Card> GetDrawPile()=>draw;public List<Card> GetDiscardPile()=>discard; }
 public class BattleContext {
+ public int EnemyDebuffNotifications;
+ public void OnEnemyDebuffApplied(int id)=>EnemyDebuffNotifications++;
  public void OnCardsDiscarded(int n){} public int lastDamageDealt,totalDamageDealt; public Card card=new();
  public Dictionary<string,List<Card>> contexts=new(); public List<Card> selected=new();
  public Card GetContextCard(string s)=>GetContextCards(s)?.FirstOrDefault(); public Card GetLastPlayedCard()=>card;
@@ -125,12 +116,6 @@ public partial class TurnSystem {
  public TurnSystem(TrainingBattleManager b,int repeats){battleManager=b;pendingExtraTurnEndTriggers=repeats;}
  public void FinishHand(){var e=DiscardRemainingHandCards();while(e.MoveNext()){} }
  private System.Collections.IEnumerator SelectTurnEndRetainCards(List<Card> cards,int n,List<Card> selected){yield break;}
-}
-
-public partial class BattleBuffController {
- private PlayerBuffRuntimeService playerBuffRuntimeService;
- public TrainingBattleManager battleManager; private MonsterBuffRuntimeService monsterBuffRuntimeService=>battleManager.monsterService;
- public BattleBuffController(PlayerBuffRuntimeService service,TrainingBattleManager manager){playerBuffRuntimeService=service;battleManager=manager;}
 }
 
 public static class BuffMetadataResolver { public static BuffData Resolve(int id)=>new(){buffId=id,name=id.ToString()}; }

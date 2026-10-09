@@ -130,7 +130,7 @@ public class PlayerData : MonoBehaviour
             TrainingBattleManager.Instance?.battleContext?.OnDefenseConsumed(removedAmount);
         }
 
-        TrainingBattleManager.Instance?.HandlePlayerBarrierReduced(removedAmount);
+        TrainingBattleManager.Instance?.Buffs.Player.OnPlayerBarrierReduced(removedAmount);
         return removedAmount;
     }
 
@@ -253,12 +253,12 @@ public class PlayerData : MonoBehaviour
         TryConsumeSoulProtection();
         if (finalDamage > 0)
         {
-            battleManager?.ConsumePlayerIncomingDamageBuffs(attacker, finalDamage);
+            battleManager?.Buffs.Player.ConsumeIncomingDamageBuff(attacker, finalDamage);
         }
         if (attacker != null && finalDamage > 0)
         {
             int actualHpLoss = Mathf.Clamp(hpBeforeHit - Mathf.Max(0, hp), 0, damageAfterDefense);
-            battleManager?.HandlePlayerHit(attacker, blockedDamage, actualHpLoss);
+            battleManager?.Buffs.Player.OnPlayerHit(attacker, blockedDamage, actualHpLoss);
         }
 
         return damageAfterDefense;
