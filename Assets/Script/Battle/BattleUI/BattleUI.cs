@@ -37,6 +37,12 @@ public class BattleUI : MonoBehaviour
     private Color defaultHPFillColor = Color.white;
     private bool hasDefaultHPFillColor;
 
+    public void OnClickSettingsButton()
+    {
+        if (SettingsManager.Instance != null)
+            SettingsManager.Instance.OpenSettingsPanel();
+    }
+
     private void Awake()
     {
         CacheHPFillDefaultColor();

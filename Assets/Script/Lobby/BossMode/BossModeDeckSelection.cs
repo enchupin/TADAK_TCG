@@ -8,13 +8,17 @@ public class BossModeDeckSelection : MonoBehaviour
     [SerializeField] private DictionarySavedDeckPanel savedDeckPanel;
     [SerializeField] private Button startButton;
     [SerializeField] private BossModeDeckSlot[] deckSlots;
+    [Tooltip("아라크네, 선지자, 얼음과 불, 공허 군주 순서로 연결")]
+    [SerializeField] private Button[] bossButtons;
     [SerializeField] private string battleSceneName = "CombatScene";
     private readonly Dictionary<Character, string> selections = new Dictionary<Character, string>();
     private bool starting;
+    private int selectedBossId;
 
     private void OnEnable()
     {
         selections.Clear();
+        selectedBossId = 0;
         starting = false;
         if (savedDeckPanel != null) savedDeckPanel.DecksChanged += Refresh;
         if (startButton != null) startButton.onClick.AddListener(StartBattle);
@@ -39,6 +43,13 @@ public class BossModeDeckSelection : MonoBehaviour
         Refresh();
     }
 
+    public void SelectBoss(int monsterId)
+    {
+        if (starting || BossModeSession.GetBossType(monsterId) == null) return;
+        selectedBossId = selectedBossId == monsterId ? 0 : monsterId;
+        Refresh();
+    }
+
     private CharacterDeckSave ResolveDeck(Character character, string deckId)
     {
         return ProfileSaveManager.CurrentProfile?.FindLibrary((int)character)?.decks?.Find(deck => deck != null && deck.deckId == deckId);
@@ -56,13 +67,26 @@ public class BossModeDeckSelection : MonoBehaviour
                 deckSlots[i]?.SetSelected(selected);
             }
         }
-        if (startButton != null) startButton.interactable = !starting && selections.Count == 3;
+        if (bossButtons != null) {
+            for (int i = 0; i < bossButtons.Length; i++) {
+                Button button = bossButtons[i];
+                if (button == null) continue;
+                ColorBlock colors = button.colors;
+                Color color = selectedBossId == 301 + i ? new Color(1f, 0.8f, 0.35f) : Color.white;
+                colors.normalColor = color;
+                colors.selectedColor = color;
+                colors.highlightedColor = color;
+                button.colors = colors;
+            }
+        }
+        if (startButton != null) startButton.interactable = !starting && selections.Count == 3
+            && BossModeSession.GetBossType(selectedBossId) != null;
     }
 
     public void StartBattle()
     {
         Refresh();
-        if (starting || selections.Count != 3) return;
+        if (starting || selections.Count != 3 || BossModeSession.GetBossType(selectedBossId) == null) return;
         List<Character> characters = new List<Character>(selections.Keys);
         characters.Sort();
         List<int> cards = new List<int>();
@@ -83,7 +107,7 @@ public class BossModeDeckSelection : MonoBehaviour
         }
         starting = true;
         if (startButton != null) startButton.interactable = false;
-        BossModeSession.Begin(characters, cards);
+        BossModeSession.Begin(characters, cards, selectedBossId);
         SceneManager.LoadScene(battleSceneName);
     }
 }

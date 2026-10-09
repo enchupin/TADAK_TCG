@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// Runtime map presenter for training mode.
@@ -10,14 +11,9 @@ using UnityEngine.UI;
 /// </summary>
 public class TrainingMapController : MonoBehaviour
 {
-    private static readonly Vector2 defaultNodeSize = new Vector2(110f, 56f);
-    private static readonly Vector2 defaultNodeSpacing = new Vector2(260f, 170f);
-
     [Header("Run Setup")]
-    [SerializeField] private string battleSceneName = "CombatScene";
     [SerializeField] private string restSceneName = "TrainingRestScene";
     [SerializeField] private string eventSceneName = "TrainingRestScene";
-    [SerializeField] private bool autoStartRunIfMissing = true;
 
     [Header("Node UI")]
     [SerializeField] private RectTransform nodeRoot;
@@ -26,11 +22,10 @@ public class TrainingMapController : MonoBehaviour
     [SerializeField] private Button namedNodeButtonPrefab;
     [SerializeField] private Button restNodeButtonPrefab;
     [SerializeField] private Button bossNodeButtonPrefab;
-    [SerializeField] private Vector2 nodeSpacing = new Vector2(260f, 170f);
-    [SerializeField] private Vector2 nodeSize = new Vector2(110f, 56f);
-    [SerializeField] private Vector2 mapPadding = new Vector2(80f, 80f);
-    [SerializeField] private float startNodeOffset = 1f;
-    [SerializeField] private float laneSpacingScale = 0.9f;
+    [SerializeField] private RectTransform[] positionTemplates = new RectTransform[10];
+    [SerializeField] private float floorSpacing = 200f;
+    [SerializeField] private CanvasGroup combatInteraction;
+    [SerializeField] private TrainingBattleManager battleManager;
 
     [Header("Visuals")]
     [SerializeField] private Color selectableNodeColor = new Color(0.26f, 0.73f, 0.29f);
@@ -45,22 +40,111 @@ public class TrainingMapController : MonoBehaviour
     [Header("Status")]
     [SerializeField] private TMP_Text statusText;
 
-    private readonly List<GameObject> spawnedNodeObjects = new List<GameObject>();
-    private readonly List<GameObject> spawnedConnectionObjects = new List<GameObject>();
-    private Vector2 layoutOrigin;
-    private Vector2 layoutNodeSize = defaultNodeSize;
-    private Vector2 effectiveNodeSpacing = defaultNodeSpacing;
+    private Vector2 nodeAnchor;
+    private Vector2 layoutNodeSize;
+    private readonly Dictionary<int, Button> nodeButtons = new Dictionary<int, Button>();
+    private readonly Dictionary<(int from, int to), Image> connectionImages = new Dictionary<(int, int), Image>();
 
-    private void Start()
+    private bool isPreview;
+    private static TrainingMapController activePreview;
+    private static int escapeConsumedFrame = -1;
+    public bool IsVisible => gameObject.activeInHierarchy;
+    private int? DisplayedCurrentNode => isPreview ? TrainingRunState.PendingNodeId : TrainingRunState.CurrentNodeId;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetPreviewState()
     {
-        EnsureRunState();
-        BuildMapUI();
+        activePreview = null;
+        escapeConsumedFrame = -1;
+    }
+
+    public void OpenMapPreview()
+    {
+        if (IsVisible) return;
+        if (BossModeSession.IsActive || !TrainingRunState.PendingNodeId.HasValue
+            || battleManager.CurrentTurnState == BattleTurnState.CombatEnd) return;
+        isPreview = true;
+        activePreview = this;
+        DisplayMap();
+        SettingsManager.PlayPanelToggleSound();
+    }
+
+    private void Update()
+    {
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame
+            && !(SettingsManager.Instance != null && SettingsManager.Instance.IsSettingsPanelOpen()))
+            TryHandlePreviewEscape();
+    }
+
+    public static bool TryHandlePreviewEscape(bool settingsPanelOpen = false)
+    {
+        if (escapeConsumedFrame == Time.frameCount) return true;
+        if (settingsPanelOpen)
+        {
+            escapeConsumedFrame = Time.frameCount;
+            return false;
+        }
+        if (activePreview == null || !activePreview.isPreview || !activePreview.IsVisible) return false;
+        escapeConsumedFrame = Time.frameCount;
+        activePreview.ShowBattle();
+        SettingsManager.PlayPanelToggleSound();
+        return true;
+    }
+
+    private void OnDisable()
+    {
+        if (activePreview == this) activePreview = null;
+    }
+
+    public void ShowMap()
+    {
+        isPreview = false;
+        if (activePreview == this) activePreview = null;
+        DisplayMap();
+    }
+
+    private void DisplayMap()
+    {
+        gameObject.SetActive(true);
+        combatInteraction.interactable = false;
+        combatInteraction.blocksRaycasts = false;
+        if (nodeButtons.Count == 0) BuildMapUI();
+        else
+        {
+            foreach (var entry in nodeButtons)
+            {
+                bool selectable = TrainingRunState.IsNodeSelectable(entry.Key);
+                entry.Value.interactable = !isPreview && selectable;
+                ApplyNodeVisual(entry.Value, selectable, TrainingRunState.IsNodeCleared(entry.Key),
+                    DisplayedCurrentNode == entry.Key);
+            }
+            foreach (var entry in connectionImages)
+                entry.Value.color = ResolveConnectionColor(entry.Key.from, entry.Key.to);
+            UpdateStatusText();
+            ResetScrollPosition();
+        }
+    }
+
+    public void ShowBattle()
+    {
+        isPreview = false;
+        combatInteraction.interactable = true;
+        combatInteraction.blocksRaycasts = true;
+        gameObject.SetActive(false);
+        battleManager.UpdateEndTurnButtonState();
+        battleManager.RefreshHandPlayableState();
     }
 
     [ContextMenu("Build Map UI")]
     public void BuildMapUI()
     {
-        EnsureNodeRoot();
+        if (nodeRoot == null || positionTemplates == null || positionTemplates.Length != 10
+            || System.Array.Exists(positionTemplates, template => template == null))
+        {
+            Debug.LogError("[TrainingMapController] Content와 기준 버튼 10개를 인스펙터에 연결하세요");
+            return;
+        }
+        foreach (RectTransform template in positionTemplates) template.gameObject.SetActive(false);
         EnsureConnectionRoot();
         ClearSpawnedNodes();
         ClearSpawnedConnections();
@@ -79,6 +163,7 @@ public class TrainingMapController : MonoBehaviour
 
     public void OnNodeSelected(int nodeId)
     {
+        if (isPreview || !IsVisible) return;
         if (!TrainingRunState.TrySelectNode(nodeId, out TrainingMapNodeData node))
             return;
 
@@ -117,42 +202,7 @@ public class TrainingMapController : MonoBehaviour
             return;
         }
 
-        if (string.IsNullOrEmpty(TrainingRunState.BattleSceneName))
-        {
-            Debug.LogError("[TrainingMapController] Battle scene name is empty.");
-            return;
-        }
-
-        SceneManager.LoadScene(TrainingRunState.BattleSceneName);
-    }
-
-    private void EnsureRunState()
-    {
-        if (TrainingRunState.HasMapData)
-            return;
-
-        if (!autoStartRunIfMissing)
-            return;
-
-        string mapSceneName = SceneManager.GetActiveScene().name;
-        TrainingRunState.StartNewRun(mapSceneName, battleSceneName);
-    }
-
-    private void EnsureNodeRoot()
-    {
-        if (nodeRoot == null)
-        {
-            nodeRoot = transform as RectTransform;
-        }
-
-        if (nodeRoot == null)
-            return;
-
-        Image rootImage = nodeRoot.GetComponent<Image>();
-        if (rootImage != null)
-        {
-            rootImage.raycastTarget = false;
-        }
+        battleManager.BeginSelectedBattle();
     }
 
     private void EnsureConnectionRoot()
@@ -193,8 +243,8 @@ public class TrainingMapController : MonoBehaviour
         RectTransform rect = button.GetComponent<RectTransform>();
         if (rect != null)
         {
-            rect.anchorMin = new Vector2(0f, 1f);
-            rect.anchorMax = new Vector2(0f, 1f);
+            rect.anchorMin = nodeAnchor;
+            rect.anchorMax = nodeAnchor;
             rect.pivot = new Vector2(0.5f, 0.5f);
             rect.sizeDelta = layoutNodeSize;
             rect.anchoredPosition = anchoredPosition;
@@ -202,9 +252,9 @@ public class TrainingMapController : MonoBehaviour
 
         bool isSelectable = TrainingRunState.IsNodeSelectable(node.nodeId);
         bool isCleared = TrainingRunState.IsNodeCleared(node.nodeId);
-        bool isCurrent = TrainingRunState.CurrentNodeId.HasValue && TrainingRunState.CurrentNodeId.Value == node.nodeId;
+        bool isCurrent = DisplayedCurrentNode == node.nodeId;
 
-        button.interactable = isSelectable;
+        button.interactable = !isPreview && isSelectable;
         button.onClick.RemoveAllListeners();
 
         int capturedNodeId = node.nodeId;
@@ -212,15 +262,25 @@ public class TrainingMapController : MonoBehaviour
 
         ApplyNodeLabel(button, node);
         ApplyNodeVisual(button, isSelectable, isCleared, isCurrent);
-        spawnedNodeObjects.Add(button.gameObject);
+        nodeButtons[node.nodeId] = button;
     }
 
     private Dictionary<int, Vector2> BuildNodePositions(IReadOnlyList<TrainingMapNodeData> nodes)
     {
+        Dictionary<int, int> counts = new Dictionary<int, int>();
+        foreach (TrainingMapNodeData node in nodes)
+        {
+            counts.TryGetValue(node.stageIndex, out int count);
+            counts[node.stageIndex] = count + 1;
+        }
         Dictionary<int, Vector2> nodePositions = new Dictionary<int, Vector2>(nodes.Count);
         foreach (TrainingMapNodeData node in nodes)
         {
-            nodePositions[node.nodeId] = GridToAnchoredPosition(node.gridPosition);
+            int count = counts[node.stageIndex];
+            int templateIndex = count * (count - 1) / 2 + node.laneIndex;
+            nodePositions[node.nodeId] = new Vector2(
+                positionTemplates[0].anchoredPosition.x + node.stageIndex * floorSpacing,
+                positionTemplates[templateIndex].anchoredPosition.y);
         }
 
         return nodePositions;
@@ -260,8 +320,8 @@ public class TrainingMapController : MonoBehaviour
             return;
         }
 
-        rect.anchorMin = new Vector2(0f, 1f);
-        rect.anchorMax = new Vector2(0f, 1f);
+        rect.anchorMin = nodeAnchor;
+        rect.anchorMax = nodeAnchor;
         rect.pivot = new Vector2(0.5f, 0.5f);
         rect.sizeDelta = new Vector2(length, Mathf.Max(2f, connectionThickness));
         rect.anchoredPosition = (fromPosition + toPosition) * 0.5f;
@@ -270,8 +330,8 @@ public class TrainingMapController : MonoBehaviour
         Image image = lineObject.GetComponent<Image>();
         image.color = ResolveConnectionColor(fromNodeId, toNodeId);
         image.raycastTarget = false;
+        connectionImages[(fromNodeId, toNodeId)] = image;
 
-        spawnedConnectionObjects.Add(lineObject);
     }
 
     private Color ResolveConnectionColor(int fromNodeId, int toNodeId)
@@ -399,37 +459,18 @@ public class TrainingMapController : MonoBehaviour
         }
     }
 
-    private Vector2 GridToAnchoredPosition(Vector2 gridPosition)
-    {
-        return new Vector2(
-            layoutOrigin.x + gridPosition.x * effectiveNodeSpacing.x,
-            layoutOrigin.y - gridPosition.y * effectiveNodeSpacing.y);
-    }
-
     private void ClearSpawnedNodes()
     {
-        for (int i = 0; i < spawnedNodeObjects.Count; i++)
-        {
-            if (spawnedNodeObjects[i] != null)
-            {
-                Destroy(spawnedNodeObjects[i]);
-            }
-        }
-
-        spawnedNodeObjects.Clear();
+        foreach (Button button in nodeButtons.Values)
+            if (button != null) Destroy(button.gameObject);
+        nodeButtons.Clear();
     }
 
     private void ClearSpawnedConnections()
     {
-        for (int i = 0; i < spawnedConnectionObjects.Count; i++)
-        {
-            if (spawnedConnectionObjects[i] != null)
-            {
-                Destroy(spawnedConnectionObjects[i]);
-            }
-        }
-
-        spawnedConnectionObjects.Clear();
+        foreach (Image image in connectionImages.Values)
+            if (image != null) Destroy(image.gameObject);
+        connectionImages.Clear();
     }
 
     private void UpdateStatusText()
@@ -437,6 +478,11 @@ public class TrainingMapController : MonoBehaviour
         if (statusText == null)
             return;
 
+        if (isPreview)
+        {
+            statusText.text = "현재 위치 확인 · ESC로 닫기";
+            return;
+        }
         if (TrainingRunState.IsRunCompleted)
         {
             statusText.text = "훈련 모드 완료";
@@ -460,71 +506,18 @@ public class TrainingMapController : MonoBehaviour
 
     private void UpdateLayoutMetrics(IReadOnlyList<TrainingMapNodeData> nodes)
     {
-        Rect layoutRect = ResolveLayoutRect();
-        float layoutWidth = Mathf.Max(0f, layoutRect.width);
-        float layoutHeight = Mathf.Max(0f, layoutRect.height);
-
-        Vector2 sanitizedSpacing = new Vector2(
-            Mathf.Max(1f, nodeSpacing.x),
-            Mathf.Max(0f, nodeSpacing.y));
-        Vector2 sanitizedNodeSize = new Vector2(
-            Mathf.Max(1f, nodeSize.x),
-            Mathf.Max(1f, nodeSize.y));
-        Vector2 sanitizedPadding = new Vector2(
-            Mathf.Max(0f, mapPadding.x),
-            Mathf.Max(0f, mapPadding.y));
-
-        layoutNodeSize = sanitizedNodeSize;
-
-        GetGridBounds(nodes, out float maxStage, out float minLane, out float maxLane);
-
-        float scaledSpacingY = sanitizedSpacing.y * Mathf.Max(0f, laneSpacingScale);
-        float stageSpan = Mathf.Max(0f, Mathf.Max(0f, startNodeOffset) + maxStage);
-        float laneSpan = Mathf.Max(0f, maxLane - minLane);
-        float availableWidth = Mathf.Max(0f, layoutWidth - sanitizedPadding.x * 2f - sanitizedNodeSize.x);
-        float availableHeight = Mathf.Max(0f, layoutHeight - sanitizedPadding.y * 2f - sanitizedNodeSize.y);
-
-        float fittedSpacingX = stageSpan > 0f
-            ? Mathf.Max(0f, availableWidth / stageSpan)
-            : sanitizedSpacing.x;
-        float fittedSpacingY = laneSpan > 0f
-            ? Mathf.Max(0f, availableHeight / laneSpan)
-            : scaledSpacingY;
-
-        effectiveNodeSpacing = new Vector2(
-            stageSpan > 0f ? Mathf.Min(sanitizedSpacing.x, fittedSpacingX) : sanitizedSpacing.x,
-            laneSpan > 0f ? Mathf.Min(scaledSpacingY, fittedSpacingY) : scaledSpacingY);
-
-        layoutOrigin = new Vector2(
-            sanitizedPadding.x + sanitizedNodeSize.x * 0.5f + Mathf.Max(0f, startNodeOffset) * effectiveNodeSpacing.x,
-            -layoutHeight * 0.5f);
-    }
-
-    private void GetGridBounds(IReadOnlyList<TrainingMapNodeData> nodes, out float maxStage, out float minLane, out float maxLane)
-    {
-        maxStage = 0f;
-        minLane = 0f;
-        maxLane = 0f;
-
-        if (nodes == null || nodes.Count == 0)
-            return;
-
-        maxStage = nodes[0].gridPosition.x;
-        minLane = nodes[0].gridPosition.y;
-        maxLane = nodes[0].gridPosition.y;
-
-        for (int i = 1; i < nodes.Count; i++)
-        {
-            Vector2 gridPosition = nodes[i].gridPosition;
-            maxStage = Mathf.Max(maxStage, gridPosition.x);
-            minLane = Mathf.Min(minLane, gridPosition.y);
-            maxLane = Mathf.Max(maxLane, gridPosition.y);
-        }
-    }
-
-    private Rect ResolveLayoutRect()
-    {
-        return nodeRoot != null ? nodeRoot.rect : default;
+        ScrollRect scroll = nodeRoot.GetComponentInParent<ScrollRect>();
+        RectTransform viewport = scroll != null ? scroll.viewport : nodeRoot.parent as RectTransform;
+        float viewportWidth = viewport.rect.width;
+        float originX = viewportWidth * 0.5f;
+        int lastStage = 0;
+        foreach (TrainingMapNodeData node in nodes) lastStage = Mathf.Max(lastStage, node.stageIndex);
+        layoutNodeSize = positionTemplates[0].sizeDelta;
+        float width = Mathf.Max(viewportWidth,
+            originX + positionTemplates[0].anchoredPosition.x + lastStage * floorSpacing + layoutNodeSize.x * 0.5f + 60f);
+        nodeRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
+        // Content 확장 후에도 기준 버튼의 좌표 원점을 첫 화면 중앙에 유지
+        nodeAnchor = new Vector2(originX / width, 0.5f);
     }
 
     private void ResetScrollPosition()
@@ -537,7 +530,13 @@ public class TrainingMapController : MonoBehaviour
             return;
 
         Canvas.ForceUpdateCanvases();
-        scrollRect.horizontalNormalizedPosition = 0f;
+        float stage = 0f;
+        if (DisplayedCurrentNode.HasValue
+            && TrainingRunState.TryGetNode(DisplayedCurrentNode.Value, out TrainingMapNodeData current))
+            stage = current.stageIndex;
+        float scrollableWidth = nodeRoot.rect.width - scrollRect.viewport.rect.width;
+        scrollRect.horizontalNormalizedPosition = scrollableWidth > 0f
+            ? Mathf.Clamp01(stage * floorSpacing / scrollableWidth) : 0f;
         scrollRect.verticalNormalizedPosition = 1f;
     }
 

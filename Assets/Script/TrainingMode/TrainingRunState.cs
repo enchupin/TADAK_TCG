@@ -33,7 +33,6 @@ public static class TrainingRunState
     public static bool IsRunCompleted { get; private set; }
     public static bool IsRunFailed { get; private set; }
 
-    public static string MapSceneName { get; private set; } = string.Empty;
     public static string BattleSceneName { get; private set; } = string.Empty;
 
     public static int? CurrentNodeId { get; private set; }
@@ -85,11 +84,10 @@ public static class TrainingRunState
         return true;
     }
 
-    public static void StartNewRun(string mapSceneName, string battleSceneName)
+    public static void StartNewRun(string battleSceneName)
     {
         ResetRun();
 
-        MapSceneName = mapSceneName;
         BattleSceneName = battleSceneName;
 
         BuildSimpleMap();
@@ -114,7 +112,6 @@ public static class TrainingRunState
         PlayerCurrentHp = 0;
         PlayerMaxHp = 0;
 
-        MapSceneName = string.Empty;
         BattleSceneName = string.Empty;
 
         IsRunActive = false;
@@ -158,7 +155,6 @@ public static class TrainingRunState
         {
             int nodeCount = stageNodeCounts[stage];
             List<int> idsInStage = new List<int>();
-            float centeredOffset = (nodeCount - 1) * 0.5f;
             for (int lane = 0; lane < nodeCount; lane++)
             {
                 TrainingNodeType nodeType = ResolveInitialNodeType(stage);
@@ -168,7 +164,6 @@ public static class TrainingRunState
                     stageIndex = stage,
                     laneIndex = lane,
                     nodeType = nodeType,
-                    gridPosition = new Vector2(stage, lane - centeredOffset),
                     plannedEncounter = new List<MonsterSpawner.SpawnMonsterType>()
                 };
 

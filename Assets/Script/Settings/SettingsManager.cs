@@ -29,7 +29,7 @@ public class SettingsManager : MonoBehaviour
     [SerializeField] private Slider sfxSlider;
 
     private readonly HashSet<Button> boundResolutionButtons = new();
-    private AudioClip buttonClickSound;
+    private static AudioClip buttonClickSound;
     private Vector2Int lastObservedResolution;
     private Vector2Int pendingResizeResolution;
     private float pendingResizeChangedAt = -1f;
@@ -66,7 +66,7 @@ public class SettingsManager : MonoBehaviour
         OpenSettingsPanel();
     }
 
-    private void PlaySettingsOpenSound()
+    public static void PlayPanelToggleSound()
     {
         if (buttonClickSound == null) {
             buttonClickSound = Resources.Load<AudioClip>(ButtonClickSoundPath);
@@ -84,6 +84,9 @@ public class SettingsManager : MonoBehaviour
             return;
         }
         if (!Keyboard.current.escapeKey.wasPressedThisFrame) {
+            return;
+        }
+        if (TrainingMapController.TryHandlePreviewEscape(IsSettingsPanelOpen())) {
             return;
         }
         if (RestSceneController.IsEventEscapeContextActive) {
@@ -115,7 +118,7 @@ public class SettingsManager : MonoBehaviour
         SyncSoundSliders();
         BindResolutionButtons();
         settingsPanel.SetActive(true);
-        PlaySettingsOpenSound();
+        PlayPanelToggleSound();
     }
 
     public bool IsSettingsPanelOpen()

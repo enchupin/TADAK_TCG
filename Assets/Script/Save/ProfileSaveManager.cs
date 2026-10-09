@@ -14,6 +14,7 @@ public static class ProfileSaveManager
 
     // 현재 실행에서 사용 중인 저장 소유자
     private static string currentOwner;
+    private static bool useLocalFallback;
 
     // 프로필 저장 파일 경로
     public static string ProfileFilePath
@@ -42,6 +43,7 @@ public static class ProfileSaveManager
     {
         currentProfile = null;
         currentOwner = null;
+        useLocalFallback = false;
     }
 
     // 현재 저장 소유자를 결정하고, 실행 중 계정 변경 검사
@@ -49,6 +51,10 @@ public static class ProfileSaveManager
     {
         // StreamClient 초기화가 저장 시스템보다 늦게 실행되는 문제를 방지하기 위해 초기화 실행
         SteamClient.EnsureInitialized();
+        if (useLocalFallback)
+        {
+            return string.Empty;
+        }
         string owner;
         if (SteamClient.TryGetUser(out ulong userId, out _))
         {
@@ -57,6 +63,13 @@ public static class ProfileSaveManager
         else if (SteamClient.State == SteamClientState.Disabled)
         {
             owner = string.Empty;
+        }
+        else if (SteamClient.State == SteamClientState.Failed && currentOwner == null)
+        {
+            // 첫 연결 실패 시 로컬 저장으로 고정하고 Steam 계정의 저장과 분리
+            useLocalFallback = true;
+            owner = string.Empty;
+            Debug.LogWarning("[ProfileSaveManager] Steam 초기화에 실패하여 이번 실행은 로컬 프로필을 사용합니다. Steam 계정 저장을 사용하려면 Steam 실행 후 게임을 다시 시작하세요");
         }
         else
         {

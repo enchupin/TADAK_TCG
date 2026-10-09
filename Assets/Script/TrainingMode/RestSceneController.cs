@@ -320,9 +320,9 @@ public class RestSceneController : MonoBehaviour
 
     private void ReturnToMap()
     {
-        if (!string.IsNullOrEmpty(TrainingRunState.MapSceneName))
+        if (!string.IsNullOrEmpty(TrainingRunState.BattleSceneName))
         {
-            SceneManager.LoadScene(TrainingRunState.MapSceneName);
+            SceneManager.LoadScene(TrainingRunState.BattleSceneName);
         }
     }
 

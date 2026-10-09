@@ -11,36 +11,53 @@ public class MonsterBuffRuntimeService
     {
         this.battleManager = battleManager;
 
-        Register(new FreezeMonsterBuffScript());
-        Register(new RegenerationMonsterBuffScript());
-        Register(new BurnMonsterBuffScript());
-        Register(new EnhancedCorrosionMonsterBuffScript());
-        Register(new CorrosionMonsterBuffScript());
-        Register(new StrengthMonsterBuffScript());
-        Register(new StrengthDecayMonsterBuffScript());
-        Register(new WeakMonsterBuffScript());
-        Register(new OverheatMonsterBuffScript());
-        Register(new RootedMonsterBuffScript());
-        Register(new GlacierBondMonsterBuffScript());
-        Register(new ThornMonsterBuffScript());
-        Register(new CrueltyMonsterBuffScript());
-        Register(new LifeLinkMonsterBuffScript());
-        Register(new FlameTransferMonsterBuffScript());
-        Register(new PoisonUpgradeMonsterBuffScript());
-        Register(new MonsterLifeStealMonsterBuffScript());
-        Register(new VoidShellMonsterBuffScript());
-        Register(new FaithfulPrayerMonsterBuffScript());
-        Register(new ParasiticMushroomMonsterBuffScript());
-        Register(new PranksterGhostMonsterBuffScript());
-        Register(new ThiefMonsterBuffScript());
-        Register(new BurningFlameMonsterBuffScript());
-        Register(new IntentionalRageMonsterBuffScript());
-        Register(new EightLegsMonsterBuffScript());
-        Register(new FuturePredationMonsterBuffScript());
-        Register(new PoisonousMushroomMonsterBuffScript());
-        Register(new MirrorMonsterBuffScript());
-        Register(new DrowningMonsterBuffScript());
-        Register(new WhirlpoolMonsterBuffScript());
+        Register(new MonsterBuffs.FreezeBuffScript());
+        Register(new MonsterBuffs.RegenerationBuffScript());
+        Register(new MonsterBuffs.BurnBuffScript());
+        Register(new MonsterBuffs.EnhancedCorrosionBuffScript());
+        Register(new MonsterBuffs.CorrosionBuffScript());
+        Register(new MonsterBuffs.StrengthBuffScript());
+        Register(new MonsterBuffs.StrengthDecayBuffScript());
+        Register(new MonsterBuffs.WeakBuffScript());
+        Register(new MonsterBuffs.OverheatBuffScript());
+        Register(new MonsterBuffs.RootedBuffScript());
+        Register(new MonsterBuffs.GlacierBondBuffScript());
+        Register(new MonsterBuffs.ThornBuffScript());
+        Register(new MonsterBuffs.CrueltyBuffScript());
+        Register(new MonsterBuffs.LifeLinkBuffScript());
+        Register(new MonsterBuffs.FlameTransferBuffScript());
+        Register(new MonsterBuffs.PoisonUpgradeBuffScript());
+        Register(new MonsterBuffs.LifeStealBuffScript());
+        Register(new MonsterBuffs.VoidShellBuffScript());
+        Register(new MonsterBuffs.FaithfulPrayerBuffScript());
+        Register(new MonsterBuffs.ParasiticMushroomBuffScript());
+        Register(new MonsterBuffs.PranksterGhostBuffScript());
+        Register(new MonsterBuffs.ThiefBuffScript());
+        Register(new MonsterBuffs.BurningFlameBuffScript());
+        Register(new MonsterBuffs.IntentionalRageBuffScript());
+        Register(new MonsterBuffs.EightLegsBuffScript());
+        Register(new MonsterBuffs.FuturePredationBuffScript());
+        Register(new MonsterBuffs.HarmonyBuffScript());
+        Register(new MonsterBuffs.AttackBoostBuffScript());
+        Register(new MonsterBuffs.PoisonousMushroomBuffScript());
+        Register(new MonsterBuffs.MirrorBuffScript());
+        Register(new MonsterBuffs.DrowningBuffScript());
+        Register(new MonsterBuffs.WhirlpoolBuffScript());
+    }
+
+    public int GetActivationCount(Monster monster, int buffId)
+    {
+        return scripts.TryGetValue(buffId, out MonsterBuffScript script) ? script.GetActivationCount(monster) : 0;
+    }
+
+    public void OnAttackActionStarted(Monster monster)
+    {
+        InvokeForActiveBuffs(monster, (script, stack) => script.OnAttackActionStarted(monster, stack));
+    }
+
+    public void OnAttackActionEnded(Monster monster)
+    {
+        foreach (MonsterBuffScript script in orderedScripts) script.OnAttackActionEnded(monster);
     }
 
     public void OnBuffApplied(Monster monster, int buffId, int appliedAmount)

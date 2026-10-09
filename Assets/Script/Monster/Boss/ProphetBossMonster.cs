@@ -27,13 +27,14 @@ public class ProphetBossMonster : Monster
     protected override void BuildNextAction()
     {
         plannedPatternIdForTurn = GetPatternIdForCurrentRoute();
-        plannedRepeatCount = Mathf.Max(1, GetBuffStack(BattleRuntimeDefinitions.FuturePredationBuffId));
+        // 패턴 계획은 턴 종료 후 진행되므로 그 시점까지의 발동 횟수를 고정
+        plannedRepeatCount = 1 + (TrainingBattleManager.Instance?.GetMonsterBuffActivationCount(this, BattleRuntimeDefinitions.FuturePredationBuffId) ?? 0);
         plannedDamageValue = 0;
 
         switch (plannedPatternIdForTurn)
         {
             case 30201:
-                SetIntent("적의 파워 능력을 하나 훔칩니다. 파워 능력이 없다면 다음 공격이 매우 강해집니다.");
+                SetIntent("적의 이로운 효과를 하나 훔칩니다. 이로운 효과가 없다면 다음 공격이 매우 강해집니다.");
                 SetPlannedPattern(30201, MonsterIntentIconType.BeneficialEffect, MonsterIntentIconType.HarmfulEffect);
                 break;
             case 30202:
@@ -70,7 +71,7 @@ public class ProphetBossMonster : Monster
             case 30202:
                 for (int repeatIndex = 0; repeatIndex < plannedRepeatCount; repeatIndex++)
                 {
-                    DealFixedDamage(target, plannedDamageValue);
+                    DealDamage(target, 8);
                     if (target != null && target.IsDead())
                     {
                         break;
@@ -84,7 +85,7 @@ public class ProphetBossMonster : Monster
                 routeStage = 0;
                 break;
             case 30204:
-                DealFixedDamage(target, plannedDamageValue);
+                DealDamage(target, 40);
                 routeStage = 2;
                 break;
             default:
@@ -133,13 +134,4 @@ public class ProphetBossMonster : Monster
         return PreviewOutgoingDamage(baseDamage);
     }
 
-    private void DealFixedDamage(PlayerData target, int damage)
-    {
-        if (target == null || damage <= 0)
-        {
-            return;
-        }
-
-        target.TakeDamage(damage, this);
-    }
 }

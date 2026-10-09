@@ -184,6 +184,20 @@ public class MonsterStateController : MonoBehaviour
             return string.Empty;
         }
 
+        // 보스도 일반 몬스터와 같은 상태 전환과 스프라이트 캐시를 사용
+        string bossImagePath = monsterImageName switch
+        {
+            "GiantFlowerSpiderBoss" => "Image/BossMonster/Arachne/Arachne",
+            "ProphetBoss" => "Image/BossMonster/Prophet/Prophet",
+            "IceAndFireBoss" => "Image/BossMonster/IceAndFire/IceAndFire",
+            "VoidLordBoss" => "Image/BossMonster/VoidLord/VoidLord",
+            _ => null
+        };
+        if (bossImagePath != null)
+        {
+            return $"{bossImagePath}_{GetStateImageSuffix(state)}";
+        }
+
         string fileName = $"{monsterImageName}_{GetStateImageSuffix(state)}";
         if (string.IsNullOrWhiteSpace(ImageResourceFolder))
         {

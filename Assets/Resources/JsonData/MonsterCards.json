@@ -60,14 +60,14 @@
             "characterId": "000",
             "cost": 0,
             "keywords": [
-                3
+                2
             ],
-            "description": "턴 종료 시 (약화)를 2 얻습니다.",
+            "description": "턴 종료 시 (빈약)을 2 얻습니다.",
             "effects": [],
             "endTurnInHandEffects": [
                 {
                     "type": "Buff",
-                    "buffId": 4008,
+                    "buffId": 4011,
                     "amount": 2,
                     "target": "Self"
                 }

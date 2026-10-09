@@ -14,7 +14,8 @@ public class BattleDeckViewer : MonoBehaviour
         None,
         DrawPile,
         DiscardPile,
-        ExhaustPile
+        ExhaustPile,
+        FullDeck
     }
 
     [Header("패널/컨테이너")]
@@ -37,6 +38,24 @@ public class BattleDeckViewer : MonoBehaviour
     private DeckPanelViewType currentViewType;
     private CardController cardDetailPreviewController;
     private CardUI cardDetailPreviewUI;
+    public void ResetForCombat()
+    {
+        isSelectionMode = false;
+        onSelectionCompleted = null;
+        selectedCards.Clear();
+        selectedControllers.Clear();
+        requiredSelectionCount = 0;
+        allowFewerSelection = false;
+        currentViewType = DeckPanelViewType.None;
+        if (cardContainerManager != null)
+        {
+            cardContainerManager.ClearHand();
+            cardContainerManager.SetCardClickHandler(null);
+        }
+        if (deckPanelRoot != null) deckPanelRoot.SetActive(false);
+        CloseCardDetailPanel();
+        UpdateConfirmButtonState();
+    }
     private void Awake() {
         ValidateRequiredReferences();
         deckPanelRoot.SetActive(false);
@@ -54,6 +73,12 @@ public class BattleDeckViewer : MonoBehaviour
         }
 
         TogglePilePanel(DeckPanelViewType.DrawPile);
+    }
+
+    // 상단 덱 버튼은 전투 중 카드 위치와 관계없이 이번 게임의 전체 덱을 표시
+    public void OnClickFullDeckButton() {
+        if (isSelectionMode || TrainingBattleManager.buildingDeck == null) return;
+        TogglePilePanel(DeckPanelViewType.FullDeck);
     }
 
     /// <summary>
@@ -152,10 +177,11 @@ public class BattleDeckViewer : MonoBehaviour
             DeckPanelViewType.DrawPile => battleManager.usableDeckManager.GetDrawPile(),
             DeckPanelViewType.DiscardPile => battleManager.usableDeckManager.GetDiscardPile(),
             DeckPanelViewType.ExhaustPile => battleManager.usableDeckManager.GetExhaustPile(),
+            DeckPanelViewType.FullDeck => TrainingBattleManager.buildingDeck.CopyDeck(),
             _ => new List<Card>()
         };
 
-        if (viewType == DeckPanelViewType.DrawPile) {
+        if (viewType == DeckPanelViewType.DrawPile || viewType == DeckPanelViewType.FullDeck) {
             cards.Sort(CompareCardsById);
         }
 

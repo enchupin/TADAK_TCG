@@ -81,9 +81,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     protected virtual int BaseDefense => 0;
     protected virtual bool IsBossMonster => false;
     public bool IsBoss => IsBossMonster;
-    public virtual bool HasInfiniteHealth => false;
-    protected virtual string HealthLabel => null;
-    protected virtual string ImageName => name;
+    private int permanentDefense;
 
     protected virtual void Awake()
     {
@@ -124,9 +122,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     {
         EnsureStatusUIReferences();
 
-        if (hpText != null && HealthLabel != null)
-            hpText.text = HealthLabel;
-        else if (hpText != null)
+        if (hpText != null)
             hpText.text = $"HP : {hp}/{maxHP}";
 
         if (defenseText != null)
@@ -202,12 +198,15 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        if (hasAttackIntent)
+        bool isAttackAction = hasAttackIntent;
+        if (isAttackAction)
         {
             stateController.EnterAttack();
+            TrainingBattleManager.Instance?.HandleMonsterAttackActionStarted(this);
         }
 
         ExecuteAction(target);
+        if (isAttackAction) TrainingBattleManager.Instance?.HandleMonsterAttackActionEnded(this);
 
         ClearPlannedAction();
         UpdateUI();
@@ -234,7 +233,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         int defenseBeforeHit = defense;
         int damageAfterDefense = Mathf.Max(0, finalDamage - defenseBeforeHit);
 
-        if (!HasInfiniteHealth) hp -= damageAfterDefense;
+        hp -= damageAfterDefense;
         SetDefenseValue(defenseBeforeHit - finalDamage);
 
         Debug.Log($"{name} took {damageAfterDefense} damage. (HP: {hp}/{maxHP})");
@@ -264,13 +263,13 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     public int LoseHp(int amount)
     {
-        int lostAmount = HasInfiniteHealth ? Mathf.Max(0, amount) : Mathf.Clamp(amount, 0, hp);
+        int lostAmount = Mathf.Clamp(amount, 0, hp);
         if (lostAmount <= 0)
         {
             return 0;
         }
 
-        if (!HasInfiniteHealth) hp -= lostAmount;
+        hp -= lostAmount;
         TrainingBattleManager.Instance?.HandleMonsterHpLost(this, lostAmount);
         HandleDeathIfNeeded();
         UpdateUI();
@@ -279,7 +278,6 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     public void Kill()
     {
-        if (HasInfiniteHealth) return;
         if (IsDead())
             return;
 
@@ -296,7 +294,6 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     public void LeaveCombat()
     {
-        if (HasInfiniteHealth) return;
         if (hasTriggeredDeath || hasLeftCombat)
         {
             return;
@@ -414,9 +411,10 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     public void OnTurnStart()
     {
         TrainingBattleManager battleManager = TrainingBattleManager.Instance;
-        if (defense > 0 && !(battleManager?.ShouldKeepMonsterBarrierOnTurnStart(this) ?? false))
+        int retainedDefense = Mathf.Clamp(permanentDefense, 0, defense);
+        if (defense > retainedDefense && !(battleManager?.ShouldKeepMonsterBarrierOnTurnStart(this) ?? false))
         {
-            defense = 0;
+            SetDefenseValue(retainedDefense);
             Debug.Log($"[Monster] {name} 턴 시작으로 보호막이 제거됩니다.");
         }
         OnTurnStarted();
@@ -648,7 +646,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
             throw new System.InvalidOperationException($"[Monster] {gameObject.name}의 MonsterStateController가 인스펙터에 연결되지 않았습니다");
         }
 
-        stateController.SetMonsterImageName(ImageName);
+        stateController.SetMonsterImageName(name);
     }
 
     private void EnsureHpSliderReference()
@@ -922,6 +920,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         maxHP = UnityEngine.Mathf.Max(0, BaseMaxHp);
         hp = maxHP;
         defense = UnityEngine.Mathf.Max(0, BaseDefense);
+        permanentDefense = 0;
         attackPower = UnityEngine.Mathf.Max(0, BaseAttackPower);
         name = GetType().Name;
 
@@ -986,7 +985,15 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     {
         int previousDefense = defense;
         defense = Mathf.Max(0, amount);
+        permanentDefense = Mathf.Min(permanentDefense, defense);
         TrainingBattleManager.Instance?.HandleMonsterDefenseChanged(this, previousDefense, defense);
+    }
+
+    public void AddPermanentDefense(int amount)
+    {
+        int previousDefense = defense;
+        AddDefense(amount);
+        permanentDefense += Mathf.Max(0, defense - previousDefense);
     }
 
     private void OnMouseDown()
