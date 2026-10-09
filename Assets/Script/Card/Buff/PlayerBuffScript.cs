@@ -20,6 +20,10 @@ public abstract class PlayerBuffScript
     {
     }
 
+    public virtual void PreparePlayerTurnEnd(TrainingBattleManager battleManager, PlayerData player, int stack) { }
+
+    public virtual void OnEnemyTurnEnd(TrainingBattleManager battleManager, PlayerData player, int stack) { }
+
     public virtual void OnPlayerTurnEnd(TrainingBattleManager battleManager, PlayerData player, int stack)
     {
     }
@@ -158,6 +162,8 @@ public abstract class PlayerBuffScript
         return currentMultiplier;
     }
 
+    public virtual void OnCardPlayStarted(TrainingBattleManager battleManager, PlayerData player, Card playedCard, int stack) { }
+
     public virtual int ConsumeRepeatCount(TrainingBattleManager battleManager, PlayerData player, Card playedCard, bool isRepeatedEffect, int stack)
     {
         return 0;
@@ -168,6 +174,10 @@ public abstract class PlayerBuffScript
     }
 
     public virtual void ResolveDeferredTurnStartEffects(TrainingBattleManager battleManager, PlayerData player, int stack)
+    {
+    }
+
+    public virtual void OnPlayerAttackStarted(TrainingBattleManager battleManager, PlayerData player, int stack)
     {
     }
 
@@ -222,11 +232,6 @@ public abstract class PlayerBuffScript
     public virtual bool ShouldApplyFeatherToAllEnemies(TrainingBattleManager battleManager, PlayerData player, int stack, bool currentShouldApplyToAll)
     {
         return currentShouldApplyToAll;
-    }
-
-    public virtual int GetFeatherTriggerBonus(TrainingBattleManager battleManager, PlayerData player, int stack, int currentBonus)
-    {
-        return currentBonus;
     }
 
     public virtual void OnFeatherApplied(TrainingBattleManager battleManager, PlayerData player, int appliedAmount, int targetCount, TargetType targetType, int stack)

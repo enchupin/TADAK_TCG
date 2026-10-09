@@ -48,6 +48,13 @@ public class BuffEffect : ICardEffect
 
     private void ApplyBuff(TrainingBattleManager manager, int finalAmount)
     {
+        bool isEnemyTarget = target == TargetType.SingleEnemy || target == TargetType.RandomEnemy || target == TargetType.AllEnemies;
+        if (isEnemyTarget && buffId == BattleRuntimeDefinitions.FeatherBuffId
+            && manager.playerData != null && manager.playerData.GetBuffStack(BattleRuntimeDefinitions.BlindFeatherBuffId) > 0)
+        {
+            manager.ApplyBuffToAllEnemies(buffId, finalAmount);
+            return;
+        }
         if (target == TargetType.Self)
         {
             manager.ApplyBuffToPlayer(buffId, finalAmount);

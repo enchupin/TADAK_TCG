@@ -4,9 +4,9 @@ public sealed class FeatherCycleBuffScript : PlayerBuffScript
 {
     public override int BuffId => FeatherCycleBuffId;
 
-    public override void OnFeatherApplied(TrainingBattleManager battleManager, PlayerData player, int appliedAmount, int targetCount, TargetType targetType, int stack)
+    public override void OnCardPlayed(TrainingBattleManager battleManager, PlayerData player, Card playedCard, Monster originalTarget, bool isRepeatedEffect, int stack)
     {
-        if (battleManager == null || stack <= 0)
+        if (battleManager == null || stack <= 0 || isRepeatedEffect || !BuffCardUtility.IsFeatherCard(playedCard))
         {
             return;
         }

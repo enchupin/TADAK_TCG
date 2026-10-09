@@ -2,6 +2,8 @@ public abstract class MonsterBuffScript
 {
     public abstract int BuffId { get; }
 
+    public virtual bool IsActive(Monster monster, int stack) => stack > 0;
+
     public virtual int GetActivationCount(Monster monster) => 0;
 
     public virtual void OnAttackActionStarted(Monster monster, int stack) { }
@@ -51,6 +53,8 @@ public abstract class MonsterBuffScript
     public virtual void OnMonsterBeforeTakeDamage(TrainingBattleManager battleManager, Monster monster, int incomingDamage, int stack)
     {
     }
+
+    public virtual void OnAttackedByPlayer(TrainingBattleManager battleManager, Monster monster, int stack) { }
 
     public virtual void OnMonsterAfterTakeDamage(TrainingBattleManager battleManager, Monster monster, int incomingDamage, int damageAfterDefense, int stack)
     {

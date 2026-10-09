@@ -233,6 +233,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         int defenseBeforeHit = defense;
         int damageAfterDefense = Mathf.Max(0, finalDamage - defenseBeforeHit);
 
+        int actualHpLoss = Mathf.Min(Mathf.Max(0, hp), damageAfterDefense);
         hp -= damageAfterDefense;
         SetDefenseValue(defenseBeforeHit - finalDamage);
 
@@ -244,7 +245,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
         if (damageAfterDefense > 0)
         {
-            TrainingBattleManager.Instance?.HandleMonsterHpLost(this, damageAfterDefense);
+            TrainingBattleManager.Instance?.HandleMonsterHpLost(this, actualHpLoss);
         }
 
         OnAfterTakeDamage(finalDamage, damageAfterDefense);
@@ -1076,7 +1077,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     private int ApplyOutgoingDamageModifier(int baseDamage)
     {
-        if (baseDamage <= 0)
+        if (baseDamage < 0)
         {
             return 0;
         }

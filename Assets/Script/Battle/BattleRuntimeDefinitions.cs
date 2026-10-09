@@ -209,7 +209,7 @@ public static class BattleRuntimeDefinitions
         Register(nameof(VictorRestBuffId), "승자의 휴식", 3051);
         Register(nameof(BerserkerBuffId), "광전사", 3052);
         Register(nameof(EnergyOverflowBuffId), "기력 초과", 3053);
-        Register(nameof(DrowningBuffId), "익사", 3054);
+        Register(nameof(DrowningBuffId), "익사", 4016);
         Register(nameof(WhirlpoolBuffId), "소용돌이", 3055);
         Register(nameof(UnderwaterBreathingBuffId), "수중 호흡", 3056);
         Register(nameof(EncroachmentBuffId), "잠식", 3057);

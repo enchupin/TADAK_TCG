@@ -11,8 +11,8 @@ public sealed class StrengthContractBuffScript : PlayerBuffScript
             return;
         }
 
-        int bondLoss = System.Math.Min(stack, player.GetBuffStack(GlacierBondBuffId));
-        if (bondLoss <= 0)
+        int bondLoss = stack;
+        if (player.GetBuffStack(GlacierBondBuffId) < bondLoss)
         {
             return;
         }

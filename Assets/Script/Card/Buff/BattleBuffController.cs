@@ -8,7 +8,6 @@ public class BattleBuffController
     private readonly PlayerBuffRuntimeService playerBuffRuntimeService;
     private readonly MonsterBuffRuntimeService monsterBuffRuntimeService;
     private readonly FeatherBuffScript featherBuffScript;
-    private readonly HashSet<Monster> monsterHpLossHealPlayerTargetsThisTurn = new();
 
     public BattleBuffController(TrainingBattleManager battleManager)
     {
@@ -20,24 +19,31 @@ public class BattleBuffController
 
     public void ResetForCombat()
     {
-        monsterHpLossHealPlayerTargetsThisTurn.Clear();
         playerBuffRuntimeService.ResetForCombat();
         featherBuffScript.ResetForCombat();
     }
 
     public void ApplyPlayerTurnStartEffects()
     {
-        monsterHpLossHealPlayerTargetsThisTurn.Clear();
         playerBuffRuntimeService.OnPlayerTurnStart();
         featherBuffScript.OnTurnStart();
     }
 
     public void ApplyPlayerTurnEndEffects()
     {
-        playerBuffRuntimeService.OnPlayerTurnEnd();
+        playerBuffRuntimeService.PreparePlayerTurnEnd();
         playerBuffRuntimeService.ReplayTurnEndTriggeredEffects();
+    }
+
+    public void FinishEnemyTurnEndEffects()
+    {
+        playerBuffRuntimeService.OnEnemyTurnEnd();
+    }
+
+    public void FinishPlayerTurnEndEffects()
+    {
+        playerBuffRuntimeService.OnPlayerTurnEnd();
         monsterBuffRuntimeService.OnPlayerTurnEnd();
-        monsterHpLossHealPlayerTargetsThisTurn.Clear();
     }
 
     public void ReplayAdditionalTurnEndTriggers()
@@ -102,7 +108,7 @@ public class BattleBuffController
         int totalDamageDealt = 0;
         foreach (Monster monster in targets)
         {
-            int dealtDamage = monster.TakeDamage(resolvedDamage, 0);
+            int dealtDamage = monster.TakeDamage(battleManager.ResolvePlayerEffectDamage(damage), 0);
             totalDamageDealt += dealtDamage;
             HandlePlayerDamageDealt(monster, dealtDamage);
         }
@@ -115,9 +121,9 @@ public class BattleBuffController
         return playerBuffRuntimeService.GetAdditionalBarrierGain();
     }
 
-    public int ResolvePlayerBarrierGain(int amount)
+    public int ResolvePlayerBarrierGain(int amount, bool fromCard = false)
     {
-        int baseAmount = Mathf.Max(0, amount) + GetAdditionalBarrierGain();
+        int baseAmount = Mathf.Max(0, amount) + (fromCard ? GetAdditionalBarrierGain() : 0);
         return playerBuffRuntimeService.ResolveBarrierGain(baseAmount);
     }
 
@@ -212,11 +218,17 @@ public class BattleBuffController
             return;
         }
 
-        monsterHpLossHealPlayerTargetsThisTurn.Add(monster);
+        battleManager.ApplyBuffToMonster(monster, LifeLinkBuffId, 1);
+    }
+
+    public void HandlePlayerAttackStarted()
+    {
+        playerBuffRuntimeService.OnPlayerAttackStarted();
     }
 
     public void HandlePlayerAttackResolved(Monster targetMonster, int barrierBefore, int barrierAfter)
     {
+        monsterBuffRuntimeService.OnAttackedByPlayer(targetMonster);
         playerBuffRuntimeService.OnPlayerAttackResolved(targetMonster, barrierBefore, barrierAfter);
     }
 
@@ -245,9 +257,9 @@ public class BattleBuffController
         return featherBuffScript.TriggerUntilEmpty(target);
     }
 
-    public int ReplayExhaustedFeathers()
+    public System.Collections.IEnumerator ReplayExhaustedFeathersSequence()
     {
-        return featherBuffScript.ReplayExhaustedFeathers();
+        return featherBuffScript.ReplayExhaustedFeathersSequence();
     }
 
     public bool TryConsumeSoulProtection()
@@ -312,14 +324,6 @@ public class BattleBuffController
 
     public void HandleMonsterHpLost(Monster monster, int hpLoss)
     {
-        if (monster != null
-            && hpLoss > 0
-            && battleManager.playerData != null
-            && monsterHpLossHealPlayerTargetsThisTurn.Contains(monster))
-        {
-            battleManager.playerData.Heal(hpLoss);
-        }
-
         monsterBuffRuntimeService.OnMonsterHpLost(monster, hpLoss);
     }
 
@@ -427,13 +431,11 @@ public class BattleBuffController
 
     public void HandleMonsterDeath(Monster monster)
     {
-        monsterHpLossHealPlayerTargetsThisTurn.Remove(monster);
         monsterBuffRuntimeService.OnMonsterDeath(monster);
     }
 
     public void HandleMonsterLeaveCombat(Monster monster)
     {
-        monsterHpLossHealPlayerTargetsThisTurn.Remove(monster);
         monsterBuffRuntimeService.OnMonsterLeaveCombat(monster);
     }
 
@@ -529,9 +531,12 @@ public class BattleBuffController
         bool hasChanges = false;
 
         hasChanges |= ApplyPersistentCardBuffChanges(battleManager.handManager?.GetHandCards(), changedHandCards, buffId);
-        hasChanges |= ApplyPersistentCardBuffChanges(battleManager.usableDeckManager?.GetDrawPile(), null, buffId);
-        hasChanges |= ApplyPersistentCardBuffChanges(battleManager.usableDeckManager?.GetDiscardPile(), null, buffId);
-        hasChanges |= ApplyPersistentCardBuffChanges(battleManager.usableDeckManager?.GetExhaustPile(), null, buffId);
+        if (buffId != FeatherEnhanceBuffId)
+        {
+            hasChanges |= ApplyPersistentCardBuffChanges(battleManager.usableDeckManager?.GetDrawPile(), null, buffId);
+            hasChanges |= ApplyPersistentCardBuffChanges(battleManager.usableDeckManager?.GetDiscardPile(), null, buffId);
+            hasChanges |= ApplyPersistentCardBuffChanges(battleManager.usableDeckManager?.GetExhaustPile(), null, buffId);
+        }
 
         if (!hasChanges)
         {

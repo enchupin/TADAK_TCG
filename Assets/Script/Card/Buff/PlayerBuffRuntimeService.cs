@@ -95,6 +95,7 @@ public class PlayerBuffRuntimeService
         Register(new ColdAirBuffScript());
         Register(new LavaBarrierBuffScript());
         Register(new ExhaustDrawContractBuffScript());
+        Register(new LifeLinkBuffScript());
         Register(new LastStandBuffScript());
         Register(new SoulProtectionBuffScript());
     }
@@ -127,7 +128,22 @@ public class PlayerBuffRuntimeService
 
     public void OnPlayerTurnStart()
     {
-        InvokeForActiveBuffs((script, player, stack) => script.OnPlayerTurnStart(battleManager, player, stack));
+        PlayerData player = battleManager?.playerData;
+        if (player == null) return;
+        foreach (PlayerBuffScript script in orderedScripts)
+        {
+            script.OnPlayerTurnStart(battleManager, player, script.GetRuntimeStack(battleManager, player));
+        }
+    }
+
+    public void PreparePlayerTurnEnd()
+    {
+        InvokeForActiveBuffs((script, player, stack) => script.PreparePlayerTurnEnd(battleManager, player, stack));
+    }
+
+    public void OnEnemyTurnEnd()
+    {
+        InvokeForActiveBuffs((script, player, stack) => script.OnEnemyTurnEnd(battleManager, player, stack));
     }
 
     public void OnPlayerTurnEnd()
@@ -418,6 +434,10 @@ public class PlayerBuffRuntimeService
 
     public int ConsumeRepeatCount(Card playedCard, bool isRepeatedEffect)
     {
+        if (!isRepeatedEffect && playedCard != null)
+        {
+            InvokeForActiveBuffs((script, player, stack) => script.OnCardPlayStarted(battleManager, player, playedCard, stack));
+        }
         int repeatCount = 0;
 
         InvokeForActiveBuffs((script, player, stack) =>
@@ -446,6 +466,14 @@ public class PlayerBuffRuntimeService
         InvokeForActiveBuffs((script, player, stack) =>
         {
             script.ResolveDeferredTurnStartEffects(battleManager, player, stack);
+        });
+    }
+
+    public void OnPlayerAttackStarted()
+    {
+        InvokeForActiveBuffs((script, player, stack) =>
+        {
+            script.OnPlayerAttackStarted(battleManager, player, stack);
         });
     }
 
@@ -577,12 +605,6 @@ public class PlayerBuffRuntimeService
     {
         return FoldActiveBuffs(false, (script, player, stack, currentShouldApplyToAll) =>
             script.ShouldApplyFeatherToAllEnemies(battleManager, player, stack, currentShouldApplyToAll));
-    }
-
-    public int GetFeatherTriggerBonus()
-    {
-        return Mathf.Max(0, FoldActiveBuffs(0, (script, player, stack, currentBonus) =>
-            script.GetFeatherTriggerBonus(battleManager, player, stack, currentBonus)));
     }
 
     public void OnFeatherApplied(int appliedAmount, int targetCount, TargetType targetType)

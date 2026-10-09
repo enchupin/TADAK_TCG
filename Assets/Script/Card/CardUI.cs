@@ -810,7 +810,7 @@ public static class CardDescriptionFormatter
             return ApplyPreviewTargetDamageMultiplier(fallbackAmount, effect?.target ?? TargetType.None, battleManager);
         }
 
-        int resolvedAmount = battleManager.playerData.CalculateCardDamage(baseAmount, effect.ampMultiplier, cardMultiplier);
+        int resolvedAmount = battleManager.playerData.CalculateCardDamage(baseAmount, effect.ampMultiplier, cardMultiplier, false);
         resolvedAmount = battleManager.ApplyCardDamageRuntimeModifiers(sourceCard, resolvedAmount);
         return ApplyPreviewTargetDamageMultiplier(resolvedAmount, effect?.target ?? TargetType.None, battleManager);
     }
@@ -872,7 +872,7 @@ public static class CardDescriptionFormatter
 
         if (effect.target == TargetType.Self && battleManager != null)
         {
-            resolvedAmount = battleManager.ResolvePlayerBarrierGain(resolvedAmount);
+            resolvedAmount = battleManager.ResolvePlayerBarrierGain(resolvedAmount, true);
         }
 
         return Mathf.Max(0, resolvedAmount);

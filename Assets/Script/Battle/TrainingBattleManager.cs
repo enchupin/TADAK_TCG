@@ -876,6 +876,16 @@ public class TrainingBattleManager : MonoBehaviour
         battleBuffController?.ApplyPlayerTurnEndEffects();
     }
 
+    public void FinishEnemyTurnEndEffects()
+    {
+        battleBuffController?.FinishEnemyTurnEndEffects();
+    }
+
+    public void FinishPlayerTurnEndEffects()
+    {
+        battleBuffController?.FinishPlayerTurnEndEffects();
+    }
+
     public void ResolveAdditionalTurnEndTriggers()
     {
         battleBuffController?.ReplayAdditionalTurnEndTriggers();
@@ -1096,6 +1106,7 @@ public class TrainingBattleManager : MonoBehaviour
         int effectiveCost = GetEffectiveCardCost(card);
         if (effectiveCost <= 0)
         {
+            playerData.ConsumeBuffStack(BattleRuntimeDefinitions.NextCardFreeBuffId, 1);
             return true;
         }
 
@@ -1140,9 +1151,9 @@ public class TrainingBattleManager : MonoBehaviour
         return battleBuffController != null ? battleBuffController.GetAdditionalBarrierGain() : 0;
     }
 
-    public int ResolvePlayerBarrierGain(int amount)
+    public int ResolvePlayerBarrierGain(int amount, bool fromCard = false)
     {
-        return battleBuffController != null ? battleBuffController.ResolvePlayerBarrierGain(amount) : Mathf.Max(0, amount);
+        return battleBuffController != null ? battleBuffController.ResolvePlayerBarrierGain(amount, fromCard) : Mathf.Max(0, amount);
     }
 
     public bool ShouldRetainPlayerBarrierOnTurnStart()
@@ -1235,6 +1246,11 @@ public class TrainingBattleManager : MonoBehaviour
     public int ConsumeRepeatedPlayCount(Card playedCard, bool isRepeatedEffect)
     {
         return battleBuffController != null ? battleBuffController.ConsumeRepeatedPlayCount(playedCard, isRepeatedEffect) : 0;
+    }
+
+    public void HandlePlayerAttackStarted()
+    {
+        battleBuffController?.HandlePlayerAttackStarted();
     }
 
     public void HandlePlayerAttackResolved(Monster targetMonster, int barrierBefore, int barrierAfter)
@@ -1396,9 +1412,9 @@ public class TrainingBattleManager : MonoBehaviour
         return battleBuffController != null ? battleBuffController.TriggerFeatherUntilEmpty(target) : 0;
     }
 
-    public int ReplayExhaustedFeathers()
+    public System.Collections.IEnumerator ReplayExhaustedFeathersSequence()
     {
-        return battleBuffController != null ? battleBuffController.ReplayExhaustedFeathers() : 0;
+        if (battleBuffController != null) yield return battleBuffController.ReplayExhaustedFeathersSequence();
     }
 
     public bool TryConsumeSoulProtection()
@@ -1613,6 +1629,12 @@ public class TrainingBattleManager : MonoBehaviour
         return battleBuffController != null
             ? battleBuffController.ProcessGeneratedCards(generatedCards, allowDuplicateGeneration)
             : new List<Card>(generatedCards);
+    }
+
+    public Card ApplyHandCardUpgrades(Card card)
+    {
+        ApplyPersistentUpgradeToCard(card);
+        return ApplyPersistentUpgradeToCard(card, BattleRuntimeDefinitions.FeatherEnhanceBuffId);
     }
 
     public Card ApplyPersistentUpgradeToCard(Card card)
@@ -1858,8 +1880,12 @@ public class TrainingBattleManager : MonoBehaviour
         return true;
     }
 
+    public int TurnSequence { get; private set; }
+
     public void SetState(BattleTurnState newState)
     {
+        if (newState == BattleTurnState.PlayerTurnStart || newState == BattleTurnState.EnemyTurnStart)
+            TurnSequence++;
         CurrentTurnState = newState;
     }
 

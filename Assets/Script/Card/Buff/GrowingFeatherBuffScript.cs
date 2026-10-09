@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using static BattleRuntimeDefinitions;
 
 public sealed class GrowingFeatherBuffScript : PlayerBuffScript
@@ -11,6 +12,18 @@ public sealed class GrowingFeatherBuffScript : PlayerBuffScript
             return;
         }
 
-        battleManager.ApplyBuffToPlayer(FeatherBuffId, stack);
+        List<Card> generatedCards = new();
+        for (int i = 0; i < stack; i++)
+        {
+            Card card = CardManager.GetCardAsCard(203080);
+            if (card != null) generatedCards.Add(card);
+        }
+
+        List<Card> processedCards = battleManager.ProcessGeneratedCards(generatedCards, true);
+        if (processedCards.Count > 0 && battleManager.handManager != null)
+        {
+            battleManager.handManager.AddCard(processedCards);
+            battleManager.UpdateAllUI();
+        }
     }
 }

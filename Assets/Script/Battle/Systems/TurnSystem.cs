@@ -164,6 +164,7 @@ public class TurnSystem
         battleManager.ApplyPlayerTurnEndEffects();
         ExpireTurnCardModifiers();
         yield return DiscardRemainingHandCards();
+        battleManager.FinishPlayerTurnEndEffects();
 
         battleManager.UpdateAllUI();
 
@@ -217,6 +218,7 @@ public class TurnSystem
         {
             monster.OnTurnEnd();
         }
+        battleManager.FinishEnemyTurnEndEffects();
 
         yield return new WaitForSeconds(battleManager.EnemyActionDelay);
 
@@ -250,10 +252,14 @@ public class TurnSystem
     private IEnumerator DiscardRemainingHandCards()
     {
         if (battleManager.handManager == null || battleManager.usableDeckManager == null)
+        {
+            ExecuteAdditionalTurnEndTriggers(null, null);
             yield break;
+        }
         List<Card> remainingCards = battleManager.handManager.GetHandCards();
         if (remainingCards.Count == 0)
         {
+            ExecuteAdditionalTurnEndTriggers(null, null);
             yield break;
         }
 

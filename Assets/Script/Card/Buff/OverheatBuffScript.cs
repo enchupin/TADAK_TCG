@@ -4,7 +4,7 @@ public sealed class OverheatBuffScript : PlayerBuffScript
 {
     public override int BuffId => OverheatBuffId;
 
-    public override float GetCalculatedCardBaseMultiplier(TrainingBattleManager battleManager, PlayerData player, int stack, float currentMultiplier)
+    public override float GetOutgoingDamageMultiplier(TrainingBattleManager battleManager, PlayerData player, int stack, float currentMultiplier)
     {
         if (stack <= 0)
         {

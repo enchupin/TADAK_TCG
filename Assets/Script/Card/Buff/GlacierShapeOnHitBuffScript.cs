@@ -9,7 +9,13 @@ public sealed class GlacierShapeOnHitBuffScript : PlayerBuffScript
 
     public override void ResolveDeferredTurnStartEffects(TrainingBattleManager battleManager, PlayerData player, int stack)
     {
-        if (battleManager == null || stack <= 0 || battleManager.handManager == null || !battleManager.CanGainCardsToHand())
+        if (battleManager == null || player == null || stack <= 0)
+        {
+            return;
+        }
+
+        player.ConsumeBuffStack(BuffId, stack);
+        if (battleManager.handManager == null || !battleManager.CanGainCardsToHand())
         {
             return;
         }
