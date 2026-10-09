@@ -55,9 +55,31 @@ public static class Program
         Reset();
         SteamClient.UserId--;
         Check(ProfileSaveManager.CurrentProfile.legacyBestDamage == 999, "계정 복귀");
-        Reset();
         SteamClient.State = SteamClientState.Failed;
         Throws<InvalidOperationException>(() => ProfileSaveManager.LoadOrCreate());
+
+        Reset();
+        Application.persistentDataPath = Path.Combine(root, "OfflineBuild");
+        PlayerProfileSave offline = ProfileSaveManager.CurrentProfile;
+        Check(offline.ownerSteamId == string.Empty && ProfileSaveManager.ProfileFilePath.Contains(Path.Combine("Saves", "Local")),
+            "Steam 없는 빌드는 별도 로컬 저장 사용");
+        Check(offline.characters.Count == 10 && offline.characters.TrueForAll(library => library.decks.Count == 1
+            && library.decks[0].cardIds.Count == 7), "Steam 초기화 실패 시 모든 캐릭터 기본 덱 생성");
+        offline.FindLibrary((int)Character.Mio).decks[0].name = "오프라인 덱";
+        ProfileSaveManager.Save(offline);
+        Reset();
+        Check(ProfileSaveManager.CurrentProfile.FindLibrary((int)Character.Mio).decks[0].name == "오프라인 덱",
+            "Steam 없는 빌드 재실행 후 덱 유지");
+        SteamClient.State = SteamClientState.Ready;
+        Check(ProfileSaveManager.CurrentProfile.ownerSteamId == string.Empty, "실행 중 Steam 복구에도 로컬 저장 유지");
+        ProfileSaveManager.Save();
+        Reset();
+        Check(ProfileSaveManager.CurrentProfile.ownerSteamId == SteamClient.UserId.ToString()
+            && ProfileSaveManager.CurrentProfile.FindLibrary((int)Character.Mio).decks[0].name != "오프라인 덱",
+            "재시작 후 Steam 계정 저장은 로컬과 분리");
+        Reset();
+        Application.persistentDataPath = root;
+        Check(ProfileSaveManager.CurrentProfile.legacyBestDamage == 999, "기존 Steam 계정 기록 보존");
 
         string path = Path.Combine(root, "Recovery", "profile.json");
         string valid = JsonConvert.SerializeObject(first);
