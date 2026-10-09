@@ -75,9 +75,6 @@ public class TrainingBattleManager : MonoBehaviour
     [SerializeField] private Button instantWinButton;
     [SerializeField] private bool enableKeyboardEndTurn = true;
 
-    [Header("Run Flow")]
-    [SerializeField] private float battleResultTransitionDelay = 0.8f;
-
     [Header("Spawned Monsters")]
     public List<Monster> spawnedMonsters = new List<Monster>();
 
@@ -109,6 +106,8 @@ public class TrainingBattleManager : MonoBehaviour
     private BattleBuffController battleBuffController;
     private CharacterIdentityService characterIdentityService;
     private bool hasResolvedBattleResult;
+    [SerializeField] private TrainingMapController trainingMap;
+    private bool hasStartedEncounter;
     private readonly List<PendingMonsterRevive> pendingMonsterRevives = new List<PendingMonsterRevive>();
 
     public float EnemyActionDelay => enemyActionDelay;
@@ -154,6 +153,37 @@ public class TrainingBattleManager : MonoBehaviour
         if (BossModeSession.IsActive) isDebugMode = false;
         CardPlayEvents.OnCardPlayed += HandleCardClicked;
 
+        if (!BossModeSession.IsActive && trainingMap != null)
+        {
+            if (!TrainingRunState.HasMapData)
+                TrainingRunState.StartNewRun(SceneManager.GetActiveScene().name);
+            if (!TrainingRunState.PendingNodeId.HasValue)
+            {
+                trainingMap.ShowMap();
+                return;
+            }
+        }
+        BeginSelectedBattle();
+    }
+
+    public void BeginSelectedBattle()
+    {
+        if (hasStartedEncounter) return;
+        StopAllCoroutines();
+        CancelMonsterSelection();
+        battleDeckViewer?.ResetForCombat();
+        handManager?.ClearHand();
+        monsterSpawner?.ClearEncounter();
+        spawnedMonsters.Clear();
+        pendingMonsterRevives.Clear();
+        currentTarget = null;
+        previewDescriptionTarget = null;
+        turnSystem = new TurnSystem(this);
+        combatResolver = new CombatResolver(this);
+        battleBuffController = new BattleBuffController(this);
+        characterIdentityService = new CharacterIdentityService(this);
+        hasStartedEncounter = true;
+        trainingMap?.ShowBattle();
         InitializeCharacterSelection();
         InitializeBattle();
         InitializeInstantWinButton();
@@ -164,7 +194,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     private void Update()
     {
-        if (!enableKeyboardEndTurn)
+        if (!hasStartedEncounter || !enableKeyboardEndTurn)
             return;
 
 #if ENABLE_INPUT_SYSTEM
@@ -908,13 +938,15 @@ public class TrainingBattleManager : MonoBehaviour
 
     public bool CanPlayerPlayCard()
     {
-        return !HasPendingSelection && !(combatResolver?.IsResolvingCardPlay ?? false)
+        return !(trainingMap != null && trainingMap.IsVisible)
+            && !HasPendingSelection && !(combatResolver?.IsResolvingCardPlay ?? false)
             && turnSystem.CanPlayerPlayCard();
     }
 
     public bool CanEndPlayerTurn()
     {
-        return !HasPendingSelection && !(combatResolver?.IsResolvingCardPlay ?? false)
+        return !(trainingMap != null && trainingMap.IsVisible)
+            && !HasPendingSelection && !(combatResolver?.IsResolvingCardPlay ?? false)
             && turnSystem.CanEndPlayerTurn();
     }
 
@@ -2178,10 +2210,8 @@ public class TrainingBattleManager : MonoBehaviour
 
     private System.Collections.IEnumerator HandleTrainingRunBattleResult(bool isVictory)
     {
-        if (battleResultTransitionDelay > 0f)
-        {
-            yield return new WaitForSeconds(battleResultTransitionDelay);
-        }
+        // 승리를 판정한 카드 효과와 턴 처리가 현재 프레임에서 마무리되도록 대기
+        yield return null;
 
         if (!TrainingRunState.HasMapData)
             yield break;
@@ -2216,10 +2246,8 @@ public class TrainingBattleManager : MonoBehaviour
             buildingDeck = null;
         }
 
-        if (!string.IsNullOrEmpty(TrainingRunState.MapSceneName))
-        {
-            SceneManager.LoadScene(TrainingRunState.MapSceneName);
-        }
+        hasStartedEncounter = false;
+        trainingMap.ShowMap();
     }
 }
 

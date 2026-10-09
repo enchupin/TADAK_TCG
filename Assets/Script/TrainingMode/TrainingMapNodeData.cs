@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public enum TrainingNodeType
 {
@@ -48,7 +47,6 @@ public class TrainingMapNodeData
     public int stageIndex;
     public int laneIndex;
     public TrainingNodeType nodeType;
-    public Vector2 gridPosition;
     public List<MonsterSpawner.SpawnMonsterType> plannedEncounter = new List<MonsterSpawner.SpawnMonsterType>();
     public List<int> nextNodeIds = new List<int>();
 

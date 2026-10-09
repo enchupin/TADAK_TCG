@@ -88,6 +88,20 @@ public class MonsterSpawner : MonoBehaviour
 
     private int reservedSummonCount;
 
+    public void ClearEncounter()
+    {
+        reservedSummonCount = 0;
+        foreach (Transform point in spawnPoints)
+        {
+            if (point == null) continue;
+            foreach (Monster monster in point.GetComponentsInChildren<Monster>(true))
+            {
+                monster.gameObject.SetActive(false);
+                Destroy(monster.gameObject);
+            }
+        }
+    }
+
     /// <summary>
     /// 노드 타입에 맞는 인카운터를 계산해 몬스터를 스폰합니다
     /// </summary>

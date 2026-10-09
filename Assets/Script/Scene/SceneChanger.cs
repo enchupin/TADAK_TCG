@@ -4,7 +4,6 @@ using UnityEngine.SceneManagement;
 public class SceneChanger : MonoBehaviour
 {
     [Header("Training Run Flow")]
-    [SerializeField] private string trainingMapSceneName = "TrainingMapScene";
     [SerializeField] private string trainingBattleSceneName = "CombatScene";
 
     public void StartTrainingRun()
@@ -12,10 +11,8 @@ public class SceneChanger : MonoBehaviour
         BossModeSession.Reset();
         TrainingBattleManager.buildingDeck = null;
         PlayerData.Reset();
-        TrainingRunState.StartNewRun(
-            trainingMapSceneName,
-            trainingBattleSceneName);
-        SceneManager.LoadScene(trainingMapSceneName);
+        TrainingRunState.StartNewRun(trainingBattleSceneName);
+        SceneManager.LoadScene(trainingBattleSceneName);
     }
 
 }

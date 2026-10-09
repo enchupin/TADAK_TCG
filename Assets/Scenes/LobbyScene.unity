@@ -27833,7 +27833,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aaf4f1064527b2488143c85c7994af0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneChanger
-  trainingMapSceneName: TrainingMapScene
   trainingBattleSceneName: CombatScene
 --- !u!114 &2094119973
 MonoBehaviour:
@@ -27888,7 +27887,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: TrainingMapScene
+          m_StringArgument: CombatScene
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &2094119974
