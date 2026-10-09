@@ -14,7 +14,7 @@ public sealed class FeatherEnhanceBuffScript : PlayerBuffScript
             return currentCardId;
         }
 
-        if (sourceBuffId > 0 && sourceBuffId != BuffId)
+        if (sourceBuffId != BuffId)
         {
             return currentCardId;
         }

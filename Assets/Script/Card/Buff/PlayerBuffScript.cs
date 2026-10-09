@@ -230,11 +230,6 @@ public abstract class PlayerBuffScript
         return currentShouldApplyToAll;
     }
 
-    public virtual int GetFeatherTriggerBonus(TrainingBattleManager battleManager, PlayerData player, int stack, int currentBonus)
-    {
-        return currentBonus;
-    }
-
     public virtual void OnFeatherApplied(TrainingBattleManager battleManager, PlayerData player, int appliedAmount, int targetCount, TargetType targetType, int stack)
     {
     }

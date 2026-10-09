@@ -1407,9 +1407,9 @@ public class TrainingBattleManager : MonoBehaviour
         return battleBuffController != null ? battleBuffController.TriggerFeatherUntilEmpty(target) : 0;
     }
 
-    public int ReplayExhaustedFeathers()
+    public System.Collections.IEnumerator ReplayExhaustedFeathersSequence()
     {
-        return battleBuffController != null ? battleBuffController.ReplayExhaustedFeathers() : 0;
+        if (battleBuffController != null) yield return battleBuffController.ReplayExhaustedFeathersSequence();
     }
 
     public bool TryConsumeSoulProtection()
@@ -1624,6 +1624,12 @@ public class TrainingBattleManager : MonoBehaviour
         return battleBuffController != null
             ? battleBuffController.ProcessGeneratedCards(generatedCards, allowDuplicateGeneration)
             : new List<Card>(generatedCards);
+    }
+
+    public Card ApplyHandCardUpgrades(Card card)
+    {
+        ApplyPersistentUpgradeToCard(card);
+        return ApplyPersistentUpgradeToCard(card, BattleRuntimeDefinitions.FeatherEnhanceBuffId);
     }
 
     public Card ApplyPersistentUpgradeToCard(Card card)

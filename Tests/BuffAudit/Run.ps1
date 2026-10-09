@@ -3,7 +3,7 @@ $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 $testRoot = Join-Path $root 'Temp/BuffAuditCheck'
 New-Item -ItemType Directory -Force $testRoot | Out-Null
 $buffRoot = Join-Path $root 'Assets/Script/Card/Buff'
-$names = @('LifeLinkBuffScript','GlacierBondBuffScript','FrailBuffScript','FeatherBuffScript','FeatherCycleBuffScript','DeadlyAmbushBuffScript','StrengthBuffScript','AttackBoostBuffScript','PlayerBuffScript','MonsterBuffScript','PlayerBuffRuntimeService','MonsterBuffRuntimeService','GrowingFeatherBuffScript','GlacierShapeOnHitBuffScript','RepeatNextPowerCardBuffScript','RepeatNextCardBuffScript','HighCostRepeatBuffScript','LastStandBuffScript','StrengthContractBuffScript','WuppiAttackBuffScript','PotionCycleBuffScript','DrawLockBuffScript','OverheatBuffScript','WeakBuffScript','RegenerationBuffScript','BurnBuffScript','DoubleActionBuffScript','DrowningOnDebuffBuffScript','RisingWaterBuffScript','UnderwaterBreathingBuffScript','NextCardFreeBuffScript','ComboBuffScript','Monster/StrengthDecayBuffScript','Monster/FrailBuffScript','Monster/GlacierBondBuffScript','Monster/MirrorBuffScript','Monster/LifeLinkBuffScript','Monster/ThornBuffScript','Monster/StrengthBuffScript','Monster/LifeStealBuffScript')
+$names = @('FeatherEnhanceBuffScript','DoubleFeatherBuffScript','FeatherStackBoostBuffScript','FeatherAutoTriggerBuffScript','BlindFeatherBuffScript','LifeLinkBuffScript','GlacierBondBuffScript','FrailBuffScript','FeatherBuffScript','FeatherCycleBuffScript','DeadlyAmbushBuffScript','StrengthBuffScript','AttackBoostBuffScript','PlayerBuffScript','MonsterBuffScript','PlayerBuffRuntimeService','MonsterBuffRuntimeService','GrowingFeatherBuffScript','GlacierShapeOnHitBuffScript','RepeatNextPowerCardBuffScript','RepeatNextCardBuffScript','HighCostRepeatBuffScript','LastStandBuffScript','StrengthContractBuffScript','WuppiAttackBuffScript','PotionCycleBuffScript','DrawLockBuffScript','OverheatBuffScript','WeakBuffScript','RegenerationBuffScript','BurnBuffScript','DoubleActionBuffScript','DrowningOnDebuffBuffScript','RisingWaterBuffScript','UnderwaterBreathingBuffScript','NextCardFreeBuffScript','ComboBuffScript','Monster/StrengthDecayBuffScript','Monster/FrailBuffScript','Monster/GlacierBondBuffScript','Monster/MirrorBuffScript','Monster/LifeLinkBuffScript','Monster/ThornBuffScript','Monster/StrengthBuffScript','Monster/LifeStealBuffScript')
 $compile = @()
 $actualClasses = @{}
 foreach ($name in $names) {
@@ -13,7 +13,7 @@ foreach ($name in $names) {
     $actualClasses[$className] = $true
 }
 
-foreach ($relative in @('Data/BuffData.cs','Card/Effects/AttackEffect.cs','Card/Effects/DamageEffect.cs','Card/Effects/ICardEffect.cs')) {
+foreach ($relative in @('Card/Effects/TriggeredCardExecutionUtility.cs','Card/Effects/CardEffectSequence.cs','Card/Effects/BuffEffect.cs','Data/BuffData.cs','Card/Effects/AttackEffect.cs','Card/Effects/DamageEffect.cs','Card/Effects/ICardEffect.cs')) {
     $compile += '<Compile Include="' + [Security.SecurityElement]::Escape((Join-Path $root ('Assets/Script/' + $relative))) + '" />'
 }
 # 계산과 비용 지불 경로도 복제 구현 대신 실제 소스의 메서드를 컴파일
@@ -31,7 +31,7 @@ function Read-SourceMethod([string]$relative, [string]$signature) {
     }
     return $source.Substring($start, $end-$start)
 }
-$methods = 'using UnityEngine; using System.Collections; using System.Collections.Generic; public partial class PlayerData {' + (Read-SourceMethod 'Battle/PlayerData.cs' 'public int CalculateCardDamage(') + (Read-SourceMethod 'Battle/PlayerData.cs' 'public int AddDefense(') + '}'
+$methods = 'using UnityEngine; using System.Collections; using System.Collections.Generic; using static BattleRuntimeDefinitions; public partial class PlayerData {' + (Read-SourceMethod 'Battle/PlayerData.cs' 'public int CalculateCardDamage(') + (Read-SourceMethod 'Battle/PlayerData.cs' 'public int AddDefense(') + '}'
 $methods += 'public partial class PlayerData {'
 foreach ($signature in @('public void AddBuff(', 'public int GetBuffStack(', 'public void SetBuffStack(', 'private void DecreaseBuffStack(', 'public void ConsumeBuffStack(', 'public void RemoveBuffStack(', 'private void RemoveBuff(', 'public int TakeDamage(', 'public int LoseHp(', 'private void TryConsumeSoulProtection(')) {
     $methods += Read-SourceMethod 'Battle/PlayerData.cs' $signature
@@ -40,6 +40,12 @@ $methods += '}'
 $methods += 'public partial class TrainingBattleManager {' + (Read-SourceMethod 'Battle/TrainingBattleManager.cs' 'public bool TryPayCardCost(') + (Read-SourceMethod 'Battle/TrainingBattleManager.cs' 'public void SetState(') + (Read-SourceMethod 'Battle/TrainingBattleManager.cs' 'public int ResolvePlayerBarrierGain(') + '}'
 $methods += 'public partial class TurnSystem {' + (Read-SourceMethod 'Battle/Systems/TurnSystem.cs' 'private IEnumerator DiscardRemainingHandCards(') + (Read-SourceMethod 'Battle/Systems/TurnSystem.cs' 'private void ExecuteAdditionalTurnEndTriggers(') + '}'
 $methods += 'public partial class BattleBuffController {' + (Read-SourceMethod 'Card/Buff/BattleBuffController.cs' 'public int ResolvePlayerBarrierGain(') + (Read-SourceMethod 'Card/Buff/BattleBuffController.cs' 'public int GetAdditionalBarrierGain(') + '}'
+$methods += 'public partial class TrainingBattleManager {' + (Read-SourceMethod 'Battle/TrainingBattleManager.cs' 'public Card ApplyHandCardUpgrades(') + (Read-SourceMethod 'Battle/TrainingBattleManager.cs' 'public Card ApplyPersistentUpgradeToCard(Card card, int sourceBuffId)') + '}'
+$methods += 'public partial class BattleBuffController {'
+foreach ($signature in @('public int ResolvePersistentUpgradeCardId(', 'public void HandleBuffApplied(', 'private static bool IsPersistentUpgradeBuff(', 'private bool ApplyPersistentCardBuffChanges(', 'public Card ApplyPersistentUpgradeToCard(')) {
+    $methods += Read-SourceMethod 'Card/Buff/BattleBuffController.cs' $signature
+}
+$methods += '}'
 [IO.File]::WriteAllText((Join-Path $testRoot 'ProductionMethods.cs'), $methods, [Text.UTF8Encoding]::new($false))
 
 $stubs = ''

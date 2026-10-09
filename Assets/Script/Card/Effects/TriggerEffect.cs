@@ -40,11 +40,20 @@ public class TriggerEffect : ICardEffect
 
         if (string.Equals(timing, "ReplayExhaustedFeather", System.StringComparison.OrdinalIgnoreCase))
         {
-            battleManager.ReplayExhaustedFeathers();
+            battleManager.StartCoroutine(CardEffectSequence.Run(battleManager.ReplayExhaustedFeathersSequence(), battleManager));
             return;
         }
 
         Debug.LogWarning($"[TriggerEffect] 아직 지원하지 않는 timing입니다: {timing}");
+    }
+
+    public System.Collections.IEnumerator ExecuteSequence(TrainingBattleManager battleManager, int? amount = null)
+    {
+        if (battleManager == null) yield break;
+        if (string.Equals(timing, "ReplayExhaustedFeather", System.StringComparison.OrdinalIgnoreCase))
+            yield return battleManager.ReplayExhaustedFeathersSequence();
+        else
+            Execute(battleManager, amount ?? 1);
     }
 
     private int ResolveAmount(TrainingBattleManager battleManager, int forwardedAmount)

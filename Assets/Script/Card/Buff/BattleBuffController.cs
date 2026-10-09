@@ -252,9 +252,9 @@ public class BattleBuffController
         return featherBuffScript.TriggerUntilEmpty(target);
     }
 
-    public int ReplayExhaustedFeathers()
+    public System.Collections.IEnumerator ReplayExhaustedFeathersSequence()
     {
-        return featherBuffScript.ReplayExhaustedFeathers();
+        return featherBuffScript.ReplayExhaustedFeathersSequence();
     }
 
     public bool TryConsumeSoulProtection()
@@ -526,9 +526,12 @@ public class BattleBuffController
         bool hasChanges = false;
 
         hasChanges |= ApplyPersistentCardBuffChanges(battleManager.handManager?.GetHandCards(), changedHandCards, buffId);
-        hasChanges |= ApplyPersistentCardBuffChanges(battleManager.usableDeckManager?.GetDrawPile(), null, buffId);
-        hasChanges |= ApplyPersistentCardBuffChanges(battleManager.usableDeckManager?.GetDiscardPile(), null, buffId);
-        hasChanges |= ApplyPersistentCardBuffChanges(battleManager.usableDeckManager?.GetExhaustPile(), null, buffId);
+        if (buffId != FeatherEnhanceBuffId)
+        {
+            hasChanges |= ApplyPersistentCardBuffChanges(battleManager.usableDeckManager?.GetDrawPile(), null, buffId);
+            hasChanges |= ApplyPersistentCardBuffChanges(battleManager.usableDeckManager?.GetDiscardPile(), null, buffId);
+            hasChanges |= ApplyPersistentCardBuffChanges(battleManager.usableDeckManager?.GetExhaustPile(), null, buffId);
+        }
 
         if (!hasChanges)
         {

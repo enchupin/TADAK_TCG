@@ -198,32 +198,32 @@
         {
             "buffId": 1015,
             "name": "순환: 깃털",
-            "description": "(깃털)을 사용할 때마다 카드를 1장 뽑습니다.",
+            "description": "깃털 카드를 사용할 때마다 카드를 1장 뽑습니다.",
             "enName": "Cycle: Feather",
-            "enDescription": "Whenever you use a (Feather), draw 1 card.",
+            "enDescription": "Whenever you play a Feather card, draw 1 card.",
             "jaName": "循環 : 羽",
-            "jaDescription": "(羽)を使うたびに、カードを1枚引く。",
+            "jaDescription": "羽カードを使うたびに、カードを1枚引く。",
             "zhHantName": "循環: 羽",
-            "zhHantDescription": "每當使用(羽)時，抽1張牌。",
+            "zhHantDescription": "每當使用羽毛牌時，抽1張牌。",
             "zhHansName": "循环: 羽",
-            "zhHansDescription": "每当使用(羽)时，抽1张牌。",
+            "zhHansDescription": "每当使用羽毛牌时，抽1张牌。",
             "ruName": "Цикл: перо",
-            "ruDescription": "Каждый раз, когда вы используете (Перо), берет 1 карту."
+            "ruDescription": "Каждый раз, когда вы разыгрываете карту «Перо», берите 1 карту."
         },
         {
             "buffId": 1016,
             "name": "강화: 깃털",
-            "description": "(깃털)이 강화됩니다.",
+            "description": "내 손의 모든 깃털 카드가 강화됩니다",
             "enName": "Enhance: Feather",
-            "enDescription": "Feathers are enhanced.",
-            "jaName": "循環 : 羽",
-            "jaDescription": "(羽)が強化される。",
+            "enDescription": "All Feather cards in your hand are enhanced.",
+            "jaName": "強化 : 羽",
+            "jaDescription": "手札のすべての羽カードが強化される。",
             "zhHantName": "強化: 羽",
-            "zhHantDescription": "(羽)會被強化。",
+            "zhHantDescription": "你手中的所有羽毛牌都會被強化。",
             "zhHansName": "强化: 羽",
-            "zhHansDescription": "(羽)会被强化。",
+            "zhHansDescription": "你手中的所有羽毛牌都会被强化。",
             "ruName": "Усиление: перья",
-            "ruDescription": "Перья усилены."
+            "ruDescription": "Все карты «Перо» в вашей руке усилены."
         },
         {
             "buffId": 1017,
@@ -813,17 +813,17 @@
         {
             "buffId": 3036,
             "name": "자라나는 깃털",
-            "description": "매 턴 시작 시 (깃털)을 {stack장} 생성합니다.",
+            "description": "매 턴 시작 시 깃털 카드를 {stack장} 생성합니다.",
             "enName": "Growing Feathers",
-            "enDescription": "Create (Feather) cards {in an amount of stack} at the start of each turn.",
+            "enDescription": "Create {stack} Feather cards at the start of each turn.",
             "jaName": "育つ羽",
-            "jaDescription": "毎ターン開始時、(羽)カードを{stack枚}生成する。",
+            "jaDescription": "毎ターン開始時、羽カードを{stack枚}生成する。",
             "zhHantName": "成長之羽",
-            "zhHantDescription": "每回合開始時，生成{stack張}(羽)牌。",
+            "zhHantDescription": "每回合開始時，生成{stack張}羽毛牌。",
             "zhHansName": "成长之羽",
-            "zhHansDescription": "每回合开始时，生成{stack张}(羽)牌。",
+            "zhHansDescription": "每回合开始时，生成{stack张}羽毛牌。",
             "ruName": "Растущие перья",
-            "ruDescription": "В начале каждого хода создает Перья {в количестве stack}."
+            "ruDescription": "В начале каждого хода создавайте карты «Перо» {в количестве stack}."
         },
         {
             "buffId": 3037,
@@ -873,17 +873,17 @@
         {
             "buffId": 3040,
             "name": "치명적인 기습",
-            "description": "매 턴 처음으로 쓰는 (깃털)의 피해량이 {stack} 증가합니다.",
+            "description": "매 턴 처음으로 쓰는 깃털 카드의 피해량이 {stack} 증가합니다.",
             "enName": "Deadly Ambush",
-            "enDescription": "The first (Feather) you use each turn deals {stack} additional damage.",
+            "enDescription": "The first Feather card you play each turn deals {stack} additional damage.",
             "jaName": "致命的な奇襲",
-            "jaDescription": "毎ターン最初に使う(羽)のダメージが{stack}増加する。",
+            "jaDescription": "毎ターン最初に使う羽カードのダメージが{stack}増加する。",
             "zhHantName": "致命伏擊",
-            "zhHantDescription": "每回合第一張使用的(羽)傷害增加{stack}。",
+            "zhHantDescription": "每回合第一張使用的羽毛牌傷害增加{stack}。",
             "zhHansName": "致命伏击",
-            "zhHansDescription": "每回合第一张使用的(羽)伤害增加{stack}。",
+            "zhHansDescription": "每回合第一张使用的羽毛牌伤害增加{stack}。",
             "ruName": "Смертельная засада",
-            "ruDescription": "Первое (Перо), которое вы используете в каждом ходу, наносит больше урона {на stack}."
+            "ruDescription": "Первая карта «Перо», которую вы разыгрываете в каждом ходу, наносит {stack} дополнительного урона."
         },
         {
             "buffId": 3041,

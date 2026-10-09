@@ -599,12 +599,6 @@ public class PlayerBuffRuntimeService
             script.ShouldApplyFeatherToAllEnemies(battleManager, player, stack, currentShouldApplyToAll));
     }
 
-    public int GetFeatherTriggerBonus()
-    {
-        return Mathf.Max(0, FoldActiveBuffs(0, (script, player, stack, currentBonus) =>
-            script.GetFeatherTriggerBonus(battleManager, player, stack, currentBonus)));
-    }
-
     public void OnFeatherApplied(int appliedAmount, int targetCount, TargetType targetType)
     {
         if (appliedAmount <= 0 || targetCount <= 0)

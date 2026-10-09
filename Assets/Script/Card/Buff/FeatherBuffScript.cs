@@ -1,11 +1,9 @@
+using System.Collections;
 using System.Collections.Generic;
 using static BattleRuntimeDefinitions;
 
 public sealed class FeatherBuffScript : PlayerBuffScript
 {
-    private const int FeatherCardId = 203080;
-    private const int EnhancedFeatherCardId = 203081;
-
     private readonly TrainingBattleManager battleManager;
     private readonly PlayerBuffRuntimeService playerBuffRuntimeService;
 
@@ -75,30 +73,29 @@ public sealed class FeatherBuffScript : PlayerBuffScript
             return 0;
         }
 
-        int triggerBonus = ConsumeDeadlyAmbushBonusIfNeeded();
         switch (NormalizeTarget(target))
         {
             case TargetType.Self:
-                return TriggerOnPlayerInternal(repeatCount, triggerBonus);
+                return TriggerOnPlayerInternal(repeatCount);
 
             case TargetType.AllEnemies:
-                return TriggerOnAllEnemies(repeatCount, triggerBonus);
+                return TriggerOnAllEnemies(repeatCount);
 
             default:
-                return TriggerOnMonsterInternal(ResolveSingleEnemyTarget(), repeatCount, triggerBonus);
+                return TriggerOnMonsterInternal(ResolveSingleEnemyTarget(), repeatCount);
         }
     }
 
     public int TriggerOnMonster(Monster monster, int repeatCount = 1)
     {
         if (repeatCount <= 0 || !HasFeather(monster)) return 0;
-        return TriggerOnMonsterInternal(monster, repeatCount, ConsumeDeadlyAmbushBonusIfNeeded());
+        return TriggerOnMonsterInternal(monster, repeatCount);
     }
 
     public int TriggerOnPlayer(int repeatCount = 1)
     {
         if (repeatCount <= 0 || !HasFeatherTarget(TargetType.Self)) return 0;
-        return TriggerOnPlayerInternal(repeatCount, ConsumeDeadlyAmbushBonusIfNeeded());
+        return TriggerOnPlayerInternal(repeatCount);
     }
 
     public int TriggerUntilEmpty(TargetType target)
@@ -108,79 +105,37 @@ public sealed class FeatherBuffScript : PlayerBuffScript
             return 0;
         }
 
-        int triggerBonus = ConsumeDeadlyAmbushBonusIfNeeded();
         switch (NormalizeTarget(target))
         {
             case TargetType.Self:
-                return TriggerOnPlayerUntilEmpty(triggerBonus);
+                return TriggerOnPlayerUntilEmpty();
 
             case TargetType.AllEnemies:
-                return TriggerOnAllEnemiesUntilEmpty(triggerBonus);
+                return TriggerOnAllEnemiesUntilEmpty();
 
             default:
-                return TriggerOnMonsterUntilEmpty(ResolveSingleEnemyTarget(), triggerBonus);
+                return TriggerOnMonsterUntilEmpty(ResolveSingleEnemyTarget());
         }
     }
 
-    public int ReplayExhaustedFeathers()
+    public IEnumerator ReplayExhaustedFeathersSequence()
     {
-        if (battleManager?.usableDeckManager == null)
+        if (battleManager?.usableDeckManager == null) yield break;
+        List<Card> candidates = new(battleManager.usableDeckManager.GetExhaustPile());
+        foreach (Card exhaustedCard in candidates)
         {
-            return 0;
+            if (!BuffCardUtility.IsFeatherCard(exhaustedCard)) continue;
+            Monster target = ResolveRandomEnemyTarget();
+            if (target == null) break;
+            Card copy = exhaustedCard.CloneForRuntimeCopy();
+            if (copy == null) continue;
+
+            yield return TriggeredCardExecutionUtility.ExecuteTriggeredCardSequence(
+                battleManager, copy, target, resolveDestination: false,
+                triggerPowerEffects: true, allowRepeats: true, applyPostPlayKeywords: false);
+            if (battleManager.TryHandleCombatEnd()) break;
         }
-
-        List<Card> exhaustedCards = battleManager.usableDeckManager.GetExhaustPile();
-        if (exhaustedCards == null || exhaustedCards.Count == 0)
-        {
-            return 0;
-        }
-
-        List<Card> exhaustedFeathers = new();
-        foreach (Card card in exhaustedCards)
-        {
-            if (IsReplayableFeatherCard(card))
-            {
-                exhaustedFeathers.Add(card);
-            }
-        }
-
-        if (exhaustedFeathers.Count == 0)
-        {
-            return 0;
-        }
-
-        int replayCount = 0;
-        Monster originalTarget = battleManager.currentTarget;
-        Monster replayTarget = ResolveRandomEnemyTarget();
-        foreach (Card featherCard in exhaustedFeathers)
-        {
-            if (replayTarget != null && replayTarget.IsDead())
-            {
-                replayTarget = ResolveRandomEnemyTarget();
-            }
-
-            if (replayTarget == null)
-            {
-                break;
-            }
-
-            ExecuteExhaustedFeatherCard(featherCard, replayTarget);
-            replayCount++;
-
-            if (battleManager.TryHandleCombatEnd())
-            {
-                break;
-            }
-        }
-
-        battleManager.currentTarget = originalTarget;
-
-        if (replayCount > 0)
-        {
-            battleManager.UpdateAllUI();
-        }
-
-        return replayCount;
+        battleManager.UpdateAllUI();
     }
 
     private void ApplyToMonsters(List<Monster> targets, int amount)
@@ -201,8 +156,6 @@ public sealed class FeatherBuffScript : PlayerBuffScript
         int autoTriggerCount = playerBuffRuntimeService != null
             ? playerBuffRuntimeService.GetFeatherAutoTriggerCount()
             : 0;
-        int triggerBonus = autoTriggerCount > 0 && targets.Exists(monster => monster != null && !monster.IsDead())
-            ? ConsumeDeadlyAmbushBonusIfNeeded() : 0;
         int appliedTargetCount = 0;
 
         foreach (Monster monster in targets)
@@ -217,7 +170,7 @@ public sealed class FeatherBuffScript : PlayerBuffScript
             battleManager.HandleEnemyDebuffApplied(monster, FeatherBuffId, finalAmount, crueltyStackBeforeApply);
             if (autoTriggerCount > 0)
             {
-                TriggerOnMonsterInternal(monster, autoTriggerCount, triggerBonus);
+                TriggerOnMonsterInternal(monster, autoTriggerCount);
             }
 
             appliedTargetCount++;
@@ -229,7 +182,7 @@ public sealed class FeatherBuffScript : PlayerBuffScript
         }
     }
 
-    private int TriggerOnMonsterInternal(Monster monster, int repeatCount, int triggerBonus)
+    private int TriggerOnMonsterInternal(Monster monster, int repeatCount)
     {
         int finalRepeatCount = playerBuffRuntimeService != null
             ? playerBuffRuntimeService.ModifyFeatherTriggerRepeatCount(repeatCount)
@@ -243,12 +196,12 @@ public sealed class FeatherBuffScript : PlayerBuffScript
         for (int i = 0; i < finalRepeatCount; i++)
         {
             int featherStack = monster.GetBuffStack(FeatherBuffId);
-            if (featherStack <= 0)
+            if (featherStack <= 0 || monster.IsDead())
             {
                 break;
             }
 
-            int damage = battleManager.ResolvePlayerEffectDamage(featherStack + triggerBonus);
+            int damage = battleManager.ResolvePlayerEffectDamage(featherStack);
             int dealtDamage = damage > 0 ? monster.TakeDamage(damage, 0) : 0;
             monster.ConsumeBuffStack(FeatherBuffId, 1);
             if (dealtDamage > 0)
@@ -262,7 +215,7 @@ public sealed class FeatherBuffScript : PlayerBuffScript
         return totalDamage;
     }
 
-    private int TriggerOnPlayerInternal(int repeatCount, int triggerBonus)
+    private int TriggerOnPlayerInternal(int repeatCount)
     {
         PlayerData player = battleManager.playerData;
         if (player == null || repeatCount <= 0)
@@ -279,14 +232,14 @@ public sealed class FeatherBuffScript : PlayerBuffScript
                 break;
             }
 
-            totalDamage += player.TakeDamage(featherStack + triggerBonus);
+            totalDamage += player.TakeDamage(featherStack);
             player.ConsumeBuffStack(FeatherBuffId, 1);
         }
 
         return totalDamage;
     }
 
-    private int TriggerOnMonsterUntilEmpty(Monster monster, int triggerBonus)
+    private int TriggerOnMonsterUntilEmpty(Monster monster)
     {
         if (monster == null || monster.IsDead())
         {
@@ -296,13 +249,13 @@ public sealed class FeatherBuffScript : PlayerBuffScript
         int totalDamage = 0;
         while (!monster.IsDead() && monster.GetBuffStack(FeatherBuffId) > 0)
         {
-            totalDamage += TriggerOnMonsterInternal(monster, 1, triggerBonus);
+            totalDamage += TriggerOnMonsterInternal(monster, 1);
         }
 
         return totalDamage;
     }
 
-    private int TriggerOnPlayerUntilEmpty(int triggerBonus)
+    private int TriggerOnPlayerUntilEmpty()
     {
         PlayerData player = battleManager.playerData;
         if (player == null)
@@ -313,13 +266,13 @@ public sealed class FeatherBuffScript : PlayerBuffScript
         int totalDamage = 0;
         while (player.GetBuffStack(FeatherBuffId) > 0)
         {
-            totalDamage += TriggerOnPlayerInternal(1, triggerBonus);
+            totalDamage += TriggerOnPlayerInternal(1);
         }
 
         return totalDamage;
     }
 
-    private int TriggerOnAllEnemies(int repeatCount, int triggerBonus)
+    private int TriggerOnAllEnemies(int repeatCount)
     {
         List<Monster> livingMonsters = battleManager.GetLivingMonsters();
         if (livingMonsters == null || livingMonsters.Count == 0)
@@ -330,13 +283,13 @@ public sealed class FeatherBuffScript : PlayerBuffScript
         int totalDamage = 0;
         foreach (Monster monster in livingMonsters)
         {
-            totalDamage += TriggerOnMonsterInternal(monster, repeatCount, triggerBonus);
+            totalDamage += TriggerOnMonsterInternal(monster, repeatCount);
         }
 
         return totalDamage;
     }
 
-    private int TriggerOnAllEnemiesUntilEmpty(int triggerBonus)
+    private int TriggerOnAllEnemiesUntilEmpty()
     {
         List<Monster> livingMonsters = battleManager.GetLivingMonsters();
         if (livingMonsters == null || livingMonsters.Count == 0)
@@ -347,7 +300,7 @@ public sealed class FeatherBuffScript : PlayerBuffScript
         int totalDamage = 0;
         foreach (Monster monster in livingMonsters)
         {
-            totalDamage += TriggerOnMonsterUntilEmpty(monster, triggerBonus);
+            totalDamage += TriggerOnMonsterUntilEmpty(monster);
         }
 
         return totalDamage;
@@ -395,8 +348,10 @@ public sealed class FeatherBuffScript : PlayerBuffScript
         return livingMonsters[UnityEngine.Random.Range(0, livingMonsters.Count)];
     }
 
-    private static TargetType NormalizeTarget(TargetType target)
+    private TargetType NormalizeTarget(TargetType target)
     {
+        if (ShouldApplyToAllEnemies() && (target == TargetType.None || target == TargetType.SingleEnemy || target == TargetType.RandomEnemy))
+            return TargetType.AllEnemies;
         return target == TargetType.None ? TargetType.SingleEnemy : target;
     }
 
@@ -410,7 +365,7 @@ public sealed class FeatherBuffScript : PlayerBuffScript
             return;
         }
 
-        TriggerOnPlayerInternal(autoTriggerCount, ConsumeDeadlyAmbushBonusIfNeeded());
+        TriggerOnPlayerInternal(autoTriggerCount);
     }
 
     private bool ShouldApplyToAllEnemies()
@@ -436,60 +391,6 @@ public sealed class FeatherBuffScript : PlayerBuffScript
             default:
                 return HasFeather(ResolveSingleEnemyTarget());
         }
-    }
-
-    private int ConsumeDeadlyAmbushBonusIfNeeded()
-    {
-        return playerBuffRuntimeService != null ? playerBuffRuntimeService.GetFeatherTriggerBonus() : 0;
-    }
-
-    private void ExecuteExhaustedFeatherCard(Card featherCard, Monster targetMonster)
-    {
-        if (featherCard == null || targetMonster == null || targetMonster.IsDead())
-        {
-            return;
-        }
-
-        BattleContext context = battleManager.battleContext;
-        List<Card> previousThisCardContext = context?.GetContextCards("ThisCard");
-        List<Card> previousSelfContext = context?.GetContextCards("Self");
-        Monster previousTarget = battleManager.currentTarget;
-
-        if (context != null)
-        {
-            List<Card> cardContext = new() { featherCard };
-            context.SetContextCards("ThisCard", cardContext);
-            context.SetContextCards("Self", cardContext);
-        }
-
-        battleManager.currentTarget = targetMonster;
-        featherCard.Play(battleManager);
-        battleManager.currentTarget = previousTarget;
-
-        RestoreContextCards(context, "ThisCard", previousThisCardContext);
-        RestoreContextCards(context, "Self", previousSelfContext);
-    }
-
-    private static void RestoreContextCards(BattleContext context, string subject, List<Card> cards)
-    {
-        if (context == null)
-        {
-            return;
-        }
-
-        if (cards == null || cards.Count == 0)
-        {
-            context.ClearContextCards(subject);
-            return;
-        }
-
-        context.SetContextCards(subject, cards);
-    }
-
-    private static bool IsReplayableFeatherCard(Card card)
-    {
-        return card != null
-            && (card.cardId == FeatherCardId || card.cardId == EnhancedFeatherCardId);
     }
 
     private void NotifyFeatherApplied(int appliedAmount, int targetCount, TargetType targetType)

@@ -106,7 +106,7 @@ public class HandManager : MonoBehaviour
         }
 
         card = TrainingBattleManager.Instance != null
-            ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
+            ? TrainingBattleManager.Instance.ApplyHandCardUpgrades(card)
             : card;
         InsertCardInHandOrder(card);
         GameObject cardObj = InstantiateCardUI(card);
@@ -137,7 +137,7 @@ public class HandManager : MonoBehaviour
                 continue;
 
             Card processedCard = TrainingBattleManager.Instance != null
-                ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
+                ? TrainingBattleManager.Instance.ApplyHandCardUpgrades(card)
                 : card;
             InsertCardInHandOrder(processedCard);
             GameObject cardObj = InstantiateCardUI(processedCard);
@@ -194,7 +194,7 @@ public class HandManager : MonoBehaviour
                 continue;
 
             Card processedCard = TrainingBattleManager.Instance != null
-                ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
+                ? TrainingBattleManager.Instance.ApplyHandCardUpgrades(card)
                 : card;
             InsertCardInHandOrder(processedCard);
             InstantiateCardUIWithoutInputController(processedCard);
@@ -725,6 +725,8 @@ public class HandManager : MonoBehaviour
     {
         if (card == null)
             return;
+
+        if (handCardList.Contains(card)) TrainingBattleManager.Instance?.ApplyHandCardUpgrades(card);
 
         CardUI cardUI = GetCardUI(card);
         if (cardUI != null)
