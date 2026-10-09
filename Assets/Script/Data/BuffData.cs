@@ -23,11 +23,6 @@ public class BuffData
 
     public static bool IsBeneficialBuffId(int targetBuffId)
     {
-        if (targetBuffId == DrowningBuffId)
-        {
-            return false;
-        }
-
         int leadingDigit = GetLeadingDigit(targetBuffId);
         return leadingDigit % 2 == 1;
     }
@@ -37,8 +32,6 @@ public class BuffData
         int leadingDigit = GetLeadingDigit(targetBuffId);
         return leadingDigit == 1
             || leadingDigit == 2
-            || targetBuffId == RepeatNextCardBuffId
-            || targetBuffId == ComboBuffId
             || targetBuffId == FaithfulPrayerBuffId
             || targetBuffId == ParasiticMushroomBuffId
             || targetBuffId == PoisonUpgradeBuffId

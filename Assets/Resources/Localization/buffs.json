@@ -648,17 +648,17 @@
         {
             "buffId": 3023,
             "name": "재사용",
-            "description": "다음 사용하는 카드가 1번 더 사용됩니다.",
+            "description": "다음 {stack}번 동안 사용하는 카드가 1번 더 사용됩니다",
             "enName": "Reuse",
-            "enDescription": "The next card you use is used 1 additional time.",
+            "enDescription": "For the next {stack} card uses, the card you use is used 1 additional time.",
             "jaName": "再使用",
-            "jaDescription": "次に使用するカードが追加で1回使用される。",
+            "jaDescription": "次の{stack}回、使用するカードが追加で1回使用される。",
             "zhHantName": "再使用",
-            "zhHantDescription": "下一張使用的牌會額外使用1次。",
+            "zhHantDescription": "接下來{stack}次使用的牌會額外使用1次。",
             "zhHansName": "再使用",
-            "zhHansDescription": "下一张使用的牌会额外使用1次。",
+            "zhHansDescription": "接下来{stack}次使用的牌会额外使用1次。",
             "ruName": "Повторное использование",
-            "ruDescription": "Следующая использованная карта применяется ещё 1 раз."
+            "ruDescription": "При следующих {stack} использованиях карт каждая карта применяется ещё 1 раз."
         },
         {
             "buffId": 3024,
@@ -1081,7 +1081,7 @@
             "ruDescription": "Максимум энергии увеличивается на {stack}."
         },
         {
-            "buffId": 3054,
+            "buffId": 4016,
             "name": "익사",
             "description": "턴 종료 시 (익사)보다 체력이 낮다면 죽습니다.",
             "enName": "Drowning",

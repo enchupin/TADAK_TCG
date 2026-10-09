@@ -11,7 +11,7 @@ public sealed class RepeatNextCardBuffScript : PlayerBuffScript
             return 0;
         }
 
-        player.RemoveBuffStack(BuffId);
+        player.ConsumeBuffStack(BuffId, 1);
         return 1;
     }
 }

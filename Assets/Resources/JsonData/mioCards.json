@@ -42,7 +42,7 @@
                 },
                 {
                     "type": "Buff",
-                    "buffId": 3054,
+                    "buffId": 4016,
                     "amount": 8,
                     "target": "SingleEnemy"
                 }
@@ -63,7 +63,7 @@
                     "subject": "UnblockedDamage",
                     "onAction": {
                         "type": "Buff",
-                        "buffId": 3054,
+                        "buffId": 4016,
                         "amountFormula": "UnblockedDamage",
                         "target": "SingleEnemy"
                     }
@@ -163,7 +163,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3054,
+                    "buffId": 4016,
                     "amount": 20,
                     "target": "SingleEnemy"
                 }
@@ -179,7 +179,7 @@
             "effects": [
                 {
                     "type": "ApplyBuffByTargetStack",
-                    "buffId": 3054,
+                    "buffId": 4016,
                     "amount": 5,
                     "count": 10,
                     "duration": 5,
@@ -196,7 +196,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3054,
+                    "buffId": 4016,
                     "amount": 13,
                     "target": "SingleEnemy"
                 },
@@ -218,7 +218,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3054,
+                    "buffId": 4016,
                     "amount": 12,
                     "target": "SingleEnemy"
                 }
@@ -236,7 +236,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3054,
+                    "buffId": 4016,
                     "amount": 6,
                     "target": "SingleEnemy"
                 },
@@ -263,13 +263,13 @@
                     "type": "ChangeStat",
                     "stat": "Buff",
                     "change": "Multiply",
-                    "buffId": 3054,
+                    "buffId": 4016,
                     "amount": 2,
                     "target": "SingleEnemy"
                 },
                 {
                     "type": "ResolveDrowningLethal",
-                    "buffId": 3054,
+                    "buffId": 4016,
                     "target": "SingleEnemy"
                 }
             ]
@@ -288,7 +288,7 @@
                 },
                 {
                     "type": "Buff",
-                    "buffId": 3054,
+                    "buffId": 4016,
                     "amount": 7,
                     "target": "SingleEnemy"
                 }
@@ -327,7 +327,7 @@
                         "checks": [
                             {
                                 "subject": "EnemyDebuffAppliedThisTurn",
-                                "param": "3054",
+                                "param": "4016",
                                 "operator": "Eq",
                                 "value": true
                             }
@@ -444,7 +444,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3054,
+                    "buffId": 4016,
                     "amount": 33,
                     "target": "AllEnemies"
                 }
@@ -462,7 +462,7 @@
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3054,
+                    "buffId": 4016,
                     "amount": 8,
                     "target": "SingleEnemy"
                 },
@@ -505,7 +505,7 @@
             "effects": [
                 {
                     "type": "DamageByBuffStack",
-                    "buffId": 3054,
+                    "buffId": 4016,
                     "target": "AllEnemies"
                 }
             ]

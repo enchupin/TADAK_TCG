@@ -469,6 +469,14 @@ public class PlayerBuffRuntimeService
         });
     }
 
+    public void OnPlayerAttackStarted()
+    {
+        InvokeForActiveBuffs((script, player, stack) =>
+        {
+            script.OnPlayerAttackStarted(battleManager, player, stack);
+        });
+    }
+
     public void OnPlayerAttackResolved(Monster targetMonster, int barrierBefore, int barrierAfter)
     {
         InvokeForActiveBuffs((script, player, stack) =>

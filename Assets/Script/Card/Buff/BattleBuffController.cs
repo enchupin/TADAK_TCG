@@ -221,6 +221,11 @@ public class BattleBuffController
         battleManager.ApplyBuffToMonster(monster, LifeLinkBuffId, 1);
     }
 
+    public void HandlePlayerAttackStarted()
+    {
+        playerBuffRuntimeService.OnPlayerAttackStarted();
+    }
+
     public void HandlePlayerAttackResolved(Monster targetMonster, int barrierBefore, int barrierAfter)
     {
         monsterBuffRuntimeService.OnAttackedByPlayer(targetMonster);

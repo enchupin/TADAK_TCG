@@ -177,6 +177,10 @@ public abstract class PlayerBuffScript
     {
     }
 
+    public virtual void OnPlayerAttackStarted(TrainingBattleManager battleManager, PlayerData player, int stack)
+    {
+    }
+
     public virtual void OnPlayerAttackResolved(TrainingBattleManager battleManager, PlayerData player, Monster targetMonster, int barrierBefore, int barrierAfter, int stack)
     {
     }

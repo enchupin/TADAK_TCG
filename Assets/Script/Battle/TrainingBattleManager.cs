@@ -1248,6 +1248,11 @@ public class TrainingBattleManager : MonoBehaviour
         return battleBuffController != null ? battleBuffController.ConsumeRepeatedPlayCount(playedCard, isRepeatedEffect) : 0;
     }
 
+    public void HandlePlayerAttackStarted()
+    {
+        battleBuffController?.HandlePlayerAttackStarted();
+    }
+
     public void HandlePlayerAttackResolved(Monster targetMonster, int barrierBefore, int barrierAfter)
     {
         battleBuffController?.HandlePlayerAttackResolved(targetMonster, barrierBefore, barrierAfter);

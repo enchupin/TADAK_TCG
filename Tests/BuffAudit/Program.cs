@@ -2,7 +2,7 @@ using System;
 using static BattleRuntimeDefinitions;
 static class Program {
  static int assertions;
- static void Eq<T>(T actual,T expected,string label) { assertions++; if(!Equals(actual,expected))throw new Exception($"{label}: 기대 {expected}, 실제 {actual}"); }
+ static void Eq<T>(T actual,T expected,string label,string updatedLabel=null) { label=updatedLabel??label; assertions++; if(!Equals(actual,expected))throw new Exception($"{label}: 기대 {expected}, 실제 {actual}"); }
  static void Main() {
   var b=new TrainingBattleManager(); var p=b.playerData;
   p.AddBuff(GrowingFeatherBuffId,2);b.enhance=true;b.duplicate=true;b.playerService.OnPlayerTurnStart();
@@ -15,7 +15,7 @@ static class Program {
   Eq(b.playerService.ConsumeRepeatCount(power,false),0,"파워 효과 자동 반복 없음");Eq(b.handManager.cards.Count,3,"다음 파워 카드 세 장 생성");Eq(p.GetBuffStack(RepeatNextPowerCardBuffId),0,"생성 후 모든 중첩 소모");
   foreach(var copy in b.handManager.cards){Eq(copy.cardId,123,"생성 카드 번호");Eq(copy.cost,2,"생성 카드 비용");Eq(copy.power,true,"생성 카드 파워 키워드");Eq(ReferenceEquals(copy,power),false,"독립 카드 복사");}
   p.AddBuff(RepeatNextPowerCardBuffId,2);b.playerService.OnCardPlayed(power,null,false);Eq(p.GetBuffStack(RepeatNextPowerCardBuffId),2,"사용한 카드가 새로 준 중첩 유지");Eq(b.handManager.cards.Count,3,"사용 완료 콜백에서 중복 생성 없음");
-  p.AddBuff(RepeatNextCardBuffId,10);p.AddBuff(RepeatNextCardBuffId,3);Eq(p.GetBuffStack(RepeatNextCardBuffId),1,"재사용 추가로 중첩되지 않음");p.SetBuffStack(RepeatNextCardBuffId,7);Eq(p.GetBuffStack(RepeatNextCardBuffId),1,"재사용 직접 설정도 최대 하나");Eq(b.playerService.ConsumeRepeatCount(ordinary,false),1,"재사용 한 번");Eq(p.GetBuffStack(RepeatNextCardBuffId),0,"재사용 발동 후 제거");
+  p.AddBuff(RepeatNextCardBuffId,10);p.AddBuff(RepeatNextCardBuffId,3);Eq(p.GetBuffStack(RepeatNextCardBuffId),13,"재사용 추가로 중첩되지 않음","재사용 추가로 13중첩 누적");p.SetBuffStack(RepeatNextCardBuffId,7);Eq(p.GetBuffStack(RepeatNextCardBuffId),7,"재사용 직접 설정도 최대 하나","재사용 직접 설정도 7중첩 유지");Eq(b.playerService.ConsumeRepeatCount(ordinary,false),1,"재사용 한 번");Eq(p.GetBuffStack(RepeatNextCardBuffId),6,"재사용 발동 후 제거","재사용 발동 후 1중첩 소모");
   b=new();p=b.playerData;b.playerService.OnPlayerTurnStart();p.AddBuff(HighCostRepeatBuffId,1);var costly=new Card{cost=2};
   Eq(b.playerService.ConsumeRepeatCount(costly,false),1,"턴 도중 풀하우스 획득");Eq(b.playerService.ConsumeRepeatCount(costly,false),0,"풀하우스 턴당 한 번");p.RemoveBuffStack(HighCostRepeatBuffId);b.playerService.OnPlayerTurnStart();p.AddBuff(HighCostRepeatBuffId,1);Eq(b.playerService.ConsumeRepeatCount(costly,false),1,"풀하우스 비활성 턴에도 초기화");
   b=new();p=b.playerData;p.AddBuff(LastStandBuffId,1);p.hp=0;Eq(b.playerService.TryConsumeFatalDamage(),true,"구사일생 첫 치명타");Eq(p.hp,1,"구사일생 체력");Eq(p.GetBuffStack(LastStandBuffId),0,"구사일생 소모");p.hp=-20;Eq(b.playerService.TryConsumeFatalDamage(),true,"소모 후 같은 턴 치명타 방어");b.TurnSequence++;p.hp=0;Eq(b.playerService.TryConsumeFatalDamage(),false,"다음 턴 보호 종료");
@@ -58,6 +58,7 @@ static class Program {
   p.AddBuff(FeatherAutoTriggerBuffId,1);p.AddBuff(FeatherStackBoostBuffId,1);new BuffEffect{buffId=FeatherBuffId,amount=1,target=TargetType.SingleEnemy}.Execute(b);Eq(m.GetBuffStack(FeatherBuffId),2,"겹치기 추가 부여 후 자동 회수 감소");Eq(m2.GetBuffStack(FeatherBuffId),2,"자동 회수 광역 대상 중복 없음");Eq(m.hp,95,"자동 회수 첫 대상 피해");Eq(m2.hp,95,"자동 회수 두 번째 대상 피해");
   m.hp=0;b.currentTarget=m;new BuffEffect{buffId=FeatherBuffId,amount=1,target=TargetType.SingleEnemy}.Execute(b);Eq(m2.hp,91,"카드 공격 대상 사망 후에도 다른 적 깃털 부여와 회수");
   b=new();p=b.playerData;m=new Monster();b.monsters.Add(m);p.AddBuff(DeadlyAmbushBuffId,5);p.AddBuff(DoubleFeatherBuffId,1);p.AddBuff(FeatherCycleBuffId,1);b.usableDeckManager.exhaust.Add(firstFeather);b.usableDeckManager.exhaust.Add(new Card{cardId=123});play=CardEffectSequence.Run(b.feather.ReplayExhaustedFeathersSequence(),b);while(play.MoveNext()){}Eq(m.hp,84,"소멸 깃털 재사용에 기습과 이중 깃털 적용");Eq(b.draws,1,"소멸 깃털 재사용에 순환 적용");Eq(b.usableDeckManager.exhaust.Count,2,"재사용 후 소멸 더미 유지");
+  assertions += BuffStackTests.Run();
   Console.WriteLine($"버프 회귀 검증 통과: {assertions}개 단언");
  }
 }
