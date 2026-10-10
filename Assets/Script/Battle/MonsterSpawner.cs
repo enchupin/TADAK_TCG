@@ -86,6 +86,10 @@ public class MonsterSpawner : MonoBehaviour
     [Header("스폰 위치")]
     [SerializeField] private List<Transform> spawnPoints = new List<Transform>();
 
+    [Header("스폰 위치별 버프 UI")]
+    [Tooltip("스폰 위치 목록과 같은 순서로 각 Buff 오브젝트의 BuffUI를 연결")]
+    public List<BuffUI> spawnBuffUIs = new List<BuffUI>();
+
     private int reservedSummonCount;
 
     public void ClearEncounter()
@@ -351,6 +355,7 @@ public class MonsterSpawner : MonoBehaviour
             return null;
         }
 
+        BindSpawnBuffUI(spawnedMonster, spawnPoint);
         return spawnedMonster;
     }
 
@@ -371,7 +376,20 @@ public class MonsterSpawner : MonoBehaviour
             return null;
         }
 
+        BindSpawnBuffUI(spawnedMonster, spawnPoint);
         return spawnedMonster;
+    }
+
+    private void BindSpawnBuffUI(Monster monster, Transform spawnPoint)
+    {
+        int slotIndex = spawnPoints.IndexOf(spawnPoint);
+        if (slotIndex < 0 || slotIndex >= spawnBuffUIs.Count || spawnBuffUIs[slotIndex] == null)
+        {
+            Debug.LogError("[MonsterSpawner] 스폰 위치의 버프 UI가 인스펙터에 연결되지 않았습니다");
+            return;
+        }
+
+        monster.SetBuffUI(spawnBuffUIs[slotIndex]);
     }
 
     /// <summary>

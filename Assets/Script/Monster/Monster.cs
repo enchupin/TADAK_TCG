@@ -29,7 +29,6 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     private const string HealthBarBackgroundObjectName = "Background";
     private const string HealthBarFillAreaObjectName = "Fill Area";
     private const string HealthBarFillObjectName = "Fill";
-    private const string BuffRootObjectName = "Buff";
 
     [Header("UI Reference")]
     [SerializeField] private TextMeshProUGUI hpText;
@@ -37,7 +36,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     [SerializeField] private TextMeshProUGUI intentText;
     [SerializeField] private Slider hpSlider;
     [SerializeField] private Image hpFillImage;
-    [SerializeField] private BuffUI buffUI;
+    public BuffUI buffUI;
     [SerializeField] private Color barrierHPFillColor = new Color32(135, 206, 235, 255);
 
     [Header("상태 컨트롤러")]
@@ -108,8 +107,14 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         UpdateUI();
     }
 
+    protected virtual void OnDisable()
+    {
+        buffUI?.UnbindMonster(this);
+    }
+
     protected virtual void OnDestroy()
     {
+        buffUI?.UnbindMonster(this);
         SetSelectionHighlight(false);
 
         if (TrainingBattleManager.Instance != null)
@@ -301,6 +306,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         }
 
         hasLeftCombat = true;
+        buffUI?.UnbindMonster(this);
         defense = 0;
         ClearPlannedAction();
         OnLeaveCombatTriggered();
@@ -636,7 +642,6 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     {
         EnsureHpSliderReference();
         EnsureHpFillImageReference();
-        EnsureBuffUIReference();
         CacheHPFillDefaultColor();
     }
 
@@ -682,50 +687,17 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    private void EnsureBuffUIReference()
+    public void SetBuffUI(BuffUI ui)
     {
-        RectTransform buffRoot = EnsureBuffRoot();
-        if (buffUI == null)
+        // 몬스터 프리팹의 부모인 스폰 위치에 미리 배치된 버프 슬롯을 연결
+        // 스포너가 인스펙터에 연결된 참조를 전달하며 이름으로 검색하지 않음
+        if (buffUI != ui)
         {
-            buffUI = GetComponentInChildren<BuffUI>(true);
+            buffUI?.UnbindMonster(this);
+            buffUI = ui;
         }
 
-        if (buffUI == null && buffRoot != null)
-        {
-            buffUI = buffRoot.gameObject.AddComponent<BuffUI>();
-        }
-
-        if (buffUI != null)
-        {
-            buffUI.BindMonster(this, buffRoot);
-        }
-    }
-
-    private RectTransform EnsureBuffRoot()
-    {
-        RectTransform foundBuffRoot = FindChildComponentByName<RectTransform>(transform, BuffRootObjectName);
-        if (foundBuffRoot != null)
-        {
-            return foundBuffRoot;
-        }
-
-        Transform parentTransform = hpSlider != null ? hpSlider.transform : transform;
-        GameObject buffObject = new GameObject(BuffRootObjectName, typeof(RectTransform));
-        buffObject.layer = gameObject.layer;
-        buffObject.transform.SetParent(parentTransform, false);
-
-        RectTransform rectTransform = buffObject.transform as RectTransform;
-        if (rectTransform != null)
-        {
-            rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
-            rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-            rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            rectTransform.sizeDelta = new Vector2(160f, 90f);
-            rectTransform.anchoredPosition = new Vector2(0f, -42f);
-            rectTransform.localScale = Vector3.one;
-        }
-
-        return rectTransform;
+        UpdateBuffUI();
     }
 
     private Slider CreateRuntimeHpSlider()
@@ -861,6 +833,13 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     private void UpdateBuffUI()
     {
+        if (!isActiveAndEnabled || IsDead() || hasLeftCombat)
+        {
+            buffUI?.UnbindMonster(this);
+            return;
+        }
+
+        buffUI?.BindMonster(this);
         buffUI?.Refresh();
     }
 
