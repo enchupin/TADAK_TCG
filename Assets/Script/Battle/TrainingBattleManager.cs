@@ -114,6 +114,9 @@ public class TrainingBattleManager : MonoBehaviour
     public int MaxHandCardCount => Mathf.Max(0, maxHandCardCount);
     public CharacterIdentityService CharacterIdentityService => characterIdentityService;
 
+    // 버프 전용 호출은 이 진입점에서 담당 실행기에 바로 접근
+    public BattleBuffController Buffs => battleBuffController ??= new BattleBuffController(this);
+
     private void Awake()
     {
         if (Instance == null)
@@ -878,7 +881,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void FinishEnemyTurnEndEffects()
     {
-        battleBuffController?.FinishEnemyTurnEndEffects();
+        battleBuffController?.Player.OnEnemyTurnEnd();
     }
 
     public void FinishPlayerTurnEndEffects()
@@ -888,7 +891,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void ResolveAdditionalTurnEndTriggers()
     {
-        battleBuffController?.ReplayAdditionalTurnEndTriggers();
+        battleBuffController?.Player.ReplayTurnEndTriggeredEffects();
     }
 
     public bool TryHandleCombatEnd()
@@ -905,7 +908,7 @@ public class TrainingBattleManager : MonoBehaviour
         BossModeSession.SaveResult();
 
         SetState(BattleTurnState.CombatEnd);
-        battleBuffController?.HandleBattleEnded(isVictory);
+        battleBuffController?.Player.OnBattleEnded(isVictory);
         UpdateEndTurnButtonState();
         RefreshHandPlayableState();
         UpdateAllUI();
@@ -1012,7 +1015,7 @@ public class TrainingBattleManager : MonoBehaviour
 
         if (battleBuffController != null)
         {
-            return battleBuffController.CanPlayCard(card);
+            return battleBuffController.Player.CanPlayCard(card);
         }
 
         return card.CanBePlayed();
@@ -1020,17 +1023,17 @@ public class TrainingBattleManager : MonoBehaviour
 
     public bool ShouldPotionGoToDiscardInsteadOfExhaust(Card card)
     {
-        return battleBuffController != null && battleBuffController.ShouldPotionGoToDiscardInsteadOfExhaust(card);
+        return battleBuffController != null && battleBuffController.Player.ShouldPotionGoToDiscardInsteadOfExhaust(card);
     }
 
     public bool ShouldExhaustUnlockedUnplayableCard(Card card)
     {
-        return battleBuffController != null && battleBuffController.ShouldExhaustUnlockedUnplayableCard(card);
+        return battleBuffController != null && battleBuffController.Player.ShouldExhaustUnlockedUnplayableCard(card);
     }
 
     public bool CanDrawCards()
     {
-        return battleBuffController == null || battleBuffController.CanDrawCards();
+        return battleBuffController == null || battleBuffController.Player.CanDrawCards();
     }
 
     public bool HasCardInHand(int cardId)
@@ -1054,12 +1057,12 @@ public class TrainingBattleManager : MonoBehaviour
 
     public bool CanGainCardsToHand()
     {
-        return battleBuffController == null || battleBuffController.CanGainCardsToHand();
+        return battleBuffController == null || battleBuffController.Player.CanGainCardsToHand();
     }
 
     public bool CanGainCardsToHandFrom(MoveZoneType from, string subject = null)
     {
-        return battleBuffController == null || battleBuffController.CanGainCardsToHandFrom(from, subject);
+        return battleBuffController == null || battleBuffController.Player.CanGainCardsToHandFrom(from, subject);
     }
 
     public int GetEffectiveCardCost(Card card)
@@ -1069,7 +1072,7 @@ public class TrainingBattleManager : MonoBehaviour
             return 0;
         }
 
-        return battleBuffController != null ? battleBuffController.GetEffectiveCardCost(card) : card.cost;
+        return battleBuffController != null ? battleBuffController.Player.GetEffectiveCardCost(card) : card.cost;
     }
 
     public bool CanPayCardCost(Card card)
@@ -1138,17 +1141,12 @@ public class TrainingBattleManager : MonoBehaviour
 
     public int GetCardUseAllEnemiesDamage()
     {
-        return battleBuffController != null ? battleBuffController.GetCardUseAllEnemiesDamage() : 0;
+        return battleBuffController != null ? battleBuffController.Player.GetCardUseAllEnemiesDamage() : 0;
     }
 
     public void ApplyCardUseAllEnemiesDamage(int damage)
     {
         battleBuffController?.ApplyCardUseAllEnemiesDamage(damage);
-    }
-
-    public int GetAdditionalBarrierGain()
-    {
-        return battleBuffController != null ? battleBuffController.GetAdditionalBarrierGain() : 0;
     }
 
     public int ResolvePlayerBarrierGain(int amount, bool fromCard = false)
@@ -1163,41 +1161,41 @@ public class TrainingBattleManager : MonoBehaviour
 
     public int GetPlayerTurnStartBarrierLoss(int currentDefense)
     {
-        return battleBuffController != null ? battleBuffController.GetPlayerTurnStartBarrierLoss(currentDefense) : Mathf.Max(0, currentDefense);
+        return battleBuffController != null ? battleBuffController.Player.GetTurnStartBarrierLoss(currentDefense) : Mathf.Max(0, currentDefense);
     }
 
     public int GetTurnEndRetainCount()
     {
-        return battleBuffController != null ? battleBuffController.GetTurnEndRetainCount() : 0;
+        return battleBuffController != null ? battleBuffController.Player.GetTurnEndRetainCount() : 0;
     }
 
     public int GetCardBaseDamageBonus(Card sourceCard, bool isAttackEffect)
     {
         return battleBuffController != null
-            ? battleBuffController.GetCardBaseDamageBonus(sourceCard, isAttackEffect)
+            ? battleBuffController.Player.GetCardBaseDamageBonus(sourceCard, isAttackEffect)
             : 0;
     }
 
     public int ApplyCardDamageRuntimeModifiers(Card sourceCard, int damage)
     {
         return battleBuffController != null
-            ? battleBuffController.ApplyCardDamageRuntimeModifiers(sourceCard, damage)
+            ? battleBuffController.Player.ModifyCardDamage(sourceCard, damage)
             : Mathf.Max(0, damage);
     }
 
     public int GetPlayerCalculatedCardDamageBonus(float strengthMultiplier)
     {
-        return battleBuffController != null ? battleBuffController.GetPlayerCalculatedCardDamageBonus(strengthMultiplier) : 0;
+        return battleBuffController != null ? battleBuffController.Player.GetCalculatedCardDamageBonus(strengthMultiplier) : 0;
     }
 
     public float GetPlayerCalculatedCardBaseMultiplier(float baseMultiplier)
     {
-        return battleBuffController != null ? battleBuffController.GetPlayerCalculatedCardBaseMultiplier(baseMultiplier) : Mathf.Max(0f, baseMultiplier);
+        return battleBuffController != null ? battleBuffController.Player.GetCalculatedCardBaseMultiplier(baseMultiplier) : Mathf.Max(0f, baseMultiplier);
     }
 
     public float GetPlayerOutgoingDamageMultiplier()
     {
-        return battleBuffController != null ? battleBuffController.GetPlayerOutgoingDamageMultiplier() : 1f;
+        return battleBuffController != null ? battleBuffController.Player.GetOutgoingDamageMultiplier() : 1f;
     }
 
     public int ResolvePlayerEffectDamage(int damage)
@@ -1213,12 +1211,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     public bool TryPreventPlayerIncomingDamage(int damage, Monster attacker)
     {
-        return battleBuffController != null && battleBuffController.TryPreventPlayerIncomingDamage(damage, attacker);
-    }
-
-    public void ConsumePlayerIncomingDamageBuffs(Monster attacker, int damage)
-    {
-        battleBuffController?.ConsumePlayerIncomingDamageBuffs(attacker, damage);
+        return battleBuffController != null && battleBuffController.Player.TryPreventIncomingDamage(attacker, damage);
     }
 
     public int ResolvePersistentUpgradeCardId(int cardId)
@@ -1228,29 +1221,9 @@ public class TrainingBattleManager : MonoBehaviour
             : cardId;
     }
 
-    public bool HasPermanentBarrierRetention()
-    {
-        return battleBuffController != null && battleBuffController.HasPermanentBarrierRetention();
-    }
-
-    public void HandlePlayedCardPowerEffects(Card playedCard, Monster originalTarget, bool isRepeatedEffect)
-    {
-        battleBuffController?.HandlePlayedCardEffects(playedCard, originalTarget, isRepeatedEffect);
-    }
-
-    public void ResolveDeferredTurnStartPowerEffects()
-    {
-        battleBuffController?.ResolveDeferredTurnStartEffects();
-    }
-
     public int ConsumeRepeatedPlayCount(Card playedCard, bool isRepeatedEffect)
     {
-        return battleBuffController != null ? battleBuffController.ConsumeRepeatedPlayCount(playedCard, isRepeatedEffect) : 0;
-    }
-
-    public void HandlePlayerAttackStarted()
-    {
-        battleBuffController?.HandlePlayerAttackStarted();
+        return battleBuffController != null ? battleBuffController.Player.ConsumeRepeatCount(playedCard, isRepeatedEffect) : 0;
     }
 
     public void HandlePlayerAttackResolved(Monster targetMonster, int barrierBefore, int barrierAfter)
@@ -1258,20 +1231,10 @@ public class TrainingBattleManager : MonoBehaviour
         battleBuffController?.HandlePlayerAttackResolved(targetMonster, barrierBefore, barrierAfter);
     }
 
-    public void HandlePlayerHit(Monster attacker, int blockedDamage, int hpDamage)
-    {
-        battleBuffController?.HandlePlayerHit(attacker, blockedDamage, hpDamage);
-    }
-
-    public void HandlePlayerBarrierReduced(int reducedAmount)
-    {
-        battleBuffController?.HandlePlayerBarrierReduced(reducedAmount);
-    }
-
     public void HandleMonsterHpLost(Monster monster, int hpLoss)
     {
         if (monster != null && monster.IsBoss) BossModeSession.AddDamage(hpLoss);
-        battleBuffController?.HandleMonsterHpLost(monster, hpLoss);
+        battleBuffController?.Monsters.OnMonsterHpLost(monster, hpLoss);
     }
 
     public void HandlePlayerHpLost(int hpLoss)
@@ -1279,38 +1242,33 @@ public class TrainingBattleManager : MonoBehaviour
         battleBuffController?.HandlePlayerHpLost(hpLoss);
     }
 
-    public void HandlePlayerDamageDealt(Monster monster, int dealtDamage)
-    {
-        battleBuffController?.HandlePlayerDamageDealt(monster, dealtDamage);
-    }
-
     public void HandleMonsterBuffApplied(Monster monster, int buffId, int amount)
     {
-        battleBuffController?.HandleMonsterBuffApplied(monster, buffId, amount);
+        battleBuffController?.Monsters.OnBuffApplied(monster, buffId, amount);
     }
 
     public void ApplyMonsterTurnStartEffects(Monster monster)
     {
-        battleBuffController?.ApplyMonsterTurnStartEffects(monster);
+        battleBuffController?.Monsters.OnMonsterTurnStart(monster);
     }
 
     public int GetMonsterBuffActivationCount(Monster monster, int buffId)
-        => battleBuffController?.GetMonsterBuffActivationCount(monster, buffId) ?? 0;
+        => battleBuffController?.Monsters.GetActivationCount(monster, buffId) ?? 0;
 
     public void HandleMonsterAttackActionStarted(Monster monster)
-        => battleBuffController?.HandleMonsterAttackActionStarted(monster);
+        => battleBuffController?.Monsters.OnAttackActionStarted(monster);
 
     public void HandleMonsterAttackActionEnded(Monster monster)
-        => battleBuffController?.HandleMonsterAttackActionEnded(monster);
+        => battleBuffController?.Monsters.OnAttackActionEnded(monster);
 
     public void ApplyMonsterTurnEndEffects(Monster monster)
     {
-        battleBuffController?.ApplyMonsterTurnEndEffects(monster);
+        battleBuffController?.Monsters.OnMonsterTurnEnd(monster);
     }
 
     public bool ShouldKeepMonsterBarrierOnTurnStart(Monster monster)
     {
-        return battleBuffController != null && battleBuffController.ShouldKeepMonsterBarrierOnTurnStart(monster);
+        return battleBuffController != null && battleBuffController.Monsters.ShouldKeepBarrierOnTurnStart(monster);
     }
 
     public int ResolveMonsterIncomingDamage(Monster monster, int damage)
@@ -1325,37 +1283,37 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void HandleMonsterDefenseChanged(Monster monster, int previousDefense, int currentDefense)
     {
-        battleBuffController?.HandleMonsterDefenseChanged(monster, previousDefense, currentDefense);
+        battleBuffController?.Monsters.OnDefenseChanged(monster, previousDefense, currentDefense);
     }
 
     public int ResolveMonsterBarrierGain(Monster monster, int amount)
     {
-        return battleBuffController != null ? battleBuffController.ResolveMonsterBarrierGain(monster, amount) : Mathf.Max(0, amount);
+        return battleBuffController != null ? battleBuffController.Monsters.ResolveBarrierGain(monster, amount) : Mathf.Max(0, amount);
     }
 
     public int ModifyMonsterOutgoingDamage(Monster monster, int damage)
     {
-        return battleBuffController != null ? battleBuffController.ModifyMonsterOutgoingDamage(monster, damage) : Mathf.Max(0, damage);
+        return battleBuffController != null ? battleBuffController.Monsters.ModifyOutgoingDamage(monster, damage) : Mathf.Max(0, damage);
     }
 
     public void HandleMonsterAttackResolved(Monster monster, PlayerData target, int attemptedDamage, int hpDamage)
     {
-        battleBuffController?.HandleMonsterAttackResolved(monster, target, attemptedDamage, hpDamage);
+        battleBuffController?.Monsters.OnMonsterAttackResolved(monster, target, attemptedDamage, hpDamage);
     }
 
     public void HandleMonsterBeforeTakeDamage(Monster monster, int incomingDamage)
     {
-        battleBuffController?.HandleMonsterBeforeTakeDamage(monster, incomingDamage);
+        battleBuffController?.Monsters.OnMonsterBeforeTakeDamage(monster, incomingDamage);
     }
 
     public void HandleMonsterAfterTakeDamage(Monster monster, int incomingDamage, int damageAfterDefense)
     {
-        battleBuffController?.HandleMonsterAfterTakeDamage(monster, incomingDamage, damageAfterDefense);
+        battleBuffController?.Monsters.OnMonsterAfterTakeDamage(monster, incomingDamage, damageAfterDefense);
     }
 
     public bool CanMonsterReceiveDamage(Monster monster, int incomingDamage)
     {
-        return battleBuffController == null || battleBuffController.CanMonsterReceiveDamage(monster, incomingDamage);
+        return battleBuffController == null || battleBuffController.Monsters.CanReceiveDamage(monster, incomingDamage);
     }
 
     public void HandleCardsExhausted(int count)
@@ -1366,7 +1324,7 @@ public class TrainingBattleManager : MonoBehaviour
         }
 
         battleContext?.OnCardsExhausted(count);
-        battleBuffController?.HandleCardsExhausted(count);
+        battleBuffController?.Player.OnCardsExhausted(count);
     }
 
     public void MoveCardToExhaust(Card card)
@@ -1419,7 +1377,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     public bool TryConsumeSoulProtection()
     {
-        return battleBuffController != null && battleBuffController.TryConsumeSoulProtection();
+        return battleBuffController != null && battleBuffController.Player.TryConsumeFatalDamage();
     }
 
     public void HandleEnemyDebuffApplied(Monster monster, int buffId, int amount, int crueltyStackBeforeApply = -1)
@@ -1435,7 +1393,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void HandleMonsterDeath(Monster monster)
     {
-        battleBuffController?.HandleMonsterDeath(monster);
+        battleBuffController?.Monsters.OnMonsterDeath(monster);
 
         if (monster == null)
         {
@@ -1471,7 +1429,7 @@ public class TrainingBattleManager : MonoBehaviour
             return;
         }
 
-        battleBuffController?.HandleMonsterLeaveCombat(monster);
+        battleBuffController?.Monsters.OnMonsterLeaveCombat(monster);
 
         if (currentTarget == monster)
         {
@@ -1497,12 +1455,12 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void HandleMonsterRevived(Monster monster)
     {
-        battleBuffController?.HandleMonsterRevived(monster);
+        battleBuffController?.Monsters.OnMonsterRevived(monster);
     }
 
     public bool CanMonsterRevive(Monster monster)
     {
-        return battleBuffController == null || battleBuffController.CanMonsterRevive(monster);
+        return battleBuffController == null || battleBuffController.Monsters.CanRevive(monster);
     }
 
     public void ScheduleMonsterRevive(Monster monster, int turns)
@@ -1644,87 +1602,24 @@ public class TrainingBattleManager : MonoBehaviour
 
     public Card ApplyPersistentUpgradeToCard(Card card, int sourceBuffId)
     {
-        if (card == null || battleBuffController == null)
-        {
-            return card;
-        }
-
-        int upgradedCardId = sourceBuffId > 0
-            ? battleBuffController.ResolvePersistentUpgradeCardId(card.cardId, sourceBuffId)
-            : battleBuffController.ResolvePersistentUpgradeCardId(card.cardId);
-        if (upgradedCardId == card.cardId)
-        {
-            return card;
-        }
-
-        Card upgradedTemplate = CardManager.GetCardAsCard(upgradedCardId);
-        if (upgradedTemplate == null)
-        {
-            return card;
-        }
-
-        card.ApplyTemplate(upgradedTemplate);
-        return card;
+        return battleBuffController != null
+            ? battleBuffController.ApplyPersistentUpgradeToCard(card, Mathf.Max(0, sourceBuffId))
+            : card;
     }
 
     public void ApplyBuffToPlayer(int buffId, int amount)
     {
-        if (amount <= 0)
-        {
-            return;
-        }
-
-        if (battleBuffController != null && battleBuffController.TryApplyToPlayer(buffId, amount))
-        {
-            return;
-        }
-
-        playerData?.AddBuff(buffId, amount);
-        battleBuffController?.HandleBuffApplied(buffId);
+        Buffs.ApplyToPlayer(buffId, amount);
     }
 
     public void ApplyBuffToMonster(Monster monster, int buffId, int amount)
     {
-        if (monster == null || monster.IsDead() || amount <= 0)
-        {
-            return;
-        }
-
-        buffId = battleBuffController != null
-            ? battleBuffController.ResolveAppliedMonsterBuffId(monster, buffId, amount)
-            : buffId;
-
-        if (battleBuffController != null && battleBuffController.TryApplyToMonster(buffId, monster, amount))
-        {
-            return;
-        }
-
-        int crueltyStackBeforeApply = monster.GetBuffStack(BattleRuntimeDefinitions.CrueltyDebuffId);
-        monster.AddBuff(buffId, amount);
-        battleBuffController?.HandleBuffApplied(buffId);
-        if (!BuffData.IsBeneficialBuffId(buffId))
-        {
-            HandleEnemyDebuffApplied(monster, buffId, amount, crueltyStackBeforeApply);
-        }
+        Buffs.ApplyToMonster(monster, buffId, amount);
     }
 
     public void ApplyBuffToAllEnemies(int buffId, int amount)
     {
-        if (amount <= 0)
-        {
-            return;
-        }
-
-        if (battleBuffController != null && battleBuffController.TryApplyToAllEnemies(buffId, amount))
-        {
-            return;
-        }
-
-        List<Monster> targets = GetLivingMonsters();
-        foreach (Monster monster in targets)
-        {
-            ApplyBuffToMonster(monster, buffId, amount);
-        }
+        Buffs.ApplyToAllEnemies(buffId, amount);
     }
 
     public void ChargeIdentityGauge(Character character, int amount = 1)

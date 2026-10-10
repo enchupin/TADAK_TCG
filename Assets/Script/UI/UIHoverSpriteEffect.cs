@@ -6,11 +6,13 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Image))]
 public sealed class UIHoverSpriteEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    [Header("대상 이미지")]
+    public Image targetImage;
+
     [Header("호버 이미지")]
     [Tooltip("마우스를 올렸을 때 표시할 이미지이며 비워두면 기존 이미지를 유지")]
     [SerializeField] private Sprite hoverSprite;
 
-    private Image targetImage;
     private Selectable selectable;
     private Sprite originalSprite;
     private bool isHovered;
@@ -18,7 +20,10 @@ public sealed class UIHoverSpriteEffect : MonoBehaviour, IPointerEnterHandler, I
 
     private void Awake()
     {
-        targetImage = GetComponent<Image>();
+        if (targetImage == null)
+        {
+            targetImage = GetComponent<Image>();
+        }
         selectable = GetComponent<Selectable>();
     }
 
@@ -45,7 +50,8 @@ public sealed class UIHoverSpriteEffect : MonoBehaviour, IPointerEnterHandler, I
 
     private void UpdateHoverSprite()
     {
-        if (hoverSprite == null || (selectable != null && (!selectable.IsActive() || !selectable.IsInteractable())))
+        if (targetImage == null || !targetImage.isActiveAndEnabled || hoverSprite == null
+            || (selectable != null && (!selectable.IsActive() || !selectable.IsInteractable())))
         {
             RestoreSprite();
             return;

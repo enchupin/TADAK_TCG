@@ -30,7 +30,7 @@ public sealed class DamageByBuffStackEffect : ICardEffect
 
             int dealtDamage = monster.TakeDamage(damage, 0);
             totalDamageDealt += dealtDamage;
-            battleManager.HandlePlayerDamageDealt(monster, dealtDamage);
+            battleManager.Buffs.Player.OnPlayerDamageDealt(monster, dealtDamage);
         }
 
         battleManager.battleContext?.OnDamageDealt(totalDamageDealt);

@@ -15,14 +15,6 @@ public sealed class FeatherBuffScript : PlayerBuffScript
         this.playerBuffRuntimeService = playerBuffRuntimeService;
     }
 
-    public void ResetForCombat()
-    {
-    }
-
-    public void OnTurnStart()
-    {
-    }
-
     public bool TryApplyToPlayer(int buffId, int amount)
     {
         if (buffId != FeatherBuffId || battleManager?.playerData == null || amount <= 0)
@@ -90,12 +82,6 @@ public sealed class FeatherBuffScript : PlayerBuffScript
     {
         if (repeatCount <= 0 || !HasFeather(monster)) return 0;
         return TriggerOnMonsterInternal(monster, repeatCount);
-    }
-
-    public int TriggerOnPlayer(int repeatCount = 1)
-    {
-        if (repeatCount <= 0 || !HasFeatherTarget(TargetType.Self)) return 0;
-        return TriggerOnPlayerInternal(repeatCount);
     }
 
     public int TriggerUntilEmpty(TargetType target)
@@ -206,7 +192,7 @@ public sealed class FeatherBuffScript : PlayerBuffScript
             monster.ConsumeBuffStack(FeatherBuffId, 1);
             if (dealtDamage > 0)
             {
-                battleManager.HandlePlayerDamageDealt(monster, dealtDamage);
+                battleManager.Buffs.Player.OnPlayerDamageDealt(monster, dealtDamage);
                 totalDamage += dealtDamage;
                 battleManager.battleContext?.OnDamageDealt(dealtDamage);
             }

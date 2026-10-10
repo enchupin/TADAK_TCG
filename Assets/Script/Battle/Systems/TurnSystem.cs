@@ -141,7 +141,7 @@ public class TurnSystem
         }
 
         battleManager.SetState(BattleTurnState.PlayerAction);
-        battleManager.ResolveDeferredTurnStartPowerEffects();
+        battleManager.Buffs.Player.ResolveDeferredTurnStartEffects();
         IsTurnTransitioning = false;
         battleManager.UpdateEndTurnButtonState();
         battleManager.RefreshHandPlayableState();

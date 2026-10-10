@@ -98,6 +98,8 @@ public class UsableDeckManager
 }
 public class TrainingBattleManager
 {
+    public BattleBuffController Buffs { get; }
+    public TrainingBattleManager() { Buffs = new BattleBuffController(this); }
     public BattleContext battleContext = new();
     public HandManager handManager = new();
     public UsableDeckManager usableDeckManager = new();
@@ -108,6 +110,8 @@ public class TrainingBattleManager
     public bool PanelAvailable = true, ImmediateSelection;
     public int OpenCount, RequiredCount, DrawCalls, Generated, Repeats, PowerCalls;
     public bool Ended;
+    public bool PotionGoesToDiscard, ExhaustUnlocked;
+    public int Payments, IdentityCharges, RemovedFromCombat, ForceEndCalls;
     public List<Card> Candidates;
     private Action<List<Card>> callback;
     private readonly List<IEnumerator> routines = new();
@@ -153,21 +157,32 @@ public class TrainingBattleManager
     public bool CanPlayerPlayCard() => !HasPendingSelection;
     public bool CanPlayCard(Card card) => true;
     public bool CanPayCardCost(Card card) => true;
-    public bool TryPayCardCost(Card card) => true;
+    public bool TryPayCardCost(Card card) { Payments++; return true; }
     public int GetEffectiveCardCost(Card card) => card.cost;
     public int ConsumeRepeatedPlayCount(Card card, bool repeat) { int n = Repeats; Repeats = 0; return n; }
     public int GetCardUseAllEnemiesDamage() => 0;
     public void ApplyCardUseAllEnemiesDamage(int amount) { }
-    public void HandlePlayedCardPowerEffects(Card card, Monster target, bool repeat) => PowerCalls++;
-    public void ChargeIdentityGauge(Character character) { }
+    public void ChargeIdentityGauge(Character character) { IdentityCharges++; }
     public void RefreshHandPlayableState() { }
     public void UpdateAllUI() { }
     public void UpdateEndTurnButtonState() { }
-    public bool ShouldPotionGoToDiscardInsteadOfExhaust(Card card) => false;
-    public bool ShouldExhaustUnlockedUnplayableCard(Card card) => false;
+    public bool ShouldPotionGoToDiscardInsteadOfExhaust(Card card) => PotionGoesToDiscard;
+    public bool ShouldExhaustUnlockedUnplayableCard(Card card) => ExhaustUnlocked;
     public void MoveCardToExhaust(Card card) => usableDeckManager.Exhaust.Add(card);
-    public void RemoveCardFromCombat(Card card) { }
+    public void RemoveCardFromCombat(Card card) { RemovedFromCombat++; handManager.RemoveCard(card); }
     public bool TryHandleCombatEnd() => CurrentTurnState == BattleTurnState.CombatEnd;
-    public void ForceEndPlayerTurn() => Ended = true;
+    public void ForceEndPlayerTurn() { Ended = true; ForceEndCalls++; }
     public List<Monster> GetLivingMonsters() => new();
+}
+
+public class BattleBuffController
+{
+    public PlayerBuffRuntimeService Player { get; }
+    public BattleBuffController(TrainingBattleManager manager) { Player = new PlayerBuffRuntimeService(manager); }
+}
+public class PlayerBuffRuntimeService
+{
+    private readonly TrainingBattleManager manager;
+    public PlayerBuffRuntimeService(TrainingBattleManager manager) { this.manager = manager; }
+    public void OnCardPlayed(Card card, Monster target, bool repeat) => manager.PowerCalls++;
 }

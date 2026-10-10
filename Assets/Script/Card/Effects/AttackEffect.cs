@@ -72,10 +72,10 @@ public class AttackEffect : ICardEffect
 
                     int barrierBefore = monster.defense;
                     int hitAmount = BuildFinalDamageAmount(battleManager, forwardedAmount, attackBoostStack);
-                    battleManager.HandlePlayerAttackStarted();
+                    battleManager.Buffs.Player.OnPlayerAttackStarted();
                     int dealtDamage = monster.TakeDamage(hitAmount, 0);
                     totalDamageDealt += dealtDamage;
-                    battleManager.HandlePlayerDamageDealt(monster, dealtDamage);
+                    battleManager.Buffs.Player.OnPlayerDamageDealt(monster, dealtDamage);
                     battleManager.HandlePlayerAttackResolved(monster, barrierBefore, monster.defense);
                 }
                 break;
@@ -104,10 +104,10 @@ public class AttackEffect : ICardEffect
 
                 ConsumeAttackBoost(battleManager, attackBoostStack);
                 int targetBarrierBefore = targetMonster.defense;
-                battleManager.HandlePlayerAttackStarted();
+                battleManager.Buffs.Player.OnPlayerAttackStarted();
                 int targetDamage = targetMonster.TakeDamage(finalAmount, 0);
                 totalDamageDealt += targetDamage;
-                battleManager.HandlePlayerDamageDealt(targetMonster, targetDamage);
+                battleManager.Buffs.Player.OnPlayerDamageDealt(targetMonster, targetDamage);
                 battleManager.HandlePlayerAttackResolved(targetMonster, targetBarrierBefore, targetMonster.defense);
                 break;
 
@@ -122,10 +122,10 @@ public class AttackEffect : ICardEffect
                 Monster randomTarget = randomTargets[Random.Range(0, randomTargets.Count)];
                 ConsumeAttackBoost(battleManager, attackBoostStack);
                 int randomBarrierBefore = randomTarget.defense;
-                battleManager.HandlePlayerAttackStarted();
+                battleManager.Buffs.Player.OnPlayerAttackStarted();
                 int randomDamage = randomTarget.TakeDamage(finalAmount, 0);
                 totalDamageDealt += randomDamage;
-                battleManager.HandlePlayerDamageDealt(randomTarget, randomDamage);
+                battleManager.Buffs.Player.OnPlayerDamageDealt(randomTarget, randomDamage);
                 battleManager.HandlePlayerAttackResolved(randomTarget, randomBarrierBefore, randomTarget.defense);
                 break;
 
@@ -137,7 +137,7 @@ public class AttackEffect : ICardEffect
                 }
 
                 ConsumeAttackBoost(battleManager, attackBoostStack);
-                battleManager.HandlePlayerAttackStarted();
+                battleManager.Buffs.Player.OnPlayerAttackStarted();
                 int selfDamage = battleManager.playerData.TakeDamage(finalAmount);
                 battleManager.battleContext?.OnPlayerCardHpLost(selfDamage);
                 break;

@@ -9,6 +9,10 @@ public class BattleBuffController
     private readonly MonsterBuffRuntimeService monsterBuffRuntimeService;
     private readonly FeatherBuffScript featherBuffScript;
 
+    // 개별 알림과 계산은 담당 실행기로 직접 전달
+    public PlayerBuffRuntimeService Player => playerBuffRuntimeService;
+    public MonsterBuffRuntimeService Monsters => monsterBuffRuntimeService;
+
     public BattleBuffController(TrainingBattleManager battleManager)
     {
         this.battleManager = battleManager;
@@ -20,13 +24,11 @@ public class BattleBuffController
     public void ResetForCombat()
     {
         playerBuffRuntimeService.ResetForCombat();
-        featherBuffScript.ResetForCombat();
     }
 
     public void ApplyPlayerTurnStartEffects()
     {
         playerBuffRuntimeService.OnPlayerTurnStart();
-        featherBuffScript.OnTurnStart();
     }
 
     public void ApplyPlayerTurnEndEffects()
@@ -35,60 +37,10 @@ public class BattleBuffController
         playerBuffRuntimeService.ReplayTurnEndTriggeredEffects();
     }
 
-    public void FinishEnemyTurnEndEffects()
-    {
-        playerBuffRuntimeService.OnEnemyTurnEnd();
-    }
-
     public void FinishPlayerTurnEndEffects()
     {
         playerBuffRuntimeService.OnPlayerTurnEnd();
         monsterBuffRuntimeService.OnPlayerTurnEnd();
-    }
-
-    public void ReplayAdditionalTurnEndTriggers()
-    {
-        playerBuffRuntimeService.ReplayTurnEndTriggeredEffects();
-    }
-
-    public bool CanPlayCard(Card card)
-    {
-        return playerBuffRuntimeService.CanPlayCard(card);
-    }
-
-    public bool ShouldPotionGoToDiscardInsteadOfExhaust(Card card)
-    {
-        return playerBuffRuntimeService.ShouldPotionGoToDiscardInsteadOfExhaust(card);
-    }
-
-    public bool ShouldExhaustUnlockedUnplayableCard(Card card)
-    {
-        return playerBuffRuntimeService.ShouldExhaustUnlockedUnplayableCard(card);
-    }
-
-    public bool CanDrawCards()
-    {
-        return playerBuffRuntimeService.CanDrawCards();
-    }
-
-    public bool CanGainCardsToHand()
-    {
-        return playerBuffRuntimeService.CanGainCardsToHand();
-    }
-
-    public bool CanGainCardsToHandFrom(MoveZoneType from, string subject = null)
-    {
-        return playerBuffRuntimeService.CanGainCardsToHandFrom(from, subject);
-    }
-
-    public int GetEffectiveCardCost(Card card)
-    {
-        return playerBuffRuntimeService.GetEffectiveCardCost(card);
-    }
-
-    public int GetCardUseAllEnemiesDamage()
-    {
-        return playerBuffRuntimeService.GetCardUseAllEnemiesDamage();
     }
 
     public void ApplyCardUseAllEnemiesDamage(int damage)
@@ -110,61 +62,21 @@ public class BattleBuffController
         {
             int dealtDamage = monster.TakeDamage(battleManager.ResolvePlayerEffectDamage(damage), 0);
             totalDamageDealt += dealtDamage;
-            HandlePlayerDamageDealt(monster, dealtDamage);
+            Player.OnPlayerDamageDealt(monster, dealtDamage);
         }
 
         battleManager.battleContext?.OnDamageDealt(totalDamageDealt);
     }
 
-    public int GetAdditionalBarrierGain()
-    {
-        return playerBuffRuntimeService.GetAdditionalBarrierGain();
-    }
-
     public int ResolvePlayerBarrierGain(int amount, bool fromCard = false)
     {
-        int baseAmount = Mathf.Max(0, amount) + (fromCard ? GetAdditionalBarrierGain() : 0);
+        int baseAmount = Mathf.Max(0, amount) + (fromCard ? Player.GetAdditionalBarrierGain() : 0);
         return playerBuffRuntimeService.ResolveBarrierGain(baseAmount);
     }
 
     public bool ShouldRetainPlayerBarrierOnTurnStart()
     {
-        return HasPermanentBarrierRetention() || playerBuffRuntimeService.TryConsumeBarrierRetentionOnTurnStart();
-    }
-
-    public int GetPlayerTurnStartBarrierLoss(int currentDefense)
-    {
-        return playerBuffRuntimeService.GetTurnStartBarrierLoss(currentDefense);
-    }
-
-    public int GetTurnEndRetainCount()
-    {
-        return playerBuffRuntimeService.GetTurnEndRetainCount();
-    }
-
-    public int GetCardBaseDamageBonus(Card sourceCard, bool isAttackEffect)
-    {
-        return playerBuffRuntimeService.GetCardBaseDamageBonus(sourceCard, isAttackEffect);
-    }
-
-    public int ApplyCardDamageRuntimeModifiers(Card sourceCard, int damage)
-    {
-        return playerBuffRuntimeService.ModifyCardDamage(sourceCard, damage);
-    }
-
-    public int GetPlayerCalculatedCardDamageBonus(float strengthMultiplier)
-    {
-        return playerBuffRuntimeService.GetCalculatedCardDamageBonus(strengthMultiplier);
-    }
-
-    public float GetPlayerCalculatedCardBaseMultiplier(float baseMultiplier)
-    {
-        return playerBuffRuntimeService.GetCalculatedCardBaseMultiplier(baseMultiplier);
-    }
-
-    public float GetPlayerOutgoingDamageMultiplier()
-    {
-        return playerBuffRuntimeService.GetOutgoingDamageMultiplier();
+        return Player.HasPermanentBarrierRetention() || playerBuffRuntimeService.TryConsumeBarrierRetentionOnTurnStart();
     }
 
     public int ResolvePlayerIncomingDamage(int damage, Monster attacker)
@@ -175,40 +87,10 @@ public class BattleBuffController
         return playerBuffRuntimeService.ClampIncomingDamage(attacker, finalDamage);
     }
 
-    public bool TryPreventPlayerIncomingDamage(int damage, Monster attacker)
-    {
-        return playerBuffRuntimeService.TryPreventIncomingDamage(attacker, damage);
-    }
-
-    public void ConsumePlayerIncomingDamageBuffs(Monster attacker, int damage)
-    {
-        playerBuffRuntimeService.ConsumeIncomingDamageBuff(attacker, damage);
-    }
-
     public int ResolvePersistentUpgradeCardId(int cardId, int sourceBuffId = 0)
     {
         int resolvedCardId = playerBuffRuntimeService.ResolvePersistentUpgradeCardId(cardId, sourceBuffId);
         return monsterBuffRuntimeService.ResolvePersistentUpgradeCardId(resolvedCardId, sourceBuffId);
-    }
-
-    public bool HasPermanentBarrierRetention()
-    {
-        return playerBuffRuntimeService.HasPermanentBarrierRetention();
-    }
-
-    public void HandlePlayedCardEffects(Card playedCard, Monster originalTarget, bool isRepeatedEffect)
-    {
-        playerBuffRuntimeService.OnCardPlayed(playedCard, originalTarget, isRepeatedEffect);
-    }
-
-    public void ResolveDeferredTurnStartEffects()
-    {
-        playerBuffRuntimeService.ResolveDeferredTurnStartEffects();
-    }
-
-    public int ConsumeRepeatedPlayCount(Card playedCard, bool isRepeatedEffect)
-    {
-        return playerBuffRuntimeService.ConsumeRepeatCount(playedCard, isRepeatedEffect);
     }
 
     public void RegisterMonsterHpLossHealPlayerThisTurn(Monster monster)
@@ -221,30 +103,10 @@ public class BattleBuffController
         battleManager.ApplyBuffToMonster(monster, LifeLinkBuffId, 1);
     }
 
-    public void HandlePlayerAttackStarted()
-    {
-        playerBuffRuntimeService.OnPlayerAttackStarted();
-    }
-
     public void HandlePlayerAttackResolved(Monster targetMonster, int barrierBefore, int barrierAfter)
     {
         monsterBuffRuntimeService.OnAttackedByPlayer(targetMonster);
         playerBuffRuntimeService.OnPlayerAttackResolved(targetMonster, barrierBefore, barrierAfter);
-    }
-
-    public void HandlePlayerHit(Monster attacker, int blockedDamage, int hpDamage)
-    {
-        playerBuffRuntimeService.OnPlayerHit(attacker, blockedDamage, hpDamage);
-    }
-
-    public void HandlePlayerBarrierReduced(int reducedAmount)
-    {
-        playerBuffRuntimeService.OnPlayerBarrierReduced(reducedAmount);
-    }
-
-    public void HandleCardsExhausted(int count)
-    {
-        playerBuffRuntimeService.OnCardsExhausted(count);
     }
 
     public int TriggerFeather(TargetType target, int repeatCount = 1)
@@ -262,53 +124,53 @@ public class BattleBuffController
         return featherBuffScript.ReplayExhaustedFeathersSequence();
     }
 
-    public bool TryConsumeSoulProtection()
+    // 특별 적용과 일반 저장, 적용 후 알림을 같은 진입점에서 처리
+    public void ApplyToPlayer(int buffId, int amount)
     {
-        return playerBuffRuntimeService.TryConsumeFatalDamage();
+        if (amount <= 0) return;
+
+        if (!featherBuffScript.TryApplyToPlayer(buffId, amount)
+            && !Player.TryApplyToPlayer(buffId, amount))
+        {
+            battleManager.playerData?.AddBuff(buffId, amount);
+        }
+        HandleBuffApplied(buffId);
     }
 
-    public bool TryApplyToPlayer(int buffId, int amount)
+    public void ApplyToMonster(Monster monster, int buffId, int amount)
     {
-        if (featherBuffScript.TryApplyToPlayer(buffId, amount))
-        {
-            HandleBuffApplied(buffId);
-            return true;
-        }
+        if (monster == null || monster.IsDead() || amount <= 0) return;
 
-        if (playerBuffRuntimeService.TryApplyToPlayer(buffId, amount))
-        {
-            HandleBuffApplied(buffId);
-            return true;
-        }
-
-        return false;
-    }
-
-    public bool TryApplyToMonster(int buffId, Monster monster, int amount)
-    {
+        buffId = Player.ResolveAppliedMonsterBuffId(monster, buffId, amount);
         if (featherBuffScript.TryApplyToMonster(buffId, monster, amount))
         {
             HandleBuffApplied(buffId);
-            return true;
+            return;
         }
 
-        return false;
+        int crueltyStackBeforeApply = monster.GetBuffStack(CrueltyDebuffId);
+        monster.AddBuff(buffId, amount);
+        HandleBuffApplied(buffId);
+        if (!BuffData.IsBeneficialBuffId(buffId))
+        {
+            battleManager.HandleEnemyDebuffApplied(monster, buffId, amount, crueltyStackBeforeApply);
+        }
     }
 
-    public bool TryApplyToAllEnemies(int buffId, int amount)
+    public void ApplyToAllEnemies(int buffId, int amount)
     {
+        if (amount <= 0) return;
+
         if (featherBuffScript.TryApplyToAllEnemies(buffId, amount))
         {
             HandleBuffApplied(buffId);
-            return true;
+            return;
         }
 
-        return false;
-    }
-
-    public int ResolveAppliedMonsterBuffId(Monster targetMonster, int buffId, int amount)
-    {
-        return playerBuffRuntimeService.ResolveAppliedMonsterBuffId(targetMonster, buffId, amount);
+        foreach (Monster monster in battleManager.GetLivingMonsters())
+        {
+            ApplyToMonster(monster, buffId, amount);
+        }
     }
 
     public void HandleEnemyDebuffApplied(Monster monster, int buffId, int amount, int crueltyStackBeforeApply = -1)
@@ -322,54 +184,10 @@ public class BattleBuffController
         playerBuffRuntimeService.OnEnemyDebuffApplied(monster, buffId, amount, crueltyStackBeforeApply);
     }
 
-    public void HandleMonsterHpLost(Monster monster, int hpLoss)
-    {
-        monsterBuffRuntimeService.OnMonsterHpLost(monster, hpLoss);
-    }
-
     public void HandlePlayerHpLost(int hpLoss)
     {
         playerBuffRuntimeService.OnPlayerHpLost(hpLoss);
         monsterBuffRuntimeService.OnPlayerHpLost(hpLoss);
-    }
-
-    public void HandlePlayerDamageDealt(Monster monster, int dealtDamage)
-    {
-        playerBuffRuntimeService.OnPlayerDamageDealt(monster, dealtDamage);
-    }
-
-    public void HandleBattleEnded(bool isVictory)
-    {
-        playerBuffRuntimeService.OnBattleEnded(isVictory);
-    }
-
-    public void HandleMonsterBuffApplied(Monster monster, int buffId, int amount)
-    {
-        monsterBuffRuntimeService.OnBuffApplied(monster, buffId, amount);
-    }
-
-    public void ApplyMonsterTurnStartEffects(Monster monster)
-    {
-        monsterBuffRuntimeService.OnMonsterTurnStart(monster);
-    }
-
-    public int GetMonsterBuffActivationCount(Monster monster, int buffId)
-        => monsterBuffRuntimeService.GetActivationCount(monster, buffId);
-
-    public void HandleMonsterAttackActionStarted(Monster monster)
-        => monsterBuffRuntimeService.OnAttackActionStarted(monster);
-
-    public void HandleMonsterAttackActionEnded(Monster monster)
-        => monsterBuffRuntimeService.OnAttackActionEnded(monster);
-
-    public void ApplyMonsterTurnEndEffects(Monster monster)
-    {
-        monsterBuffRuntimeService.OnMonsterTurnEnd(monster);
-    }
-
-    public bool ShouldKeepMonsterBarrierOnTurnStart(Monster monster)
-    {
-        return monsterBuffRuntimeService.ShouldKeepBarrierOnTurnStart(monster);
     }
 
     public int ResolveMonsterIncomingDamage(Monster monster, int damage)
@@ -387,61 +205,6 @@ public class BattleBuffController
         }
 
         monsterBuffRuntimeService.TryConsumeIncomingDamageBuff(monster);
-    }
-
-    public void HandleMonsterDefenseChanged(Monster monster, int previousDefense, int currentDefense)
-    {
-        monsterBuffRuntimeService.OnDefenseChanged(monster, previousDefense, currentDefense);
-    }
-
-    public int ResolveMonsterBarrierGain(Monster monster, int amount)
-    {
-        return monsterBuffRuntimeService.ResolveBarrierGain(monster, amount);
-    }
-
-    public int ModifyMonsterOutgoingDamage(Monster monster, int damage)
-    {
-        return monsterBuffRuntimeService.ModifyOutgoingDamage(monster, damage);
-    }
-
-    public void HandleMonsterAttackResolved(Monster monster, PlayerData target, int attemptedDamage, int hpDamage)
-    {
-        monsterBuffRuntimeService.OnMonsterAttackResolved(monster, target, attemptedDamage, hpDamage);
-    }
-
-    public void HandleMonsterBeforeTakeDamage(Monster monster, int incomingDamage)
-    {
-        monsterBuffRuntimeService.OnMonsterBeforeTakeDamage(monster, incomingDamage);
-    }
-
-    public void HandleMonsterAfterTakeDamage(Monster monster, int incomingDamage, int damageAfterDefense)
-    {
-        monsterBuffRuntimeService.OnMonsterAfterTakeDamage(monster, incomingDamage, damageAfterDefense);
-    }
-
-    public bool CanMonsterReceiveDamage(Monster monster, int incomingDamage)
-    {
-        return monsterBuffRuntimeService.CanReceiveDamage(monster, incomingDamage);
-    }
-
-    public bool CanMonsterRevive(Monster monster)
-    {
-        return monsterBuffRuntimeService.CanRevive(monster);
-    }
-
-    public void HandleMonsterDeath(Monster monster)
-    {
-        monsterBuffRuntimeService.OnMonsterDeath(monster);
-    }
-
-    public void HandleMonsterLeaveCombat(Monster monster)
-    {
-        monsterBuffRuntimeService.OnMonsterLeaveCombat(monster);
-    }
-
-    public void HandleMonsterRevived(Monster monster)
-    {
-        monsterBuffRuntimeService.OnMonsterRevived(monster);
     }
 
     public List<Card> ProcessGeneratedCards(List<Card> generatedCards, bool allowDuplicateGeneration = true)

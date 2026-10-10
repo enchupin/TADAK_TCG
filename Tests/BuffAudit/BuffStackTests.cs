@@ -85,7 +85,7 @@ static class BuffStackTests
             new DamageEffect { amount = 1 }.Execute(battle);
             Eq(player.GetBuffStack(ComboBuffId), i + 2, "일반 피해마다 콤보 1중첩 증가");
         }
-        battle.HandlePlayerDamageDealt(monster, 0);
+        battle.Buffs.Player.OnPlayerDamageDealt(monster, 0);
         Eq(player.GetBuffStack(ComboBuffId), 6, "피해가 없으면 콤보 유지");
         new AttackEffect { amount = 10, target = TargetType.SingleEnemy }.Execute(battle);
         Eq(monster.hp, 85, "7중첩에 도달시키는 공격은 원래 피해");

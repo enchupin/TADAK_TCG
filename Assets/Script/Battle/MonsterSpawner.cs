@@ -35,8 +35,8 @@ public class MonsterSpawner : MonoBehaviour
         FlashyScythe
     }
 
-    [Header("몬스터 생성 프리팹")]
-    [SerializeField] private MonsterPrefabFactory monsterPrefabFactory = new MonsterPrefabFactory();
+    // 몬스터 생성 프리팹
+    private readonly MonsterPrefabFactory monsterPrefabFactory = new MonsterPrefabFactory();
 
     private static readonly SpawnMonsterType[][] earlyNormalNodeEncounterTable =
     {
@@ -88,16 +88,19 @@ public class MonsterSpawner : MonoBehaviour
 
     private int reservedSummonCount;
 
+    private void Awake()
+    {
+        ClearEncounter();
+    }
+
     public void ClearEncounter()
     {
         reservedSummonCount = 0;
         foreach (Transform point in spawnPoints)
         {
-            if (point == null) continue;
-            foreach (Monster monster in point.GetComponentsInChildren<Monster>(true))
+            if (point != null)
             {
-                monster.gameObject.SetActive(false);
-                Destroy(monster.gameObject);
+                point.gameObject.SetActive(false);
             }
         }
     }
@@ -345,13 +348,7 @@ public class MonsterSpawner : MonoBehaviour
             return null;
         }
 
-        Monster spawnedMonster = monsterPrefabFactory.CreateMonster(monsterType, spawnPoint);
-        if (spawnedMonster == null)
-        {
-            return null;
-        }
-
-        return spawnedMonster;
+        return monsterPrefabFactory.CreateMonster(monsterType, spawnPoint);
     }
 
     /// <summary>
@@ -365,13 +362,7 @@ public class MonsterSpawner : MonoBehaviour
             return null;
         }
 
-        Monster spawnedMonster = monsterPrefabFactory.CreateMonster(monsterComponentType, spawnPoint);
-        if (spawnedMonster == null)
-        {
-            return null;
-        }
-
-        return spawnedMonster;
+        return monsterPrefabFactory.CreateMonster(monsterComponentType, spawnPoint);
     }
 
     /// <summary>
@@ -431,22 +422,8 @@ public class MonsterSpawner : MonoBehaviour
     /// </summary>
     private bool IsSpawnPointOccupied(Transform spawnPoint)
     {
-        if (spawnPoint == null)
-        {
-            return false;
-        }
-
-        Monster[] monsters = spawnPoint.GetComponentsInChildren<Monster>(true);
-        for (int i = 0; i < monsters.Length; i++)
-        {
-            Monster monster = monsters[i];
-            if (monster != null && monster.gameObject.activeSelf && !monster.IsDead())
-            {
-                return true;
-            }
-        }
-
-        return false;
+        // 사망 처리가 끝나 프리팹이 비활성화된 슬롯만 재사용
+        return spawnPoint != null && spawnPoint.gameObject.activeSelf;
     }
 
 }

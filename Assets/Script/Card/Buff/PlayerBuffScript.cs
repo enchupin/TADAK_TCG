@@ -1,3 +1,5 @@
+// 개별 버프의 효과는 필요한 훅만 재정의하고 실행 순서는 PlayerBuffRuntimeService에서 관리
+// 새 알림은 호출부에서 Buffs.Player로 전달하며 매니저와 컨트롤러에 중계 메서드를 추가하지 않음
 public abstract class PlayerBuffScript
 {
     public abstract int BuffId { get; }

@@ -92,6 +92,9 @@ public class SettingsManager : MonoBehaviour
         if (RestSceneController.IsEventEscapeContextActive) {
             return;
         }
+        if (!IsSettingsPanelOpen() && BattleDeckViewer.TryHandlePanelEscape()) {
+            return;
+        }
         ToggleSettingPanel();
     }
 
@@ -107,6 +110,7 @@ public class SettingsManager : MonoBehaviour
         }
 
         settingsPanel.SetActive(false);
+        PlayPanelToggleSound();
     }
 
     public void OpenSettingsPanel()

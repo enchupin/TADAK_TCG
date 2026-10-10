@@ -35,7 +35,7 @@ static class Program {
   b=new();p=b.playerData;p.AddBuff(NextCardFreeBuffId,1);Eq(b.TryPayCardCost(new Card{cost=3}),true,"예고 비용 지불 성공");Eq(p.energy,3,"예고 에너지 미소모");Eq(p.GetBuffStack(NextCardFreeBuffId),0,"예고 효과 실행 전 소모");p.AddBuff(NextCardFreeBuffId,1);b.playerService.OnCardPlayed(new Card(),null,false);Eq(p.GetBuffStack(NextCardFreeBuffId),1,"사용한 카드로 얻은 예고 유지");
   b=new();p=b.playerData;p.AddBuff(LastStandBuffId,1);b.SetState(BattleTurnState.EnemyTurnStart);p.hp=0;Eq(b.playerService.TryConsumeFatalDamage(),false,"적 턴 시작에는 구사일생 미발동");b.SetState(BattleTurnState.EnemyAction);Eq(b.playerService.TryConsumeFatalDamage(),false,"적 공격에는 구사일생 미발동");Eq(p.GetBuffStack(LastStandBuffId),1,"적 턴에는 미발동 버프 유지");b.SetState(BattleTurnState.PlayerTurnStart);Eq(b.playerService.TryConsumeFatalDamage(),true,"자신의 턴 시작에는 보호 발동");b.playerService.OnPlayerTurnStart();p.hp=0;Eq(b.playerService.TryConsumeFatalDamage(),true,"시작 효과 처리 후에도 보호 유지");b.SetState(BattleTurnState.PlayerAction);p.hp=0;Eq(b.playerService.TryConsumeFatalDamage(),true,"자신의 턴 동안 보호 유지");b.SetState(BattleTurnState.PlayerTurnEnd);p.hp=0;Eq(b.playerService.TryConsumeFatalDamage(),false,"턴 종료 진입 후 보호 종료");b.SetState(BattleTurnState.EnemyAction);p.hp=0;Eq(b.playerService.TryConsumeFatalDamage(),false,"발동 후 몬스터 턴에는 보호 없음");
   b=new();p=b.playerData;p.AddBuff(ComboBuffId,1);p.AddBuff(AttackBoostBuffId,3);m=new Monster();b.monsters.Add(m);var m2=new Monster();b.monsters.Add(m2);
-  for(int i=0;i<6;i++)b.HandlePlayerDamageDealt(m,1);new AttackEffect{amount=10,target=TargetType.AllEnemies}.Execute(b);
+  for(int i=0;i<6;i++)b.Buffs.Player.OnPlayerDamageDealt(m,1);new AttackEffect{amount=10,target=TargetType.AllEnemies}.Execute(b);
   Eq(m.hp,74,"광역 일곱 번째 타격 두 배와 강공");Eq(m2.hp,87,"광역 여덟 번째 타격 정상과 강공");Eq(p.GetBuffStack(AttackBoostBuffId),0,"강공 한 번 소모");
   b=new();p=b.playerData;p.AddBuff(StrengthBuffId,10);p.AddBuff(WeakBuffId,1);p.AddBuff(OverheatBuffId,10);m=new Monster();b.monsters.Add(m);new DamageEffect{amount=10,target=TargetType.SingleEnemy}.Execute(b);Eq(m.hp,80,"비공격 피해는 과열만 적용");
   b=new();p=b.playerData;p.AddBuff(FeatherCycleBuffId,1);b.playerService.OnFeatherApplied(2,1,TargetType.SingleEnemy);Eq(b.draws,0,"깃털 부여만으로 순환 미발동");b.playerService.OnCardPlayed(new Card{cardId=203081},null,false);Eq(b.draws,1,"깃털 카드 사용 시 순환");
@@ -59,6 +59,7 @@ static class Program {
   m.hp=0;b.currentTarget=m;new BuffEffect{buffId=FeatherBuffId,amount=1,target=TargetType.SingleEnemy}.Execute(b);Eq(m2.hp,91,"카드 공격 대상 사망 후에도 다른 적 깃털 부여와 회수");
   b=new();p=b.playerData;m=new Monster();b.monsters.Add(m);p.AddBuff(DeadlyAmbushBuffId,5);p.AddBuff(DoubleFeatherBuffId,1);p.AddBuff(FeatherCycleBuffId,1);b.usableDeckManager.exhaust.Add(firstFeather);b.usableDeckManager.exhaust.Add(new Card{cardId=123});play=CardEffectSequence.Run(b.feather.ReplayExhaustedFeathersSequence(),b);while(play.MoveNext()){}Eq(m.hp,84,"소멸 깃털 재사용에 기습과 이중 깃털 적용");Eq(b.draws,1,"소멸 깃털 재사용에 순환 적용");Eq(b.usableDeckManager.exhaust.Count,2,"재사용 후 소멸 더미 유지");
   assertions += BuffStackTests.Run();
+  assertions += BuffApplicationTests.Run();
   Console.WriteLine($"버프 회귀 검증 통과: {assertions}개 단언");
  }
 }

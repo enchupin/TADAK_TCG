@@ -7,8 +7,8 @@ using UnityEngine;
 [Serializable]
 public class MonsterPrefabFactory
 {
-    [Header("기본 몬스터 프리팹")]
-    [SerializeField] private GameObject baseMonsterPrefab;
+    // 기본 몬스터 프리팹
+    // 씬에 미리 배치한 프리팹에 몬스터 컴포넌트만 설정
 
     public Monster CreateMonster(MonsterSpawner.SpawnMonsterType monsterType, Transform parent)
     {
@@ -24,6 +24,7 @@ public class MonsterPrefabFactory
 
     public Monster CreateMonster(Type monsterComponentType, Transform parent)
     {
+        GameObject baseMonsterPrefab = parent != null ? parent.gameObject : null;
         if (baseMonsterPrefab == null)
         {
             Debug.LogError("[MonsterPrefabFactory] 기본 몬스터 프리팹이 설정되지 않았습니다");
@@ -36,36 +37,64 @@ public class MonsterPrefabFactory
             return null;
         }
 
-        GameObject spawnedObject = UnityEngine.Object.Instantiate(baseMonsterPrefab, parent, false);
-        spawnedObject.name = monsterComponentType.Name;
-        spawnedObject.transform.localPosition = Vector3.zero;
-        spawnedObject.transform.localRotation = Quaternion.identity;
-        spawnedObject.transform.localScale = Vector3.one;
+        GameObject spawnedObject = baseMonsterPrefab;
 
-        if (spawnedObject.GetComponent<Monster>() != null)
+        foreach (Monster previous in spawnedObject.GetComponents<Monster>())
         {
-            Debug.LogError($"[MonsterPrefabFactory] 기본 몬스터 프리팹에는 Monster 하위 컴포넌트를 미리 넣지 않아야 합니다. prefab={baseMonsterPrefab.name}");
-            UnityEngine.Object.Destroy(spawnedObject);
-            return null;
+            if (spawnedObject.activeSelf)
+            {
+                Debug.LogError($"[MonsterPrefabFactory] 기본 몬스터 프리팹에는 Monster 하위 컴포넌트를 미리 넣지 않아야 합니다. prefab={baseMonsterPrefab.name}");
+                return null;
+            }
         }
 
         MonsterStateController stateController = spawnedObject.GetComponent<MonsterStateController>();
         if (stateController == null)
         {
             Debug.LogError($"[MonsterPrefabFactory] 기본 몬스터 프리팹에 MonsterStateController가 없습니다. prefab={baseMonsterPrefab.name}");
-            UnityEngine.Object.Destroy(spawnedObject);
             return null;
         }
 
+        if (stateController.monsterImage == null)
+        {
+            Debug.LogError("[MonsterSpawner] 스폰 위치의 몬스터 이미지가 인스펙터에 연결되지 않았습니다");
+            return null;
+        }
+        if (stateController.hpSlider == null || stateController.hpFillImage == null)
+        {
+            Debug.LogError("[MonsterSpawner] 스폰 위치의 체력 UI가 인스펙터에 연결되지 않았습니다");
+            return null;
+        }
+        if (stateController.buffUI == null)
+        {
+            Debug.LogError("[MonsterSpawner] 스폰 위치의 버프 UI가 인스펙터에 연결되지 않았습니다");
+            return null;
+        }
+
+        // 이전 몬스터의 제거 처리가 새 몬스터의 이미지에 영향을 주지 않도록 확인
+        // 슬롯의 UI는 유지하고 이전 몬스터 컴포넌트의 연결만 해제
+        foreach (Monster previous in spawnedObject.GetComponents<Monster>())
+        {
+            previous.enabled = false;
+            previous.hpSlider = null;
+            previous.hpFillImage = null;
+            previous.buffUI = null;
+            UnityEngine.Object.Destroy(previous);
+        }
+
+        spawnedObject.SetActive(true);
         Monster monster = spawnedObject.AddComponent(monsterComponentType) as Monster;
         if (monster == null)
         {
             Debug.LogError($"[MonsterPrefabFactory] 몬스터 컴포넌트 추가에 실패했습니다. type={monsterComponentType.Name}");
-            UnityEngine.Object.Destroy(spawnedObject);
             return null;
         }
 
+        monster.hpSlider = stateController.hpSlider;
+        monster.hpFillImage = stateController.hpFillImage;
+        monster.buffUI = stateController.buffUI;
         monster.SetStateController(stateController);
+        monster.UpdateUI();
         spawnedObject.name = monster.name;
         return monster;
     }

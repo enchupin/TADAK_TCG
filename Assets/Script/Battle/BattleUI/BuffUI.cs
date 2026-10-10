@@ -14,15 +14,12 @@ public class BuffUI : MonoBehaviour
     private const int DefaultBuffIconId = 1000;
 
     [Header("버프 아이콘 설정")]
-    [SerializeField] private RectTransform buffRoot;
-    [SerializeField] private Vector2 firstIconPosition = new Vector2(30f, -30f);
-    [SerializeField] private Vector2 iconSize = new Vector2(30f, 30f);
-    [SerializeField] private float iconSpacing = 60f;
-    [SerializeField] private int iconsPerRow = 7;
+    // 계층의 나열 순서와 무관하게 실제 배치된 위치를 좌측 상단부터 행 순서로 사용
+    // 이 순서로 이미지를 인스펙터에 직접 연결하며 런타임에는 좌표를 계산하지 않음
+    public List<Image> iconSlots = new();
     [SerializeField] private BuffTarget target = BuffTarget.Player;
     [SerializeField] private Monster targetMonster;
 
-    private readonly List<Image> createdIcons = new();
     private readonly Dictionary<int, Sprite> iconCache = new();
     private string currentBuffSignature;
 
@@ -44,35 +41,50 @@ public class BuffUI : MonoBehaviour
         RefreshIfNeeded();
     }
 
+    private void OnDisable()
+    {
+        ClearSlots();
+        currentBuffSignature = null;
+    }
+
     private void OnDestroy()
     {
-        ClearIconObjects();
         iconCache.Clear();
     }
 
     public void Refresh()
     {
         List<int> activeBuffIds = CollectActiveBuffIds();
-        RebuildIcons(activeBuffIds);
+        UpdateSlots(activeBuffIds);
         currentBuffSignature = BuildBuffSignature(activeBuffIds);
     }
 
-    public void BindMonster(Monster monster, RectTransform root = null)
+    public void BindMonster(Monster monster)
     {
-        target = BuffTarget.Monster;
-        if (root != null)
-        {
-            buffRoot = root;
-        }
-
-        if (targetMonster == monster)
+        if (target == BuffTarget.Monster && targetMonster == monster)
         {
             return;
         }
 
+        ClearSlots();
+        target = BuffTarget.Monster;
         targetMonster = monster;
         currentBuffSignature = null;
         RefreshIfNeeded();
+    }
+
+    public void UnbindMonster(Monster monster)
+    {
+        // 이전 몬스터가 제거되더라도 같은 스폰 칸에 새로 연결된 몬스터의 버프는 유지
+        // 버프를 넘겨주는 것이 아니라 현재 표시 대상과 해제 요청의 몬스터가 같을 때만 슬롯을 비움
+        if (target != BuffTarget.Monster || targetMonster != monster)
+        {
+            return;
+        }
+
+        targetMonster = null;
+        ClearSlots();
+        currentBuffSignature = null;
     }
 
     private void RefreshIfNeeded()
@@ -84,7 +96,7 @@ public class BuffUI : MonoBehaviour
             return;
         }
 
-        RebuildIcons(activeBuffIds);
+        UpdateSlots(activeBuffIds);
         currentBuffSignature = nextBuffSignature;
     }
 
@@ -113,7 +125,9 @@ public class BuffUI : MonoBehaviour
     {
         if (target == BuffTarget.Monster)
         {
-            return targetMonster != null ? targetMonster.currentBuffs : null;
+            return targetMonster != null && targetMonster.isActiveAndEnabled && !targetMonster.IsDead()
+                ? targetMonster.currentBuffs
+                : null;
         }
 
         PlayerData player = PlayerData.Instance;
@@ -147,74 +161,21 @@ public class BuffUI : MonoBehaviour
         return builder.ToString();
     }
 
-    private void RebuildIcons(List<int> activeBuffIds)
+    private void UpdateSlots(List<int> activeBuffIds)
     {
-        EnsureBuffRoot();
-        ClearIconObjects();
+        ClearSlots();
 
-        if (buffRoot == null || activeBuffIds == null)
+        if (activeBuffIds == null)
         {
             return;
         }
 
-        int safeIconsPerRow = Mathf.Max(1, iconsPerRow);
-        for (int i = 0; i < activeBuffIds.Count; i++)
+        // 유효한 버프를 첫 슬롯부터 다시 채워 중간에 사라진 버프의 빈칸을 당김
+        int visibleCount = Mathf.Min(activeBuffIds.Count, iconSlots.Count);
+        for (int i = 0; i < visibleCount; i++)
         {
-            Image iconImage = CreateBuffImage(i, safeIconsPerRow);
-            if (iconImage == null)
-            {
-                continue;
-            }
-
-            createdIcons.Add(iconImage);
-            SetIconSprite(activeBuffIds[i], iconImage);
+            SetIconSprite(activeBuffIds[i], iconSlots[i]);
         }
-    }
-
-    private void EnsureBuffRoot()
-    {
-        if (buffRoot != null)
-        {
-            return;
-        }
-
-        Transform foundBuffRoot = transform.Find("Buff");
-        if (foundBuffRoot is RectTransform foundRectTransform)
-        {
-            buffRoot = foundRectTransform;
-            return;
-        }
-
-        buffRoot = transform as RectTransform;
-    }
-
-    private Image CreateBuffImage(int index, int safeIconsPerRow)
-    {
-        GameObject iconObject = new GameObject($"BuffImage ({index + 1})", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-        iconObject.transform.SetParent(buffRoot, false);
-
-        RectTransform rectTransform = iconObject.transform as RectTransform;
-        if (rectTransform == null)
-        {
-            Destroy(iconObject);
-            return null;
-        }
-
-        int column = index % safeIconsPerRow;
-        int row = index / safeIconsPerRow;
-        rectTransform.anchorMin = new Vector2(0f, 1f);
-        rectTransform.anchorMax = new Vector2(0f, 1f);
-        rectTransform.pivot = new Vector2(0.5f, 0.5f);
-        rectTransform.sizeDelta = iconSize;
-        rectTransform.anchoredPosition = firstIconPosition + new Vector2(column * iconSpacing, -row * iconSpacing);
-        rectTransform.localScale = Vector3.one;
-
-        Image iconImage = iconObject.GetComponent<Image>();
-        iconImage.enabled = false;
-        iconImage.raycastTarget = false;
-        iconImage.preserveAspect = true;
-
-        return iconImage;
     }
 
     private void SetIconSprite(int buffId, Image iconImage)
@@ -262,18 +223,21 @@ public class BuffUI : MonoBehaviour
         image.sprite = sprite;
         image.enabled = true;
         image.color = Color.white;
+        image.raycastTarget = false;
+        image.preserveAspect = true;
     }
 
-    private void ClearIconObjects()
+    private void ClearSlots()
     {
-        foreach (Image image in createdIcons)
+        foreach (Image image in iconSlots)
         {
             if (image != null)
             {
-                Destroy(image.gameObject);
+                image.enabled = false;
+                image.sprite = null;
+                // 편집용 구분색이 전투 중 아이콘과 선택 강조에 남지 않도록 초기화
+                image.color = Color.white;
             }
         }
-
-        createdIcons.Clear();
     }
 }

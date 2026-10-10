@@ -100,7 +100,7 @@ public class CombatResolver
             battleManager.currentTarget = originalTarget;
             yield return playedCard.PlaySequence(battleManager);
             battleManager.currentTarget = null;
-            battleManager.HandlePlayedCardPowerEffects(playedCard, originalTarget, false);
+            battleManager.Buffs.Player.OnCardPlayed(playedCard, originalTarget, false);
             if (cardUseAllEnemiesDamage > 0)
                 battleManager.ApplyCardUseAllEnemiesDamage(cardUseAllEnemiesDamage);
 
@@ -122,13 +122,13 @@ public class CombatResolver
                 yield return useAnimation;
             }
 
-            ResolvePlayedCardDestination(playedCard);
+            CardPlayCompletion.ResolveDestination(battleManager, playedCard);
             if (battleManager.TryHandleCombatEnd())
             {
                 yield break;
             }
 
-            ApplyPostPlayKeywords(playedCard);
+            CardPlayCompletion.ApplyKeywords(battleManager, playedCard);
             battleManager.TryHandleCombatEnd();
         }
         finally
@@ -146,93 +146,6 @@ public class CombatResolver
         battleManager.UpdateAllUI();
     }
 
-    private void ResolvePlayedCardDestination(Card playedCard)
-    {
-        if (playedCard == null)
-        {
-            return;
-        }
-
-        if (battleManager.ShouldPotionGoToDiscardInsteadOfExhaust(playedCard))
-        {
-            battleManager.usableDeckManager?.AddToDiscard(playedCard);
-            return;
-        }
-
-        if (playedCard.ShouldExhaustWhenPlayed())
-        {
-            battleManager.MoveCardToExhaust(playedCard);
-            return;
-        }
-
-        if (battleManager.ShouldExhaustUnlockedUnplayableCard(playedCard))
-        {
-            battleManager.MoveCardToExhaust(playedCard);
-            return;
-        }
-
-        if (playedCard.ShouldLeaveCombatWhenPlayed())
-        {
-            battleManager.RemoveCardFromCombat(playedCard);
-            return;
-        }
-
-        if (HasResolvedCardDestination(playedCard))
-        {
-            return;
-        }
-
-        battleManager.usableDeckManager?.AddToDiscard(playedCard);
-    }
-
-    private bool HasResolvedCardDestination(Card playedCard)
-    {
-        if (playedCard == null || battleManager?.usableDeckManager == null)
-        {
-            return false;
-        }
-
-        return battleManager.usableDeckManager.GetDrawPile().Contains(playedCard)
-            || battleManager.usableDeckManager.GetDiscardPile().Contains(playedCard)
-            || battleManager.usableDeckManager.GetExhaustPile().Contains(playedCard);
-    }
-
-    private void ApplyPostPlayKeywords(Card playedCard)
-    {
-        if (playedCard == null)
-        {
-            return;
-        }
-
-        if (playedCard.HasKeyword(CardKeywordIds.Shadow))
-        {
-            CreateShadowCopy(playedCard);
-        }
-
-        if (playedCard.HasKeyword(CardKeywordIds.Finale))
-        {
-            battleManager.ForceEndPlayerTurn();
-        }
-    }
-
-    private void CreateShadowCopy(Card sourceCard)
-    {
-        if (sourceCard == null || battleManager.handManager == null)
-        {
-            return;
-        }
-
-        Card shadowCopy = sourceCard.CloneForRuntimeCopy();
-        if (shadowCopy == null)
-        {
-            return;
-        }
-
-        shadowCopy.AddKeyword(CardKeywordIds.Ghost);
-        shadowCopy.SetCost(Mathf.Max(1, sourceCard.cost - 1), false);
-        battleManager.handManager.AddCard(shadowCopy);
-    }
-
     private IEnumerator ReplayCardEffectsIfNeeded(Card playedCard, Monster originalTarget, int repeatCount)
     {
         for (int i = 0; i < repeatCount; i++)
@@ -240,7 +153,7 @@ public class CombatResolver
             battleManager.currentTarget = originalTarget;
             yield return playedCard.PlaySequence(battleManager);
             battleManager.currentTarget = null;
-            battleManager.HandlePlayedCardPowerEffects(playedCard, originalTarget, true);
+            battleManager.Buffs.Player.OnCardPlayed(playedCard, originalTarget, true);
             while (battleManager.HasPendingSelection)
                 yield return null;
         }

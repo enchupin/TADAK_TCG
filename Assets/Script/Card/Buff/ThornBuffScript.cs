@@ -15,7 +15,7 @@ public sealed class ThornBuffScript : PlayerBuffScript
         if (damage > 0)
         {
             int dealtDamage = attacker.TakeDamage(damage, 0);
-            battleManager?.HandlePlayerDamageDealt(attacker, dealtDamage);
+            battleManager?.Buffs.Player.OnPlayerDamageDealt(attacker, dealtDamage);
         }
     }
 }

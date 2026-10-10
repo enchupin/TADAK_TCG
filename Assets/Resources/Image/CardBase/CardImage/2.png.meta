@@ -1,10 +1,16 @@
 fileFormatVersion: 2
-guid: 879211450ea49a244b79d89889db89aa
+guid: ee59143f0f26f574480d2ca640703051
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7879150038014140143
-    second: "\uBC29\uD328_0"
+      213: -4909983984795921717
+    second: 00002_0
+  - first:
+      213: -3564486005565356076
+    second: 00002_1
+  - first:
+      213: 8670039830376357525
+    second: 00002_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -72,7 +78,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 512
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -113,13 +119,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\uBC29\uD328_0"
+      name: 00002_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 64
-        height: 80
+        x: 219
+        y: 706
+        width: 61
+        height: 58
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +134,52 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 111692439c2a7a290800000000000000
-      internalID: -7879150038014140143
+      spriteID: bc2d16d749b3cdbb0800000000000000
+      internalID: -4909983984795921717
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 00002_1
+      rect:
+        serializedVersion: 2
+        x: 230
+        y: 92
+        width: 818
+        height: 1085
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d70d670dd6688ec0800000000000000
+      internalID: -3564486005565356076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 00002_2
+      rect:
+        serializedVersion: 2
+        x: 998
+        y: 504
+        width: 99
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59e12163a4b225870800000000000000
+      internalID: 8670039830376357525
       vertices: []
       indices: 
       edges: []
@@ -148,7 +198,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\uBC29\uD328_0": -7879150038014140143
+      00002_0: -4909983984795921717
+      00002_1: -3564486005565356076
+      00002_2: 8670039830376357525
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

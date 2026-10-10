@@ -6,7 +6,7 @@ $sources = @(
     'Card/Card.cs', 'Card/CardKeywordIds.cs', 'Character/Character.cs',
     'Battle/BattleContext.cs', 'Battle/Systems/CombatResolver.cs',
     'Card/Data/MoveZoneType.cs', 'Card/Data/MovePositionType.cs',
-    'Card/Effects/ICardEffect.cs', 'Card/Effects/CardEffectSequence.cs',
+    'Card/Effects/ICardEffect.cs', 'Card/Effects/CardEffectSequence.cs', 'Card/Effects/CardPlayCompletion.cs',
     'Card/Effects/SelectCardEffect.cs', 'Card/Effects/RepeatEffect.cs',
     'Card/Effects/ConditionalEffect.cs', 'Card/Effects/TriggeredCardExecutionUtility.cs',
     'Card/Effects/UseTopDeckCardsEffect.cs', 'Card/Effects/ReplayExhaustedCardsEffect.cs',

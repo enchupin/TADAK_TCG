@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 /// <summary>
@@ -38,6 +39,37 @@ public class BattleDeckViewer : MonoBehaviour
     private DeckPanelViewType currentViewType;
     private CardController cardDetailPreviewController;
     private CardUI cardDetailPreviewUI;
+    private static BattleDeckViewer activeViewer;
+
+    private void OnEnable() {
+        activeViewer = this;
+    }
+
+    private void OnDisable() {
+        if (activeViewer == this) activeViewer = null;
+    }
+
+    private void Update() {
+        // 전투 씬을 직접 실행해 설정 매니저가 없는 경우에도 ESC 닫기를 지원
+        if (SettingsManager.Instance != null || Keyboard.current == null
+            || !Keyboard.current.escapeKey.wasPressedThisFrame) return;
+        if (TrainingMapController.TryHandlePreviewEscape()) return;
+        TryHandlePanelEscape();
+    }
+
+    public static bool TryHandlePanelEscape() {
+        if (activeViewer == null || activeViewer.isSelectionMode) return false;
+
+        if (activeViewer.cardDetailPanelRoot != null && activeViewer.cardDetailPanelRoot.activeInHierarchy) {
+            activeViewer.CloseCardDetailPanel();
+            return true;
+        }
+
+        if (activeViewer.deckPanelRoot == null || !activeViewer.deckPanelRoot.activeInHierarchy) return false;
+        activeViewer.TogglePilePanel(activeViewer.currentViewType);
+        return true;
+    }
+
     public void ResetForCombat()
     {
         isSelectionMode = false;
@@ -53,13 +85,13 @@ public class BattleDeckViewer : MonoBehaviour
             cardContainerManager.SetCardClickHandler(null);
         }
         if (deckPanelRoot != null) deckPanelRoot.SetActive(false);
-        CloseCardDetailPanel();
+        HideCardDetailPanel();
         UpdateConfirmButtonState();
     }
     private void Awake() {
         ValidateRequiredReferences();
         deckPanelRoot.SetActive(false);
-        CloseCardDetailPanel();
+        HideCardDetailPanel();
         UpdateConfirmButtonState();
     }
 
@@ -125,13 +157,15 @@ public class BattleDeckViewer : MonoBehaviour
 
         if (deckPanelRoot.activeSelf && currentViewType == viewType) {
             deckPanelRoot.SetActive(false);
-            CloseCardDetailPanel();
+            HideCardDetailPanel();
             currentViewType = DeckPanelViewType.None;
+            SettingsManager.PlayPanelToggleSound();
             return;
         }
 
         deckPanelRoot.SetActive(true);
         RefreshPileCards(viewType);
+        SettingsManager.PlayPanelToggleSound();
     }
 
     public bool OpenSelectionPanel(List<Card> selectableCards, int selectCount, Action<List<Card>> onComplete, bool allowFewer = false) {
@@ -149,7 +183,7 @@ public class BattleDeckViewer : MonoBehaviour
         onSelectionCompleted = onComplete;
         selectedCards.Clear();
         selectedControllers.Clear();
-        CloseCardDetailPanel();
+        HideCardDetailPanel();
         UpdateConfirmButtonState();
 
         cardContainerManager.ClearHand();
@@ -185,7 +219,7 @@ public class BattleDeckViewer : MonoBehaviour
             cards.Sort(CompareCardsById);
         }
 
-        CloseCardDetailPanel();
+        HideCardDetailPanel();
         cardContainerManager.ClearHand();
         cardContainerManager.SetCardClickHandler(HandleViewedCardClicked);
         currentViewType = viewType;
@@ -259,7 +293,7 @@ public class BattleDeckViewer : MonoBehaviour
         onSelectionCompleted = null;
         selectedCards.Clear();
         selectedControllers.Clear();
-        CloseCardDetailPanel();
+        HideCardDetailPanel();
         UpdateConfirmButtonState();
 
         cardContainerManager.SetCardClickHandler(null);
@@ -273,6 +307,12 @@ public class BattleDeckViewer : MonoBehaviour
     }
 
     public void CloseCardDetailPanel() {
+        bool wasVisible = cardDetailPanelRoot != null && cardDetailPanelRoot.activeInHierarchy;
+        HideCardDetailPanel();
+        if (wasVisible) SettingsManager.PlayPanelToggleSound();
+    }
+
+    private void HideCardDetailPanel() {
         ResolveCardDetailPreviewUI()?.HideBuffTooltip();
         if (cardDetailPanelRoot != null) {
             cardDetailPanelRoot.SetActive(false);
@@ -290,6 +330,7 @@ public class BattleDeckViewer : MonoBehaviour
 
         if (cardDetailPanelRoot != null) {
             cardDetailPanelRoot.SetActive(true);
+            SettingsManager.PlayPanelToggleSound();
         }
 
         if (cardDetailPreviewController != null) {
