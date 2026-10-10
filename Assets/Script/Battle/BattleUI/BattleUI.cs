@@ -30,6 +30,11 @@ public class BattleUI : MonoBehaviour
     [SerializeField] private Image secondIdentityImage;
     [SerializeField] private Image thirdIdentityImage;
 
+    [Header("아이덴티티 충전 완료 이미지")]
+    public Image firstIdentityFullImage;
+    public Image secondIdentityFullImage;
+    public Image thirdIdentityFullImage;
+
     [Header("데이터 참조")]
     [SerializeField] private TrainingBattleManager battleManager;
     [SerializeField] private GameObject defeatPanel;
@@ -47,6 +52,7 @@ public class BattleUI : MonoBehaviour
     {
         CacheHPFillDefaultColor();
         HideDefeatPanel();
+        UpdateIdentityGauges();
     }
 
 
@@ -115,9 +121,9 @@ public class BattleUI : MonoBehaviour
     
     public void UpdateIdentityGauges()
     {
-        UpdateIdentityGaugeSlider(firstIdentityGaugeSlider, firstIdentityImage, 0);
-        UpdateIdentityGaugeSlider(secondIdentityGaugeSlider, secondIdentityImage, 1);
-        UpdateIdentityGaugeSlider(thirdIdentityGaugeSlider, thirdIdentityImage, 2);
+        UpdateIdentityGaugeSlider(firstIdentityGaugeSlider, firstIdentityImage, firstIdentityFullImage, 0);
+        UpdateIdentityGaugeSlider(secondIdentityGaugeSlider, secondIdentityImage, secondIdentityFullImage, 1);
+        UpdateIdentityGaugeSlider(thirdIdentityGaugeSlider, thirdIdentityImage, thirdIdentityFullImage, 2);
     }
 
     /// <summary>
@@ -189,25 +195,30 @@ public class BattleUI : MonoBehaviour
         }
     }
     
-    private void UpdateIdentityGaugeSlider(Slider targetSlider, Image identityImage, int slotIndex)
+    private void UpdateIdentityGaugeSlider(Slider targetSlider, Image identityImage, Image fullGaugeImage, int slotIndex)
     {
-        if (targetSlider == null)
+        if (targetSlider != null)
         {
-            return;
+            targetSlider.interactable = false;
+            targetSlider.wholeNumbers = false;
+            targetSlider.minValue = 0f;
+            targetSlider.maxValue = 1f;
         }
-
-        targetSlider.interactable = false;
-        targetSlider.wholeNumbers = false;
-        targetSlider.minValue = 0f;
-        targetSlider.maxValue = 1f;
 
         if (battleManager == null || !battleManager.TryGetSelectedCharacterBySlot(slotIndex, out Character character))
         {
-            targetSlider.SetValueWithoutNotify(1f);
+            if (targetSlider != null)
+            {
+                targetSlider.SetValueWithoutNotify(1f);
+            }
             if (identityImage != null)
             {
                 identityImage.sprite = null;
                 identityImage.enabled = false;
+            }
+            if (fullGaugeImage != null)
+            {
+                fullGaugeImage.gameObject.SetActive(false);
             }
             return;
         }
@@ -222,7 +233,14 @@ public class BattleUI : MonoBehaviour
         int currentGauge = Mathf.Clamp(battleManager.GetIdentityGauge(character), 0, maxGauge);
 
         // 충전될수록 검은색 필터가 사라지도록 남은 비율을 표시
-        targetSlider.SetValueWithoutNotify(1f - (float)currentGauge / maxGauge);
+        if (targetSlider != null)
+        {
+            targetSlider.SetValueWithoutNotify(1f - (float)currentGauge / maxGauge);
+        }
+        if (fullGaugeImage != null)
+        {
+            fullGaugeImage.gameObject.SetActive(currentGauge >= maxGauge);
+        }
     }
 
 }
