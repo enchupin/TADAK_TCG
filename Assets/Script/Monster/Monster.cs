@@ -29,7 +29,6 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     [Header("UI Reference")]
     [SerializeField] private TextMeshProUGUI hpText;
     [SerializeField] private TextMeshProUGUI defenseText;
-    [SerializeField] private TextMeshProUGUI intentText;
     public Slider hpSlider;
     public Image hpFillImage;
     public BuffUI buffUI;
@@ -91,7 +90,6 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     protected virtual void Start()
     {
         BindStateController();
-        EnsureIntentTextReference();
 
         if (TrainingBattleManager.Instance != null)
         {
@@ -495,6 +493,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         skipCurrentTurnAction = true;
         SetIntent("기절합니다.");
         SetPlannedPattern(0, MonsterIntentIconType.Stun);
+        UpdateIntentUI();
     }
 
     public void ScalePlannedIntent(float multiplier)
@@ -618,22 +617,14 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     private void UpdateIntentUI()
     {
-        EnsureIntentTextReference();
-        if (intentText == null)
+        if (stateController == null)
+        {
             return;
+        }
 
-        if (!string.IsNullOrWhiteSpace(plannedIntentDescription))
-        {
-            intentText.text = plannedIntentDescription;
-        }
-        else if (hasAttackIntent)
-        {
-            intentText.text = $"Intent: Attack {plannedIntentValue}";
-        }
-        else
-        {
-            intentText.text = string.Empty;
-        }
+        stateController.UpdateIntendIcons(isActiveAndEnabled && !IsDead() && !hasLeftCombat
+            ? plannedIntentIcons
+            : null);
     }
 
     private void BindStateController()
@@ -793,6 +784,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         plannedIntentDescription = string.Empty;
         plannedPatternId = 0;
         plannedIntentIcons.Clear();
+        UpdateIntentUI();
     }
 
     private static string ReplaceIntentValue(string description, int previousValue, int nextValue)
@@ -932,36 +924,6 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         }
 
         return amount;
-    }
-
-    private void EnsureIntentTextReference()
-    {
-        if (intentText != null)
-        {
-            return;
-        }
-
-        TextMeshProUGUI sourceText = hpText != null ? hpText : defenseText;
-        if (sourceText == null)
-        {
-            return;
-        }
-
-        intentText = Instantiate(sourceText, sourceText.transform.parent);
-        intentText.gameObject.name = "EnemyIntentText";
-        intentText.text = string.Empty;
-
-        RectTransform sourceRect = sourceText.rectTransform;
-        RectTransform intentRect = intentText.rectTransform;
-        intentRect.anchorMin = sourceRect.anchorMin;
-        intentRect.anchorMax = sourceRect.anchorMax;
-        intentRect.pivot = sourceRect.pivot;
-        intentRect.sizeDelta = sourceRect.sizeDelta;
-        intentRect.anchoredPosition = sourceRect.anchoredPosition + new Vector2(0f, -40f);
-        intentRect.localScale = sourceRect.localScale;
-
-        int siblingIndex = sourceText.transform.GetSiblingIndex();
-        intentText.transform.SetSiblingIndex(siblingIndex + 1);
     }
 
     protected virtual bool IsNonStackableBuff(int buffId)

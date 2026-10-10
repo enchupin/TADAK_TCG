@@ -235,6 +235,8 @@ public class BuffUI : MonoBehaviour
             {
                 image.enabled = false;
                 image.sprite = null;
+                // 편집용 구분색이 전투 중 아이콘과 선택 강조에 남지 않도록 초기화
+                image.color = Color.white;
             }
         }
     }

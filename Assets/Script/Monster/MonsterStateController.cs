@@ -56,6 +56,17 @@ public class MonsterStateController : MonoBehaviour
     // 프리팹 내부의 BuffUI와 버프 이미지 순서를 인스펙터에 연결
     public BuffUI buffUI;
 
+    [Header("의도 이미지 슬롯")]
+    [Tooltip("좌측 상단부터 표시할 순서대로 프리팹의 Intend 이미지를 연결")]
+    public List<Image> intendSlots = new();
+
+    [Header("의도 아이콘")]
+    [SerializeField] private Sprite attackIntendSprite;
+    [SerializeField] private Sprite protectionIntendSprite;
+    [SerializeField] private Sprite beneficialIntendSprite;
+    [SerializeField] private Sprite harmfulIntendSprite;
+    [SerializeField] private Sprite defaultIntendSprite;
+
     [Header("상태 효과음")]
     [SerializeField, HideInInspector] private AudioClip attackSound;
     [SerializeField, HideInInspector] private AudioClip hitSound;
@@ -72,6 +83,7 @@ public class MonsterStateController : MonoBehaviour
     private void Awake()
     {
         CacheAnimator();
+        UpdateIntendIcons(null);
     }
 
     private void OnEnable()
@@ -85,11 +97,47 @@ public class MonsterStateController : MonoBehaviour
     private void OnDisable()
     {
         StopReturnToIdle();
+        UpdateIntendIcons(null);
         if (monsterImage != null)
         {
             monsterImage.enabled = false;
             monsterImage.raycastTarget = false;
             monsterImage.sprite = null;
+        }
+    }
+
+    public void UpdateIntendIcons(IReadOnlyList<MonsterIntentIconType> iconTypes)
+    {
+        int iconCount = iconTypes != null && isActiveAndEnabled ? iconTypes.Count : 0;
+        for (int i = 0; i < intendSlots.Count; i++)
+        {
+            Image slot = intendSlots[i];
+            if (slot == null)
+            {
+                continue;
+            }
+
+            MonsterIntentIconType iconType = i < iconCount ? iconTypes[i] : MonsterIntentIconType.None;
+            Sprite sprite = iconType switch
+            {
+                MonsterIntentIconType.None => null,
+                MonsterIntentIconType.Attack => attackIntendSprite,
+                MonsterIntentIconType.Protection => protectionIntendSprite,
+                MonsterIntentIconType.BeneficialEffect => beneficialIntendSprite,
+                MonsterIntentIconType.HarmfulEffect => harmfulIntendSprite,
+                _ => defaultIntendSprite
+            };
+            if (iconType != MonsterIntentIconType.None && sprite == null)
+            {
+                sprite = defaultIntendSprite;
+            }
+
+            slot.sprite = sprite;
+            slot.enabled = sprite != null;
+            // 파스텔 구분색은 편집용으로 사용하고 전투에서는 아이콘 원래 색상을 표시
+            slot.color = Color.white;
+            slot.preserveAspect = true;
+            slot.raycastTarget = false;
         }
     }
 
