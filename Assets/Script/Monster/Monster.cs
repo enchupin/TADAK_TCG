@@ -25,7 +25,6 @@ public enum MonsterIntentIconType
 public abstract class Monster : MonoBehaviour, IPointerClickHandler
 {
     private static readonly Color SelectionTintColor = new Color(0.45f, 0.75f, 1f, 1f);
-    private static readonly Dictionary<Slider, Monster> healthBarOwners = new();
 
     [Header("UI Reference")]
     [SerializeField] private TextMeshProUGUI hpText;
@@ -105,6 +104,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     protected virtual void OnDisable()
     {
+        SetSelectionHighlight(false);
         ReleaseHealthBarUI();
         buffUI?.UnbindMonster(this);
     }
@@ -302,6 +302,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         }
 
         hasLeftCombat = true;
+        SetSelectionHighlight(false);
         ReleaseHealthBarUI();
         buffUI?.UnbindMonster(this);
         defense = 0;
@@ -645,56 +646,11 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         stateController.SetMonsterImageName(name);
     }
 
-    public void SetBuffUI(BuffUI ui)
-    {
-        // 몬스터 프리팹의 부모인 스폰 위치에 미리 배치된 버프 슬롯을 연결
-        // 스포너가 인스펙터에 연결된 참조를 전달하며 이름으로 검색하지 않음
-        if (buffUI != ui)
-        {
-            buffUI?.UnbindMonster(this);
-            buffUI = ui;
-        }
-
-        UpdateBuffUI();
-    }
-
-    public void SetHealthBarUI(Slider slider, Image fillImage)
-    {
-        ReleaseHealthBarUI();
-        hpSlider = slider;
-        hpFillImage = fillImage;
-        hasDefaultHPFillColor = false;
-        if (hpSlider == null)
-        {
-            return;
-        }
-
-        // 같은 스폰 칸을 재사용할 때 이전 몬스터의 체력바 색상과 연결을 먼저 정리
-        if (healthBarOwners.TryGetValue(hpSlider, out Monster previousOwner))
-        {
-            if (previousOwner != null)
-            {
-                previousOwner.ReleaseHealthBarUI();
-            }
-
-            healthBarOwners.Remove(hpSlider);
-        }
-
-        CacheHPFillDefaultColor();
-        UpdateHealthBarUI();
-    }
-
     private void ReleaseHealthBarUI()
     {
         // 이전 몬스터의 늦은 제거 처리가 새 몬스터의 체력바를 숨기지 않도록 소유자를 확인
-        if (ReferenceEquals(hpSlider, null)
-            || !healthBarOwners.TryGetValue(hpSlider, out Monster owner)
-            || owner != this)
-        {
-            return;
-        }
-
-        healthBarOwners.Remove(hpSlider);
+        // 같은 스폰 칸을 재사용할 때 이전 몬스터의 체력바 색상과 연결을 먼저 정리
+        // 재사용 전에 이전 컴포넌트의 UI 참조를 해제하므로 소유자 목록은 사용하지 않음
         if (hpSlider != null)
         {
             hpSlider.gameObject.SetActive(false);
@@ -725,13 +681,11 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        if (hpSlider == null
-            || (healthBarOwners.TryGetValue(hpSlider, out Monster owner) && owner != this))
+        if (hpSlider == null)
         {
             return;
         }
 
-        healthBarOwners[hpSlider] = this;
         hpSlider.gameObject.SetActive(true);
         int safeMaxHp = Mathf.Max(1, maxHP);
         hpSlider.minValue = 0f;
@@ -824,6 +778,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         }
 
         hasTriggeredDeath = true;
+        SetSelectionHighlight(false);
         defense = 0;
         ClearPlannedAction();
         OnDeathTriggered();

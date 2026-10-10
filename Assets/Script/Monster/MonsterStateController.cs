@@ -31,11 +31,30 @@ public class MonsterStateController : MonoBehaviour
     [SerializeField] private float hitStateDuration = 0.25f;
 
     [Header("상태 이미지")]
-    [SerializeField] private Image targetImage;
-    [SerializeField] private SpriteRenderer targetSpriteRenderer;
+    // 스폰 위치별 몬스터 이미지
+    // 스폰 위치 목록과 같은 순서로 각 MonsterImage의 MonsterImageUI를 연결
+    // 별도 컴포넌트 없이 Image를 직접 연결하도록 변경
+    // 스폰 위치 목록과 같은 순서로 각 MonsterImage의 Image를 연결
+    // 각 슬롯에 배치한 프리팹 내부 이미지를 직접 연결
+    [Tooltip("스폰 위치의 몬스터 이미지")]
+    public Image monsterImage;
     [SerializeField] private string monsterImageNameOverride;
     [SerializeField] private bool preserveImageAspect = true;
     [SerializeField] private bool logMissingImage = true;
+
+    [Header("스폰 위치별 체력 UI")]
+    // 스폰 위치 목록과 같은 순서로 각 HPSlider를 연결
+    // 각 HPSlider의 Fill 이미지를 같은 순서로 연결
+    // 슬롯별 목록 대신 프리팹 내부의 체력바와 Fill 이미지를 연결
+    public Slider hpSlider;
+    public Image hpFillImage;
+
+    [Header("스폰 위치별 버프 UI")]
+    // 스폰 위치 목록과 같은 순서로 각 Buff 오브젝트의 BuffUI를 연결
+    // 몬스터 프리팹의 부모인 스폰 위치에 미리 배치된 버프 슬롯을 연결
+    // 스포너가 인스펙터에 연결된 참조를 전달하며 이름으로 검색하지 않음
+    // 프리팹 내부의 BuffUI와 버프 이미지 순서를 인스펙터에 연결
+    public BuffUI buffUI;
 
     [Header("상태 효과음")]
     [SerializeField, HideInInspector] private AudioClip attackSound;
@@ -53,12 +72,25 @@ public class MonsterStateController : MonoBehaviour
     private void Awake()
     {
         CacheAnimator();
-        CacheImageTarget();
+    }
+
+    private void OnEnable()
+    {
+        if (monsterImage != null)
+        {
+            ApplyStateImage(CurrentState);
+        }
     }
 
     private void OnDisable()
     {
         StopReturnToIdle();
+        if (monsterImage != null)
+        {
+            monsterImage.enabled = false;
+            monsterImage.raycastTarget = false;
+            monsterImage.sprite = null;
+        }
     }
 
     public void EnterIdle()
@@ -122,9 +154,12 @@ public class MonsterStateController : MonoBehaviour
 
     private void ApplyStateImage(MonsterStateType state)
     {
-        CacheImageTarget();
+        if (!isActiveAndEnabled)
+        {
+            return;
+        }
 
-        if (targetImage == null && targetSpriteRenderer == null)
+        if (monsterImage == null)
         {
             LogMissingImageTarget();
             return;
@@ -136,16 +171,10 @@ public class MonsterStateController : MonoBehaviour
             return;
         }
 
-        if (targetImage != null)
-        {
-            targetImage.sprite = stateSprite;
-            targetImage.preserveAspect = preserveImageAspect;
-        }
-
-        if (targetSpriteRenderer != null)
-        {
-            targetSpriteRenderer.sprite = stateSprite;
-        }
+        monsterImage.sprite = stateSprite;
+        monsterImage.preserveAspect = preserveImageAspect;
+        monsterImage.enabled = true;
+        monsterImage.raycastTarget = true;
     }
 
     private Sprite LoadStateSprite(MonsterStateType state)
@@ -239,19 +268,6 @@ public class MonsterStateController : MonoBehaviour
 
         hasLoggedMissingImageTarget = true;
         Debug.LogWarning("[MonsterStateController] 상태 이미지를 적용할 Image 또는 SpriteRenderer가 연결되지 않았습니다", this);
-    }
-
-    private void CacheImageTarget()
-    {
-        if (targetImage == null)
-        {
-            TryGetComponent(out targetImage);
-        }
-
-        if (targetSpriteRenderer == null)
-        {
-            TryGetComponent(out targetSpriteRenderer);
-        }
     }
 
     private static Sprite LoadSpriteFromMultipleResource(string resourcePath)
