@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MonsterSpawner : MonoBehaviour
 {
@@ -90,7 +91,24 @@ public class MonsterSpawner : MonoBehaviour
     [Tooltip("스폰 위치 목록과 같은 순서로 각 Buff 오브젝트의 BuffUI를 연결")]
     public List<BuffUI> spawnBuffUIs = new List<BuffUI>();
 
+    [Header("스폰 위치별 체력 UI")]
+    [Tooltip("스폰 위치 목록과 같은 순서로 각 HPSlider를 연결")]
+    public List<Slider> spawnHPSliders = new List<Slider>();
+    [Tooltip("각 HPSlider의 Fill 이미지를 같은 순서로 연결")]
+    public List<Image> spawnHPFillImages = new List<Image>();
+
     private int reservedSummonCount;
+
+    private void Awake()
+    {
+        foreach (Slider slider in spawnHPSliders)
+        {
+            if (slider != null)
+            {
+                slider.gameObject.SetActive(false);
+            }
+        }
+    }
 
     public void ClearEncounter()
     {
@@ -356,6 +374,7 @@ public class MonsterSpawner : MonoBehaviour
         }
 
         BindSpawnBuffUI(spawnedMonster, spawnPoint);
+        BindSpawnHealthBarUI(spawnedMonster, spawnPoint);
         return spawnedMonster;
     }
 
@@ -377,6 +396,7 @@ public class MonsterSpawner : MonoBehaviour
         }
 
         BindSpawnBuffUI(spawnedMonster, spawnPoint);
+        BindSpawnHealthBarUI(spawnedMonster, spawnPoint);
         return spawnedMonster;
     }
 
@@ -390,6 +410,19 @@ public class MonsterSpawner : MonoBehaviour
         }
 
         monster.SetBuffUI(spawnBuffUIs[slotIndex]);
+    }
+
+    private void BindSpawnHealthBarUI(Monster monster, Transform spawnPoint)
+    {
+        int slotIndex = spawnPoints.IndexOf(spawnPoint);
+        if (slotIndex < 0 || slotIndex >= spawnHPSliders.Count || spawnHPSliders[slotIndex] == null
+            || slotIndex >= spawnHPFillImages.Count || spawnHPFillImages[slotIndex] == null)
+        {
+            Debug.LogError("[MonsterSpawner] 스폰 위치의 체력 UI가 인스펙터에 연결되지 않았습니다");
+            return;
+        }
+
+        monster.SetHealthBarUI(spawnHPSliders[slotIndex], spawnHPFillImages[slotIndex]);
     }
 
     /// <summary>

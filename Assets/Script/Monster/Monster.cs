@@ -25,17 +25,14 @@ public enum MonsterIntentIconType
 public abstract class Monster : MonoBehaviour, IPointerClickHandler
 {
     private static readonly Color SelectionTintColor = new Color(0.45f, 0.75f, 1f, 1f);
-    private const string HealthBarObjectName = "HpBar";
-    private const string HealthBarBackgroundObjectName = "Background";
-    private const string HealthBarFillAreaObjectName = "Fill Area";
-    private const string HealthBarFillObjectName = "Fill";
+    private static readonly Dictionary<Slider, Monster> healthBarOwners = new();
 
     [Header("UI Reference")]
     [SerializeField] private TextMeshProUGUI hpText;
     [SerializeField] private TextMeshProUGUI defenseText;
     [SerializeField] private TextMeshProUGUI intentText;
-    [SerializeField] private Slider hpSlider;
-    [SerializeField] private Image hpFillImage;
+    public Slider hpSlider;
+    public Image hpFillImage;
     public BuffUI buffUI;
     [SerializeField] private Color barrierHPFillColor = new Color32(135, 206, 235, 255);
 
@@ -96,7 +93,6 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     {
         BindStateController();
         EnsureIntentTextReference();
-        EnsureStatusUIReferences();
 
         if (TrainingBattleManager.Instance != null)
         {
@@ -109,11 +105,13 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     protected virtual void OnDisable()
     {
+        ReleaseHealthBarUI();
         buffUI?.UnbindMonster(this);
     }
 
     protected virtual void OnDestroy()
     {
+        ReleaseHealthBarUI();
         buffUI?.UnbindMonster(this);
         SetSelectionHighlight(false);
 
@@ -125,8 +123,6 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     public void UpdateUI()
     {
-        EnsureStatusUIReferences();
-
         if (hpText != null)
             hpText.text = $"HP : {hp}/{maxHP}";
 
@@ -306,6 +302,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         }
 
         hasLeftCombat = true;
+        ReleaseHealthBarUI();
         buffUI?.UnbindMonster(this);
         defense = 0;
         ClearPlannedAction();
@@ -638,13 +635,6 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    private void EnsureStatusUIReferences()
-    {
-        EnsureHpSliderReference();
-        EnsureHpFillImageReference();
-        CacheHPFillDefaultColor();
-    }
-
     private void BindStateController()
     {
         if (stateController == null)
@@ -653,38 +643,6 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         }
 
         stateController.SetMonsterImageName(name);
-    }
-
-    private void EnsureHpSliderReference()
-    {
-        if (hpSlider != null)
-        {
-            return;
-        }
-
-        hpSlider = FindChildComponentByName<Slider>(transform, HealthBarObjectName);
-        if (hpSlider == null)
-        {
-            hpSlider = CreateRuntimeHpSlider();
-        }
-    }
-
-    private void EnsureHpFillImageReference()
-    {
-        if (hpFillImage != null)
-        {
-            return;
-        }
-
-        if (hpSlider != null && hpSlider.fillRect != null)
-        {
-            hpFillImage = hpSlider.fillRect.GetComponent<Image>();
-        }
-
-        if (hpFillImage == null && hpSlider != null)
-        {
-            hpFillImage = FindChildComponentByName<Image>(hpSlider.transform, HealthBarFillObjectName);
-        }
     }
 
     public void SetBuffUI(BuffUI ui)
@@ -700,99 +658,52 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         UpdateBuffUI();
     }
 
-    private Slider CreateRuntimeHpSlider()
+    public void SetHealthBarUI(Slider slider, Image fillImage)
     {
-        GameObject sliderObject = new GameObject(HealthBarObjectName, typeof(RectTransform), typeof(Slider));
-        sliderObject.layer = gameObject.layer;
-        sliderObject.transform.SetParent(transform, false);
-
-        RectTransform sliderRect = sliderObject.transform as RectTransform;
-        if (sliderRect != null)
-        {
-            sliderRect.anchorMin = new Vector2(0.5f, 0f);
-            sliderRect.anchorMax = new Vector2(0.5f, 0f);
-            sliderRect.pivot = new Vector2(0.5f, 0.5f);
-            sliderRect.sizeDelta = new Vector2(160f, 20f);
-            sliderRect.anchoredPosition = new Vector2(0f, -10f);
-            sliderRect.localScale = Vector3.one;
-        }
-
-        Image backgroundImage = CreateHealthBarImage(
-            HealthBarBackgroundObjectName,
-            sliderObject.transform,
-            new Color(0f, 0f, 0f, 0.55f));
-        RectTransform backgroundRect = backgroundImage != null ? backgroundImage.rectTransform : null;
-        StretchHealthBarRect(backgroundRect, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-
-        RectTransform fillAreaRect = CreateHealthBarRect(HealthBarFillAreaObjectName, sliderObject.transform);
-        StretchHealthBarRect(
-            fillAreaRect,
-            new Vector2(0f, 0.25f),
-            new Vector2(1f, 0.75f),
-            new Vector2(5f, 0f),
-            new Vector2(-5f, 0f));
-
-        Image fillImage = CreateHealthBarImage(HealthBarFillObjectName, fillAreaRect, Color.white);
-        RectTransform fillRect = fillImage != null ? fillImage.rectTransform : null;
-        StretchHealthBarRect(fillRect, new Vector2(0f, 0f), new Vector2(0f, 1f), Vector2.zero, new Vector2(10f, 0f));
-
-        Slider slider = sliderObject.GetComponent<Slider>();
-        slider.interactable = false;
-        slider.transition = Selectable.Transition.None;
-        slider.minValue = 0f;
-        slider.maxValue = 1f;
-        slider.value = 1f;
-        slider.wholeNumbers = false;
-        slider.targetGraphic = null;
-        slider.fillRect = fillRect;
-
+        ReleaseHealthBarUI();
+        hpSlider = slider;
         hpFillImage = fillImage;
-        return slider;
-    }
-
-    private static RectTransform CreateHealthBarRect(string objectName, Transform parent)
-    {
-        if (parent == null)
-        {
-            return null;
-        }
-
-        GameObject rectObject = new GameObject(objectName, typeof(RectTransform));
-        rectObject.layer = parent.gameObject.layer;
-        rectObject.transform.SetParent(parent, false);
-        return rectObject.transform as RectTransform;
-    }
-
-    private static Image CreateHealthBarImage(string objectName, Transform parent, Color color)
-    {
-        if (parent == null)
-        {
-            return null;
-        }
-
-        GameObject imageObject = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-        imageObject.layer = parent.gameObject.layer;
-        imageObject.transform.SetParent(parent, false);
-
-        Image image = imageObject.GetComponent<Image>();
-        image.color = color;
-        image.raycastTarget = false;
-        return image;
-    }
-
-    private static void StretchHealthBarRect(RectTransform rectTransform, Vector2 anchorMin, Vector2 anchorMax, Vector2 offsetMin, Vector2 offsetMax)
-    {
-        if (rectTransform == null)
+        hasDefaultHPFillColor = false;
+        if (hpSlider == null)
         {
             return;
         }
 
-        rectTransform.anchorMin = anchorMin;
-        rectTransform.anchorMax = anchorMax;
-        rectTransform.pivot = new Vector2(0.5f, 0.5f);
-        rectTransform.offsetMin = offsetMin;
-        rectTransform.offsetMax = offsetMax;
-        rectTransform.localScale = Vector3.one;
+        // 같은 스폰 칸을 재사용할 때 이전 몬스터의 체력바 색상과 연결을 먼저 정리
+        if (healthBarOwners.TryGetValue(hpSlider, out Monster previousOwner))
+        {
+            if (previousOwner != null)
+            {
+                previousOwner.ReleaseHealthBarUI();
+            }
+
+            healthBarOwners.Remove(hpSlider);
+        }
+
+        CacheHPFillDefaultColor();
+        UpdateHealthBarUI();
+    }
+
+    private void ReleaseHealthBarUI()
+    {
+        // 이전 몬스터의 늦은 제거 처리가 새 몬스터의 체력바를 숨기지 않도록 소유자를 확인
+        if (ReferenceEquals(hpSlider, null)
+            || !healthBarOwners.TryGetValue(hpSlider, out Monster owner)
+            || owner != this)
+        {
+            return;
+        }
+
+        healthBarOwners.Remove(hpSlider);
+        if (hpSlider != null)
+        {
+            hpSlider.gameObject.SetActive(false);
+        }
+
+        if (hpFillImage != null && hasDefaultHPFillColor)
+        {
+            hpFillImage.color = defaultHPFillColor;
+        }
     }
 
     private void CacheHPFillDefaultColor()
@@ -808,13 +719,24 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     private void UpdateHealthBarUI()
     {
-        if (hpSlider != null)
+        if (!isActiveAndEnabled || IsDead() || hasLeftCombat)
         {
-            int safeMaxHp = Mathf.Max(1, maxHP);
-            hpSlider.minValue = 0f;
-            hpSlider.maxValue = safeMaxHp;
-            hpSlider.SetValueWithoutNotify(Mathf.Clamp(hp, 0, safeMaxHp));
+            ReleaseHealthBarUI();
+            return;
         }
+
+        if (hpSlider == null
+            || (healthBarOwners.TryGetValue(hpSlider, out Monster owner) && owner != this))
+        {
+            return;
+        }
+
+        healthBarOwners[hpSlider] = this;
+        hpSlider.gameObject.SetActive(true);
+        int safeMaxHp = Mathf.Max(1, maxHP);
+        hpSlider.minValue = 0f;
+        hpSlider.maxValue = safeMaxHp;
+        hpSlider.SetValueWithoutNotify(Mathf.Clamp(hp, 0, safeMaxHp));
 
         if (hpFillImage == null)
         {
@@ -841,30 +763,6 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
         buffUI?.BindMonster(this);
         buffUI?.Refresh();
-    }
-
-    private static T FindChildComponentByName<T>(Transform root, string objectName) where T : Component
-    {
-        if (root == null || string.IsNullOrWhiteSpace(objectName))
-        {
-            return null;
-        }
-
-        foreach (Transform child in root)
-        {
-            if (child.name == objectName && child.TryGetComponent(out T component))
-            {
-                return component;
-            }
-
-            T foundComponent = FindChildComponentByName<T>(child, objectName);
-            if (foundComponent != null)
-            {
-                return foundComponent;
-            }
-        }
-
-        return null;
     }
 
     private void DecreaseBuffStack(int buffId, int amount)
