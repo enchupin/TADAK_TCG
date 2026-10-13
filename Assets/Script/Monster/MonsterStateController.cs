@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -60,6 +61,9 @@ public class MonsterStateController : MonoBehaviour
     [Tooltip("좌측 상단부터 표시할 순서대로 프리팹의 Intend 이미지를 연결")]
     public List<Image> intendSlots = new();
 
+    [Tooltip("의도 이미지 슬롯과 같은 순서로 각 Intend의 수치 텍스트를 연결")]
+    public List<TextMeshProUGUI> intendValueTexts = new();
+
     [Header("의도 아이콘")]
     [SerializeField] private Sprite attackIntendSprite;
     [SerializeField] private Sprite protectionIntendSprite;
@@ -106,7 +110,8 @@ public class MonsterStateController : MonoBehaviour
         }
     }
 
-    public void UpdateIntendIcons(IReadOnlyList<MonsterIntentIconType> iconTypes)
+    public void UpdateIntendIcons(IReadOnlyList<MonsterIntentIconType> iconTypes,
+        int? attackValue = null, int? protectionValue = null)
     {
         int iconCount = iconTypes != null && isActiveAndEnabled ? iconTypes.Count : 0;
         for (int i = 0; i < intendSlots.Count; i++)
@@ -138,6 +143,29 @@ public class MonsterStateController : MonoBehaviour
             slot.color = Color.white;
             slot.preserveAspect = true;
             slot.raycastTarget = false;
+        }
+
+        for (int i = 0; i < intendValueTexts.Count; i++)
+        {
+            TextMeshProUGUI valueText = intendValueTexts[i];
+            if (valueText == null)
+            {
+                continue;
+            }
+
+            MonsterIntentIconType iconType = i < iconCount ? iconTypes[i] : MonsterIntentIconType.None;
+            int? value = iconType switch
+            {
+                MonsterIntentIconType.Attack => attackValue,
+                MonsterIntentIconType.Bomb => attackValue,
+                MonsterIntentIconType.Protection => protectionValue,
+                _ => null
+            };
+            bool showValue = value.HasValue && i < intendSlots.Count
+                && intendSlots[i] != null && intendSlots[i].enabled;
+            valueText.text = showValue ? value.Value.ToString() : string.Empty;
+            valueText.enabled = showValue;
+            valueText.raycastTarget = false;
         }
     }
 

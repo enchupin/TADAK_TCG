@@ -24,6 +24,7 @@ public class CactusMonster : Monster
             int barrierGain = PreviewBarrierGain(12);
             SetAttackIntent(attackDamage, $"피해를 {attackDamage} 입힙니다. 보호막을 {barrierGain} 얻습니다.");
             SetPlannedPattern(11501, MonsterIntentIconType.Attack, MonsterIntentIconType.Protection);
+            SetProtectionIntentValue(barrierGain);
             return;
         }
 

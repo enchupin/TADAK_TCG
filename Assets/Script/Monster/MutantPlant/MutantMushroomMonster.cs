@@ -25,6 +25,7 @@ public class MutantMushroomMonster : Monster
         int weakAmount = PreviewPlayerDebuffAmount(BattleRuntimeDefinitions.WeakBuffId, 2);
         SetIntent($"보호막을 {barrierGain} 얻습니다. 약화를 {weakAmount} 부여합니다.");
         SetPlannedPattern(10302, MonsterIntentIconType.Protection, MonsterIntentIconType.HarmfulEffect);
+        SetProtectionIntentValue(barrierGain);
     }
 
     protected override void ExecuteAction(PlayerData target)

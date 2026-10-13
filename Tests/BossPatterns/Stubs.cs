@@ -72,6 +72,7 @@ public abstract class Monster {
  protected void AddCardToPlayerDiscard(Card c)=>TrainingBattleManager.Instance.usableDeckManager.AddToDiscard(c);
  protected void SetAttackIntent(int n,string s){attack=true;} protected void SetIntent(string s){attack=false;}
  protected void SetPlannedPattern(int id,params MonsterIntentIconType[] icons)=>pattern=id;
+ protected void SetProtectionIntentValue(int n){}
  protected virtual void OnBattleStart(){} protected virtual void OnTurnEnded(){}
  protected virtual void OnDefenseChanged(int oldValue,int newValue){}
  protected virtual bool CanReceiveDamage(int n)=>true;

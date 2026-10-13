@@ -31,6 +31,7 @@ public class WoodenPuppetMonster : Monster
                 int barrierGain = PreviewBarrierGain(8);
                 SetAttackIntent(attackDamage, $"피해를 {attackDamage} 입힙니다. 보호막을 {barrierGain} 얻습니다.");
                 SetPlannedPattern(11602, MonsterIntentIconType.Attack, MonsterIntentIconType.Protection);
+                SetProtectionIntentValue(barrierGain);
                 break;
             case 11603:
                 int frailAmount = PreviewPlayerDebuffAmount(BattleRuntimeDefinitions.FrailBuffId, 3);

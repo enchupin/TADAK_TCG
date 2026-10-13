@@ -39,6 +39,7 @@ public class MutantSweetPotatoMonster : Monster
                 int rootBarrierGain = PreviewBarrierGain(RootBarrierAmount);
                 SetIntent($"뿌리내림을 얻습니다. 보호막을 {rootBarrierGain} 얻습니다.");
                 SetPlannedPattern(RootPatternId, MonsterIntentIconType.Protection, MonsterIntentIconType.BeneficialEffect);
+                SetProtectionIntentValue(rootBarrierGain);
                 break;
             case MultiHitPatternId:
                 int multiHitDamage = GetPreviewDamage(IsRooted() ? MultiHitRootedDamage : MultiHitBaseDamage);

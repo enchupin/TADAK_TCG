@@ -47,6 +47,7 @@ public class HauntedClothMonster : Monster
                 int barrierGain = PreviewBarrierGain(8);
                 SetAttackIntent(attackDamage, $"피해를 {attackDamage} 입힙니다. 보호막을 {barrierGain} 얻습니다.");
                 SetPlannedPattern(11002, MonsterIntentIconType.Attack, MonsterIntentIconType.Protection);
+                SetProtectionIntentValue(barrierGain);
                 break;
             default:
                 SetIntent("도망갑니다.");

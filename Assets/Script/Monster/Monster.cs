@@ -47,6 +47,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     private bool hasAttackIntent = false;
     private int plannedIntentValue = 0;
+    private int? plannedProtectionIntentValue;
     private string plannedIntentDescription = string.Empty;
     private readonly List<MonsterIntentIconType> plannedIntentIcons = new();
     private int plannedPatternId = 0;
@@ -513,6 +514,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     {
         hasAttackIntent = true;
         plannedIntentValue = Mathf.Max(0, intentValue);
+        plannedProtectionIntentValue = null;
         plannedIntentDescription = intentDescription;
     }
 
@@ -520,7 +522,13 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     {
         hasAttackIntent = false;
         plannedIntentValue = 0;
+        plannedProtectionIntentValue = null;
         plannedIntentDescription = intentDescription;
+    }
+
+    protected void SetProtectionIntentValue(int intentValue)
+    {
+        plannedProtectionIntentValue = Mathf.Max(0, intentValue);
     }
 
     protected void SetPlannedPattern(int patternId, params MonsterIntentIconType[] iconTypes)
@@ -624,7 +632,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
         stateController.UpdateIntendIcons(isActiveAndEnabled && !IsDead() && !hasLeftCombat
             ? plannedIntentIcons
-            : null);
+            : null, hasAttackIntent ? plannedIntentValue : (int?)null, plannedProtectionIntentValue);
     }
 
     private void BindStateController()
@@ -781,6 +789,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     {
         hasAttackIntent = false;
         plannedIntentValue = 0;
+        plannedProtectionIntentValue = null;
         plannedIntentDescription = string.Empty;
         plannedPatternId = 0;
         plannedIntentIcons.Clear();
