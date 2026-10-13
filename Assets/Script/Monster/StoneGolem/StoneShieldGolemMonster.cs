@@ -20,6 +20,7 @@ public class StoneShieldGolemMonster : StoneGolemMonsterBase
             int barrierGain = PreviewBarrierGain(8);
             SetIntent($"적에게 약화를 {weakAmount} 부여합니다. 모든 아군이 보호막을 {barrierGain} 얻습니다.");
             SetPlannedPattern(10601, MonsterIntentIconType.Protection, MonsterIntentIconType.HarmfulEffect);
+            SetProtectionIntentValue(barrierGain);
             return;
         }
 

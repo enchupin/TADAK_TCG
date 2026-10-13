@@ -21,6 +21,10 @@ public class FlashyScytheMonster : Monster
             case 1:
                 SetIntent("????由ы띁?먭쾶 蹂댄샇留됱쓣 7 遺?ы빀?덈떎.");
                 SetPlannedPattern(10502, MonsterIntentIconType.Protection);
+                Monster barrierTarget = FindJackORipper();
+                SetProtectionIntentValue(barrierTarget != null
+                    ? TrainingBattleManager.Instance.ResolveMonsterBarrierGain(barrierTarget, 7)
+                    : 0);
                 break;
             default:
                 int previewDamage = PreviewOutgoingDamage(4);

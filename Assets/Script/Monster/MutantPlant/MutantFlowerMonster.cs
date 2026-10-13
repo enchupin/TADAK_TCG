@@ -20,6 +20,7 @@ public class MutantFlowerMonster : Monster
                 int barrierGain = PreviewBarrierGain(7);
                 SetAttackIntent(guardedAttackDamage, $"피해를 {guardedAttackDamage} 입힙니다. 보호막을 {barrierGain} 얻습니다.");
                 SetPlannedPattern(10102, MonsterIntentIconType.Attack, MonsterIntentIconType.Protection);
+                SetProtectionIntentValue(barrierGain);
                 break;
             default:
                 int corrosionAmount = PreviewPlayerDebuffAmount(BattleRuntimeDefinitions.CorrosionBuffId, 2);

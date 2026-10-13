@@ -20,6 +20,7 @@ public class PriestessMonster : Monster
             case 0:
                 SetAttackIntent(GetPreviewDamage(13), $"피해를 {GetPreviewDamage(13)} 입힙니다. 보호막을 {GetBarrierGain(8)} 얻습니다.");
                 SetPlannedPattern(20201, MonsterIntentIconType.Attack, MonsterIntentIconType.Protection);
+                SetProtectionIntentValue(GetBarrierGain(8));
                 break;
             case 1:
                 SetAttackIntent(GetPreviewDamage(4), $"피해를 {GetPreviewDamage(4)}씩 2회 입힙니다.");
@@ -28,6 +29,7 @@ public class PriestessMonster : Monster
             case 2:
                 SetIntent($"보호막을 {GetBarrierGain(12)} 얻습니다.");
                 SetPlannedPattern(20203, MonsterIntentIconType.Protection);
+                SetProtectionIntentValue(GetBarrierGain(12));
                 break;
             default:
                 SetAttackIntent(GetPreviewDamage(25), $"피해를 {GetPreviewDamage(25)} 입힙니다.");
