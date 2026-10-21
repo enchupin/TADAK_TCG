@@ -61,7 +61,7 @@ static class BuffStackTests
         (5013, BuffPolarity.Passive, false), (5014, BuffPolarity.Passive, false)
     };
 
-    private static readonly int[] DeletedBuffIds = { 1011, 1012, 1016, 1023, 3007, 3017, 3022, 3038, 3039, 3040, 3055, 3058, 3060, 4005, 4007 };
+    private static readonly int[] DeletedBuffIds = { 1011, 1012, 1016, 1023, 3007, 3033, 3017, 3022, 3038, 3039, 3040, 3055, 3058, 3060, 4005, 4007 };
 
     private static void VerifyStackRules()
     {

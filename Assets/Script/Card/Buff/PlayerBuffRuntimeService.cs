@@ -81,7 +81,6 @@ public class PlayerBuffRuntimeService
         Register(new LavaSkinBuffScript());
         Register(new TemporaryLavaSkinBuffScript());
         Register(new ColdAirBuffScript());
-        Register(new LavaBarrierBuffScript());
         Register(new ExhaustDrawContractBuffScript());
         Register(new LifeLinkBuffScript());
         Register(new LastStandBuffScript());

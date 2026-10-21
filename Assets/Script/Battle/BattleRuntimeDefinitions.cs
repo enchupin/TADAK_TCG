@@ -53,7 +53,6 @@ public static class BattleRuntimeDefinitions
     public static int JokerPowerBuffId => GetBuffId(nameof(JokerPowerBuffId));
     public static int RuneBuffId => GetBuffId(nameof(RuneBuffId));
     public static int RuneGenerationBuffId => GetBuffId(nameof(RuneGenerationBuffId));
-    public static int LavaBarrierBuffId => GetBuffId(nameof(LavaBarrierBuffId));
     public static int FeatherStackBoostBuffId => GetBuffId(nameof(FeatherStackBoostBuffId));
     public static int RepeatNextPowerCardBuffId => GetBuffId(nameof(RepeatNextPowerCardBuffId));
     public static int GrowingFeatherBuffId => GetBuffId(nameof(GrowingFeatherBuffId));
@@ -169,7 +168,6 @@ public static class BattleRuntimeDefinitions
         Register(nameof(JokerPowerBuffId), "광대", 3029);
         Register(nameof(RuneBuffId), "동력", 3031);
         Register(nameof(RuneGenerationBuffId), "배터리", 3032);
-        Register(nameof(LavaBarrierBuffId), "용암 보호막", 3033);
         Register(nameof(FeatherStackBoostBuffId), "겹치기", 3034);
         Register(nameof(RepeatNextPowerCardBuffId), "각인 반복", 3035);
         Register(nameof(GrowingFeatherBuffId), "자라나는 깃털", 3036);

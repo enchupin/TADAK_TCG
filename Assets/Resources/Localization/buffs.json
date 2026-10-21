@@ -720,7 +720,7 @@
             "polarity": "beneficial",
             "stackable": true,
             "name": "광대",
-            "description": "매 턴 시작 시 무작위로 강화된 아군 고유 카드를 {stack장} 획득합니다.",
+            "description": "매 턴 시작 시 무작위로 강화된 잭의 고유 카드를 {stack장} 획득합니다.",
             "enName": "Joker",
             "enDescription": "",
             "jaName": "ジョーカー",
@@ -765,23 +765,6 @@
             "zhHansDescription": "每回合开始时，获得{stack层}(充能)。",
             "ruName": "Батарея",
             "ruDescription": "В начале каждого хода получает (Заряд) {в размере stack}."
-        },
-        {
-            "buffId": 3033,
-            "polarity": "beneficial",
-            "stackable": true,
-            "name": "용암 보호막",
-            "description": "다음에 받는 피해를 {stack회} 받지 않습니다.",
-            "enName": "Lava Block",
-            "enDescription": "Prevent incoming damage {for the next stack hits}.",
-            "jaName": "溶岩障壁",
-            "jaDescription": "次に受けるダメージを{stack回}防ぐ。",
-            "zhHantName": "熔岩護盾",
-            "zhHantDescription": "防止接下來受到的{stack次}傷害。",
-            "zhHansName": "熔岩护盾",
-            "zhHansDescription": "防止接下来受到的{stack次}伤害。",
-            "ruName": "Лавовый барьер",
-            "ruDescription": "Предотвращает получение урона {в следующие stack раза}."
         },
         {
             "buffId": 3034,

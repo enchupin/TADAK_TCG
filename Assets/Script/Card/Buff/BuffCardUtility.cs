@@ -55,9 +55,10 @@ public static class BuffCardUtility
         return generatedCards;
     }
 
-    public static List<Card> CreateRandomUniqueUpgradeCards(int count)
+    // onlyCharacter를 지정하면 해당 캐릭터의 강화된 고유 카드만 후보로 사용
+    public static List<Card> CreateRandomUniqueUpgradeCards(int count, Character? onlyCharacter = null)
     {
-        List<int> pool = GetUniqueUpgradeCardPool();
+        List<int> pool = GetUniqueUpgradeCardPool(onlyCharacter);
         if (pool.Count == 0)
         {
             return CreateRandomCardsFromGroup(JokerUpgradeGroupName, count);
@@ -199,11 +200,15 @@ public static class BuffCardUtility
         return false;
     }
 
-    private static List<int> GetUniqueUpgradeCardPool()
+    private static List<int> GetUniqueUpgradeCardPool(Character? onlyCharacter = null)
     {
         List<int> pool = new();
         HashSet<Character> selectedCharacters = null;
-        if (SelectedButtonControl.selectedCharacterList != null && SelectedButtonControl.selectedCharacterList.Count > 0)
+        if (onlyCharacter.HasValue)
+        {
+            selectedCharacters = new HashSet<Character> { onlyCharacter.Value };
+        }
+        else if (SelectedButtonControl.selectedCharacterList != null && SelectedButtonControl.selectedCharacterList.Count > 0)
         {
             selectedCharacters = new HashSet<Character>(SelectedButtonControl.selectedCharacterList);
         }
