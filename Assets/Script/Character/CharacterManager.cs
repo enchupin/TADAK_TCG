@@ -4,6 +4,7 @@ using UnityEngine;
 public static class CharacterManager
 {
     private static readonly int[] StarterDeckOffsets = { 10, 20, 30, 40, 50, 60, 70 };
+    private static readonly int[] UniqueCardOffsets = { 30, 40, 50, 60, 70 };
     private static readonly Dictionary<int, string> defaultCharacterNameById = new Dictionary<int, string>();
     private static readonly Dictionary<int, CharacterLocalizationJsonEntry> localizedCharacterNameById = new Dictionary<int, CharacterLocalizationJsonEntry>();
 
@@ -109,6 +110,24 @@ public static class CharacterManager
     public static List<int> GetStarterCardIds(Character character)
     {
         return GetStarterCardIds(GetIdByCharacterEnum(character));
+    }
+
+    // 고유 카드는 카드 번호 03 ~ 07의 기본형(변형 0)
+    public static List<int> GetUniqueBaseCardIds(Character character)
+    {
+        int characterId = GetIdByCharacterEnum(character);
+        List<int> uniqueCardIds = new List<int>(UniqueCardOffsets.Length);
+        if (!IsStarterDeckSupported(characterId))
+        {
+            return uniqueCardIds;
+        }
+
+        foreach (int offset in UniqueCardOffsets)
+        {
+            uniqueCardIds.Add(characterId * 1000 + offset);
+        }
+
+        return uniqueCardIds;
     }
 
     public static List<CharacterData> GetAllCharacters()

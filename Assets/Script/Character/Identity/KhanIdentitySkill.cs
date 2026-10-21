@@ -7,8 +7,7 @@ public sealed class KhanIdentitySkill : CharacterIdentitySkill
             return false;
         }
 
-        int healAmount = battleManager.playerData.maxHP / 5;
-        battleManager.playerData.Heal(healAmount);
+        battleManager.ApplyBuffToPlayer(BattleRuntimeDefinitions.RegenerationBuffId, 6);
         battleManager.playerData.AddDefense(12);
         return true;
     }

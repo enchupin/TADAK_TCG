@@ -7,7 +7,7 @@ public sealed class CreamIdentitySkill : CharacterIdentitySkill
             return false;
         }
 
-        battleManager.AddIdentityGaugeToOtherCharacters(identityState.Character, 3);
+        battleManager.AddIdentityGaugeToOtherCharacters(identityState.Character, 4);
         return true;
     }
 }

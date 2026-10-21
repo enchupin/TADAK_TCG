@@ -38,12 +38,12 @@
       "zhHantName": "伊格妮亞",
       "zhHansName": "伊格妮亚",
       "ruName": "Игния",
-      "koIdentityDescription": "(강공)을 20 얻습니다.",
-      "enIdentityDescription": "Gain 20 (Heavy Strike).",
-      "jaIdentityDescription": "(強攻)を20得る。",
-      "zhHantIdentityDescription": "獲得20層(強攻)。",
-      "zhHansIdentityDescription": "获得20层(强攻)。",
-      "ruIdentityDescription": "Получает 20 (Тяжёлого удара)."
+      "koIdentityDescription": "(강공)을 8 얻습니다. 모든 적에게 (발화)를 2 부여합니다.",
+      "enIdentityDescription": "",
+      "jaIdentityDescription": "",
+      "zhHantIdentityDescription": "",
+      "zhHansIdentityDescription": "",
+      "ruIdentityDescription": ""
     },
     {
       "characterId": 202,
@@ -128,12 +128,12 @@
       "zhHantName": "可莉姆",
       "zhHansName": "可莉姆",
       "ruName": "Крим",
-      "koIdentityDescription": "다른 캐릭터들이 아이덴티티 포인트를 3씩 획득합니다.",
-      "enIdentityDescription": "Other characters each gain 3 Identity Points.",
-      "jaIdentityDescription": "他のキャラクター達がアイデンティティポイントを3ずつ得る。",
-      "zhHantIdentityDescription": "其他角色各獲得3點身分點數。",
-      "zhHansIdentityDescription": "其他角色各获得3点身份点数。",
-      "ruIdentityDescription": "Другие персонажи получают по 3 очка идентичности."
+      "koIdentityDescription": "다른 캐릭터의 아이덴티티 게이지를 4씩 채웁니다.",
+      "enIdentityDescription": "",
+      "jaIdentityDescription": "",
+      "zhHantIdentityDescription": "",
+      "zhHansIdentityDescription": "",
+      "ruIdentityDescription": ""
     },
     {
       "characterId": 303,
@@ -143,12 +143,12 @@
       "zhHantName": "汗",
       "zhHansName": "汗",
       "ruName": "Хан",
-      "koIdentityDescription": "최대 체력의 20%를 회복하고 보호막을 12 얻습니다.",
-      "enIdentityDescription": "Recover 20% of your max HP and gain 12 Block.",
-      "jaIdentityDescription": "最大体力の20%を回復し、バリアを12得る。",
-      "zhHantIdentityDescription": "回復20%的最大生命值，並獲得12點護盾。",
-      "zhHansIdentityDescription": "回复20%的最大生命值，并获得12点护盾。",
-      "ruIdentityDescription": "Восстанавливает 20% от максимального здоровья и получает 12 барьера."
+      "koIdentityDescription": "(재생)을 6 얻고 보호막을 12 얻습니다.",
+      "enIdentityDescription": "",
+      "jaIdentityDescription": "",
+      "zhHantIdentityDescription": "",
+      "zhHansIdentityDescription": "",
+      "ruIdentityDescription": ""
     }
   ]
 }
