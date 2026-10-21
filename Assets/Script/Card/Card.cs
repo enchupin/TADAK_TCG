@@ -11,7 +11,9 @@ public enum CardCostType
 {
     Energy,
     Barrier,
-    Rune
+    Rune,
+    // 물결(3066) 중첩으로 비용 지불 (R-83)
+    Wave
 }
 
 [System.Serializable]
@@ -42,6 +44,17 @@ public class Card
     public List<int> boundCardIds = new();
     public List<int> pendingBoundCardIds = new();
 
+    // 조각: 사용 시 본래 효과 다음에 발동할 페이로드 카드 (카드당 1개, 이번 전투 동안 유지, R-73)
+    public int fragmentCardId;
+
+    // 호기심: 비용 0, 사용하면 본래 효과 대신 강화 선택 (R-20~22)
+    public bool isCurious;
+    // 이번 사용이 호기심 강화로 처리되었는지 (행선지를 버린 더미로 고정)
+    public bool resolvedAsCuriosity;
+
+    // 전투 덱 사본이 가리키는 저장 덱 위치 (생성·복제 카드는 -1)
+    public int sourceDeckIndex = -1;
+
     private int turnCostDelta;
     private bool hasTurnCostOverride;
     private int turnCostOverride;
@@ -70,8 +83,11 @@ public class Card
     {
         Debug.Log($"[{cardName}] 카드 사용!");
         PromotePendingBoundCardIds();
+        resolvedAsCuriosity = false;
 
         BattleContext context = battlemanager?.battleContext;
+        // 동전은 카드 사용마다 새로 던짐
+        context?.ResetCoinFlip(this);
         List<Card> previousThis = context?.GetContextCards("ThisCard");
         List<Card> previousSelf = context?.GetContextCards("Self");
         try
@@ -81,6 +97,16 @@ public class Card
                 List<Card> contextCards = new List<Card> { this };
                 battlemanager.battleContext.SetContextCards("ThisCard", contextCards);
                 battlemanager.battleContext.SetContextCards("Self", contextCards);
+            }
+
+            if (isCurious)
+            {
+                // 호기심 카드는 본래 효과 없이 강화만 진행
+                if (battlemanager != null)
+                {
+                    yield return battlemanager.PlayCuriositySequence(this);
+                }
+                yield break;
             }
 
             yield return CardEffectSequence.Execute(effects, battlemanager);
@@ -99,6 +125,23 @@ public class Card
                     yield return TriggeredCardExecutionUtility.ExecuteTriggeredCardSequence(
                         battlemanager,
                         boundCard,
+                        battlemanager != null ? battlemanager.currentTarget : null,
+                        resolveDestination: false,
+                        triggerPowerEffects: false,
+                        allowRepeats: false,
+                        applyPostPlayKeywords: false);
+                }
+            }
+
+            if (fragmentCardId > 0)
+            {
+                context?.OnFragmentedCardPlayed();
+                Card fragmentCard = CardManager.GetCardAsCard(fragmentCardId);
+                if (fragmentCard != null)
+                {
+                    yield return TriggeredCardExecutionUtility.ExecuteTriggeredCardSequence(
+                        battlemanager,
+                        fragmentCard,
                         battlemanager != null ? battlemanager.currentTarget : null,
                         resolveDestination: false,
                         triggerPowerEffects: false,
@@ -203,6 +246,10 @@ public class Card
         clonedCard.pendingBoundCardIds = pendingBoundCardIds != null
             ? new List<int>(pendingBoundCardIds)
             : new List<int>();
+        // 복제 카드는 조각을 이어받지만 호기심과 저장 덱 위치는 이어받지 않음
+        clonedCard.fragmentCardId = fragmentCardId;
+        clonedCard.isCurious = false;
+        clonedCard.sourceDeckIndex = -1;
         clonedCard.baseCost = Mathf.Max(0, baseCost);
         clonedCard.cost = Mathf.Max(0, cost);
         clonedCard.turnCostDelta = turnCostDelta;

@@ -420,6 +420,7 @@ public class TrainingBattleManager : MonoBehaviour
 
         turnSystem.ResetForCombat();
         battleBuffController?.ResetForCombat();
+        ApplyCuriosityAtCombatStart();
         ApplyCombatStartEffects();
 
         if (TryHandleCombatEnd())
@@ -1080,7 +1081,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     public int GetEffectiveCardCost(Card card)
     {
-        if (card == null)
+        if (card == null || card.isCurious)
         {
             return 0;
         }
@@ -1107,6 +1108,8 @@ public class TrainingBattleManager : MonoBehaviour
                 return playerData.defense >= effectiveCost;
             case CardCostType.Rune:
                 return playerData.GetBuffStack(BattleRuntimeDefinitions.RuneBuffId) >= effectiveCost;
+            case CardCostType.Wave:
+                return playerData.GetBuffStack(BattleRuntimeDefinitions.WaveBuffId) >= effectiveCost;
             default:
                 return playerData.energy >= effectiveCost;
         }
@@ -1140,6 +1143,17 @@ public class TrainingBattleManager : MonoBehaviour
 
             playerData.ConsumeBuffStack(BattleRuntimeDefinitions.RuneBuffId, effectiveCost);
             WuppiModeRuntimeUtility.HandleDirectBuffStackChange(this, playerData, BattleRuntimeDefinitions.RuneBuffId);
+            return true;
+        }
+
+        if (card.costType == CardCostType.Wave)
+        {
+            if (playerData.GetBuffStack(BattleRuntimeDefinitions.WaveBuffId) < effectiveCost)
+            {
+                return false;
+            }
+
+            playerData.ConsumeBuffStack(BattleRuntimeDefinitions.WaveBuffId, effectiveCost);
             return true;
         }
 
@@ -1702,6 +1716,87 @@ public class TrainingBattleManager : MonoBehaviour
         UpdateAllUI();
         TryHandleCombatEnd();
         return true;
+    }
+
+    // R-20 전투 시작 시 강화되지 않은 카드 중 무작위 curiosityPerCombat장을 호기심 상태로 만듦
+    // 보스전에는 호기심이 없음 (R-62)
+    private void ApplyCuriosityAtCombatStart()
+    {
+        if (BossModeSession.IsActive || !TrainingRunState.IsRunActive || buildingDeck == null || usableDeckManager == null)
+        {
+            return;
+        }
+
+        List<Card> candidates = new List<Card>();
+        foreach (Card card in usableDeckManager.GetDrawPile())
+        {
+            if (card != null && !card.isCurious && card.sourceDeckIndex >= 0
+                && card.enforceCardIds != null && card.enforceCardIds.Count > 0)
+            {
+                candidates.Add(card);
+            }
+        }
+
+        int curiosityCount = Mathf.Min(GameRules.Combat.curiosityPerCombat, candidates.Count);
+        for (int i = 0; i < curiosityCount; i++)
+        {
+            int index = UnityEngine.Random.Range(0, candidates.Count);
+            Card curiousCard = candidates[index];
+            candidates.RemoveAt(index);
+            curiousCard.isCurious = true;
+            curiousCard.SetCost(0, false);
+            Debug.Log($"[BattleManager] 호기심 카드: {curiousCard.cardName}");
+        }
+    }
+
+    // R-22 호기심 카드 사용: 강화 계열 중 3개를 제시하고 고른 강화를 이번 전투와 저장 덱에 즉시 반영
+    public System.Collections.IEnumerator PlayCuriositySequence(Card curiousCard)
+    {
+        if (curiousCard == null)
+        {
+            yield break;
+        }
+
+        List<int> upgradeIds = new List<int>(curiousCard.enforceCardIds ?? new List<int>());
+        List<Card> options = new List<Card>();
+        while (upgradeIds.Count > 0 && options.Count < GameRules.Deck.choiceCount)
+        {
+            int index = UnityEngine.Random.Range(0, upgradeIds.Count);
+            Card option = CardManager.GetCardAsCard(upgradeIds[index]);
+            upgradeIds.RemoveAt(index);
+            if (option != null)
+            {
+                options.Add(option);
+            }
+        }
+
+        curiousCard.isCurious = false;
+        curiousCard.resolvedAsCuriosity = true;
+        if (options.Count == 0)
+        {
+            Debug.LogWarning($"[BattleManager] {curiousCard.cardName}의 강화 선택지가 없어 호기심을 종료합니다");
+            yield break;
+        }
+
+        List<Card> pickedCards = null;
+        yield return SelectCardsCoroutine(options, 1, false, cards => pickedCards = cards);
+        Card picked = pickedCards != null && pickedCards.Count > 0 ? pickedCards[0] : options[0];
+
+        int originalCardId = curiousCard.cardId;
+        int deckIndex = curiousCard.sourceDeckIndex;
+        curiousCard.ApplyTemplate(picked);
+        LocalizationManager.ApplyToRuntimeCard(curiousCard);
+        if (buildingDeck != null && deckIndex >= 0 && deckIndex < buildingDeck.GetCards().Count
+            && buildingDeck.GetCards()[deckIndex]?.cardId == originalCardId)
+        {
+            buildingDeck.ReplaceCardAt(deckIndex, picked.cardId);
+        }
+        else
+        {
+            Debug.LogWarning($"[BattleManager] 저장 덱에서 호기심 카드 위치를 찾지 못해 이번 전투에만 강화했습니다: {curiousCard.cardName}");
+        }
+
+        UpdateAllUI();
     }
 
     private bool CanGrantIdentityCardReward()

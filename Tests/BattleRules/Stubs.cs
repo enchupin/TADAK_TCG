@@ -17,6 +17,7 @@ namespace UnityEngine
     {
         public static int Max(int a, int b) => Math.Max(a, b);
         public static int Clamp(int value, int min, int max) => Math.Min(Math.Max(value, min), max);
+        public static int Min(int a, int b) => Math.Min(a, b);
     }
 
     public static class Random
@@ -34,6 +35,9 @@ namespace UnityEngine
     }
 }
 
+public static class BossModeSession { public static bool IsActive; }
+public static class TrainingRunState { public static bool IsRunActive = true; }
+
 public static class LocalizationManager
 {
     public static int Applied;
@@ -45,6 +49,7 @@ public class BuildingDeck
     public readonly List<Card> Cards = new List<Card>();
     public IReadOnlyList<Card> GetCards() => Cards;
     public bool AddCard(int cardId) { Cards.Add(CardManager.GetCardAsCard(cardId)); return true; }
+    public bool ReplaceCardAt(int index, int cardId) { Cards[index] = CardManager.GetCardAsCard(cardId); return true; }
     public void RemoveCard(Card card) => Cards.Remove(card);
 }
 
@@ -119,6 +124,13 @@ public class Card
     public string cardName = string.Empty;
     public Character character;
     public CardCostType costType = CardCostType.Energy;
+    public int cost = 1;
+    public bool isCurious;
+    public bool resolvedAsCuriosity;
+    public int sourceDeckIndex = -1;
+    public List<int> enforceCardIds = new List<int>();
+    public void SetCost(int value, bool turnOnly) => cost = value;
+    public void ApplyTemplate(Card template) { cardId = template.cardId; cost = template.cost; enforceCardIds = new List<int>(template.enforceCardIds); }
     public int OnDrawCount;
     public void ExecuteOnDrawEffects(TrainingBattleManager manager) => OnDrawCount++;
 }
@@ -139,6 +151,7 @@ public class UsableDeckManager
 {
     public List<Card> Draw = new List<Card>();
     public List<Card> Discard = new List<Card>();
+    public List<Card> GetDrawPile() => Draw;
     public Card DrawCard() { Card card = Draw.FirstOrDefault(); if (card != null) Draw.Remove(card); return card; }
     public void AddToDiscard(Card card) => Discard.Add(card);
 }
@@ -182,6 +195,7 @@ public partial class TrainingBattleManager
         return true;
     }
     public System.Collections.IEnumerator Reward(Character character) => RunIdentityCardRewardSequence(character);
+    public void StartCuriosity() => ApplyCuriosityAtCombatStart();
     public void UpdateAllUI() { }
     public List<Card> Draw(int count) => DrawCardsSequentially(count, false, () => usableDeckManager.DrawCard());
 }

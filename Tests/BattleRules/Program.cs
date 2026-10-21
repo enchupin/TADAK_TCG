@@ -110,6 +110,7 @@ static class Program
         CheckIdentity();
         CheckDeckReward();
         CheckRewardSequence();
+        CheckCuriosity();
 
         Console.WriteLine($"전투 규칙 검증 {count}개 통과");
     }
@@ -210,6 +211,45 @@ static class Program
         TrainingBattleManager.buildingDeck = new BuildingDeck();
         RunCoroutine(manager.Reward(Character.Ignia));
         Check(TrainingBattleManager.buildingDeck.Cards.Count == 1 && !manager.IsDeckRewardInProgress, "선택 창이 없으면 첫 선택지로 진행하고 잠금 해제");
+        TrainingBattleManager.buildingDeck = null;
+    }
+
+    static void CheckCuriosity()
+    {
+        TrainingBattleManager manager = NewBattle(0, 0);
+        TrainingBattleManager.buildingDeck = new BuildingDeck();
+        for (int i = 0; i < 4; i++)
+        {
+            Card deckCard = new Card { cardId = 201030 + i * 10, cost = 2, enforceCardIds = new List<int> { 201031 + i * 10, 201032 + i * 10, 201033 + i * 10, 201034 + i * 10, 201035 + i * 10 } };
+            TrainingBattleManager.buildingDeck.Cards.Add(deckCard);
+            manager.usableDeckManager.Draw.Add(new Card { cardId = deckCard.cardId, cost = 2, enforceCardIds = new List<int>(deckCard.enforceCardIds), sourceDeckIndex = i });
+        }
+        manager.usableDeckManager.Draw.Add(new Card { cardId = 201010, cost = 1, sourceDeckIndex = 9 });
+        manager.usableDeckManager.Draw.Add(new Card { cardId = 201040, cost = 2, enforceCardIds = new List<int> { 201041 } });
+
+        manager.StartCuriosity();
+        List<Card> curious = manager.usableDeckManager.Draw.Where(card => card.isCurious).ToList();
+        Check(curious.Count == 1, "전투당 호기심 1장");
+        Check(curious[0].sourceDeckIndex >= 0 && curious[0].enforceCardIds.Count > 0, "강화 계열이 있는 저장 덱 카드만 호기심 대상");
+        Check(curious[0].cost == 0, "호기심 카드 비용 0");
+
+        Card target = curious[0];
+        int deckIndex = target.sourceDeckIndex;
+        List<int> upgradeLine = new List<int>(target.enforceCardIds);
+        List<int> offered = null;
+        manager.PickSelection = (cards, selectCount) => { offered = cards.Select(card => card.cardId).ToList(); return cards.GetRange(cards.Count - 1, 1); };
+        RunCoroutine(manager.PlayCuriositySequence(target));
+        Check(offered != null && offered.Count == 3 && offered.Distinct().Count() == 3, "강화 계열 5종 중 서로 다른 3종 제시");
+        Check(offered.All(upgradeLine.Contains), "선택지는 해당 카드의 강화 계열");
+        Check(target.cardId == offered.Last() && !target.isCurious && target.resolvedAsCuriosity, "고른 강화가 이번 전투 카드에 즉시 적용");
+        Check(TrainingBattleManager.buildingDeck.Cards[deckIndex].cardId == offered.Last(), "고른 강화가 저장 덱에 영구 반영");
+
+        BossModeSession.IsActive = true;
+        manager = NewBattle(0, 0);
+        manager.usableDeckManager.Draw.Add(new Card { cardId = 201030, enforceCardIds = new List<int> { 201031 }, sourceDeckIndex = 0 });
+        manager.StartCuriosity();
+        Check(!manager.usableDeckManager.Draw[0].isCurious, "보스전에는 호기심 없음");
+        BossModeSession.IsActive = false;
         TrainingBattleManager.buildingDeck = null;
     }
 

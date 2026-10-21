@@ -963,6 +963,7 @@ public class CardJSONConverter : EditorWindow
             case "ReplayExhaustedCards": return EffectType.ReplayExhaustedCards;
             case "UseTopDeckCards": return EffectType.UseTopDeckCards;
             case "BindCard": return EffectType.BindCard;
+            case "Fragment": return EffectType.Fragment;
             case "EnemyHpLossHealPlayer": return EffectType.EnemyHpLossHealPlayer;
             case "Party": return EffectType.Party;
             case "CopyEnemyDebuffs": return EffectType.CopyEnemyDebuffs;
@@ -987,6 +988,7 @@ public class CardJSONConverter : EditorWindow
             case "Energy": return CardCostType.Energy;
             case "Barrier": return CardCostType.Barrier;
             case "Rune": return CardCostType.Rune;
+            case "Wave": return CardCostType.Wave;
             default:
                 Debug.LogWarning($"[CardJSONConverter] Unknown cost type: {type}. Fallback to Energy.");
                 return CardCostType.Energy;

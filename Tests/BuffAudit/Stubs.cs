@@ -10,12 +10,12 @@ namespace UnityEngine {
   public static int FloorToInt(float v)=>(int)Math.Floor(v); public static int Clamp(int v,int a,int b)=>Math.Clamp(v,a,b);
  }
 }
-public enum CardCostType { Energy, Barrier, Rune }
+public enum CardCostType { Energy, Barrier, Rune, Wave }
 public enum BattleTurnState { PlayerTurnStart, PlayerAction, PlayerTurnEnd, EnemyTurnStart, EnemyAction, EnemyTurnEnd, CombatEnd }
 public enum MoveZoneType { DrawPile, DiscardPile, Source }
 public enum WuppiModeState { Attack, Guard }
 public class Card {
- public Character character;
+ public Character character; public bool isCurious,resolvedAsCuriosity; public int fragmentCardId; public int baseCost=>cost;
  public List<ICardEffect> effects=new(); public int cardId,cost; public CardCostType costType; public bool power;
  public Card CloneForRuntimeCopy()=>new(){cardId=cardId,cost=cost,costType=costType,power=power,effects=new(effects)};
  public void ApplyTemplate(Card c){cardId=c.cardId;cost=c.cost;effects=new(c.effects);}

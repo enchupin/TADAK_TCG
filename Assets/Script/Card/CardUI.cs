@@ -506,7 +506,39 @@ public static class CardDescriptionFormatter
     private static readonly Regex AmountPlaceholderPattern = new(@"\{amount(?<index>\d*)\}", RegexOptions.Compiled);
     private static readonly Regex ReferencedBuffNamePattern = new(@"\((?<name>[^()]+)\)", RegexOptions.Compiled);
 
+    private const string CuriosityDescription = "강화됩니다.";
+
     public static string Format(Card card, TrainingBattleManager battleManager)
+    {
+        if (card != null && card.isCurious)
+        {
+            return CuriosityDescription;
+        }
+
+        string fragmentDescription = BuildFragmentDescription(card);
+        if (!string.IsNullOrEmpty(fragmentDescription))
+        {
+            return FormatBody(card, battleManager) + "\n" + fragmentDescription;
+        }
+
+        return FormatBody(card, battleManager);
+    }
+
+    // 조각이 새겨진 카드는 본래 설명 아래에 조각 효과를 덧붙임
+    private static string BuildFragmentDescription(Card card)
+    {
+        if (card == null || card.fragmentCardId <= 0)
+        {
+            return string.Empty;
+        }
+
+        CardData fragmentData = CardManager.GetCard(card.fragmentCardId);
+        return fragmentData != null && !string.IsNullOrWhiteSpace(fragmentData.description)
+            ? $"조각: {RemoveReferencedBuffParentheses(fragmentData.description)}"
+            : string.Empty;
+    }
+
+    private static string FormatBody(Card card, TrainingBattleManager battleManager)
     {
         if (card == null || string.IsNullOrEmpty(card.description))
         {

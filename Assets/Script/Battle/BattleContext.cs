@@ -26,6 +26,14 @@ public class BattleContext
     // 에너지 관련
     public int energySpentThisTurn;
 
+    // 동전: 카드 사용마다 한 번 던진 결과 (같은 사용 안의 여러 동전 효과는 같은 결과)
+    private readonly Dictionary<Card, bool> coinResultsByCard = new Dictionary<Card, bool>();
+    private System.Random coinRandom = new System.Random();
+    public bool LastCoinWasHeads { get; private set; }
+
+    // 이번 턴에 조각된 카드를 사용한 횟수
+    public int fragmentedCardsPlayedThisTurn;
+
     // 직접 사용한 카드가 실제로 지불한 비용 (할인·예고 반영 후)
     private Card lastPaidCard;
     private int lastPaidCost;
@@ -114,6 +122,7 @@ public class BattleContext
         totalDamageDealt = 0;
         defenseConsumed = 0;
         energySpentThisTurn = 0;
+        fragmentedCardsPlayedThisTurn = 0;
         enemyDebuffsAppliedThisTurn.Clear();
         ClearSelectedCards();
         ClearAllContextCards();
@@ -254,6 +263,49 @@ public class BattleContext
     public void OnDefenseConsumed(int amount)
     {
         defenseConsumed += amount;
+    }
+
+    // 시드를 지정하면 같은 순서의 동전 결과를 재현 (R-72 시드 RNG)
+    public void SetCoinSeed(int seed)
+    {
+        coinRandom = new System.Random(seed);
+    }
+
+    public void ResetCoinFlip(Card card)
+    {
+        if (card != null)
+        {
+            coinResultsByCard.Remove(card);
+        }
+    }
+
+    // 앞면이면 true, 행운이 있으면 앞면으로 확정하고 행운을 소모 (행운은 동전으로만 소모)
+    public bool ResolveCoinFlip(Card card, System.Func<bool> tryConsumeLuck)
+    {
+        if (card != null && coinResultsByCard.TryGetValue(card, out bool cachedResult))
+        {
+            return cachedResult;
+        }
+
+        bool isHeads = tryConsumeLuck != null && tryConsumeLuck();
+        if (!isHeads)
+        {
+            isHeads = coinRandom.Next(2) == 0;
+        }
+
+        if (card != null)
+        {
+            coinResultsByCard[card] = isHeads;
+        }
+
+        LastCoinWasHeads = isHeads;
+        Debug.Log($"[BattleContext] 동전 결과: {(isHeads ? "앞면" : "뒷면")}");
+        return isHeads;
+    }
+
+    public void OnFragmentedCardPlayed()
+    {
+        fragmentedCardsPlayedThisTurn++;
     }
 
     public void RecordPaidCost(Card card, int paidCost)

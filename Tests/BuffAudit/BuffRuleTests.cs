@@ -14,6 +14,7 @@ static class BuffRuleTests
         VerifyCorrosion();
         VerifyTurnEffects();
         VerifyPolarity();
+        VerifyWaveCost();
         return assertions;
     }
 
@@ -172,6 +173,19 @@ static class BuffRuleTests
         Eq(player.GetBuffStack(GlacierBondBuffId), 2, "해체는 이중 동작으로 반복");
         battle.playerService.OnPlayerTurnEnd();
         Eq(player.GetBuffStack(4015), 0, "해체는 턴 종료 처리 후 제거");
+    }
+
+    private static void VerifyWaveCost()
+    {
+        var battle = new TrainingBattleManager();
+        var player = battle.playerData;
+        var waveCard = new Card { cost = 2, costType = CardCostType.Wave };
+        Eq(battle.TryPayCardCost(waveCard), false, "물결이 부족하면 지불 실패");
+        player.AddBuff(WaveBuffId, 3);
+        int energyBefore = player.energy;
+        Eq(battle.TryPayCardCost(waveCard), true, "물결로 비용 지불");
+        Eq(player.GetBuffStack(WaveBuffId), 1, "물결 2 소모");
+        Eq(player.energy, energyBefore, "물결 비용은 에너지를 쓰지 않음");
     }
 
     private static void VerifyPolarity()

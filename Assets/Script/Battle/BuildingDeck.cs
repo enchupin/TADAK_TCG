@@ -147,8 +147,9 @@ public class BuildingDeck
     {
         List<Card> copiedDeck = new List<Card>(deckList.Count);
 
-        foreach (Card sourceCard in deckList)
+        for (int deckIndex = 0; deckIndex < deckList.Count; deckIndex++)
         {
+            Card sourceCard = deckList[deckIndex];
             if (sourceCard == null)
                 continue;
 
@@ -175,6 +176,8 @@ public class BuildingDeck
                 : new List<int>();
 
             LocalizationManager.ApplyToRuntimeCard(clonedCard);
+            // 호기심 강화를 저장 덱에 반영하기 위한 원본 위치
+            clonedCard.sourceDeckIndex = deckIndex;
 
             copiedDeck.Add(clonedCard);
         }

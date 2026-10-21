@@ -440,6 +440,13 @@ public static class CardEffectFactory
                     count = effectData.count > 0 ? effectData.count : effectData.amount
                 };
 
+            case EffectType.Fragment:
+                int.TryParse(effectData.cardId, out int fragmentCardId);
+                return new FragmentEffect
+                {
+                    fragmentCardId = fragmentCardId
+                };
+
             case EffectType.CopyEnemyDebuffs:
                 return new CopyEnemyDebuffsEffect
                 {

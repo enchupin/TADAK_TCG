@@ -49,5 +49,7 @@ public enum EffectType
     ApplyBuffByTargetStack = 56,
     ResolveDrowningLethal = 57,
     DamageByBuffStack = 58,
-    IncreaseBeneficialBuffStacks = 59
+    IncreaseBeneficialBuffStacks = 59,
+    // 손의 다른 카드 1장에 페이로드 카드 효과를 새김 (R-73)
+    Fragment = 60
 }

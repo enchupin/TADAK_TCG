@@ -115,6 +115,8 @@ public class TrainingBattleManager
     public List<Card> Candidates;
     private Action<List<Card>> callback;
     private readonly List<IEnumerator> routines = new();
+    public int CuriosityPlays;
+    public IEnumerator PlayCuriositySequence(Card card) { CuriosityPlays++; card.isCurious = false; card.resolvedAsCuriosity = true; yield break; }
     public UnityEngine.Coroutine StartCoroutine(IEnumerator sequence)
     {
         if (sequence.MoveNext()) routines.Add(sequence);

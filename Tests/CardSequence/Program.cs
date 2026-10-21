@@ -163,6 +163,7 @@ static class Program
             c.Play(m); Assert(count == 1 && m.battleContext.GetContextCard("ThisCard") == null, "동기 효과 호환");
         });
         passed += CardCompletionTests.Run();
+        passed += CardMechanicTests.Run();
         Console.WriteLine($"{passed} tests passed");
     }
     sealed class ActionEffect : ICardEffect

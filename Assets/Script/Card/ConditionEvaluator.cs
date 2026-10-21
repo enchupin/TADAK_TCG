@@ -30,6 +30,20 @@ public static class ConditionEvaluator
         // { "subject": "EnemyCount", "operator": "Eq", "value": 1 }
         string op = string.IsNullOrEmpty(check.@operator) ? "Eq" : check.@operator;
 
+        // 동전: 앞면이면 1, 뒷면이면 0 (R-72)
+        if (check.subject == "Coin")
+        {
+            Card coinCard = battleManager.battleContext?.GetContextCard("ThisCard");
+            bool isHeads = battleManager.battleContext != null && battleManager.battleContext.ResolveCoinFlip(coinCard, () => TryConsumeLuck(battleManager));
+            return Compare(isHeads ? 1f : 0f, op, check.value);
+        }
+
+        if (check.subject == "FragmentedCardPlayedThisTurn")
+        {
+            int fragmentedPlays = battleManager.battleContext != null ? battleManager.battleContext.fragmentedCardsPlayedThisTurn : 0;
+            return Compare(fragmentedPlays, op, check.value);
+        }
+
         if (check.subject == "EnemyCount" || check.property == "EnemyCount")
         {
             int enemyCount = 0;
@@ -80,6 +94,19 @@ public static class ConditionEvaluator
 
         float subjectValue = GetPropertyValue(subjectObj, check.property, check.param);
         return Compare(subjectValue, op, check.value);
+    }
+
+    private static bool TryConsumeLuck(TrainingBattleManager battleManager)
+    {
+        PlayerData player = battleManager?.playerData;
+        if (player == null || player.GetBuffStack(BattleRuntimeDefinitions.LuckBuffId) <= 0)
+        {
+            return false;
+        }
+
+        player.RemoveBuffStack(BattleRuntimeDefinitions.LuckBuffId);
+        battleManager.UpdateAllUI();
+        return true;
     }
 
     private static object GetSubject(string subjectType, TrainingBattleManager bm)

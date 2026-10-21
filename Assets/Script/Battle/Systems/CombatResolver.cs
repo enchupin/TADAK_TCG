@@ -72,7 +72,8 @@ public class CombatResolver
         controller.PrepareAcceptedPlayAnimationStart();
         battleManager.battleContext?.RecordPaidCost(playedCard, effectiveCost);
 
-        int repeatCount = battleManager.ConsumeRepeatedPlayCount(playedCard, false);
+        // 호기심 카드는 강화만 하므로 반복·재사용을 소모하지 않음
+        int repeatCount = playedCard.isCurious ? 0 : battleManager.ConsumeRepeatedPlayCount(playedCard, false);
         int cardUseAllEnemiesDamage = battleManager.GetCardUseAllEnemiesDamage();
         Debug.Log($"[Player] 카드 사용: {playedCard.cardName}");
 
