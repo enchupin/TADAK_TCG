@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 public static class Program
 {
     // v1.0 데이터로 교체가 끝난 캐릭터 카드 파일 (단계별로 추가)
-    private static readonly string[] MigratedCardFiles = { "isla", "jack", "cream" };
+    private static readonly string[] MigratedCardFiles = { "isla", "jack", "cream", "ignia", "vanessa", "merel", "mio", "polar", "rune", "khan" };
 
     private static int passed;
     private static readonly List<string> failures = new List<string>();
@@ -33,8 +33,11 @@ public static class Program
 
         // 실제 변환기의 효과 타입 문자열
         string converter = File.ReadAllText(Path.Combine(root, "Assets/Editor/CardJSONConverter.cs"));
+        // ParseEffectType 본문의 case 라벨 (한 반환을 공유하는 라벨 포함, 미지원 throw 라벨 제외)
+        string parseBody = converter.Substring(converter.IndexOf("private static EffectType ParseEffectType"));
+        parseBody = parseBody.Substring(0, parseBody.IndexOf("default:"));
         HashSet<string> effectTypes = new HashSet<string>(
-            Regex.Matches(converter, "case \"(\\w+)\": return EffectType\\.").Select(m => m.Groups[1].Value));
+            Regex.Matches(parseBody, "case \"(\\w+)\":(?!\\s*throw)").Select(m => m.Groups[1].Value));
         Check(effectTypes.Count > 20, "변환기 효과 타입 추출");
 
         HashSet<int> buffIds = new HashSet<int>(Load(Path.Combine(locDir, "buffs.json"))["buffs"].Select(b => (int)b["buffId"]));

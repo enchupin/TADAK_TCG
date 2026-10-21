@@ -579,6 +579,8 @@ public class CardJSONConverter : EditorWindow
             durationText = ReadJsonString(effectObject, "duration"),
             effectIndex = ReadJsonInt(effectObject, "effectIndex", -1),
             ampMultiplier = ReadJsonFloat(effectObject, "ampMultiplier", 1f),
+            boostMultiplier = ReadJsonFloat(effectObject, "boostMultiplier", 1f),
+            cardFilter = ReadJsonString(effectObject, "filter"),
             multiplier = ReadJsonFloat(effectObject, "multiplier", 0f),
             count = ReadJsonInt(effectObject, "count"),
             stat = ReadJsonString(effectObject, "stat"),

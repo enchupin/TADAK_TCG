@@ -480,6 +480,12 @@ public class TrainingBattleManager : MonoBehaviour
         DrawCharacterCardsAndGet(count, characterFilter, ignoreRootAbsorption);
     }
 
+    // 조건에 맞는 카드만 드로우 (다른 아군 카드, 피해를 입히는 카드 등)
+    public List<Card> DrawMatchingCardsAndGet(int count, Predicate<Card> match, bool ignoreRootAbsorption = false)
+    {
+        return DrawCardsSequentially(count, ignoreRootAbsorption, () => usableDeckManager?.DrawMatchingCard(match));
+    }
+
     public List<Card> DrawCharacterCardsAndGet(int count, Character? characterFilter = null, bool ignoreRootAbsorption = false)
     {
         return DrawCardsSequentially(count, ignoreRootAbsorption, () =>
@@ -1198,9 +1204,24 @@ public class TrainingBattleManager : MonoBehaviour
 
     public int GetCardBaseDamageBonus(Card sourceCard, bool isAttackEffect)
     {
-        return battleBuffController != null
+        int permanentBonus = sourceCard != null ? Mathf.Max(0, sourceCard.permanentDamageBonus) : 0;
+        return permanentBonus + (battleBuffController != null
             ? battleBuffController.Player.GetCardBaseDamageBonus(sourceCard, isAttackEffect)
-            : 0;
+            : 0);
+    }
+
+    // R-22a 런 덱(저장 덱 원본)에 영구 피해 증가를 반영 (보스전에서는 반영하지 않음)
+    public void RecordPermanentDamageBonus(Card card, int amount)
+    {
+        if (card == null || amount == 0 || BossModeSession.IsActive || !TrainingRunState.IsRunActive || buildingDeck == null)
+        {
+            return;
+        }
+
+        if (!buildingDeck.AddPermanentDamageBonusAt(card.sourceDeckIndex, card.cardId, amount))
+        {
+            Debug.LogWarning($"[BattleManager] 저장 덱에서 카드 위치를 찾지 못해 이번 전투에만 피해를 늘렸습니다: {card.cardName}");
+        }
     }
 
     public int ApplyCardDamageRuntimeModifiers(Card sourceCard, int damage)

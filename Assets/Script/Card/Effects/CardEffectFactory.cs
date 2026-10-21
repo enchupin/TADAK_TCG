@@ -90,6 +90,8 @@ public static class CardEffectFactory
                     cardIdList = effectData.formulaCardIdFilter,
                     target = effectData.target,
                     ampMultiplier = effectData.ampMultiplier > 0f ? effectData.ampMultiplier : 1f,
+                    boostMultiplier = effectData.boostMultiplier > 0f ? effectData.boostMultiplier : 1f,
+                    perTargetOnAction = string.Equals(effectData.operation, "PerTarget", System.StringComparison.OrdinalIgnoreCase),
                     onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
                 };
 
@@ -188,7 +190,8 @@ public static class CardEffectFactory
                 {
                     amount = effectData.amount,
                     amountFormula = effectData.amountFormula,
-                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
+                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject),
+                    operation = effectData.operation
                 };
 
             case EffectType.ExhaustCard:
@@ -327,6 +330,7 @@ public static class CardEffectFactory
                     allowFewerSelection = effectData.allowFewerSelection,
                     upgradeableOnly = effectData.upgradeableOnly,
                     excludeUnique = effectData.excludeUnique,
+                    cardFilter = effectData.cardFilter,
                     onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
                 };
 
@@ -456,7 +460,8 @@ public static class CardEffectFactory
             case EffectType.CopyEnemyDebuffs:
                 return new CopyEnemyDebuffsEffect
                 {
-                    target = effectData.target
+                    target = effectData.target,
+                    random = effectData.random
                 };
 
             case EffectType.ApplyBuffByTargetStack:
@@ -487,7 +492,8 @@ public static class CardEffectFactory
                 return new IncreaseBeneficialBuffStacksEffect
                 {
                     amount = effectData.amount,
-                    target = effectData.target
+                    target = effectData.target,
+                    buffFilterIds = effectData.buffFilterIds == null ? null : new List<int>(effectData.buffFilterIds)
                 };
 
             case EffectType.EnemyHpLossHealPlayer:

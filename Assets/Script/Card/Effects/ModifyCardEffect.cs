@@ -56,6 +56,11 @@ public class ModifyCardEffect : ICardEffect
             case "EffectAmount":
                 ApplyEffectAmountChange(card, resolvedAmount);
                 return;
+            // R-22a 카드가 스스로 영구적으로 늘리는 피해량
+            case "PermanentDamage":
+                card.permanentDamageBonus = Mathf.Max(0, card.permanentDamageBonus + resolvedAmount);
+                TrainingBattleManager.Instance?.RecordPermanentDamageBonus(card, resolvedAmount);
+                return;
             default:
                 Debug.LogWarning($"[ModifyCardEffect] 지원하지 않는 param입니다: {param}");
                 return;
@@ -64,13 +69,12 @@ public class ModifyCardEffect : ICardEffect
 
     private void ApplyCostChange(Card card, int resolvedAmount)
     {
-        bool turnOnly = string.Equals(durationText, "Turn", System.StringComparison.OrdinalIgnoreCase);
         if (string.Equals(operation, "Set", System.StringComparison.OrdinalIgnoreCase)) {
-            card.SetCost(resolvedAmount, turnOnly);
+            card.SetCost(resolvedAmount, durationText);
             return;
         }
 
-        card.ApplyCostModifier(resolvedAmount, turnOnly);
+        card.ApplyCostModifier(resolvedAmount, durationText);
     }
 
     private void ApplyDamageChange(Card card, int resolvedAmount)
@@ -137,6 +141,10 @@ public class ModifyCardEffect : ICardEffect
     {
         if (string.Equals(operation, "Set", System.StringComparison.OrdinalIgnoreCase)) {
             return Mathf.Max(0, resolvedAmount);
+        }
+
+        if (string.Equals(operation, "Multiply", System.StringComparison.OrdinalIgnoreCase)) {
+            return Mathf.Max(0, currentValue * resolvedAmount);
         }
 
         return Mathf.Max(0, currentValue + resolvedAmount);

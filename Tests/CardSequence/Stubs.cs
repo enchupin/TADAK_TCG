@@ -56,7 +56,7 @@ public static class FormulaEvaluator
     public static int Evaluate(string formula, BattleContext context, object player, int amount = 0) => int.Parse(formula);
 }
 public class ConditionData { public List<int> checks = new(); }
-public static class ConditionEvaluator { public static bool Evaluate(ConditionData data, TrainingBattleManager manager) => true; }
+public static class ConditionEvaluator { public static bool Evaluate(ConditionData data, TrainingBattleManager manager) => true; public static bool IsDisruptionCard(Card card) => false; }
 public enum TargetType { None, Hand, Discard, Deck }
 public class RandomCardData { }
 public class GenerateCardEffect

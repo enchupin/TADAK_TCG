@@ -18,6 +18,8 @@ public class CharacterDeckSave
     public bool isRunSavedDeck = false;
     public string runSavedAtUtc = string.Empty;
     public List<int> cardIds = new();
+    // R-22a cardIds와 같은 위치의 영구 피해 증가량 (비어 있으면 0, 보스전 시작 시 초기화)
+    public List<int> permanentDamageBonuses = new();
 
     public static CharacterDeckSave Create(string deckName, List<int> sourceCardIds = null)
     {

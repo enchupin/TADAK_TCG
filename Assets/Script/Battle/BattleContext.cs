@@ -22,6 +22,8 @@ public class BattleContext
     public int lastDamageDealt;
     public int totalDamageDealt;
     public int playerCardHpLostThisCombat;
+    // 이번 전투에서 플레이어가 회복한 체력
+    public int playerHealedThisCombat;
 
     // 에너지 관련
     public int energySpentThisTurn;
@@ -138,6 +140,7 @@ public class BattleContext
         deckShuffleCountThisCombat = 0;
         totalDamageDealt = 0;
         playerCardHpLostThisCombat = 0;
+        playerHealedThisCombat = 0;
         OnTurnStart();
     }
 
@@ -196,6 +199,30 @@ public class BattleContext
         }
 
         enemyDebuffsAppliedThisTurn.Add(buffId);
+    }
+
+    public int GetCardsPlayedThisTurnByCharacter(Character character, bool countOthers)
+    {
+        int count = 0;
+        foreach (Card playedCard in cardsPlayedThisTurnList)
+        {
+            if (playedCard == null || playedCard.character == Character.Monster)
+            {
+                continue;
+            }
+
+            if ((playedCard.character == character) != countOthers)
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public int GetEnemyDebuffKindsAppliedThisTurn()
+    {
+        return enemyDebuffsAppliedThisTurn.Count;
     }
 
     public bool WasEnemyDebuffAppliedThisTurn(int buffId)
@@ -258,6 +285,14 @@ public class BattleContext
         }
 
         playerCardHpLostThisCombat += amount;
+    }
+
+    public void OnPlayerHealed(int amount)
+    {
+        if (amount > 0)
+        {
+            playerHealedThisCombat += amount;
+        }
     }
 
     public void OnDefenseConsumed(int amount)

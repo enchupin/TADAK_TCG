@@ -123,6 +123,13 @@ public static class Program
         first.characters[0].decks[0].cardIds = new System.Collections.Generic.List<int> { 1 };
         Check(ProfileSaveCodec.Decode(JsonConvert.SerializeObject(first), first.ownerSteamId)
             .characters[0].decks[0].cardIds.Count == 1, "최대 장수 이하 저장덱 허용");
+        // R-22a 영구 피해 증가 저장, 이전 저장에는 빈 목록
+        first.characters[0].decks[0].permanentDamageBonuses = new System.Collections.Generic.List<int> { 6 };
+        Check(ProfileSaveCodec.Decode(JsonConvert.SerializeObject(first), first.ownerSteamId)
+            .characters[0].decks[0].permanentDamageBonuses.SequenceEqual(new[] { 6 }), "영구 피해 증가 저장");
+        string withoutBonus = JsonConvert.SerializeObject(first).Replace(",\"permanentDamageBonuses\":[6]", "").Replace(",\"permanentDamageBonuses\":[]", "");
+        Check(!withoutBonus.Contains("permanentDamageBonuses")
+            && ProfileSaveCodec.Decode(withoutBonus, first.ownerSteamId).characters[0].decks[0].permanentDamageBonuses?.Count == 0, "이전 저장덱은 영구 피해 증가 없음");
         first.characters[0].decks[0].cardIds.Clear();
         Throws<InvalidDataException>(() => ProfileSaveCodec.Decode(JsonConvert.SerializeObject(first), first.ownerSteamId));
         first.characters[0].decks[0].cardIds = null;

@@ -5,15 +5,15 @@
             "name": "깃털 뽑기",
             "characterId": 203,
             "cost": 1,
-            "description": "깃털 카드를 {amount}장 생성합니다.",
+            "description": "깃털 카드를 2장 생성합니다.",
             "effects": [
                 {
-                    "type": "Repeat",
-                    "amount": 2
-                },
-                {
-                    "type": "GenerateCard",
-                    "cardId": "203080"
+                    "type": "RandGenerate",
+                    "amount": 2,
+                    "cardIds": [
+                        203080
+                    ],
+                    "to": "Hand"
                 }
             ]
         },
@@ -22,12 +22,12 @@
             "name": "보호용 숄",
             "characterId": 203,
             "cost": 1,
-            "description": "보호막을 {amount} 얻습니다.",
+            "description": "보호막을 {block} 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",
-                    "amount": 6,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 4
                 }
             ]
         },
@@ -39,288 +39,152 @@
             "keywords": [
                 4
             ],
-            "description": "(깃털 겹치기)를 {amount} 얻습니다.",
+            "description": "(깃털)을 부여할 때마다 1 더 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 3034,
-                    "amount": 1,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 1
                 }
             ],
             "enforceGroup": "enforce_203030"
         },
         {
             "cardId": 203031,
-            "name": "겹치기 +",
+            "name": "겹치기+",
             "characterId": 203,
-            "cost": 1,
+            "cost": 2,
             "keywords": [
                 4
             ],
-            "description": "(깃털 겹치기)를 {amount} 얻습니다.",
+            "description": "(깃털)을 부여할 때마다 2 더 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 3034,
-                    "amount": 2,
-                    "target": "Self"
-                }
-            ]
-        },
-        {
-            "cardId": 203032,
-            "name": "겹치기 +",
-            "characterId": 203,
-            "cost": 1,
-            "description": "(무아지경)을 {amount} 얻습니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffId": 3060,
-                    "amount": 2,
-                    "target": "Self"
-                }
-            ]
-        },
-        {
-            "cardId": 203033,
-            "name": "겹치기 +",
-            "characterId": 203,
-            "cost": 1,
-            "keywords": [
-                4,
-                9
-            ],
-            "description": "(이중 깃털)을 얻습니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffId": 1022,
-                    "amount": 1,
-                    "target": "Self"
-                }
-            ]
-        },
-        {
-            "cardId": 203034,
-            "name": "겹치기 +",
-            "characterId": 203,
-            "cost": 1,
-            "description": "(파워 반복)을 {amount} 얻습니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffId": 3035,
-                    "amount": 1,
-                    "target": "Self"
-                }
-            ]
-        },
-        {
-            "cardId": 203035,
-            "name": "겹치기 +",
-            "characterId": 203,
-            "cost": 1,
-            "description": "버린 카드 더미를 뽑을 카드 더미에 넣고 섞습니다. 카드를 {amount}장 뽑습니다.",
-            "effects": [
-                {
-                    "type": "Move",
-                    "from": "DiscardPile",
-                    "amountFormula": "all",
-                    "to": "DrawPile",
-                    "position": "Random"
-                },
-                {
-                    "type": "Draw",
+                    "target": "Self",
                     "amount": 2
                 }
             ]
         },
         {
-            "cardId": 203040,
-            "name": "예비용 깃털",
+            "cardId": 203032,
+            "name": "겹치기+",
             "characterId": 203,
             "cost": 2,
-            "description": "깃털 카드를 {amount}장 생성합니다.",
+            "keywords": [
+                4,
+                9
+            ],
+            "description": "깃털 카드가 반복을 얻습니다.",
             "effects": [
                 {
-                    "type": "Repeat",
-                    "amount": 3
+                    "type": "Buff",
+                    "buffId": 1022,
+                    "target": "Self",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "cardId": 203033,
+            "name": "겹치기+",
+            "characterId": 203,
+            "cost": 1,
+            "description": "깃털 카드를 2장 생성합니다. (은신)을 1 얻습니다.",
+            "effects": [
+                {
+                    "type": "RandGenerate",
+                    "amount": 2,
+                    "cardIds": [
+                        203080
+                    ],
+                    "to": "Hand"
                 },
                 {
-                    "type": "GenerateCard",
-                    "cardId": "203080"
+                    "type": "Buff",
+                    "buffId": 3065,
+                    "target": "Self",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "cardId": 203034,
+            "name": "겹치기+",
+            "characterId": 203,
+            "cost": 1,
+            "description": "(은신)을 1 얻습니다. 보호막을 {block} 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3065,
+                    "target": "Self",
+                    "amount": 1
+                },
+                {
+                    "type": "Barrier",
+                    "target": "Self",
+                    "amount": 4
+                }
+            ]
+        },
+        {
+            "cardId": 203035,
+            "name": "겹치기+",
+            "characterId": 203,
+            "cost": 1,
+            "description": "다음 각인 카드가 반복을 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3035,
+                    "target": "Self",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "cardId": 203040,
+            "name": "회수",
+            "characterId": 203,
+            "cost": 1,
+            "description": "대상의 (깃털)을 1회 회수합니다.",
+            "effects": [
+                {
+                    "type": "Trigger",
+                    "timing": "Feather",
+                    "target": "SingleEnemy",
+                    "amount": 1
                 }
             ],
             "enforceGroup": "enforce_203040"
         },
         {
             "cardId": 203041,
-            "name": "예비용 깃털 +",
+            "name": "회수+",
             "characterId": 203,
-            "cost": 2,
-            "description": "강화된 깃털 카드를 {amount}장 생성합니다.",
+            "cost": 1,
+            "description": "대상의 (깃털)을 2회 회수합니다.",
             "effects": [
                 {
-                    "type": "Repeat",
-                    "amount": 3
-                },
-                {
-                    "type": "GenerateCard",
-                    "cardId": "203081"
+                    "type": "Trigger",
+                    "timing": "Feather",
+                    "target": "SingleEnemy",
+                    "amount": 2
                 }
             ]
         },
         {
             "cardId": 203042,
-            "name": "예비용 깃털 +",
+            "name": "회수+",
             "characterId": 203,
-            "cost": 2,
-            "description": "깃털 카드를 {amount}장 생성합니다. 사용할 때마다 이 카드의 비용이 {amount2} 감소합니다.",
-            "effects": [
-                {
-                    "type": "Repeat",
-                    "amount": 3
-                },
-                {
-                    "type": "GenerateCard",
-                    "cardId": "203080"
-                },
-                {
-                    "type": "ModifyCard",
-                    "source": "ThisCard",
-                    "param": "Cost",
-                    "amount": -1,
-                    "operation": "Add"
-                }
-            ]
-        },
-        {
-            "cardId": 203043,
-            "name": "예비용 깃털 +",
-            "characterId": 203,
-            "cost": 1,
-            "description": "카드를 {amount}장 뽑습니다. 깃털 카드를 {amount2}장 생성합니다.",
-            "effects": [
-                {
-                    "type": "Draw",
-                    "amount": 2
-                },
-                {
-                    "type": "Repeat",
-                    "amount": 2
-                },
-                {
-                    "type": "GenerateCard",
-                    "cardId": "203080"
-                }
-            ]
-        },
-        {
-            "cardId": 203044,
-            "name": "예비용 깃털 +",
-            "characterId": 203,
-            "cost": 1,
-            "keywords": [
-                4,
-                5
-            ],
-            "description": "(자라나는 깃털)을 {amount} 얻습니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffId": 3036,
-                    "amount": 1,
-                    "target": "Self"
-                }
-            ]
-        },
-        {
-            "cardId": 203045,
-            "name": "예비용 깃털 +",
-            "characterId": 203,
-            "cost": 1,
-            "description": "내 손에 있는 모든 방해 카드를 깃털 카드로 만듭니다.",
-            "effects": [
-                {
-                    "type": "TransformCards",
-                    "from": "Hand",
-                    "character": "Monster",
-                    "cardId": "203080"
-                }
-            ]
-        },
-        {
-            "cardId": 203050,
-            "name": "회수",
-            "characterId": 203,
-            "cost": 1,
-            "description": "적의 (깃털)을 {amount}회 발동시킵니다.",
-            "effects": [
-                {
-                    "type": "Trigger",
-                    "timing": "Feather",
-                    "target": "SingleEnemy",
-                    "amount": 1
-                }
-            ],
-            "enforceGroup": "enforce_203050"
-        },
-        {
-            "cardId": 203051,
-            "name": "회수 +",
-            "characterId": 203,
-            "cost": 1,
-            "description": "모든 적의 (깃털)을 {amount}회 발동시킵니다.",
-            "effects": [
-                {
-                    "type": "Trigger",
-                    "timing": "Feather",
-                    "target": "AllEnemies",
-                    "amount": 1
-                }
-            ]
-        },
-        {
-            "cardId": 203052,
-            "name": "회수 +",
-            "characterId": 203,
-            "cost": 0,
-            "description": "적의 (깃털)을 {amount}회 발동시킵니다.",
-            "effects": [
-                {
-                    "type": "Trigger",
-                    "timing": "Feather",
-                    "target": "SingleEnemy",
-                    "amount": 1
-                }
-            ]
-        },
-        {
-            "cardId": 203053,
-            "name": "회수 +",
-            "characterId": 203,
-            "cost": 1,
-            "description": "적의 (깃털)을 {amount}회 발동시킵니다.",
-            "effects": [
-                {
-                    "type": "Trigger",
-                    "timing": "Feather",
-                    "target": "SingleEnemy",
-                    "amount": 2
-                }
-            ]
-        },
-        {
-            "cardId": 203054,
-            "name": "회수 +",
-            "characterId": 203,
-            "cost": 3,
+            "cost": 4,
             "keywords": [
                 9
             ],
-            "description": "적의 (깃털)이 0이 될 때까지 반복해서 발동합니다.",
+            "description": "대상의 (깃털)이 0이 될 때까지 회수합니다.",
             "effects": [
                 {
                     "type": "Trigger",
@@ -330,15 +194,213 @@
             ]
         },
         {
-            "cardId": 203055,
-            "name": "회수 +",
+            "cardId": 203043,
+            "name": "회수+",
+            "characterId": 203,
+            "cost": 1,
+            "description": "대상의 (깃털)을 1회 회수합니다. (은신) 상태라면 3회 회수합니다.",
+            "effects": [
+                {
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "Source",
+                                "operator": "Eq",
+                                "value": true,
+                                "property": "HasBuff",
+                                "param": 3065
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "Trigger",
+                                "timing": "Feather",
+                                "target": "SingleEnemy",
+                                "amount": 3
+                            }
+                        ],
+                        "elseEffects": [
+                            {
+                                "type": "Trigger",
+                                "timing": "Feather",
+                                "target": "SingleEnemy",
+                                "amount": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "cardId": 203044,
+            "name": "회수+",
             "characterId": 203,
             "cost": 2,
-            "description": "소멸된 모든 깃털 카드를 무작위 적에게 다시 사용합니다.",
+            "description": "소멸된 깃털 카드를 모두 대상에게 다시 사용합니다.",
             "effects": [
                 {
                     "type": "Trigger",
-                    "timing": "ReplayExhaustedFeather"
+                    "timing": "ReplayExhaustedFeather",
+                    "target": "SingleEnemy"
+                }
+            ]
+        },
+        {
+            "cardId": 203045,
+            "name": "회수+",
+            "characterId": 203,
+            "cost": 0,
+            "description": "대상의 (깃털)을 1회 회수합니다.",
+            "effects": [
+                {
+                    "type": "Trigger",
+                    "timing": "Feather",
+                    "target": "SingleEnemy",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "cardId": 203050,
+            "name": "예비용 깃털",
+            "characterId": 203,
+            "cost": 1,
+            "description": "깃털 카드를 3장 생성합니다.",
+            "effects": [
+                {
+                    "type": "RandGenerate",
+                    "amount": 3,
+                    "cardIds": [
+                        203080
+                    ],
+                    "to": "Hand"
+                }
+            ],
+            "enforceGroup": "enforce_203050"
+        },
+        {
+            "cardId": 203051,
+            "name": "예비용 깃털+",
+            "characterId": 203,
+            "cost": 1,
+            "description": "강화된 깃털 카드를 3장 생성합니다.",
+            "effects": [
+                {
+                    "type": "RandGenerate",
+                    "amount": 3,
+                    "cardIds": [
+                        203081
+                    ],
+                    "to": "Hand"
+                }
+            ]
+        },
+        {
+            "cardId": 203052,
+            "name": "예비용 깃털+",
+            "characterId": 203,
+            "cost": 1,
+            "keywords": [
+                4,
+                5
+            ],
+            "description": "매 턴 시작 시 깃털 카드를 1장 생성합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3036,
+                    "target": "Self",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "cardId": 203053,
+            "name": "예비용 깃털+",
+            "characterId": 203,
+            "cost": 1,
+            "description": "깃털 카드를 1장 생성합니다. 이번 턴에 해당 카드의 피해량은 3배입니다.",
+            "effects": [
+                {
+                    "type": "Copy",
+                    "from": "CardId",
+                    "amount": 1,
+                    "to": "Hand",
+                    "cardIds": [
+                        203080
+                    ],
+                    "subject": "GeneratedCard",
+                    "onAction": {
+                        "type": "ModifyCard",
+                        "subject": "GeneratedCard",
+                        "param": "Damage",
+                        "operation": "Multiply",
+                        "amount": 3
+                    }
+                }
+            ]
+        },
+        {
+            "cardId": 203054,
+            "name": "예비용 깃털+",
+            "characterId": 203,
+            "cost": 1,
+            "description": "깃털 카드를 2장 생성합니다. (은신) 상태라면 3장 생성합니다.",
+            "effects": [
+                {
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "Source",
+                                "operator": "Eq",
+                                "value": true,
+                                "property": "HasBuff",
+                                "param": 3065
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "RandGenerate",
+                                "amount": 3,
+                                "cardIds": [
+                                    203080
+                                ],
+                                "to": "Hand"
+                            }
+                        ],
+                        "elseEffects": [
+                            {
+                                "type": "RandGenerate",
+                                "amount": 2,
+                                "cardIds": [
+                                    203080
+                                ],
+                                "to": "Hand"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "cardId": 203055,
+            "name": "예비용 깃털+",
+            "characterId": 203,
+            "cost": 1,
+            "description": "손에서 방해 카드를 1장 깃털 카드로 바꿉니다.",
+            "effects": [
+                {
+                    "type": "SelectCard",
+                    "from": "Hand",
+                    "amount": 1,
+                    "subject": "Selected",
+                    "onAction": {
+                        "type": "TransformCards",
+                        "from": "Source",
+                        "subject": "Selected",
+                        "cardId": "203080"
+                    },
+                    "filter": "Disruption"
                 }
             ]
         },
@@ -351,70 +413,33 @@
                 5,
                 3
             ],
-            "description": "모든 적에게 (약화)를 {amount}, (빈약)을 {amount}, (부식)을 {amount} 부여합니다.",
+            "description": "카드를 1장 뽑습니다. 깃털 카드를 1장 생성합니다.",
             "effects": [
                 {
-                    "type": "Buff",
-                    "buffId": 4008,
-                    "amount": 1,
-                    "target": "AllEnemies"
+                    "type": "Draw",
+                    "amount": 1
                 },
                 {
-                    "type": "Buff",
-                    "buffId": 4011,
+                    "type": "RandGenerate",
                     "amount": 1,
-                    "target": "AllEnemies"
-                },
-                {
-                    "type": "Buff",
-                    "buffId": 4001,
-                    "amount": 1,
-                    "target": "AllEnemies"
+                    "cardIds": [
+                        203080
+                    ],
+                    "to": "Hand"
                 }
             ],
             "enforceGroup": "enforce_203060"
         },
         {
             "cardId": 203061,
-            "name": "정보 탐색 +",
+            "name": "정보 탐색+",
             "characterId": 203,
-            "cost": 0,
-            "keywords": [
-                5,
-                3
-            ],
-            "description": "모든 적에게 (약화)를 {amount}, (빈약)을 {amount}, (부식)을 {amount} 부여합니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffId": 4008,
-                    "amount": 2,
-                    "target": "AllEnemies"
-                },
-                {
-                    "type": "Buff",
-                    "buffId": 4011,
-                    "amount": 2,
-                    "target": "AllEnemies"
-                },
-                {
-                    "type": "Buff",
-                    "buffId": 4001,
-                    "amount": 2,
-                    "target": "AllEnemies"
-                }
-            ]
-        },
-        {
-            "cardId": 203062,
-            "name": "정보 탐색 +",
-            "characterId": 203,
-            "cost": 1,
+            "cost": 2,
             "keywords": [
                 1,
                 3
             ],
-            "description": "내 손에 있는 모든 카드를 버립니다. 버린 카드 수 만큼 깃털 카드를 생성합니다.",
+            "description": "손에서 카드를 모두 버립니다. 버린 수만큼 깃털 카드를 생성합니다.",
             "effects": [
                 {
                     "type": "Move",
@@ -436,35 +461,84 @@
             ]
         },
         {
-            "cardId": 203063,
-            "name": "정보 탐색 +",
+            "cardId": 203062,
+            "name": "정보 탐색+",
             "characterId": 203,
             "cost": 1,
-            "description": "적이 공격할 의도가 있다면, 깃털 카드를 {amount}장 생성하고 보호막을 {amount2} 얻습니다.",
+            "description": "적에게 공격할 의도가 있으면 깃털 카드를 2장 생성합니다. 보호막을 {block} 얻습니다.",
             "effects": [
                 {
                     "condition": {
                         "checks": [
                             {
                                 "subject": "Target",
-                                "property": "HasAttackIntent",
                                 "operator": "Eq",
-                                "value": 1
+                                "value": 1,
+                                "property": "HasAttackIntent"
                             }
                         ],
                         "effects": [
                             {
-                                "type": "Repeat",
-                                "amount": 2
-                            },
+                                "type": "RandGenerate",
+                                "amount": 2,
+                                "cardIds": [
+                                    203080
+                                ],
+                                "to": "Hand"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "type": "Barrier",
+                    "target": "Self",
+                    "amount": 4
+                }
+            ]
+        },
+        {
+            "cardId": 203063,
+            "name": "정보 탐색+",
+            "characterId": 203,
+            "cost": 0,
+            "keywords": [
+                5
+            ],
+            "description": "(은신)을 1 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3065,
+                    "target": "Self",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "cardId": 203064,
+            "name": "정보 탐색+",
+            "characterId": 203,
+            "cost": 0,
+            "description": "대상이 기절·덫 상태라면 (깃털) 중첩을 2배로 늘립니다.",
+            "effects": [
+                {
+                    "condition": {
+                        "checks": [
                             {
-                                "type": "GenerateCard",
-                                "cardId": "203080"
-                            },
+                                "subject": "Target",
+                                "operator": "Eq",
+                                "value": 1,
+                                "property": "IsStunnedOrTrapped"
+                            }
+                        ],
+                        "effects": [
                             {
-                                "type": "Barrier",
-                                "amount": 5,
-                                "target": "Self"
+                                "type": "ChangeStat",
+                                "stat": "Buff",
+                                "change": "Multiply",
+                                "buffId": 4014,
+                                "amount": 2,
+                                "target": "SingleEnemy"
                             }
                         ]
                     }
@@ -472,59 +546,37 @@
             ]
         },
         {
-            "cardId": 203064,
-            "name": "정보 탐색 +",
+            "cardId": 203065,
+            "name": "정보 탐색+",
             "characterId": 203,
             "cost": 0,
-            "description": "카드를 {amount}장 뽑습니다. 파워 카드라면 비용을 {amount2} 감소시킵니다.",
+            "description": "카드를 1장 뽑고 그 카드가 각인 카드면 비용을 1 감소시킵니다.",
             "effects": [
                 {
                     "type": "Draw",
                     "amount": 1,
-                    "subject": "DrawnCard",
                     "onAction": {
                         "condition": {
                             "checks": [
                                 {
                                     "subject": "DrawnCard",
-                                    "property": "HasKeyword",
-                                    "param": 4,
                                     "operator": "Eq",
-                                    "value": true
+                                    "value": true,
+                                    "property": "HasKeyword",
+                                    "param": 4
                                 }
                             ],
                             "effects": [
                                 {
                                     "type": "ReduceCost",
-                                    "amount": 1
+                                    "amount": 1,
+                                    "duration": "UntilPlayed",
+                                    "subject": "DrawnCard"
                                 }
                             ]
                         }
-                    }
-                }
-            ]
-        },
-        {
-            "cardId": 203065,
-            "name": "정보 탐색 +",
-            "characterId": 203,
-            "cost": 1,
-            "keywords": [
-                3
-            ],
-            "description": "(약화)를 {amount} 얻고 (힘)을 {amount2} 얻습니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffId": 4008,
-                    "amount": 1,
-                    "target": "Self"
-                },
-                {
-                    "type": "Buff",
-                    "buffId": 3002,
-                    "amount": 3,
-                    "target": "Self"
+                    },
+                    "subject": "DrawnCard"
                 }
             ]
         },
@@ -536,118 +588,112 @@
             "keywords": [
                 4
             ],
-            "description": "(정밀)을 {amount} 얻습니다.",
+            "description": "깃털 카드의 피해량이 3 증가합니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 3037,
-                    "amount": 4,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 3
                 }
             ],
             "enforceGroup": "enforce_203070"
         },
         {
             "cardId": 203071,
-            "name": "정밀 투척 +",
+            "name": "정밀 투척+",
             "characterId": 203,
-            "cost": 1,
+            "cost": 3,
             "keywords": [
-                4
+                4,
+                9
             ],
-            "description": "(자동 회수)를 {amount} 얻습니다.",
+            "description": "깃털 카드를 쓸 때마다 카드를 1장 뽑습니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3038,
-                    "amount": 1,
-                    "target": "Self"
+                    "buffId": 1015,
+                    "target": "Self",
+                    "amount": 1
                 }
             ]
         },
         {
             "cardId": 203072,
-            "name": "정밀 투척 +",
+            "name": "정밀 투척+",
             "characterId": 203,
-            "cost": 2,
-            "keywords": [
-                4
-            ],
-            "description": "(눈 먼 깃털)을 얻습니다. 깃털 카드를 4장 생성합니다.",
+            "cost": 1,
+            "description": "손의 깃털 카드를 모두 강화합니다.",
             "effects": [
                 {
-                    "type": "Buff",
-                    "buffId": 3039,
-                    "amount": 1,
-                    "target": "Self"
-                },
-                {
-                    "type": "Repeat",
-                    "amount": 4
-                },
-                {
-                    "type": "GenerateCard",
-                    "cardId": "203080"
+                    "type": "SelectCard",
+                    "from": "Hand",
+                    "amount": 10,
+                    "subject": "Selected",
+                    "onAction": {
+                        "type": "UpgradeCards",
+                        "from": "Source",
+                        "upgrade": "Random"
+                    },
+                    "random": true,
+                    "allowFewer": true,
+                    "upgradeableOnly": true,
+                    "cardIdGroup": "merel_feather_all"
                 }
             ]
         },
         {
             "cardId": 203073,
-            "name": "정밀 투척 +",
+            "name": "정밀 투척+",
             "characterId": 203,
-            "cost": 2,
+            "cost": 1,
             "keywords": [
                 4
             ],
-            "description": "(순환: 깃털)을 얻습니다.",
+            "description": "깃털 카드의 피해량이 5 증가합니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 1015,
-                    "target": "Self"
+                    "buffId": 3037,
+                    "target": "Self",
+                    "amount": 5
                 }
             ]
         },
         {
             "cardId": 203074,
-            "name": "정밀 투척 +",
+            "name": "정밀 투척+",
             "characterId": 203,
-            "cost": 1,
+            "cost": 2,
             "keywords": [
-                4
+                4,
+                9
             ],
-            "description": "(치명적인 기습)을 {amount} 얻습니다.",
+            "description": "(깃털)을 보유한 적을 처치할 때마다 에너지를 1 얻고 카드를 1장 뽑습니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3040,
-                    "amount": 8,
-                    "target": "Self"
+                    "buffId": 1026,
+                    "target": "Self",
+                    "amount": 1
                 }
             ]
         },
         {
             "cardId": 203075,
-            "name": "정밀 투척 +",
+            "name": "정밀 투척+",
             "characterId": 203,
             "cost": 1,
             "keywords": [
                 4
             ],
-            "description": "(강화: 깃털)을 얻습니다. 깃털 카드를 2장 생성합니다.",
+            "description": "적에게 해로운 효과를 부여할 때마다 그 적에게 (깃털)을 1 부여합니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 1016,
-                    "target": "Self"
-                },
-                {
-                    "type": "Repeat",
-                    "amount": 2
-                },
-                {
-                    "type": "GenerateCard",
-                    "cardId": "203080"
+                    "buffId": 3074,
+                    "target": "Self",
+                    "amount": 1
                 }
             ]
         },
@@ -659,42 +705,42 @@
             "keywords": [
                 3
             ],
-            "description": "피해를 {amount} 입힙니다. (깃털)을 {amount2} 부여합니다.",
+            "description": "피해를 {attack} 입힙니다. (깃털)을 1 부여합니다.",
             "effects": [
                 {
                     "type": "Attack",
-                    "amount": 3,
-                    "target": "SingleEnemy"
+                    "target": "SingleEnemy",
+                    "amount": 3
                 },
                 {
                     "type": "Buff",
                     "buffId": 4014,
-                    "amount": 1,
-                    "target": "SingleEnemy"
+                    "target": "SingleEnemy",
+                    "amount": 1
                 }
             ],
             "enforceGroup": "enforce_203080"
         },
         {
             "cardId": 203081,
-            "name": "깃털 +",
+            "name": "깃털+",
             "characterId": 203,
             "cost": 0,
             "keywords": [
                 3
             ],
-            "description": "피해를 {amount} 입힙니다. (깃털)을 {amount2} 부여합니다.",
+            "description": "피해를 {attack} 입힙니다. (깃털)을 2 부여합니다.",
             "effects": [
                 {
                     "type": "Attack",
-                    "amount": 5,
-                    "target": "SingleEnemy"
+                    "target": "SingleEnemy",
+                    "amount": 5
                 },
                 {
                     "type": "Buff",
                     "buffId": 4014,
-                    "amount": 2,
-                    "target": "SingleEnemy"
+                    "target": "SingleEnemy",
+                    "amount": 2
                 }
             ]
         }

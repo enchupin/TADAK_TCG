@@ -80,6 +80,17 @@ public static class ConditionEvaluator
             return Compare(cardsPlayed, op, check.value);
         }
 
+        // 이번 턴에 해당 캐릭터(param) 카드를 사용한 수 / 다른 아군 카드를 사용한 수 (현재 카드 포함)
+        if (check.subject == "CharacterCardsPlayedThisTurn" || check.subject == "OtherCharacterCardsPlayedThisTurn")
+        {
+            int.TryParse(check.param, out int characterId);
+            bool countOthers = check.subject == "OtherCharacterCardsPlayedThisTurn";
+            int count = battleManager.battleContext != null
+                ? battleManager.battleContext.GetCardsPlayedThisTurnByCharacter((Character)characterId, countOthers)
+                : 0;
+            return Compare(count, op, check.value);
+        }
+
         if (check.subject == "EnemyDebuffAppliedThisTurn")
         {
             int buffId = 0;
@@ -94,6 +105,12 @@ public static class ConditionEvaluator
 
         float subjectValue = GetPropertyValue(subjectObj, check.property, check.param);
         return Compare(subjectValue, op, check.value);
+    }
+
+    // 방해 카드: 몬스터가 만든 카드 또는 사용불가 카드
+    public static bool IsDisruptionCard(Card card)
+    {
+        return card != null && (card.character == Character.Monster || card.HasKeyword(CardKeywordIds.Unplayable));
     }
 
     private static bool TryConsumeLuck(TrainingBattleManager battleManager)
@@ -161,7 +178,7 @@ public static class ConditionEvaluator
                 case "CharacterId": return (int)card.character;
                 case "IsPotion": return IsPotionCard(card) ? 1f : 0f;
                 // 방해 카드: 몬스터가 만든 카드 또는 사용불가 카드
-                case "IsDisruption": return card.character == Character.Monster || card.HasKeyword(CardKeywordIds.Unplayable) ? 1f : 0f;
+                case "IsDisruption": return IsDisruptionCard(card) ? 1f : 0f;
                 case "HasKeyword":
                     return card.HasKeyword(ResolveKeywordId(param)) ? 1f : 0f;
             }
@@ -206,8 +223,12 @@ public static class ConditionEvaluator
             switch (property)
             {
                 case "Hp": return monster.hp;
+                // 체력 비율(%)
+                case "HpPercent": return monster.maxHP > 0 ? monster.hp * 100f / monster.maxHP : 0f;
                 case "Defense": return monster.defense;
                 case "HasAttackIntent": return monster.HasAttackIntent ? 1f : 0f;
+                // 기절 또는 덫 상태
+                case "IsStunnedOrTrapped": return monster.IsStunned || monster.GetBuffStack(BattleRuntimeDefinitions.TrapStateBuffId) > 0 ? 1f : 0f;
                 case "Buff":
                     int monsterBuffId = int.Parse(param);
                     return monster.GetBuffStack(monsterBuffId);

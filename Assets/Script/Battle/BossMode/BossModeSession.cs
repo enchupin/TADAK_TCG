@@ -31,6 +31,7 @@ public static class BossModeSession
         TrainingBattleManager.buildingDeck = null;
         SelectedButtonControl.selectedCharacterList = new List<Character>(characters);
         cardIds.AddRange(selectedCardIds);
+        TrainingRunDeckPersistence.ResetPermanentDamageBonuses();
         SelectedBossId = bossId;
         IsActive = true;
     }

@@ -10,7 +10,38 @@ static class CardMechanicTests
         VerifyCoin();
         VerifyFragment();
         VerifyCuriosityPlay();
-        return 3;
+        VerifyCostDurations();
+        return 4;
+    }
+
+    // 비용 변경 기간: 이번 턴 / 사용·버림 전까지 / 전투, 복제 시 영구 피해 증가 유지(R-22a)
+    private static void VerifyCostDurations()
+    {
+        var card = new Card { cardId = 1, cost = 3 };
+        card.InitializeRuntimeState();
+        card.ApplyCostModifier(-1, "UntilPlayed");
+        Assert(card.cost == 2, "사용 전까지 비용 감소");
+        card.ClearTurnModifiers();
+        Assert(card.cost == 2, "턴이 지나도 손에 있으면 유지");
+        card.ApplyCostModifier(-1, "Turn");
+        Assert(card.cost == 1, "이번 턴 감소와 중첩");
+        card.ClearTurnModifiers();
+        Assert(card.cost == 2, "이번 턴 감소만 해제");
+        card.ClearUntilPlayedModifiers();
+        Assert(card.cost == 3, "사용·버림 시 해제");
+        card.SetCost(0, "UntilPlayed");
+        Assert(card.cost == 0, "사용 전까지 비용 지정");
+        card.ClearUntilPlayedModifiers();
+        Assert(card.cost == 3, "비용 지정 해제");
+        card.ApplyCostModifier(-1, (string)null);
+        card.ClearUntilPlayedModifiers();
+        card.ClearTurnModifiers();
+        Assert(card.cost == 2, "기간 없는 감소는 전투 동안 유지");
+
+        card.permanentDamageBonus = 6;
+        card.sourceDeckIndex = 3;
+        Card copy = card.CloneForRuntimeCopy();
+        Assert(copy.permanentDamageBonus == 6 && copy.sourceDeckIndex == -1, "복제는 영구 피해 증가를 잇고 저장 덱 위치는 잇지 않음");
     }
 
     private static void Assert(bool value, string message)

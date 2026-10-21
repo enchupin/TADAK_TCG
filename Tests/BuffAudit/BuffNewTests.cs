@@ -17,6 +17,7 @@ static class BuffNewTests
         VerifyDefense();
         VerifyResources();
         VerifyOwlEyeAndCurse();
+        VerifyCardBuffAmounts();
         return assertions;
     }
 
@@ -243,5 +244,30 @@ static class BuffNewTests
         battle.playerService.OnPlayerTurnEnd();
         Eq(player.GetBuffStack(StrengthBuffId), 4, "저주 회복 턴 종료 시 힘");
         Eq(player.GetBuffStack(CurseRecoveryBuffId), 0, "저주 회복 제거");
+    }
+
+    // 카드 효과의 음수 부여(103070 시간 저주)와 강공 배율(201044)
+    private static void VerifyCardBuffAmounts()
+    {
+        var battle = new TrainingBattleManager();
+        var player = battle.playerData;
+        var monster = new Monster();
+        battle.monsters.Add(monster);
+        new BuffEffect { buffId = StrengthBuffId, amount = -6, target = TargetType.AllEnemies }.Execute(battle);
+        Eq(monster.GetBuffStack(StrengthBuffId), -6, "음수 허용 효과는 카드에서 음수로 부여");
+        new BuffEffect { buffId = WeakBuffId, amount = -2, target = TargetType.AllEnemies }.Execute(battle);
+        Eq(monster.GetBuffStack(WeakBuffId), 1, "음수 비허용 효과는 기존처럼 최소 1 부여");
+
+        battle = new TrainingBattleManager();
+        player = battle.playerData;
+        monster = new Monster();
+        battle.monsters.Add(monster);
+        var card = new Card();
+        card.effects.Add(new AttackEffect { amount = 20, target = TargetType.SingleEnemy, boostMultiplier = 3 });
+        player.AddBuff(AttackBoostBuffId, 4);
+        battle.battleContext.SetContextCards("ThisCard", new() { card });
+        card.effects[0].Execute(battle);
+        Eq(monster.hp, 68, "강공 3배 적용");
+        Eq(player.GetBuffStack(AttackBoostBuffId), 0, "강공 소모");
     }
 }

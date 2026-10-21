@@ -4,6 +4,8 @@ using System.Collections.Generic;
 public sealed class CopyEnemyDebuffsEffect : ICardEffect
 {
     public TargetType target = TargetType.SingleEnemy;
+    // 무작위 해로운 효과 1개만 복사
+    public bool random;
 
     public void Execute(TrainingBattleManager battleManager)
     {
@@ -27,6 +29,12 @@ public sealed class CopyEnemyDebuffsEffect : ICardEffect
         if (debuffs.Count == 0)
         {
             return;
+        }
+
+        if (random && debuffs.Count > 1)
+        {
+            BuffSnapshot picked = debuffs[UnityEngine.Random.Range(0, debuffs.Count)];
+            debuffs = new List<BuffSnapshot> { picked };
         }
 
         foreach (Monster monster in battleManager.GetLivingMonsters())

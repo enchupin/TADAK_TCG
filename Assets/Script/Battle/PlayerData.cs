@@ -338,6 +338,7 @@ public class PlayerData : MonoBehaviour
     {
         int healAmount = Mathf.Min(amount, maxHP - hp);
         hp += healAmount;
+        TrainingBattleManager.Instance?.battleContext?.OnPlayerHealed(healAmount);
         Debug.Log($"체력 +{healAmount} 회복 (현재: {hp}/{maxHP})");
     }
 

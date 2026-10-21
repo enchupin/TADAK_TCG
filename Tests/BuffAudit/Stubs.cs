@@ -7,7 +7,7 @@ namespace UnityEngine {
  public static class Debug { public static void LogWarning(object v){} public static void Log(object v){} }
  public static class Mathf {
   public static int Abs(int n)=>Math.Abs(n); public static int Min(int a,int b)=>Math.Min(a,b); public static int Max(int a,int b)=>Math.Max(a,b); public static float Max(float a,float b)=>Math.Max(a,b);
-  public static int FloorToInt(float v)=>(int)Math.Floor(v); public static int Clamp(int v,int a,int b)=>Math.Clamp(v,a,b);
+  public static int FloorToInt(float v)=>(int)Math.Floor(v); public static int RoundToInt(float v)=>(int)Math.Round(v); public static bool Approximately(float a,float b)=>Math.Abs(a-b)<1e-5f; public static int Clamp(int v,int a,int b)=>Math.Clamp(v,a,b);
  }
 }
 public enum CardCostType { Energy, Barrier, Rune, Wave }

@@ -12,6 +12,8 @@ public class SelectCardEffect : ICardEffect
     public bool allowFewerSelection;
     public bool upgradeableOnly;
     public bool excludeUnique;
+    // 후보 카드 조건: Disruption(방해 카드)
+    public string cardFilter;
     public List<ICardEffect> onActions;
 
     public void Execute(TrainingBattleManager battleManager)
@@ -165,6 +167,10 @@ public class SelectCardEffect : ICardEffect
 
         if (upgradeableOnly) {
             sourceCards = sourceCards.FindAll(IsUpgradeableCard);
+        }
+
+        if (string.Equals(cardFilter, "Disruption", System.StringComparison.OrdinalIgnoreCase)) {
+            sourceCards = sourceCards.FindAll(ConditionEvaluator.IsDisruptionCard);
         }
 
         return sourceCards;

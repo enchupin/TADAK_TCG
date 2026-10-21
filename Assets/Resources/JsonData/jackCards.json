@@ -480,7 +480,8 @@
                                     "subject": "Selected",
                                     "param": "Cost",
                                     "operation": "Set",
-                                    "amount": 0
+                                    "amount": 0,
+                                    "duration": "UntilPlayed"
                                 }
                             ],
                             "elseEffects": [
@@ -489,7 +490,8 @@
                                     "subject": "Selected",
                                     "param": "Cost",
                                     "operation": "Add",
-                                    "amount": -1
+                                    "amount": -1,
+                                    "duration": "UntilPlayed"
                                 }
                             ]
                         }

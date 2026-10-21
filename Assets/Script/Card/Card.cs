@@ -58,9 +58,17 @@ public class Card
     // 전투 덱 사본이 가리키는 저장 덱 위치 (생성·복제 카드는 -1)
     public int sourceDeckIndex = -1;
 
+    // R-22a 카드가 스스로 영구적으로 늘린 피해량 (저장 덱에 누적, 보스전 시작 시 초기화)
+    public int permanentDamageBonus;
+
     private int turnCostDelta;
     private bool hasTurnCostOverride;
     private int turnCostOverride;
+
+    // 사용되거나 버려질 때까지 유지되는 비용 변경 (턴이 지나도 손에 있으면 유지)
+    private int untilPlayedCostDelta;
+    private bool hasUntilPlayedCostOverride;
+    private int untilPlayedCostOverride;
 
     /// <summary>
     /// 런타임 상태 초기화
@@ -71,6 +79,7 @@ public class Card
         turnCostDelta = 0;
         hasTurnCostOverride = false;
         turnCostOverride = 0;
+        ResetUntilPlayedModifiers();
         RecalculateCost();
     }
 
@@ -252,6 +261,7 @@ public class Card
             : new List<int>();
         // 복제 카드는 조각을 이어받지만 호기심과 저장 덱 위치는 이어받지 않음
         clonedCard.fragmentCardId = fragmentCardId;
+        clonedCard.permanentDamageBonus = permanentDamageBonus;
         clonedCard.isCurious = false;
         clonedCard.sourceDeckIndex = -1;
         clonedCard.baseCost = Mathf.Max(0, baseCost);
@@ -259,6 +269,9 @@ public class Card
         clonedCard.turnCostDelta = turnCostDelta;
         clonedCard.hasTurnCostOverride = hasTurnCostOverride;
         clonedCard.turnCostOverride = turnCostOverride;
+        clonedCard.untilPlayedCostDelta = untilPlayedCostDelta;
+        clonedCard.hasUntilPlayedCostOverride = hasUntilPlayedCostOverride;
+        clonedCard.untilPlayedCostOverride = untilPlayedCostOverride;
         clonedCard.RecalculateCost();
         return clonedCard;
     }
@@ -350,6 +363,60 @@ public class Card
         RecalculateCost();
     }
 
+    public static bool IsUntilPlayedDuration(string durationText)
+    {
+        return string.Equals(durationText, "UntilPlayed", System.StringComparison.OrdinalIgnoreCase);
+    }
+
+    // 기간 문자열(Turn/UntilPlayed/없음=전투)에 맞춰 비용 증감
+    public void ApplyCostModifier(int amount, string durationText)
+    {
+        if (IsUntilPlayedDuration(durationText)) {
+            if (hasUntilPlayedCostOverride) {
+                untilPlayedCostOverride = Mathf.Max(0, untilPlayedCostOverride + amount);
+            }
+            else {
+                untilPlayedCostDelta += amount;
+            }
+
+            RecalculateCost();
+            return;
+        }
+
+        ApplyCostModifier(amount, string.Equals(durationText, "Turn", System.StringComparison.OrdinalIgnoreCase));
+    }
+
+    // 기간 문자열(Turn/UntilPlayed/없음=전투)에 맞춰 비용 지정
+    public void SetCost(int value, string durationText)
+    {
+        if (IsUntilPlayedDuration(durationText)) {
+            hasUntilPlayedCostOverride = true;
+            untilPlayedCostOverride = Mathf.Max(0, value);
+            RecalculateCost();
+            return;
+        }
+
+        SetCost(value, string.Equals(durationText, "Turn", System.StringComparison.OrdinalIgnoreCase));
+    }
+
+    // 버린 카드 더미·소멸 더미로 이동할 때 호출
+    public void ClearUntilPlayedModifiers()
+    {
+        if (untilPlayedCostDelta == 0 && !hasUntilPlayedCostOverride) {
+            return;
+        }
+
+        ResetUntilPlayedModifiers();
+        RecalculateCost();
+    }
+
+    private void ResetUntilPlayedModifiers()
+    {
+        untilPlayedCostDelta = 0;
+        hasUntilPlayedCostOverride = false;
+        untilPlayedCostOverride = 0;
+    }
+
     public void ClearTurnModifiers()
     {
         turnCostDelta = 0;
@@ -406,6 +473,7 @@ public class Card
         turnCostDelta = 0;
         hasTurnCostOverride = false;
         turnCostOverride = 0;
+        ResetUntilPlayedModifiers();
         RecalculateCost();
     }
 
@@ -423,9 +491,12 @@ public class Card
 
     private void RecalculateCost()
     {
+        // 우선순위: 이번 턴 지정 > 사용 전까지 지정 > 기본 + 증감
         int resolvedCost = hasTurnCostOverride
             ? turnCostOverride
-            : baseCost + turnCostDelta;
+            : hasUntilPlayedCostOverride
+                ? untilPlayedCostOverride + turnCostDelta
+                : baseCost + untilPlayedCostDelta + turnCostDelta;
 
         cost = Mathf.Max(0, resolvedCost);
     }

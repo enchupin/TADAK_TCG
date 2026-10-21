@@ -22,6 +22,7 @@ public class UsableDeckManager : MonoBehaviour
         card = TrainingBattleManager.Instance != null
             ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
             : card;
+        card.ClearUntilPlayedModifiers();
         discardPile.Add(card);
     }
 
@@ -44,6 +45,7 @@ public class UsableDeckManager : MonoBehaviour
             Card processedCard = TrainingBattleManager.Instance != null
                 ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
                 : card;
+            processedCard.ClearUntilPlayedModifiers();
             discardPile.Add(processedCard);
         }
     }
@@ -60,6 +62,7 @@ public class UsableDeckManager : MonoBehaviour
         card = TrainingBattleManager.Instance != null
             ? TrainingBattleManager.Instance.ApplyPersistentUpgradeToCard(card)
             : card;
+        card.ClearUntilPlayedModifiers();
         exhaustPile.Add(card);
     }
 
@@ -183,6 +186,40 @@ public class UsableDeckManager : MonoBehaviour
         }
 
         return drawnCards;
+    }
+
+    /// <summary>
+    /// 덱에서 조건에 맞는 카드 1장을 찾아 드로우 (없으면 버린 카드 더미를 섞어 한 번 더 찾음)
+    /// </summary>
+    public Card DrawMatchingCard(System.Predicate<Card> match)
+    {
+        if (match == null) {
+            return null;
+        }
+
+        if (usableDeck == null || usableDeck.Count == 0) {
+            if (discardPile.Count > 0) {
+                ReshuffleDiscardToDeck();
+            }
+            else {
+                return null;
+            }
+        }
+
+        if (usableDeck == null || usableDeck.Count == 0) {
+            return null;
+        }
+
+        List<Card> drawPile = new List<Card>(usableDeck);
+        int foundIndex = drawPile.FindIndex(candidate => candidate != null && match(candidate));
+        if (foundIndex < 0) {
+            return null;
+        }
+
+        Card drawnCard = drawPile[foundIndex];
+        drawPile.RemoveAt(foundIndex);
+        usableDeck = new Queue<Card>(drawPile);
+        return drawnCard;
     }
 
     /// <summary>

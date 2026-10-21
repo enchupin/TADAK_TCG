@@ -5,12 +5,12 @@
             "name": "정권",
             "characterId": 303,
             "cost": 1,
-            "description": "피해를 {amount} 입힙니다.",
+            "description": "피해를 {attack} 입힙니다.",
             "effects": [
                 {
                     "type": "Attack",
-                    "amount": 5,
-                    "target": "SingleEnemy"
+                    "target": "SingleEnemy",
+                    "amount": 4
                 }
             ]
         },
@@ -19,12 +19,12 @@
             "name": "가드",
             "characterId": 303,
             "cost": 1,
-            "description": "보호막을 {amount} 얻습니다.",
+            "description": "보호막을 {block} 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",
-                    "amount": 7,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 8
                 }
             ]
         },
@@ -33,131 +33,113 @@
             "name": "투지",
             "characterId": 303,
             "cost": 1,
-            "description": "체력을 {amount} 잃습니다. 보호막을 {amount2} 얻습니다.",
+            "description": "체력을 5 잃고 보호막을 {block} 얻습니다.",
             "effects": [
                 {
                     "type": "HpLoss",
-                    "amount": 3,
+                    "amount": 5,
                     "target": "Self"
                 },
                 {
                     "type": "Barrier",
-                    "amount": 16,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 15
                 }
             ],
             "enforceGroup": "enforce_303030"
         },
         {
             "cardId": 303031,
-            "name": "투지 +",
+            "name": "투지+",
             "characterId": 303,
-            "cost": 1,
-            "description": "체력을 {amount} 잃습니다. 보호막을 {amount2} 얻습니다.",
+            "cost": 2,
+            "description": "체력을 8 잃고 보호막을 {block} 얻습니다.",
             "effects": [
                 {
                     "type": "HpLoss",
-                    "amount": 5,
+                    "amount": 8,
                     "target": "Self"
                 },
                 {
                     "type": "Barrier",
-                    "amount": 24,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 26
                 }
             ]
         },
         {
             "cardId": 303032,
-            "name": "투지 +",
-            "characterId": 303,
-            "cost": 0,
-            "description": "이번 턴 동안 (힘)을 {amount}, (결속)을 {amount2} 얻습니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffId": 3002,
-                    "amount": 3,
-                    "target": "Self"
-                },
-                {
-                    "type": "Buff",
-                    "buffId": 3012,
-                    "amount": 3,
-                    "target": "Self"
-                },
-                {
-                    "type": "Buff",
-                    "buffId": 4006,
-                    "amount": 3,
-                    "target": "Self"
-                },
-                {
-                    "type": "Buff",
-                    "buffId": 4015,
-                    "amount": 3,
-                    "target": "Self"
-                }
-            ]
-        },
-        {
-            "cardId": 303033,
-            "name": "투지 +",
-            "characterId": 303,
-            "cost": 0,
-            "description": "체력을 {amount} 잃습니다. 에너지를 {amount2} 얻습니다.",
-            "effects": [
-                {
-                    "type": "HpLoss",
-                    "amount": 3,
-                    "target": "Self"
-                },
-                {
-                    "type": "Stamina",
-                    "amount": 2
-                }
-            ]
-        },
-        {
-            "cardId": 303034,
-            "name": "투지 +",
-            "characterId": 303,
-            "cost": 0,
-            "keywords": [
-                3
-            ],
-            "description": "체력을 {amount} 잃습니다. 에너지를 {amount2} 얻습니다. 카드를 {amount3}장 뽑습니다.",
-            "effects": [
-                {
-                    "type": "HpLoss",
-                    "amount": 5,
-                    "target": "Self"
-                },
-                {
-                    "type": "Stamina",
-                    "amount": 2
-                },
-                {
-                    "type": "Draw",
-                    "amount": 4
-                }
-            ]
-        },
-        {
-            "cardId": 303035,
-            "name": "투지 +",
+            "name": "투지+",
             "characterId": 303,
             "cost": 1,
             "keywords": [
                 4
             ],
-            "description": "(불타는 투지)를 {amount} 얻습니다.",
+            "description": "매 턴 시작 시 체력을 2 잃고 보호막을 4 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 3049,
-                    "amount": 6,
+                    "target": "Self",
+                    "amount": 4
+                }
+            ]
+        },
+        {
+            "cardId": 303033,
+            "name": "투지+",
+            "characterId": 303,
+            "cost": 1,
+            "description": "(재생)을 4 얻습니다. 보호막을 {block} 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3001,
+                    "target": "Self",
+                    "amount": 4
+                },
+                {
+                    "type": "Barrier",
+                    "target": "Self",
+                    "amount": 6
+                }
+            ]
+        },
+        {
+            "cardId": 303034,
+            "name": "투지+",
+            "characterId": 303,
+            "cost": 0,
+            "description": "체력을 3 잃고 (재생)을 5 얻습니다.",
+            "effects": [
+                {
+                    "type": "HpLoss",
+                    "amount": 3,
                     "target": "Self"
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3001,
+                    "target": "Self",
+                    "amount": 5
+                }
+            ]
+        },
+        {
+            "cardId": 303035,
+            "name": "투지+",
+            "characterId": 303,
+            "cost": 1,
+            "description": "적을 도발해 공격하게 합니다. 보호막을 {block} 얻습니다.",
+            "effects": [
+                {
+                    "type": "ReplanIntent",
+                    "target": "SingleEnemy"
+                },
+                {
+                    "type": "Barrier",
+                    "target": "Self",
+                    "amount": 10
                 }
             ]
         },
@@ -166,27 +148,27 @@
             "name": "난타",
             "characterId": 303,
             "cost": 1,
-            "description": "체력을 {amount} 잃습니다. 피해를 {amount2} 입힙니다.",
+            "description": "체력을 4 잃고 피해를 {attack} 입힙니다.",
             "effects": [
                 {
                     "type": "HpLoss",
-                    "amount": 3,
+                    "amount": 4,
                     "target": "Self"
                 },
                 {
                     "type": "Attack",
-                    "amount": 16,
-                    "target": "SingleEnemy"
+                    "target": "SingleEnemy",
+                    "amount": 9
                 }
             ],
             "enforceGroup": "enforce_303040"
         },
         {
             "cardId": 303041,
-            "name": "난타 +",
+            "name": "난타+",
             "characterId": 303,
             "cost": 1,
-            "description": "체력을 {amount} 잃습니다. 피해를 {amount2}씩 6번 입힙니다.",
+            "description": "체력을 6 잃고 피해를 3씩 4회 입힙니다.",
             "effects": [
                 {
                     "type": "HpLoss",
@@ -194,92 +176,110 @@
                     "target": "Self"
                 },
                 {
-                    "type": "Attack",
-                    "amount": 3,
-                    "target": "SingleEnemy"
+                    "type": "Repeat",
+                    "amount": 4
                 },
                 {
                     "type": "Attack",
-                    "amount": 3,
-                    "target": "SingleEnemy"
-                },
-                {
-                    "type": "Attack",
-                    "amount": 3,
-                    "target": "SingleEnemy"
-                },
-                {
-                    "type": "Attack",
-                    "amount": 3,
-                    "target": "SingleEnemy"
-                },
-                {
-                    "type": "Attack",
-                    "amount": 3,
-                    "target": "SingleEnemy"
-                },
-                {
-                    "type": "Attack",
-                    "amount": 3,
-                    "target": "SingleEnemy"
-                }
-            ]
-        },
-        {
-            "cardId": 303042,
-            "name": "난타 +",
-            "characterId": 303,
-            "cost": 2,
-            "description": "소멸된 카드 더미의 무작위 카드 {amount}장을 재사용합니다.",
-            "effects": [
-                {
-                    "type": "ReplayExhaustedCards",
+                    "target": "SingleEnemy",
                     "amount": 3
                 }
             ]
         },
         {
-            "cardId": 303043,
-            "name": "난타 +",
-            "characterId": 303,
-            "cost": 2,
-            "description": "뽑을 카드 더미 맨 위의 카드 {amount}장을 사용합니다.",
-            "effects": [
-                {
-                    "type": "UseTopDeckCards",
-                    "amount": 2
-                }
-            ]
-        },
-        {
-            "cardId": 303044,
-            "name": "난타 +",
+            "cardId": 303042,
+            "name": "난타+",
             "characterId": 303,
             "cost": 1,
             "keywords": [
                 4,
                 9
             ],
-            "description": "(콤보)를 얻습니다.",
+            "description": "공격 피해를 7회 입힐 때마다 피해량이 2배가 됩니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 3048,
-                    "amount": 1,
+                    "target": "Self",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "cardId": 303043,
+            "name": "난타+",
+            "characterId": 303,
+            "cost": 2,
+            "description": "체력을 3 잃고 피해를 {attack} 입힙니다. 보유한 (재생) 중첩의 절반만큼 (재생)을 더 얻습니다.",
+            "effects": [
+                {
+                    "type": "HpLoss",
+                    "amount": 3,
                     "target": "Self"
+                },
+                {
+                    "type": "Attack",
+                    "target": "SingleEnemy",
+                    "amount": 4
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3001,
+                    "target": "Self",
+                    "amountFormula": "Floor(Stack(3001) / 2)"
+                }
+            ]
+        },
+        {
+            "cardId": 303044,
+            "name": "난타+",
+            "characterId": 303,
+            "cost": 2,
+            "description": "피해를 {attack} 입힙니다. 입힌 피해의 절반만큼 회복합니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "target": "SingleEnemy",
+                    "amount": 10,
+                    "subject": "UnblockedDamage",
+                    "onAction": {
+                        "type": "Heal",
+                        "target": "Self",
+                        "amountFormula": "Floor(UnblockedDamage / 2)"
+                    }
                 }
             ]
         },
         {
             "cardId": 303045,
-            "name": "난타 +",
+            "name": "난타+",
             "characterId": 303,
-            "cost": 2,
-            "description": "손에서 카드를 1장 선택해 이 카드에 귀속시킵니다. 귀속된 카드는 이 카드가 사용될 때마다 함께 사용됩니다.",
+            "cost": 1,
+            "description": "보호막을 {block} 얻습니다. 대상이 덫·기절 상태라면 추가로 피해를 9 입힙니다.",
             "effects": [
                 {
-                    "type": "BindCard",
-                    "count": 1
+                    "type": "Barrier",
+                    "target": "Self",
+                    "amount": 6
+                },
+                {
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "Target",
+                                "operator": "Eq",
+                                "value": 1,
+                                "property": "IsStunnedOrTrapped"
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "Attack",
+                                "target": "SingleEnemy",
+                                "amount": 9
+                            }
+                        ]
+                    }
                 }
             ]
         },
@@ -288,221 +288,229 @@
             "name": "불굴",
             "characterId": 303,
             "cost": 1,
-            "description": "체력을 {amount} 회복합니다. 이 수치는 이번 내 턴 동안 잃은 체력입니다.",
+            "keywords": [
+                4
+            ],
+            "description": "전투 승리 후 체력을 8 회복합니다.",
             "effects": [
                 {
-                    "type": "Heal",
-                    "amountFormula": "HpLostThisTurn",
-                    "target": "Self"
+                    "type": "Buff",
+                    "buffId": 3051,
+                    "target": "Self",
+                    "amount": 8
                 }
             ],
             "enforceGroup": "enforce_303050"
         },
         {
             "cardId": 303051,
-            "name": "불굴 +",
+            "name": "불굴+",
             "characterId": 303,
-            "cost": 0,
-            "description": "체력을 {amount} 회복합니다. 이 수치는 이번 내 턴 동안 잃은 체력입니다.",
+            "cost": 1,
+            "keywords": [
+                4
+            ],
+            "description": "내 턴 동안 체력을 잃을 때마다 보호막을 2 얻습니다.",
             "effects": [
                 {
-                    "type": "Heal",
-                    "amountFormula": "HpLostThisTurn",
-                    "target": "Self"
+                    "type": "Buff",
+                    "buffId": 3050,
+                    "target": "Self",
+                    "amount": 2
                 }
             ]
         },
         {
             "cardId": 303052,
-            "name": "불굴 +",
-            "characterId": 303,
-            "cost": 1,
-            "description": "보호막을 {amount} 얻습니다. 이 수치는 현재 잃은 체력의 20%입니다.",
-            "effects": [
-                {
-                    "type": "Barrier",
-                    "amountFormula": "MissingHp * 0.2",
-                    "target": "Self"
-                }
-            ]
-        },
-        {
-            "cardId": 303053,
-            "name": "불굴 +",
+            "name": "불굴+",
             "characterId": 303,
             "cost": 2,
             "keywords": [
                 4,
                 9
             ],
-            "description": "(구사일생)을 얻습니다.",
+            "description": "죽음에 이르는 피해를 받을 시 해당 턴 동안 체력이 1 미만으로 내려가지 않습니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 1021,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "cardId": 303053,
+            "name": "불굴+",
+            "characterId": 303,
+            "cost": 1,
+            "description": "이번 턴에 잃은 체력을 모두 회복합니다.",
+            "effects": [
+                {
+                    "type": "Heal",
+                    "target": "Self",
+                    "amountFormula": "HpLostThisTurn"
                 }
             ]
         },
         {
             "cardId": 303054,
-            "name": "불굴 +",
+            "name": "불굴+",
             "characterId": 303,
             "cost": 1,
             "keywords": [
-                4
+                3
             ],
-            "description": "(불굴)을 {amount} 얻습니다.",
+            "description": "잃은 체력의 20%를 회복합니다.",
             "effects": [
                 {
-                    "type": "Buff",
-                    "buffId": 3050,
-                    "amount": 2,
-                    "target": "Self"
+                    "type": "Heal",
+                    "target": "Self",
+                    "amountFormula": "Floor(MissingHp * 0.2)"
                 }
             ]
         },
         {
             "cardId": 303055,
-            "name": "불굴 +",
+            "name": "불굴+",
             "characterId": 303,
             "cost": 1,
             "keywords": [
                 4
             ],
-            "description": "(승자의 휴식)을 {amount} 얻습니다.",
+            "description": "덫을 2개 설치합니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3051,
-                    "amount": 10,
-                    "target": "Self"
+                    "buffId": 3073,
+                    "target": "Self",
+                    "amount": 2
                 }
             ]
         },
         {
             "cardId": 303060,
-            "name": "도발",
+            "name": "사냥",
             "characterId": 303,
-            "cost": 0,
-            "keywords": [
-                1
-            ],
-            "description": "적에게 (힘)을 {amount} 부여합니다. (힘)을 {amount2} 얻습니다.",
+            "cost": 1,
+            "description": "적을 도발해 공격하게 합니다. 보호막을 {block} 얻습니다.",
             "effects": [
                 {
-                    "type": "Buff",
-                    "buffId": 3002,
-                    "amount": 3,
+                    "type": "ReplanIntent",
                     "target": "SingleEnemy"
                 },
                 {
-                    "type": "Buff",
-                    "buffId": 3002,
-                    "amount": 3,
-                    "target": "Self"
+                    "type": "Barrier",
+                    "target": "Self",
+                    "amount": 8
                 }
             ],
             "enforceGroup": "enforce_303060"
         },
         {
             "cardId": 303061,
-            "name": "도발 +",
+            "name": "사냥+",
             "characterId": 303,
-            "cost": 0,
-            "keywords": [
-                1
-            ],
-            "description": "적에게 (힘)을 {amount} 부여합니다. (힘)을 {amount2} 얻습니다.",
+            "cost": 1,
+            "description": "체력을 4 잃고 (덫 상태)를 1 부여합니다. 피해를 {attack} 입힙니다.",
             "effects": [
                 {
-                    "type": "Buff",
-                    "buffId": 3002,
-                    "amount": 2,
-                    "target": "SingleEnemy"
+                    "type": "HpLoss",
+                    "amount": 4,
+                    "target": "Self"
                 },
                 {
                     "type": "Buff",
-                    "buffId": 3002,
-                    "amount": 5,
-                    "target": "Self"
+                    "buffId": 2003,
+                    "target": "SingleEnemy",
+                    "amount": 1
+                },
+                {
+                    "type": "Attack",
+                    "target": "SingleEnemy",
+                    "amount": 8
                 }
             ]
         },
         {
             "cardId": 303062,
-            "name": "도발 +",
-            "characterId": 303,
-            "cost": 1,
-            "description": "적에게 (힘)을 {amount} 부여합니다. 적의 의도를 변경합니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffId": 3002,
-                    "amount": 2,
-                    "target": "SingleEnemy"
-                },
-                {
-                    "type": "ReplanIntent",
-                    "target": "SingleEnemy"
-                }
-            ]
-        },
-        {
-            "cardId": 303063,
-            "name": "도발 +",
-            "characterId": 303,
-            "cost": 1,
-            "description": "보호막을 {amount} 얻습니다. (약화)를 {amount2} 부여합니다.",
-            "effects": [
-                {
-                    "type": "Barrier",
-                    "amount": 9,
-                    "target": "Self"
-                },
-                {
-                    "type": "Buff",
-                    "buffId": 4008,
-                    "amount": 2,
-                    "target": "SingleEnemy"
-                }
-            ]
-        },
-        {
-            "cardId": 303064,
-            "name": "도발 +",
-            "characterId": 303,
-            "cost": 1,
-            "description": "모든 적이 (과열)을 {amount} 얻습니다. 보호막을 {amount2} 얻습니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffId": 3017,
-                    "amount": 2,
-                    "target": "AllEnemies"
-                },
-                {
-                    "type": "Barrier",
-                    "amount": 16,
-                    "target": "Self"
-                }
-            ]
-        },
-        {
-            "cardId": 303065,
-            "name": "도발 +",
+            "name": "사냥+",
             "characterId": 303,
             "cost": 0,
             "keywords": [
                 9,
                 3
             ],
-            "description": "적에게 (의도된 분노)를 부여합니다.",
+            "description": "적의 피해량을 2배로 만드는 대신 다른 적의 피해량을 절반으로 감소시킵니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 1019,
+                    "target": "SingleEnemy",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "cardId": 303063,
+            "name": "사냥+",
+            "characterId": 303,
+            "cost": 1,
+            "description": "보호막을 {block} 얻습니다. (재생)을 2 얻습니다.",
+            "effects": [
+                {
+                    "type": "Barrier",
+                    "target": "Self",
+                    "amount": 8
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3001,
+                    "target": "Self",
+                    "amount": 2
+                }
+            ]
+        },
+        {
+            "cardId": 303064,
+            "name": "사냥+",
+            "characterId": 303,
+            "cost": 1,
+            "description": "적의 현재 의도를 변경합니다. (재생)을 2 얻습니다.",
+            "effects": [
+                {
+                    "type": "ReplanIntent",
                     "target": "SingleEnemy"
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3001,
+                    "target": "Self",
+                    "amount": 2
+                }
+            ]
+        },
+        {
+            "cardId": 303065,
+            "name": "사냥+",
+            "characterId": 303,
+            "cost": 1,
+            "keywords": [
+                4,
+                9
+            ],
+            "description": "(사냥꾼)을 얻습니다. 피해를 {attack} 입힙니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 1027,
+                    "target": "Self",
+                    "amount": 1
+                },
+                {
+                    "type": "Attack",
+                    "target": "SingleEnemy",
+                    "amount": 6
                 }
             ]
         },
@@ -510,113 +518,101 @@
             "cardId": 303070,
             "name": "혈투",
             "characterId": 303,
-            "cost": 1,
-            "description": "이번 전투 동안 내 카드로 잃은 체력만큼 피해를 입힙니다. 피해량은 {amount}입니다.",
+            "cost": 2,
+            "keywords": [
+                4,
+                9
+            ],
+            "description": "내 체력을 잃게 하는 카드가 반복을 얻습니다.",
             "effects": [
                 {
-                    "type": "Attack",
-                    "amountFormula": "CardHpLostThisCombat",
-                    "target": "SingleEnemy"
+                    "type": "Buff",
+                    "buffId": 1020,
+                    "target": "Self",
+                    "amount": 1
                 }
             ],
             "enforceGroup": "enforce_303070"
         },
         {
             "cardId": 303071,
-            "name": "혈투 +",
+            "name": "혈투+",
             "characterId": 303,
-            "cost": 0,
-            "description": "이번 전투 동안 내 카드로 잃은 체력만큼 피해를 입힙니다. 피해량은 {amount}입니다.",
+            "cost": 3,
+            "keywords": [
+                4
+            ],
+            "description": "내 턴 동안 체력을 잃을 때마다 모든 적에게 피해를 6 입힙니다.",
             "effects": [
                 {
-                    "type": "Attack",
-                    "amountFormula": "CardHpLostThisCombat",
-                    "target": "SingleEnemy"
+                    "type": "Buff",
+                    "buffId": 3052,
+                    "target": "Self",
+                    "amount": 6
                 }
             ]
         },
         {
             "cardId": 303072,
-            "name": "혈투 +",
+            "name": "혈투+",
             "characterId": 303,
-            "cost": 1,
-            "description": "손에서 카드를 1장 선택해 소멸시킵니다. 카드를 {amount}장 뽑습니다.",
+            "cost": 4,
+            "description": "이번 전투에서 카드로 잃은 체력만큼 피해를 입힙니다.",
             "effects": [
                 {
-                    "type": "SelectCard",
-                    "from": "Hand",
-                    "count": 1,
-                    "subject": "Selected",
-                    "onAction": [
-                        {
-                            "type": "ExhaustCard",
-                            "from": "Source"
-                        },
-                        {
-                            "type": "Draw",
-                            "amount": 3
-                        }
-                    ]
+                    "type": "Attack",
+                    "target": "SingleEnemy",
+                    "amountFormula": "CardHpLostThisCombat"
                 }
             ]
         },
         {
             "cardId": 303073,
-            "name": "혈투 +",
+            "name": "혈투+",
             "characterId": 303,
-            "cost": 2,
-            "description": "모든 적에게 피해를 {amount} 입힙니다. 버린 카드 더미에 부상 카드를 2장 생성합니다.",
+            "cost": 3,
+            "description": "이번 전투에서 회복한 체력만큼 피해를 입힙니다.",
             "effects": [
                 {
                     "type": "Attack",
-                    "amount": 22,
-                    "target": "AllEnemies"
-                },
-                {
-                    "type": "GenerateCard",
-                    "cardId": "303080",
-                    "target": "Discard"
-                },
-                {
-                    "type": "GenerateCard",
-                    "cardId": "303080",
-                    "target": "Discard"
+                    "target": "SingleEnemy",
+                    "amountFormula": "HealedThisCombat"
                 }
             ]
         },
         {
             "cardId": 303074,
-            "name": "혈투 +",
+            "name": "혈투+",
             "characterId": 303,
-            "cost": 1,
-            "keywords": [
-                4
-            ],
-            "description": "(광전사)를 {amount} 얻습니다.",
+            "cost": 2,
+            "description": "(재생) 중첩의 2배만큼 피해를 입힙니다.",
             "effects": [
                 {
-                    "type": "Buff",
-                    "buffId": 3052,
-                    "amount": 8,
-                    "target": "Self"
+                    "type": "Attack",
+                    "target": "SingleEnemy",
+                    "amountFormula": "Stack(3001) * 2"
                 }
             ]
         },
         {
             "cardId": 303075,
-            "name": "혈투 +",
+            "name": "혈투+",
             "characterId": 303,
-            "cost": 2,
-            "keywords": [
-                4,
-                9
-            ],
-            "description": "(혈투)를 얻습니다.",
+            "cost": 3,
+            "description": "모든 적에게 피해를 {attack} 입힙니다. 버린 카드 더미에 부상을 2장 생성합니다.",
             "effects": [
                 {
-                    "type": "Buff",
-                    "buffId": 1020,
-                    "target": "Self"
+                    "type": "Attack",
+                    "target": "AllEnemies",
+                    "amount": 13
+                },
+                {
+                    "type": "RandGenerate",
+                    "amount": 2,
+                    "cardIds": [
+                        303080
+                    ],
+                    "to": "DiscardPile"
                 }
             ]
         },
@@ -628,7 +624,7 @@
             "keywords": [
                 2
             ],
-            "description": "사용할 수 없습니다.",
+            "description": "",
             "effects": []
         }
     ]
