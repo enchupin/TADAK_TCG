@@ -103,6 +103,7 @@ static class Program
 
         CheckIdentity();
         CheckDeckReward();
+        CheckRewardSequence();
 
         Console.WriteLine($"전투 규칙 검증 {count}개 통과");
     }
@@ -155,6 +156,55 @@ static class Program
         Check(nextBattle.TryUse(Character.Ignia) && nextBattle.TryClaimCardReward(Character.Ignia), "새 전투 첫 사용 보상");
         nextBattle.RestoreGauges(new Dictionary<Character, int> { { Character.Polar, 99 } });
         Check(nextBattle.GetGauge(Character.Polar) == 8, "복원 값은 비용으로 제한");
+    }
+
+    // 중첩 IEnumerator와 WaitUntil을 처리하는 간단한 코루틴 실행기
+    static void RunCoroutine(System.Collections.IEnumerator routine)
+    {
+        Stack<System.Collections.IEnumerator> stack = new Stack<System.Collections.IEnumerator>();
+        stack.Push(routine);
+        int guard = 0;
+        while (stack.Count > 0)
+        {
+            Check(++guard < 10000, "보상 코루틴이 끝나지 않음");
+            count--;
+            System.Collections.IEnumerator current = stack.Peek();
+            if (!current.MoveNext()) { stack.Pop(); continue; }
+            if (current.Current is System.Collections.IEnumerator nested) stack.Push(nested);
+            else if (current.Current is UnityEngine.WaitUntil wait) Check(wait.Predicate(), "선택 완료 전 대기 해제");
+        }
+    }
+
+    static void CheckRewardSequence()
+    {
+        TrainingBattleManager manager = NewBattle(5, 0);
+        TrainingBattleManager.buildingDeck = new BuildingDeck();
+        for (int i = 0; i < 6; i++) TrainingBattleManager.buildingDeck.Cards.Add(new Card { cardId = 201010, character = Character.Ignia });
+        RunCoroutine(manager.Reward(Character.Ignia));
+        Check(!manager.IsDeckRewardInProgress, "보상 완료 후 진행 플래그 해제");
+        Check(manager.RefreshFlags.Count > 0 && !manager.RefreshFlags[manager.RefreshFlags.Count - 1], "보상 완료 후 플래그 해제 상태로 손패 사용 가능 여부를 다시 계산");
+        Check(manager.PanelOpenCount == 1 && TrainingBattleManager.buildingDeck.Cards.Count == 7, "3지선다 1회 후 저장 덱에 1장 추가");
+        Card rewardCard = TrainingBattleManager.buildingDeck.Cards[6];
+        Check(manager.usableDeckManager.Discard.Count == 1 && manager.usableDeckManager.Discard[0].cardId == rewardCard.cardId, "보상 카드는 이번 전투 버린 카드 더미에도 추가");
+        Check(!ReferenceEquals(manager.usableDeckManager.Discard[0], rewardCard), "전투용 카드는 저장 덱과 별도 인스턴스");
+
+        manager = NewBattle(5, 0);
+        TrainingBattleManager.buildingDeck = new BuildingDeck();
+        for (int i = 0; i < 8; i++) TrainingBattleManager.buildingDeck.Cards.Add(new Card { cardId = 201010, character = Character.Ignia });
+        Card keptReward = null;
+        manager.PickSelection = (cards, selectCount) => selectCount == 1 && cards.All(card => card.cardId % 1000 >= 30) ? cards.GetRange(0, 1) : cards.GetRange(0, selectCount);
+        RunCoroutine(manager.Reward(Character.Ignia));
+        keptReward = TrainingBattleManager.buildingDeck.Cards.FirstOrDefault(card => card.cardId != 201010);
+        Check(manager.PanelOpenCount == 2, "8장 초과 시 제거 선택 창이 이어서 열림");
+        Check(TrainingBattleManager.buildingDeck.Cards.Count(card => card.character == Character.Ignia) == 8 && keptReward != null, "넘은 1장을 제거해 캐릭터당 8장 유지");
+        Check(!manager.RefreshFlags[manager.RefreshFlags.Count - 1], "초과 제거까지 마친 뒤 손패 상태 갱신");
+
+        manager = NewBattle(5, 0);
+        manager.PanelAvailable = false;
+        TrainingBattleManager.buildingDeck = new BuildingDeck();
+        RunCoroutine(manager.Reward(Character.Ignia));
+        Check(TrainingBattleManager.buildingDeck.Cards.Count == 1 && !manager.IsDeckRewardInProgress, "선택 창이 없으면 첫 선택지로 진행하고 잠금 해제");
+        TrainingBattleManager.buildingDeck = null;
     }
 
     static void CheckDeckReward()

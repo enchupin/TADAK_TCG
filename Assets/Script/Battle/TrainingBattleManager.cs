@@ -1732,6 +1732,7 @@ public class TrainingBattleManager : MonoBehaviour
             if (buildingDeck.AddCard(pickedCard.cardId))
             {
                 Debug.Log($"[BattleManager] 아이덴티티 보상으로 {pickedCard.cardName} 카드를 저장 덱에 추가했습니다");
+                AddRewardCardToCurrentBattle(pickedCard.cardId);
             }
 
             yield return TrimCharacterDeckOverflowCoroutine(character);
@@ -1739,7 +1740,30 @@ public class TrainingBattleManager : MonoBehaviour
         finally
         {
             isDeckRewardInProgress = false;
+            // 보상 진행 중 막아 둔 카드 사용과 턴 종료 상태를 다시 계산
+            UpdateEndTurnButtonState();
+            RefreshHandPlayableState();
+            UpdateAllUI();
         }
+    }
+
+    // 전투 중 획득한 보상 카드는 이번 전투에서도 쓸 수 있도록 버린 카드 더미에 넣음
+    private void AddRewardCardToCurrentBattle(int cardId)
+    {
+        if (usableDeckManager == null)
+        {
+            return;
+        }
+
+        Card battleCard = CardManager.GetCardAsCard(cardId);
+        if (battleCard == null)
+        {
+            return;
+        }
+
+        LocalizationManager.ApplyToRuntimeCard(battleCard);
+        usableDeckManager.AddToDiscard(battleCard);
+        Debug.Log($"[BattleManager] 보상 카드 {battleCard.cardName}을(를) 버린 카드 더미에 넣었습니다");
     }
 
     // R-15 캐릭터 카드가 상한을 넘으면 넘은 장수만큼 골라 저장 덱에서 제거

@@ -26,6 +26,26 @@ namespace UnityEngine
     }
 
     public class ScriptableObject { }
+
+    public class WaitUntil
+    {
+        public readonly Func<bool> Predicate;
+        public WaitUntil(Func<bool> predicate) { Predicate = predicate; }
+    }
+}
+
+public static class LocalizationManager
+{
+    public static int Applied;
+    public static void ApplyToRuntimeCard(Card card) => Applied++;
+}
+
+public class BuildingDeck
+{
+    public readonly List<Card> Cards = new List<Card>();
+    public IReadOnlyList<Card> GetCards() => Cards;
+    public bool AddCard(int cardId) { Cards.Add(CardManager.GetCardAsCard(cardId)); return true; }
+    public void RemoveCard(Card card) => Cards.Remove(card);
 }
 
 public enum CardCostType { Energy, Barrier, Rune }
@@ -51,6 +71,7 @@ public class CardData
 public static class CardManager
 {
     public static readonly HashSet<int> UniqueCardIds = new HashSet<int>();
+    public static Card GetCardAsCard(int cardId) => new Card { cardId = cardId, character = (Character)(cardId / 1000) };
     public static CardData GetCard(int cardId)
     {
         CardData data = new CardData { cardId = cardId };
@@ -137,7 +158,24 @@ public partial class TrainingBattleManager
     public int maxHandCardCount = 10;
     public int playerBaseEnergyPerTurn = 3;
     public bool CanDrawCards() => DrawAllowed;
-    public void RefreshHandPlayableState() { }
+    public static BuildingDeck buildingDeck;
+    private bool isDeckRewardInProgress;
+    public bool IsDeckRewardInProgress => isDeckRewardInProgress;
+    public bool HasPendingSelection;
+    public bool PanelAvailable = true;
+    public int PanelOpenCount;
+    public readonly List<bool> RefreshFlags = new List<bool>();
+    public Func<List<Card>, int, List<Card>> PickSelection = (cards, selectCount) => cards.GetRange(0, selectCount);
+    public void RefreshHandPlayableState() => RefreshFlags.Add(isDeckRewardInProgress);
+    public void UpdateEndTurnButtonState() { }
+    public bool OpenSelectCardPanel(List<Card> cards, int selectCount, Action<List<Card>> onSelected, bool allowFewer = false)
+    {
+        if (!PanelAvailable) return false;
+        PanelOpenCount++;
+        onSelected(PickSelection(cards, selectCount));
+        return true;
+    }
+    public System.Collections.IEnumerator Reward(Character character) => RunIdentityCardRewardSequence(character);
     public void UpdateAllUI() { }
     public List<Card> Draw(int count) => DrawCardsSequentially(count, false, () => usableDeckManager.DrawCard());
 }

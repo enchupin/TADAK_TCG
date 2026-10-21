@@ -80,7 +80,7 @@ public class CombatResolver
         {
             battleManager.UpdateEndTurnButtonState();
             battleManager.battleContext?.OnCardPlayed(playedCard);
-            battleManager.ChargeIdentityGauge(playedCard.character);
+            battleManager.ChargeIdentityGaugeForPlayedCard(playedCard, effectiveCost);
 
             battleManager.StartCoroutine(CardEffectSequence.Run(
                 FinishPlayedCardSequence(controller.cardUI, playedCard, eventData.targetMonster, repeatCount, cardUseAllEnemiesDamage), battleManager));
