@@ -12,6 +12,9 @@ public class BuffUI : MonoBehaviour
     }
 
     private const int DefaultBuffIconId = 1000;
+    // 족보(1028)는 더블·풀하우스·스트레이트·로열을 하나의 아이콘으로 묶어 표시 (R-79)
+    private const int HandRankBuffId = 1028;
+    private static readonly HashSet<int> HandRankMemberBuffIds = new() { 1007, 1009, 1010, 1024 };
 
     [Header("버프 아이콘 설정")]
     // 계층의 나열 순서와 무관하게 실제 배치된 위치를 좌측 상단부터 행 순서로 사용
@@ -112,10 +115,21 @@ public class BuffUI : MonoBehaviour
         foreach (Buff buff in sourceBuffs)
         {
             int buffId = GetBuffId(buff);
-            if (buffId > 0)
+            if (buffId <= 0)
             {
-                activeBuffIds.Add(buffId);
+                continue;
             }
+
+            if (target == BuffTarget.Player && HandRankMemberBuffIds.Contains(buffId))
+            {
+                if (!activeBuffIds.Contains(HandRankBuffId))
+                {
+                    activeBuffIds.Add(HandRankBuffId);
+                }
+                continue;
+            }
+
+            activeBuffIds.Add(buffId);
         }
 
         return activeBuffIds;
@@ -136,7 +150,8 @@ public class BuffUI : MonoBehaviour
 
     private static int GetBuffId(Buff buff)
     {
-        if (buff == null || buff.stack <= 0 || buff.data == null)
+        // 힘처럼 음수 중첩을 가진 효과도 표시
+        if (buff == null || buff.stack == 0 || buff.data == null)
         {
             return 0;
         }

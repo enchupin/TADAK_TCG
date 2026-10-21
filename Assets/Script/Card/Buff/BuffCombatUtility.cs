@@ -36,6 +36,26 @@ public static class BuffCombatUtility
         TrainingBattleManager.Instance?.UpdateAllUI();
     }
 
+    // 익사로 처치할 때 사용해 처치 알림에서 익사 사망 여부를 구분
+    public static void KillByDrowning(TrainingBattleManager battleManager, Monster monster)
+    {
+        if (monster == null || monster.IsDead())
+        {
+            return;
+        }
+
+        PlayerBuffRuntimeService playerBuffs = (battleManager ?? TrainingBattleManager.Instance)?.Buffs.Player;
+        playerBuffs?.MarkDrowningKill(monster);
+        try
+        {
+            monster.Kill();
+        }
+        finally
+        {
+            playerBuffs?.ClearDrowningKill();
+        }
+    }
+
     public static Buff RemoveRandomBeneficialBuff(Monster monster, int excludedBuffId = 0)
     {
         if (monster?.currentBuffs == null)

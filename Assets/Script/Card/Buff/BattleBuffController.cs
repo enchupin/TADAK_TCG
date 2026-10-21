@@ -236,7 +236,29 @@ public class BattleBuffController
     {
         int safeDamage = Mathf.Max(0, damage);
         float multiplier = monsterBuffRuntimeService.GetIncomingDamageMultiplier(monster);
+        multiplier = ApplyHunterMultiplier(monster, multiplier);
         return Mathf.FloorToInt(safeDamage * multiplier);
+    }
+
+    // 사냥꾼 보유 시 기절·덫 상태인 적은 관통을 소모하지 않고 항상 관통 배율로 피해를 받음
+    // 이미 관통을 보유했다면 그대로, 부식만 있다면 부식 대신 관통 배율 적용
+    private float ApplyHunterMultiplier(Monster monster, float multiplier)
+    {
+        PlayerData player = battleManager.playerData;
+        if (monster == null || player == null || player.GetBuffStack(HunterBuffId) <= 0
+            || monster.GetBuffStack(EnhancedCorrosionBuffId) > 0
+            || !(monster.IsStunned || monster.GetBuffStack(TrapStateBuffId) > 0))
+        {
+            return multiplier;
+        }
+
+        if (monster.GetBuffStack(CorrosionBuffId) > 0)
+        {
+            int corrosionAsBuffId = player.GetBuffStack(CorrosionEnhanceBuffId) > 0 ? EnhancedCorrosionBuffId : CorrosionBuffId;
+            multiplier /= BuffValueUtility.GetIncomingDamageMultiplier(corrosionAsBuffId);
+        }
+
+        return multiplier * BuffValueUtility.GetIncomingDamageMultiplier(EnhancedCorrosionBuffId);
     }
 
     public void ConsumeMonsterIncomingDamageBuffs(Monster monster, int damage)

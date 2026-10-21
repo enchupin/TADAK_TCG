@@ -33,6 +33,7 @@ $methods += Read-SourceLine $manager 'public bool IsHandFull =>'
 foreach ($signature in @('private List<Card> DrawCardsSequentially(', 'private void CompleteDrawSequence(', 'private bool CanStartDraw(', 'private bool HasRootAbsorptionInHand(', 'public bool HasCardInHand(', 'private System.Collections.IEnumerator RunIdentityCardRewardSequence(', 'private void AddRewardCardToCurrentBattle(', 'public System.Collections.IEnumerator TrimCharacterDeckOverflowCoroutine(', 'private System.Collections.IEnumerator SelectCardsCoroutine(')) {
     $methods += Read-SourceMethod $manager $signature
 }
+$methods += '} public partial class PlayerData {' + (Read-SourceMethod 'Battle/PlayerData.cs' 'public void AddEnergy(')
 $methods += '} public partial class HandManager {' + (Read-SourceMethod 'Battle/HandManager.cs' 'private bool TryRouteOverflowToDiscard(') + '}'
 [IO.File]::WriteAllText((Join-Path $testRoot 'ProductionMethods.cs'), $methods, [Text.UTF8Encoding]::new($false))
 

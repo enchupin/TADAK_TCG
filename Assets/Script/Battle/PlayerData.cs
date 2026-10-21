@@ -233,7 +233,8 @@ public class PlayerData : MonoBehaviour
             return;
         }
 
-        energy = Mathf.Clamp(energy + amount, 0, maxEnergy);
+        // 카드 효과나 버프로 얻는 에너지는 최대 에너지(턴 시작 회복량)를 넘을 수 있음
+        energy = Mathf.Max(0, energy + amount);
         Debug.Log($"에너지 +{amount} (현재: {energy}/{maxEnergy})");
     }
 

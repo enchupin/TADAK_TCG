@@ -123,6 +123,12 @@ public class Card
     public void ExecuteOnDrawEffects(TrainingBattleManager manager) => OnDrawCount++;
 }
 
+public partial class PlayerData
+{
+    public int energy;
+    public int maxEnergy;
+}
+
 public class BattleContext
 {
     public int Drawn;

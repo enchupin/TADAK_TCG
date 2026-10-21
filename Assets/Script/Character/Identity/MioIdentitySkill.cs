@@ -22,7 +22,7 @@ public sealed class MioIdentitySkill : CharacterIdentitySkill
 
             if (monster.GetBuffStack(DrowningBuffId) > monster.maxHP)
             {
-                monster.Kill();
+                BuffCombatUtility.KillByDrowning(battleManager, monster);
             }
         }
 

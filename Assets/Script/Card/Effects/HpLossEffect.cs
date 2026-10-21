@@ -32,7 +32,7 @@ public class HpLossEffect : ICardEffect
                 int selfHpLoss = battleManager.playerData != null
                     ? battleManager.playerData.LoseHp(resolvedAmount)
                     : 0;
-                battleManager.battleContext?.OnPlayerCardHpLost(selfHpLoss);
+                battleManager.HandlePlayerCardHpLost(selfHpLoss);
                 break;
             case TargetType.RandomEnemy:
                 Monster randomTarget = BuffCardUtility.PickRandomLivingMonster(battleManager);

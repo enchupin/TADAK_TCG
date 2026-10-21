@@ -100,6 +100,28 @@ public static class BattleRuntimeDefinitions
     public static int RootedBuffId => GetBuffId(nameof(RootedBuffId));
     public static int MirrorBuffId => GetBuffId(nameof(MirrorBuffId));
     public static int PoisonousMushroomBuffId => GetBuffId(nameof(PoisonousMushroomBuffId));
+    public static int RoyalBuffId => GetBuffId(nameof(RoyalBuffId));
+    public static int LuckBuffId => GetBuffId(nameof(LuckBuffId));
+    public static int ExecutionerBuffId => GetBuffId(nameof(ExecutionerBuffId));
+    public static int HunterBuffId => GetBuffId(nameof(HunterBuffId));
+    public static int HandRankBuffId => GetBuffId(nameof(HandRankBuffId));
+    public static int TrapStateBuffId => GetBuffId(nameof(TrapStateBuffId));
+    public static int CatalystBuffId => GetBuffId(nameof(CatalystBuffId));
+    public static int CounterBuffId => GetBuffId(nameof(CounterBuffId));
+    public static int ScoreBuffId => GetBuffId(nameof(ScoreBuffId));
+    public static int EffectiveHitBuffId => GetBuffId(nameof(EffectiveHitBuffId));
+    public static int StealthBuffId => GetBuffId(nameof(StealthBuffId));
+    public static int WaveBuffId => GetBuffId(nameof(WaveBuffId));
+    public static int HighTideBuffId => GetBuffId(nameof(HighTideBuffId));
+    public static int TideFlowBuffId => GetBuffId(nameof(TideFlowBuffId));
+    public static int WaterEmbraceBuffId => GetBuffId(nameof(WaterEmbraceBuffId));
+    public static int HibernationBuffId => GetBuffId(nameof(HibernationBuffId));
+    public static int BloodContractBuffId => GetBuffId(nameof(BloodContractBuffId));
+    public static int SanctuaryBuffId => GetBuffId(nameof(SanctuaryBuffId));
+    public static int TrapSetBuffId => GetBuffId(nameof(TrapSetBuffId));
+    public static int OwlEyeBuffId => GetBuffId(nameof(OwlEyeBuffId));
+    public static int CurseRecoveryBuffId => GetBuffId(nameof(CurseRecoveryBuffId));
+    public static int MarkBuffId => GetBuffId(nameof(MarkBuffId));
 
     public static void Initialize()
     {
@@ -215,6 +237,28 @@ public static class BattleRuntimeDefinitions
         Register(nameof(RootedBuffId), "뿌리내림", 5011);
         Register(nameof(MirrorBuffId), "거울", 5012);
         Register(nameof(PoisonousMushroomBuffId), "독버섯", 5013);
+        Register(nameof(RoyalBuffId), "로열", 1024);
+        Register(nameof(LuckBuffId), "행운", 1025);
+        Register(nameof(ExecutionerBuffId), "처형자", 1026);
+        Register(nameof(HunterBuffId), "사냥꾼", 1027);
+        Register(nameof(HandRankBuffId), "족보", 1028);
+        Register(nameof(TrapStateBuffId), "덫 상태", 2003);
+        Register(nameof(CatalystBuffId), "촉매", 3061);
+        Register(nameof(CounterBuffId), "반격", 3062);
+        Register(nameof(ScoreBuffId), "득점", 3063);
+        Register(nameof(EffectiveHitBuffId), "유효타", 3064);
+        Register(nameof(StealthBuffId), "은신", 3065);
+        Register(nameof(WaveBuffId), "물결", 3066);
+        Register(nameof(HighTideBuffId), "만조", 3067);
+        Register(nameof(TideFlowBuffId), "조류", 3068);
+        Register(nameof(WaterEmbraceBuffId), "물의 품", 3069);
+        Register(nameof(HibernationBuffId), "동면", 3070);
+        Register(nameof(BloodContractBuffId), "계약: 피", 3071);
+        Register(nameof(SanctuaryBuffId), "성역", 3072);
+        Register(nameof(TrapSetBuffId), "덫 설치", 3073);
+        Register(nameof(OwlEyeBuffId), "부엉이의 눈", 3074);
+        Register(nameof(CurseRecoveryBuffId), "저주 회복", 3075);
+        Register(nameof(MarkBuffId), "표식", 4018);
     }
 
     private static void Register(string key, string buffName, int fallbackId)

@@ -101,6 +101,12 @@ static class Program
         for (int i = 0; i < 12; i++) lobbyHand.handCardList.Add(new Card());
         Check(!lobbyHand.TryAdd(new Card()), "전투 밖 손패는 상한 미적용");
 
+        PlayerData energyPlayer = new PlayerData { energy = 5, maxEnergy = 5 };
+        energyPlayer.AddEnergy(2);
+        Check(energyPlayer.energy == 7, "카드·버프로 얻는 에너지는 최대치 초과 가능");
+        energyPlayer.AddEnergy(-3);
+        Check(energyPlayer.energy == 7, "0 이하 획득량은 무시");
+
         CheckIdentity();
         CheckDeckReward();
         CheckRewardSequence();

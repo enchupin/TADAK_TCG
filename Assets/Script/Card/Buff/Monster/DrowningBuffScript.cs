@@ -13,7 +13,7 @@ public sealed class DrowningBuffScript : MonsterBuffScript
             return;
         }
 
-        monster.Kill();
+        BuffCombatUtility.KillByDrowning(battleManager, monster);
         battleManager?.UpdateAllUI();
     }
 }

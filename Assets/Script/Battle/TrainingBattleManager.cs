@@ -1250,6 +1250,13 @@ public class TrainingBattleManager : MonoBehaviour
         battleBuffController?.Monsters.OnMonsterHpLost(monster, hpLoss);
     }
 
+    // 카드 효과로 파티가 체력을 잃었을 때 통계와 버프 알림을 함께 처리
+    public void HandlePlayerCardHpLost(int hpLoss)
+    {
+        battleContext?.OnPlayerCardHpLost(hpLoss);
+        battleBuffController?.Player.OnPlayerCardHpLost(hpLoss);
+    }
+
     public void HandlePlayerHpLost(int hpLoss)
     {
         battleBuffController?.HandlePlayerHpLost(hpLoss);
@@ -1269,7 +1276,10 @@ public class TrainingBattleManager : MonoBehaviour
         => battleBuffController?.Monsters.GetActivationCount(monster, buffId) ?? 0;
 
     public void HandleMonsterAttackActionStarted(Monster monster)
-        => battleBuffController?.Monsters.OnAttackActionStarted(monster);
+    {
+        battleBuffController?.Monsters.OnAttackActionStarted(monster);
+        battleBuffController?.Player.OnEnemyAttackActionStarted(monster);
+    }
 
     public void HandleMonsterAttackActionEnded(Monster monster)
         => battleBuffController?.Monsters.OnAttackActionEnded(monster);
@@ -1407,6 +1417,7 @@ public class TrainingBattleManager : MonoBehaviour
     public void HandleMonsterDeath(Monster monster)
     {
         battleBuffController?.Monsters.OnMonsterDeath(monster);
+        battleBuffController?.Player.OnEnemyKilled(monster);
 
         if (monster == null)
         {

@@ -15,6 +15,7 @@ public enum BattleTurnState { PlayerTurnStart, PlayerAction, PlayerTurnEnd, Enem
 public enum MoveZoneType { DrawPile, DiscardPile, Source }
 public enum WuppiModeState { Attack, Guard }
 public class Card {
+ public Character character;
  public List<ICardEffect> effects=new(); public int cardId,cost; public CardCostType costType; public bool power;
  public Card CloneForRuntimeCopy()=>new(){cardId=cardId,cost=cost,costType=costType,power=power,effects=new(effects)};
  public void ApplyTemplate(Card c){cardId=c.cardId;cost=c.cost;effects=new(c.effects);}
@@ -48,7 +49,7 @@ public partial class PlayerData {
  public void AddEnergy(int n)=>energy+=n;
 }
 public class Monster {
- public Dictionary<int,int> buffs=new(); public int hp=100,defense,maxHP=100; public void Heal(int n)=>hp=Math.Min(maxHP,hp+n); public int TakeDamage(int n,int unused=0){hp-=n;return n;}
+ public Dictionary<int,int> buffs=new(); public int hp=100,defense,maxHP=100; public bool stunned; public bool IsStunned=>stunned; public void Heal(int n)=>hp=Math.Min(maxHP,hp+n); public int TakeDamage(int n,int unused=0){hp-=n;return n;}
  public int GetBuffStack(int id)=>buffs.GetValueOrDefault(id);
  public void AddBuff(int id,int amount)=>buffs[id]=GetBuffStack(id)+amount;
  public void ConsumeBuffStack(int id,int amount)=>buffs[id]=Math.Max(0,GetBuffStack(id)-amount);
@@ -80,7 +81,7 @@ public partial class TrainingBattleManager {
  public int GetPlayerCalculatedCardDamageBonus(float n)=>playerService.GetCalculatedCardDamageBonus(n);
  public float GetPlayerCalculatedCardBaseMultiplier(float n)=>playerService.GetCalculatedCardBaseMultiplier(n);
  public int ResolvePlayerEffectDamage(int n)=>(int)(n*playerService.GetOutgoingDamageMultiplier());
- public int ResolvePlayerIncomingDamage(int n,Monster m)=>(int)(n*playerService.GetIncomingDamageMultiplier(m));
+ public int ResolvePlayerIncomingDamage(int n,Monster m)=>battleBuffController.ResolvePlayerIncomingDamage(n,m);
  public bool TryPreventPlayerIncomingDamage(int n,Monster m)=>playerService.TryPreventIncomingDamage(m,n);
  public void HandlePlayerHpLost(int n){playerService.OnPlayerHpLost(n);monsterService.OnPlayerHpLost(n);}
  public void TryConsumeSoulProtection()=>playerService.TryConsumeFatalDamage();
@@ -98,6 +99,9 @@ public partial class TrainingBattleManager {
  }
  public void UpdateAllUI(){}
  public void AddTurnEndTriggerRepeat(int n)=>repeats+=n;
+ public List<CharacterIdentityState> identityStates=new(){new(),new(),new()};
+ public IReadOnlyList<CharacterIdentityState> GetIdentityStates()=>identityStates;
+ public void HandlePlayerCardHpLost(int n){battleContext.OnPlayerCardHpLost(n);playerService.OnPlayerCardHpLost(n);}
 }
 
 public class Piles { public List<Card> draw=new(),discard=new(),exhaust=new();public void AddToDiscard(List<Card> c)=>discard.AddRange(c);public void AddToDiscard(Card c)=>discard.Add(c);public List<Card> GetExhaustPile()=>exhaust;public List<Card> GetDrawPile()=>draw;public List<Card> GetDiscardPile()=>discard; }
@@ -119,6 +123,10 @@ public partial class TurnSystem {
  public void FinishHand(){var e=DiscardRemainingHandCards();while(e.MoveNext()){} }
  private System.Collections.IEnumerator SelectTurnEndRetainCards(List<Card> cards,int n,List<Card> selected){yield break;}
 }
+
+public enum Character { Monster=0, Isla=101, Jack=102, Cream=103, Ignia=201, Vanessa=202, Merel=203, Mio=204, Polar=301, Rune=302, Khan=303 }
+public class CharacterIdentityState { }
+public static class GameRulesJsonParser { public static GameRulesData LoadOrDefault()=>new(); }
 
 public static class BuffMetadataResolver { public static BuffData Resolve(int id)=>new(){buffId=id,name=id.ToString()}; }
 

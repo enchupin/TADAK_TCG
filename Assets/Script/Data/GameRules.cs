@@ -9,6 +9,7 @@ public sealed class GameRulesData
     public string version = "1.0";
     public CombatRulesData combat = new CombatRulesData();
     public DeckRulesData deck = new DeckRulesData();
+    public GroupRulesData groups = new GroupRulesData();
     public IdentityRulesData identity = new IdentityRulesData();
     public TrainingRulesData training = new TrainingRulesData();
 }
@@ -36,6 +37,13 @@ public sealed class DeckRulesData
     public int upgradesPerCard = 5;
 
     public int MaxDeckSize => Math.Max(0, maxCardsPerCharacter) * Math.Max(0, partySize);
+}
+
+[Serializable]
+public sealed class GroupRulesData
+{
+    // 반응 상태: 발화, 익사, 깃털, 빙결 (촉매·몬스터 반응 상태 배수 대상)
+    public List<int> reactive = new List<int> { 4003, 4016, 4014, 4004 };
 }
 
 [Serializable]
@@ -102,6 +110,7 @@ public static class GameRules
 
     public static CombatRulesData Combat => Current.combat ?? (Current.combat = new CombatRulesData());
     public static DeckRulesData Deck => Current.deck ?? (Current.deck = new DeckRulesData());
+    public static GroupRulesData Groups => Current.groups ?? (Current.groups = new GroupRulesData());
     public static IdentityRulesData Identity => Current.identity ?? (Current.identity = new IdentityRulesData());
     public static TrainingRulesData Training => Current.training ?? (Current.training = new TrainingRulesData());
 

@@ -57,6 +57,7 @@ static class Program {
   assertions += BuffStackTests.Run();
   assertions += BuffApplicationTests.Run();
   assertions += BuffRuleTests.Run();
+  assertions += BuffNewTests.Run();
   Console.WriteLine($"버프 회귀 검증 통과: {assertions}개 단언");
  }
 }

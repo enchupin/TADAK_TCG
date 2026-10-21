@@ -63,6 +63,8 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     private readonly Dictionary<SpriteRenderer, Color> originalSpriteColors = new();
 
     public bool HasAttackIntent => hasAttackIntent;
+    // 이번 턴 행동을 쉬는 기절 상태
+    public bool IsStunned => skipCurrentTurnAction && !IsDead();
     public int PlannedIntentValue => plannedIntentValue;
     public int PlannedPatternId => plannedPatternId;
     public IReadOnlyList<MonsterIntentIconType> PlannedIntentIcons => plannedIntentIcons;
@@ -203,6 +205,12 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         {
             stateController.EnterAttack();
             TrainingBattleManager.Instance?.HandleMonsterAttackActionStarted(this);
+            // 덫 등 공격 직전 효과로 사망했다면 행동하지 않음
+            if (IsDead())
+            {
+                TrainingBattleManager.Instance?.HandleMonsterAttackActionEnded(this);
+                return;
+            }
         }
 
         ExecuteAction(target);

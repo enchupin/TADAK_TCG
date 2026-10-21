@@ -16,6 +16,9 @@
         "partySize": 3,
         "upgradesPerCard": 5
     },
+    "groups": {
+        "reactive": [4003, 4016, 4014, 4004]
+    },
     "identity": {
         "usesPerNewCard": 1
     },

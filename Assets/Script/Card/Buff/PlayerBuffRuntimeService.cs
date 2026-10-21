@@ -85,6 +85,21 @@ public class PlayerBuffRuntimeService
         Register(new LifeLinkBuffScript());
         Register(new LastStandBuffScript());
         Register(new SoulProtectionBuffScript());
+        Register(new RoyalBuffScript());
+        Register(new ExecutionerBuffScript());
+        Register(new CatalystBuffScript());
+        Register(new CounterBuffScript());
+        Register(new EffectiveHitBuffScript());
+        Register(new StealthBuffScript());
+        Register(new HighTideBuffScript());
+        Register(new TideFlowBuffScript());
+        Register(new WaterEmbraceBuffScript());
+        Register(new HibernationBuffScript());
+        Register(new BloodContractBuffScript());
+        Register(new SanctuaryBuffScript());
+        Register(new TrapSetBuffScript());
+        Register(new OwlEyeBuffScript());
+        Register(new CurseRecoveryBuffScript());
     }
 
     public void ResetForCombat()
@@ -606,6 +621,50 @@ public class PlayerBuffRuntimeService
         {
             script.OnFeatherApplied(battleManager, player, appliedAmount, targetCount, targetType, stack);
         });
+    }
+
+    // 익사 처치로 표시된 몬스터 (물의 품 판정용)
+    private Monster drowningKillTarget;
+
+    public void MarkDrowningKill(Monster monster)
+    {
+        drowningKillTarget = monster;
+    }
+
+    public void ClearDrowningKill()
+    {
+        drowningKillTarget = null;
+    }
+
+    public void OnEnemyKilled(Monster killedMonster)
+    {
+        if (killedMonster == null)
+        {
+            return;
+        }
+
+        bool killedByDrowning = ReferenceEquals(killedMonster, drowningKillTarget);
+        InvokeForActiveBuffs((script, player, stack) => script.OnEnemyKilled(battleManager, player, killedMonster, killedByDrowning, stack));
+    }
+
+    public void OnEnemyAttackActionStarted(Monster attacker)
+    {
+        if (attacker == null || attacker.IsDead())
+        {
+            return;
+        }
+
+        InvokeForActiveBuffs((script, player, stack) => script.OnEnemyAttackActionStarted(battleManager, player, attacker, stack));
+    }
+
+    public void OnPlayerCardHpLost(int hpLoss)
+    {
+        if (hpLoss <= 0)
+        {
+            return;
+        }
+
+        InvokeForActiveBuffs((script, player, stack) => script.OnPlayerCardHpLost(battleManager, player, hpLoss, stack));
     }
 
     public void OnBattleEnded(bool isVictory)

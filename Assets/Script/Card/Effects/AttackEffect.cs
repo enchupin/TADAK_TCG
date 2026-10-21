@@ -139,7 +139,7 @@ public class AttackEffect : ICardEffect
                 ConsumeAttackBoost(battleManager, attackBoostStack);
                 battleManager.Buffs.Player.OnPlayerAttackStarted();
                 int selfDamage = battleManager.playerData.TakeDamage(finalAmount);
-                battleManager.battleContext?.OnPlayerCardHpLost(selfDamage);
+                battleManager.HandlePlayerCardHpLost(selfDamage);
                 break;
         }
 
