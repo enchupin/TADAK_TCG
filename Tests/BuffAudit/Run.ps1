@@ -3,7 +3,7 @@ $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 $testRoot = Join-Path $root 'Temp/BuffAuditCheck'
 New-Item -ItemType Directory -Force $testRoot | Out-Null
 $buffRoot = Join-Path $root 'Assets/Script/Card/Buff'
-$names = @('FeatherEnhanceBuffScript','DoubleFeatherBuffScript','FeatherStackBoostBuffScript','FeatherAutoTriggerBuffScript','BlindFeatherBuffScript','LifeLinkBuffScript','GlacierBondBuffScript','FrailBuffScript','FeatherBuffScript','FeatherCycleBuffScript','DeadlyAmbushBuffScript','StrengthBuffScript','AttackBoostBuffScript','PlayerBuffScript','MonsterBuffScript','BattleBuffController','RuneBuffScript','PotionEnhanceBuffScript','PlayerBuffRuntimeService','MonsterBuffRuntimeService','GrowingFeatherBuffScript','GlacierShapeOnHitBuffScript','RepeatNextPowerCardBuffScript','RepeatNextCardBuffScript','HighCostRepeatBuffScript','LastStandBuffScript','StrengthContractBuffScript','WuppiAttackBuffScript','PotionCycleBuffScript','DrawLockBuffScript','OverheatBuffScript','WeakBuffScript','RegenerationBuffScript','BurnBuffScript','DoubleActionBuffScript','DrowningOnDebuffBuffScript','RisingWaterBuffScript','UnderwaterBreathingBuffScript','NextCardFreeBuffScript','ComboBuffScript','Monster/StrengthDecayBuffScript','Monster/FrailBuffScript','Monster/GlacierBondBuffScript','Monster/MirrorBuffScript','Monster/LifeLinkBuffScript','Monster/ThornBuffScript','Monster/StrengthBuffScript','Monster/LifeStealBuffScript')
+$names = @('PrecisionBuffScript','DoubleJackBuffScript','StraightBuffScript','CorrosionBuffScript','EnhancedCorrosionBuffScript','CorrosionEnhanceBuffScript','Monster/CorrosionBuffScript','Monster/EnhancedCorrosionBuffScript','BurningWillBuffScript','IndomitableBuffScript','FlameConductionBuffScript','DamageClampToOneBuffScript','OverheatGrowthBuffScript','DelayedPotionFactoryBuffScript','BondDecayBuffScript','StrengthDecayBuffScript','DoubleFeatherBuffScript','FeatherStackBoostBuffScript','LifeLinkBuffScript','GlacierBondBuffScript','FrailBuffScript','FeatherBuffScript','FeatherCycleBuffScript','StrengthBuffScript','AttackBoostBuffScript','PlayerBuffScript','MonsterBuffScript','BattleBuffController','RuneBuffScript','PotionEnhanceBuffScript','PlayerBuffRuntimeService','MonsterBuffRuntimeService','GrowingFeatherBuffScript','GlacierShapeOnHitBuffScript','RepeatNextPowerCardBuffScript','RepeatNextCardBuffScript','HighCostRepeatBuffScript','LastStandBuffScript','StrengthContractBuffScript','WuppiAttackBuffScript','PotionCycleBuffScript','DrawLockBuffScript','WeakBuffScript','RegenerationBuffScript','BurnBuffScript','DoubleActionBuffScript','DrowningOnDebuffBuffScript','UnderwaterBreathingBuffScript','NextCardFreeBuffScript','ComboBuffScript','Monster/StrengthDecayBuffScript','Monster/FrailBuffScript','Monster/GlacierBondBuffScript','Monster/MirrorBuffScript','Monster/LifeLinkBuffScript','Monster/ThornBuffScript','Monster/StrengthBuffScript','Monster/LifeStealBuffScript')
 $compile = @()
 $actualClasses = @{}
 foreach ($name in $names) {
@@ -13,7 +13,7 @@ foreach ($name in $names) {
     $actualClasses[$className] = $true
 }
 
-foreach ($relative in @('Card/Effects/TriggeredCardExecutionUtility.cs','Card/Effects/CardPlayCompletion.cs','Card/Effects/CardEffectSequence.cs','Card/Effects/BuffEffect.cs','Data/BuffData.cs','Card/Effects/AttackEffect.cs','Card/Effects/DamageEffect.cs','Card/Effects/ICardEffect.cs')) {
+foreach ($relative in @('Card/Buff/BuffValueUtility.cs','Card/Effects/TriggeredCardExecutionUtility.cs','Card/Effects/CardPlayCompletion.cs','Card/Effects/CardEffectSequence.cs','Card/Effects/BuffEffect.cs','Data/BuffData.cs','Card/Effects/AttackEffect.cs','Card/Effects/DamageEffect.cs','Card/Effects/ICardEffect.cs')) {
     $compile += '<Compile Include="' + [Security.SecurityElement]::Escape((Join-Path $root ('Assets/Script/' + $relative))) + '" />'
 }
 # 계산과 비용 지불 경로도 복제 구현 대신 실제 소스의 메서드를 컴파일
@@ -33,7 +33,7 @@ function Read-SourceMethod([string]$relative, [string]$signature) {
 }
 $methods = 'using UnityEngine; using System.Collections; using System.Collections.Generic; using static BattleRuntimeDefinitions; public partial class PlayerData {' + (Read-SourceMethod 'Battle/PlayerData.cs' 'public int CalculateCardDamage(') + (Read-SourceMethod 'Battle/PlayerData.cs' 'public int AddDefense(') + '}'
 $methods += 'public partial class PlayerData {'
-foreach ($signature in @('public void AddBuff(', 'public int GetBuffStack(', 'public void SetBuffStack(', 'private void DecreaseBuffStack(', 'public void ConsumeBuffStack(', 'public void RemoveBuffStack(', 'private void RemoveBuff(', 'public int TakeDamage(', 'public int LoseHp(', 'private void TryConsumeSoulProtection(')) {
+foreach ($signature in @('public void AddBuff(', 'private void AddSignedBuffStack(', 'public int GetBuffStack(', 'public void SetBuffStack(', 'private void DecreaseBuffStack(', 'public void ConsumeBuffStack(', 'public void RemoveBuffStack(', 'private void RemoveBuff(', 'public int TakeDamage(', 'public int LoseHp(', 'private void TryConsumeSoulProtection(')) {
     $methods += Read-SourceMethod 'Battle/PlayerData.cs' $signature
 }
 $methods += '}'

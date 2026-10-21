@@ -6,6 +6,10 @@ using UnityEngine;
 public sealed class BuffMetadataJsonData
 {
     public int buffId;
+    // beneficial / harmful / passive
+    public string polarity;
+    public bool stackable = true;
+    public bool signed;
     public string name;
     public string description;
     public string enName;

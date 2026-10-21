@@ -102,7 +102,7 @@ public static class BuffCombatUtility
         HashSet<int> negativeBuffIds = new();
         foreach (Buff buff in monster.currentBuffs)
         {
-            if (buff?.data == null || BuffData.IsBeneficialBuffId(buff.data.buffId))
+            if (buff?.data == null || !BuffData.IsHarmfulBuffId(buff.data.buffId))
             {
                 continue;
             }
@@ -120,13 +120,14 @@ public static class BuffCombatUtility
             return;
         }
 
-        monster.currentBuffs.RemoveAll(buff => buff?.data != null && !BuffData.IsBeneficialBuffId(buff.data.buffId));
+        // 몬스터 패시브는 해로운 효과 제거 대상에서 제외
+        monster.currentBuffs.RemoveAll(buff => buff?.data != null && BuffData.IsHarmfulBuffId(buff.data.buffId));
     }
 
     private static bool IsRemovableBeneficialBuff(Buff buff, int excludedBuffId)
     {
         return buff?.data != null
             && buff.data.buffId != excludedBuffId
-            && BuffData.IsBeneficialBuffId(buff.data.buffId);
+            && BuffData.IsRemovableBeneficialBuffId(buff.data.buffId);
     }
 }

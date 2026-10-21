@@ -4,6 +4,9 @@ public abstract class PlayerBuffScript
 {
     public abstract int BuffId { get; }
 
+    // 힘처럼 음수 중첩일 때도 효과를 계산해야 하는 버프
+    public virtual bool AllowsNegativeStack => false;
+
     public virtual int GetRuntimeStack(TrainingBattleManager battleManager, PlayerData player)
     {
         return player != null ? player.GetBuffStack(BuffId) : 0;

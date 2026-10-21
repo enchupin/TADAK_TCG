@@ -23,7 +23,7 @@ public class MultiplyEnemyDebuffsEffect : ICardEffect
 
             foreach (Buff buff in monster.currentBuffs)
             {
-                if (buff?.data == null || buff.stack <= 0 || BuffData.IsBeneficialBuffId(buff.data.buffId))
+                if (buff?.data == null || buff.stack <= 0 || !BuffData.IsHarmfulBuffId(buff.data.buffId))
                 {
                     continue;
                 }

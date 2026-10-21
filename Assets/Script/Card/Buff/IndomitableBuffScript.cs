@@ -11,7 +11,8 @@ public sealed class IndomitableBuffScript : PlayerBuffScript
             return;
         }
 
-        battleManager.ApplyBuffToPlayer(StrengthBuffId, stack);
+        // v1.0 불굴은 힘 대신 보호막을 얻음
+        player.AddDefense(stack);
     }
 
     private static bool IsPlayerTurnState(TrainingBattleManager battleManager)

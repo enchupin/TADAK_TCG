@@ -1395,7 +1395,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void HandleEnemyDebuffApplied(Monster monster, int buffId, int amount, int crueltyStackBeforeApply = -1)
     {
-        if (BuffData.IsBeneficialBuffId(buffId))
+        if (!BuffData.IsHarmfulBuffId(buffId))
         {
             return;
         }
@@ -1604,8 +1604,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     public Card ApplyHandCardUpgrades(Card card)
     {
-        ApplyPersistentUpgradeToCard(card);
-        return ApplyPersistentUpgradeToCard(card, BattleRuntimeDefinitions.FeatherEnhanceBuffId);
+        return ApplyPersistentUpgradeToCard(card);
     }
 
     public Card ApplyPersistentUpgradeToCard(Card card)

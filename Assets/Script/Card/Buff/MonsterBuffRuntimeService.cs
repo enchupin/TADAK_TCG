@@ -14,12 +14,12 @@ public class MonsterBuffRuntimeService
         Register(new MonsterBuffs.FreezeBuffScript());
         Register(new MonsterBuffs.RegenerationBuffScript());
         Register(new MonsterBuffs.BurnBuffScript());
-        Register(new MonsterBuffs.EnhancedCorrosionBuffScript());
+        // 부식이 관통 보유 여부를 먼저 확인한 뒤 관통이 감소하도록 부식을 먼저 등록
         Register(new MonsterBuffs.CorrosionBuffScript());
+        Register(new MonsterBuffs.EnhancedCorrosionBuffScript());
         Register(new MonsterBuffs.StrengthBuffScript());
         Register(new MonsterBuffs.StrengthDecayBuffScript());
         Register(new MonsterBuffs.WeakBuffScript());
-        Register(new MonsterBuffs.OverheatBuffScript());
         Register(new MonsterBuffs.RootedBuffScript());
         Register(new MonsterBuffs.GlacierBondBuffScript());
         Register(new MonsterBuffs.FrailBuffScript());

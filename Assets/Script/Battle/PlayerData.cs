@@ -139,8 +139,25 @@ public class PlayerData : MonoBehaviour
     /// </summary>
     public void AddBuff(int buffId, int amount)
     {
-        if (amount <= 0)
+        if (amount == 0)
         {
+            return;
+        }
+
+        // 힘처럼 음수 중첩을 허용하는 효과는 부호 그대로 더함
+        if (BuffData.AllowsNegativeStack(buffId) && (amount < 0 || GetBuffStack(buffId) < 0))
+        {
+            AddSignedBuffStack(buffId, amount);
+            return;
+        }
+
+        if (amount < 0)
+        {
+            // 중첩 불가 효과에 음수를 부여하면 효과 제거 (E-26)
+            if (BuffData.IsNonStackableBuffId(buffId))
+            {
+                RemoveBuff(buffId);
+            }
             return;
         }
 
@@ -177,6 +194,33 @@ public class PlayerData : MonoBehaviour
         {
             CreamBuffRuntimeUtility.SyncEnergyOverflow(this);
         }
+    }
+
+    // 음수 중첩 허용 효과의 중첩 변경 (0이 되면 제거)
+    private void AddSignedBuffStack(int buffId, int amount)
+    {
+        Buff existingBuff = currentBuffs.Find(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
+        int nextStack = (existingBuff != null ? existingBuff.stack : 0) + amount;
+        if (nextStack == 0)
+        {
+            if (existingBuff != null)
+            {
+                currentBuffs.Remove(existingBuff);
+            }
+            return;
+        }
+
+        BuffData data = BuffMetadataResolver.Resolve(buffId);
+        if (existingBuff != null)
+        {
+            existingBuff.data = data;
+            existingBuff.stack = nextStack;
+            return;
+        }
+
+        currentBuffs.Add(new Buff(data, nextStack));
     }
 
     /// <summary>

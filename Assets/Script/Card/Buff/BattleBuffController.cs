@@ -127,6 +127,12 @@ public class BattleBuffController
     // 특별 적용과 일반 저장, 적용 후 알림을 같은 진입점에서 처리
     public void ApplyToPlayer(int buffId, int amount)
     {
+        if (amount < 0)
+        {
+            ApplyNegativeAmountToPlayer(buffId, amount);
+            return;
+        }
+
         if (amount <= 0) return;
 
         if (!featherBuffScript.TryApplyToPlayer(buffId, amount)
@@ -139,6 +145,12 @@ public class BattleBuffController
 
     public void ApplyToMonster(Monster monster, int buffId, int amount)
     {
+        if (monster != null && !monster.IsDead() && amount < 0)
+        {
+            ApplyNegativeAmountToMonster(monster, buffId, amount);
+            return;
+        }
+
         if (monster == null || monster.IsDead() || amount <= 0) return;
 
         buffId = Player.ResolveAppliedMonsterBuffId(monster, buffId, amount);
@@ -151,14 +163,44 @@ public class BattleBuffController
         int crueltyStackBeforeApply = monster.GetBuffStack(CrueltyDebuffId);
         monster.AddBuff(buffId, amount);
         HandleBuffApplied(buffId);
-        if (!BuffData.IsBeneficialBuffId(buffId))
+        if (BuffData.IsHarmfulBuffId(buffId))
         {
             battleManager.HandleEnemyDebuffApplied(monster, buffId, amount, crueltyStackBeforeApply);
         }
     }
 
+    // 음수 부여는 음수 중첩 허용 효과(힘 등)만 적용하고 중첩 불가 효과는 제거, 그 외는 무시
+    // 해로운 효과 부여 알림이나 깃털 특수 처리는 하지 않음
+    private void ApplyNegativeAmountToPlayer(int buffId, int amount)
+    {
+        if (battleManager.playerData == null || !CanApplyNegativeAmount(buffId)) return;
+
+        battleManager.playerData.AddBuff(buffId, amount);
+    }
+
+    private void ApplyNegativeAmountToMonster(Monster monster, int buffId, int amount)
+    {
+        if (!CanApplyNegativeAmount(buffId)) return;
+
+        monster.AddBuff(buffId, amount);
+    }
+
+    private static bool CanApplyNegativeAmount(int buffId)
+    {
+        return BuffData.AllowsNegativeStack(buffId) || BuffData.IsNonStackableBuffId(buffId);
+    }
+
     public void ApplyToAllEnemies(int buffId, int amount)
     {
+        if (amount < 0)
+        {
+            foreach (Monster monster in battleManager.GetLivingMonsters())
+            {
+                ApplyNegativeAmountToMonster(monster, buffId, amount);
+            }
+            return;
+        }
+
         if (amount <= 0) return;
 
         if (featherBuffScript.TryApplyToAllEnemies(buffId, amount))
@@ -175,7 +217,7 @@ public class BattleBuffController
 
     public void HandleEnemyDebuffApplied(Monster monster, int buffId, int amount, int crueltyStackBeforeApply = -1)
     {
-        if (BuffData.IsBeneficialBuffId(buffId))
+        if (!BuffData.IsHarmfulBuffId(buffId))
         {
             return;
         }
@@ -294,12 +336,9 @@ public class BattleBuffController
         bool hasChanges = false;
 
         hasChanges |= ApplyPersistentCardBuffChanges(battleManager.handManager?.GetHandCards(), changedHandCards, buffId);
-        if (buffId != FeatherEnhanceBuffId)
-        {
-            hasChanges |= ApplyPersistentCardBuffChanges(battleManager.usableDeckManager?.GetDrawPile(), null, buffId);
-            hasChanges |= ApplyPersistentCardBuffChanges(battleManager.usableDeckManager?.GetDiscardPile(), null, buffId);
-            hasChanges |= ApplyPersistentCardBuffChanges(battleManager.usableDeckManager?.GetExhaustPile(), null, buffId);
-        }
+        hasChanges |= ApplyPersistentCardBuffChanges(battleManager.usableDeckManager?.GetDrawPile(), null, buffId);
+        hasChanges |= ApplyPersistentCardBuffChanges(battleManager.usableDeckManager?.GetDiscardPile(), null, buffId);
+        hasChanges |= ApplyPersistentCardBuffChanges(battleManager.usableDeckManager?.GetExhaustPile(), null, buffId);
 
         if (!hasChanges)
         {
@@ -319,7 +358,6 @@ public class BattleBuffController
     {
         return buffId == PotionEnhanceBuffId
             || buffId == GlacierShapeEnhanceBuffId
-            || buffId == FeatherEnhanceBuffId
             || buffId == PoisonUpgradeBuffId;
     }
 

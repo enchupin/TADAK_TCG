@@ -25,7 +25,7 @@ public class Piles {
 }
 public class Hand { public List<Card> cards=new(); public void AddCard(Card c)=>cards.Add(c); }
 public class TrainingBattleManager {
- public static TrainingBattleManager Instance=new(); public PlayerData playerData=new();
+ public static TrainingBattleManager Instance=new(); public PlayerData playerData=new(); public int TurnSequence=1;
  public Piles usableDeckManager=new();public Hand handManager=new();public List<Monster> monsters=new();
  public MonsterBuffs.FuturePredationBuffScript predation=new();
  public MonsterBuffs.HarmonyBuffScript harmony=new();
@@ -67,7 +67,7 @@ public abstract class Monster {
  protected int PreviewBarrierGain(int n)=>n;
  protected int PreviewMonsterBuffAmount(int id,int n)=>n;
  protected int PreviewPlayerDebuffAmount(int id,int n)=>n;
- protected int DealDamage(PlayerData p,int n){int d=PreviewOutgoingDamage(n);p.hp-=d;p.hits.Add(d);TrainingBattleManager.Instance.harmony.OnMonsterAttackResolved(null,this,p,d,d,GetBuffStack(BattleRuntimeDefinitions.HarmonyBuffId));return d;}
+ protected int DealDamage(PlayerData p,int n){int d=PreviewOutgoingDamage(n);p.hp-=d;p.hits.Add(d);TrainingBattleManager.Instance.harmony.OnMonsterAttackResolved(null,this,p,d,d,GetBuffStack(BattleRuntimeDefinitions.HarmonyBuffId));TrainingBattleManager.Instance.attackBoost.OnMonsterAttackResolved(null,this,p,d,d,GetBuffStack(BattleRuntimeDefinitions.AttackBoostBuffId));return d;}
  protected void AddDebuffToPlayer(PlayerData p,int id,int n)=>p.buffs[id]=p.buffs.GetValueOrDefault(id)+n;
  protected void AddCardToPlayerDiscard(Card c)=>TrainingBattleManager.Instance.usableDeckManager.AddToDiscard(c);
  protected void SetAttackIntent(int n,string s){attack=true;} protected void SetIntent(string s){attack=false;}

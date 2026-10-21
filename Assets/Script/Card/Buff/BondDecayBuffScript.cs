@@ -5,7 +5,8 @@ public sealed class BondDecayBuffScript : PlayerBuffScript
 
     public override int BuffId => BuffIdValue;
 
-    public override void OnPlayerTurnEnd(TrainingBattleManager battleManager, PlayerData player, int stack)
+    // 이중 동작 등으로 반복될 수 있는 턴 종료 효과 (E-28)
+    public override void OnPlayerTurnEndTriggered(TrainingBattleManager battleManager, PlayerData player, int stack)
     {
         if (player == null || stack <= 0)
         {
@@ -13,6 +14,10 @@ public sealed class BondDecayBuffScript : PlayerBuffScript
         }
 
         player.ConsumeBuffStack(BondBuffId, stack);
-        player.RemoveBuffStack(BuffId);
+    }
+
+    public override void OnPlayerTurnEnd(TrainingBattleManager battleManager, PlayerData player, int stack)
+    {
+        player?.RemoveBuffStack(BuffId);
     }
 }

@@ -16,7 +16,7 @@ public sealed class CopyEnemyDebuffsEffect : ICardEffect
         List<BuffSnapshot> debuffs = new List<BuffSnapshot>();
         foreach (Buff buff in sourceMonster.currentBuffs)
         {
-            if (buff?.data == null || buff.stack <= 0 || BuffData.IsBeneficialBuffId(buff.data.buffId))
+            if (buff?.data == null || buff.stack <= 0 || !BuffData.IsHarmfulBuffId(buff.data.buffId))
             {
                 continue;
             }

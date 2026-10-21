@@ -14,15 +14,14 @@ public class PlayerBuffRuntimeService
         Register(new WuppiAttackSwitchBuffScript());
         Register(new WuppiGuardSwitchBuffScript());
         Register(new StrengthBuffScript());
-        Register(new OverheatBuffScript());
-        Register(new EnhancedCorrosionBuffScript());
+        // 부식이 관통 보유 여부를 먼저 확인한 뒤 관통이 감소하도록 부식을 먼저 등록
         Register(new CorrosionBuffScript());
+        Register(new EnhancedCorrosionBuffScript());
         Register(new CorrosionEnhanceBuffScript());
         Register(new StrengthContractBuffScript());
         Register(new DrawInterferenceBuffScript());
         Register(new ExtraDrawBuffScript());
         Register(new OverheatGrowthBuffScript());
-        Register(new OverheatDecayBuffScript());
         Register(new AbsoluteZeroBuffScript());
         Register(new GlacierShapeOnHitBuffScript());
         Register(new PrecisionBuffScript());
@@ -32,14 +31,12 @@ public class PlayerBuffRuntimeService
         Register(new UnplayableUnlockBuffScript());
         Register(new DoubleJackBuffScript());
         Register(new DuplicateGenerateBuffScript());
-        Register(new EfficientBarrierBuffScript());
         Register(new BarrierRetentionBuffScript());
         Register(new PermanentBarrierRetentionBuffScript());
         Register(new HighCostRepeatBuffScript());
         Register(new StraightBuffScript());
         Register(new RegenerationBuffScript());
         Register(new BurnBuffScript());
-        Register(new ThornDecayBuffScript());
         Register(new StrengthDecayBuffScript());
         Register(new DrawLockBuffScript());
         Register(new NextCardFreeBuffScript());
@@ -55,17 +52,12 @@ public class PlayerBuffRuntimeService
         Register(new PotionCorrosionBuffScript());
         Register(new DelayedPotionFactoryBuffScript());
         Register(new BioExperimentAllBuffScript());
-        Register(new PotionFactoryBuffScript());
         Register(new AttackBoostBuffScript());
         Register(new FeatherCycleBuffScript());
-        Register(new FeatherEnhanceBuffScript());
         Register(new BloodBattleBuffScript());
         Register(new DoubleFeatherBuffScript());
         Register(new FeatherStackBoostBuffScript());
         Register(new GrowingFeatherBuffScript());
-        Register(new FeatherAutoTriggerBuffScript());
-        Register(new BlindFeatherBuffScript());
-        Register(new DeadlyAmbushBuffScript());
         Register(new DoubleActionBuffScript());
         Register(new JokerPowerBuffScript());
         Register(new ComboBuffScript());
@@ -79,15 +71,11 @@ public class PlayerBuffRuntimeService
         Register(new WhirlpoolBuffScript());
         Register(new UnderwaterBreathingBuffScript());
         Register(new EncroachmentBuffScript());
-        Register(new RisingWaterBuffScript());
         Register(new DrowningOnDebuffBuffScript());
-        Register(new TranceBuffScript());
         Register(new WuppiGuardBuffScript());
         Register(new WuppiAttackBuffScript());
         Register(new RuneGenerationBuffScript());
-        Register(new RuneBarrierBuffScript());
         Register(new FlameConductionBuffScript());
-        Register(new IntimidationBuffScript());
         Register(new ThornBuffScript());
         Register(new EvadeBuffScript());
         Register(new LavaSkinBuffScript());
@@ -333,7 +321,8 @@ public class PlayerBuffRuntimeService
             finalBonus = script.GetCalculatedCardDamageBonus(battleManager, player, strengthMultiplier, stack, finalBonus);
         });
 
-        return Mathf.Max(0, finalBonus);
+        // 음수 힘은 피해를 낮추며 최종 피해의 하한은 CalculateCardDamage에서 처리
+        return finalBonus;
     }
 
     public float GetCalculatedCardBaseMultiplier(float baseMultiplier)
@@ -655,7 +644,7 @@ public class PlayerBuffRuntimeService
         foreach (PlayerBuffScript script in orderedScripts)
         {
             int stack = script.GetRuntimeStack(battleManager, player);
-            if (stack > 0)
+            if (IsActiveStack(script, stack))
             {
                 action(script, player, stack);
             }
@@ -674,7 +663,7 @@ public class PlayerBuffRuntimeService
         foreach (PlayerBuffScript script in orderedScripts)
         {
             int stack = script.GetRuntimeStack(battleManager, player);
-            if (stack <= 0)
+            if (!IsActiveStack(script, stack))
             {
                 continue;
             }
@@ -683,5 +672,10 @@ public class PlayerBuffRuntimeService
         }
 
         return result;
+    }
+
+    private static bool IsActiveStack(PlayerBuffScript script, int stack)
+    {
+        return stack > 0 || (stack < 0 && script.AllowsNegativeStack);
     }
 }

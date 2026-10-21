@@ -70,6 +70,7 @@ public class CombatResolver
 
         eventData.MarkAccepted();
         controller.PrepareAcceptedPlayAnimationStart();
+        battleManager.battleContext?.RecordPaidCost(playedCard, effectiveCost);
 
         int repeatCount = battleManager.ConsumeRepeatedPlayCount(playedCard, false);
         int cardUseAllEnemiesDamage = battleManager.GetCardUseAllEnemiesDamage();

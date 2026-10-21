@@ -26,6 +26,10 @@ public class BattleContext
     // 에너지 관련
     public int energySpentThisTurn;
 
+    // 직접 사용한 카드가 실제로 지불한 비용 (할인·예고 반영 후)
+    private Card lastPaidCard;
+    private int lastPaidCost;
+
     // 보호막 관련
     public int defenseConsumed;
 
@@ -250,6 +254,23 @@ public class BattleContext
     public void OnDefenseConsumed(int amount)
     {
         defenseConsumed += amount;
+    }
+
+    public void RecordPaidCost(Card card, int paidCost)
+    {
+        lastPaidCard = card;
+        lastPaidCost = paidCost < 0 ? 0 : paidCost;
+    }
+
+    // 직접 사용한 카드면 지불한 비용, 유발 사용 등으로 지불 기록이 없으면 카드 비용
+    public int GetPaidCost(Card card)
+    {
+        if (card == null)
+        {
+            return 0;
+        }
+
+        return ReferenceEquals(card, lastPaidCard) ? lastPaidCost : card.cost;
     }
 
     public void OnEnergySpent(int amount)
