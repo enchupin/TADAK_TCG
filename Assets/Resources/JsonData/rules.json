@@ -1,0 +1,45 @@
+{
+    "version": "1.0",
+    "combat": {
+        "chargeMode": "energy",
+        "curiosityPerCombat": 1,
+        "drawPerTurn": 5,
+        "energyPerTurn": 5,
+        "handLimit": 10,
+        "maxEnemies": 4,
+        "patternStagger": true,
+        "stunConsumesIntent": true
+    },
+    "deck": {
+        "choiceCount": 3,
+        "maxCardsPerCharacter": 8,
+        "partySize": 3,
+        "upgradesPerCard": 5
+    },
+    "identity": {
+        "usesPerNewCard": 1
+    },
+    "training": {
+        "floors": 15,
+        "startFloor": 1,
+        "exitFloors": [8, 15],
+        "restHealRatio": 0.4,
+        "map": {
+            "nodesPerFloor": [1, 2, 3, 3, 3, 3, 2, 1, 2, 3, 3, 3, 3, 2, 1],
+            "maxOutDegree": 2,
+            "minNamedPerPath": 1,
+            "minRestPerPath": 2,
+            "typeWeights": {
+                "rest": 0.25,
+                "normal": 0.55,
+                "named": 0.2
+            },
+            "segments": [
+                { "tier": 1, "fromFloor": 2, "toFloor": 4 },
+                { "tier": 2, "fromFloor": 5, "toFloor": 7 },
+                { "tier": 3, "fromFloor": 9, "toFloor": 11 },
+                { "tier": 4, "fromFloor": 12, "toFloor": 14 }
+            ]
+        }
+    }
+}

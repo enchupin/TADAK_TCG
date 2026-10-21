@@ -67,6 +67,9 @@ public class TrainingBattleManager : MonoBehaviour
     [SerializeField] private BattleDeckViewer battleDeckViewer;
 
     [Header("Turn Settings")]
+    // 드로우 수, 손패 상한, 턴당 에너지는 기본적으로 rules.json의 combat 항목에서 읽음
+    // 실시간 테스트와 QA용으로 체크하면 아래 인스펙터 값을 대신 사용
+    [SerializeField] private bool overrideTurnSettingsFromInspector = false;
     public int drawCardCount = 6;
     [SerializeField] private int maxHandCardCount = 10;
     [SerializeField] private int playerBaseEnergyPerTurn = 3;
@@ -111,7 +114,10 @@ public class TrainingBattleManager : MonoBehaviour
     private readonly List<PendingMonsterRevive> pendingMonsterRevives = new List<PendingMonsterRevive>();
 
     public float EnemyActionDelay => enemyActionDelay;
-    public int MaxHandCardCount => Mathf.Max(0, maxHandCardCount);
+    public int MaxHandCardCount => Mathf.Max(0, overrideTurnSettingsFromInspector ? maxHandCardCount : GameRules.Combat.handLimit);
+    public int DrawCardCount => Mathf.Max(0, overrideTurnSettingsFromInspector ? drawCardCount : GameRules.Combat.drawPerTurn);
+    public int PlayerBaseEnergyPerTurn => Mathf.Max(0, overrideTurnSettingsFromInspector ? playerBaseEnergyPerTurn : GameRules.Combat.energyPerTurn);
+    public bool IsHandFull => handManager != null && handManager.GetHandCount() >= MaxHandCardCount;
     public CharacterIdentityService CharacterIdentityService => characterIdentityService;
 
     // 버프 전용 호출은 이 진입점에서 담당 실행기에 바로 접근
@@ -341,7 +347,7 @@ public class TrainingBattleManager : MonoBehaviour
             }
         }
 
-        playerData.Initialize(totalMaxHp, totalDefense, playerBaseEnergyPerTurn);
+        playerData.Initialize(totalMaxHp, totalDefense, PlayerBaseEnergyPerTurn);
         characterIdentityService?.Initialize(SelectedButtonControl.selectedCharacterList);
 
         if (TrainingRunState.IsRunActive)
@@ -509,7 +515,7 @@ public class TrainingBattleManager : MonoBehaviour
 
         if (matchingCards.Count > 0) {
             Debug.Log($"[Debug] 디버그 시작 카드 {matchingCards.Count}장을 추가했습니다. 기준: {GetDebugTargetSummary()}");
-            handManager.AddCard(matchingCards);
+            handManager.AddCardIgnoringHandLimit(matchingCards);
             if (battleContext != null) {
                 battleContext.OnCardsDrawn(matchingCards.Count);
             }
@@ -842,8 +848,8 @@ public class TrainingBattleManager : MonoBehaviour
 
         int currentHandCount = handManager != null ? handManager.GetHandCount() : 0;
         int availableHandSpace = Mathf.Max(0, MaxHandCardCount - currentHandCount);
-        int targetStartDrawCount = Mathf.Min(availableHandSpace, Mathf.Max(drawCardCount, openingCards.Count));
-        int drawModifier = targetStartDrawCount - drawCardCount;
+        int targetStartDrawCount = Mathf.Min(availableHandSpace, Mathf.Max(DrawCardCount, openingCards.Count));
+        int drawModifier = targetStartDrawCount - DrawCardCount;
         if (drawModifier != 0)
         {
             turnSystem.AddTurnStartDrawModifier(drawModifier);
@@ -2049,6 +2055,12 @@ public class TrainingBattleManager : MonoBehaviour
                 break;
             }
 
+            // 손패가 가득 차면 더 뽑지 않고 남은 카드는 덱에 그대로 둠
+            if (IsHandFull)
+            {
+                break;
+            }
+
             Card drawnCard = drawCard();
             if (drawnCard == null)
             {
@@ -2091,6 +2103,12 @@ public class TrainingBattleManager : MonoBehaviour
         for (int drawIndex = 0; drawIndex < count; drawIndex++)
         {
             if (!ignoreRootAbsorption && HasRootAbsorptionInHand())
+            {
+                break;
+            }
+
+            // 손패가 가득 차면 더 뽑지 않고 남은 카드는 덱에 그대로 둠
+            if (IsHandFull)
             {
                 break;
             }

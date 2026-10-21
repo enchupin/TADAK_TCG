@@ -412,7 +412,8 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         UpdateUI();
     }
 
-    public void OnTurnStart()
+    // 몬스터 턴은 모든 몬스터의 보호막 제거를 먼저 끝낸 뒤 턴 시작 효과를 처리
+    public void RemoveTurnStartBarrier()
     {
         TrainingBattleManager battleManager = TrainingBattleManager.Instance;
         int retainedDefense = Mathf.Clamp(permanentDefense, 0, defense);
@@ -421,6 +422,12 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
             SetDefenseValue(retainedDefense);
             Debug.Log($"[Monster] {name} 턴 시작으로 보호막이 제거됩니다.");
         }
+        UpdateUI();
+    }
+
+    public void OnTurnStart()
+    {
+        TrainingBattleManager battleManager = TrainingBattleManager.Instance;
         OnTurnStarted();
         battleManager?.ApplyMonsterTurnStartEffects(this);
         UpdateUI();

@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class MonsterSpawner : MonoBehaviour
 {
-    private const int MaxMonsterCount = 5;
+    // 동시 적 수 상한은 rules.json의 combat.maxEnemies에서 읽음
+    private static int MaxMonsterCount => Mathf.Max(0, GameRules.Combat.maxEnemies);
 
     public enum SpawnMonsterType
     {
