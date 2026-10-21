@@ -8,6 +8,9 @@ public sealed class CharacterIdentityState
     public int CurrentGauge { get; private set; }
     public int MaxGauge => Mathf.Max(0, CharacterData?.identity?.cost ?? 0);
     public string Description => CharacterData?.identity?.description ?? string.Empty;
+    // 이번 전투에서 스킬을 사용한 횟수와 카드 획득 보상 지급 여부
+    public int UsesThisBattle { get; private set; }
+    public bool HasReceivedCardRewardThisBattle { get; private set; }
 
     public bool CanUse => Skill != null && MaxGauge > 0 && CurrentGauge >= MaxGauge;
 
@@ -36,6 +39,12 @@ public sealed class CharacterIdentityState
         return true;
     }
 
+    // 훈련 진행 중 이전 전투의 충전 진행도를 복원할 때 사용
+    public void SetGauge(int amount)
+    {
+        CurrentGauge = Mathf.Clamp(amount, 0, MaxGauge);
+    }
+
     public bool ConsumeGauge()
     {
         if (!CanUse)
@@ -43,7 +52,14 @@ public sealed class CharacterIdentityState
             return false;
         }
 
-        CurrentGauge = Mathf.Max(0, CurrentGauge - MaxGauge);
+        // 사용 후 충전 진행도는 0으로 초기화
+        CurrentGauge = 0;
+        UsesThisBattle++;
         return true;
+    }
+
+    public void MarkCardRewardReceived()
+    {
+        HasReceivedCardRewardThisBattle = true;
     }
 }

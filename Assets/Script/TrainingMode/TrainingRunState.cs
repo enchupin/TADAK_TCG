@@ -28,6 +28,7 @@ public static class TrainingRunState
     private static readonly HashSet<int> selectableNodeIds = new HashSet<int>();
     private static readonly HashSet<int> clearedNodeIds = new HashSet<int>();
     private static readonly Dictionary<int, List<int>> validConnectionMasksByShape = new Dictionary<int, List<int>>();
+    private static readonly Dictionary<Character, int> identityGaugeByCharacter = new Dictionary<Character, int>();
 
     public static bool IsRunActive { get; private set; }
     public static bool IsRunCompleted { get; private set; }
@@ -84,6 +85,26 @@ public static class TrainingRunState
         return true;
     }
 
+    // 훈련 동안 아이덴티티 충전 진행도는 전투가 끝나도 유지
+    public static void SetIdentityGauges(IReadOnlyDictionary<Character, int> gauges)
+    {
+        identityGaugeByCharacter.Clear();
+        if (gauges == null)
+        {
+            return;
+        }
+
+        foreach (KeyValuePair<Character, int> entry in gauges)
+        {
+            identityGaugeByCharacter[entry.Key] = Mathf.Max(0, entry.Value);
+        }
+    }
+
+    public static IReadOnlyDictionary<Character, int> GetIdentityGauges()
+    {
+        return identityGaugeByCharacter;
+    }
+
     public static void StartNewRun(string battleSceneName)
     {
         ResetRun();
@@ -111,6 +132,7 @@ public static class TrainingRunState
         HasPlayerHealthState = false;
         PlayerCurrentHp = 0;
         PlayerMaxHp = 0;
+        identityGaugeByCharacter.Clear();
 
         BattleSceneName = string.Empty;
 

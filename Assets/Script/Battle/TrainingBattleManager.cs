@@ -112,6 +112,8 @@ public class TrainingBattleManager : MonoBehaviour
     [SerializeField] private TrainingMapController trainingMap;
     private bool hasStartedEncounter;
     private readonly List<PendingMonsterRevive> pendingMonsterRevives = new List<PendingMonsterRevive>();
+    // 저장 덱 보상(획득·초과 제거) 진행 중에는 카드 사용과 턴 종료, 전투 종료 처리를 대기
+    private bool isDeckRewardInProgress;
 
     public float EnemyActionDelay => enemyActionDelay;
     public int MaxHandCardCount => Mathf.Max(0, overrideTurnSettingsFromInspector ? maxHandCardCount : GameRules.Combat.handLimit);
@@ -349,6 +351,11 @@ public class TrainingBattleManager : MonoBehaviour
 
         playerData.Initialize(totalMaxHp, totalDefense, PlayerBaseEnergyPerTurn);
         characterIdentityService?.Initialize(SelectedButtonControl.selectedCharacterList);
+        // 훈련 중에는 이전 전투의 아이덴티티 충전 진행도를 이어받고 보스전은 0에서 시작
+        if (!BossModeSession.IsActive && TrainingRunState.IsRunActive)
+        {
+            characterIdentityService?.RestoreGauges(TrainingRunState.GetIdentityGauges());
+        }
 
         if (TrainingRunState.IsRunActive)
         {
@@ -970,14 +977,14 @@ public class TrainingBattleManager : MonoBehaviour
     public bool CanPlayerPlayCard()
     {
         return !(trainingMap != null && trainingMap.IsVisible)
-            && !HasPendingSelection && !(combatResolver?.IsResolvingCardPlay ?? false)
+            && !HasPendingSelection && !isDeckRewardInProgress && !(combatResolver?.IsResolvingCardPlay ?? false)
             && turnSystem.CanPlayerPlayCard();
     }
 
     public bool CanEndPlayerTurn()
     {
         return !(trainingMap != null && trainingMap.IsVisible)
-            && !HasPendingSelection && !(combatResolver?.IsResolvingCardPlay ?? false)
+            && !HasPendingSelection && !isDeckRewardInProgress && !(combatResolver?.IsResolvingCardPlay ?? false)
             && turnSystem.CanEndPlayerTurn();
     }
 
@@ -1638,6 +1645,12 @@ public class TrainingBattleManager : MonoBehaviour
         characterIdentityService.AddGauge(character, amount);
     }
 
+    // 직접 사용한 카드로 아이덴티티를 충전 (충전량은 rules.json의 chargeMode 기준)
+    public void ChargeIdentityGaugeForPlayedCard(Card playedCard, int paidCost)
+    {
+        characterIdentityService?.ChargeForPlayedCard(playedCard, paidCost);
+    }
+
     public void AddIdentityGaugeToOtherCharacters(Character sourceCharacter, int amount)
     {
         if (amount <= 0 || characterIdentityService == null)
@@ -1669,10 +1682,111 @@ public class TrainingBattleManager : MonoBehaviour
             return false;
         }
 
+        // 훈련 중 전투마다 처음 조건을 채운 아이덴티티 사용은 해당 캐릭터의 신규 카드 획득 보상
+        if (CanGrantIdentityCardReward() && characterIdentityService.TryClaimCardReward(character))
+        {
+            StartCoroutine(RunIdentityCardRewardSequence(character));
+        }
+
         RefreshHandPlayableState();
         UpdateAllUI();
         TryHandleCombatEnd();
         return true;
+    }
+
+    private bool CanGrantIdentityCardReward()
+    {
+        return !BossModeSession.IsActive && TrainingRunState.IsRunActive && buildingDeck != null;
+    }
+
+    private System.Collections.IEnumerator RunIdentityCardRewardSequence(Character character)
+    {
+        isDeckRewardInProgress = true;
+        try
+        {
+            // 스킬 효과가 연 선택 창이 끝난 뒤 보상 선택을 진행
+            while (HasPendingSelection)
+            {
+                yield return null;
+            }
+
+            List<Card> options = new List<Card>();
+            foreach (int cardId in TrainingDeckRewardService.GetAcquisitionOptions(buildingDeck.GetCards(), character))
+            {
+                Card option = CardManager.GetCardAsCard(cardId);
+                if (option != null)
+                {
+                    options.Add(option);
+                }
+            }
+
+            if (options.Count == 0)
+            {
+                Debug.LogWarning($"[BattleManager] {character}의 획득 가능한 고유 카드가 없어 보상을 건너뜁니다");
+                yield break;
+            }
+
+            List<Card> pickedCards = null;
+            yield return SelectCardsCoroutine(options, 1, false, cards => pickedCards = cards);
+            Card pickedCard = pickedCards != null && pickedCards.Count > 0 ? pickedCards[0] : options[0];
+            if (buildingDeck.AddCard(pickedCard.cardId))
+            {
+                Debug.Log($"[BattleManager] 아이덴티티 보상으로 {pickedCard.cardName} 카드를 저장 덱에 추가했습니다");
+            }
+
+            yield return TrimCharacterDeckOverflowCoroutine(character);
+        }
+        finally
+        {
+            isDeckRewardInProgress = false;
+        }
+    }
+
+    // R-15 캐릭터 카드가 상한을 넘으면 넘은 장수만큼 골라 저장 덱에서 제거
+    public System.Collections.IEnumerator TrimCharacterDeckOverflowCoroutine(Character character)
+    {
+        if (buildingDeck == null)
+        {
+            yield break;
+        }
+
+        int overflowCount = TrainingDeckRewardService.GetOverflowCount(buildingDeck.GetCards(), character);
+        if (overflowCount <= 0)
+        {
+            yield break;
+        }
+
+        List<Card> characterCards = TrainingDeckRewardService.GetCharacterCards(buildingDeck.GetCards(), character);
+        List<Card> removedCards = null;
+        yield return SelectCardsCoroutine(characterCards, overflowCount, false, cards => removedCards = cards);
+        if (removedCards == null || removedCards.Count < overflowCount)
+        {
+            // 선택 창이 없으면 가장 최근에 얻은 카드부터 제거
+            removedCards = characterCards.GetRange(characterCards.Count - overflowCount, overflowCount);
+        }
+
+        foreach (Card removedCard in removedCards)
+        {
+            buildingDeck.RemoveCard(removedCard);
+        }
+    }
+
+    private System.Collections.IEnumerator SelectCardsCoroutine(List<Card> cards, int selectCount, bool allowFewer, Action<List<Card>> onSelected)
+    {
+        bool isCompleted = false;
+        List<Card> selectedCards = null;
+        bool opened = OpenSelectCardPanel(cards, selectCount, result =>
+        {
+            selectedCards = result;
+            isCompleted = true;
+        }, allowFewer);
+
+        if (opened)
+        {
+            yield return new WaitUntil(() => isCompleted);
+        }
+
+        onSelected?.Invoke(selectedCards);
     }
 
     public bool TryUseIdentitySkill(int characterId)
@@ -2173,6 +2287,12 @@ public class TrainingBattleManager : MonoBehaviour
         // 승리를 판정한 카드 효과와 턴 처리가 현재 프레임에서 마무리되도록 대기
         yield return null;
 
+        // 마지막 행동이 아이덴티티였다면 카드 획득 보상을 마친 뒤 저장 덱을 처리
+        while (isDeckRewardInProgress)
+        {
+            yield return null;
+        }
+
         if (!TrainingRunState.HasMapData)
             yield break;
 
@@ -2189,6 +2309,11 @@ public class TrainingBattleManager : MonoBehaviour
         if (PlayerData.Instance != null)
         {
             TrainingRunState.SetPlayerHealthState(PlayerData.Instance.hp, PlayerData.Instance.maxHP);
+        }
+
+        if (characterIdentityService != null)
+        {
+            TrainingRunState.SetIdentityGauges(characterIdentityService.ExportGauges());
         }
 
         if (shouldPersistRunDeck)

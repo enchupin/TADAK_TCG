@@ -73,22 +73,29 @@ public class BuildingDeck
     /// <summary>
     /// Add reward card.
     /// </summary>
-    public void AddCard(int cardId)
+    public bool AddCard(int cardId)
     {
         Card newCard = CardManager.GetCardAsCard(cardId);
         if (newCard == null)
         {
-            return;
+            return false;
         }
 
         if (ViolatesUniqueRule(newCard))
         {
             Debug.LogWarning($"[BuildingDeck] 유일 키워드로 인해 카드를 추가할 수 없습니다: {newCard.cardName}");
-            return;
+            return false;
         }
 
         deckList.Add(newCard);
         Debug.Log($"[BuildingDeck] card added: {newCard.cardName} (total {deckList.Count})");
+        return true;
+    }
+
+    // 저장 덱의 카드 인스턴스 목록 (선택 UI에서 제거 대상 지정용, 전투에는 CopyDeck 사용)
+    public IReadOnlyList<Card> GetCards()
+    {
+        return deckList;
     }
 
     public bool ReplaceCardAt(int index, int cardId)

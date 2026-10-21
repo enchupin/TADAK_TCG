@@ -162,7 +162,7 @@ public class TrainingBattleManager
     public int ConsumeRepeatedPlayCount(Card card, bool repeat) { int n = Repeats; Repeats = 0; return n; }
     public int GetCardUseAllEnemiesDamage() => 0;
     public void ApplyCardUseAllEnemiesDamage(int amount) { }
-    public void ChargeIdentityGauge(Character character) { IdentityCharges++; }
+    public void ChargeIdentityGaugeForPlayedCard(Card card, int paidCost) { IdentityCharges++; }
     public void RefreshHandPlayableState() { }
     public void UpdateAllUI() { }
     public void UpdateEndTurnButtonState() { }

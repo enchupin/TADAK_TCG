@@ -16,7 +16,68 @@ namespace UnityEngine
     public static class Mathf
     {
         public static int Max(int a, int b) => Math.Max(a, b);
+        public static int Clamp(int value, int min, int max) => Math.Min(Math.Max(value, min), max);
     }
+
+    public static class Random
+    {
+        public static System.Random Source = new System.Random(7);
+        public static int Range(int min, int maxExclusive) => Source.Next(min, maxExclusive);
+    }
+
+    public class ScriptableObject { }
+}
+
+public enum CardCostType { Energy, Barrier, Rune }
+
+public class CharacterData : UnityEngine.ScriptableObject
+{
+    public CharacterIdentityDefinition identity = new CharacterIdentityDefinition();
+}
+
+public static class CharacterManager
+{
+    public static readonly Dictionary<Character, CharacterData> Characters = new Dictionary<Character, CharacterData>();
+    public static CharacterData GetCharacterByEnum(Character character) => Characters.TryGetValue(character, out CharacterData data) ? data : null;
+    public static List<int> GetUniqueBaseCardIds(Character character) => new List<int> { (int)character * 1000 + 30, (int)character * 1000 + 40, (int)character * 1000 + 50, (int)character * 1000 + 60, (int)character * 1000 + 70 };
+}
+
+public class CardData
+{
+    public int cardId;
+    public List<int> keywords = new List<int>();
+}
+
+public static class CardManager
+{
+    public static readonly HashSet<int> UniqueCardIds = new HashSet<int>();
+    public static CardData GetCard(int cardId)
+    {
+        CardData data = new CardData { cardId = cardId };
+        if (UniqueCardIds.Contains(cardId)) data.keywords.Add(CardKeywordIds.Unique);
+        return data;
+    }
+}
+
+public abstract class CharacterIdentitySkill
+{
+    public abstract bool Execute(TrainingBattleManager battleManager, CharacterIdentityState identityState);
+}
+
+public sealed class TestIdentitySkill : CharacterIdentitySkill
+{
+    public int Executed;
+    public override bool Execute(TrainingBattleManager battleManager, CharacterIdentityState identityState) { Executed++; return true; }
+}
+
+public static class CharacterIdentitySkillRegistry
+{
+    public static Dictionary<Character, CharacterIdentitySkill> Create() => new Dictionary<Character, CharacterIdentitySkill>
+    {
+        { Character.Isla, new TestIdentitySkill() },
+        { Character.Ignia, new TestIdentitySkill() },
+        { Character.Polar, new TestIdentitySkill() }
+    };
 }
 
 // 테스트에서는 rules.json을 System.Text.Json으로 읽어 실제 데이터와 필드 매핑을 함께 검증
@@ -35,6 +96,8 @@ public class Card
 {
     public int cardId;
     public string cardName = string.Empty;
+    public Character character;
+    public CardCostType costType = CardCostType.Energy;
     public int OnDrawCount;
     public void ExecuteOnDrawEffects(TrainingBattleManager manager) => OnDrawCount++;
 }

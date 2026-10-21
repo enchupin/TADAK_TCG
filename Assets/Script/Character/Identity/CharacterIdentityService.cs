@@ -57,6 +57,33 @@ public sealed class CharacterIdentityService
         return state != null && state.AddGauge(amount);
     }
 
+    // 카드 사용 시 충전량을 rules.json의 chargeMode에 따라 계산
+    // energy 모드는 그 캐릭터 카드에 실제로 지불한 에너지만 충전하고 보호막·동력 비용은 제외
+    public bool ChargeForPlayedCard(Card playedCard, int paidCost)
+    {
+        if (playedCard == null || playedCard.character == Character.Monster)
+        {
+            return false;
+        }
+
+        return AddGauge(playedCard.character, ResolveChargeAmount(playedCard, paidCost));
+    }
+
+    public static int ResolveChargeAmount(Card playedCard, int paidCost)
+    {
+        if (playedCard == null)
+        {
+            return 0;
+        }
+
+        if (GameRules.Combat.chargeMode == IdentityChargeModes.Card)
+        {
+            return 1;
+        }
+
+        return playedCard.costType == CardCostType.Energy ? Mathf.Max(0, paidCost) : 0;
+    }
+
     public void AddGaugeToOtherCharacters(Character sourceCharacter, int amount)
     {
         if (amount <= 0)
@@ -95,6 +122,50 @@ public sealed class CharacterIdentityService
         }
 
         return state.ConsumeGauge();
+    }
+
+    // 전투마다 캐릭터별로 usesPerNewCard회 사용했을 때 한 번만 카드 획득 보상을 지급
+    public bool TryClaimCardReward(Character character)
+    {
+        CharacterIdentityState state = GetState(character);
+        int requiredUses = Mathf.Max(1, GameRules.Identity.usesPerNewCard);
+        if (state == null || state.HasReceivedCardRewardThisBattle || state.UsesThisBattle < requiredUses)
+        {
+            return false;
+        }
+
+        state.MarkCardRewardReceived();
+        return true;
+    }
+
+    public Dictionary<Character, int> ExportGauges()
+    {
+        Dictionary<Character, int> gauges = new Dictionary<Character, int>();
+        foreach (CharacterIdentityState state in states)
+        {
+            if (state != null)
+            {
+                gauges[state.Character] = state.CurrentGauge;
+            }
+        }
+
+        return gauges;
+    }
+
+    public void RestoreGauges(IReadOnlyDictionary<Character, int> gauges)
+    {
+        if (gauges == null)
+        {
+            return;
+        }
+
+        foreach (CharacterIdentityState state in states)
+        {
+            if (state != null && gauges.TryGetValue(state.Character, out int gauge))
+            {
+                state.SetGauge(gauge);
+            }
+        }
     }
 
     public int GetGauge(Character character)

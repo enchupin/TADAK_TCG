@@ -42,6 +42,12 @@ $project = '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</Out
     '<Compile Include="' + $escapedRoot + '/Tests/BattleRules/*.cs" />' +
     '<Compile Include="' + $escapedTestRoot + '/ProductionMethods.cs" />' +
     '<Compile Include="' + $escapedRoot + '/Assets/Script/Data/GameRules.cs" />' +
+    '<Compile Include="' + $escapedRoot + '/Assets/Script/Character/Character.cs" />' +
+    '<Compile Include="' + $escapedRoot + '/Assets/Script/Card/CardKeywordIds.cs" />' +
+    '<Compile Include="' + $escapedRoot + '/Assets/Script/Character/Identity/CharacterIdentityDefinition.cs" />' +
+    '<Compile Include="' + $escapedRoot + '/Assets/Script/Character/Identity/CharacterIdentityState.cs" />' +
+    '<Compile Include="' + $escapedRoot + '/Assets/Script/Character/Identity/CharacterIdentityService.cs" />' +
+    '<Compile Include="' + $escapedRoot + '/Assets/Script/TrainingMode/TrainingDeckRewardService.cs" />' +
     '</ItemGroup></Project>'
 $projectPath = Join-Path $testRoot 'Check.csproj'
 [IO.File]::WriteAllText($projectPath, $project, [Text.UTF8Encoding]::new($false))
