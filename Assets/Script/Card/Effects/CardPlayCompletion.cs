@@ -23,6 +23,13 @@ public static class CardPlayCompletion
 
         if (playedCard.ShouldExhaustWhenPlayed())
         {
+            if (playedCard.skipExhaustOnce)
+            {
+                playedCard.skipExhaustOnce = false;
+                battleManager.usableDeckManager?.AddToDiscard(playedCard);
+                return;
+            }
+
             battleManager.MoveCardToExhaust(playedCard);
             return;
         }

@@ -6,7 +6,9 @@ using System.Collections.Generic;
 public class PlayerProfileSave
 {
     // 데이터 구조 버전 2
-    public const int CurrentProfileVersion = 2;
+    // 버전 3: v1.0 카드 데이터 교체로 같은 카드 ID의 효과가 바뀌어 이전 저장 덱을 시작 덱으로 초기화
+    public const int CurrentProfileVersion = 3;
+    public const int CardDataV1ProfileVersion = 3;
     public int profileVersion = CurrentProfileVersion;
 
     // 플레이어 아이디

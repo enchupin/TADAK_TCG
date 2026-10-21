@@ -13,6 +13,8 @@ public class BuffEffect : ICardEffect
     public string amountFormula;
     public int duration;
     public TargetType target;
+    // 수식에서 카드 사용 수를 셀 때의 카드 ID 필터 (cardIdGroup)
+    public List<int> cardIdList;
 
     public void Execute(TrainingBattleManager battleManager)
     {
@@ -28,7 +30,15 @@ public class BuffEffect : ICardEffect
     {
         Monster formulaTargetMonster = CardEffectRuntimeUtility.ResolveSingleEnemyTarget(battleManager);
         int finalAmount = string.IsNullOrWhiteSpace(amountFormula)
-            ? amount : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, formulaTargetMonster, forwardedAmount);
+            ? amount : FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, cardIdList, formulaTargetMonster, forwardedAmount);
+
+        // 음수 중첩 허용 효과(힘 등)는 음수 부여를 그대로 전달
+        if (buffId > 0 && string.IsNullOrWhiteSpace(amountFormula) && finalAmount < 0 && BuffData.AllowsNegativeStack(buffId))
+        {
+            ApplyBuff(battleManager, finalAmount);
+            battleManager.UpdateAllUI();
+            return;
+        }
 
         if (buffId > 0 && string.IsNullOrWhiteSpace(amountFormula) && finalAmount <= 0)
         {

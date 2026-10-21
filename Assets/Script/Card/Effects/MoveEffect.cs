@@ -157,6 +157,12 @@ public class MoveEffect : ICardEffect
                     return true;
                 }
                 return false;
+            case MoveZoneType.ExhaustPile:
+                if (battleManager.usableDeckManager.GetExhaustPile().Contains(card)) {
+                    battleManager.usableDeckManager.RemoveFromExhaust(card);
+                    return true;
+                }
+                return false;
             case MoveZoneType.Source:
                 return RemoveFromAnyZone(card, battleManager);
             default:
@@ -176,6 +182,11 @@ public class MoveEffect : ICardEffect
 
         if (battleManager.usableDeckManager.GetDiscardPile().Contains(card)) {
             battleManager.usableDeckManager.RemoveFromDiscard(card);
+            return true;
+        }
+
+        if (battleManager.usableDeckManager.GetExhaustPile().Contains(card)) {
+            battleManager.usableDeckManager.RemoveFromExhaust(card);
             return true;
         }
 

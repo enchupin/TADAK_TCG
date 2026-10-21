@@ -79,6 +79,10 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     protected virtual bool IsBossMonster => false;
     public bool IsBoss => IsBossMonster;
     private int permanentDefense;
+    // 이번 내 턴 동안 잃은 체력 (내 턴 시작 시 초기화)
+    public int HpLostThisTurn { get; private set; }
+    // 합체 등으로 커진 패턴 배수 (공격 피해·보호막 획득에 곱함)
+    public int patternMultiplier = 1;
 
     protected virtual void Awake()
     {
@@ -253,6 +257,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
         if (damageAfterDefense > 0)
         {
+            HpLostThisTurn += actualHpLoss;
             TrainingBattleManager.Instance?.HandleMonsterHpLost(this, actualHpLoss);
         }
 
@@ -279,6 +284,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         }
 
         hp -= lostAmount;
+        HpLostThisTurn += lostAmount;
         TrainingBattleManager.Instance?.HandleMonsterHpLost(this, lostAmount);
         HandleDeathIfNeeded();
         UpdateUI();
@@ -340,9 +346,14 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         UpdateUI();
     }
 
+    public void ResetTurnHpLoss()
+    {
+        HpLostThisTurn = 0;
+    }
+
     public void AddDefense(int amount)
     {
-        int finalAmount = Mathf.Max(0, amount);
+        int finalAmount = Mathf.Max(0, amount) * Mathf.Max(1, patternMultiplier);
         TrainingBattleManager battleManager = TrainingBattleManager.Instance;
         if (battleManager != null)
         {
@@ -633,7 +644,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     protected int PreviewBarrierGain(int baseAmount)
     {
-        int safeAmount = Mathf.Max(0, baseAmount);
+        int safeAmount = Mathf.Max(0, baseAmount) * Mathf.Max(1, patternMultiplier);
         int resolvedAmount = TrainingBattleManager.Instance != null
             ? TrainingBattleManager.Instance.ResolveMonsterBarrierGain(this, safeAmount)
             : safeAmount;
@@ -812,6 +823,8 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         hp = maxHP;
         defense = UnityEngine.Mathf.Max(0, BaseDefense);
         permanentDefense = 0;
+        patternMultiplier = 1;
+        HpLostThisTurn = 0;
         attackPower = UnityEngine.Mathf.Max(0, BaseAttackPower);
         name = GetType().Name;
 
@@ -975,9 +988,10 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
             return 0;
         }
 
+        int scaledDamage = baseDamage * Mathf.Max(1, patternMultiplier);
         return TrainingBattleManager.Instance != null
-            ? TrainingBattleManager.Instance.ModifyMonsterOutgoingDamage(this, baseDamage)
-            : Mathf.Max(0, baseDamage);
+            ? TrainingBattleManager.Instance.ModifyMonsterOutgoingDamage(this, scaledDamage)
+            : Mathf.Max(0, scaledDamage);
     }
 
     private int ResolveMonsterBuffAmount(int amount, bool isNonStackable)

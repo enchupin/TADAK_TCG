@@ -11,6 +11,7 @@ public class SelectCardEffect : ICardEffect
     public bool random;
     public bool allowFewerSelection;
     public bool upgradeableOnly;
+    public bool excludeUnique;
     public List<ICardEffect> onActions;
 
     public void Execute(TrainingBattleManager battleManager)
@@ -129,6 +130,9 @@ public class SelectCardEffect : ICardEffect
             case MoveZoneType.AllUnique:
                 AddAllUniqueCards(sourceCards);
                 break;
+            case MoveZoneType.ExhaustPile:
+                AddUnique(sourceCards, battleManager.usableDeckManager.GetExhaustPile());
+                break;
             case MoveZoneType.Source:
             case MoveZoneType.None:
                 AddUnique(sourceCards, battleManager.battleContext.GetSelectedCards());
@@ -139,9 +143,24 @@ public class SelectCardEffect : ICardEffect
             sourceCards = sourceCards.FindAll(card => card != null && cardIdFilter.Contains(card.cardId));
         }
 
-        Character? filteredCharacter = ResolveCharacterFilter(battleManager);
-        if (filteredCharacter.HasValue) {
-            sourceCards = sourceCards.FindAll(card => card != null && card.character == filteredCharacter.Value);
+        // Party: 이번 전투 파티 캐릭터의 카드만
+        if (string.Equals(characterFilter, "Party", System.StringComparison.OrdinalIgnoreCase)) {
+            HashSet<Character> partyCharacters = new HashSet<Character>();
+            foreach (CharacterIdentityState state in battleManager.GetIdentityStates()) {
+                if (state != null) partyCharacters.Add(state.Character);
+            }
+            sourceCards = sourceCards.FindAll(card => card != null && partyCharacters.Contains(card.character));
+        }
+        else {
+            Character? filteredCharacter = ResolveCharacterFilter(battleManager);
+            if (filteredCharacter.HasValue) {
+                sourceCards = sourceCards.FindAll(card => card != null && card.character == filteredCharacter.Value);
+            }
+        }
+
+        // R-25 복제·복사처럼 카드를 고르는 효과에는 유일 카드를 보이지 않음
+        if (excludeUnique) {
+            sourceCards = sourceCards.FindAll(card => card != null && !card.HasKeyword(CardKeywordIds.Unique));
         }
 
         if (upgradeableOnly) {
@@ -353,6 +372,12 @@ public class SelectCardEffect : ICardEffect
     private static bool IsUniqueCardId(int cardId)
     {
         if (IsBasicCardId(cardId)) {
+            return false;
+        }
+
+        // 생성 카드(그룹 08 이상)는 고유 카드에서 제외
+        int group = Mathf.Abs(cardId) % 1000 / 10;
+        if (group >= 8) {
             return false;
         }
 

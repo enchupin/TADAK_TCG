@@ -10,6 +10,8 @@ public class MultiplyBarrierEffect : ICardEffect
     public int amount;
     public string amountFormula;
     public TargetType target = TargetType.Self;
+    // 0보다 크면 정수 배수 대신 소수 배율 적용 (예: 0.5 = 절반)
+    public float multiplierValue;
 
     public void Execute(TrainingBattleManager battleManager)
     {
@@ -34,6 +36,12 @@ public class MultiplyBarrierEffect : ICardEffect
             multiplier = 0;
         }
 
+        if (multiplierValue > 0f)
+        {
+            ApplyFractionalMultiplier(battleManager);
+            return;
+        }
+
         if (target == TargetType.Self && battleManager.playerData != null)
         {
             battleManager.playerData.defense = Mathf.Max(0, battleManager.playerData.defense * multiplier);
@@ -50,6 +58,26 @@ public class MultiplyBarrierEffect : ICardEffect
             }
 
             monster.SetDefense(monster.defense * multiplier);
+        }
+
+        battleManager.UpdateAllUI();
+    }
+
+    private void ApplyFractionalMultiplier(TrainingBattleManager battleManager)
+    {
+        if (target == TargetType.Self && battleManager.playerData != null)
+        {
+            battleManager.playerData.defense = Mathf.Max(0, Mathf.FloorToInt(battleManager.playerData.defense * multiplierValue));
+            battleManager.UpdateAllUI();
+            return;
+        }
+
+        foreach (Monster monster in CardEffectRuntimeUtility.ResolveEnemyTargets(battleManager, target))
+        {
+            if (monster != null && !monster.IsDead())
+            {
+                monster.SetDefense(Mathf.FloorToInt(monster.defense * multiplierValue));
+            }
         }
 
         battleManager.UpdateAllUI();

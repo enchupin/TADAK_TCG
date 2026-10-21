@@ -148,6 +148,10 @@ public class ChangeStatEffect : ICardEffect
             case "remove":
                 return currentBarrier;
 
+            // 보호막 절반 감소 (남는 쪽 올림)
+            case "half":
+                return currentBarrier / 2;
+
             case "decrease":
                 int decreaseAmount = ResolveNumericAmount(battleManager, forwardedAmount);
                 return Mathf.Clamp(decreaseAmount, 0, currentBarrier);

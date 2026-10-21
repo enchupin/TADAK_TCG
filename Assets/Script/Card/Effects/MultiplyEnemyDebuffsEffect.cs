@@ -5,6 +5,8 @@ public class MultiplyEnemyDebuffsEffect : ICardEffect
 {
     public int amount;
     public TargetType target = TargetType.SingleEnemy;
+    // 지정하면 해당 버프만 배수 (비우면 모든 해로운 효과)
+    public List<int> buffFilterIds;
 
     public void Execute(TrainingBattleManager battleManager)
     {
@@ -23,7 +25,8 @@ public class MultiplyEnemyDebuffsEffect : ICardEffect
 
             foreach (Buff buff in monster.currentBuffs)
             {
-                if (buff?.data == null || buff.stack <= 0 || !BuffData.IsHarmfulBuffId(buff.data.buffId))
+                if (buff?.data == null || buff.stack <= 0 || !BuffData.IsHarmfulBuffId(buff.data.buffId)
+                    || (buffFilterIds != null && buffFilterIds.Count > 0 && !buffFilterIds.Contains(buff.data.buffId)))
                 {
                     continue;
                 }

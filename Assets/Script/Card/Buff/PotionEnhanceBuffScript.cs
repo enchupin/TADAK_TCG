@@ -16,13 +16,9 @@ public sealed class PotionEnhanceBuffScript : PlayerBuffScript
             return currentCardId;
         }
 
-        return currentCardId switch
-        {
-            101080 => 101081,
-            101082 => 101083,
-            101084 => 101085,
-            101086 => 101087,
-            _ => currentCardId
-        };
+        // 포션 기본형(x0)은 같은 그룹의 강화형(x1)으로
+        return BuffCardUtility.IsPotionCardId(currentCardId) && currentCardId % 10 == 0
+            ? currentCardId + 1
+            : currentCardId;
     }
 }

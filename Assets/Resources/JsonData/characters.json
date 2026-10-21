@@ -4,61 +4,71 @@
       "characterId": 101,
       "name": "아일라",
       "maxHp": 30,
-      "identityCost": 6
+      "identityCost": 6,
+      "starterDeck": [101010, 101010, 101020, 101020, 101030, 101040]
     },
     {
       "characterId": 102,
       "name": "잭",
       "maxHp": 30,
-      "identityCost": 6
+      "identityCost": 6,
+      "starterDeck": [102010, 102010, 102020, 102020, 102030, 102040]
     },
     {
       "characterId": 201,
       "name": "이그니아",
       "maxHp": 35,
-      "identityCost": 10
+      "identityCost": 10,
+      "starterDeck": [201010, 201010, 201020, 201020, 201030, 201040]
     },
     {
       "characterId": 202,
       "name": "바네사",
       "maxHp": 35,
-      "identityCost": 10
+      "identityCost": 10,
+      "starterDeck": [202010, 202010, 202020, 202020, 202030, 202040]
     },
     {
       "characterId": 203,
       "name": "메렐",
       "maxHp": 35,
-      "identityCost": 10
+      "identityCost": 10,
+      "starterDeck": [203010, 203010, 203020, 203020, 203030, 203040]
     },
     {
       "characterId": 204,
       "name": "미오",
       "maxHp": 35,
-      "identityCost": 10
+      "identityCost": 10,
+      "starterDeck": [204010, 204010, 204020, 204020, 204030, 204040]
     },
     {
       "characterId": 301,
       "name": "폴라",
       "maxHp": 55,
-      "identityCost": 8
+      "identityCost": 8,
+      "starterDeck": [301010, 301010, 301020, 301020, 301030, 301040]
     },
     {
       "characterId": 302,
       "name": "룬",
       "maxHp": 55,
-      "identityCost": 8
+      "identityCost": 8,
+      "starterDeck": [302010, 302010, 302020, 302020, 302030, 302040]
     },
     {
       "characterId": 103,
       "name": "크림",
       "maxHp": 30,
-      "identityCost": 6
+      "identityCost": 6,
+      "starterDeck": [103010, 103010, 103020, 103020, 103030, 103040]
     },
     {
       "characterId": 303,
       "name": "칸",
       "maxHp": 55,
-      "identityCost": 8
+      "identityCost": 8,
+      "starterDeck": [303010, 303010, 303020, 303020, 303030, 303040]
     }
   ]
 }

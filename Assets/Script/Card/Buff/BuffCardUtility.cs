@@ -3,7 +3,8 @@ using UnityEngine;
 
 public static class BuffCardUtility
 {
-    public const string BasePotionGroupName = "isla_potion_even_base_pool";
+    // v1.0 무작위 포션: 폭발·마비·회복·독·산성·반응 포션 기본형
+    public const string BasePotionGroupName = "isla_potion_base_pool";
     public const string JokerUpgradeGroupName = "enforce_102040";
     private const int BaseFeatherCardId = 203080;
     private const int EnhancedFeatherCardId = 203081;
@@ -15,7 +16,8 @@ public static class BuffCardUtility
 
     public static bool IsPotionCardId(int cardId)
     {
-        return cardId >= 101080 && cardId <= 101087;
+        // 포션은 카드 그룹 10108 ~ 10113 (기본형 x0, 강화형 x1)
+        return cardId >= 101080 && cardId <= 101139;
     }
 
     public static bool IsFeatherCard(Card card)

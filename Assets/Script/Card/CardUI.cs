@@ -505,6 +505,8 @@ public static class CardDescriptionFormatter
 {
     private static readonly Regex AmountPlaceholderPattern = new(@"\{amount(?<index>\d*)\}", RegexOptions.Compiled);
     private static readonly Regex ReferencedBuffNamePattern = new(@"\((?<name>[^()]+)\)", RegexOptions.Compiled);
+    // {attack}, {attack2}는 공격·피해 효과 수치, {block}, {block2}는 보호막 효과 수치만 순서대로 가리킴
+    private static readonly Regex KindPlaceholderPattern = new(@"\{(?<kind>attack|block)(?<index>\d*)\}", RegexOptions.Compiled);
 
     private const string CuriosityDescription = "강화됩니다.";
 
@@ -545,9 +547,10 @@ public static class CardDescriptionFormatter
             return string.Empty;
         }
 
-        if (card.description.IndexOf("{amount", System.StringComparison.Ordinal) < 0)
+        string description = ReplaceKindPlaceholders(card.description, card, battleManager);
+        if (description.IndexOf("{amount", System.StringComparison.Ordinal) < 0)
         {
-            return RemoveReferencedBuffParentheses(card.description);
+            return RemoveReferencedBuffParentheses(description);
         }
 
         List<int> amounts = ResolveAmounts(card.effects, battleManager, card);
@@ -556,7 +559,7 @@ public static class CardDescriptionFormatter
             amounts.Add(0);
         }
 
-        string formattedDescription = AmountPlaceholderPattern.Replace(card.description, match =>
+        string formattedDescription = AmountPlaceholderPattern.Replace(description, match =>
         {
             string indexText = match.Groups["index"].Value;
             int resolvedIndex = 1;
@@ -575,6 +578,79 @@ public static class CardDescriptionFormatter
         });
 
         return RemoveReferencedBuffParentheses(formattedDescription);
+    }
+
+    private static string ReplaceKindPlaceholders(string description, Card card, TrainingBattleManager battleManager)
+    {
+        if (string.IsNullOrEmpty(description) || !KindPlaceholderPattern.IsMatch(description))
+        {
+            return description;
+        }
+
+        List<int> attackAmounts = new List<int>();
+        List<int> blockAmounts = new List<int>();
+        CollectKindAmounts(card.effects, battleManager, card, attackAmounts, blockAmounts);
+        return KindPlaceholderPattern.Replace(description, match =>
+        {
+            List<int> source = match.Groups["kind"].Value == "attack" ? attackAmounts : blockAmounts;
+            string indexText = match.Groups["index"].Value;
+            int index = string.IsNullOrEmpty(indexText) ? 1 : int.TryParse(indexText, out int parsed) ? parsed : 1;
+            return index >= 1 && index <= source.Count ? source[index - 1].ToString() : "0";
+        });
+    }
+
+    private static void CollectKindAmounts(List<ICardEffect> effects, TrainingBattleManager battleManager, Card sourceCard, List<int> attackAmounts, List<int> blockAmounts)
+    {
+        if (effects == null)
+        {
+            return;
+        }
+
+        foreach (ICardEffect effect in effects)
+        {
+            switch (effect)
+            {
+                case AttackEffect attackEffect:
+                    attackAmounts.Add(Mathf.Max(0, ResolveAttackAmount(attackEffect, battleManager, sourceCard)));
+                    CollectKindAmounts(attackEffect.onActions, battleManager, sourceCard, attackAmounts, blockAmounts);
+                    break;
+                case DamageEffect damageEffect:
+                    attackAmounts.Add(Mathf.Max(0, ResolveDamageAmount(damageEffect, battleManager, sourceCard)));
+                    CollectKindAmounts(damageEffect.onActions, battleManager, sourceCard, attackAmounts, blockAmounts);
+                    break;
+                case BarrierEffect barrierEffect:
+                    blockAmounts.Add(Mathf.Max(0, ResolveBarrierAmount(barrierEffect, battleManager)));
+                    CollectKindAmounts(barrierEffect.onActions, battleManager, sourceCard, attackAmounts, blockAmounts);
+                    break;
+                case ConditionalEffect conditionalEffect:
+                    // 기존 수치 수집과 같은 순서: 실패 분기(기본 효과)를 먼저
+                    bool hasFailEffects = conditionalEffect.failEffects != null && conditionalEffect.failEffects.Count > 0;
+                    CollectKindAmounts(hasFailEffects ? conditionalEffect.failEffects : conditionalEffect.successEffects, battleManager, sourceCard, attackAmounts, blockAmounts);
+                    CollectKindAmounts(hasFailEffects ? conditionalEffect.successEffects : conditionalEffect.failEffects, battleManager, sourceCard, attackAmounts, blockAmounts);
+                    break;
+                case RepeatEffect repeatEffect:
+                    if (repeatEffect.effectToRepeat != null)
+                    {
+                        CollectKindAmounts(new List<ICardEffect> { repeatEffect.effectToRepeat }, battleManager, sourceCard, attackAmounts, blockAmounts);
+                    }
+                    break;
+                case DrawEffect drawEffect:
+                    CollectKindAmounts(drawEffect.onActions, battleManager, sourceCard, attackAmounts, blockAmounts);
+                    break;
+                case SelectCardEffect selectCardEffect:
+                    CollectKindAmounts(selectCardEffect.onActions, battleManager, sourceCard, attackAmounts, blockAmounts);
+                    break;
+                case CopyEffect copyEffect:
+                    CollectKindAmounts(copyEffect.onActions, battleManager, sourceCard, attackAmounts, blockAmounts);
+                    break;
+                case MoveEffect moveEffect:
+                    CollectKindAmounts(moveEffect.onActions, battleManager, sourceCard, attackAmounts, blockAmounts);
+                    break;
+                case ExhaustCardEffect exhaustCardEffect:
+                    CollectKindAmounts(exhaustCardEffect.onActions, battleManager, sourceCard, attackAmounts, blockAmounts);
+                    break;
+            }
+        }
     }
 
     private static string RemoveReferencedBuffParentheses(string description)

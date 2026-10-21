@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -31,7 +33,7 @@ public static class Program
         File.WriteAllText(Path.Combine(root, "profile.json"), legacy);
         PlayerPrefs.Values["RankingModeBestDamage"] = 123;
         PlayerProfileSave local = ProfileSaveManager.CurrentProfile;
-        Check(local.profileVersion == 2 && local.playerId == "legacy" && local.legacyBestDamage == 123, "기존 프로필/점수 이전");
+        Check(local.profileVersion == 3 && local.playerId == "legacy" && local.legacyBestDamage == 123, "기존 프로필/점수 이전");
         Check(File.ReadAllText(Path.Combine(root, "profile.json")) == legacy, "기존 원본 보존");
         Check(ProfileSaveManager.ProfileFilePath.Contains(Path.Combine("Saves", "Local")), "개발 경로");
         local.legacyBestDamage = 321;
@@ -98,7 +100,7 @@ public static class Program
         Check(ProfileFileStore.Load(path, decode).legacyBestDamage == 999 && File.Exists(path), "첫 저장 중 종료 복구");
         File.Delete(path + ".tmp");
         File.WriteAllText(path + ".bak", valid);
-        string future = valid.Replace("\"profileVersion\":2", "\"profileVersion\":999");
+        string future = valid.Replace("\"profileVersion\":3", "\"profileVersion\":999");
         File.WriteAllText(path, future);
         Throws<InvalidOperationException>(() => ProfileFileStore.Load(path, decode));
         Check(File.ReadAllText(path) == future, "미래 버전 원본 보존");
@@ -192,6 +194,27 @@ public static class Program
         Check(bossProfile.FindLibrary((int)Character.Mio).decks.Count == 1, "보스모드 기록 저장 후 덱 보존");
         bossProfile.bossModeLastDamage = -1;
         Throws<InvalidDataException>(() => ProfileSaveCodec.Validate(bossProfile, bossProfile.ownerSteamId));
+
+        // 버전 2 저장 덱은 v1.0 카드 데이터 기준 시작 덱으로 초기화
+        bossProfile.bossModeLastDamage = 0;
+        CharacterDeckListSave oldIsla = bossProfile.FindLibrary((int)Character.Isla);
+        oldIsla.decks.Clear();
+        oldIsla.decks.Add(CharacterDeckSave.Create("이전 덱", new List<int> { 101050, 101060, 101070 }));
+        oldIsla.decks.Add(CharacterDeckSave.Create("이전 덱 2", new List<int> { 101061 }));
+        oldIsla.selectedDeckId = oldIsla.decks[1].deckId;
+        string versionTwo = JsonConvert.SerializeObject(bossProfile).Replace("\"profileVersion\":3", "\"profileVersion\":2");
+        File.WriteAllText(ProfileSaveManager.ProfileFilePath, versionTwo);
+        Reset();
+        PlayerProfileSave migrated = ProfileSaveManager.CurrentProfile;
+        CharacterDeckListSave migratedIsla = migrated.FindLibrary((int)Character.Isla);
+        Check(migrated.profileVersion == 3, "버전 3으로 이전");
+        Check(migratedIsla.decks.Count == 1 && migratedIsla.decks[0].cardIds.SequenceEqual(CharacterManager.GetStarterCardIds((int)Character.Isla)),
+            "이전 저장 덱은 시작 덱으로 초기화");
+        Check(migratedIsla.selectedDeckId == migratedIsla.decks[0].deckId, "초기화된 시작 덱 선택");
+        Check(migrated.bossModeBestDamage == 5_000_000_000L, "저장 덱 초기화 시 기록 보존");
+        Reset();
+        Check(ProfileSaveManager.CurrentProfile.FindLibrary((int)Character.Isla).decks[0].deckId == migratedIsla.decks[0].deckId,
+            "이전 완료 후 재실행 시 다시 초기화하지 않음");
         Console.WriteLine($"저장 시스템 검증 {passed}개 통과");
     }
 }

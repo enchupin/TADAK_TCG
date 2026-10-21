@@ -61,11 +61,16 @@ static class Program
 
     static void Main(string[] args)
     {
-        foreach (string file in Directory.GetFiles(Path.Combine(args[0], "Assets/Resources/JsonData"), "*Cards.json"))
+        // v1.0 카드 데이터에서 해당 형태(선택 버리기 후 드로우/생성) 카드가 사라져 이전 정의를 고정 픽스처로 유지
+        string[] fixtures = {
+            "{\"cardId\":101044,\"characterId\":101,\"effects\":[{\"type\":\"SelectCard\",\"from\":\"Hand\",\"amount\":1,\"onAction\":{\"type\":\"Move\",\"from\":\"Source\",\"to\":\"DiscardPile\"},\"subject\":\"SelectedCard\"},{\"type\":\"RandGenerate\",\"amount\":2,\"to\":\"Hand\"}]}",
+            "{\"cardId\":102053,\"characterId\":102,\"effects\":[{\"type\":\"SelectCard\",\"from\":\"Hand\",\"amount\":2,\"onAction\":{\"type\":\"Move\",\"from\":\"Source\",\"to\":\"DiscardPile\"},\"subject\":\"Selected\"},{\"type\":\"Draw\",\"amount\":2}]}",
+            "{\"cardId\":202042,\"characterId\":202,\"effects\":[{\"type\":\"SelectCard\",\"from\":\"Hand\",\"count\":2,\"onAction\":{\"type\":\"Move\",\"from\":\"Source\",\"to\":\"DiscardPile\"},\"subject\":\"SelectedCard\"},{\"type\":\"Draw\",\"amount\":2}]}"
+        };
+        foreach (string fixture in fixtures)
         {
-            using var json = JsonDocument.Parse(File.ReadAllText(file));
-            foreach (var card in json.RootElement.GetProperty("cards").EnumerateArray())
-                definitions[card.GetProperty("cardId").GetInt32()] = card.Clone();
+            using var json = JsonDocument.Parse(fixture);
+            definitions[json.RootElement.GetProperty("cardId").GetInt32()] = json.RootElement.Clone();
         }
         foreach (int id in new[] { 101044, 102053, 202042 })
         {

@@ -242,10 +242,32 @@ public static class ProfileSaveManager
     {
         bool hasChanges = false;
 
-        if (profile.profileVersion < PlayerProfileSave.CurrentProfileVersion)
+        int loadedProfileVersion = profile.profileVersion;
+        if (loadedProfileVersion < 2)
         {
             profile.legacyBestDamage = Math.Max(profile.legacyBestDamage,
                 Math.Max(0, PlayerPrefs.GetInt("RankingModeBestDamage", 0)));
+        }
+
+        // v1.0 카드 데이터 이전의 저장 덱은 비우고 아래 EnsureCharacterLibraries에서 시작 덱을 다시 만듦
+        if (loadedProfileVersion < PlayerProfileSave.CardDataV1ProfileVersion && profile.characters != null)
+        {
+            foreach (CharacterDeckListSave library in profile.characters)
+            {
+                if (library == null)
+                {
+                    continue;
+                }
+
+                library.decks = new List<CharacterDeckSave>();
+                library.selectedDeckId = string.Empty;
+            }
+
+            Debug.Log("[ProfileSaveManager] v1.0 카드 데이터로 저장 덱을 시작 덱으로 초기화했습니다");
+        }
+
+        if (loadedProfileVersion < PlayerProfileSave.CurrentProfileVersion)
+        {
             profile.profileVersion = PlayerProfileSave.CurrentProfileVersion;
             hasChanges = true;
         }

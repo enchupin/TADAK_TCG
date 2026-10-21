@@ -109,6 +109,10 @@ public class TurnSystem
             battleManager.battleContext = new BattleContext();
         }
         battleManager.battleContext.OnTurnStart();
+        foreach (Monster monster in battleManager.GetLivingMonsters())
+        {
+            monster.ResetTurnHpLoss();
+        }
 
         // 처리 순서 고정: 보호막 제거 → 에너지 지급 → 턴 시작 버프 → 드로우
         if (battleManager.playerData != null)

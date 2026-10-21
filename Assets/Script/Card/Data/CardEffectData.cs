@@ -58,6 +58,8 @@ public class CardEffectData
     public string characterFilter;
     public bool allowFewerSelection;
     public bool upgradeableOnly;
+    // R-25 선택 후보에서 유일 카드 제외
+    public bool excludeUnique;
 
     [Header("Keyword")]
     public string keyword;

@@ -160,6 +160,8 @@ public static class ConditionEvaluator
                 case "Cost": return card.cost;
                 case "CharacterId": return (int)card.character;
                 case "IsPotion": return IsPotionCard(card) ? 1f : 0f;
+                // 방해 카드: 몬스터가 만든 카드 또는 사용불가 카드
+                case "IsDisruption": return card.character == Character.Monster || card.HasKeyword(CardKeywordIds.Unplayable) ? 1f : 0f;
                 case "HasKeyword":
                     return card.HasKeyword(ResolveKeywordId(param)) ? 1f : 0f;
             }
@@ -171,6 +173,8 @@ public static class ConditionEvaluator
             {
                 case "Count":
                     return cards.Count;
+                case "AllSameCost":
+                    return cards.Count > 0 && cards.TrueForAll(card => card != null && card.cost == cards[0].cost) ? 1f : 0f;
                 case "HasCharacterId":
                     if (int.TryParse(param, out int characterId))
                     {
@@ -225,10 +229,7 @@ public static class ConditionEvaluator
 
     private static bool IsPotionCard(Card card)
     {
-        if (card == null) return false;
-        if (card.character != Character.Isla) return false;
-
-        return card.cardId >= 101080 && card.cardId <= 101087;
+        return BuffCardUtility.IsPotionCard(card);
     }
 
     private static int ResolveKeywordId(string rawKeyword)

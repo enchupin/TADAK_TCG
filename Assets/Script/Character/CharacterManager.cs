@@ -7,6 +7,8 @@ public static class CharacterManager
     private static readonly int[] UniqueCardOffsets = { 30, 40, 50, 60, 70 };
     private static readonly Dictionary<int, string> defaultCharacterNameById = new Dictionary<int, string>();
     private static readonly Dictionary<int, CharacterLocalizationJsonEntry> localizedCharacterNameById = new Dictionary<int, CharacterLocalizationJsonEntry>();
+    // characters.json에 정의된 시작 덱 (없으면 기존 오프셋 규칙 사용)
+    private static readonly Dictionary<int, List<int>> starterDeckById = new Dictionary<int, List<int>>();
 
     private static Dictionary<int, CharacterData> characterCache;
     private static bool isInitialized = false;
@@ -22,6 +24,7 @@ public static class CharacterManager
         characterCache = new Dictionary<int, CharacterData>();
         defaultCharacterNameById.Clear();
         localizedCharacterNameById.Clear();
+        starterDeckById.Clear();
 
         if (!CharacterJsonParser.TryLoad(out List<CharacterJsonEntry> characters))
         {
@@ -50,6 +53,10 @@ public static class CharacterManager
             if (!characterCache.ContainsKey(runtimeCharacter.characterId))
             {
                 characterCache[runtimeCharacter.characterId] = runtimeCharacter;
+                if (sourceCharacter.starterDeck != null && sourceCharacter.starterDeck.Count > 0)
+                {
+                    starterDeckById[runtimeCharacter.characterId] = new List<int>(sourceCharacter.starterDeck);
+                }
                 defaultCharacterNameById[runtimeCharacter.characterId] = runtimeCharacter.characterName;
             }
             else
@@ -96,6 +103,16 @@ public static class CharacterManager
         if (!IsStarterDeckSupported(characterId))
         {
             return new List<int>();
+        }
+
+        if (!isInitialized)
+        {
+            Initialize();
+        }
+
+        if (starterDeckById.TryGetValue(characterId, out List<int> dataStarterDeck))
+        {
+            return new List<int>(dataStarterDeck);
         }
 
         List<int> starterCardIds = new List<int>(StarterDeckOffsets.Length);

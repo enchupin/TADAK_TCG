@@ -83,6 +83,7 @@ public class HandManager
     public bool RemoveCard(Card card) => Cards.Remove(card);
     public UnityEngine.Coroutine RemoveCardFromHandWithUseAnimation(CardUI ui) { Cards.Remove(ui.Card); return null; }
 }
+public sealed class CharacterIdentityState { public Character Character { get; set; } }
 public class UsableDeckManager
 {
     public List<Card> Draw = new(), Discard = new(), Exhaust = new();
@@ -94,6 +95,7 @@ public class UsableDeckManager
     public void AddToDrawPileRandom(Card card) => Draw.Add(card);
     public bool RemoveFromDrawPile(Card card) => Draw.Remove(card);
     public void RemoveFromDiscard(Card card) => Discard.Remove(card);
+    public void RemoveFromExhaust(Card card) => Exhaust.Remove(card);
     public Card DrawCard() { var c = Draw.FirstOrDefault(); if (c != null) Draw.Remove(c); return c; }
 }
 public class TrainingBattleManager
@@ -116,6 +118,7 @@ public class TrainingBattleManager
     private Action<List<Card>> callback;
     private readonly List<IEnumerator> routines = new();
     public int CuriosityPlays;
+    public IReadOnlyList<CharacterIdentityState> GetIdentityStates() => new List<CharacterIdentityState>();
     public IEnumerator PlayCuriositySequence(Card card) { CuriosityPlays++; card.isCurious = false; card.resolvedAsCuriosity = true; yield break; }
     public UnityEngine.Coroutine StartCoroutine(IEnumerator sequence)
     {

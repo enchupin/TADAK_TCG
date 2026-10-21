@@ -10,5 +10,7 @@ public enum MoveZoneType
     CardId,
     Basic,
     Unique,
-    AllUnique
+    AllUnique,
+    // 소멸 카드 더미
+    ExhaustPile
 }

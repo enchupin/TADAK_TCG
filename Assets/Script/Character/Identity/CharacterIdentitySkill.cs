@@ -36,6 +36,17 @@ public abstract class CharacterIdentitySkill
         battleManager.handManager.AddCard(generatedCards);
     }
 
+    // 이미 만든 카드를 생성 카드로 처리해 손에 추가 (복제 생성 등 생성 처리 적용)
+    protected static void AddGeneratedCardsToHand(TrainingBattleManager battleManager, List<Card> cards)
+    {
+        if (battleManager?.handManager == null || cards == null || cards.Count == 0)
+        {
+            return;
+        }
+
+        battleManager.handManager.AddCard(battleManager.ProcessGeneratedCards(cards));
+    }
+
     protected static void AddRepeatedCardToHand(TrainingBattleManager battleManager, int cardId, int amount)
     {
         if (amount <= 0)

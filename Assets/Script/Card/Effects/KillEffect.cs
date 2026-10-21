@@ -81,10 +81,19 @@ public class KillEffect : ICardEffect
 [System.Serializable]
 public class PartyEffect : ICardEffect
 {
+    // All: 적 전체를 ID가 가장 높은 적에게 합침 (체력·최대 체력·보호막·상태 합산, 패턴 수치는 합쳐진 수만큼 배수)
+    public string operation;
+
     public void Execute(TrainingBattleManager battleManager)
     {
         if (battleManager == null)
         {
+            return;
+        }
+
+        if (string.Equals(operation, "All", System.StringComparison.OrdinalIgnoreCase))
+        {
+            MergeAll(battleManager);
             return;
         }
 
@@ -129,6 +138,38 @@ public class PartyEffect : ICardEffect
         MergeMonsterState(survivor, absorbedMonster);
         absorbedMonster.currentBuffs.Clear();
         absorbedMonster.Kill();
+        survivor.UpdateUI();
+        battleManager.UpdateAllUI();
+    }
+
+    private static void MergeAll(TrainingBattleManager battleManager)
+    {
+        List<Monster> livingMonsters = battleManager.GetLivingMonsters();
+        if (livingMonsters == null || livingMonsters.Count < 2)
+        {
+            return;
+        }
+
+        Monster survivor = livingMonsters[0];
+        foreach (Monster monster in livingMonsters)
+        {
+            survivor = ResolvePartySurvivor(survivor, monster);
+        }
+
+        foreach (Monster absorbedMonster in livingMonsters)
+        {
+            if (absorbedMonster == survivor)
+            {
+                continue;
+            }
+
+            MergeMonsterState(survivor, absorbedMonster);
+            survivor.SetDefense(survivor.defense + Mathf.Max(0, absorbedMonster.defense));
+            survivor.patternMultiplier += Mathf.Max(1, absorbedMonster.patternMultiplier);
+            absorbedMonster.currentBuffs.Clear();
+            absorbedMonster.Kill();
+        }
+
         survivor.UpdateUI();
         battleManager.UpdateAllUI();
     }

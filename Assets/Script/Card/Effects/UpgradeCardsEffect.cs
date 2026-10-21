@@ -24,6 +24,13 @@ public class UpgradeCardsEffect : ICardEffect
             return;
         }
 
+        // Choose: 강화 계열 중 선택지 3개를 제시해 고른 강화를 적용 (대상 1장)
+        if (string.Equals(upgrade, "Choose", StringComparison.OrdinalIgnoreCase))
+        {
+            ChooseUpgrade(battleManager, targetCards.Find(CanUpgradeCard));
+            return;
+        }
+
         int remainingUpgradeCount = ResolveUpgradeCount(battleManager, targetCards.Count);
         List<Card> upgradedCards = new List<Card>();
         foreach (Card card in targetCards)
@@ -67,6 +74,47 @@ public class UpgradeCardsEffect : ICardEffect
         CardEffectRuntimeUtility.RefreshCardDisplays(battleManager, upgradedCards);
         battleManager.RefreshHandPlayableState();
         battleManager.UpdateAllUI();
+    }
+
+    private void ChooseUpgrade(TrainingBattleManager battleManager, Card card)
+    {
+        if (card == null)
+        {
+            return;
+        }
+
+        List<int> upgradeIds = new List<int>(card.enforceCardIds);
+        List<Card> options = new List<Card>();
+        while (upgradeIds.Count > 0 && options.Count < GameRules.Deck.choiceCount)
+        {
+            int index = UnityEngine.Random.Range(0, upgradeIds.Count);
+            Card option = CardManager.GetCardAsCard(upgradeIds[index]);
+            upgradeIds.RemoveAt(index);
+            if (option != null)
+            {
+                options.Add(option);
+            }
+        }
+
+        if (options.Count == 0)
+        {
+            return;
+        }
+
+        void Apply(List<Card> selected)
+        {
+            Card picked = selected != null && selected.Count > 0 ? selected[0] : options[0];
+            card.ApplyTemplate(picked);
+            battleManager.ApplyPersistentUpgradeToCard(card);
+            CardEffectRuntimeUtility.RefreshCardDisplays(battleManager, new List<Card> { card });
+            battleManager.RefreshHandPlayableState();
+            battleManager.UpdateAllUI();
+        }
+
+        if (!battleManager.OpenSelectCardPanel(options, 1, Apply))
+        {
+            Apply(null);
+        }
     }
 
     private List<Card> ResolveTargetCards(TrainingBattleManager battleManager)

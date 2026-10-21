@@ -52,6 +52,9 @@ public class Card
     // 이번 사용이 호기심 강화로 처리되었는지 (행선지를 버린 더미로 고정)
     public bool resolvedAsCuriosity;
 
+    // 이번 사용에 한해 소멸하지 않고 버린 카드 더미로 이동
+    public bool skipExhaustOnce;
+
     // 전투 덱 사본이 가리키는 저장 덱 위치 (생성·복제 카드는 -1)
     public int sourceDeckIndex = -1;
 
@@ -84,6 +87,7 @@ public class Card
         Debug.Log($"[{cardName}] 카드 사용!");
         PromotePendingBoundCardIds();
         resolvedAsCuriosity = false;
+        skipExhaustOnce = false;
 
         BattleContext context = battlemanager?.battleContext;
         // 동전은 카드 사용마다 새로 던짐

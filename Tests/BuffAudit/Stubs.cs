@@ -15,7 +15,7 @@ public enum BattleTurnState { PlayerTurnStart, PlayerAction, PlayerTurnEnd, Enem
 public enum MoveZoneType { DrawPile, DiscardPile, Source }
 public enum WuppiModeState { Attack, Guard }
 public class Card {
- public Character character; public bool isCurious,resolvedAsCuriosity; public int fragmentCardId; public int baseCost=>cost;
+ public Character character; public bool isCurious,resolvedAsCuriosity,skipExhaustOnce; public int fragmentCardId; public int baseCost=>cost;
  public List<ICardEffect> effects=new(); public int cardId,cost; public CardCostType costType; public bool power;
  public Card CloneForRuntimeCopy()=>new(){cardId=cardId,cost=cost,costType=costType,power=power,effects=new(effects)};
  public void ApplyTemplate(Card c){cardId=c.cardId;cost=c.cost;effects=new(c.effects);}
@@ -32,7 +32,7 @@ public class Card {
 }
 public static class CardKeywordIds { public const int Power=1,Shadow=2,Ghost=3,Finale=4; }
 public static class CardManager { public static Card GetCardAsCard(int id)=>new(){cardId=id}; }
-public static class BuffCardUtility { public const string BasePotionGroupName="potion"; public static bool IsFeatherCard(Card c)=>c!=null&&(c.cardId==203080||c.cardId==203081); public static bool IsPotionCard(Card c)=>c.cardId==101080;
+public static class BuffCardUtility { public const string BasePotionGroupName="potion"; public static bool IsFeatherCard(Card c)=>c!=null&&(c.cardId==203080||c.cardId==203081); public static bool IsPotionCard(Card c)=>c.cardId==101080; public static bool IsPotionCardId(int id)=>id>=101080&&id<=101139;
  public static List<Card> CreateRandomCardsFromGroup(string group,int n)=>Enumerable.Range(0,n).Select(_=>new Card{cardId=101080}).ToList(); }
 public static class CreamBuffRuntimeUtility { public const int ComboBuffId=3048,EnergyOverflowBuffId=3053; public static void SyncEnergyOverflow(PlayerData p){} }
 public static class WuppiModeRuntimeUtility {
@@ -115,7 +115,7 @@ public class BattleContext {
  public void OnDamageDealt(int n){lastDamageDealt=n;totalDamageDealt+=n;} public void OnPlayerCardHpLost(int n){} public void OnEnergySpent(int n){}
  Card paidCard; int paidCost; public void RecordPaidCost(Card c,int n){paidCard=c;paidCost=n;} public int GetPaidCost(Card c)=>ReferenceEquals(c,paidCard)?paidCost:c.cost;
 }
-public static class FormulaEvaluator { public static int Evaluate(string s,BattleContext c,PlayerData p,Monster m,int n)=>n; public static int Evaluate(string s,BattleContext c,PlayerData p,List<int> ids,int n)=>n; }
+public static class FormulaEvaluator { public static int Evaluate(string s,BattleContext c,PlayerData p,Monster m,int n)=>n; public static int Evaluate(string s,BattleContext c,PlayerData p,List<int> ids,int n)=>n; public static int Evaluate(string s,BattleContext c,PlayerData p,List<int> ids,Monster m,int n)=>n; }
 
 public partial class TurnSystem {
  private TrainingBattleManager battleManager; private int pendingExtraTurnEndTriggers;

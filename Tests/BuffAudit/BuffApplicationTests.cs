@@ -44,9 +44,9 @@ static class BuffApplicationTests
         battle.usableDeckManager.draw.Add(potion);
         battle.ApplyBuffToPlayer(PotionEnhanceBuffId, 1);
         Eq(potion.cardId, 101081, "버프 적용 완료 후 덱의 지속 강화");
-        var newPotion = new Card { cardId = 101082 };
+        var newPotion = new Card { cardId = 101090 };
         Eq(ReferenceEquals(battle.ApplyPersistentUpgradeToCard(newPotion, -1), newPotion), true, "지속 강화는 원래 카드 객체를 유지");
-        Eq(newPotion.cardId, 101083, "버프 출처가 지정되지 않은 강화 경로 유지");
+        Eq(newPotion.cardId, 101091, "버프 출처가 지정되지 않은 강화 경로 유지");
         return assertions;
     }
 

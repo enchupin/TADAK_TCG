@@ -205,7 +205,9 @@ public class AttackEffect : ICardEffect
             return;
         }
 
-        baseAmount = FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, cardIdList, formulaBaseValue);
+        // TargetBuff 등 대상 기준 수식을 위해 현재 대상 적을 함께 전달
+        Monster formulaTarget = CardEffectRuntimeUtility.ResolveSingleEnemyTarget(battleManager);
+        baseAmount = FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, cardIdList, formulaTarget, formulaBaseValue);
     }
 
     private bool TryParseMultiplierFormula(string formula, out float multiplier)

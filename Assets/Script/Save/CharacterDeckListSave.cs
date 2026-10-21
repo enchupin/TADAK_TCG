@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 
 
-// Ä³¸¯ÅÍ Á÷¾÷º° µ¦ ¸®½ºÆ® Å¬·¡½º
+// ìºë¦­í„° ì§ì—…ë³„ ë± ë¦¬ìŠ¤íŠ¸ í´ë˜ìŠ¤
 [Serializable]
 public class CharacterDeckListSave
 {
