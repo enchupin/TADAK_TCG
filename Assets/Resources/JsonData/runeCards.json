@@ -579,8 +579,8 @@
             "description": "적 1명의 다음 턴 행동을 봉인합니다.",
             "effects": [
                 {
-                    "type": "Trigger",
-                    "timing": "Stun",
+                    "type": "IntentQueue",
+                    "operation": "Seal",
                     "target": "SingleEnemy"
                 }
             ]

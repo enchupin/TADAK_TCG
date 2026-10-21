@@ -1342,6 +1342,25 @@ public class TrainingBattleManager : MonoBehaviour
     public void HandleMonsterDefenseChanged(Monster monster, int previousDefense, int currentDefense)
     {
         battleBuffController?.Monsters.OnDefenseChanged(monster, previousDefense, currentDefense);
+        // 보호막 보유 여부가 바뀌면 조건 규칙형 의도 재판정
+        if ((previousDefense > 0) != (currentDefense > 0))
+        {
+            ReevaluateConditionalMonsterIntents();
+        }
+    }
+
+    // E-40 조건 규칙형 몬스터는 조건에 영향을 주는 이벤트(사망·이탈·보호막 변화) 직후 의도를 다시 정함
+    public void ReevaluateConditionalMonsterIntents()
+    {
+        if (CurrentTurnState != BattleTurnState.PlayerAction)
+        {
+            return;
+        }
+
+        foreach (Monster livingMonster in GetLivingMonsters())
+        {
+            (livingMonster as DataMonster)?.ReevaluateConditionalIntent();
+        }
     }
 
     public int ResolveMonsterBarrierGain(Monster monster, int amount)
@@ -1478,6 +1497,7 @@ public class TrainingBattleManager : MonoBehaviour
             monster.gameObject.SetActive(false);
         }
 
+        ReevaluateConditionalMonsterIntents();
         UpdateAllUI();
     }
 
@@ -1509,6 +1529,7 @@ public class TrainingBattleManager : MonoBehaviour
             monster.gameObject.SetActive(false);
         }
 
+        ReevaluateConditionalMonsterIntents();
         UpdateAllUI();
     }
 
@@ -2236,7 +2257,11 @@ public class TrainingBattleManager : MonoBehaviour
 
         if (BossModeSession.IsActive)
         {
-            RegisterMonster(monsterSpawner.SpawnMonsterToAvailableSlot(BossModeSession.GetBossType(BossModeSession.SelectedBossId)));
+            // 보스 조우(BS01 ~ BS04)의 동행 몬스터까지 함께 생성
+            foreach (Monster bossEncounterMonster in monsterSpawner.SpawnEncounter(BossModeSession.GetBossEncounterId(BossModeSession.SelectedBossId)))
+            {
+                RegisterMonster(bossEncounterMonster);
+            }
             return;
         }
 

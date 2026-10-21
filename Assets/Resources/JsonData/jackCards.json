@@ -652,7 +652,10 @@
             "description": "적의 현재 의도를 변경합니다.",
             "effects": [
                 {
-                    "type": "ReplanIntent",
+                    "type": "IntentQueue",
+                    "operation": "Delay",
+                    "amount": 1,
+                    "count": 5,
                     "target": "SingleEnemy"
                 }
             ]

@@ -45,7 +45,7 @@ public class BossModeDeckSelection : MonoBehaviour
 
     public void SelectBoss(int monsterId)
     {
-        if (starting || BossModeSession.GetBossType(monsterId) == null) return;
+        if (starting || !BossModeSession.IsValidBoss(monsterId)) return;
         selectedBossId = selectedBossId == monsterId ? 0 : monsterId;
         Refresh();
     }
@@ -80,13 +80,13 @@ public class BossModeDeckSelection : MonoBehaviour
             }
         }
         if (startButton != null) startButton.interactable = !starting && selections.Count == 3
-            && BossModeSession.GetBossType(selectedBossId) != null;
+            && BossModeSession.IsValidBoss(selectedBossId);
     }
 
     public void StartBattle()
     {
         Refresh();
-        if (starting || selections.Count != 3 || BossModeSession.GetBossType(selectedBossId) == null) return;
+        if (starting || selections.Count != 3 || !BossModeSession.IsValidBoss(selectedBossId)) return;
         List<Character> characters = new List<Character>(selections.Keys);
         characters.Sort();
         List<int> cards = new List<int>();

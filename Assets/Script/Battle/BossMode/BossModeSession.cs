@@ -10,21 +10,27 @@ public static class BossModeSession
     private static bool saved;
     private static readonly List<int> cardIds = new List<int>();
 
-    public static Type GetBossType(int monsterId)
+    // 로비 보스 선택 ID(원본 301 ~ 304 또는 v1.0 5301 ~ 5304) → 보스 조우 BS01 ~ BS04 (8-6)
+    public static string GetBossEncounterId(int bossId)
     {
-        return monsterId switch
+        return (bossId % 1000) switch
         {
-            301 => typeof(GiantFlowerSpiderBossMonster),
-            302 => typeof(ProphetBossMonster),
-            303 => typeof(IceAndFireBossMonster),
-            304 => typeof(VoidLordBossMonster),
+            301 => "BS01",
+            302 => "BS02",
+            303 => "BS03",
+            304 => "BS04",
             _ => null
         };
     }
 
+    public static bool IsValidBoss(int bossId)
+    {
+        return GetBossEncounterId(bossId) != null;
+    }
+
     public static void Begin(List<Character> characters, List<int> selectedCardIds, int bossId)
     {
-        if (GetBossType(bossId) == null) throw new ArgumentOutOfRangeException(nameof(bossId));
+        if (!IsValidBoss(bossId)) throw new ArgumentOutOfRangeException(nameof(bossId));
         Reset();
         TrainingRunState.ResetRun();
         PlayerData.Reset();

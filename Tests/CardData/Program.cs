@@ -102,6 +102,11 @@ public static class Program
                     ValidateEffect(tag, effect, effectTypes, buffIds, groups, allCardIds);
                 }
 
+                // 변환기 구조 규칙 (onAction 바깥에서만 검사)
+                ValidateConverterRules(tag, card["effects"], false);
+                ValidateConverterRules(tag, card["onDrawEffects"], false);
+                ValidateConverterRules(tag, card["endTurnInHandEffects"], false);
+
                 string description = (string)card["description"];
                 if (description.Contains("{attack}")) {
                     Check(effects.Any(e => (string)e["type"] == "Attack" || (string)e["type"] == "Damage"), $"{tag} {{attack}} 대상 효과 없음");
@@ -143,6 +148,51 @@ public static class Program
         }
         CollectEffects(effect["onAction"], result);
         CollectEffects(effect["effects"], result);
+    }
+
+    // CardJSONConverter.ReadEffect: onAction이 있으면 바깥 subject 필수, SelectCard는 바깥 from 필수
+    private static void ValidateConverterRules(string tag, JToken token, bool inOnAction)
+    {
+        if (token is JArray array) {
+            foreach (JToken item in array) ValidateConverterRules(tag, item, inOnAction);
+            return;
+        }
+        if (!(token is JObject effect)) return;
+
+        bool hasOnAction = effect["onAction"] is JObject || effect["onAction"] is JArray;
+        if (!inOnAction) {
+            Check(!hasOnAction || !string.IsNullOrWhiteSpace((string)effect["subject"]), $"{tag} onAction이 있는 {effect["type"]}에 subject 없음");
+            if ((string)effect["type"] == "SelectCard") {
+                Check(!string.IsNullOrWhiteSpace((string)effect["from"]), $"{tag} SelectCard에 from 없음");
+            }
+        }
+
+        // 위치와 무관한 스키마 규칙 (Copy · Repeat · Kill · 이전 키워드)
+        string type = (string)effect["type"];
+        if (type == "Copy") {
+            Check(effect["cardId"] == null && effect["target"] == null, $"{tag} Copy에 이전 필드 cardId/target");
+            Check(!string.IsNullOrWhiteSpace((string)effect["from"]) && !string.IsNullOrWhiteSpace((string)effect["to"]), $"{tag} Copy에 from/to 없음");
+            if ((string)effect["from"] == "CardId") {
+                Check(effect["cardIds"] is JArray ids && ids.Count > 0, $"{tag} Copy CardId에 cardIds 없음");
+            }
+        }
+        if (type == "Repeat") {
+            Check(effect["amount"] != null || !string.IsNullOrWhiteSpace((string)effect["amountFormula"]), $"{tag} Repeat에 amount 없음");
+            Check(effect["count"] == null && effect["effects"] == null && effect["onAction"] == null && effect["subject"] == null, $"{tag} Repeat에 지원하지 않는 필드");
+        }
+        if (type == "Kill") {
+            Check(effect["amount"] == null && effect["amountFormula"] == null, $"{tag} Kill에 amount");
+        }
+        string formula = (string)effect["amountFormula"];
+        Check(formula == null || formula.IndexOf("discarded", StringComparison.OrdinalIgnoreCase) < 0, $"{tag} 이전 수식 키워드 discarded");
+        Check(!string.Equals((string)effect["subject"], "DiscardedCount", StringComparison.OrdinalIgnoreCase), $"{tag} 이전 subject DiscardedCount");
+
+        if (effect["condition"] is JObject condition) {
+            ValidateConverterRules(tag, condition["effects"], inOnAction);
+            ValidateConverterRules(tag, condition["elseEffects"], inOnAction);
+        }
+        ValidateConverterRules(tag, effect["effects"], inOnAction);
+        ValidateConverterRules(tag, effect["onAction"], true);
     }
 
     private static void ValidateEffect(string tag, JObject effect, HashSet<string> effectTypes, HashSet<int> buffIds,

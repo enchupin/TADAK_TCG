@@ -47,7 +47,8 @@ public class TrainingMapNodeData
     public int stageIndex;
     public int laneIndex;
     public TrainingNodeType nodeType;
-    public List<MonsterSpawner.SpawnMonsterType> plannedEncounter = new List<MonsterSpawner.SpawnMonsterType>();
+    // v1.0 몬스터 ID(4자리) 목록 (encounters.json 조우 구성)
+    public List<int> plannedEncounter = new List<int>();
     public List<int> nextNodeIds = new List<int>();
 
     public bool HasPlannedEncounter => plannedEncounter != null && plannedEncounter.Count > 0;

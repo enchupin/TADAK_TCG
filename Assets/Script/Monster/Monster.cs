@@ -73,6 +73,8 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         : throw new System.InvalidOperationException($"[Monster] {gameObject.name}의 MonsterStateController가 인스펙터에 연결되지 않았습니다");
     public abstract int MonsterId { get; }
     protected virtual string MonsterName => GetType().Name;
+    // 표시용 이름 (데이터 몬스터는 계층 포함 이름)
+    public string DisplayName => MonsterName;
     protected abstract int BaseMaxHp { get; }
     protected virtual int BaseAttackPower => 0;
     protected virtual int BaseDefense => 0;
@@ -199,6 +201,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         {
             Debug.Log($"[Enemy Turn] {name}은(는) 기절 상태로 이번 턴 행동을 쉬었습니다.");
             skipCurrentTurnAction = false;
+            OnTurnActionSkipped();
             ClearPlannedAction();
             UpdateUI();
             return;
@@ -568,7 +571,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         UpdateIntentUI();
     }
 
-    public void ScalePlannedIntent(float multiplier)
+    public virtual void ScalePlannedIntent(float multiplier)
     {
         if (multiplier < 0f || !hasAttackIntent || plannedIntentValue <= 0)
         {
@@ -1043,6 +1046,11 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     }
 
     protected virtual void OnRevivedTriggered()
+    {
+    }
+
+    // 기절로 이번 턴 행동을 쉬었을 때
+    protected virtual void OnTurnActionSkipped()
     {
     }
 

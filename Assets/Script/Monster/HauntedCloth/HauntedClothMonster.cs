@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HauntedClothMonster : Monster
+// v1.0 110 귀신 들린 천
+// 체력·패턴·AI는 monsters.json 데이터 사용 (DataMonster), 장난꾸러기 유령이 0이 되면 P03 이탈 우선
+// P01 카드 훔치기: 위치 무관, 강화된 카드 우선 → 각인 카드 우선 → 같으면 무작위 (E-44)
+public class HauntedClothMonster : DataMonster
 {
     private enum PlayerCardZone
     {
@@ -22,70 +25,23 @@ public class HauntedClothMonster : Monster
         public PlayerCardZone Zone { get; }
     }
 
-    private int patternIndex;
-
-    public override int MonsterId => 110;
-    protected override string MonsterName => "귀신 들린 천";
-    protected override int BaseMaxHp => 72;
-
-    protected override void OnBattleStart()
+    protected override IEnumerable<MonsterIntentIconType> GetSpecialIcons(string key)
     {
-        AddBuff(BattleRuntimeDefinitions.PranksterGhostBuffId, 5);
-        patternIndex = 0;
+        yield return MonsterIntentIconType.DisruptCard;
     }
 
-    protected override void BuildNextAction()
+    protected override void ExecuteSpecial(string key, MonsterActionDefinition action, PlayerData target)
     {
-        switch (GetCurrentPatternId())
+        if (key == "steal_card")
         {
-            case 11001:
-                SetIntent("적의 무작위 카드 1장을 훔칩니다. 훔친 카드는 '도둑' 버프에 귀속되며, 사망 시 덱에 다시 추가됩니다.");
-                SetPlannedPattern(11001, MonsterIntentIconType.HarmfulEffect);
-                break;
-            case 11002:
-                int attackDamage = PreviewOutgoingDamage(11);
-                int barrierGain = PreviewBarrierGain(8);
-                SetAttackIntent(attackDamage, $"피해를 {attackDamage} 입힙니다. 보호막을 {barrierGain} 얻습니다.");
-                SetPlannedPattern(11002, MonsterIntentIconType.Attack, MonsterIntentIconType.Protection);
-                SetProtectionIntentValue(barrierGain);
-                break;
-            default:
-                SetIntent("도망갑니다.");
-                SetPlannedPattern(11003, MonsterIntentIconType.Leave);
-                break;
-        }
-    }
-
-    protected override void ExecuteAction(PlayerData target)
-    {
-        switch (GetCurrentPatternId())
-        {
-            case 11001:
-                StealRandomPlayerCard();
-                patternIndex = 1;
-                break;
-            case 11002:
-                DealDamage(target, 11);
-                AddDefense(8);
-                patternIndex = 0;
-                break;
-            default:
-                LeaveCombat();
-                break;
-        }
-    }
-
-    private int GetCurrentPatternId()
-    {
-        if (GetBuffStack(BattleRuntimeDefinitions.PranksterGhostBuffId) <= 0)
-        {
-            return 11003;
+            StealPlayerCard();
+            return;
         }
 
-        return patternIndex == 0 ? 11001 : 11002;
+        base.ExecuteSpecial(key, action, target);
     }
 
-    private void StealRandomPlayerCard()
+    private void StealPlayerCard()
     {
         TrainingBattleManager battleManager = TrainingBattleManager.Instance;
         if (battleManager == null || battleManager.handManager == null || battleManager.usableDeckManager == null)
@@ -103,7 +59,7 @@ public class HauntedClothMonster : Monster
             return;
         }
 
-        StolenCardCandidate candidate = candidates[Random.Range(0, candidates.Count)];
+        StolenCardCandidate candidate = PickPriorityCandidate(candidates);
         if (!RemoveCardFromZone(candidate, battleManager))
         {
             return;
@@ -112,6 +68,34 @@ public class HauntedClothMonster : Monster
         MonsterBuffs.ThiefBuffScript.RegisterStolenCard(this, candidate.Card);
         AddBuff(BattleRuntimeDefinitions.ThiefBuffId, 1);
         battleManager.UpdateAllUI();
+    }
+
+    // 강화된 카드(변형 1~5) 우선, 그다음 각인 카드, 같은 우선순위 안에서는 무작위
+    private static StolenCardCandidate PickPriorityCandidate(List<StolenCardCandidate> candidates)
+    {
+        int bestPriority = int.MinValue;
+        List<StolenCardCandidate> best = new List<StolenCardCandidate>();
+        foreach (StolenCardCandidate candidate in candidates)
+        {
+            int priority = (IsUpgradedCard(candidate.Card) ? 2 : 0) + (candidate.Card.HasKeyword(CardKeywordIds.Power) ? 1 : 0);
+            if (priority > bestPriority)
+            {
+                bestPriority = priority;
+                best.Clear();
+            }
+
+            if (priority == bestPriority)
+            {
+                best.Add(candidate);
+            }
+        }
+
+        return best[Random.Range(0, best.Count)];
+    }
+
+    private static bool IsUpgradedCard(Card card)
+    {
+        return card != null && Mathf.Abs(card.cardId) % 10 != 0;
     }
 
     private static void AddCandidates(List<StolenCardCandidate> candidates, List<Card> cards, PlayerCardZone zone)

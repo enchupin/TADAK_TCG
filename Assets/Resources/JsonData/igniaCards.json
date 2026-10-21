@@ -472,6 +472,7 @@
                     "change": "Remove",
                     "buffId": 4003,
                     "target": "SingleEnemy",
+                    "subject": "Self",
                     "onAction": {
                         "type": "Buff",
                         "buffId": 3009,

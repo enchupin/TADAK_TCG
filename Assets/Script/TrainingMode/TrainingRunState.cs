@@ -186,7 +186,7 @@ public static class TrainingRunState
                     stageIndex = stage,
                     laneIndex = lane,
                     nodeType = nodeType,
-                    plannedEncounter = new List<MonsterSpawner.SpawnMonsterType>()
+                    plannedEncounter = new List<int>()
                 };
 
                 nodesById[node.nodeId] = node;
@@ -580,11 +580,11 @@ public static class TrainingRunState
         return candidates;
     }
 
-    private static List<MonsterSpawner.SpawnMonsterType> CreatePlannedEncounter(TrainingNodeType nodeType, int stageIndex)
+    private static List<int> CreatePlannedEncounter(TrainingNodeType nodeType, int stageIndex)
     {
         if (!TrainingNodeTypeUtility.RequiresBattle(nodeType))
         {
-            return new List<MonsterSpawner.SpawnMonsterType>();
+            return new List<int>();
         }
 
         return MonsterSpawner.CreateEncounterPlan(nodeType, stageIndex);
@@ -653,7 +653,7 @@ public static class TrainingRunState
         for (int i = 0; i < monsterNodes.Count; i++)
         {
             TrainingMapNodeData node = monsterNodes[i];
-            List<List<MonsterSpawner.SpawnMonsterType>> rawCandidates = MonsterSpawner.GetEncounterCandidates(node.nodeType, node.stageIndex);
+            List<List<int>> rawCandidates = MonsterSpawner.GetEncounterCandidates(node.nodeType, node.stageIndex);
             ShuffleList(rawCandidates);
 
             HashSet<string> addedSignatures = new HashSet<string>();
@@ -771,7 +771,7 @@ public static class TrainingRunState
                 continue;
             }
 
-            nextNode.plannedEncounter = new List<MonsterSpawner.SpawnMonsterType>(candidate.encounter);
+            nextNode.plannedEncounter = new List<int>(candidate.encounter);
             assignedSignatureByNodeId[nextNode.nodeId] = candidate.signature;
 
             if (TryAssignMonsterEncountersRecursive(
@@ -885,10 +885,10 @@ public static class TrainingRunState
 
     private sealed class MonsterEncounterCandidate
     {
-        public readonly List<MonsterSpawner.SpawnMonsterType> encounter;
+        public readonly List<int> encounter;
         public readonly string signature;
 
-        public MonsterEncounterCandidate(List<MonsterSpawner.SpawnMonsterType> encounter)
+        public MonsterEncounterCandidate(List<int> encounter)
         {
             this.encounter = encounter;
             signature = MonsterSpawner.BuildEncounterSignature(encounter);

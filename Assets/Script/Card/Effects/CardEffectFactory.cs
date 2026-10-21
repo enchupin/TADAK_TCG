@@ -430,6 +430,15 @@ public static class CardEffectFactory
                     target = effectData.target
                 };
 
+            case EffectType.IntentQueue:
+                return new IntentQueueEffect
+                {
+                    target = effectData.target,
+                    operation = effectData.operation,
+                    amount = effectData.amount > 0 ? effectData.amount : 1,
+                    maxAmount = effectData.count
+                };
+
             case EffectType.ReplayExhaustedCards:
                 return new ReplayExhaustedCardsEffect
                 {

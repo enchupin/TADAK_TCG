@@ -15,6 +15,13 @@ public class ReplanIntentEffect : ICardEffect
         List<Monster> targets = ResolveTargets(battleManager);
         foreach (Monster monster in targets)
         {
+            // 의도 큐를 쓰는 데이터 몬스터는 다음 의도로 1칸 미룸 (R-70)
+            if (monster is DataMonster dataMonster)
+            {
+                dataMonster.DelayIntent(1);
+                continue;
+            }
+
             monster?.PlanNextAction();
         }
 

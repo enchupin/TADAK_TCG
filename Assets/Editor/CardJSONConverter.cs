@@ -968,6 +968,7 @@ public class CardJSONConverter : EditorWindow
             case "MultiplyEnemyDebuffs": return EffectType.MultiplyEnemyDebuffs;
             case "ScaleIntent": return EffectType.ScaleIntent;
             case "ReplanIntent": return EffectType.ReplanIntent;
+            case "IntentQueue": return EffectType.IntentQueue;
             case "ReplayExhaustedCards": return EffectType.ReplayExhaustedCards;
             case "UseTopDeckCards": return EffectType.UseTopDeckCards;
             case "BindCard": return EffectType.BindCard;

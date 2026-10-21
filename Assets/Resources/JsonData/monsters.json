@@ -1,0 +1,4918 @@
+﻿{
+    "version": "1.0",
+    "monsters": [
+        {
+            "id": 1101,
+            "species": 101,
+            "className": "MutantFlowerMonster",
+            "name": "변이 꽃 I",
+            "tier": 1,
+            "kind": "normal",
+            "hp": 24,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 110101,
+                    "text": "피해를 10 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 10,
+                            "hits": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 110102,
+                    "text": "피해를 7 입힙니다. 보호막을 4 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 7,
+                            "hits": 1
+                        },
+                        {
+                            "type": "block",
+                            "amount": 4,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 110103,
+                    "text": "부식을 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4001,
+                            "amount": 2
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "noRepeat": [
+                    "P03"
+                ]
+            }
+        },
+        {
+            "id": 2101,
+            "species": 101,
+            "className": "MutantFlowerMonster",
+            "name": "변이 꽃 II",
+            "tier": 2,
+            "kind": "normal",
+            "hp": 23,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 210101,
+                    "text": "피해를 8 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 8,
+                            "hits": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 210102,
+                    "text": "피해를 6 입힙니다. 보호막을 4 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 6,
+                            "hits": 1
+                        },
+                        {
+                            "type": "block",
+                            "amount": 4,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 210103,
+                    "text": "부식을 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4001,
+                            "amount": 2
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "noRepeat": [
+                    "P03"
+                ]
+            }
+        },
+        {
+            "id": 1102,
+            "species": 102,
+            "className": "MutantCarnivorousPlantMonster",
+            "name": "변이 식충식물 I",
+            "tier": 1,
+            "kind": "normal",
+            "hp": 24,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 110201,
+                    "text": "힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 110202,
+                    "text": "피해를 8 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 8,
+                            "hits": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 110203,
+                    "text": "피해를 3씩 3회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 3,
+                            "hits": 3
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "start": "P02"
+            }
+        },
+        {
+            "id": 2102,
+            "species": 102,
+            "className": "MutantCarnivorousPlantMonster",
+            "name": "변이 식충식물 II",
+            "tier": 2,
+            "kind": "normal",
+            "hp": 24,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 210201,
+                    "text": "힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 210202,
+                    "text": "피해를 7 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 7,
+                            "hits": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 210203,
+                    "text": "피해를 3씩 3회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 3,
+                            "hits": 3
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "start": "P02"
+            }
+        },
+        {
+            "id": 1103,
+            "species": 103,
+            "className": "MutantMushroomMonster",
+            "name": "변이 버섯 I",
+            "tier": 1,
+            "kind": "normal",
+            "hp": 15,
+            "start": [
+                {
+                    "buffId": 5013,
+                    "amount": 1
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 110301,
+                    "text": "피해를 7 입힙니다. 체력을 막히지 않은 피해만큼 회복합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 7,
+                            "hits": 1
+                        },
+                        {
+                            "type": "healUnblocked"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 110302,
+                    "text": "보호막을 7 얻습니다. 약화를 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "block",
+                            "amount": 7,
+                            "target": "self"
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4008,
+                            "amount": 2
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02"
+                ]
+            }
+        },
+        {
+            "id": 2103,
+            "species": 103,
+            "className": "MutantMushroomMonster",
+            "name": "변이 버섯 II",
+            "tier": 2,
+            "kind": "normal",
+            "hp": 16,
+            "start": [
+                {
+                    "buffId": 5013,
+                    "amount": 1
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 210301,
+                    "text": "피해를 6 입힙니다. 체력을 막히지 않은 피해만큼 회복합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 6,
+                            "hits": 1
+                        },
+                        {
+                            "type": "healUnblocked"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 210302,
+                    "text": "보호막을 7 얻습니다. 약화를 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "block",
+                            "amount": 7,
+                            "target": "self"
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4008,
+                            "amount": 2
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02"
+                ]
+            }
+        },
+        {
+            "id": 1104,
+            "species": 104,
+            "className": "JackORipperMonster",
+            "name": "잭 오 리퍼 I",
+            "tier": 1,
+            "kind": "normal",
+            "hp": 35,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 110401,
+                    "text": "피해를 1씩 6회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 1,
+                            "hits": 6
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 110402,
+                    "text": "현란한 낫 I을 1마리 소환합니다.",
+                    "actions": [
+                        {
+                            "type": "summon",
+                            "species": 105
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 110403,
+                    "text": "피해를 2씩 4회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 2,
+                            "hits": 4
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02",
+                    "P03"
+                ]
+            }
+        },
+        {
+            "id": 2104,
+            "species": 104,
+            "className": "JackORipperMonster",
+            "name": "잭 오 리퍼 II",
+            "tier": 2,
+            "kind": "normal",
+            "hp": 60,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 210401,
+                    "text": "피해를 1씩 6회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 1,
+                            "hits": 6
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 210402,
+                    "text": "현란한 낫 II을 1마리 소환합니다.",
+                    "actions": [
+                        {
+                            "type": "summon",
+                            "species": 105
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 210403,
+                    "text": "피해를 2씩 4회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 2,
+                            "hits": 4
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02",
+                    "P03"
+                ]
+            }
+        },
+        {
+            "id": 3104,
+            "species": 104,
+            "className": "JackORipperMonster",
+            "name": "잭 오 리퍼 III",
+            "tier": 3,
+            "kind": "normal",
+            "hp": 58,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 310401,
+                    "text": "피해를 1씩 6회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 1,
+                            "hits": 6
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 310402,
+                    "text": "현란한 낫 III을 1마리 소환합니다.",
+                    "actions": [
+                        {
+                            "type": "summon",
+                            "species": 105
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 310403,
+                    "text": "피해를 2씩 4회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 2,
+                            "hits": 4
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02",
+                    "P03"
+                ]
+            }
+        },
+        {
+            "id": 4104,
+            "species": 104,
+            "className": "JackORipperMonster",
+            "name": "잭 오 리퍼 IV",
+            "tier": 4,
+            "kind": "normal",
+            "hp": 52,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 410401,
+                    "text": "피해를 1씩 6회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 1,
+                            "hits": 6
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 410402,
+                    "text": "현란한 낫 IV를 1마리 소환합니다.",
+                    "actions": [
+                        {
+                            "type": "summon",
+                            "species": 105
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 410403,
+                    "text": "피해를 2씩 4회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 2,
+                            "hits": 4
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02",
+                    "P03"
+                ]
+            }
+        },
+        {
+            "id": 1105,
+            "species": 105,
+            "className": "FlashyScytheMonster",
+            "name": "현란한 낫 I",
+            "tier": 1,
+            "kind": "normal",
+            "hp": 7,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 110501,
+                    "text": "모든 아군이 힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "allies"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 110502,
+                    "text": "잭 오 리퍼 I이(없으면 자신) 보호막을 4 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "block",
+                            "amount": 4,
+                            "target": "species",
+                            "species": 104
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 110503,
+                    "text": "피해를 4 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 4,
+                            "hits": 1
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "start": "P01",
+                "noRepeatAll": true
+            }
+        },
+        {
+            "id": 2105,
+            "species": 105,
+            "className": "FlashyScytheMonster",
+            "name": "현란한 낫 II",
+            "tier": 2,
+            "kind": "normal",
+            "hp": 7,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 210501,
+                    "text": "모든 아군이 힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "allies"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 210502,
+                    "text": "잭 오 리퍼 II이(없으면 자신) 보호막을 4 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "block",
+                            "amount": 4,
+                            "target": "species",
+                            "species": 104
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 210503,
+                    "text": "피해를 4 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 4,
+                            "hits": 1
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "start": "P01",
+                "noRepeatAll": true
+            }
+        },
+        {
+            "id": 3105,
+            "species": 105,
+            "className": "FlashyScytheMonster",
+            "name": "현란한 낫 III",
+            "tier": 3,
+            "kind": "normal",
+            "hp": 7,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 310501,
+                    "text": "모든 아군이 힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "allies"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 310502,
+                    "text": "잭 오 리퍼 III이(없으면 자신) 보호막을 4 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "block",
+                            "amount": 4,
+                            "target": "species",
+                            "species": 104
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 310503,
+                    "text": "피해를 4 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 4,
+                            "hits": 1
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "start": "P01",
+                "noRepeatAll": true
+            }
+        },
+        {
+            "id": 4105,
+            "species": 105,
+            "className": "FlashyScytheMonster",
+            "name": "현란한 낫 IV",
+            "tier": 4,
+            "kind": "normal",
+            "hp": 7,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 410501,
+                    "text": "모든 아군이 힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "allies"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 410502,
+                    "text": "잭 오 리퍼 IV가(없으면 자신) 보호막을 4 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "block",
+                            "amount": 4,
+                            "target": "species",
+                            "species": 104
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 410503,
+                    "text": "피해를 4 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 4,
+                            "hits": 1
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "start": "P01",
+                "noRepeatAll": true
+            }
+        },
+        {
+            "id": 2106,
+            "species": 106,
+            "className": "StoneShieldGolemMonster",
+            "name": "돌 방패 골렘 II",
+            "tier": 2,
+            "kind": "normal",
+            "hp": 27,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 210601,
+                    "text": "약화를 2 부여합니다. 모든 아군이 보호막을 4 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4008,
+                            "amount": 2
+                        },
+                        {
+                            "type": "block",
+                            "amount": 4,
+                            "target": "allies"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 210602,
+                    "text": "피해를 14 입힙니다. 전투에서 이탈합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 14,
+                            "hits": 1
+                        },
+                        {
+                            "type": "leave"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "rules",
+                "rules": [
+                    {
+                        "if": {
+                            "type": "alone"
+                        },
+                        "use": "P02"
+                    },
+                    {
+                        "use": "P01"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 3106,
+            "species": 106,
+            "className": "StoneShieldGolemMonster",
+            "name": "돌 방패 골렘 III",
+            "tier": 3,
+            "kind": "normal",
+            "hp": 29,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 310601,
+                    "text": "약화를 2 부여합니다. 모든 아군이 보호막을 4 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4008,
+                            "amount": 2
+                        },
+                        {
+                            "type": "block",
+                            "amount": 4,
+                            "target": "allies"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 310602,
+                    "text": "피해를 13 입힙니다. 전투에서 이탈합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 13,
+                            "hits": 1
+                        },
+                        {
+                            "type": "leave"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "rules",
+                "rules": [
+                    {
+                        "if": {
+                            "type": "alone"
+                        },
+                        "use": "P02"
+                    },
+                    {
+                        "use": "P01"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 4106,
+            "species": 106,
+            "className": "StoneShieldGolemMonster",
+            "name": "돌 방패 골렘 IV",
+            "tier": 4,
+            "kind": "normal",
+            "hp": 37,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 410601,
+                    "text": "약화를 2 부여합니다. 모든 아군이 보호막을 5 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4008,
+                            "amount": 2
+                        },
+                        {
+                            "type": "block",
+                            "amount": 5,
+                            "target": "allies"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 410602,
+                    "text": "피해를 15 입힙니다. 전투에서 이탈합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 15,
+                            "hits": 1
+                        },
+                        {
+                            "type": "leave"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "rules",
+                "rules": [
+                    {
+                        "if": {
+                            "type": "alone"
+                        },
+                        "use": "P02"
+                    },
+                    {
+                        "use": "P01"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2107,
+            "species": 107,
+            "className": "StoneThrowGolemMonster",
+            "name": "돌 던져 골렘 II",
+            "tier": 2,
+            "kind": "normal",
+            "hp": 20,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 210701,
+                    "text": "부식을 2 부여합니다. 모든 아군이 힘을 1 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4001,
+                            "amount": 2
+                        },
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 1,
+                            "target": "allies"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 210702,
+                    "text": "피해를 8 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 8,
+                            "hits": 1
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02"
+                ]
+            }
+        },
+        {
+            "id": 3107,
+            "species": 107,
+            "className": "StoneThrowGolemMonster",
+            "name": "돌 던져 골렘 III",
+            "tier": 3,
+            "kind": "normal",
+            "hp": 23,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 310701,
+                    "text": "부식을 2 부여합니다. 모든 아군이 힘을 1 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4001,
+                            "amount": 2
+                        },
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 1,
+                            "target": "allies"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 310702,
+                    "text": "피해를 9 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 9,
+                            "hits": 1
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02"
+                ]
+            }
+        },
+        {
+            "id": 4107,
+            "species": 107,
+            "className": "StoneThrowGolemMonster",
+            "name": "돌 던져 골렘 IV",
+            "tier": 4,
+            "kind": "normal",
+            "hp": 29,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 410701,
+                    "text": "부식을 2 부여합니다. 모든 아군이 힘을 1 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4001,
+                            "amount": 2
+                        },
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 1,
+                            "target": "allies"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 410702,
+                    "text": "피해를 10 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 10,
+                            "hits": 1
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02"
+                ]
+            }
+        },
+        {
+            "id": 2108,
+            "species": 108,
+            "className": "StoneStealGolemMonster",
+            "name": "돌 훔쳐 골렘 II",
+            "tier": 2,
+            "kind": "normal",
+            "hp": 15,
+            "start": [
+                {
+                    "buffId": 5001,
+                    "amount": 1
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 210801,
+                    "text": "피해를 4씩 2회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 4,
+                            "hits": 2
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01"
+                ]
+            }
+        },
+        {
+            "id": 3108,
+            "species": 108,
+            "className": "StoneStealGolemMonster",
+            "name": "돌 훔쳐 골렘 III",
+            "tier": 3,
+            "kind": "normal",
+            "hp": 17,
+            "start": [
+                {
+                    "buffId": 5001,
+                    "amount": 1
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 310801,
+                    "text": "피해를 4씩 2회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 4,
+                            "hits": 2
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01"
+                ]
+            }
+        },
+        {
+            "id": 4108,
+            "species": 108,
+            "className": "StoneStealGolemMonster",
+            "name": "돌 훔쳐 골렘 IV",
+            "tier": 4,
+            "kind": "normal",
+            "hp": 22,
+            "start": [
+                {
+                    "buffId": 5001,
+                    "amount": 1
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 410801,
+                    "text": "피해를 5씩 2회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 5,
+                            "hits": 2
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01"
+                ]
+            }
+        },
+        {
+            "id": 1109,
+            "species": 109,
+            "className": "VoidBugMonster",
+            "name": "공허 벌레 I",
+            "tier": 1,
+            "kind": "normal",
+            "hp": 34,
+            "start": [
+                {
+                    "buffId": 5002,
+                    "amount": 4
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 110901,
+                    "text": "피해를 6 입힙니다. 부식을 1 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 6,
+                            "hits": 1
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4001,
+                            "amount": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 110902,
+                    "text": "피해를 6 입힙니다. 빈약을 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 6,
+                            "hits": 1
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 2
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 110903,
+                    "text": "힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P03",
+                    "P02"
+                ]
+            }
+        },
+        {
+            "id": 2109,
+            "species": 109,
+            "className": "VoidBugMonster",
+            "name": "공허 벌레 II",
+            "tier": 2,
+            "kind": "normal",
+            "hp": 34,
+            "start": [
+                {
+                    "buffId": 5002,
+                    "amount": 4
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 210901,
+                    "text": "피해를 5 입힙니다. 부식을 1 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 5,
+                            "hits": 1
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4001,
+                            "amount": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 210902,
+                    "text": "피해를 5 입힙니다. 빈약을 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 5,
+                            "hits": 1
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 2
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 210903,
+                    "text": "힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P03",
+                    "P02"
+                ]
+            }
+        },
+        {
+            "id": 3109,
+            "species": 109,
+            "className": "VoidBugMonster",
+            "name": "공허 벌레 III",
+            "tier": 3,
+            "kind": "normal",
+            "hp": 40,
+            "start": [
+                {
+                    "buffId": 5002,
+                    "amount": 4
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 310901,
+                    "text": "피해를 5 입힙니다. 부식을 1 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 5,
+                            "hits": 1
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4001,
+                            "amount": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 310902,
+                    "text": "피해를 5 입힙니다. 빈약을 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 5,
+                            "hits": 1
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 2
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 310903,
+                    "text": "힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P03",
+                    "P02"
+                ]
+            }
+        },
+        {
+            "id": 4109,
+            "species": 109,
+            "className": "VoidBugMonster",
+            "name": "공허 벌레 IV",
+            "tier": 4,
+            "kind": "normal",
+            "hp": 51,
+            "start": [
+                {
+                    "buffId": 5002,
+                    "amount": 6
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 410901,
+                    "text": "피해를 6 입힙니다. 부식을 1 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 6,
+                            "hits": 1
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4001,
+                            "amount": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 410902,
+                    "text": "피해를 6 입힙니다. 빈약을 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 6,
+                            "hits": 1
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 2
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 410903,
+                    "text": "힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P03",
+                    "P02"
+                ]
+            }
+        },
+        {
+            "id": 5109,
+            "species": 109,
+            "className": "VoidBugMonster",
+            "name": "공허 벌레",
+            "tier": 5,
+            "kind": "normal",
+            "hp": 18,
+            "start": [
+                {
+                    "buffId": 5002,
+                    "amount": 2
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 510901,
+                    "text": "피해를 3 입힙니다. 부식을 1 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 3,
+                            "hits": 1
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4001,
+                            "amount": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 510902,
+                    "text": "피해를 3 입힙니다. 빈약을 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 3,
+                            "hits": 1
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 2
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 510903,
+                    "text": "힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P03",
+                    "P02"
+                ]
+            }
+        },
+        {
+            "id": 1110,
+            "species": 110,
+            "className": "HauntedClothMonster",
+            "name": "귀신 들린 천 I",
+            "tier": 1,
+            "kind": "normal",
+            "hp": 38,
+            "start": [
+                {
+                    "buffId": 5006,
+                    "amount": 5
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 111001,
+                    "text": "적의 무작위 카드 1장을 훔칩니다.",
+                    "actions": [
+                        {
+                            "type": "special",
+                            "key": "steal_card"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 111002,
+                    "text": "피해를 11 입힙니다. 보호막을 4 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 11,
+                            "hits": 1
+                        },
+                        {
+                            "type": "block",
+                            "amount": 4,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 111003,
+                    "text": "전투에서 이탈합니다.",
+                    "actions": [
+                        {
+                            "type": "leave"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02"
+                ],
+                "override": [
+                    {
+                        "if": {
+                            "type": "self_status_le",
+                            "buffId": 5006,
+                            "value": 0
+                        },
+                        "use": "P03"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2110,
+            "species": 110,
+            "className": "HauntedClothMonster",
+            "name": "귀신 들린 천 II",
+            "tier": 2,
+            "kind": "normal",
+            "hp": 54,
+            "start": [
+                {
+                    "buffId": 5006,
+                    "amount": 5
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 211001,
+                    "text": "적의 무작위 카드 1장을 훔칩니다.",
+                    "actions": [
+                        {
+                            "type": "special",
+                            "key": "steal_card"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 211002,
+                    "text": "피해를 14 입힙니다. 보호막을 6 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 14,
+                            "hits": 1
+                        },
+                        {
+                            "type": "block",
+                            "amount": 6,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 211003,
+                    "text": "전투에서 이탈합니다.",
+                    "actions": [
+                        {
+                            "type": "leave"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02"
+                ],
+                "override": [
+                    {
+                        "if": {
+                            "type": "self_status_le",
+                            "buffId": 5006,
+                            "value": 0
+                        },
+                        "use": "P03"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 3110,
+            "species": 110,
+            "className": "HauntedClothMonster",
+            "name": "귀신 들린 천 III",
+            "tier": 3,
+            "kind": "normal",
+            "hp": 78,
+            "start": [
+                {
+                    "buffId": 5006,
+                    "amount": 5
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 311001,
+                    "text": "적의 무작위 카드 1장을 훔칩니다.",
+                    "actions": [
+                        {
+                            "type": "special",
+                            "key": "steal_card"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 311002,
+                    "text": "피해를 19 입힙니다. 보호막을 9 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 19,
+                            "hits": 1
+                        },
+                        {
+                            "type": "block",
+                            "amount": 9,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 311003,
+                    "text": "전투에서 이탈합니다.",
+                    "actions": [
+                        {
+                            "type": "leave"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02"
+                ],
+                "override": [
+                    {
+                        "if": {
+                            "type": "self_status_le",
+                            "buffId": 5006,
+                            "value": 0
+                        },
+                        "use": "P03"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 4110,
+            "species": 110,
+            "className": "HauntedClothMonster",
+            "name": "귀신 들린 천 IV",
+            "tier": 4,
+            "kind": "normal",
+            "hp": 96,
+            "start": [
+                {
+                    "buffId": 5006,
+                    "amount": 5
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 411001,
+                    "text": "적의 무작위 카드 1장을 훔칩니다.",
+                    "actions": [
+                        {
+                            "type": "special",
+                            "key": "steal_card"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 411002,
+                    "text": "피해를 22 입힙니다. 보호막을 11 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 22,
+                            "hits": 1
+                        },
+                        {
+                            "type": "block",
+                            "amount": 11,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 411003,
+                    "text": "전투에서 이탈합니다.",
+                    "actions": [
+                        {
+                            "type": "leave"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02"
+                ],
+                "override": [
+                    {
+                        "if": {
+                            "type": "self_status_le",
+                            "buffId": 5006,
+                            "value": 0
+                        },
+                        "use": "P03"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 1111,
+            "species": 111,
+            "className": "FireSpiritMonster",
+            "name": "불꽃 정령 I",
+            "tier": 1,
+            "kind": "normal",
+            "hp": 19,
+            "start": [
+                {
+                    "buffId": 5008,
+                    "amount": 1
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 111101,
+                    "text": "힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 111102,
+                    "text": "피해를 3씩 2회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 3,
+                            "hits": 2
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 111103,
+                    "text": "피해를 12 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 12,
+                            "hits": 1
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "noRepeat": [
+                    "P01"
+                ]
+            }
+        },
+        {
+            "id": 2111,
+            "species": 111,
+            "className": "FireSpiritMonster",
+            "name": "불꽃 정령 II",
+            "tier": 2,
+            "kind": "normal",
+            "hp": 27,
+            "start": [
+                {
+                    "buffId": 5008,
+                    "amount": 1
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 211101,
+                    "text": "힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 211102,
+                    "text": "피해를 4씩 2회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 4,
+                            "hits": 2
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 211103,
+                    "text": "피해를 15 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 15,
+                            "hits": 1
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "noRepeat": [
+                    "P01"
+                ]
+            }
+        },
+        {
+            "id": 3111,
+            "species": 111,
+            "className": "FireSpiritMonster",
+            "name": "불꽃 정령 III",
+            "tier": 3,
+            "kind": "normal",
+            "hp": 32,
+            "start": [
+                {
+                    "buffId": 5008,
+                    "amount": 1
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 311101,
+                    "text": "힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 311102,
+                    "text": "피해를 4씩 2회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 4,
+                            "hits": 2
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 311103,
+                    "text": "피해를 16 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 16,
+                            "hits": 1
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "noRepeat": [
+                    "P01"
+                ]
+            }
+        },
+        {
+            "id": 4111,
+            "species": 111,
+            "className": "FireSpiritMonster",
+            "name": "불꽃 정령 IV",
+            "tier": 4,
+            "kind": "normal",
+            "hp": 38,
+            "start": [
+                {
+                    "buffId": 5008,
+                    "amount": 1
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 411101,
+                    "text": "힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 411102,
+                    "text": "피해를 4씩 2회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 4,
+                            "hits": 2
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 411103,
+                    "text": "피해를 18 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 18,
+                            "hits": 1
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "noRepeat": [
+                    "P01"
+                ]
+            }
+        },
+        {
+            "id": 3112,
+            "species": 112,
+            "className": "MutantSweetPotatoMonster",
+            "name": "변이 고구마 III",
+            "tier": 3,
+            "kind": "normal",
+            "hp": 32,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 311201,
+                    "text": "뿌리내림을 1 얻습니다. 보호막을 21 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 5011,
+                            "amount": 1,
+                            "target": "self"
+                        },
+                        {
+                            "type": "block",
+                            "amount": 21,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 311202,
+                    "text": "뿌리내림 상태라면 피해를 14 입힙니다. 빈약을 2 부여합니다. 아니라면 피해를 11 입힙니다. 빈약을 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "ifSelfStatus",
+                            "buffId": 5011,
+                            "then": [
+                                {
+                                    "type": "attack",
+                                    "amount": 14,
+                                    "hits": 1
+                                },
+                                {
+                                    "type": "debuff",
+                                    "buffId": 4011,
+                                    "amount": 2
+                                }
+                            ],
+                            "else": [
+                                {
+                                    "type": "attack",
+                                    "amount": 11,
+                                    "hits": 1
+                                },
+                                {
+                                    "type": "debuff",
+                                    "buffId": 4011,
+                                    "amount": 2
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 311203,
+                    "text": "뿌리내림 상태라면 피해를 7씩 3회 입힙니다. 아니라면 피해를 7씩 2회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "ifSelfStatus",
+                            "buffId": 5011,
+                            "then": [
+                                {
+                                    "type": "attack",
+                                    "amount": 7,
+                                    "hits": 3
+                                }
+                            ],
+                            "else": [
+                                {
+                                    "type": "attack",
+                                    "amount": 7,
+                                    "hits": 2
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "key": "P04",
+                    "id": 311204,
+                    "text": "힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "sequence",
+                "intro": [
+                    "P02",
+                    "P01"
+                ],
+                "loop": [
+                    "P02",
+                    "P03",
+                    "P04"
+                ]
+            }
+        },
+        {
+            "id": 4112,
+            "species": 112,
+            "className": "MutantSweetPotatoMonster",
+            "name": "변이 고구마 IV",
+            "tier": 4,
+            "kind": "normal",
+            "hp": 25,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 411201,
+                    "text": "뿌리내림을 1 얻습니다. 보호막을 16 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 5011,
+                            "amount": 1,
+                            "target": "self"
+                        },
+                        {
+                            "type": "block",
+                            "amount": 16,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 411202,
+                    "text": "뿌리내림 상태라면 피해를 10 입힙니다. 빈약을 2 부여합니다. 아니라면 피해를 8 입힙니다. 빈약을 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "ifSelfStatus",
+                            "buffId": 5011,
+                            "then": [
+                                {
+                                    "type": "attack",
+                                    "amount": 10,
+                                    "hits": 1
+                                },
+                                {
+                                    "type": "debuff",
+                                    "buffId": 4011,
+                                    "amount": 2
+                                }
+                            ],
+                            "else": [
+                                {
+                                    "type": "attack",
+                                    "amount": 8,
+                                    "hits": 1
+                                },
+                                {
+                                    "type": "debuff",
+                                    "buffId": 4011,
+                                    "amount": 2
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 411203,
+                    "text": "뿌리내림 상태라면 피해를 5씩 3회 입힙니다. 아니라면 피해를 5씩 2회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "ifSelfStatus",
+                            "buffId": 5011,
+                            "then": [
+                                {
+                                    "type": "attack",
+                                    "amount": 5,
+                                    "hits": 3
+                                }
+                            ],
+                            "else": [
+                                {
+                                    "type": "attack",
+                                    "amount": 5,
+                                    "hits": 2
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "key": "P04",
+                    "id": 411204,
+                    "text": "힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "sequence",
+                "intro": [
+                    "P02",
+                    "P01"
+                ],
+                "loop": [
+                    "P02",
+                    "P03",
+                    "P04"
+                ]
+            }
+        },
+        {
+            "id": 3113,
+            "species": 113,
+            "className": "MutantCarrotMonster",
+            "name": "변이 당근 III",
+            "tier": 3,
+            "kind": "normal",
+            "hp": 28,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 311301,
+                    "text": "뿌리내림을 1 얻습니다. 보호막을 19 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 5011,
+                            "amount": 1,
+                            "target": "self"
+                        },
+                        {
+                            "type": "block",
+                            "amount": 19,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 311302,
+                    "text": "뿌리내림 상태라면 피해를 12 입힙니다. 약화를 2 부여합니다. 아니라면 피해를 10 입힙니다. 약화를 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "ifSelfStatus",
+                            "buffId": 5011,
+                            "then": [
+                                {
+                                    "type": "attack",
+                                    "amount": 12,
+                                    "hits": 1
+                                },
+                                {
+                                    "type": "debuff",
+                                    "buffId": 4008,
+                                    "amount": 2
+                                }
+                            ],
+                            "else": [
+                                {
+                                    "type": "attack",
+                                    "amount": 10,
+                                    "hits": 1
+                                },
+                                {
+                                    "type": "debuff",
+                                    "buffId": 4008,
+                                    "amount": 2
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 311303,
+                    "text": "뿌리내림 상태라면 피해를 7씩 3회 입힙니다. 아니라면 피해를 7씩 2회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "ifSelfStatus",
+                            "buffId": 5011,
+                            "then": [
+                                {
+                                    "type": "attack",
+                                    "amount": 7,
+                                    "hits": 3
+                                }
+                            ],
+                            "else": [
+                                {
+                                    "type": "attack",
+                                    "amount": 7,
+                                    "hits": 2
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "key": "P04",
+                    "id": 311304,
+                    "text": "힘을 3 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 3,
+                            "target": "self"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "sequence",
+                "intro": [
+                    "P02",
+                    "P01"
+                ],
+                "loop": [
+                    "P02",
+                    "P03",
+                    "P04"
+                ]
+            }
+        },
+        {
+            "id": 4113,
+            "species": 113,
+            "className": "MutantCarrotMonster",
+            "name": "변이 당근 IV",
+            "tier": 4,
+            "kind": "normal",
+            "hp": 26,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 411301,
+                    "text": "뿌리내림을 1 얻습니다. 보호막을 18 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 5011,
+                            "amount": 1,
+                            "target": "self"
+                        },
+                        {
+                            "type": "block",
+                            "amount": 18,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 411302,
+                    "text": "뿌리내림 상태라면 피해를 11 입힙니다. 약화를 2 부여합니다. 아니라면 피해를 9 입힙니다. 약화를 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "ifSelfStatus",
+                            "buffId": 5011,
+                            "then": [
+                                {
+                                    "type": "attack",
+                                    "amount": 11,
+                                    "hits": 1
+                                },
+                                {
+                                    "type": "debuff",
+                                    "buffId": 4008,
+                                    "amount": 2
+                                }
+                            ],
+                            "else": [
+                                {
+                                    "type": "attack",
+                                    "amount": 9,
+                                    "hits": 1
+                                },
+                                {
+                                    "type": "debuff",
+                                    "buffId": 4008,
+                                    "amount": 2
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 411303,
+                    "text": "뿌리내림 상태라면 피해를 6씩 3회 입힙니다. 아니라면 피해를 6씩 2회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "ifSelfStatus",
+                            "buffId": 5011,
+                            "then": [
+                                {
+                                    "type": "attack",
+                                    "amount": 6,
+                                    "hits": 3
+                                }
+                            ],
+                            "else": [
+                                {
+                                    "type": "attack",
+                                    "amount": 6,
+                                    "hits": 2
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "key": "P04",
+                    "id": 411304,
+                    "text": "힘을 3 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 3,
+                            "target": "self"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "sequence",
+                "intro": [
+                    "P02",
+                    "P01"
+                ],
+                "loop": [
+                    "P02",
+                    "P03",
+                    "P04"
+                ]
+            }
+        },
+        {
+            "id": 1114,
+            "species": 114,
+            "className": "MirrorMonster",
+            "name": "거울 괴물 I",
+            "tier": 1,
+            "kind": "normal",
+            "hp": 40,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 111401,
+                    "text": "피해를 거울 중첩만큼 입힙니다. 거울을 0으로 만듭니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 0,
+                            "hits": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 111402,
+                    "text": "빈약을 2 부여합니다. 약화를 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 2
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4008,
+                            "amount": 2
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P01",
+                    "P02"
+                ]
+            }
+        },
+        {
+            "id": 2114,
+            "species": 114,
+            "className": "MirrorMonster",
+            "name": "거울 괴물 II",
+            "tier": 2,
+            "kind": "normal",
+            "hp": 71,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 211401,
+                    "text": "피해를 거울 중첩만큼 입힙니다. 거울을 0으로 만듭니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 0,
+                            "hits": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 211402,
+                    "text": "빈약을 2 부여합니다. 약화를 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 2
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4008,
+                            "amount": 2
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P01",
+                    "P02"
+                ]
+            }
+        },
+        {
+            "id": 3114,
+            "species": 114,
+            "className": "MirrorMonster",
+            "name": "거울 괴물 III",
+            "tier": 3,
+            "kind": "normal",
+            "hp": 85,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 311401,
+                    "text": "피해를 거울 중첩만큼 입힙니다. 거울을 0으로 만듭니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 0,
+                            "hits": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 311402,
+                    "text": "빈약을 2 부여합니다. 약화를 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 2
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4008,
+                            "amount": 2
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P01",
+                    "P02"
+                ]
+            }
+        },
+        {
+            "id": 4114,
+            "species": 114,
+            "className": "MirrorMonster",
+            "name": "거울 괴물 IV",
+            "tier": 4,
+            "kind": "normal",
+            "hp": 126,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 411401,
+                    "text": "피해를 거울 중첩만큼 입힙니다. 거울을 0으로 만듭니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 0,
+                            "hits": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 411402,
+                    "text": "빈약을 2 부여합니다. 약화를 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 2
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4008,
+                            "amount": 2
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P01",
+                    "P02"
+                ]
+            }
+        },
+        {
+            "id": 5114,
+            "species": 114,
+            "className": "MirrorMonster",
+            "name": "거울 괴물",
+            "tier": 5,
+            "kind": "normal",
+            "hp": 39,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 511401,
+                    "text": "피해를 거울 중첩만큼 입힙니다. 거울을 0으로 만듭니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 0,
+                            "hits": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 511402,
+                    "text": "빈약을 2 부여합니다. 약화를 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 2
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4008,
+                            "amount": 2
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P01",
+                    "P02"
+                ]
+            }
+        },
+        {
+            "id": 1115,
+            "species": 115,
+            "className": "CactusMonster",
+            "name": "선인장 I",
+            "tier": 1,
+            "kind": "normal",
+            "hp": 15,
+            "start": [
+                {
+                    "buffId": 3010,
+                    "amount": 3
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 111501,
+                    "text": "피해를 7 입힙니다. 보호막을 7 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 7,
+                            "hits": 1
+                        },
+                        {
+                            "type": "block",
+                            "amount": 7,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 111502,
+                    "text": "가시를 2 얻습니다.(최대 9)",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3010,
+                            "amount": 2,
+                            "target": "self",
+                            "max": 9
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "override": [
+                    {
+                        "if": {
+                            "type": "self_status_ge",
+                            "buffId": 3010,
+                            "value": 9
+                        },
+                        "use": "P01"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2115,
+            "species": 115,
+            "className": "CactusMonster",
+            "name": "선인장 II",
+            "tier": 2,
+            "kind": "normal",
+            "hp": 18,
+            "start": [
+                {
+                    "buffId": 3010,
+                    "amount": 3
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 211501,
+                    "text": "피해를 7 입힙니다. 보호막을 8 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 7,
+                            "hits": 1
+                        },
+                        {
+                            "type": "block",
+                            "amount": 8,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 211502,
+                    "text": "가시를 2 얻습니다.(최대 9)",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3010,
+                            "amount": 2,
+                            "target": "self",
+                            "max": 9
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "override": [
+                    {
+                        "if": {
+                            "type": "self_status_ge",
+                            "buffId": 3010,
+                            "value": 9
+                        },
+                        "use": "P01"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 3115,
+            "species": 115,
+            "className": "CactusMonster",
+            "name": "선인장 III",
+            "tier": 3,
+            "kind": "normal",
+            "hp": 29,
+            "start": [
+                {
+                    "buffId": 3010,
+                    "amount": 3
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 311501,
+                    "text": "피해를 11 입힙니다. 보호막을 13 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 11,
+                            "hits": 1
+                        },
+                        {
+                            "type": "block",
+                            "amount": 13,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 311502,
+                    "text": "가시를 2 얻습니다.(최대 9)",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3010,
+                            "amount": 2,
+                            "target": "self",
+                            "max": 9
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "override": [
+                    {
+                        "if": {
+                            "type": "self_status_ge",
+                            "buffId": 3010,
+                            "value": 9
+                        },
+                        "use": "P01"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 4115,
+            "species": 115,
+            "className": "CactusMonster",
+            "name": "선인장 IV",
+            "tier": 4,
+            "kind": "normal",
+            "hp": 25,
+            "start": [
+                {
+                    "buffId": 3010,
+                    "amount": 3
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 411501,
+                    "text": "피해를 9 입힙니다. 보호막을 12 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 9,
+                            "hits": 1
+                        },
+                        {
+                            "type": "block",
+                            "amount": 12,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 411502,
+                    "text": "가시를 2 얻습니다.(최대 9)",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3010,
+                            "amount": 2,
+                            "target": "self",
+                            "max": 9
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "override": [
+                    {
+                        "if": {
+                            "type": "self_status_ge",
+                            "buffId": 3010,
+                            "value": 9
+                        },
+                        "use": "P01"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 1116,
+            "species": 116,
+            "className": "WoodenPuppetMonster",
+            "name": "목각 인형 I",
+            "tier": 1,
+            "kind": "normal",
+            "hp": 25,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 111601,
+                    "text": "피해를 5 입힙니다. 적의 버린 카드 더미에 뿌리 흡수 카드를 2장 생성합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 5,
+                            "hits": 1
+                        },
+                        {
+                            "type": "card",
+                            "cardId": 40,
+                            "count": 2,
+                            "zone": "discard"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 111602,
+                    "text": "피해를 7 입힙니다. 보호막을 3 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 7,
+                            "hits": 1
+                        },
+                        {
+                            "type": "block",
+                            "amount": 3,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 111603,
+                    "text": "빈약을 3 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 3
+                        }
+                    ]
+                },
+                {
+                    "key": "P04",
+                    "id": 111604,
+                    "text": "약화를 3 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4008,
+                            "amount": 3
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "require": [
+                    {
+                        "pattern": "P03",
+                        "if": {
+                            "type": "player_lacks",
+                            "buffId": 4011
+                        }
+                    },
+                    {
+                        "pattern": "P04",
+                        "if": {
+                            "type": "player_lacks",
+                            "buffId": 4008
+                        }
+                    }
+                ],
+                "groupExclusive": [
+                    "P03",
+                    "P04"
+                ]
+            }
+        },
+        {
+            "id": 2116,
+            "species": 116,
+            "className": "WoodenPuppetMonster",
+            "name": "목각 인형 II",
+            "tier": 2,
+            "kind": "normal",
+            "hp": 36,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 211601,
+                    "text": "피해를 6 입힙니다. 적의 버린 카드 더미에 뿌리 흡수 카드를 2장 생성합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 6,
+                            "hits": 1
+                        },
+                        {
+                            "type": "card",
+                            "cardId": 40,
+                            "count": 2,
+                            "zone": "discard"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 211602,
+                    "text": "피해를 9 입힙니다. 보호막을 5 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 9,
+                            "hits": 1
+                        },
+                        {
+                            "type": "block",
+                            "amount": 5,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 211603,
+                    "text": "빈약을 3 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 3
+                        }
+                    ]
+                },
+                {
+                    "key": "P04",
+                    "id": 211604,
+                    "text": "약화를 3 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4008,
+                            "amount": 3
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "require": [
+                    {
+                        "pattern": "P03",
+                        "if": {
+                            "type": "player_lacks",
+                            "buffId": 4011
+                        }
+                    },
+                    {
+                        "pattern": "P04",
+                        "if": {
+                            "type": "player_lacks",
+                            "buffId": 4008
+                        }
+                    }
+                ],
+                "groupExclusive": [
+                    "P03",
+                    "P04"
+                ]
+            }
+        },
+        {
+            "id": 3116,
+            "species": 116,
+            "className": "WoodenPuppetMonster",
+            "name": "목각 인형 III",
+            "tier": 3,
+            "kind": "normal",
+            "hp": 44,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 311601,
+                    "text": "피해를 7 입힙니다. 적의 버린 카드 더미에 뿌리 흡수 카드를 2장 생성합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 7,
+                            "hits": 1
+                        },
+                        {
+                            "type": "card",
+                            "cardId": 40,
+                            "count": 2,
+                            "zone": "discard"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 311602,
+                    "text": "피해를 11 입힙니다. 보호막을 6 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 11,
+                            "hits": 1
+                        },
+                        {
+                            "type": "block",
+                            "amount": 6,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 311603,
+                    "text": "빈약을 3 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 3
+                        }
+                    ]
+                },
+                {
+                    "key": "P04",
+                    "id": 311604,
+                    "text": "약화를 3 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4008,
+                            "amount": 3
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "require": [
+                    {
+                        "pattern": "P03",
+                        "if": {
+                            "type": "player_lacks",
+                            "buffId": 4011
+                        }
+                    },
+                    {
+                        "pattern": "P04",
+                        "if": {
+                            "type": "player_lacks",
+                            "buffId": 4008
+                        }
+                    }
+                ],
+                "groupExclusive": [
+                    "P03",
+                    "P04"
+                ]
+            }
+        },
+        {
+            "id": 4116,
+            "species": 116,
+            "className": "WoodenPuppetMonster",
+            "name": "목각 인형 IV",
+            "tier": 4,
+            "kind": "normal",
+            "hp": 69,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 411601,
+                    "text": "피해를 10 입힙니다. 적의 버린 카드 더미에 뿌리 흡수 카드를 2장 생성합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 10,
+                            "hits": 1
+                        },
+                        {
+                            "type": "card",
+                            "cardId": 40,
+                            "count": 2,
+                            "zone": "discard"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 411602,
+                    "text": "피해를 15 입힙니다. 보호막을 9 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 15,
+                            "hits": 1
+                        },
+                        {
+                            "type": "block",
+                            "amount": 9,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 411603,
+                    "text": "빈약을 3 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 3
+                        }
+                    ]
+                },
+                {
+                    "key": "P04",
+                    "id": 411604,
+                    "text": "약화를 3 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4008,
+                            "amount": 3
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "require": [
+                    {
+                        "pattern": "P03",
+                        "if": {
+                            "type": "player_lacks",
+                            "buffId": 4011
+                        }
+                    },
+                    {
+                        "pattern": "P04",
+                        "if": {
+                            "type": "player_lacks",
+                            "buffId": 4008
+                        }
+                    }
+                ],
+                "groupExclusive": [
+                    "P03",
+                    "P04"
+                ]
+            }
+        },
+        {
+            "id": 4201,
+            "species": 201,
+            "className": "RotwoodWardenMonster",
+            "name": "썩은나무 숲지기 IV",
+            "tier": 4,
+            "kind": "named",
+            "hp": 121,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 420101,
+                    "text": "체력을 10 회복합니다. 빈약을 3 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "heal",
+                            "amount": 10
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 3
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 420102,
+                    "text": "체력을 10 회복합니다. 드로우 방해를 1 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "heal",
+                            "amount": 10
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4012,
+                            "amount": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 420103,
+                    "text": "아무 행동도 하지 않습니다.",
+                    "actions": [
+                        {
+                            "type": "nothing"
+                        }
+                    ]
+                },
+                {
+                    "key": "P04",
+                    "id": 420104,
+                    "text": "피해를 55 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 55,
+                            "hits": 1
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02",
+                    "P03",
+                    "P04"
+                ]
+            }
+        },
+        {
+            "id": 1202,
+            "species": 202,
+            "className": "PriestessMonster",
+            "name": "여사제 I",
+            "tier": 1,
+            "kind": "named",
+            "hp": 104,
+            "start": [
+                {
+                    "buffId": 5003,
+                    "amount": 1
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 120201,
+                    "text": "피해를 15 입힙니다. 보호막을 5 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 15,
+                            "hits": 1
+                        },
+                        {
+                            "type": "block",
+                            "amount": 5,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 120202,
+                    "text": "피해를 5씩 2회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 5,
+                            "hits": 2
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 120203,
+                    "text": "보호막을 8 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "block",
+                            "amount": 8,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P04",
+                    "id": 120204,
+                    "text": "피해를 30 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 30,
+                            "hits": 1
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02",
+                    "P03",
+                    "P04"
+                ]
+            }
+        },
+        {
+            "id": 2202,
+            "species": 202,
+            "className": "PriestessMonster",
+            "name": "여사제 II",
+            "tier": 2,
+            "kind": "named",
+            "hp": 119,
+            "start": [
+                {
+                    "buffId": 5003,
+                    "amount": 1
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 220201,
+                    "text": "피해를 18 입힙니다. 보호막을 5 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 18,
+                            "hits": 1
+                        },
+                        {
+                            "type": "block",
+                            "amount": 5,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 220202,
+                    "text": "피해를 5씩 2회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 5,
+                            "hits": 2
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 220203,
+                    "text": "보호막을 9 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "block",
+                            "amount": 9,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P04",
+                    "id": 220204,
+                    "text": "피해를 34 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 34,
+                            "hits": 1
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02",
+                    "P03",
+                    "P04"
+                ]
+            }
+        },
+        {
+            "id": 2203,
+            "species": 203,
+            "className": "MushroomHostMonster",
+            "name": "버섯 숙주 II",
+            "tier": 2,
+            "kind": "named",
+            "hp": 83,
+            "start": [
+                {
+                    "buffId": 5004,
+                    "amount": 1
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 220301,
+                    "text": "적의 손에 중독 카드를 2장 생성합니다.",
+                    "actions": [
+                        {
+                            "type": "card",
+                            "cardId": 20,
+                            "count": 2,
+                            "zone": "hand"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 220302,
+                    "text": "피해를 13 입힙니다. 빈약을 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 13,
+                            "hits": 1
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 2
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 220303,
+                    "text": "피해를 18 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 18,
+                            "hits": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P04",
+                    "id": 220304,
+                    "text": "강화: 중독을 1 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 5005,
+                            "amount": 1,
+                            "target": "self"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "sequence",
+                "intro": [
+                    "P01",
+                    "P02",
+                    "P03",
+                    "P04"
+                ],
+                "loop": [
+                    "P01",
+                    "P02",
+                    "P03"
+                ]
+            }
+        },
+        {
+            "id": 3203,
+            "species": 203,
+            "className": "MushroomHostMonster",
+            "name": "버섯 숙주 III",
+            "tier": 3,
+            "kind": "named",
+            "hp": 114,
+            "start": [
+                {
+                    "buffId": 5004,
+                    "amount": 1
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 320301,
+                    "text": "적의 손에 중독 카드를 2장 생성합니다.",
+                    "actions": [
+                        {
+                            "type": "card",
+                            "cardId": 20,
+                            "count": 2,
+                            "zone": "hand"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 320302,
+                    "text": "피해를 18 입힙니다. 빈약을 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 18,
+                            "hits": 1
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 2
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 320303,
+                    "text": "피해를 24 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 24,
+                            "hits": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P04",
+                    "id": 320304,
+                    "text": "강화: 중독을 1 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 5005,
+                            "amount": 1,
+                            "target": "self"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "sequence",
+                "intro": [
+                    "P01",
+                    "P02",
+                    "P03",
+                    "P04"
+                ],
+                "loop": [
+                    "P01",
+                    "P02",
+                    "P03"
+                ]
+            }
+        },
+        {
+            "id": 3204,
+            "species": 204,
+            "className": "VoidBeastMonster",
+            "name": "공허 괴수 III",
+            "tier": 3,
+            "kind": "named",
+            "hp": 106,
+            "start": [
+                {
+                    "buffId": 5002,
+                    "amount": 4
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 320401,
+                    "text": "피해를 6씩 (누적 횟수 + 2)회 입힙니다. 다음 사용 때 횟수가 1 늘어납니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 6,
+                            "hits": 2,
+                            "hitsGrow": true
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 320402,
+                    "text": "적의 힘을 2 감소시킵니다. 힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "reducePlayerBuff",
+                            "buffId": 3002,
+                            "amount": 2
+                        },
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 320403,
+                    "text": "공허 껍질을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 5002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02",
+                    "P03"
+                ]
+            }
+        },
+        {
+            "id": 4204,
+            "species": 204,
+            "className": "VoidBeastMonster",
+            "name": "공허 괴수 IV",
+            "tier": 4,
+            "kind": "named",
+            "hp": 148,
+            "start": [
+                {
+                    "buffId": 5002,
+                    "amount": 5
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 420401,
+                    "text": "피해를 8씩 (누적 횟수 + 2)회 입힙니다. 다음 사용 때 횟수가 1 늘어납니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 8,
+                            "hits": 2,
+                            "hitsGrow": true
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 420402,
+                    "text": "적의 힘을 2 감소시킵니다. 힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "reducePlayerBuff",
+                            "buffId": 3002,
+                            "amount": 2
+                        },
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 420403,
+                    "text": "공허 껍질을 3 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 5002,
+                            "amount": 3,
+                            "target": "self"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02",
+                    "P03"
+                ]
+            }
+        },
+        {
+            "id": 5204,
+            "species": 204,
+            "className": "VoidBeastMonster",
+            "name": "공허 괴수",
+            "tier": 5,
+            "kind": "named",
+            "hp": 110,
+            "start": [
+                {
+                    "buffId": 5002,
+                    "amount": 4
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 520401,
+                    "text": "피해를 6씩 (누적 횟수 + 2)회 입힙니다. 다음 사용 때 횟수가 1 늘어납니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 6,
+                            "hits": 2,
+                            "hitsGrow": true
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 520402,
+                    "text": "적의 힘을 2 감소시킵니다. 힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "reducePlayerBuff",
+                            "buffId": 3002,
+                            "amount": 2
+                        },
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 520403,
+                    "text": "공허 껍질을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 5002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02",
+                    "P03"
+                ]
+            }
+        },
+        {
+            "id": 2205,
+            "species": 205,
+            "className": "FireSpiritMonster",
+            "name": "불꽃 정령(네임드) II",
+            "tier": 2,
+            "kind": "named",
+            "hp": 23,
+            "start": [
+                {
+                    "buffId": 5008,
+                    "amount": 1
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 220501,
+                    "text": "힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 220502,
+                    "text": "피해를 4씩 2회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 4,
+                            "hits": 2
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 220503,
+                    "text": "피해를 14 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 14,
+                            "hits": 1
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "noRepeat": [
+                    "P01"
+                ]
+            }
+        },
+        {
+            "id": 3205,
+            "species": 205,
+            "className": "FireSpiritMonster",
+            "name": "불꽃 정령(네임드) III",
+            "tier": 3,
+            "kind": "named",
+            "hp": 29,
+            "start": [
+                {
+                    "buffId": 5008,
+                    "amount": 1
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 320501,
+                    "text": "힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 320502,
+                    "text": "피해를 5씩 2회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 5,
+                            "hits": 2
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 320503,
+                    "text": "피해를 18 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 18,
+                            "hits": 1
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "noRepeat": [
+                    "P01"
+                ]
+            }
+        },
+        {
+            "id": 4205,
+            "species": 205,
+            "className": "FireSpiritMonster",
+            "name": "불꽃 정령(네임드) IV",
+            "tier": 4,
+            "kind": "named",
+            "hp": 35,
+            "start": [
+                {
+                    "buffId": 5008,
+                    "amount": 1
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 420501,
+                    "text": "힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 420502,
+                    "text": "피해를 6씩 2회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 6,
+                            "hits": 2
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 420503,
+                    "text": "피해를 22 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 22,
+                            "hits": 1
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "noRepeat": [
+                    "P01"
+                ]
+            }
+        },
+        {
+            "id": 1206,
+            "species": 206,
+            "className": "VoidBugMonster",
+            "name": "공허 벌레(네임드) I",
+            "tier": 1,
+            "kind": "named",
+            "hp": 27,
+            "start": [
+                {
+                    "buffId": 5002,
+                    "amount": 3
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 120601,
+                    "text": "피해를 4 입힙니다. 부식을 1 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 4,
+                            "hits": 1
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4001,
+                            "amount": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 120602,
+                    "text": "피해를 4 입힙니다. 빈약을 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 4,
+                            "hits": 1
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 2
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 120603,
+                    "text": "힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P03",
+                    "P02"
+                ]
+            }
+        },
+        {
+            "id": 3206,
+            "species": 206,
+            "className": "VoidBugMonster",
+            "name": "공허 벌레(네임드) III",
+            "tier": 3,
+            "kind": "named",
+            "hp": 17,
+            "start": [
+                {
+                    "buffId": 5002,
+                    "amount": 2
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 320601,
+                    "text": "피해를 3 입힙니다. 부식을 1 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 3,
+                            "hits": 1
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4001,
+                            "amount": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 320602,
+                    "text": "피해를 3 입힙니다. 빈약을 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 3,
+                            "hits": 1
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 2
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 320603,
+                    "text": "힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P03",
+                    "P02"
+                ]
+            }
+        },
+        {
+            "id": 4206,
+            "species": 206,
+            "className": "VoidBugMonster",
+            "name": "공허 벌레(네임드) IV",
+            "tier": 4,
+            "kind": "named",
+            "hp": 24,
+            "start": [
+                {
+                    "buffId": 5002,
+                    "amount": 3
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 420601,
+                    "text": "피해를 4 입힙니다. 부식을 1 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 4,
+                            "hits": 1
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4001,
+                            "amount": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 420602,
+                    "text": "피해를 4 입힙니다. 빈약을 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 4,
+                            "hits": 1
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 2
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 420603,
+                    "text": "힘을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P03",
+                    "P02"
+                ]
+            }
+        },
+        {
+            "id": 2207,
+            "species": 207,
+            "className": "MutantMushroomMonster",
+            "name": "변이 버섯(네임드) II",
+            "tier": 2,
+            "kind": "named",
+            "hp": 13,
+            "start": [
+                {
+                    "buffId": 5013,
+                    "amount": 1
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 220701,
+                    "text": "피해를 6 입힙니다. 체력을 막히지 않은 피해만큼 회복합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 6,
+                            "hits": 1
+                        },
+                        {
+                            "type": "healUnblocked"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 220702,
+                    "text": "보호막을 6 얻습니다. 약화를 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "block",
+                            "amount": 6,
+                            "target": "self"
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4008,
+                            "amount": 2
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02"
+                ]
+            }
+        },
+        {
+            "id": 3207,
+            "species": 207,
+            "className": "MutantMushroomMonster",
+            "name": "변이 버섯(네임드) III",
+            "tier": 3,
+            "kind": "named",
+            "hp": 17,
+            "start": [
+                {
+                    "buffId": 5013,
+                    "amount": 1
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 320701,
+                    "text": "피해를 8 입힙니다. 체력을 막히지 않은 피해만큼 회복합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 8,
+                            "hits": 1
+                        },
+                        {
+                            "type": "healUnblocked"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 320702,
+                    "text": "보호막을 8 얻습니다. 약화를 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "block",
+                            "amount": 8,
+                            "target": "self"
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4008,
+                            "amount": 2
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "cycle",
+                "order": [
+                    "P01",
+                    "P02"
+                ]
+            }
+        },
+        {
+            "id": 5301,
+            "species": 301,
+            "className": "GiantFlowerSpiderBossMonster",
+            "name": "아라크네",
+            "tier": 5,
+            "kind": "boss",
+            "hp": 248,
+            "start": [
+                {
+                    "buffId": 5009,
+                    "amount": 8
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 530101,
+                    "text": "피해를 2씩 여덟 다리 중첩만큼 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 2,
+                            "hitsBuff": 5009
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 530102,
+                    "text": "약화를 3 부여합니다. 부식을 3 부여합니다. 빈약을 3 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4008,
+                            "amount": 3
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4001,
+                            "amount": 3
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 3
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 530103,
+                    "text": "피해를 21 입힙니다. 적의 버린 카드 더미에 자상 카드를 2장 생성합니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 21,
+                            "hits": 1
+                        },
+                        {
+                            "type": "card",
+                            "cardId": 10,
+                            "count": 2,
+                            "zone": "discard"
+                        }
+                    ]
+                },
+                {
+                    "key": "P04",
+                    "id": 530104,
+                    "text": "보호막을 4 얻습니다. 피해를 8 입힙니다. 체력을 4 회복합니다.",
+                    "actions": [
+                        {
+                            "type": "block",
+                            "amount": 4,
+                            "target": "self"
+                        },
+                        {
+                            "type": "attack",
+                            "amount": 8,
+                            "hits": 1
+                        },
+                        {
+                            "type": "heal",
+                            "amount": 4
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "random",
+                "start": "P01",
+                "noRepeatAll": true
+            }
+        },
+        {
+            "id": 5302,
+            "species": 302,
+            "className": "ProphetBossMonster",
+            "name": "선지자",
+            "tier": 5,
+            "kind": "boss",
+            "hp": 138,
+            "start": [
+                {
+                    "buffId": 5010,
+                    "amount": 1
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 530201,
+                    "text": "적의 이로운 효과를 하나 훔칩니다. 적이 보유한 이로운 효과가 없다면 다음 공격이 매우 강해집니다.",
+                    "actions": [
+                        {
+                            "type": "special",
+                            "key": "steal_buff"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 530202,
+                    "text": "피해를 8씩 (미래 포식 발동 수 + 1)회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 8,
+                            "hits": 1,
+                            "hitsActivationBuff": 5010
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 530203,
+                    "text": "빈약을 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 2
+                        }
+                    ]
+                },
+                {
+                    "key": "P04",
+                    "id": 530204,
+                    "text": "피해를 40 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 40,
+                            "hits": 1
+                        }
+                    ]
+                },
+                {
+                    "key": "P05",
+                    "id": 530205,
+                    "text": "부식을 2 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4001,
+                            "amount": 2
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "branch",
+                "start": "P01",
+                "branches": [
+                    {
+                        "name": "stole",
+                        "loop": [
+                            "P02",
+                            "P03",
+                            "P01"
+                        ]
+                    },
+                    {
+                        "name": "failed",
+                        "loop": [
+                            "P04",
+                            "P05",
+                            "P01"
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "id": 5303,
+            "species": 303,
+            "className": "IceAndFireBossMonster",
+            "name": "얼음과 불",
+            "tier": 5,
+            "kind": "boss",
+            "hp": 165,
+            "start": [
+                {
+                    "buffId": 5014,
+                    "amount": 1
+                }
+            ],
+            "startBlock": 55,
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 530301,
+                    "text": "피해를 4씩 5회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 4,
+                            "hits": 5
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 530302,
+                    "text": "빈약을 99 부여합니다. 부식을 99 부여합니다. 약화를 99 부여합니다.",
+                    "actions": [
+                        {
+                            "type": "debuff",
+                            "buffId": 4011,
+                            "amount": 99
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4001,
+                            "amount": 99
+                        },
+                        {
+                            "type": "debuff",
+                            "buffId": 4008,
+                            "amount": 99
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 530303,
+                    "text": "힘을 3 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3002,
+                            "amount": 3,
+                            "target": "self"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "rules",
+                "start": "P02",
+                "rules": [
+                    {
+                        "if": {
+                            "type": "has_block"
+                        },
+                        "use": "P03"
+                    },
+                    {
+                        "use": "P01"
+                    }
+                ],
+                "decideAtTurnEnd": true
+            }
+        },
+        {
+            "id": 5304,
+            "species": 304,
+            "className": "VoidLordBossMonster",
+            "name": "공허 군주",
+            "tier": 5,
+            "kind": "boss",
+            "hp": 180,
+            "start": [
+                {
+                    "buffId": 5002,
+                    "amount": 6
+                }
+            ],
+            "patterns": [
+                {
+                    "key": "P01",
+                    "id": 530401,
+                    "text": "적의 뽑을 카드 더미(섞어 넣기)에 공허의 부름 카드를 1장 생성합니다. 적의 손에 공허의 부름 카드를 1장 생성합니다. 적의 버린 카드 더미에 공허의 부름 카드를 1장 생성합니다.",
+                    "actions": [
+                        {
+                            "type": "card",
+                            "cardId": 30,
+                            "count": 1,
+                            "zone": "drawShuffle"
+                        },
+                        {
+                            "type": "card",
+                            "cardId": 30,
+                            "count": 1,
+                            "zone": "hand"
+                        },
+                        {
+                            "type": "card",
+                            "cardId": 30,
+                            "count": 1,
+                            "zone": "discard"
+                        }
+                    ]
+                },
+                {
+                    "key": "P02",
+                    "id": 530402,
+                    "text": "공허 껍질을 2 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 5002,
+                            "amount": 2,
+                            "target": "self"
+                        }
+                    ]
+                },
+                {
+                    "key": "P03",
+                    "id": 530403,
+                    "text": "피해를 8씩 3회 입힙니다.",
+                    "actions": [
+                        {
+                            "type": "attack",
+                            "amount": 8,
+                            "hits": 3
+                        }
+                    ]
+                },
+                {
+                    "key": "P04",
+                    "id": 530404,
+                    "text": "해로운 효과를 모두 제거합니다. 다음 턴에 아무것도 하지 않지만, 피해를 받지 않습니다.",
+                    "actions": [
+                        {
+                            "type": "special",
+                            "key": "cleanse_invulnerable"
+                        }
+                    ]
+                },
+                {
+                    "key": "P05",
+                    "id": 530405,
+                    "text": "아무 행동도 하지 않습니다.",
+                    "actions": [
+                        {
+                            "type": "nothing"
+                        }
+                    ]
+                },
+                {
+                    "key": "P06",
+                    "id": 530406,
+                    "text": "강공을 4 얻습니다.",
+                    "actions": [
+                        {
+                            "type": "buff",
+                            "buffId": 3009,
+                            "amount": 4,
+                            "target": "self"
+                        }
+                    ]
+                }
+            ],
+            "ai": {
+                "type": "rules",
+                "start": "P03",
+                "rules": [
+                    {
+                        "if": {
+                            "type": "alone"
+                        },
+                        "loop": [
+                            "P06",
+                            "P03"
+                        ]
+                    },
+                    {
+                        "loop": [
+                            "P01",
+                            "P02",
+                            "P03"
+                        ]
+                    }
+                ],
+                "lock": {
+                    "if": {
+                        "type": "debuff_kinds_ge",
+                        "value": 3
+                    },
+                    "loop": [
+                        "P04",
+                        "P05",
+                        "P03"
+                    ],
+                    "decideAtTurnEnd": true
+                }
+            }
+        }
+    ]
+}

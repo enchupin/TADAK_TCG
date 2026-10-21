@@ -1,0 +1,584 @@
+﻿{
+    "version": "1.0",
+    "encounters": [
+        {
+            "id": "E101",
+            "kind": "normal",
+            "tier": 1,
+            "monsters": [
+                1101,
+                1102
+            ]
+        },
+        {
+            "id": "E102",
+            "kind": "normal",
+            "tier": 1,
+            "monsters": [
+                1101,
+                1103
+            ]
+        },
+        {
+            "id": "E103",
+            "kind": "normal",
+            "tier": 1,
+            "monsters": [
+                1102,
+                1103
+            ]
+        },
+        {
+            "id": "E104",
+            "kind": "normal",
+            "tier": 1,
+            "monsters": [
+                1101,
+                1115
+            ]
+        },
+        {
+            "id": "E105",
+            "kind": "normal",
+            "tier": 1,
+            "monsters": [
+                1103,
+                1115
+            ]
+        },
+        {
+            "id": "E106",
+            "kind": "normal",
+            "tier": 1,
+            "monsters": [
+                1109,
+                1109
+            ]
+        },
+        {
+            "id": "E107",
+            "kind": "normal",
+            "tier": 1,
+            "monsters": [
+                1111,
+                1111
+            ]
+        },
+        {
+            "id": "E108",
+            "kind": "normal",
+            "tier": 1,
+            "monsters": [
+                1110,
+                1114
+            ]
+        },
+        {
+            "id": "E109",
+            "kind": "normal",
+            "tier": 1,
+            "monsters": [
+                1104,
+                1116
+            ]
+        },
+        {
+            "id": "E110",
+            "kind": "normal",
+            "tier": 1,
+            "monsters": [
+                1116,
+                1116
+            ]
+        },
+        {
+            "id": "E111",
+            "kind": "normal",
+            "tier": 1,
+            "monsters": [
+                1104,
+                1110
+            ]
+        },
+        {
+            "id": "E112",
+            "kind": "normal",
+            "tier": 1,
+            "monsters": [
+                1109,
+                1114
+            ]
+        },
+        {
+            "id": "NM02-1",
+            "kind": "named",
+            "tier": 1,
+            "monsters": [
+                1202
+            ]
+        },
+        {
+            "id": "NM06-1",
+            "kind": "named",
+            "tier": 1,
+            "monsters": [
+                1206,
+                1206,
+                1206,
+                1206
+            ]
+        },
+        {
+            "id": "E201",
+            "kind": "normal",
+            "tier": 2,
+            "monsters": [
+                2106,
+                2107,
+                2108
+            ]
+        },
+        {
+            "id": "E202",
+            "kind": "normal",
+            "tier": 2,
+            "monsters": [
+                2106,
+                2107,
+                2107
+            ]
+        },
+        {
+            "id": "E203",
+            "kind": "normal",
+            "tier": 2,
+            "monsters": [
+                2106,
+                2108,
+                2108
+            ]
+        },
+        {
+            "id": "E204",
+            "kind": "normal",
+            "tier": 2,
+            "monsters": [
+                2107,
+                2107,
+                2108
+            ]
+        },
+        {
+            "id": "E205",
+            "kind": "normal",
+            "tier": 2,
+            "monsters": [
+                2101,
+                2102,
+                2103
+            ]
+        },
+        {
+            "id": "E206",
+            "kind": "normal",
+            "tier": 2,
+            "monsters": [
+                2102,
+                2115,
+                2115
+            ]
+        },
+        {
+            "id": "E207",
+            "kind": "normal",
+            "tier": 2,
+            "monsters": [
+                2109,
+                2109,
+                2109
+            ]
+        },
+        {
+            "id": "E208",
+            "kind": "normal",
+            "tier": 2,
+            "monsters": [
+                2111,
+                2111
+            ]
+        },
+        {
+            "id": "E209",
+            "kind": "normal",
+            "tier": 2,
+            "monsters": [
+                2116,
+                2116
+            ]
+        },
+        {
+            "id": "E210",
+            "kind": "normal",
+            "tier": 2,
+            "monsters": [
+                2104,
+                2110
+            ]
+        },
+        {
+            "id": "E211",
+            "kind": "normal",
+            "tier": 2,
+            "monsters": [
+                2114,
+                2116
+            ]
+        },
+        {
+            "id": "E212",
+            "kind": "normal",
+            "tier": 2,
+            "monsters": [
+                2110,
+                2114
+            ]
+        },
+        {
+            "id": "NM02-2",
+            "kind": "named",
+            "tier": 2,
+            "monsters": [
+                2202
+            ]
+        },
+        {
+            "id": "NM03-2",
+            "kind": "named",
+            "tier": 2,
+            "monsters": [
+                2207,
+                2203
+            ]
+        },
+        {
+            "id": "NM05-2",
+            "kind": "named",
+            "tier": 2,
+            "monsters": [
+                2205,
+                2205,
+                2205
+            ]
+        },
+        {
+            "id": "E301",
+            "kind": "normal",
+            "tier": 3,
+            "monsters": [
+                3112,
+                3113
+            ]
+        },
+        {
+            "id": "E302",
+            "kind": "normal",
+            "tier": 3,
+            "monsters": [
+                3112,
+                3115
+            ]
+        },
+        {
+            "id": "E303",
+            "kind": "normal",
+            "tier": 3,
+            "monsters": [
+                3113,
+                3115
+            ]
+        },
+        {
+            "id": "E304",
+            "kind": "normal",
+            "tier": 3,
+            "monsters": [
+                3112,
+                3112
+            ]
+        },
+        {
+            "id": "E305",
+            "kind": "normal",
+            "tier": 3,
+            "monsters": [
+                3108,
+                3108,
+                3108
+            ]
+        },
+        {
+            "id": "E306",
+            "kind": "normal",
+            "tier": 3,
+            "monsters": [
+                3106,
+                3107,
+                3108
+            ]
+        },
+        {
+            "id": "E307",
+            "kind": "normal",
+            "tier": 3,
+            "monsters": [
+                3106,
+                3107,
+                3107
+            ]
+        },
+        {
+            "id": "E308",
+            "kind": "normal",
+            "tier": 3,
+            "monsters": [
+                3109,
+                3109,
+                3109
+            ]
+        },
+        {
+            "id": "E309",
+            "kind": "normal",
+            "tier": 3,
+            "monsters": [
+                3111,
+                3111
+            ]
+        },
+        {
+            "id": "E310",
+            "kind": "normal",
+            "tier": 3,
+            "monsters": [
+                3110,
+                3114
+            ]
+        },
+        {
+            "id": "E311",
+            "kind": "normal",
+            "tier": 3,
+            "monsters": [
+                3104,
+                3116
+            ]
+        },
+        {
+            "id": "E312",
+            "kind": "normal",
+            "tier": 3,
+            "monsters": [
+                3116,
+                3116
+            ]
+        },
+        {
+            "id": "NM03-3",
+            "kind": "named",
+            "tier": 3,
+            "monsters": [
+                3207,
+                3203
+            ]
+        },
+        {
+            "id": "NM04-3",
+            "kind": "named",
+            "tier": 3,
+            "monsters": [
+                3204,
+                3206
+            ]
+        },
+        {
+            "id": "NM05-3",
+            "kind": "named",
+            "tier": 3,
+            "monsters": [
+                3205,
+                3205,
+                3205
+            ]
+        },
+        {
+            "id": "E401",
+            "kind": "normal",
+            "tier": 4,
+            "monsters": [
+                4112,
+                4112,
+                4113
+            ]
+        },
+        {
+            "id": "E402",
+            "kind": "normal",
+            "tier": 4,
+            "monsters": [
+                4112,
+                4113,
+                4113
+            ]
+        },
+        {
+            "id": "E403",
+            "kind": "normal",
+            "tier": 4,
+            "monsters": [
+                4112,
+                4113,
+                4115
+            ]
+        },
+        {
+            "id": "E404",
+            "kind": "normal",
+            "tier": 4,
+            "monsters": [
+                4108,
+                4108,
+                4108
+            ]
+        },
+        {
+            "id": "E405",
+            "kind": "normal",
+            "tier": 4,
+            "monsters": [
+                4106,
+                4107,
+                4108
+            ]
+        },
+        {
+            "id": "E406",
+            "kind": "normal",
+            "tier": 4,
+            "monsters": [
+                4106,
+                4108,
+                4108
+            ]
+        },
+        {
+            "id": "E407",
+            "kind": "normal",
+            "tier": 4,
+            "monsters": [
+                4109,
+                4109,
+                4109
+            ]
+        },
+        {
+            "id": "E408",
+            "kind": "normal",
+            "tier": 4,
+            "monsters": [
+                4111,
+                4111
+            ]
+        },
+        {
+            "id": "E409",
+            "kind": "normal",
+            "tier": 4,
+            "monsters": [
+                4110,
+                4114
+            ]
+        },
+        {
+            "id": "E410",
+            "kind": "normal",
+            "tier": 4,
+            "monsters": [
+                4104,
+                4116
+            ]
+        },
+        {
+            "id": "E411",
+            "kind": "normal",
+            "tier": 4,
+            "monsters": [
+                4116,
+                4114
+            ]
+        },
+        {
+            "id": "NM01-4",
+            "kind": "named",
+            "tier": 4,
+            "monsters": [
+                4201,
+                4201
+            ]
+        },
+        {
+            "id": "NM04-4",
+            "kind": "named",
+            "tier": 4,
+            "monsters": [
+                4204,
+                4206
+            ]
+        },
+        {
+            "id": "NM05-4",
+            "kind": "named",
+            "tier": 4,
+            "monsters": [
+                4205,
+                4205,
+                4205
+            ]
+        },
+        {
+            "id": "BS01",
+            "kind": "boss",
+            "tier": 5,
+            "monsters": [
+                5301
+            ]
+        },
+        {
+            "id": "BS02",
+            "kind": "boss",
+            "tier": 5,
+            "monsters": [
+                5114,
+                5114,
+                5302
+            ]
+        },
+        {
+            "id": "BS03",
+            "kind": "boss",
+            "tier": 5,
+            "monsters": [
+                5303
+            ]
+        },
+        {
+            "id": "BS04",
+            "kind": "boss",
+            "tier": 5,
+            "monsters": [
+                5109,
+                5204,
+                5304
+            ]
+        }
+    ]
+}

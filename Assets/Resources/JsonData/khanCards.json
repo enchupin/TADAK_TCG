@@ -133,7 +133,8 @@
             "description": "적을 도발해 공격하게 합니다. 보호막을 {block} 얻습니다.",
             "effects": [
                 {
-                    "type": "ReplanIntent",
+                    "type": "IntentQueue",
+                    "operation": "CopyAttack",
                     "target": "SingleEnemy"
                 },
                 {
@@ -396,7 +397,8 @@
             "description": "적을 도발해 공격하게 합니다. 보호막을 {block} 얻습니다.",
             "effects": [
                 {
-                    "type": "ReplanIntent",
+                    "type": "IntentQueue",
+                    "operation": "CopyAttack",
                     "target": "SingleEnemy"
                 },
                 {
@@ -479,7 +481,10 @@
             "description": "적의 현재 의도를 변경합니다. (재생)을 2 얻습니다.",
             "effects": [
                 {
-                    "type": "ReplanIntent",
+                    "type": "IntentQueue",
+                    "operation": "Delay",
+                    "amount": 1,
+                    "count": 5,
                     "target": "SingleEnemy"
                 },
                 {
