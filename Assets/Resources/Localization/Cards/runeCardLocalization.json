@@ -479,66 +479,6 @@
             "zhHansDescription": "",
             "ruName": "",
             "ruDescription": ""
-        },
-        {
-            "cardId": 302080,
-            "koName": "조각: 동력",
-            "koDescription": "사용 시 {동력} 1",
-            "enName": "",
-            "enDescription": "",
-            "jaName": "",
-            "jaDescription": "",
-            "zhHantName": "",
-            "zhHantDescription": "",
-            "zhHansName": "",
-            "zhHansDescription": "",
-            "ruName": "",
-            "ruDescription": ""
-        },
-        {
-            "cardId": 302090,
-            "koName": "조각: 보호막",
-            "koDescription": "사용 시 보호막 4",
-            "enName": "",
-            "enDescription": "",
-            "jaName": "",
-            "jaDescription": "",
-            "zhHantName": "",
-            "zhHantDescription": "",
-            "zhHansName": "",
-            "zhHansDescription": "",
-            "ruName": "",
-            "ruDescription": ""
-        },
-        {
-            "cardId": 302100,
-            "koName": "조각: 피해",
-            "koDescription": "사용 시 피해 4",
-            "enName": "",
-            "enDescription": "",
-            "jaName": "",
-            "jaDescription": "",
-            "zhHantName": "",
-            "zhHantDescription": "",
-            "zhHansName": "",
-            "zhHansDescription": "",
-            "ruName": "",
-            "ruDescription": ""
-        },
-        {
-            "cardId": 302110,
-            "koName": "조각: 턴 종료",
-            "koDescription": "사용 시 내 턴 종료 효과 1회 발동",
-            "enName": "",
-            "enDescription": "",
-            "jaName": "",
-            "jaDescription": "",
-            "zhHantName": "",
-            "zhHantDescription": "",
-            "zhHansName": "",
-            "zhHansDescription": "",
-            "ruName": "",
-            "ruDescription": ""
         }
     ]
 }

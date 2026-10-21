@@ -81,6 +81,7 @@ public class HandManager
     public void AddCard(Card card) { if (Cards.Count < Capacity) Cards.Add(card); }
     public void AddCard(List<Card> cards) { foreach (var card in cards) AddCard(card); }
     public bool RemoveCard(Card card) => Cards.Remove(card);
+    public void RefreshCardDisplay(Card card) {}
     public UnityEngine.Coroutine RemoveCardFromHandWithUseAnimation(CardUI ui) { Cards.Remove(ui.Card); return null; }
 }
 public sealed class CharacterIdentityState { public Character Character { get; set; } }

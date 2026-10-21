@@ -88,12 +88,8 @@ static class CardMechanicTests
     private static void VerifyFragment()
     {
         var manager = new TrainingBattleManager();
-        var payload = new Card { cardId = 900001 };
         var payloadEffect = new OrderEffect("fragment");
-        payload.effects.Add(payloadEffect);
-        CardManager.Cards[900001] = payload;
-
-        var host = new Card { cardId = 700010, fragmentCardId = 900001 };
+        var host = new Card { cardId = 700010, fragmentEffects = new() { payloadEffect }, fragmentDescription = "사용 시 피해를 4 입힙니다." };
         var hostEffect = new OrderEffect("host");
         host.effects.Add(hostEffect);
         Finish(CardEffectSequence.Run(host.PlaySequence(manager), manager));
@@ -101,11 +97,22 @@ static class CardMechanicTests
         Assert(manager.battleContext.fragmentedCardsPlayedThisTurn == 1, "조각된 카드 사용 기록");
         Finish(CardEffectSequence.Run(host.PlaySequence(manager), manager));
         Assert(OrderEffect.Log.Count == 4, "조각은 이번 전투 동안 유지되어 다시 발동");
-        Assert(host.CloneForRuntimeCopy().fragmentCardId == 900001, "복제 카드는 조각을 이어받음");
+        Card copy = host.CloneForRuntimeCopy();
+        Assert(copy.HasFragment && copy.fragmentEffects[0] == payloadEffect && copy.fragmentDescription == host.fragmentDescription, "복제 카드는 조각을 이어받음");
+        Assert(FragmentEffect.ExtractQuotedText("조각: 손에서 카드를 1장 선택해 \"사용 시 보호막을 4 얻습니다.\"를 새깁니다.") == "사용 시 보호막을 4 얻습니다.", "조각 문구는 설명의 따옴표 안 문장");
         manager.battleContext.OnTurnStart();
         Assert(manager.battleContext.fragmentedCardsPlayedThisTurn == 0, "턴 시작 시 조각 사용 기록 초기화");
-        CardManager.Cards.Remove(900001);
         OrderEffect.Log.Clear();
+
+        // 조각 카드 사용: 손의 다른 카드에 효과와 따옴표 안 문구를 새김, 이미 조각된 카드는 제외
+        manager = new TrainingBattleManager { PanelAvailable = false };
+        var source = new Card { cardId = 302055, description = "조각: 손에서 카드를 1장 선택해 \"사용 시 피해를 4 입힙니다.\"를 새깁니다." };
+        var engraved = new Card { cardId = 1, fragmentEffects = new() { payloadEffect } };
+        var target = new Card { cardId = 2 };
+        manager.handManager.Cards.AddRange(new[] { source, engraved, target });
+        manager.battleContext.SetContextCards("ThisCard", new() { source });
+        new FragmentEffect { payloadEffects = new() { payloadEffect } }.Execute(manager);
+        Assert(target.HasFragment && target.fragmentDescription == "사용 시 피해를 4 입힙니다." && !source.HasFragment, "조각 효과와 문구를 다른 카드에 새김");
         Console.WriteLine("PASS 조각: 본래 효과 후 발동, 전투 동안 유지");
     }
 

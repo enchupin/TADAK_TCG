@@ -6,11 +6,12 @@ using UnityEngine;
 // 한 카드에는 조각을 1개만 새길 수 있음
 public class FragmentEffect : ICardEffect
 {
-    public int fragmentCardId;
+    // 새길 효과 (JSON의 effects)
+    public List<ICardEffect> payloadEffects;
 
     public void Execute(TrainingBattleManager battleManager)
     {
-        if (battleManager?.handManager == null || fragmentCardId <= 0)
+        if (battleManager?.handManager == null || payloadEffects == null || payloadEffects.Count == 0)
         {
             return;
         }
@@ -24,12 +25,34 @@ public class FragmentEffect : ICardEffect
             return;
         }
 
-        if (battleManager.OpenSelectCardPanel(candidates, 1, selectedCards => ApplyFragment(battleManager, selectedCards)))
+        string description = ExtractQuotedText(hostCard?.description);
+        if (battleManager.OpenSelectCardPanel(candidates, 1, selectedCards => ApplyFragment(battleManager, selectedCards, description)))
         {
             return;
         }
 
-        ApplyFragment(battleManager, new List<Card> { candidates[0] });
+        ApplyFragment(battleManager, new List<Card> { candidates[0] }, description);
+    }
+
+    // 조각 카드 설명의 따옴표 안 문구를 새긴 효과의 표시 문구로 사용 (현지화된 설명 기준)
+    public static string ExtractQuotedText(string description)
+    {
+        if (string.IsNullOrEmpty(description))
+        {
+            return string.Empty;
+        }
+
+        foreach ((char open, char close) in new[] { ('"', '"'), ('\u201C', '\u201D'), ('\u300C', '\u300D') })
+        {
+            int start = description.IndexOf(open);
+            int end = start >= 0 ? description.IndexOf(close, start + 1) : -1;
+            if (start >= 0 && end > start)
+            {
+                return description.Substring(start + 1, end - start - 1).Trim();
+            }
+        }
+
+        return string.Empty;
     }
 
     public static List<Card> ResolveCandidates(TrainingBattleManager battleManager, Card hostCard)
@@ -43,7 +66,7 @@ public class FragmentEffect : ICardEffect
 
         foreach (Card handCard in handCards)
         {
-            if (handCard != null && handCard != hostCard && handCard.fragmentCardId <= 0)
+            if (handCard != null && handCard != hostCard && !handCard.HasFragment)
             {
                 candidates.Add(handCard);
             }
@@ -52,15 +75,16 @@ public class FragmentEffect : ICardEffect
         return candidates;
     }
 
-    private void ApplyFragment(TrainingBattleManager battleManager, List<Card> selectedCards)
+    private void ApplyFragment(TrainingBattleManager battleManager, List<Card> selectedCards, string description)
     {
-        if (selectedCards == null || selectedCards.Count == 0 || selectedCards[0] == null || selectedCards[0].fragmentCardId > 0)
+        if (selectedCards == null || selectedCards.Count == 0 || selectedCards[0] == null || selectedCards[0].HasFragment)
         {
             return;
         }
 
         Card targetCard = selectedCards[0];
-        targetCard.fragmentCardId = fragmentCardId;
+        targetCard.fragmentEffects = new List<ICardEffect>(payloadEffects);
+        targetCard.fragmentDescription = description;
         battleManager.handManager?.RefreshCardDisplay(targetCard);
         battleManager.RefreshHandPlayableState();
         battleManager.UpdateAllUI();

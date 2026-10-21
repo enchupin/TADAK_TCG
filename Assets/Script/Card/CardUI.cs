@@ -529,15 +529,12 @@ public static class CardDescriptionFormatter
     // 조각이 새겨진 카드는 본래 설명 아래에 조각 효과를 덧붙임
     private static string BuildFragmentDescription(Card card)
     {
-        if (card == null || card.fragmentCardId <= 0)
+        if (card == null || !card.HasFragment || string.IsNullOrWhiteSpace(card.fragmentDescription))
         {
             return string.Empty;
         }
 
-        CardData fragmentData = CardManager.GetCard(card.fragmentCardId);
-        return fragmentData != null && !string.IsNullOrWhiteSpace(fragmentData.description)
-            ? $"조각: {RemoveReferencedBuffParentheses(fragmentData.description)}"
-            : string.Empty;
+        return $"조각: {RemoveReferencedBuffParentheses(card.fragmentDescription)}";
     }
 
     private static string FormatBody(Card card, TrainingBattleManager battleManager)

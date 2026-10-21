@@ -153,6 +153,8 @@ public class CardInteractionHandler : UIHoverEffect,
 
         bool hasSingleEnemyTarget = false;
         CollectTargetingFlags(cc.Card.effects, ref hasSingleEnemyTarget);
+        // 조각으로 새긴 효과가 단일 적을 대상으로 하면 대상 지정 필요
+        CollectTargetingFlags(cc.Card.fragmentEffects, ref hasSingleEnemyTarget);
         return hasSingleEnemyTarget;
     }
 

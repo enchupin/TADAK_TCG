@@ -451,10 +451,9 @@ public static class CardEffectFactory
                 };
 
             case EffectType.Fragment:
-                int.TryParse(effectData.cardId, out int fragmentCardId);
                 return new FragmentEffect
                 {
-                    fragmentCardId = fragmentCardId
+                    payloadEffects = BuildRuntimeEffects(effectData.subEffects)
                 };
 
             case EffectType.CopyEnemyDebuffs:

@@ -44,8 +44,10 @@ public class Card
     public List<int> boundCardIds = new();
     public List<int> pendingBoundCardIds = new();
 
-    // 조각: 사용 시 본래 효과 다음에 발동할 페이로드 카드 (카드당 1개, 이번 전투 동안 유지, R-73)
-    public int fragmentCardId;
+    // 조각: 사용 시 본래 효과 다음에 발동할 효과와 그 문구 (카드당 1개, 이번 전투 동안 유지, R-73)
+    public List<ICardEffect> fragmentEffects;
+    public string fragmentDescription;
+    public bool HasFragment => fragmentEffects != null && fragmentEffects.Count > 0;
 
     // 호기심: 비용 0, 사용하면 본래 효과 대신 강화 선택 (R-20~22)
     public bool isCurious;
@@ -146,21 +148,10 @@ public class Card
                 }
             }
 
-            if (fragmentCardId > 0)
+            if (HasFragment)
             {
                 context?.OnFragmentedCardPlayed();
-                Card fragmentCard = CardManager.GetCardAsCard(fragmentCardId);
-                if (fragmentCard != null)
-                {
-                    yield return TriggeredCardExecutionUtility.ExecuteTriggeredCardSequence(
-                        battlemanager,
-                        fragmentCard,
-                        battlemanager != null ? battlemanager.currentTarget : null,
-                        resolveDestination: false,
-                        triggerPowerEffects: false,
-                        allowRepeats: false,
-                        applyPostPlayKeywords: false);
-                }
+                yield return CardEffectSequence.Execute(fragmentEffects, battlemanager);
             }
 
         }
@@ -260,7 +251,8 @@ public class Card
             ? new List<int>(pendingBoundCardIds)
             : new List<int>();
         // 복제 카드는 조각을 이어받지만 호기심과 저장 덱 위치는 이어받지 않음
-        clonedCard.fragmentCardId = fragmentCardId;
+        clonedCard.fragmentEffects = fragmentEffects != null ? new List<ICardEffect>(fragmentEffects) : null;
+        clonedCard.fragmentDescription = fragmentDescription;
         clonedCard.permanentDamageBonus = permanentDamageBonus;
         clonedCard.isCurious = false;
         clonedCard.sourceDeckIndex = -1;
