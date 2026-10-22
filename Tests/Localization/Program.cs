@@ -15,6 +15,9 @@ class Program {
   References();
   Catalog();
   LanguageList(args[0]);
+  SyncCore();
+  Csv();
+  SourceTables(args[0]);
   Console.WriteLine($"로컬라이징 검증 {count}개 통과");
  }
 
@@ -211,5 +214,70 @@ class Program {
   // 기존 저장 값 호환 (PlayerPrefs Localization.Language)
   foreach(var saved in new[]{"ko","en","ja","zh-Hant","zh-Hans","ru"})Check(catalog.NormalizeCode(saved)==saved,$"기존 저장 값 {saved}");
   Check(catalog.ResolveSystemLanguage("Korean")=="ko"&&catalog.ResolveSystemLanguage("Japanese")=="ja","시스템 언어 ko · ja");
+ }
+
+ static void SyncCore(){
+  var names=new Dictionary<string,int>{{"부식",4001},{"강화: 포션",1002}};
+  var report=new LocalizationSyncReport();
+  Equal(LocalizationSourceSync.ConvertSourceText("(부식)을 3 부여합니다.",names,report,"t"),"[buff:4001]을 3 부여합니다.","괄호 버프 → ID");
+  Equal(LocalizationSourceSync.ConvertSourceText("(강화: 포션)을 얻습니다. (턴당 1회)",names,report,"t"),"[buff:1002]을 얻습니다. (턴당 1회)","버프가 아닌 괄호 유지");
+  Check(report.KeptParentheses.Count==1&&report.KeptParentheses[0].Contains("턴당 1회"),"유지한 괄호 보고");
+  Equal(LocalizationSourceSync.ConvertSourceText("{동력}을 2 얻습니다. 피해를 {attack} 줍니다.",names,report,"t"),"{runeBuff}을 2 얻습니다. 피해를 {attack} 줍니다.","동적 이름 키 변환, 수치 자리표시 유지");
+  Equal(LocalizationSourceSync.ConvertSourceText(null,names,report,"t"),"","null 원문");
+  Equal(LocalizationSourceSync.GetTableName("card.1.name"),"cards","카드 표");
+  Equal(LocalizationSourceSync.GetTableName("buff.1.desc"),"buffs","버프 표");
+  Equal(LocalizationSourceSync.GetTableName("monster.101.name"),"monsters","몬스터 표");
+  Equal(LocalizationSourceSync.GetTableName("intent.attack.name"),"intents","의도 표");
+  Equal(LocalizationSourceSync.GetTableName("ui.endTurn"),"ui","UI 표");
+  string hash=LocalizationSourceSync.ComputeHash("피해를 {attack} 줍니다.");
+  Check(hash.Length==12&&hash==LocalizationSourceSync.ComputeHash("피해를 {attack} 줍니다.")&&hash!=LocalizationSourceSync.ComputeHash("피해를 {attack} 입힙니다."),"원문 해시");
+  Check(LocalizationSourceSync.ResolveStatus("a","",hash)==TranslationStatus.Missing,"번역 없음");
+  Check(LocalizationSourceSync.ResolveStatus("a","A",null)==TranslationStatus.Unverified,"해시 기록 없음");
+  Check(LocalizationSourceSync.ResolveStatus("a","A",LocalizationSourceSync.ComputeHash("a"))==TranslationStatus.UpToDate,"최신");
+  Check(LocalizationSourceSync.ResolveStatus("b","A",LocalizationSourceSync.ComputeHash("a"))==TranslationStatus.Stale,"원문 변경");
+  string json=LocalizationSourceSync.SerializeTable(new SortedDictionary<string,string>(StringComparer.Ordinal){{"a","\"인용\" d'Armure\n줄"},{"b","카드"}});
+  Check(!json.Contains("\r")&&json.EndsWith("}\n")&&json.Contains("    \"a\": "),"표 직렬화 형식 (LF · 4칸)");
+  var parsed=JsonSerializer.Deserialize<Dictionary<string,string>>(json);
+  Check(parsed["a"]=="\"인용\" d'Armure\n줄"&&parsed["b"]=="카드","표 직렬화 왕복");
+  Check(json.Contains("카드"),"한글을 이스케이프하지 않음");
+ }
+
+ static void Csv(){
+  string[] values={"plain","콤마, 포함","\"따옴표\"","줄\n바꿈","",""};
+  string line=string.Join(",",values.Select(LocalizationSourceSync.EscapeCsv));
+  var records=LocalizationSourceSync.ParseCsv("﻿key,value\r\n"+line+"\r\nlast,1");
+  Check(records.Count==3,"CSV 레코드 수");
+  Check(records[0][0]=="key","BOM 제거");
+  Check(records[1].SequenceEqual(values),"CSV 왕복");
+  Check(records[2].SequenceEqual(new[]{"last","1"}),"마지막 줄바꿈 없음");
+  Check(LocalizationSourceSync.ParseCsv("").Count==0,"빈 CSV");
+ }
+
+ // ko 생성 표가 JsonData와 같아야 함 (원문 수정 후 동기화를 빼먹으면 실패)
+ static void SourceTables(string root){
+  var report=new LocalizationSyncReport();
+  var tables=LocalizationSourceSync.BuildSourceTables(root,report);
+  Check(report.Warnings.Count==0,"원문 경고 없음: "+string.Join(" / ",report.Warnings));
+  foreach(var table in tables){
+   string path=Path.Combine(root,LocalizationSourceSync.LocalizationFolder,"ko",table.Key+".json");
+   var onDisk=LocalizationSourceSync.ReadTable(path);
+   var diff=table.Value.Where(e=>!onDisk.TryGetValue(e.Key,out var v)||v!=e.Value).Select(e=>e.Key).Concat(onDisk.Keys.Where(k=>!table.Value.ContainsKey(k))).ToList();
+   Check(diff.Count==0,$"ko/{table.Key}.json이 JsonData와 다릅니다. Tools/Localization/한국어 원문 동기화 필요: {string.Join(", ",diff.Take(5))}");
+  }
+  Check(tables["cards"].Keys.Count(k=>k.EndsWith(".name"))==343,"카드 343장");
+  Check(tables["buffs"].Keys.Count(k=>k.EndsWith(".name"))==115,"버프 115개");
+  Check(tables["characters"].Keys.Count(k=>k.EndsWith(".identity"))==10,"아이덴티티 10개");
+  // 모든 언어 표의 참조 버프는 존재하는 ID
+  var buffIds=new HashSet<int>(tables["buffs"].Keys.Select(k=>int.Parse(k.Split('.')[1])));
+  var keywordIds=new HashSet<int>(tables["keywords"].Keys.Select(k=>int.Parse(k.Split('.')[1])));
+  foreach(var dir in Directory.GetDirectories(Path.Combine(root,LocalizationSourceSync.LocalizationFolder))){
+   string code=Path.GetFileName(dir);
+   if(code=="Cards")continue;
+   foreach(var entry in LocalizationSourceSync.ReadLanguage(root,code))
+    foreach(var reference in LocalizedTextFormatter.ExtractReferences(entry.Value)){
+     if(reference.Kind==LocalizedReference.Buff)Check(buffIds.Contains(reference.Id),$"{code} {entry.Key}: 없는 버프 {reference.Id}");
+     if(reference.Kind==LocalizedReference.Keyword)Check(keywordIds.Contains(reference.Id),$"{code} {entry.Key}: 없는 키워드 {reference.Id}");
+    }
+  }
  }
 }

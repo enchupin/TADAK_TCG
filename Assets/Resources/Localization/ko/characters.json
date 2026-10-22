@@ -1,0 +1,22 @@
+{
+    "character.101.identity": "무작위 포션 3장을 제작합니다. 모든 적에게 [buff:4001]을 3 부여합니다.",
+    "character.101.name": "아일라",
+    "character.102.identity": "덱에서 카드 1장을 선택해 복사합니다. [buff:1025]을 얻습니다.",
+    "character.102.name": "잭",
+    "character.103.identity": "다른 캐릭터의 아이덴티티 게이지를 4씩 채웁니다.",
+    "character.103.name": "크림",
+    "character.201.identity": "[buff:3009]을 8 얻습니다. 모든 적에게 [buff:4003]를 2 부여합니다.",
+    "character.201.name": "이그니아",
+    "character.202.identity": "[buff:3024]을 2 얻습니다. [buff:3063]을 3 얻습니다.",
+    "character.202.name": "바네사",
+    "character.203.identity": "강화된 깃털 카드를 2장 생성합니다. [buff:3065]을 1 얻습니다.",
+    "character.203.name": "메렐",
+    "character.204.identity": "모든 적에게 [buff:4016]를 10 부여합니다. [buff:4016]가 적의 최대 체력보다 높다면 즉시 발동합니다. [buff:3066]을 2 얻습니다.",
+    "character.204.name": "미오",
+    "character.301.identity": "보호막을 10 얻습니다. 모든 적에게 [buff:4004]을 2 부여합니다.",
+    "character.301.name": "폴라",
+    "character.302.identity": "{runeBuff}을 5 얻습니다. 내 턴 종료 시 효과들을 1회 발동합니다.",
+    "character.302.name": "룬",
+    "character.303.identity": "[buff:3001]을 6 얻고 보호막을 12 얻습니다.",
+    "character.303.name": "칸"
+}

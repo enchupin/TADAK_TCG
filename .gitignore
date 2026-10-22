@@ -136,3 +136,6 @@ Assets/Resources/CharacterCollection.asset.meta
 
 # Claude 작업용 문서
 /.claude-work/
+
+# 로컬라이징 CSV 내보내기 (번역 전달용)
+/LocalizationExport/

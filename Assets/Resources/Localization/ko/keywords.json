@@ -1,0 +1,22 @@
+{
+    "keyword.1.desc": "이 카드는 턴 종료 시에 손에서 버려지지 않고 보존: 효과를 발동시킵니다.",
+    "keyword.1.name": "보존",
+    "keyword.10.desc": "지정된 효과를 추가로 반복합니다.",
+    "keyword.10.name": "반복",
+    "keyword.2.desc": "이 카드는 낼 수 없습니다.",
+    "keyword.2.name": "사용불가",
+    "keyword.3.desc": "이 카드는 사용 후 버려지는 대신 소멸됩니다.",
+    "keyword.3.name": "소멸",
+    "keyword.4.desc": "이 카드는 사용 후 버려지는 대신 이번 전투 동안 파티에 종속됩니다. 소멸로 처리하지 않습니다.",
+    "keyword.4.name": "각인",
+    "keyword.5.desc": "이 카드는 전투 시작 시 드로우됩니다.",
+    "keyword.5.name": "개시",
+    "keyword.6.desc": "이 카드는 사용 시 유령 키워드를 가진 복제 카드를 손에 생성합니다. 복제 카드는 원래 비용을 유지하며 최소 1입니다.",
+    "keyword.6.name": "그림자",
+    "keyword.7.desc": "이 카드를 사용하면 턴이 강제로 종료됩니다.",
+    "keyword.7.name": "종언",
+    "keyword.8.desc": "이 카드는 사용 또는 턴 종료 시 소멸됩니다.",
+    "keyword.8.name": "유령",
+    "keyword.9.desc": "덱에 같은 유형의 카드가 존재할 수 없습니다.",
+    "keyword.9.name": "유일"
+}

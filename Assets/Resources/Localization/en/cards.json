@@ -1,0 +1,12 @@
+{
+    "card.10.desc": "At the end of the turn, take 2 damage.",
+    "card.10.name": "Laceration",
+    "card.20.desc": "At the end of the turn, take 4 damage.",
+    "card.20.name": "Poisoned",
+    "card.21.desc": "At the end of the turn, take 6 damage.",
+    "card.21.name": "Poisoned+",
+    "card.30.desc": "Gain 2 [buff:4011] at the end of the turn.",
+    "card.30.name": "Call of the Void",
+    "card.40.desc": "While this is in your hand, you cannot draw cards.",
+    "card.40.name": "Root Drain"
+}

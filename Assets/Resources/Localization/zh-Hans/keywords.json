@@ -1,0 +1,19 @@
+{
+    "keyword.1.desc": "此牌在回合结束时不会从手中弃掉，并会触发保留效果。",
+    "keyword.1.name": "保留",
+    "keyword.10.desc": "将指定效果额外重复触发。",
+    "keyword.10.name": "重复",
+    "keyword.2.desc": "此牌无法打出。",
+    "keyword.2.name": "无法打出",
+    "keyword.3.desc": "此牌使用后不会进入弃牌堆，而是会消灭。",
+    "keyword.3.name": "消灭",
+    "keyword.5.desc": "此牌会在战斗开始时抽到。",
+    "keyword.5.name": "开幕",
+    "keyword.6.name": "影子",
+    "keyword.7.desc": "打出此牌会强制结束你的回合。",
+    "keyword.7.name": "终焉",
+    "keyword.8.desc": "此牌在打出时或回合结束时会消灭。",
+    "keyword.8.name": "幽灵",
+    "keyword.9.desc": "牌组中不能存在另一张相同类型的牌。",
+    "keyword.9.name": "唯一"
+}

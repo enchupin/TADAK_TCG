@@ -1,0 +1,19 @@
+{
+    "keyword.1.desc": "This card is not discarded from your hand at the end of turn and triggers its Retain effect.",
+    "keyword.1.name": "Retain",
+    "keyword.10.desc": "Repeat the designated effect additional times.",
+    "keyword.10.name": "Repeat",
+    "keyword.2.desc": "This card cannot be played.",
+    "keyword.2.name": "Unplayable",
+    "keyword.3.desc": "This card Exhausts instead of being discarded after use.",
+    "keyword.3.name": "Exhaust",
+    "keyword.5.desc": "This card is drawn at the start of combat.",
+    "keyword.5.name": "Opening",
+    "keyword.6.name": "Shadow",
+    "keyword.7.desc": "Playing this card forcibly ends your turn.",
+    "keyword.7.name": "Finale",
+    "keyword.8.desc": "This card Exhausts when played or at the end of turn.",
+    "keyword.8.name": "Ghost",
+    "keyword.9.desc": "Your deck cannot contain another card of the same type.",
+    "keyword.9.name": "Unique"
+}
