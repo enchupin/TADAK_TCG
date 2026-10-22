@@ -68,6 +68,7 @@ class Program {
  static void RichText(){
   var colors=TooltipColors.Default;
   Check(colors.BeneficialHex=="26619C"&&colors.HarmfulHex=="FF2400"&&colors.IntentHex=="808000"&&colors.ValueHex=="FBCEB1","기본 색상 라피스 · 스칼렛 · 올리브 · 아프리콧");
+  Check(colors.InactiveHex=="808080"&&TooltipRichText.Inactive("1",colors)=="<color=#808080>1</color>","미달성 · 수령 완료 회색");
   Check(TooltipRichText.EffectName("힘",false,colors)=="<color=#26619C>힘</color>","이로운 효과 이름 라피스");
   Check(TooltipRichText.EffectName("부식",true,colors)=="<color=#FF2400>부식</color>","해로운 효과 이름 스칼렛");
   Check(TooltipRichText.IntentName("공격",colors)=="<color=#808000>공격</color>","의도 이름 올리브");
@@ -89,9 +90,9 @@ class Program {
   BuffTooltipFormatter.DynamicNameLookup attack=(string key,out string name,out bool harmful)=>{name=key=="동력"?"우피: 공격":null;harmful=false;return name!=null;};
 
   // 요구 예시: 힘: 공격 피해가 3 증가합니다.
-  Check(BuffTooltipFormatter.FormatEntry("힘","공격 피해가 {stack} 증가합니다.",3,false,c)==$"{B("힘")}: 공격 피해가 {V(3)} 증가합니다.","힘 예시");
+  Check(BuffTooltipFormatter.FormatEntry("힘","공격 피해가 {stack} 증가합니다.",3,false,c)==$"{B("힘")}\n공격 피해가 {V(3)} 증가합니다.","힘 예시 (이름 한 줄)");
   Check(BuffTooltipFormatter.FormatEntry("힘","공격 피해가 {stack} 증가합니다.",-2,false,c).Contains(V(-2)),"음수 중첩 그대로");
-  Check(BuffTooltipFormatter.FormatEntry("부식","받는 피해가 25% 증가합니다.",2,true,c)==$"{H("부식")}: 받는 피해가 25% 증가합니다.","해로운 효과 이름 스칼렛, 고정 문구 수치는 그대로");
+  Check(BuffTooltipFormatter.FormatEntry("부식","받는 피해가 25% 증가합니다.",2,true,c)==$"{H("부식")}\n받는 피해가 25% 증가합니다.","해로운 효과 이름 스칼렛, 고정 문구 수치는 그대로");
   Check(BuffTooltipFormatter.FormatDescription("카드를 {stack장} 뽑습니다.",2,c)==$"카드를 {V(2)}장 뽑습니다.","{stack장} 단위");
   Check(BuffTooltipFormatter.FormatDescription("공격을 {stack회} 회피합니다.",1,c)==$"공격을 {V(1)}회 회피합니다.","{stack회} 단위");
   Check(BuffTooltipFormatter.FormatDescription("적에게 (부식)을 {stack} 부여합니다.",3,c,refs)==$"적에게 {H("부식")}을 {V(3)} 부여합니다.","참조 버프 괄호 제거 · 극성 색");
@@ -107,6 +108,23 @@ class Program {
   Check(BuffTooltipFormatter.FormatDescription("(부식)과 (발화)",0,c,refs)==$"{H("부식")}과 {H("발화")}","여러 참조");
   Check(BuffTooltipFormatter.FormatEntry("족보","",0,false,c)==B("족보"),"설명 없으면 이름만");
   Check(BuffTooltipFormatter.FormatEntry("","설명",0,false,c)=="설명","이름 없으면 설명만");
+  // 족보 한 줄: 이름: 조건 → 보상, 달성 조건은 기본 색 · 미달성은 회색, 구분자는 기본 색
+  static string G(string t)=>$"<color=#808080>{t}</color>";
+  Check(BuffTooltipFormatter.FormatProgressEntry("더블",new List<(string,bool)>{("?",false),("?",false)},new[]{"카드 1장"},false,c)
+   ==$"{B("더블")}: {G("?")} · {G("?")} → 카드 1장","더블 기본");
+  Check(BuffTooltipFormatter.FormatProgressEntry("더블",new List<(string,bool)>{("1",true),("1",false)},new[]{"카드 1장"},false,c)
+   ==$"{B("더블")}: 1 · {G("1")} → 카드 1장","더블 진행 중");
+  Check(BuffTooltipFormatter.FormatProgressEntry("풀하우스",new List<(string,bool)>{("3↑",false)},new[]{"1회 더 발동"},false,c)
+   ==$"{B("풀하우스")}: {G("3↑")} → 1회 더 발동","풀하우스 기본");
+  // 이미 받은 보상: 조건과 보상 모두 회색 (이름 · 구분자는 그대로)
+  Check(BuffTooltipFormatter.FormatProgressEntry("풀하우스",new List<(string,bool)>{("3↑",true)},new[]{"1회 더 발동"},true,c)
+   ==$"{B("풀하우스")}: {G("3↑")} → {G("1회 더 발동")}","풀하우스 완료");
+  Check(BuffTooltipFormatter.FormatProgressEntry("스트레이트",new List<(string,bool)>{("1",true),("2",false),("3",true)},new[]{"에너지 2","카드 1장"},false,c)
+   ==$"{B("스트레이트")}: 1 · {G("2")} · 3 → 에너지 2 · 카드 1장","스트레이트 진행 중");
+  Check(BuffTooltipFormatter.FormatProgressEntry("스트레이트",new List<(string,bool)>{("1",true),("2",true),("3",true)},new[]{"에너지 2","카드 1장"},true,c)
+   ==$"{B("스트레이트")}: {G("1")} · {G("2")} · {G("3")} → {G("에너지 2")} · {G("카드 1장")}","스트레이트 완료");
+  Check(BuffTooltipFormatter.FormatProgressEntry("로열",new List<(string,bool)>{("이슬라",true),("잭",false),("크림",false)},new[]{"에너지 1"},false,c)
+   ==$"{B("로열")}: 이슬라 · {G("잭")} · {G("크림")} → 에너지 1","로열 진행 중");
   // 조사 보정
   Check(BuffTooltipFormatter.AdjustJosa("보호","을")=="를"&&BuffTooltipFormatter.AdjustJosa("공격","를")=="을","을/를");
   Check(BuffTooltipFormatter.AdjustJosa("보호","이")=="가"&&BuffTooltipFormatter.AdjustJosa("동력","가")=="이","이/가");
@@ -149,14 +167,14 @@ class Program {
   BuffTooltipFormatter.ReferenceLookup refs=(string name,out bool harmful)=>{harmful=name=="부식";return name is "부식" or "힘";};
   // 행동 종류마다 한 줄, 이름 올리브 · 숫자 아프리콧
   var text=IntentTooltipFormatter.FormatLines(new List<(string,string)>{("공격","피해를 6씩 2회 입힙니다."),("방어","보호막을 5 얻습니다.")},c,refs);
-  Check(text==$"{O("공격")}: 피해를 {V(6)}씩 {V(2)}회 입힙니다.\n{O("방어")}: 보호막을 {V(5)} 얻습니다.","의도 줄 형식");
+  Check(text==$"{O("공격")}\n피해를 {V(6)}씩 {V(2)}회 입힙니다.\n\n{O("방어")}\n보호막을 {V(5)} 얻습니다.","의도 줄 형식 (이름 한 줄, 종류 사이 빈 줄)");
   // 버프 표기는 괄호 제거 · 극성 색, 숫자 색 태그 안의 16진수는 다시 해석하지 않음
   Check(IntentTooltipFormatter.FormatSentence("(부식)을 2 부여합니다.",c,refs)==$"{H("부식")}을 {V(2)} 부여합니다.","해로운 효과 부여");
   Check(IntentTooltipFormatter.FormatSentence("(힘)을 3 얻습니다.",c,refs)==$"{B("힘")}을 {V(3)} 얻습니다.","이로운 효과 획득");
   Check(IntentTooltipFormatter.FormatSentence("(4001)을 2 부여합니다.",c,refs)==$"(4001)을 {V(2)} 부여합니다.","버프가 아닌 괄호 유지");
   Check(IntentTooltipFormatter.FormatSentence("받는 피해 25%",c)==$"받는 피해 {V(25)}%","퍼센트 수치");
   // 특수 패턴: 여러 의도 이름을 이어서 표시
-  Check(IntentTooltipFormatter.FormatLines(new List<(string,string)>{("강화 · 약화","이로운 효과를 훔칩니다.")},c)==$"{O("강화 · 약화")}: 이로운 효과를 훔칩니다.","여러 의도 이름");
+  Check(IntentTooltipFormatter.FormatLines(new List<(string,string)>{("강화 · 약화","이로운 효과를 훔칩니다.")},c)==$"{O("강화 · 약화")}\n이로운 효과를 훔칩니다.","여러 의도 이름");
   Check(IntentTooltipFormatter.FormatLines(new List<(string,string)>{("","설명만")},c)=="설명만","이름 없으면 문장만");
   Check(IntentTooltipFormatter.FormatLines(new List<(string,string)>{("기절","")},c)==O("기절"),"문장 없으면 이름만");
   Check(IntentTooltipFormatter.FormatLines(new List<(string,string)>(),c)==""&&IntentTooltipFormatter.FormatLines(null,c)=="","빈 의도");

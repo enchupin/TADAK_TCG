@@ -28,14 +28,15 @@ public static class BuffTooltipTextBuilder
         return BuildEntry(buff.data, buff.stack, TooltipView.Colors);
     }
 
-    // 족보 툴팁: 족보 설명 아래 보유 중인 족보마다 설명과 진행도
+    // 족보 툴팁: 족보 이름 한 줄 아래 보유 중인 족보마다 이름: 조건 → 보상 한 줄
+    // 각 족보의 설명은 결국 진행도와 보상이므로 설명 대신 진행도로 표시 (사용자 확인)
     public static string BuildHandRank(IReadOnlyList<Buff> buffs)
     {
         TooltipColors colors = TooltipView.Colors;
         StringBuilder builder = new();
         if (BuffMetadataDatabase.TryGetBuffData(HandRankBuffId, out BuffData handRankData) && handRankData != null)
         {
-            builder.Append(BuildEntry(handRankData, 0, colors));
+            builder.Append(TooltipRichText.EffectName(handRankData.name, false, colors));
         }
 
         foreach (int memberId in HandRankMemberOrder)
@@ -48,16 +49,13 @@ public static class BuffTooltipTextBuilder
 
             if (builder.Length > 0)
             {
-                builder.Append("\n\n");
+                builder.Append('\n');
             }
 
-            builder.Append(BuildEntry(member.data, member.stack, colors));
-            string progress = BuildHandRankProgress(memberId, colors);
-            if (!string.IsNullOrEmpty(progress))
-            {
-                builder.Append('\n');
-                builder.Append(progress);
-            }
+            string progressLine = BuildHandRankProgress(member.data, colors);
+            builder.Append(!string.IsNullOrEmpty(progressLine)
+                ? progressLine
+                : TooltipRichText.EffectName(member.data.name, false, colors));
         }
 
         return builder.ToString();
@@ -111,7 +109,7 @@ public static class BuffTooltipTextBuilder
         return true;
     }
 
-    private static string BuildHandRankProgress(int memberId, TooltipColors colors)
+    private static string BuildHandRankProgress(BuffData memberData, TooltipColors colors)
     {
         TrainingBattleManager battleManager = TrainingBattleManager.Instance;
         PlayerBuffRuntimeService runtime = battleManager != null ? battleManager.Buffs?.Player : null;
@@ -120,46 +118,67 @@ public static class BuffTooltipTextBuilder
             return string.Empty;
         }
 
+        int memberId = memberData.buffId;
+        string name = memberData.name;
+        List<(string text, bool achieved)> conditions = new();
+
         // 버프 ID가 상수가 아니라 switch 대신 순서대로 확인
+        // 진행도에는 비용 단어 없이 숫자만 표시 (사용자 요청)
+        // 더블: 같은 비용 카드 2장 연속 → 카드 1장 (반복 발동), 첫 장 전에는 ?
         if (memberId == DoubleJackBuffId && runtime.TryGetScript(memberId, out DoubleJackBuffScript doubleJack))
         {
-            string lastCost = doubleJack.LastPaidCost >= 0
-                ? $" (직전 비용 {TooltipRichText.Value(doubleJack.LastPaidCost, colors)})"
-                : string.Empty;
-            return $"진행: 연속 {TooltipRichText.Value(doubleJack.SameCostStreak, colors)}/{TooltipRichText.Value(doubleJack.RequiredSameCostStreak, colors)}{lastCost}";
-        }
-
-        if (memberId == HighCostRepeatBuffId && runtime.TryGetScript(memberId, out HighCostRepeatBuffScript highCost))
-        {
-            return highCost.HasRepeatedThisTurn ? "진행: 이번 턴 발동함" : "진행: 이번 턴 발동 대기";
-        }
-
-        if (memberId == StraightBuffId && runtime.TryGetScript(memberId, out StraightBuffScript straight))
-        {
-            if (straight.HasTriggeredThisTurn)
+            bool hasFirst = doubleJack.SameCostStreak > 0 && doubleJack.LastPaidCost >= 0;
+            string costText = hasFirst ? doubleJack.LastPaidCost.ToString() : "?";
+            for (int i = 0; i < doubleJack.RequiredSameCostStreak; i++)
             {
-                return "진행: 이번 턴 발동함";
+                conditions.Add((costText, i < doubleJack.SameCostStreak));
             }
 
-            List<string> paidCosts = new();
+            return BuffTooltipFormatter.FormatProgressEntry(name, conditions, new[] { "카드 1장" }, false, colors);
+        }
+
+        // 풀하우스: 이번 턴 처음 쓰는 비용 3 이상 카드 → 1회 더 발동 (턴당 1회)
+        if (memberId == HighCostRepeatBuffId && runtime.TryGetScript(memberId, out HighCostRepeatBuffScript highCost))
+        {
+            conditions.Add(("3↑", highCost.HasRepeatedThisTurn));
+            return BuffTooltipFormatter.FormatProgressEntry(name, conditions, new[] { "1회 더 발동" }, highCost.HasRepeatedThisTurn, colors);
+        }
+
+        // 스트레이트: 비용 1 · 2 · 3 → 에너지 2 · 카드 1장 (턴당 1회)
+        if (memberId == StraightBuffId && runtime.TryGetScript(memberId, out StraightBuffScript straight))
+        {
             foreach (int cost in StraightBuffScript.RequiredCostList)
             {
-                if (straight.HasPaidCostThisTurn(cost))
+                conditions.Add((cost.ToString(), straight.HasPaidCostThisTurn(cost)));
+            }
+
+            return BuffTooltipFormatter.FormatProgressEntry(name, conditions, new[] { "에너지 2", "카드 1장" }, straight.HasTriggeredThisTurn, colors);
+        }
+
+        // 로열: 파티 전원의 카드 사용 → 에너지 1 (반복 발동)
+        if (memberId == RoyalBuffId && runtime.TryGetScript(memberId, out RoyalBuffScript royal))
+        {
+            foreach (CharacterIdentityState state in battleManager.GetIdentityStates())
+            {
+                if (state != null)
                 {
-                    paidCosts.Add(TooltipRichText.Value(cost, colors));
+                    conditions.Add((GetLocalizedCharacterName(state.Character), royal.HasPlayedCharacter(state.Character)));
                 }
             }
 
-            string paidText = paidCosts.Count > 0 ? $"비용 {string.Join(" · ", paidCosts)} 사용" : "사용한 비용 없음";
-            return $"진행: {paidText} ({TooltipRichText.Value(paidCosts.Count, colors)}/{TooltipRichText.Value(StraightBuffScript.RequiredCostList.Count, colors)})";
-        }
-
-        if (memberId == RoyalBuffId && runtime.TryGetScript(memberId, out RoyalBuffScript royal))
-        {
-            return $"진행: {TooltipRichText.Value(royal.PlayedCharacterCount, colors)}/{TooltipRichText.Value(royal.GetRequiredCharacterCount(battleManager), colors)}명";
+            return BuffTooltipFormatter.FormatProgressEntry(name, conditions, new[] { "에너지 1" }, false, colors);
         }
 
         return string.Empty;
+    }
+
+    // 언어 변경 시 CharacterManager가 갱신하는 현지화 이름 사용
+    private static string GetLocalizedCharacterName(Character character)
+    {
+        CharacterData data = CharacterManager.GetCharacterByEnum(character);
+        return data != null && !string.IsNullOrWhiteSpace(data.characterName)
+            ? data.characterName
+            : character.ToString();
     }
 
     private static Buff FindActiveBuff(IReadOnlyList<Buff> buffs, int buffId)

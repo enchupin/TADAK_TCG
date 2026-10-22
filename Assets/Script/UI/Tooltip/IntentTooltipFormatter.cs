@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 /// <summary>
 /// 의도 툴팁 문구 포맷 (Unity 의존 없음)
 /// </summary>
-// 행동 종류마다 한 줄: 의도 이름(올리브): 문장
+// 행동 종류마다 의도 이름(올리브) 한 줄 + 문장, 행동 종류 사이는 빈 줄
 // 문장 안의 숫자는 아프리콧, (부식) 같은 버프 표기는 괄호를 빼고 극성 색
 public static class IntentTooltipFormatter
 {
@@ -32,7 +32,7 @@ public static class IntentTooltipFormatter
 
             if (builder.Length > 0)
             {
-                builder.Append('\n');
+                builder.Append("\n\n");
             }
 
             if (string.IsNullOrWhiteSpace(intentName))
@@ -44,7 +44,7 @@ public static class IntentTooltipFormatter
             builder.Append(TooltipRichText.IntentName(intentName, colors));
             if (!string.IsNullOrWhiteSpace(body))
             {
-                builder.Append(": ");
+                builder.Append('\n');
                 builder.Append(body);
             }
         }

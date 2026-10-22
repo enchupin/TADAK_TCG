@@ -18,12 +18,16 @@ public class TooltipPalette
     [Tooltip("수치 (아프리콧)")]
     public Color value = new Color32(0xFB, 0xCE, 0xB1, 0xFF);
 
+    [Tooltip("진행도의 미달성 조건 · 이미 받은 보상 (회색), 달성 조건은 기본 텍스트 색")]
+    public Color inactive = new Color32(0x80, 0x80, 0x80, 0xFF);
+
     public TooltipColors ToColors()
     {
         return new TooltipColors(
             ColorUtility.ToHtmlStringRGBA(beneficial),
             ColorUtility.ToHtmlStringRGBA(harmful),
             ColorUtility.ToHtmlStringRGBA(intent),
-            ColorUtility.ToHtmlStringRGBA(value));
+            ColorUtility.ToHtmlStringRGBA(value),
+            ColorUtility.ToHtmlStringRGBA(inactive));
     }
 }

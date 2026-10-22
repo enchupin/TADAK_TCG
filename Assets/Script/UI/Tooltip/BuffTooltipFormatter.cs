@@ -1,9 +1,11 @@
+using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
 
 /// <summary>
 /// 버프 툴팁 문구 포맷 (Unity 의존 없음)
 /// </summary>
-// 이름: 설명 형식, 이름은 극성 색 (패시브는 이로운 효과와 같은 색)
+// 이름 한 줄 + 설명 형식, 이름은 극성 색 (패시브는 이로운 효과와 같은 색)
 // {stack} · {stack장} · {stack회}: 현재 중첩 수치(아프리콧) + 단위
 // {동력} 같은 동적 이름: 조회 결과 이름으로 바꾸고 뒤따르는 조사를 받침에 맞춤
 // (부식) 같은 참조 버프: 괄호를 빼고 참조 버프의 극성 색, 버프가 아닌 괄호 문구는 그대로 둠
@@ -34,7 +36,8 @@ public static class BuffTooltipFormatter
             return body;
         }
 
-        return string.IsNullOrWhiteSpace(body) ? coloredName : $"{coloredName}: {body}";
+        // 이름이 항상 한 줄을 차지하도록 설명은 다음 줄부터
+        return string.IsNullOrWhiteSpace(body) ? coloredName : $"{coloredName}\n{body}";
     }
 
     public static string FormatDescription(
@@ -78,6 +81,51 @@ public static class BuffTooltipFormatter
             // 알 수 없는 자리표시는 중괄호만 뺌
             return key + josa;
         });
+    }
+
+    // 족보 한 줄: 이름: 조건 · 조건 → 보상 · 보상
+    // 달성 조건은 기본 색, 미달성 조건은 회색, 보상을 더 받을 수 없으면 조건과 보상 모두 회색
+    // 구분자( · , → )는 항상 기본 색
+    public static string FormatProgressEntry(
+        string name,
+        IReadOnlyList<(string text, bool achieved)> conditions,
+        IReadOnlyList<string> rewards,
+        bool rewardClaimed,
+        TooltipColors colors)
+    {
+        StringBuilder builder = new();
+        builder.Append(TooltipRichText.EffectName(name, false, colors));
+        builder.Append(": ");
+
+        if (conditions != null)
+        {
+            for (int i = 0; i < conditions.Count; i++)
+            {
+                if (i > 0)
+                {
+                    builder.Append(" · ");
+                }
+
+                (string text, bool achieved) = conditions[i];
+                builder.Append(achieved && !rewardClaimed ? text : TooltipRichText.Inactive(text, colors));
+            }
+        }
+
+        builder.Append(" → ");
+        if (rewards != null)
+        {
+            for (int i = 0; i < rewards.Count; i++)
+            {
+                if (i > 0)
+                {
+                    builder.Append(" · ");
+                }
+
+                builder.Append(rewardClaimed ? TooltipRichText.Inactive(rewards[i], colors) : rewards[i]);
+            }
+        }
+
+        return builder.ToString();
     }
 
     // 이름의 마지막 글자 받침에 맞춰 조사 선택

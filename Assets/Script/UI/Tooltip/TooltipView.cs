@@ -22,6 +22,8 @@ public class TooltipView : MonoBehaviour
     [Header("크기")]
     [Tooltip("텍스트 최대 너비, 넘으면 줄바꿈")]
     [SerializeField] private float maxTextWidth = 360f;
+    [Tooltip("툴팁 패널 최소 크기 (여백 포함), 문구가 짧아도 이 크기보다 작아지지 않음")]
+    [SerializeField] private Vector2 minPanelSize = new Vector2(240f, 60f);
     [Tooltip("텍스트 바깥 여백 (x: 좌우, y: 상하)")]
     [SerializeField] private Vector2 padding = new Vector2(12f, 8f);
     [Tooltip("화면 가장자리와 툴팁 사이 최소 간격")]
@@ -216,13 +218,17 @@ public class TooltipView : MonoBehaviour
         float width = Mathf.Min(Mathf.Ceil(natural.x) + 1f, limit);
         float height = Mathf.Ceil(text.GetPreferredValues(value, width, Mathf.Infinity).y);
 
+        // 최소 크기를 적용한 뒤 텍스트는 늘어난 너비 안에서 좌측 상단부터 배치 (줄바꿈 위치는 그대로)
+        float panelWidth = Mathf.Max(width + padding.x * 2f, minPanelSize.x);
+        float panelHeight = Mathf.Max(height + padding.y * 2f, minPanelSize.y);
+
         RectTransform textRect = text.rectTransform;
-        textRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
+        textRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Max(width, panelWidth - padding.x * 2f));
         textRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
         textRect.anchoredPosition = new Vector2(padding.x, -padding.y);
 
-        panel.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width + padding.x * 2f);
-        panel.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height + padding.y * 2f);
+        panel.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, panelWidth);
+        panel.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, panelHeight);
     }
 
     private void Reposition()
