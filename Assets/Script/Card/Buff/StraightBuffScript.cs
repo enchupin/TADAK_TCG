@@ -13,6 +13,11 @@ public sealed class StraightBuffScript : PlayerBuffScript
 
     public override int BuffId => StraightBuffId;
 
+    // 툴팁 진행도: 필요한 비용 목록, 이번 턴 사용한 비용, 발동 여부
+    public static IReadOnlyList<int> RequiredCostList => RequiredCosts;
+    public bool HasPaidCostThisTurn(int cost) => paidCostsThisTurn.Contains(cost);
+    public bool HasTriggeredThisTurn => hasTriggeredThisTurn;
+
     public override void ResetForCombat(TrainingBattleManager battleManager, PlayerData player)
     {
         ResetTurn();

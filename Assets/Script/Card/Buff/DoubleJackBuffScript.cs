@@ -11,6 +11,11 @@ public sealed class DoubleJackBuffScript : PlayerBuffScript
 
     public override int BuffId => DoubleJackBuffId;
 
+    // 툴팁 진행도: 연속 횟수 / 필요 횟수, 직전 비용 (-1이면 없음)
+    public int SameCostStreak => sameCostStreak;
+    public int RequiredSameCostStreak => RequiredStreak;
+    public int LastPaidCost => lastPaidCost;
+
     public override void ResetForCombat(TrainingBattleManager battleManager, PlayerData player)
     {
         lastPaidCost = -1;

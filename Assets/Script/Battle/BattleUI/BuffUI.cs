@@ -23,11 +23,20 @@ public class BuffUI : MonoBehaviour
     [SerializeField] private BuffTarget target = BuffTarget.Player;
     [SerializeField] private Monster targetMonster;
 
+    [Header("툴팁")]
+    // 슬롯에 TooltipTrigger가 없으면 실행 시 추가하고 이 간격으로 아이콘 하단에 표시
+    [Tooltip("아이콘과 툴팁 사이 간격 (슬롯에 TooltipTrigger를 직접 붙인 경우 그 설정 사용)")]
+    [SerializeField] private float tooltipSpacing = 4f;
+
     private readonly Dictionary<int, Sprite> iconCache = new();
+    // 슬롯 순서대로 표시 중인 버프 ID (툴팁 조회용)
+    private readonly List<int> displayedBuffIds = new();
+    private bool hasSetupTooltipTriggers;
     private string currentBuffSignature;
 
     private void OnEnable()
     {
+        SetupTooltipTriggers();
         currentBuffSignature = null;
         RefreshIfNeeded();
     }
@@ -190,6 +199,82 @@ public class BuffUI : MonoBehaviour
         for (int i = 0; i < visibleCount; i++)
         {
             SetIconSprite(activeBuffIds[i], iconSlots[i]);
+            displayedBuffIds.Add(activeBuffIds[i]);
+        }
+    }
+
+    // 슬롯마다 툴팁 트리거를 연결하고 슬롯 번호로 현재 버프 문구를 조회
+    private void SetupTooltipTriggers()
+    {
+        if (hasSetupTooltipTriggers)
+        {
+            return;
+        }
+
+        hasSetupTooltipTriggers = true;
+        for (int i = 0; i < iconSlots.Count; i++)
+        {
+            Image slot = iconSlots[i];
+            if (slot == null)
+            {
+                continue;
+            }
+
+            if (!slot.TryGetComponent(out TooltipTrigger trigger))
+            {
+                trigger = slot.gameObject.AddComponent<TooltipTrigger>();
+                trigger.SetPlacement(TooltipPlacement.Bottom, tooltipSpacing);
+            }
+
+            trigger.SetSource(new BuffSlotTooltipSource(this, i));
+        }
+    }
+
+    private string GetSlotTooltipText(int slotIndex)
+    {
+        if (slotIndex < 0 || slotIndex >= displayedBuffIds.Count)
+        {
+            return string.Empty;
+        }
+
+        int buffId = displayedBuffIds[slotIndex];
+        List<Buff> sourceBuffs = ResolveSourceBuffs();
+        if (sourceBuffs == null)
+        {
+            return string.Empty;
+        }
+
+        if (buffId == HandRankBuffId && target == BuffTarget.Player)
+        {
+            return BuffTooltipTextBuilder.BuildHandRank(sourceBuffs);
+        }
+
+        // 표시 중 중첩이 바뀌어도 현재 값을 읽도록 매번 목록에서 찾음
+        foreach (Buff buff in sourceBuffs)
+        {
+            if (GetBuffId(buff) == buffId)
+            {
+                return BuffTooltipTextBuilder.Build(buff);
+            }
+        }
+
+        return string.Empty;
+    }
+
+    private sealed class BuffSlotTooltipSource : ITooltipSource
+    {
+        private readonly BuffUI owner;
+        private readonly int slotIndex;
+
+        public BuffSlotTooltipSource(BuffUI owner, int slotIndex)
+        {
+            this.owner = owner;
+            this.slotIndex = slotIndex;
+        }
+
+        public string GetTooltipText()
+        {
+            return owner != null ? owner.GetSlotTooltipText(slotIndex) : string.Empty;
         }
     }
 
@@ -238,18 +323,21 @@ public class BuffUI : MonoBehaviour
         image.sprite = sprite;
         image.enabled = true;
         image.color = Color.white;
-        image.raycastTarget = false;
+        // 툴팁 호버를 받도록 표시 중인 아이콘만 레이캐스트를 켬
+        image.raycastTarget = true;
         image.preserveAspect = true;
     }
 
     private void ClearSlots()
     {
+        displayedBuffIds.Clear();
         foreach (Image image in iconSlots)
         {
             if (image != null)
             {
                 image.enabled = false;
                 image.sprite = null;
+                image.raycastTarget = false;
                 // 편집용 구분색이 전투 중 아이콘과 선택 강조에 남지 않도록 초기화
                 image.color = Color.white;
             }

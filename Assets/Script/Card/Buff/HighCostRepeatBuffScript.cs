@@ -8,6 +8,9 @@ public sealed class HighCostRepeatBuffScript : PlayerBuffScript
 
     public override int BuffId => HighCostRepeatBuffId;
 
+    // 툴팁 진행도: 이번 턴 발동 여부
+    public bool HasRepeatedThisTurn => hasRepeatedThisTurn;
+
     public override void ResetForCombat(TrainingBattleManager battleManager, PlayerData player)
     {
         hasRepeatedThisTurn = false;

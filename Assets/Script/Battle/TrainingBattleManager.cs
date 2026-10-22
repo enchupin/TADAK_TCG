@@ -1472,10 +1472,14 @@ public class TrainingBattleManager : MonoBehaviour
         battleBuffController?.HandleEnemyDebuffApplied(monster, buffId, amount, crueltyStackBeforeApply);
     }
 
-    public void HandleMonsterDeath(Monster monster)
+    // countsAsKill: 자폭처럼 처치가 아닌 사망은 사망 시 효과만 발동하고 처치 효과(처형자 등)는 발동하지 않음
+    public void HandleMonsterDeath(Monster monster, bool countsAsKill = true)
     {
         battleBuffController?.Monsters.OnMonsterDeath(monster);
-        battleBuffController?.Player.OnEnemyKilled(monster);
+        if (countsAsKill)
+        {
+            battleBuffController?.Player.OnEnemyKilled(monster);
+        }
 
         if (monster == null)
         {

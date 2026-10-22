@@ -21,6 +21,9 @@ public class CardInteractionHandler : UIHoverEffect,
     private static bool isAnyCardDragging = false;
     private bool isDragging = false;
 
+    // 버프 · 의도 툴팁이 카드 드래그 중에는 표시되지 않도록 공개
+    public static bool IsAnyCardDragging => isAnyCardDragging;
+
     [Header("Debug")]
     public bool showPlayThreshold = true;
     private Color thresholdColor = new Color(1f, 0f, 0f, 0.5f);
