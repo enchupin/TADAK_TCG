@@ -9,6 +9,8 @@ public sealed class CharacterJsonEntry
     public string name = string.Empty;
     public int maxHp = 0;
     public int identityCost = 0;
+    // 아이덴티티 스킬 설명 한국어 원문, 번역은 Localization/<언어>/characters.json
+    public string identityDescription = string.Empty;
     // 시작 덱 카드 ID (R-11: 기본 카드 2종 × 2장 + 고유 카드 030 · 040)
     public List<int> starterDeck = new List<int>();
 }

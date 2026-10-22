@@ -106,6 +106,15 @@ class Program {
   Check(BuffTooltipFormatter.FormatDescription("{동력}을 얻습니다.",1,c)=="동력을 얻습니다.","조회 없으면 중괄호만 제거");
   // 치환 결과가 다시 해석되지 않음
   Check(BuffTooltipFormatter.FormatDescription("(부식)과 (발화)",0,c,refs)==$"{H("부식")}과 {H("발화")}","여러 참조");
+  // 로컬라이징 표의 ID 참조: 현재 언어 이름 · 극성 색 · 조사 보정, 표시 문구 덮어쓰기
+  BuffTooltipFormatter.BuffIdLookup ids=(int id,out string name,out bool harmful)=>{
+   name=id==4001?"부식":id==3031?"보호":id==4011?"Хрупкость":null;harmful=id==4001||id==4011;return name!=null;};
+  Check(BuffTooltipFormatter.FormatDescription("적에게 [buff:4001]를 {stack} 부여합니다.",3,c,refs,null,ids)==$"적에게 {H("부식")}을 {V(3)} 부여합니다.","ID 참조 · 조사 보정");
+  Check(BuffTooltipFormatter.FormatDescription("[buff:3031]을 얻습니다.",0,c,refs,null,ids)==$"{B("보호")}를 얻습니다.","ID 참조 받침 없음");
+  Check(BuffTooltipFormatter.FormatDescription("Получает 2 [buff:4011|Хрупкости].",0,c,refs,null,ids)==$"Получает 2 {H("Хрупкости")}.","표시 문구 덮어쓰기 · 극성 색");
+  Check(BuffTooltipFormatter.FormatDescription("[buff:9999]을 얻습니다.",0,c,refs,null,ids)=="[buff:9999]을 얻습니다.","조회 실패 시 원문");
+  Check(BuffTooltipFormatter.FormatDescription("[buff:9999|word] x",0,c,refs,null,ids)=="word x","조회 실패 시 표시 문구");
+  Check(BuffTooltipFormatter.FormatDescription("{runeBuff}을 {stack} 얻습니다.",2,c,refs,(string key,out string name,out bool harmful)=>{name=key=="runeBuff"?"우피: 보호":null;harmful=false;return name!=null;})==$"{B("우피: 보호")}를 {V(2)} 얻습니다.","runeBuff 동적 이름");
   Check(BuffTooltipFormatter.FormatEntry("족보","",0,false,c)==B("족보"),"설명 없으면 이름만");
   Check(BuffTooltipFormatter.FormatEntry("","설명",0,false,c)=="설명","이름 없으면 설명만");
   // 족보 한 줄: 이름: 조건 → 보상, 달성 조건은 기본 색 · 미달성은 회색, 구분자는 기본 색
@@ -134,7 +143,7 @@ class Program {
 
  // buffs.json 전체: 남는 중괄호 없음, 괄호 참조는 버프 이름이거나 알려진 문구
  static void BuffData(string root){
-  using var doc=JsonDocument.Parse(File.ReadAllText(Path.Combine(root,"Assets/Resources/Localization/buffs.json")));
+  using var doc=JsonDocument.Parse(File.ReadAllText(Path.Combine(root,"Assets/Resources/JsonData/buffs.json")));
   var buffs=doc.RootElement.GetProperty("buffs").EnumerateArray().Select(b=>(
    id:b.GetProperty("buffId").GetInt32(),
    name:b.GetProperty("name").GetString(),

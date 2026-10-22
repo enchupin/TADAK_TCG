@@ -10,23 +10,14 @@ public sealed class BuffMetadataJsonData
     public string polarity;
     public bool stackable = true;
     public bool signed;
+    // 한국어 원문, 번역은 Localization/<언어>/buffs.json
     public string name;
     public string description;
-    public string enName;
-    public string enDescription;
-    public string jaName;
-    public string jaDescription;
-    public string zhHantName;
-    public string zhHantDescription;
-    public string zhHansName;
-    public string zhHansDescription;
-    public string ruName;
-    public string ruDescription;
 }
 
 public static class BuffMetadataJsonParser
 {
-    private const string BuffResourcePath = "Localization/buffs";
+    private const string BuffResourcePath = "JsonData/buffs";
 
     public static bool TryLoad(out List<BuffMetadataJsonData> buffs)
     {

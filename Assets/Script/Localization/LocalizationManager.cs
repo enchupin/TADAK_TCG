@@ -13,33 +13,8 @@ public enum LocalizationLanguage
     Russian
 }
 
-[Serializable]
-public class CardLocalizationTable
-{
-    public List<CardLocalizationEntry> cards = new();
-}
-
-[Serializable]
-public class CardLocalizationEntry
-{
-    public int cardId;
-    public string koName;
-    public string koDescription;
-    public string enName;
-    public string enDescription;
-    public string jaName;
-    public string jaDescription;
-    public string zhHantName;
-    public string zhHantDescription;
-    public string zhHansName;
-    public string zhHansDescription;
-    public string ruName;
-    public string ruDescription;
-}
-
 public static class LocalizationManager
 {
-    private const string LocalizationResourcePath = "Localization/Cards";
     private const string LanguagePlayerPrefsKey = "Localization.Language";
     // 언어 목록과 언어별 문구 표 (Localization/<언어 코드>/*.json)
     private const string LanguageListResourcePath = "Localization/languages";
@@ -54,7 +29,6 @@ public static class LocalizationManager
     private static LocalizationCatalog catalog;
     private static readonly HashSet<string> loadedLanguageTables = new(StringComparer.OrdinalIgnoreCase);
     private static readonly HashSet<string> reportedMissingKeys = new(StringComparer.Ordinal);
-    private static readonly Dictionary<int, CardLocalizationEntry> localizedEntriesById = new();
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Initialize()
@@ -152,10 +126,11 @@ public static class LocalizationManager
     public static string Format(
         string template,
         IReadOnlyDictionary<string, object> args = null,
-        LocalizedTextFormatter.ReferenceResolver referenceResolver = null)
+        LocalizedTextFormatter.ReferenceResolver referenceResolver = null,
+        bool substituteSimpleArguments = true)
     {
         EnsureInitialized();
-        return LocalizedTextFormatter.Format(template, currentLanguageCode, args, referenceResolver);
+        return LocalizedTextFormatter.Format(template, currentLanguageCode, args, referenceResolver, substituteSimpleArguments);
     }
 
     private static void ApplyLanguageCode(string languageCode)
@@ -172,98 +147,12 @@ public static class LocalizationManager
     {
         BuffMetadataDatabase.RefreshLocalizedText();
         CharacterManager.RefreshLocalizedText();
-        ApplyToAllCards();
         ApplyToCurrentRunDeck();
         RefreshActiveCardControllers();
         LanguageChanged?.Invoke();
     }
 
-    public static string ResolveLocalizedText(
-        string koreanText,
-        string englishText,
-        string japaneseText,
-        string chineseTraditionalText,
-        string chineseSimplifiedText,
-        string russianText,
-        string fallbackText = "")
-    {
-        EnsureInitialized();
-        return ResolveLocalizedText(
-            currentLanguage,
-            koreanText,
-            englishText,
-            japaneseText,
-            chineseTraditionalText,
-            chineseSimplifiedText,
-            russianText,
-            fallbackText);
-    }
-
-    public static string ResolveLocalizedText(
-        LocalizationLanguage language,
-        string koreanText,
-        string englishText,
-        string japaneseText,
-        string chineseTraditionalText,
-        string chineseSimplifiedText,
-        string russianText,
-        string fallbackText = "")
-    {
-        string localizedText = GetLocalizedText(
-            language,
-            koreanText,
-            englishText,
-            japaneseText,
-            chineseTraditionalText,
-            chineseSimplifiedText,
-            russianText);
-
-        if (!string.IsNullOrWhiteSpace(localizedText))
-        {
-            return localizedText;
-        }
-
-        if (language == LocalizationLanguage.Russian && !string.IsNullOrWhiteSpace(englishText))
-        {
-            return englishText;
-        }
-
-        if (!string.IsNullOrWhiteSpace(koreanText))
-        {
-            return koreanText;
-        }
-
-        return fallbackText ?? string.Empty;
-    }
-
-    public static bool TryGetLocalizedCardName(int cardId, out string localizedName)
-    {
-        EnsureInitialized();
-        localizedName = ResolveLocalizedCardName(cardId, string.Empty);
-        return !string.IsNullOrWhiteSpace(localizedName);
-    }
-
-    public static bool TryGetLocalizedCardDescription(int cardId, out string localizedDescription)
-    {
-        EnsureInitialized();
-        localizedDescription = ResolveLocalizedCardDescription(cardId, string.Empty);
-        return !string.IsNullOrWhiteSpace(localizedDescription);
-    }
-
-    public static void ApplyToCards(List<CardData> cards)
-    {
-        EnsureInitialized();
-        if (cards == null)
-        {
-            return;
-        }
-
-        foreach (CardData card in cards)
-        {
-            ApplyToCard(card);
-        }
-    }
-
+    // 런타임 카드 이름 · 설명 틀을 현재 언어로 (CardData 원본은 한국어 그대로 둠)
     public static void ApplyToRuntimeCard(Card card)
     {
         EnsureInitialized();
@@ -272,8 +161,14 @@ public static class LocalizationManager
             return;
         }
 
-        card.cardName = ResolveLocalizedCardName(card.cardId, card.cardName);
-        card.description = ResolveLocalizedCardDescription(card.cardId, card.description);
+        CardData sourceCard = CardManager.GetCard(card.cardId);
+        card.cardName = GameText.CardName(card.cardId, sourceCard != null ? sourceCard.cardName : card.cardName);
+        card.description = GameText.CardDescription(card.cardId, sourceCard != null ? sourceCard.description : card.description);
+        // 새긴 조각 문구는 원래 카드 설명에서 다시 뽑음
+        if (card.fragmentSourceCardId > 0)
+        {
+            card.fragmentDescription = FragmentEffect.ExtractQuotedText(GameText.CardDescription(card.fragmentSourceCardId));
+        }
     }
 
     public static void ApplyToRuntimeCards(IEnumerable<Card> cards)
@@ -288,17 +183,6 @@ public static class LocalizationManager
         {
             ApplyToRuntimeCard(card);
         }
-    }
-
-    public static void ApplyToAllCards()
-    {
-        EnsureInitialized();
-        if (!CardManager.IsInitialized())
-        {
-            return;
-        }
-
-        ApplyToCards(CardManager.GetAllCards());
     }
 
     private static void ApplyToCurrentRunDeck()
@@ -335,7 +219,6 @@ public static class LocalizationManager
 
         isInitialized = true;
         LoadLanguageList();
-        LoadLocalizationTables();
         LoadLanguagePreference();
     }
 
@@ -427,7 +310,7 @@ public static class LocalizationManager
         Debug.LogWarning($"[LocalizationManager] 문구 키가 없습니다: {key} ({currentLanguageCode})");
     }
 
-    // 기존 6개 열 방식 데이터용: 목록에 없는 언어는 폴백 순서에서 처음 나오는 기존 언어로
+    // 기존 enum 사용처용: 목록에 없는 언어는 폴백 순서에서 처음 나오는 기존 언어로
     private static LocalizationLanguage ResolveLegacyLanguage(string languageCode)
     {
         foreach (string code in catalog.GetFallbackChain(languageCode))
@@ -439,53 +322,6 @@ public static class LocalizationManager
         }
 
         return LocalizationLanguage.Korean;
-    }
-
-    private static void LoadLocalizationTables()
-    {
-        localizedEntriesById.Clear();
-
-        TextAsset[] jsonFiles = Resources.LoadAll<TextAsset>(LocalizationResourcePath);
-        if (jsonFiles == null || jsonFiles.Length == 0)
-        {
-            Debug.LogWarning("[LocalizationManager] 카드 로컬라이징 파일을 찾지 못했습니다");
-            return;
-        }
-
-        foreach (TextAsset jsonFile in jsonFiles)
-        {
-            if (jsonFile == null)
-            {
-                continue;
-            }
-
-            CardLocalizationTable table;
-            try
-            {
-                table = JsonUtility.FromJson<CardLocalizationTable>(jsonFile.text);
-            }
-            catch
-            {
-                Debug.LogWarning($"[LocalizationManager] 로컬라이징 파일 파싱에 실패했습니다: {jsonFile.name}");
-                continue;
-            }
-
-            if (table?.cards == null)
-            {
-                Debug.LogWarning($"[LocalizationManager] 로컬라이징 파일 형식이 올바르지 않습니다: {jsonFile.name}");
-                continue;
-            }
-
-            foreach (CardLocalizationEntry entry in table.cards)
-            {
-                if (entry == null || entry.cardId <= 0)
-                {
-                    continue;
-                }
-
-                localizedEntriesById[entry.cardId] = entry;
-            }
-        }
     }
 
     private static void LoadLanguagePreference()
@@ -503,72 +339,6 @@ public static class LocalizationManager
         }
 
         ApplyLanguageCode(catalog.ResolveSystemLanguage(Application.systemLanguage.ToString()));
-    }
-
-    private static void ApplyToCard(CardData card)
-    {
-        if (card == null || card.cardId <= 0)
-        {
-            return;
-        }
-
-        card.cardName = ResolveLocalizedCardName(card.cardId, card.cardName);
-        card.description = ResolveLocalizedCardDescription(card.cardId, card.description);
-    }
-
-    private static string ResolveLocalizedCardName(int cardId, string fallbackText)
-    {
-        if (!localizedEntriesById.TryGetValue(cardId, out CardLocalizationEntry entry) || entry == null)
-        {
-            return fallbackText ?? string.Empty;
-        }
-
-        return ResolveLocalizedText(
-            entry.koName,
-            entry.enName,
-            entry.jaName,
-            entry.zhHantName,
-            entry.zhHansName,
-            entry.ruName,
-            fallbackText);
-    }
-
-    private static string ResolveLocalizedCardDescription(int cardId, string fallbackText)
-    {
-        if (!localizedEntriesById.TryGetValue(cardId, out CardLocalizationEntry entry) || entry == null)
-        {
-            return fallbackText ?? string.Empty;
-        }
-
-        return ResolveLocalizedText(
-            entry.koDescription,
-            entry.enDescription,
-            entry.jaDescription,
-            entry.zhHantDescription,
-            entry.zhHansDescription,
-            entry.ruDescription,
-            fallbackText);
-    }
-
-    private static string GetLocalizedText(
-        LocalizationLanguage language,
-        string koreanText,
-        string englishText,
-        string japaneseText,
-        string chineseTraditionalText,
-        string chineseSimplifiedText,
-        string russianText)
-    {
-        return language switch
-        {
-            LocalizationLanguage.Korean => koreanText,
-            LocalizationLanguage.English => englishText,
-            LocalizationLanguage.Japanese => japaneseText,
-            LocalizationLanguage.ChineseTraditional => chineseTraditionalText,
-            LocalizationLanguage.ChineseSimplified => chineseSimplifiedText,
-            LocalizationLanguage.Russian => russianText,
-            _ => string.Empty
-        };
     }
 
     private static string ToLanguageCode(LocalizationLanguage language)

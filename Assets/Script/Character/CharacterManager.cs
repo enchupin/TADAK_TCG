@@ -6,7 +6,8 @@ public static class CharacterManager
     private static readonly int[] StarterDeckOffsets = { 10, 20, 30, 40, 50, 60, 70 };
     private static readonly int[] UniqueCardOffsets = { 30, 40, 50, 60, 70 };
     private static readonly Dictionary<int, string> defaultCharacterNameById = new Dictionary<int, string>();
-    private static readonly Dictionary<int, CharacterLocalizationJsonEntry> localizedCharacterNameById = new Dictionary<int, CharacterLocalizationJsonEntry>();
+    // characters.json의 한국어 아이덴티티 설명 (번역이 없을 때 사용)
+    private static readonly Dictionary<int, string> defaultIdentityDescriptionById = new Dictionary<int, string>();
     // characters.json에 정의된 시작 덱 (없으면 기존 오프셋 규칙 사용)
     private static readonly Dictionary<int, List<int>> starterDeckById = new Dictionary<int, List<int>>();
 
@@ -23,7 +24,7 @@ public static class CharacterManager
 
         characterCache = new Dictionary<int, CharacterData>();
         defaultCharacterNameById.Clear();
-        localizedCharacterNameById.Clear();
+        defaultIdentityDescriptionById.Clear();
         starterDeckById.Clear();
 
         if (!CharacterJsonParser.TryLoad(out List<CharacterJsonEntry> characters))
@@ -33,7 +34,6 @@ public static class CharacterManager
 
         BuffMetadataDatabase.Preload();
         BattleRuntimeDefinitions.Initialize();
-        LoadCharacterLocalizations();
 
         foreach (CharacterJsonEntry sourceCharacter in characters)
         {
@@ -58,6 +58,7 @@ public static class CharacterManager
                     starterDeckById[runtimeCharacter.characterId] = new List<int>(sourceCharacter.starterDeck);
                 }
                 defaultCharacterNameById[runtimeCharacter.characterId] = runtimeCharacter.characterName;
+                defaultIdentityDescriptionById[runtimeCharacter.characterId] = sourceCharacter.identityDescription ?? string.Empty;
             }
             else
             {
@@ -185,30 +186,6 @@ public static class CharacterManager
         return GetCharacter(GetIdByCharacterEnum(character));
     }
 
-    private static void LoadCharacterLocalizations()
-    {
-        if (!CharacterLocalizationJsonParser.TryLoad(out List<CharacterLocalizationJsonEntry> localizedCharacters))
-        {
-            return;
-        }
-
-        foreach (CharacterLocalizationJsonEntry localizedCharacter in localizedCharacters)
-        {
-            if (localizedCharacter == null || localizedCharacter.characterId <= 0)
-            {
-                continue;
-            }
-
-            if (localizedCharacterNameById.ContainsKey(localizedCharacter.characterId))
-            {
-                Debug.LogWarning($"[CharacterManager] 중복된 캐릭터 로컬라이즈 ID가 있습니다: {localizedCharacter.characterId}");
-                continue;
-            }
-
-            localizedCharacterNameById[localizedCharacter.characterId] = localizedCharacter;
-        }
-    }
-
     private static void ApplyIdentityData(CharacterData runtimeCharacter, int identityCost)
     {
         if (runtimeCharacter == null)
@@ -228,7 +205,6 @@ public static class CharacterManager
             return;
         }
 
-        LocalizationLanguage currentLanguage = LocalizationManager.GetCurrentLanguage();
         foreach (KeyValuePair<int, CharacterData> entry in characterCache)
         {
             if (entry.Value == null)
@@ -236,51 +212,12 @@ public static class CharacterManager
                 continue;
             }
 
-            entry.Value.characterName = ResolveLocalizedCharacterName(currentLanguage, entry.Key, entry.Value.characterName);
-            entry.Value.identity.description = ResolveLocalizedIdentityDescription(currentLanguage, entry.Key, entry.Value.identity.description);
+            defaultCharacterNameById.TryGetValue(entry.Key, out string defaultCharacterName);
+            defaultIdentityDescriptionById.TryGetValue(entry.Key, out string defaultIdentityDescription);
+            entry.Value.characterName = GameText.CharacterName(entry.Key, defaultCharacterName ?? entry.Value.characterName);
+            // 아이덴티티 설명은 [buff:id] 참조를 현재 언어 이름으로 풀어 둠
+            entry.Value.identity.description = GameText.FormatPlain(GameText.IdentityDescription(entry.Key, defaultIdentityDescription));
         }
-    }
-
-    private static string ResolveLocalizedCharacterName(LocalizationLanguage currentLanguage, int characterId, string fallbackText)
-    {
-        string defaultCharacterName = fallbackText ?? string.Empty;
-        if (defaultCharacterNameById.TryGetValue(characterId, out string cachedDefaultCharacterName))
-        {
-            defaultCharacterName = cachedDefaultCharacterName ?? string.Empty;
-        }
-
-        if (!localizedCharacterNameById.TryGetValue(characterId, out CharacterLocalizationJsonEntry localizedCharacter) || localizedCharacter == null)
-        {
-            return defaultCharacterName;
-        }
-
-        return LocalizationManager.ResolveLocalizedText(
-            currentLanguage,
-            localizedCharacter.koName,
-            localizedCharacter.enName,
-            localizedCharacter.jaName,
-            localizedCharacter.zhHantName,
-            localizedCharacter.zhHansName,
-            localizedCharacter.ruName,
-            defaultCharacterName);
-    }
-
-    private static string ResolveLocalizedIdentityDescription(LocalizationLanguage currentLanguage, int characterId, string fallbackText)
-    {
-        if (!localizedCharacterNameById.TryGetValue(characterId, out CharacterLocalizationJsonEntry localizedCharacter) || localizedCharacter == null)
-        {
-            return fallbackText ?? string.Empty;
-        }
-
-        return LocalizationManager.ResolveLocalizedText(
-            currentLanguage,
-            localizedCharacter.koIdentityDescription,
-            localizedCharacter.enIdentityDescription,
-            localizedCharacter.jaIdentityDescription,
-            localizedCharacter.zhHantIdentityDescription,
-            localizedCharacter.zhHansIdentityDescription,
-            localizedCharacter.ruIdentityDescription,
-            fallbackText ?? string.Empty);
     }
 
     private static bool IsStarterDeckSupported(int characterId)

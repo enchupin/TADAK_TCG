@@ -12,6 +12,7 @@ using System.Text;
 // [buff:3012] · [buff:3012|표시 문구] · [keyword:1] · [card:101010]: 참조 토큰, 표시 문구는 격변화 등 덮어쓰기용
 // 한국어는 인자 · 참조 바로 뒤의 조사(을/를 등)를 치환 결과의 받침에 맞춤
 // ICU 작은따옴표 이스케이프는 지원하지 않음 (프랑스어 d'Armure 등을 그대로 쓰기 위함)
+// substituteSimpleArguments가 false면 복수형 · 선택만 해석하고 {name}은 남김 (툴팁의 {stack} 색 처리용)
 public static class LocalizedTextFormatter
 {
     public delegate bool ReferenceResolver(LocalizedReference reference, out string text);
@@ -22,7 +23,8 @@ public static class LocalizedTextFormatter
         string template,
         string languageCode,
         IReadOnlyDictionary<string, object> args = null,
-        ReferenceResolver referenceResolver = null)
+        ReferenceResolver referenceResolver = null,
+        bool substituteSimpleArguments = true)
     {
         if (string.IsNullOrEmpty(template))
         {
@@ -35,7 +37,7 @@ public static class LocalizedTextFormatter
         }
 
         bool adjustJosa = PluralRules.GetPrimaryLanguage(languageCode) == KoreanLanguage;
-        return FormatInternal(template, languageCode, args, referenceResolver, adjustJosa);
+        return FormatInternal(template, new FormatContext(languageCode, args, referenceResolver, adjustJosa, substituteSimpleArguments));
     }
 
     // 문구에 들어 있는 참조 토큰 목록 (카드 툴팁의 참조 버프 추출 · 검증용)
@@ -67,12 +69,25 @@ public static class LocalizedTextFormatter
         return names;
     }
 
-    private static string FormatInternal(
-        string template,
-        string languageCode,
-        IReadOnlyDictionary<string, object> args,
-        ReferenceResolver referenceResolver,
-        bool adjustJosa)
+    private readonly struct FormatContext
+    {
+        public readonly string LanguageCode;
+        public readonly IReadOnlyDictionary<string, object> Args;
+        public readonly ReferenceResolver ReferenceResolver;
+        public readonly bool AdjustJosa;
+        public readonly bool SubstituteSimpleArguments;
+
+        public FormatContext(string languageCode, IReadOnlyDictionary<string, object> args, ReferenceResolver referenceResolver, bool adjustJosa, bool substituteSimpleArguments)
+        {
+            LanguageCode = languageCode;
+            Args = args;
+            ReferenceResolver = referenceResolver;
+            AdjustJosa = adjustJosa;
+            SubstituteSimpleArguments = substituteSimpleArguments;
+        }
+    }
+
+    private static string FormatInternal(string template, FormatContext context)
     {
         StringBuilder builder = new(template.Length + 16);
         int i = 0;
@@ -88,13 +103,13 @@ public static class LocalizedTextFormatter
                 if (close > i)
                 {
                     consumed = close - i + 1;
-                    replaced = FormatArgument(template.Substring(i + 1, close - i - 1), languageCode, args, referenceResolver, adjustJosa);
+                    replaced = FormatArgument(template.Substring(i + 1, close - i - 1), context);
                 }
             }
             else if (c == '[' && TryParseReference(template, i, out LocalizedReference reference, out int length))
             {
                 consumed = length;
-                if (referenceResolver != null && referenceResolver(reference, out string resolved))
+                if (context.ReferenceResolver != null && context.ReferenceResolver(reference, out string resolved))
                 {
                     replaced = resolved ?? string.Empty;
                 }
@@ -121,7 +136,7 @@ public static class LocalizedTextFormatter
 
             builder.Append(replaced);
             i += consumed;
-            if (adjustJosa)
+            if (context.AdjustJosa)
             {
                 int josaLength = KoreanJosa.MatchJosaAt(template, i, out string josa);
                 if (josaLength > 0)
@@ -136,18 +151,14 @@ public static class LocalizedTextFormatter
     }
 
     // { } 안쪽: 이름 또는 "이름, plural|select, 분기들"
-    private static string FormatArgument(
-        string content,
-        string languageCode,
-        IReadOnlyDictionary<string, object> args,
-        ReferenceResolver referenceResolver,
-        bool adjustJosa)
+    private static string FormatArgument(string content, FormatContext context)
     {
+        IReadOnlyDictionary<string, object> args = context.Args;
         int firstComma = IndexOfTopLevel(content, ',', 0);
         if (firstComma < 0)
         {
             string name = content.Trim();
-            return args != null && args.TryGetValue(name, out object value) ? ToDisplayString(value) : null;
+            return context.SubstituteSimpleArguments && args != null && args.TryGetValue(name, out object value) ? ToDisplayString(value) : null;
         }
 
         string argumentName = content.Substring(0, firstComma).Trim();
@@ -173,7 +184,7 @@ public static class LocalizedTextFormatter
                     return null;
                 }
 
-                chosen = ChoosePluralBranch(branches, languageCode, number);
+                chosen = ChoosePluralBranch(branches, context.LanguageCode, number);
                 if (chosen == null)
                 {
                     return null;
@@ -195,7 +206,7 @@ public static class LocalizedTextFormatter
                 return null;
         }
 
-        return FormatInternal(chosen, languageCode, args, referenceResolver, adjustJosa);
+        return FormatInternal(chosen, context);
     }
 
     private static string ChoosePluralBranch(Dictionary<string, string> branches, string languageCode, long number)

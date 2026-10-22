@@ -37,8 +37,6 @@ public static class CardManager
             return;
         }
 
-        LocalizationManager.ApplyToCards(collection.allCards);
-        
         // Dictionary 캐싱 (cardId로 조회)
         cardCache = new Dictionary<int, CardData>();
         foreach (var card in collection.allCards)

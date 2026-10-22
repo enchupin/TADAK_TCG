@@ -19,7 +19,7 @@ class Program {
  static PlayerData Player=>TrainingBattleManager.Instance.playerData;
  static void Main(string[] args){
   root=args[0];UnityEngine.Resources.Root=root;
-  foreach(var b in JObject.Parse(File.ReadAllText(Path.Combine(root,"Assets/Resources/Localization/buffs.json")))["buffs"])BuffMetadataResolver.Names[(int)b["buffId"]]=(string)b["name"];
+  foreach(var b in JObject.Parse(File.ReadAllText(Path.Combine(root,"Assets/Resources/JsonData/buffs.json")))["buffs"])BuffMetadataResolver.Names[(int)b["buffId"]]=(string)b["name"];
   MonsterDatabase.Reload();
   VerifyData();
   VerifyBosses();

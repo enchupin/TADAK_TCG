@@ -47,6 +47,8 @@ public class Card
     // 조각: 사용 시 본래 효과 다음에 발동할 효과와 그 문구 (카드당 1개, 이번 전투 동안 유지, R-73)
     public List<ICardEffect> fragmentEffects;
     public string fragmentDescription;
+    // 조각 문구를 뽑은 카드 (언어 변경 시 그 카드 설명에서 다시 뽑음)
+    public int fragmentSourceCardId;
     public bool HasFragment => fragmentEffects != null && fragmentEffects.Count > 0;
 
     // 호기심: 비용 0, 사용하면 본래 효과 대신 강화 선택 (R-20~22)
@@ -253,6 +255,7 @@ public class Card
         // 복제 카드는 조각을 이어받지만 호기심과 저장 덱 위치는 이어받지 않음
         clonedCard.fragmentEffects = fragmentEffects != null ? new List<ICardEffect>(fragmentEffects) : null;
         clonedCard.fragmentDescription = fragmentDescription;
+        clonedCard.fragmentSourceCardId = fragmentSourceCardId;
         clonedCard.permanentDamageBonus = permanentDamageBonus;
         clonedCard.isCurious = false;
         clonedCard.sourceDeckIndex = -1;

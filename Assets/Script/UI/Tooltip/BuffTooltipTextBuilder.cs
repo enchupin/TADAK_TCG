@@ -8,7 +8,12 @@ using static BattleRuntimeDefinitions;
 public static class BuffTooltipTextBuilder
 {
     // {동력}: 동력 · 우피: 보호 · 우피: 공격은 중첩을 공유하며 우피 모드에 따라 활성 버프가 바뀜
-    private const string RuneDynamicKey = "동력";
+    // 로컬라이징 표에서는 {runeBuff}로 표기
+    private const string RuneDynamicKey = GameText.RuneBuffArgument;
+    // 족보 보상 문구 (ko: 카드 1장 · 1회 더 발동 · 에너지 {amount})
+    private const string RewardCardKey = "ui.tooltip.handRank.rewardCard";
+    private const string RewardRepeatKey = "ui.tooltip.handRank.rewardRepeat";
+    private const string RewardEnergyKey = "ui.tooltip.handRank.rewardEnergy";
 
     // 족보(1028)에 묶여 표시되는 버프 (더블 · 풀하우스 · 스트레이트 · 로열 순서)
     private static readonly int[] HandRankMemberOrder = { DoubleJackBuffId, HighCostRepeatBuffId, StraightBuffId, RoyalBuffId };
@@ -63,21 +68,43 @@ public static class BuffTooltipTextBuilder
 
     private static string BuildEntry(BuffData data, int stack, TooltipColors colors)
     {
+        // 번역문의 복수형({stack, plural, …})만 먼저 풀고 {stack}은 색 처리를 위해 남김
+        string description = LocalizationManager.Format(
+            data.description,
+            new Dictionary<string, object> { { "stack", stack } },
+            null,
+            false);
         return BuffTooltipFormatter.FormatEntry(
             data.name,
-            data.description,
+            description,
             stack,
             BuffData.IsHarmfulBuffId(data.buffId),
             colors,
             TryResolveReference,
-            TryResolveDynamicName);
+            TryResolveDynamicName,
+            TryResolveBuffId);
+    }
+
+    // [buff:id] 참조: 현재 언어 이름 · 극성
+    internal static bool TryResolveBuffId(int buffId, out string buffName, out bool harmful)
+    {
+        buffName = null;
+        harmful = false;
+        if (!BuffMetadataDatabase.TryGetBuffData(buffId, out BuffData data) || data == null)
+        {
+            return false;
+        }
+
+        buffName = data.name;
+        harmful = BuffData.IsHarmfulBuffId(buffId);
+        return true;
     }
 
     // 설명 안의 (버프명) 표기를 버프로 해석, 의도 툴팁도 함께 사용
     internal static bool TryResolveReference(string buffName, out bool harmful)
     {
         harmful = false;
-        if (!BuffMetadataDatabase.TryGetBuffId(buffName, out int buffId))
+        if (!BuffMetadataDatabase.TryGetBuffIdByAnyName(buffName, out int buffId))
         {
             return false;
         }
@@ -95,10 +122,7 @@ public static class BuffTooltipTextBuilder
             return false;
         }
 
-        PlayerData player = PlayerData.Instance;
-        int buffId = player != null && player.wuppiMode == WuppiModeState.Guard ? WuppiGuardBuffId
-            : player != null && player.wuppiMode == WuppiModeState.Attack ? WuppiAttackBuffId
-            : RuneBuffId;
+        int buffId = GameText.GetCurrentRuneBuffId();
         if (!BuffMetadataDatabase.TryGetBuffData(buffId, out BuffData data) || data == null)
         {
             return false;
@@ -134,14 +158,14 @@ public static class BuffTooltipTextBuilder
                 conditions.Add((costText, i < doubleJack.SameCostStreak));
             }
 
-            return BuffTooltipFormatter.FormatProgressEntry(name, conditions, new[] { "카드 1장" }, false, colors);
+            return BuffTooltipFormatter.FormatProgressEntry(name, conditions, new[] { GameText.Ui(RewardCardKey) }, false, colors);
         }
 
         // 풀하우스: 이번 턴 처음 쓰는 비용 3 이상 카드 → 1회 더 발동 (턴당 1회)
         if (memberId == HighCostRepeatBuffId && runtime.TryGetScript(memberId, out HighCostRepeatBuffScript highCost))
         {
             conditions.Add(("3↑", highCost.HasRepeatedThisTurn));
-            return BuffTooltipFormatter.FormatProgressEntry(name, conditions, new[] { "1회 더 발동" }, highCost.HasRepeatedThisTurn, colors);
+            return BuffTooltipFormatter.FormatProgressEntry(name, conditions, new[] { GameText.Ui(RewardRepeatKey) }, highCost.HasRepeatedThisTurn, colors);
         }
 
         // 스트레이트: 비용 1 · 2 · 3 → 에너지 2 · 카드 1장 (턴당 1회)
@@ -152,7 +176,7 @@ public static class BuffTooltipTextBuilder
                 conditions.Add((cost.ToString(), straight.HasPaidCostThisTurn(cost)));
             }
 
-            return BuffTooltipFormatter.FormatProgressEntry(name, conditions, new[] { "에너지 2", "카드 1장" }, straight.HasTriggeredThisTurn, colors);
+            return BuffTooltipFormatter.FormatProgressEntry(name, conditions, new[] { EnergyReward(2), GameText.Ui(RewardCardKey) }, straight.HasTriggeredThisTurn, colors);
         }
 
         // 로열: 파티 전원의 카드 사용 → 에너지 1 (반복 발동)
@@ -166,10 +190,15 @@ public static class BuffTooltipTextBuilder
                 }
             }
 
-            return BuffTooltipFormatter.FormatProgressEntry(name, conditions, new[] { "에너지 1" }, false, colors);
+            return BuffTooltipFormatter.FormatProgressEntry(name, conditions, new[] { EnergyReward(1) }, false, colors);
         }
 
         return string.Empty;
+    }
+
+    private static string EnergyReward(int amount)
+    {
+        return GameText.Ui(RewardEnergyKey, new Dictionary<string, object> { { "amount", amount } });
     }
 
     // 언어 변경 시 CharacterManager가 갱신하는 현지화 이름 사용

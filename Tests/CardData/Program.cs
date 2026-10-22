@@ -40,8 +40,8 @@ public static class Program
             Regex.Matches(parseBody, "case \"(\\w+)\":(?!\\s*throw)").Select(m => m.Groups[1].Value));
         Check(effectTypes.Count > 20, "변환기 효과 타입 추출");
 
-        HashSet<int> buffIds = new HashSet<int>(Load(Path.Combine(locDir, "buffs.json"))["buffs"].Select(b => (int)b["buffId"]));
-        HashSet<int> keywordIds = new HashSet<int>(Load(Path.Combine(locDir, "keywords.json"))["keywords"].Select(k => (int)k["keywordId"]));
+        HashSet<int> buffIds = new HashSet<int>(Load(Path.Combine(jsonDir, "buffs.json"))["buffs"].Select(b => (int)b["buffId"]));
+        HashSet<int> keywordIds = new HashSet<int>(Load(Path.Combine(jsonDir, "keywords.json"))["keywords"].Select(k => (int)k["keywordId"]));
         Dictionary<string, List<int>> groups = Load(Path.Combine(jsonDir, "cardGroups.json"))["groups"]
             .ToDictionary(g => (string)g["groupName"], g => g["cardIds"].Select(id => (int)id).ToList());
 
@@ -63,8 +63,8 @@ public static class Program
 
         foreach (string name in MigratedCardFiles) {
             JArray cards = (JArray)Load(Path.Combine(jsonDir, name + "Cards.json"))["cards"];
-            JArray loc = (JArray)Load(Path.Combine(locDir, "Cards", name + "CardLocalization.json"))["cards"];
-            Dictionary<int, JToken> locById = loc.ToDictionary(c => (int)c["cardId"]);
+            // 한국어 표(ko/cards.json)는 JsonData에서 동기화로 생성
+            JObject koCards = Load(Path.Combine(locDir, "ko", "cards.json"));
             Check(cards.Count > 0, $"{name} 카드 없음");
 
             foreach (JToken card in cards) {
@@ -73,8 +73,8 @@ public static class Program
                 string tag = $"{name}:{id}";
                 Check(id / 1000 == characterId, $"{tag} 캐릭터 ID 접두 불일치");
                 Check(!string.IsNullOrWhiteSpace((string)card["name"]), $"{tag} 이름 없음");
-                Check(locById.TryGetValue(id, out JToken locEntry) && !string.IsNullOrWhiteSpace((string)locEntry["koName"])
-                    && (string)locEntry["koDescription"] == (string)card["description"], $"{tag} 로컬라이징 불일치");
+                Check((string)koCards[$"card.{id}.name"] == (string)card["name"], $"{tag} 로컬라이징 이름 불일치");
+                Check(string.IsNullOrEmpty((string)card["description"]) || !string.IsNullOrWhiteSpace((string)koCards[$"card.{id}.desc"]), $"{tag} 로컬라이징 설명 없음");
 
                 foreach (JToken keyword in (JArray)card["keywords"] ?? new JArray()) {
                     Check(keywordIds.Contains((int)keyword), $"{tag} 키워드 {keyword} 없음");

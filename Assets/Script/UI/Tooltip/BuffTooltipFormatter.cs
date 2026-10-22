@@ -9,15 +9,17 @@ using System.Text.RegularExpressions;
 // {stack} · {stack장} · {stack회}: 현재 중첩 수치(아프리콧) + 단위
 // {동력} 같은 동적 이름: 조회 결과 이름으로 바꾸고 뒤따르는 조사를 받침에 맞춤
 // (부식) 같은 참조 버프: 괄호를 빼고 참조 버프의 극성 색, 버프가 아닌 괄호 문구는 그대로 둠
+// [buff:4001] · [buff:4001|표시 문구]: 로컬라이징 표의 ID 참조, 현재 언어 이름(또는 표시 문구) + 극성 색, 뒤따르는 조사 보정
 public static class BuffTooltipFormatter
 {
     public delegate bool ReferenceLookup(string buffName, out bool harmful);
     public delegate bool DynamicNameLookup(string key, out string buffName, out bool harmful);
+    public delegate bool BuffIdLookup(int buffId, out string buffName, out bool harmful);
 
     private const string StackKey = "stack";
 
     private static readonly Regex TokenPattern = new(
-        @"\{(?<key>[^{}]+)\}(?<josa>으로|로|을|를|이|가|은|는|과|와)?|\((?<ref>[^()]+)\)",
+        @"\{(?<key>[^{}]+)\}(?<josa>으로|로|을|를|이|가|은|는|과|와)?|\[buff:(?<id>\d+)(?:\|(?<display>[^\]]*))?\](?<josa>으로|로|을|를|이|가|은|는|과|와)?|\((?<ref>[^()]+)\)",
         RegexOptions.Compiled);
 
     public static string FormatEntry(
@@ -27,10 +29,11 @@ public static class BuffTooltipFormatter
         bool harmful,
         TooltipColors colors,
         ReferenceLookup referenceLookup = null,
-        DynamicNameLookup dynamicLookup = null)
+        DynamicNameLookup dynamicLookup = null,
+        BuffIdLookup idLookup = null)
     {
         string coloredName = TooltipRichText.EffectName(name, harmful, colors);
-        string body = FormatDescription(description, stack, colors, referenceLookup, dynamicLookup);
+        string body = FormatDescription(description, stack, colors, referenceLookup, dynamicLookup, idLookup);
         if (string.IsNullOrWhiteSpace(name))
         {
             return body;
@@ -45,7 +48,8 @@ public static class BuffTooltipFormatter
         int stack,
         TooltipColors colors,
         ReferenceLookup referenceLookup = null,
-        DynamicNameLookup dynamicLookup = null)
+        DynamicNameLookup dynamicLookup = null,
+        BuffIdLookup idLookup = null)
     {
         if (string.IsNullOrWhiteSpace(description))
         {
@@ -55,6 +59,23 @@ public static class BuffTooltipFormatter
         // 한 번에 치환해 새로 넣은 색 태그가 다시 해석되지 않게 함
         return TokenPattern.Replace(description.Trim(), match =>
         {
+            Group idGroup = match.Groups["id"];
+            if (idGroup.Success)
+            {
+                string idJosa = match.Groups["josa"].Value;
+                Group displayGroup = match.Groups["display"];
+                string display = displayGroup.Success && displayGroup.Value.Length > 0 ? displayGroup.Value : null;
+                if (idLookup != null && int.TryParse(idGroup.Value, out int buffId)
+                    && idLookup(buffId, out string buffName, out bool idHarmful) && !string.IsNullOrEmpty(display ?? buffName))
+                {
+                    string shown = display ?? buffName;
+                    return TooltipRichText.EffectName(shown, idHarmful, colors) + AdjustJosa(shown, idJosa);
+                }
+
+                // 조회할 수 없으면 표시 문구만, 그것도 없으면 원문
+                return display != null ? display + AdjustJosa(display, idJosa) : match.Value;
+            }
+
             Group referenceGroup = match.Groups["ref"];
             if (referenceGroup.Success)
             {
