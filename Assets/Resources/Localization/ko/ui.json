@@ -1,6 +1,7 @@
 {
     "ui.card.curious": "강화됩니다.",
     "ui.card.fragment": "조각: {description}",
+    "ui.monster.scareCrow": "허수아비",
     "ui.tooltip.handRank.rewardCard": "카드 1장",
     "ui.tooltip.handRank.rewardEnergy": "에너지 {amount}",
     "ui.tooltip.handRank.rewardRepeat": "1회 더 발동"

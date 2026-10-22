@@ -32,7 +32,7 @@ public static class LocalizationSourceSync
     public const string UiTable = "ui";
 
     // 동기화 도구가 생성하는 ko 표
-    public static readonly string[] GeneratedTables = { CardsTable, BuffsTable, KeywordsTable, CharactersTable };
+    public static readonly string[] GeneratedTables = { CardsTable, BuffsTable, KeywordsTable, CharactersTable, MonstersTable };
 
     // 기존 원문의 동적 이름 표기 → 영문 인자 이름
     private static readonly Dictionary<string, string> DynamicNameKeys = new(StringComparer.Ordinal)
@@ -61,6 +61,7 @@ public static class LocalizationSourceSync
         AddBuffs(jsonData, tables[BuffsTable], buffIdByName, report);
         AddKeywords(jsonData, tables[KeywordsTable], buffIdByName, report);
         AddCharacters(jsonData, tables[CharactersTable], buffIdByName, report);
+        AddMonsters(jsonData, tables[MonstersTable], buffIdByName, report);
         return tables;
     }
 
@@ -618,6 +619,40 @@ public static class LocalizationSourceSync
             string prefix = $"character.{characterId.ToString(CultureInfo.InvariantCulture)}";
             AddEntry(table, prefix + ".name", character.Value<string>("name"), report);
             AddEntry(table, prefix + ".identity", ConvertSourceText(character.Value<string>("identityDescription"), buffIdByName, report, prefix), report);
+        }
+    }
+
+    // 몬스터 이름(monster.<id>.name)과 화면에 나오는 특수 패턴 문구(monster.pattern.<패턴 id>.text)
+    // 일반 패턴 문구는 행동으로 의도 문장을 만들므로 표에 넣지 않음
+    private static void AddMonsters(string jsonData, SortedDictionary<string, string> table, Dictionary<string, int> buffIdByName, LocalizationSyncReport report)
+    {
+        foreach (JObject monster in ReadArray(Path.Combine(jsonData, "monsters.json"), "monsters"))
+        {
+            int monsterId = monster.Value<int?>("id") ?? 0;
+            if (monsterId <= 0)
+            {
+                continue;
+            }
+
+            string prefix = $"monster.{monsterId.ToString(CultureInfo.InvariantCulture)}";
+            AddEntry(table, prefix + ".name", monster.Value<string>("name"), report);
+            if (monster["patterns"] is not JArray patterns)
+            {
+                continue;
+            }
+
+            foreach (JObject pattern in patterns.OfType<JObject>())
+            {
+                int patternId = pattern.Value<int?>("id") ?? 0;
+                bool hasSpecial = pattern.Descendants().OfType<JObject>().Any(action => action.Value<string>("type") == "special");
+                if (patternId <= 0 || !hasSpecial)
+                {
+                    continue;
+                }
+
+                string patternPrefix = $"monster.pattern.{patternId.ToString(CultureInfo.InvariantCulture)}";
+                AddEntry(table, patternPrefix + ".text", ConvertSourceText(pattern.Value<string>("text"), buffIdByName, report, patternPrefix), report);
+            }
         }
     }
 

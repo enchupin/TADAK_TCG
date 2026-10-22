@@ -239,6 +239,15 @@ public class TrainingBattleManager : MonoBehaviour
     private void HandleLanguageChanged()
     {
         RefreshLocalizedRuntimeCards();
+        // 몬스터 의도 문구도 현재 언어로 다시 만듦
+        if (encounterSystem != null)
+        {
+            foreach (Monster livingMonster in GetLivingMonsters())
+            {
+                livingMonster?.RefreshIntentText();
+            }
+        }
+
         UpdateAllUI();
     }
 

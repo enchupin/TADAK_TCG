@@ -19,6 +19,7 @@ $project = @"
     <Compile Include="$escapedRoot/Assets/Script/Monster/Boss/*.cs" />
     <Compile Include="$escapedRoot/Assets/Script/Monster/DataMonster.cs" />
     <Compile Include="$escapedRoot/Assets/Script/Monster/MonsterIntentLine.cs" />
+    <Compile Include="$escapedRoot/Assets/Script/Localization/Core/*.cs" />
     <Compile Include="$escapedRoot/Assets/Script/Monster/AI/*.cs" />
     <Compile Include="$escapedRoot/Assets/Script/Monster/Data/*.cs" />
     <Compile Include="$escapedRoot/Assets/Script/Card/Buff/MonsterBuffScript.cs" />

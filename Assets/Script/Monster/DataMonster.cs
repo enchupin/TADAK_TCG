@@ -33,7 +33,7 @@ public abstract class DataMonster : Monster, IMonsterAIContext
     public IReadOnlyList<string> QueuedPatternKeys => intentQueue != null ? intentQueue.Items : new List<string>();
     public override int MonsterId => definition != null ? definition.id : 0;
     public int Species => definition != null ? definition.species : 0;
-    protected override string MonsterName => definition != null ? definition.name : base.MonsterName;
+    protected override string MonsterName => definition != null ? MonsterIntentText.MonsterName(definition) : base.MonsterName;
     protected override int BaseMaxHp => definition != null ? definition.hp : 1;
     protected override bool IsBossMonster => definition != null && definition.IsBoss;
 
@@ -312,6 +312,12 @@ public abstract class DataMonster : Monster, IMonsterAIContext
         UpdateUI();
     }
 
+    // 언어 변경 시 의도 문구 다시 만들기
+    protected override void OnRefreshIntentText()
+    {
+        RefreshIntent();
+    }
+
     // 의도 표시 갱신 (거울 중첩 등 미리보기 값이 바뀔 때)
     public void RefreshIntent()
     {
@@ -327,7 +333,7 @@ public abstract class DataMonster : Monster, IMonsterAIContext
     {
         if (string.IsNullOrEmpty(currentKey) || currentKey == MonsterIntentQueue.NoActionKey)
         {
-            SetIntent("아무 행동도 하지 않습니다.");
+            SetIntent(MonsterIntentText.Line("intent.line.nothing"));
             SetPlannedPattern(0, MonsterIntentIconType.Stun);
             return;
         }
@@ -343,7 +349,7 @@ public abstract class DataMonster : Monster, IMonsterAIContext
         List<MonsterActionDefinition> actions = FlattenActions(pattern.actions);
         StringBuilder text = new StringBuilder();
         List<MonsterIntentIconType> icons = new List<MonsterIntentIconType>();
-        // 의도 툴팁용 행동 종류별 문장 (버프 이름은 (이름) 표기)
+        // 의도 툴팁용 행동 종류별 문장 (버프는 [buff:id] 표기, 툴팁에서 현재 언어 이름 · 극성 색)
         List<MonsterIntentLine> lines = new List<MonsterIntentLine>();
         int? firstAttackDamage = null;
         int protection = 0;
@@ -358,7 +364,7 @@ public abstract class DataMonster : Monster, IMonsterAIContext
                     int damage = PreviewAttackDamage(action.amount);
                     int hits = ResolvePlannedHits(action);
                     firstAttackDamage ??= damage;
-                    string attackSentence = hits > 1 ? $"피해를 {damage}씩 {hits}회 입힙니다." : $"피해를 {damage} 입힙니다.";
+                    string attackSentence = MonsterIntentText.Line("intent.line.attack", new Dictionary<string, object> { { "damage", damage }, { "hits", hits } });
                     AppendSentence(text, attackSentence);
                     AddIcon(icons, MonsterIntentIconType.Attack);
                     AddIntentLine(lines, MonsterIntentIconType.Attack, attackSentence);
@@ -374,34 +380,36 @@ public abstract class DataMonster : Monster, IMonsterAIContext
                     break;
                 case MonsterActionDefinition.Buff:
                     int gain = PreviewSelfBuffGain(action);
-                    AppendSentence(text, action.target == MonsterActionDefinition.TargetAllies
-                        ? $"모든 아군이 {WithObjectParticle(GetBuffName(action.buffId))} {gain} 얻습니다."
-                        : $"{WithObjectParticle(GetBuffName(action.buffId))} {gain} 얻습니다.");
+                    string buffSentence = MonsterIntentText.Line(
+                        action.target == MonsterActionDefinition.TargetAllies ? "intent.line.buffAllies" : "intent.line.buff",
+                        BuffArguments(action.buffId, gain));
+                    AppendSentence(text, MonsterIntentText.Plain(buffSentence));
                     AddIcon(icons, MonsterIntentIconType.BeneficialEffect);
-                    AddIntentLine(lines, MonsterIntentIconType.BeneficialEffect, action.target == MonsterActionDefinition.TargetAllies
-                        ? $"모든 아군이 {WithObjectParticleMarked(GetBuffName(action.buffId))} {gain} 얻습니다."
-                        : $"{WithObjectParticleMarked(GetBuffName(action.buffId))} {gain} 얻습니다.");
+                    AddIntentLine(lines, MonsterIntentIconType.BeneficialEffect, buffSentence);
                     break;
                 case MonsterActionDefinition.Debuff:
-                    AppendSentence(text, $"{WithObjectParticle(GetBuffName(action.buffId))} {PreviewPlayerDebuffAmount(action.buffId, action.amount)} 부여합니다.");
+                    string debuffSentence = MonsterIntentText.Line("intent.line.debuff", BuffArguments(action.buffId, PreviewPlayerDebuffAmount(action.buffId, action.amount)));
+                    AppendSentence(text, MonsterIntentText.Plain(debuffSentence));
                     AddIcon(icons, MonsterIntentIconType.HarmfulEffect);
-                    AddIntentLine(lines, MonsterIntentIconType.HarmfulEffect, $"{WithObjectParticleMarked(GetBuffName(action.buffId))} {PreviewPlayerDebuffAmount(action.buffId, action.amount)} 부여합니다.");
+                    AddIntentLine(lines, MonsterIntentIconType.HarmfulEffect, debuffSentence);
                     break;
                 case MonsterActionDefinition.ReducePlayerBuff:
-                    AppendSentence(text, $"적의 {WithObjectParticle(GetBuffName(action.buffId))} {action.amount} 감소시킵니다.");
+                    string reduceSentence = MonsterIntentText.Line("intent.line.reducePlayerBuff", BuffArguments(action.buffId, action.amount));
+                    AppendSentence(text, MonsterIntentText.Plain(reduceSentence));
                     AddIcon(icons, MonsterIntentIconType.HarmfulEffect);
-                    AddIntentLine(lines, MonsterIntentIconType.HarmfulEffect, $"적의 {WithObjectParticleMarked(GetBuffName(action.buffId))} {action.amount} 감소시킵니다.");
+                    AddIntentLine(lines, MonsterIntentIconType.HarmfulEffect, reduceSentence);
                     break;
                 case MonsterActionDefinition.Heal:
-                    string healSentence = $"체력을 {Mathf.Max(0, action.amount)} 회복합니다.";
+                    string healSentence = MonsterIntentText.Line("intent.line.heal", new Dictionary<string, object> { { "amount", Mathf.Max(0, action.amount) } });
                     AppendSentence(text, healSentence);
                     AddIcon(icons, MonsterIntentIconType.Heal);
                     AddIntentLine(lines, MonsterIntentIconType.Heal, healSentence);
                     break;
                 case MonsterActionDefinition.HealUnblocked:
-                    AppendSentence(text, "체력을 막히지 않은 피해만큼 회복합니다.");
+                    string healUnblockedSentence = MonsterIntentText.Line("intent.line.healUnblocked");
+                    AppendSentence(text, healUnblockedSentence);
                     AddIcon(icons, MonsterIntentIconType.Heal);
-                    AddIntentLine(lines, MonsterIntentIconType.Heal, "체력을 막히지 않은 피해만큼 회복합니다.");
+                    AddIntentLine(lines, MonsterIntentIconType.Heal, healUnblockedSentence);
                     break;
                 case MonsterActionDefinition.AddCard:
                     string cardSentence = BuildCardText(action);
@@ -411,13 +419,15 @@ public abstract class DataMonster : Monster, IMonsterAIContext
                     break;
                 case MonsterActionDefinition.Summon:
                     MonsterDefinition summoned = MonsterDatabase.Get(definition.GetSpeciesIdInSameTier(action.species));
-                    string summonSentence = $"{WithObjectParticle(summoned != null ? summoned.name : "몬스터")} 1마리 소환합니다.";
+                    string summonedName = summoned != null ? MonsterIntentText.MonsterName(summoned) : MonsterIntentText.Line("intent.word.monster");
+                    string summonSentence = MonsterIntentText.Line("intent.line.summon", new Dictionary<string, object> { { "monster", summonedName } });
                     AppendSentence(text, summonSentence);
                     AddIcon(icons, MonsterIntentIconType.Summon);
                     AddIntentLine(lines, MonsterIntentIconType.Summon, summonSentence);
                     break;
                 case MonsterActionDefinition.Leave:
-                    AppendSentence(text, "전투에서 이탈합니다.");
+                    string leaveSentence = MonsterIntentText.Line("intent.line.leave");
+                    AppendSentence(text, leaveSentence);
                     // 공격 후 이탈은 자폭 아이콘
                     if (icons.Remove(MonsterIntentIconType.Attack))
                     {
@@ -429,18 +439,19 @@ public abstract class DataMonster : Monster, IMonsterAIContext
                             line.ReplaceIconType(MonsterIntentIconType.Attack, MonsterIntentIconType.Bomb);
                         }
 
-                        AddIntentLine(lines, MonsterIntentIconType.Bomb, "사망합니다.");
+                        AddIntentLine(lines, MonsterIntentIconType.Bomb, MonsterIntentText.Line("intent.line.death"));
                     }
                     else
                     {
                         AddIcon(icons, MonsterIntentIconType.Leave);
-                        AddIntentLine(lines, MonsterIntentIconType.Leave, "전투에서 이탈합니다.");
+                        AddIntentLine(lines, MonsterIntentIconType.Leave, leaveSentence);
                     }
                     break;
                 case MonsterActionDefinition.Nothing:
-                    AppendSentence(text, "아무 행동도 하지 않습니다.");
+                    string nothingSentence = MonsterIntentText.Line("intent.line.nothing");
+                    AppendSentence(text, nothingSentence);
                     AddIcon(icons, MonsterIntentIconType.Stun);
-                    AddIntentLine(lines, MonsterIntentIconType.Stun, "아무 행동도 하지 않습니다.");
+                    AddIntentLine(lines, MonsterIntentIconType.Stun, nothingSentence);
                     break;
                 case MonsterActionDefinition.Special:
                     hasSpecial = true;
@@ -452,7 +463,9 @@ public abstract class DataMonster : Monster, IMonsterAIContext
             }
         }
 
-        string description = hasSpecial && !string.IsNullOrEmpty(pattern.text) ? pattern.text : text.ToString();
+        // 특수 패턴 문구는 현재 언어 표에서 (툴팁 줄은 참조 토큰 유지, 설명은 이름으로)
+        string patternText = hasSpecial ? MonsterIntentText.PatternText(pattern) : string.Empty;
+        string description = hasSpecial && !string.IsNullOrEmpty(patternText) ? MonsterIntentText.Plain(patternText) : text.ToString();
         if (firstAttackDamage.HasValue)
         {
             SetAttackIntent(firstAttackDamage.Value, description);
@@ -464,8 +477,8 @@ public abstract class DataMonster : Monster, IMonsterAIContext
 
         SetPlannedPattern(pattern.id, icons.ToArray());
         // 특수 패턴은 패턴 문구 전체를 한 줄로, 의도 이름은 아이콘 종류를 이어서 표시
-        SetIntentLines(hasSpecial && !string.IsNullOrEmpty(pattern.text)
-            ? new[] { new MonsterIntentLine(pattern.text, icons.ToArray()) }
+        SetIntentLines(hasSpecial && !string.IsNullOrEmpty(patternText)
+            ? new[] { new MonsterIntentLine(patternText, icons.ToArray()) }
             : lines);
         if (hasProtection)
         {
@@ -483,14 +496,14 @@ public abstract class DataMonster : Monster, IMonsterAIContext
         switch (action.target)
         {
             case MonsterActionDefinition.TargetAllies:
-                return $"모든 아군이 보호막을 {block} 얻습니다.";
+                return MonsterIntentText.Line("intent.line.blockAllies", new Dictionary<string, object> { { "amount", block } });
             case MonsterActionDefinition.TargetSpecies:
                 Monster target = FindSpeciesAlly(action.species);
                 return target != null && target != this
-                    ? $"{target.DisplayName}이(가) 보호막을 {block} 얻습니다."
-                    : $"보호막을 {block} 얻습니다.";
+                    ? MonsterIntentText.Line("intent.line.blockTarget", new Dictionary<string, object> { { "target", target.DisplayName }, { "amount", block } })
+                    : MonsterIntentText.Line("intent.line.block", new Dictionary<string, object> { { "amount", block } });
             default:
-                return $"보호막을 {block} 얻습니다.";
+                return MonsterIntentText.Line("intent.line.block", new Dictionary<string, object> { { "amount", block } });
         }
     }
 
@@ -500,8 +513,9 @@ public abstract class DataMonster : Monster, IMonsterAIContext
         int resolvedCardId = battleManager != null ? battleManager.ResolvePersistentUpgradeCardId(action.cardId) : action.cardId;
         Card card = CardManager.GetCardAsCard(resolvedCardId) ?? CardManager.GetCardAsCard(action.cardId);
         string cardName = card != null ? card.cardName : action.cardId.ToString();
-        string zoneText = action.zone == "hand" ? "적의 손에" : action.zone == "drawShuffle" ? "적의 뽑을 카드 더미에" : "적의 버린 카드 더미에";
-        return $"{zoneText} {cardName} 카드를 {Mathf.Max(1, action.count)}장 생성합니다.";
+        // 손 · 뽑을 카드 더미 · 버린 카드 더미마다 문장을 따로 둠 (언어마다 어순이 다름)
+        string key = action.zone == "hand" ? "intent.line.addCard.hand" : action.zone == "drawShuffle" ? "intent.line.addCard.drawShuffle" : "intent.line.addCard.discard";
+        return MonsterIntentText.Line(key, new Dictionary<string, object> { { "card", cardName }, { "count", Mathf.Max(1, action.count) } });
     }
 
     private static void AppendSentence(StringBuilder text, string sentence)
@@ -920,34 +934,10 @@ public abstract class DataMonster : Monster, IMonsterAIContext
         return false;
     }
 
-    private static string GetBuffName(int buffId)
+    // [buff:{buffId}] 틀에 넣을 인자 (버프 이름은 표시할 때 현재 언어로)
+    private static Dictionary<string, object> BuffArguments(int buffId, int amount)
     {
-        BuffData data = BuffMetadataResolver.Resolve(buffId);
-        return data != null && !string.IsNullOrWhiteSpace(data.name) ? data.name : buffId.ToString();
-    }
-
-    // 툴팁 문장용: (이름)을/를 형식으로 버프 이름 색 표시 대상 지정
-    private static string WithObjectParticleMarked(string word)
-    {
-        string withParticle = WithObjectParticle(word);
-        return string.IsNullOrEmpty(word) ? withParticle : $"({word}){withParticle.Substring(word.Length)}";
-    }
-
-    // 받침 유무로 을/를 선택
-    private static string WithObjectParticle(string word)
-    {
-        if (string.IsNullOrEmpty(word))
-        {
-            return word;
-        }
-
-        char last = word[word.Length - 1];
-        if (last < 0xAC00 || last > 0xD7A3)
-        {
-            return word + "을(를)";
-        }
-
-        return word + ((last - 0xAC00) % 28 == 0 ? "를" : "을");
+        return new Dictionary<string, object> { { "buffId", buffId }, { "amount", amount } };
     }
 
     // ── IMonsterAIContext ─────────────────────────────────────────────

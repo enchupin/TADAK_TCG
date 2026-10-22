@@ -53,6 +53,17 @@ public static class GameText
         return Lookup("character." + ToKeyId(characterId) + ".identity", fallback);
     }
 
+    public static string MonsterName(int monsterId, string fallback = "")
+    {
+        return Lookup("monster." + ToKeyId(monsterId) + ".name", fallback);
+    }
+
+    // 특수 패턴 문구 (참조 토큰이 남은 틀)
+    public static string MonsterPatternText(int patternId, string fallback = "")
+    {
+        return Lookup("monster.pattern." + ToKeyId(patternId) + ".text", fallback);
+    }
+
     // UI 문구: 인자 · 복수형 · 참조를 현재 언어로 해석
     public static string Ui(string key, IReadOnlyDictionary<string, object> args = null)
     {

@@ -49,6 +49,8 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     private int plannedIntentValue = 0;
     private int? plannedProtectionIntentValue;
     private string plannedIntentDescription = string.Empty;
+    // 기절 의도 표시 중 (언어 변경 시 기절 문구로 다시 만듦)
+    private bool showingStunIntent;
     private readonly List<MonsterIntentIconType> plannedIntentIcons = new();
     // 의도 툴팁용 행동 종류별 문장 (비어 있으면 의도 설명 전체를 한 줄로 표시)
     private readonly List<MonsterIntentLine> plannedIntentLines = new();
@@ -597,10 +599,33 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     public void SetStunIntent()
     {
         skipCurrentTurnAction = true;
-        SetIntent("기절합니다.");
+        ApplyStunIntentText();
         SetPlannedPattern(0, MonsterIntentIconType.Stun);
-        SetIntentLines(new[] { new MonsterIntentLine("이번 턴에 행동하지 않습니다.", MonsterIntentIconType.Stun) });
         UpdateIntentUI();
+    }
+
+    // 언어 변경 시 표시 중인 의도 문구를 현재 언어로 다시 만듦
+    public void RefreshIntentText()
+    {
+        if (showingStunIntent)
+        {
+            ApplyStunIntentText();
+            UpdateIntentUI();
+            return;
+        }
+
+        OnRefreshIntentText();
+    }
+
+    protected virtual void OnRefreshIntentText()
+    {
+    }
+
+    private void ApplyStunIntentText()
+    {
+        SetIntent(MonsterIntentText.Line("intent.plain.stunned"));
+        SetIntentLines(new[] { new MonsterIntentLine(MonsterIntentText.Line("intent.line.stunned"), MonsterIntentIconType.Stun) });
+        showingStunIntent = true;
     }
 
     public virtual void ScalePlannedIntent(float multiplier)
@@ -626,6 +651,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     protected void SetAttackIntent(int intentValue, string intentDescription)
     {
+        showingStunIntent = false;
         hasAttackIntent = true;
         plannedIntentValue = Mathf.Max(0, intentValue);
         plannedProtectionIntentValue = null;
@@ -635,6 +661,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     protected void SetIntent(string intentDescription)
     {
+        showingStunIntent = false;
         hasAttackIntent = false;
         plannedIntentValue = 0;
         plannedProtectionIntentValue = null;

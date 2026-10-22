@@ -182,6 +182,12 @@ class Program {
   Check(IntentTooltipFormatter.FormatSentence("(힘)을 3 얻습니다.",c,refs)==$"{B("힘")}을 {V(3)} 얻습니다.","이로운 효과 획득");
   Check(IntentTooltipFormatter.FormatSentence("(4001)을 2 부여합니다.",c,refs)==$"(4001)을 {V(2)} 부여합니다.","버프가 아닌 괄호 유지");
   Check(IntentTooltipFormatter.FormatSentence("받는 피해 25%",c)==$"받는 피해 {V(25)}%","퍼센트 수치");
+  // 로컬라이징 표의 ID 참조: ID 숫자는 수치로 보지 않고 현재 언어 이름 · 극성 색 · 조사 보정
+  BuffTooltipFormatter.BuffIdLookup ids=(int id,out string name,out bool harmful)=>{name=id==4001?"부식":id==3012?"결속":null;harmful=id==4001;return name!=null;};
+  Check(IntentTooltipFormatter.FormatSentence("[buff:4001]를 2 부여합니다.",c,refs,ids)==$"{H("부식")}을 {V(2)} 부여합니다.","ID 참조 해로운 효과");
+  Check(IntentTooltipFormatter.FormatSentence("모든 아군이 [buff:3012]을 3 얻습니다.",c,refs,ids)==$"모든 아군이 {B("결속")}을 {V(3)} 얻습니다.","ID 참조 이로운 효과");
+  Check(IntentTooltipFormatter.FormatSentence("Applies 2 [buff:4001|Corrosion].",c,refs,ids)==$"Applies {V(2)} {H("Corrosion")}.","ID 참조 표시 문구");
+  Check(IntentTooltipFormatter.FormatSentence("[buff:9999]을 2 얻습니다.",c,refs,ids)==$"[buff:9999]을 {V(2)} 얻습니다.","조회 실패 시 토큰 유지");
   // 특수 패턴: 여러 의도 이름을 이어서 표시
   Check(IntentTooltipFormatter.FormatLines(new List<(string,string)>{("강화 · 약화","이로운 효과를 훔칩니다.")},c)==$"{O("강화 · 약화")}\n이로운 효과를 훔칩니다.","여러 의도 이름");
   Check(IntentTooltipFormatter.FormatLines(new List<(string,string)>{("","설명만")},c)=="설명만","이름 없으면 문장만");

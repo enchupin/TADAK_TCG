@@ -162,7 +162,7 @@ class Program {
   Fresh();var bug=New<TestDataMonster>(1109);bug.Plan();Check(bug.pattern==110901,"공허 벌레 첫 의도 P01");
   // 의도 툴팁: 행동 종류별 한 줄, 버프 이름은 (이름) 표기
   Check(bug.intentLines.Count==2&&bug.intentLines[0].IsSingle(MonsterIntentIconType.Attack)&&bug.intentLines[0].Sentence.Contains("6"),"의도 툴팁 공격 줄");
-  Check(bug.intentLines[1].IsSingle(MonsterIntentIconType.HarmfulEffect)&&bug.intentLines[1].Sentence.StartsWith("(")&&bug.intentLines[1].Sentence.Contains(")"),"의도 툴팁 해로운 효과 줄 버프 표기");
+  Check(bug.intentLines[1].IsSingle(MonsterIntentIconType.HarmfulEffect)&&bug.intentLines[1].Sentence.StartsWith("[buff:")&&bug.intentLines[1].Sentence.Contains("]"),"의도 툴팁 해로운 효과 줄 버프 표기 (ID 참조)");
   Check(bug.DelayIntent(2)&&bug.pattern==110902&&bug.QueuedPatternKeys.Count==0,"2칸 미루기로 P02");
   bug.Act();bug.Plan();Check(bug.pattern==110901,"미룬 뒤 순환 계속");
 
