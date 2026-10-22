@@ -23,6 +23,8 @@ public abstract class DataMonster : Monster, IMonsterAIContext
     private bool currentChangedByCard;
     private float intentDamageScale = 1f;
     private int lastUnblockedDamage;
+    // 현재 패턴에서 공격을 실행했는지 (공격 후 이탈 = 자폭)
+    private bool hasAttackedInCurrentPattern;
     private readonly Dictionary<string, int> patternUseCounts = new Dictionary<string, int>();
     private readonly Dictionary<MonsterActionDefinition, int> plannedHits = new Dictionary<MonsterActionDefinition, int>();
 
@@ -341,6 +343,8 @@ public abstract class DataMonster : Monster, IMonsterAIContext
         List<MonsterActionDefinition> actions = FlattenActions(pattern.actions);
         StringBuilder text = new StringBuilder();
         List<MonsterIntentIconType> icons = new List<MonsterIntentIconType>();
+        // 의도 툴팁용 행동 종류별 문장 (버프 이름은 (이름) 표기)
+        List<MonsterIntentLine> lines = new List<MonsterIntentLine>();
         int? firstAttackDamage = null;
         int protection = 0;
         bool hasProtection = false;
@@ -354,15 +358,19 @@ public abstract class DataMonster : Monster, IMonsterAIContext
                     int damage = PreviewAttackDamage(action.amount);
                     int hits = ResolvePlannedHits(action);
                     firstAttackDamage ??= damage;
-                    AppendSentence(text, hits > 1 ? $"피해를 {damage}씩 {hits}회 입힙니다." : $"피해를 {damage} 입힙니다.");
+                    string attackSentence = hits > 1 ? $"피해를 {damage}씩 {hits}회 입힙니다." : $"피해를 {damage} 입힙니다.";
+                    AppendSentence(text, attackSentence);
                     AddIcon(icons, MonsterIntentIconType.Attack);
+                    AddIntentLine(lines, MonsterIntentIconType.Attack, attackSentence);
                     break;
                 case MonsterActionDefinition.Block:
                     int block = PreviewBlock(action);
                     protection += block;
                     hasProtection = true;
-                    AppendSentence(text, BuildBlockText(action, block));
+                    string blockSentence = BuildBlockText(action, block);
+                    AppendSentence(text, blockSentence);
                     AddIcon(icons, MonsterIntentIconType.Protection);
+                    AddIntentLine(lines, MonsterIntentIconType.Protection, blockSentence);
                     break;
                 case MonsterActionDefinition.Buff:
                     int gain = PreviewSelfBuffGain(action);
@@ -370,31 +378,43 @@ public abstract class DataMonster : Monster, IMonsterAIContext
                         ? $"모든 아군이 {WithObjectParticle(GetBuffName(action.buffId))} {gain} 얻습니다."
                         : $"{WithObjectParticle(GetBuffName(action.buffId))} {gain} 얻습니다.");
                     AddIcon(icons, MonsterIntentIconType.BeneficialEffect);
+                    AddIntentLine(lines, MonsterIntentIconType.BeneficialEffect, action.target == MonsterActionDefinition.TargetAllies
+                        ? $"모든 아군이 {WithObjectParticleMarked(GetBuffName(action.buffId))} {gain} 얻습니다."
+                        : $"{WithObjectParticleMarked(GetBuffName(action.buffId))} {gain} 얻습니다.");
                     break;
                 case MonsterActionDefinition.Debuff:
                     AppendSentence(text, $"{WithObjectParticle(GetBuffName(action.buffId))} {PreviewPlayerDebuffAmount(action.buffId, action.amount)} 부여합니다.");
                     AddIcon(icons, MonsterIntentIconType.HarmfulEffect);
+                    AddIntentLine(lines, MonsterIntentIconType.HarmfulEffect, $"{WithObjectParticleMarked(GetBuffName(action.buffId))} {PreviewPlayerDebuffAmount(action.buffId, action.amount)} 부여합니다.");
                     break;
                 case MonsterActionDefinition.ReducePlayerBuff:
                     AppendSentence(text, $"적의 {WithObjectParticle(GetBuffName(action.buffId))} {action.amount} 감소시킵니다.");
                     AddIcon(icons, MonsterIntentIconType.HarmfulEffect);
+                    AddIntentLine(lines, MonsterIntentIconType.HarmfulEffect, $"적의 {WithObjectParticleMarked(GetBuffName(action.buffId))} {action.amount} 감소시킵니다.");
                     break;
                 case MonsterActionDefinition.Heal:
-                    AppendSentence(text, $"체력을 {Mathf.Max(0, action.amount)} 회복합니다.");
+                    string healSentence = $"체력을 {Mathf.Max(0, action.amount)} 회복합니다.";
+                    AppendSentence(text, healSentence);
                     AddIcon(icons, MonsterIntentIconType.Heal);
+                    AddIntentLine(lines, MonsterIntentIconType.Heal, healSentence);
                     break;
                 case MonsterActionDefinition.HealUnblocked:
                     AppendSentence(text, "체력을 막히지 않은 피해만큼 회복합니다.");
                     AddIcon(icons, MonsterIntentIconType.Heal);
+                    AddIntentLine(lines, MonsterIntentIconType.Heal, "체력을 막히지 않은 피해만큼 회복합니다.");
                     break;
                 case MonsterActionDefinition.AddCard:
-                    AppendSentence(text, BuildCardText(action));
+                    string cardSentence = BuildCardText(action);
+                    AppendSentence(text, cardSentence);
                     AddIcon(icons, MonsterIntentIconType.DisruptCard);
+                    AddIntentLine(lines, MonsterIntentIconType.DisruptCard, cardSentence);
                     break;
                 case MonsterActionDefinition.Summon:
                     MonsterDefinition summoned = MonsterDatabase.Get(definition.GetSpeciesIdInSameTier(action.species));
-                    AppendSentence(text, $"{WithObjectParticle(summoned != null ? summoned.name : "몬스터")} 1마리 소환합니다.");
+                    string summonSentence = $"{WithObjectParticle(summoned != null ? summoned.name : "몬스터")} 1마리 소환합니다.";
+                    AppendSentence(text, summonSentence);
                     AddIcon(icons, MonsterIntentIconType.Summon);
+                    AddIntentLine(lines, MonsterIntentIconType.Summon, summonSentence);
                     break;
                 case MonsterActionDefinition.Leave:
                     AppendSentence(text, "전투에서 이탈합니다.");
@@ -402,15 +422,25 @@ public abstract class DataMonster : Monster, IMonsterAIContext
                     if (icons.Remove(MonsterIntentIconType.Attack))
                     {
                         icons.Insert(0, MonsterIntentIconType.Bomb);
+                        // 툴팁도 공격 줄을 자폭 줄로 바꾸고 사망 문장을 이어 붙임
+                        // 자폭은 처치가 아닌 사망으로 처리 (사망 시 효과만 발동, 사용자 확인)
+                        foreach (MonsterIntentLine line in lines)
+                        {
+                            line.ReplaceIconType(MonsterIntentIconType.Attack, MonsterIntentIconType.Bomb);
+                        }
+
+                        AddIntentLine(lines, MonsterIntentIconType.Bomb, "사망합니다.");
                     }
                     else
                     {
                         AddIcon(icons, MonsterIntentIconType.Leave);
+                        AddIntentLine(lines, MonsterIntentIconType.Leave, "전투에서 이탈합니다.");
                     }
                     break;
                 case MonsterActionDefinition.Nothing:
                     AppendSentence(text, "아무 행동도 하지 않습니다.");
                     AddIcon(icons, MonsterIntentIconType.Stun);
+                    AddIntentLine(lines, MonsterIntentIconType.Stun, "아무 행동도 하지 않습니다.");
                     break;
                 case MonsterActionDefinition.Special:
                     hasSpecial = true;
@@ -433,6 +463,10 @@ public abstract class DataMonster : Monster, IMonsterAIContext
         }
 
         SetPlannedPattern(pattern.id, icons.ToArray());
+        // 특수 패턴은 패턴 문구 전체를 한 줄로, 의도 이름은 아이콘 종류를 이어서 표시
+        SetIntentLines(hasSpecial && !string.IsNullOrEmpty(pattern.text)
+            ? new[] { new MonsterIntentLine(pattern.text, icons.ToArray()) }
+            : lines);
         if (hasProtection)
         {
             SetProtectionIntentValue(protection);
@@ -478,6 +512,21 @@ public abstract class DataMonster : Monster, IMonsterAIContext
         }
 
         text.Append(sentence);
+    }
+
+    // 같은 종류의 행동은 한 줄에 이어 붙임
+    private static void AddIntentLine(List<MonsterIntentLine> lines, MonsterIntentIconType icon, string sentence)
+    {
+        foreach (MonsterIntentLine line in lines)
+        {
+            if (line.IsSingle(icon))
+            {
+                line.AppendSentence(sentence);
+                return;
+            }
+        }
+
+        lines.Add(new MonsterIntentLine(sentence, icon));
     }
 
     private static void AddIcon(List<MonsterIntentIconType> icons, MonsterIntentIconType icon)
@@ -594,11 +643,13 @@ public abstract class DataMonster : Monster, IMonsterAIContext
         string executedKey = currentKey;
         MonsterPatternDefinition pattern = definition?.FindPattern(executedKey);
         lastUnblockedDamage = 0;
+        hasAttackedInCurrentPattern = false;
         if (pattern != null)
         {
             foreach (MonsterActionDefinition action in FlattenActions(pattern.actions))
             {
-                if (IsDead() || target == null)
+                // 자폭 등 공격으로 파티가 먼저 쓰러지면 남은 행동(이탈 등)을 진행하지 않아 패배가 먼저 처리됨
+                if (IsDead() || target == null || target.IsDead())
                 {
                     break;
                 }
@@ -624,6 +675,7 @@ public abstract class DataMonster : Monster, IMonsterAIContext
         switch (action.type)
         {
             case MonsterActionDefinition.Attack:
+                hasAttackedInCurrentPattern = true;
                 int hits = ResolvePlannedHits(action);
                 int amount = Mathf.FloorToInt(Mathf.Max(0, action.amount) * intentDamageScale);
                 for (int hitIndex = 0; hitIndex < hits; hitIndex++)
@@ -667,7 +719,15 @@ public abstract class DataMonster : Monster, IMonsterAIContext
                 SummonSpecies(action.species);
                 break;
             case MonsterActionDefinition.Leave:
-                LeaveCombat();
+                // 공격 후 이탈은 자폭(의도 아이콘과 같은 기준) → 처치가 아닌 사망
+                if (hasAttackedInCurrentPattern)
+                {
+                    SelfDestruct();
+                }
+                else
+                {
+                    LeaveCombat();
+                }
                 break;
             case MonsterActionDefinition.Special:
                 ExecuteSpecial(action.key, action, target);
@@ -864,6 +924,13 @@ public abstract class DataMonster : Monster, IMonsterAIContext
     {
         BuffData data = BuffMetadataResolver.Resolve(buffId);
         return data != null && !string.IsNullOrWhiteSpace(data.name) ? data.name : buffId.ToString();
+    }
+
+    // 툴팁 문장용: (이름)을/를 형식으로 버프 이름 색 표시 대상 지정
+    private static string WithObjectParticleMarked(string word)
+    {
+        string withParticle = WithObjectParticle(word);
+        return string.IsNullOrEmpty(word) ? withParticle : $"({word}){withParticle.Substring(word.Length)}";
     }
 
     // 받침 유무로 을/를 선택

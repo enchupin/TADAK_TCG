@@ -75,7 +75,8 @@ public static class BuffTooltipTextBuilder
             TryResolveDynamicName);
     }
 
-    private static bool TryResolveReference(string buffName, out bool harmful)
+    // 설명 안의 (버프명) 표기를 버프로 해석, 의도 툴팁도 함께 사용
+    internal static bool TryResolveReference(string buffName, out bool harmful)
     {
         harmful = false;
         if (!BuffMetadataDatabase.TryGetBuffId(buffName, out int buffId))

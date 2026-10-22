@@ -64,6 +64,14 @@ public class MonsterStateController : MonoBehaviour
     [Tooltip("의도 이미지 슬롯과 같은 순서로 각 Intend의 수치 텍스트를 연결")]
     public List<TextMeshProUGUI> intendValueTexts = new();
 
+    [Header("의도 툴팁")]
+    // 의도 아이콘은 추후 1개로 통합 예정이라 영역 전체를 호버 대상으로 사용
+    // 아이콘 사이 빈틈까지 호버하려면 영역에 투명 Image(레이캐스트 켬)를 두면 됨
+    [Tooltip("의도 툴팁 호버 영역, 툴팁은 이 영역 우측에 표시. 비어 있으면 아이콘마다 각자 우측에 표시")]
+    [SerializeField] private RectTransform intentTooltipArea;
+    [Tooltip("의도 영역과 툴팁 사이 간격 (TooltipTrigger를 직접 붙인 경우 그 설정 사용)")]
+    [SerializeField] private float intentTooltipSpacing = 6f;
+
     [Header("의도 아이콘")]
     [SerializeField] private Sprite attackIntendSprite;
     [SerializeField] private Sprite protectionIntendSprite;
@@ -81,6 +89,7 @@ public class MonsterStateController : MonoBehaviour
     private string monsterImageName;
     private bool hasLoggedMissingImageTarget;
     private readonly Dictionary<MonsterStateType, Sprite> stateSpriteCache = new();
+    private readonly List<TooltipTrigger> intentTooltipTriggers = new();
 
     public MonsterStateType CurrentState { get; private set; } = MonsterStateType.Idle;
 
@@ -142,7 +151,8 @@ public class MonsterStateController : MonoBehaviour
             // 파스텔 구분색은 편집용으로 사용하고 전투에서는 아이콘 원래 색상을 표시
             slot.color = Color.white;
             slot.preserveAspect = true;
-            slot.raycastTarget = false;
+            // 의도 툴팁 호버를 받도록 표시 중인 아이콘만 레이캐스트를 켬
+            slot.raycastTarget = sprite != null;
         }
 
         for (int i = 0; i < intendValueTexts.Count; i++)
@@ -167,6 +177,48 @@ public class MonsterStateController : MonoBehaviour
             valueText.enabled = showValue;
             valueText.raycastTarget = false;
         }
+    }
+
+    // 몬스터가 연결될 때 의도 툴팁 문구 제공자를 지정
+    public void BindIntentTooltip(ITooltipSource source)
+    {
+        if (intentTooltipTriggers.Count == 0)
+        {
+            SetupIntentTooltipTriggers();
+        }
+
+        foreach (TooltipTrigger trigger in intentTooltipTriggers)
+        {
+            trigger.SetSource(source);
+        }
+    }
+
+    private void SetupIntentTooltipTriggers()
+    {
+        if (intentTooltipArea != null)
+        {
+            intentTooltipTriggers.Add(GetOrAddTooltipTrigger(intentTooltipArea.gameObject));
+            return;
+        }
+
+        foreach (Image slot in intendSlots)
+        {
+            if (slot != null)
+            {
+                intentTooltipTriggers.Add(GetOrAddTooltipTrigger(slot.gameObject));
+            }
+        }
+    }
+
+    private TooltipTrigger GetOrAddTooltipTrigger(GameObject target)
+    {
+        if (!target.TryGetComponent(out TooltipTrigger trigger))
+        {
+            trigger = target.AddComponent<TooltipTrigger>();
+            trigger.SetPlacement(TooltipPlacement.Right, intentTooltipSpacing);
+        }
+
+        return trigger;
     }
 
     public void EnterIdle()

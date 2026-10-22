@@ -13,6 +13,7 @@ class Program {
   RichText();
   BuffFormat();
   BuffData(args[0]);
+  IntentFormat();
   Console.WriteLine($"툴팁 검증 {count}개 통과");
  }
 
@@ -139,5 +140,25 @@ class Program {
   var allowed=new HashSet<string>{"턴당 1회","강공"};
   var unexpected=unresolved.Where(n=>!allowed.Contains(n)).ToList();
   Check(unexpected.Count==0,"buffs.json에 없는 참조: "+string.Join(", ",unexpected));
+ }
+
+ static string O(string n)=>$"<color=#808000>{n}</color>";
+
+ static void IntentFormat(){
+  var c=TooltipColors.Default;
+  BuffTooltipFormatter.ReferenceLookup refs=(string name,out bool harmful)=>{harmful=name=="부식";return name is "부식" or "힘";};
+  // 행동 종류마다 한 줄, 이름 올리브 · 숫자 아프리콧
+  var text=IntentTooltipFormatter.FormatLines(new List<(string,string)>{("공격","피해를 6씩 2회 입힙니다."),("방어","보호막을 5 얻습니다.")},c,refs);
+  Check(text==$"{O("공격")}: 피해를 {V(6)}씩 {V(2)}회 입힙니다.\n{O("방어")}: 보호막을 {V(5)} 얻습니다.","의도 줄 형식");
+  // 버프 표기는 괄호 제거 · 극성 색, 숫자 색 태그 안의 16진수는 다시 해석하지 않음
+  Check(IntentTooltipFormatter.FormatSentence("(부식)을 2 부여합니다.",c,refs)==$"{H("부식")}을 {V(2)} 부여합니다.","해로운 효과 부여");
+  Check(IntentTooltipFormatter.FormatSentence("(힘)을 3 얻습니다.",c,refs)==$"{B("힘")}을 {V(3)} 얻습니다.","이로운 효과 획득");
+  Check(IntentTooltipFormatter.FormatSentence("(4001)을 2 부여합니다.",c,refs)==$"(4001)을 {V(2)} 부여합니다.","버프가 아닌 괄호 유지");
+  Check(IntentTooltipFormatter.FormatSentence("받는 피해 25%",c)==$"받는 피해 {V(25)}%","퍼센트 수치");
+  // 특수 패턴: 여러 의도 이름을 이어서 표시
+  Check(IntentTooltipFormatter.FormatLines(new List<(string,string)>{("강화 · 약화","이로운 효과를 훔칩니다.")},c)==$"{O("강화 · 약화")}: 이로운 효과를 훔칩니다.","여러 의도 이름");
+  Check(IntentTooltipFormatter.FormatLines(new List<(string,string)>{("","설명만")},c)=="설명만","이름 없으면 문장만");
+  Check(IntentTooltipFormatter.FormatLines(new List<(string,string)>{("기절","")},c)==O("기절"),"문장 없으면 이름만");
+  Check(IntentTooltipFormatter.FormatLines(new List<(string,string)>(),c)==""&&IntentTooltipFormatter.FormatLines(null,c)=="","빈 의도");
  }
 }

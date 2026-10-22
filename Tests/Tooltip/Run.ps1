@@ -12,6 +12,7 @@ $project = @"
     <Compile Include="$escapedRoot/Assets/Script/UI/Tooltip/TooltipLayout.cs" />
     <Compile Include="$escapedRoot/Assets/Script/UI/Tooltip/TooltipRichText.cs" />
     <Compile Include="$escapedRoot/Assets/Script/UI/Tooltip/BuffTooltipFormatter.cs" />
+    <Compile Include="$escapedRoot/Assets/Script/UI/Tooltip/IntentTooltipFormatter.cs" />
   </ItemGroup>
 </Project>
 "@

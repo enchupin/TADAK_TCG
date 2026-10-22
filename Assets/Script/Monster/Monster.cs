@@ -50,10 +50,15 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     private int? plannedProtectionIntentValue;
     private string plannedIntentDescription = string.Empty;
     private readonly List<MonsterIntentIconType> plannedIntentIcons = new();
+    // 의도 툴팁용 행동 종류별 문장 (비어 있으면 의도 설명 전체를 한 줄로 표시)
+    private readonly List<MonsterIntentLine> plannedIntentLines = new();
+    private IntentTooltipSource intentTooltipSource;
     private int plannedPatternId = 0;
     private bool skipCurrentTurnAction = false;
     private bool hasTriggeredDeath = false;
     private bool hasLeftCombat = false;
+    // 자폭 사망 처리 중 (처치로 세지 않음)
+    private bool isSelfDestructing = false;
     private bool hasInitializedBattleStart = false;
     private bool isSelectionHighlighted = false;
     private int lastSelectionClickFrame = -1;
@@ -68,6 +73,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     public int PlannedIntentValue => plannedIntentValue;
     public int PlannedPatternId => plannedPatternId;
     public IReadOnlyList<MonsterIntentIconType> PlannedIntentIcons => plannedIntentIcons;
+    public IReadOnlyList<MonsterIntentLine> PlannedIntentLines => plannedIntentLines;
     public MonsterStateType CurrentState => stateController != null
         ? stateController.CurrentState
         : throw new System.InvalidOperationException($"[Monster] {gameObject.name}의 MonsterStateController가 인스펙터에 연결되지 않았습니다");
@@ -308,6 +314,31 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         }
         HandleDeathIfNeeded();
         UpdateUI();
+    }
+
+    // 자폭: 사망 시 효과(화염 전이 등)는 발동하지만 처치가 아니므로 처치 효과(처형자 등)는 발동하지 않음
+    // 피해가 아니므로 체력 손실 효과도 발동하지 않음
+    public void SelfDestruct()
+    {
+        if (hasTriggeredDeath || hasLeftCombat)
+        {
+            return;
+        }
+
+        hp = 0;
+        defense = 0;
+        isSelfDestructing = true;
+        try
+        {
+            HandleDeathIfNeeded();
+        }
+        finally
+        {
+            isSelfDestructing = false;
+        }
+
+        UpdateUI();
+        Debug.Log($"[Monster] {name} 자폭");
     }
 
     public void LeaveCombat()
@@ -568,6 +599,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         skipCurrentTurnAction = true;
         SetIntent("기절합니다.");
         SetPlannedPattern(0, MonsterIntentIconType.Stun);
+        SetIntentLines(new[] { new MonsterIntentLine("이번 턴에 행동하지 않습니다.", MonsterIntentIconType.Stun) });
         UpdateIntentUI();
     }
 
@@ -581,6 +613,14 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         int previousValue = plannedIntentValue;
         plannedIntentValue = Mathf.Max(0, Mathf.FloorToInt(plannedIntentValue * multiplier));
         plannedIntentDescription = ReplaceIntentValue(plannedIntentDescription, previousValue, plannedIntentValue);
+        foreach (MonsterIntentLine line in plannedIntentLines)
+        {
+            if (line.Contains(MonsterIntentIconType.Attack) || line.Contains(MonsterIntentIconType.Bomb))
+            {
+                line.ReplaceSentence(ReplaceIntentValue(line.Sentence, previousValue, plannedIntentValue));
+                break;
+            }
+        }
         UpdateUI();
     }
 
@@ -590,6 +630,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         plannedIntentValue = Mathf.Max(0, intentValue);
         plannedProtectionIntentValue = null;
         plannedIntentDescription = intentDescription;
+        plannedIntentLines.Clear();
     }
 
     protected void SetIntent(string intentDescription)
@@ -598,6 +639,46 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         plannedIntentValue = 0;
         plannedProtectionIntentValue = null;
         plannedIntentDescription = intentDescription;
+        plannedIntentLines.Clear();
+    }
+
+    // SetIntent · SetAttackIntent 뒤에 호출 (의도 설정 시 이전 문장은 지워짐)
+    protected void SetIntentLines(IEnumerable<MonsterIntentLine> lines)
+    {
+        plannedIntentLines.Clear();
+        if (lines == null)
+        {
+            return;
+        }
+
+        foreach (MonsterIntentLine line in lines)
+        {
+            if (line != null)
+            {
+                plannedIntentLines.Add(line);
+            }
+        }
+    }
+
+    // 의도 영역 호버 시 표시할 문구
+    public string GetIntentTooltipText()
+    {
+        if (!isActiveAndEnabled || IsDead() || hasLeftCombat || plannedIntentIcons.Count == 0)
+        {
+            return string.Empty;
+        }
+
+        if (plannedIntentLines.Count > 0)
+        {
+            return IntentTooltipTextBuilder.Build(plannedIntentLines);
+        }
+
+        if (string.IsNullOrWhiteSpace(plannedIntentDescription))
+        {
+            return string.Empty;
+        }
+
+        return IntentTooltipTextBuilder.Build(new[] { new MonsterIntentLine(plannedIntentDescription, plannedIntentIcons.ToArray()) });
     }
 
     protected void SetProtectionIntentValue(int intentValue)
@@ -717,6 +798,23 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         }
 
         stateController.SetMonsterImageName(name);
+        intentTooltipSource ??= new IntentTooltipSource(this);
+        stateController.BindIntentTooltip(intentTooltipSource);
+    }
+
+    private sealed class IntentTooltipSource : ITooltipSource
+    {
+        private readonly Monster owner;
+
+        public IntentTooltipSource(Monster owner)
+        {
+            this.owner = owner;
+        }
+
+        public string GetTooltipText()
+        {
+            return owner != null ? owner.GetIntentTooltipText() : string.Empty;
+        }
     }
 
     private void ReleaseHealthBarUI()
@@ -857,7 +955,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         defense = 0;
         ClearPlannedAction();
         OnDeathTriggered();
-        TrainingBattleManager.Instance?.HandleMonsterDeath(this);
+        TrainingBattleManager.Instance?.HandleMonsterDeath(this, !isSelfDestructing);
         Debug.Log($"[Monster] {name} 처치");
     }
 
@@ -869,6 +967,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         plannedIntentDescription = string.Empty;
         plannedPatternId = 0;
         plannedIntentIcons.Clear();
+        plannedIntentLines.Clear();
         UpdateIntentUI();
     }
 

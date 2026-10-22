@@ -107,7 +107,13 @@ class Program {
   shield.Plan();Check(shield.pattern==210601,"아군이 있으면 약화·보호막");
   thrower.hp=0;shield.ReevaluateConditionalIntent();Check(shield.pattern==210602,"아군 사망 즉시 자폭 의도로 변경");
   Check(!shield.CanChangeIntent,"이탈 의도는 변경 불가");
-  shield.Act();Check(Player.hits.SequenceEqual(new[]{14})&&shield.left,"피해 14 후 이탈");
+  Check(shield.intentLines.Count==1&&shield.intentLines[0].IsSingle(MonsterIntentIconType.Bomb)&&shield.intentLines[0].Sentence=="피해를 14 입힙니다. 사망합니다.","자폭 툴팁은 공격 + 사망 한 줄");
+  // 공격 후 이탈은 자폭: 이탈이 아니라 처치가 아닌 사망으로 처리
+  shield.Act();Check(Player.hits.SequenceEqual(new[]{14})&&shield.selfDestructed&&shield.IsDead()&&!shield.left,"피해 14 후 이탈");
+  // 자폭 피해로 파티가 먼저 쓰러지면 이탈하지 않음 → 남은 적이 있어 몬스터 패배보다 플레이어 패배가 먼저
+  Fresh();shield=New<TestDataMonster>(2106);thrower=New<TestDataMonster>(2107);
+  shield.Plan();thrower.hp=0;shield.ReevaluateConditionalIntent();Player.hp=10;
+  shield.Act();Check(Player.IsDead()&&!shield.selfDestructed&&!shield.left&&!shield.IsDead(),"파티가 먼저 쓰러지면 자폭 생략");
 
   // 선인장: 가시 최대 9, 9 이상이면 P01 우선
   Fresh();var cactus=New<TestDataMonster>(1115);Check(cactus.GetBuffStack(3010)==3,"선인장 시작 가시 3");
@@ -154,6 +160,9 @@ class Program {
  static void VerifyIntentQueue(){
   // n칸 미루기: 큐를 채워 n번째로 바꾸고 앞칸 버림, 이후 순환은 이어짐 (2-8절 2·3)
   Fresh();var bug=New<TestDataMonster>(1109);bug.Plan();Check(bug.pattern==110901,"공허 벌레 첫 의도 P01");
+  // 의도 툴팁: 행동 종류별 한 줄, 버프 이름은 (이름) 표기
+  Check(bug.intentLines.Count==2&&bug.intentLines[0].IsSingle(MonsterIntentIconType.Attack)&&bug.intentLines[0].Sentence.Contains("6"),"의도 툴팁 공격 줄");
+  Check(bug.intentLines[1].IsSingle(MonsterIntentIconType.HarmfulEffect)&&bug.intentLines[1].Sentence.StartsWith("(")&&bug.intentLines[1].Sentence.Contains(")"),"의도 툴팁 해로운 효과 줄 버프 표기");
   Check(bug.DelayIntent(2)&&bug.pattern==110902&&bug.QueuedPatternKeys.Count==0,"2칸 미루기로 P02");
   bug.Act();bug.Plan();Check(bug.pattern==110901,"미룬 뒤 순환 계속");
 
@@ -166,7 +175,7 @@ class Program {
 
   // 봉인: 큐 맨 앞에 행동 없음, 다음 의도부터 순환 계속
   Fresh();bug=New<TestDataMonster>(1109);bug.Plan();Check(bug.SealNextAction(),"봉인");bug.Act();bug.Plan();
-  Check(bug.pattern==0&&bug.intentText=="아무 행동도 하지 않습니다.","봉인된 다음 턴은 행동 없음");Check(!bug.CanChangeIntent,"봉인된 상태는 변경 불가");
+  Check(bug.pattern==0&&bug.intentText=="아무 행동도 하지 않습니다.","봉인된 다음 턴은 행동 없음");Check(bug.intentLines.Count==0,"행동 없음은 의도 설명 한 줄로 대체");Check(!bug.CanChangeIntent,"봉인된 상태는 변경 불가");
   Player.hits.Clear();bug.Act();Check(Player.hits.Count==0,"봉인된 턴 행동 없음");bug.Plan();Check(bug.pattern==110903,"봉인 뒤 순환 계속");
 
   // 보스 봉인은 피해 15

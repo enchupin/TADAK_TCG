@@ -103,6 +103,7 @@ public abstract class Monster {
  public void AddPermanentDefense(int n){AddDefense(n);permanentDefense+=n;}
  public int TakeDamage(int n,int s=0){if(!CanReceiveDamage(n))return 0;int d=Math.Max(0,n-defense);defense=Math.Max(0,defense-n);hp-=d;OnAfterTakeDamage(n,d);return d;}
  public void LeaveCombat(){left=true;}
+ public bool selfDestructed; public void SelfDestruct(){hp=0;defense=0;selfDestructed=true;}
  public void UpdateUI(){}
  public virtual void ScalePlannedIntent(float m){}
  protected int PreviewOutgoingDamage(int n)=>n+GetBuffStack(BattleRuntimeDefinitions.StrengthBuffId)+TrainingBattleManager.Instance.attackBoost.GetOutgoingDamageFlatBonus(null,this,GetBuffStack(BattleRuntimeDefinitions.AttackBoostBuffId),0);
@@ -112,7 +113,9 @@ public abstract class Monster {
  protected int DealDamage(PlayerData p,int n){int d=PreviewOutgoingDamage(n);p.hp-=d;p.hits.Add(d);TrainingBattleManager.Instance.harmony.OnMonsterAttackResolved(null,this,p,d,d,GetBuffStack(BattleRuntimeDefinitions.HarmonyBuffId));TrainingBattleManager.Instance.attackBoost.OnMonsterAttackResolved(null,this,p,d,d,GetBuffStack(BattleRuntimeDefinitions.AttackBoostBuffId));return d;}
  protected void AddDebuffToPlayer(PlayerData p,int id,int n)=>p.buffs[id]=p.buffs.GetValueOrDefault(id)+n;
  protected void AddCardToPlayerDiscard(Card c)=>TrainingBattleManager.Instance.usableDeckManager.AddToDiscard(c);
- protected void SetAttackIntent(int n,string s){attack=true;intentText=s;} protected void SetIntent(string s){attack=false;intentText=s;}
+ public List<MonsterIntentLine> intentLines=new();
+ protected void SetAttackIntent(int n,string s){attack=true;intentText=s;intentLines.Clear();} protected void SetIntent(string s){attack=false;intentText=s;intentLines.Clear();}
+ protected void SetIntentLines(IEnumerable<MonsterIntentLine> l){intentLines=l.ToList();}
  protected void SetPlannedPattern(int id,params MonsterIntentIconType[] icons)=>pattern=id;
  protected void SetProtectionIntentValue(int n){}
  protected virtual void OnBattleStart(){} protected virtual void OnTurnEnded(){} protected virtual void OnRevivedTriggered(){}
