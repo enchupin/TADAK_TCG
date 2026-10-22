@@ -430,7 +430,7 @@ public class TrainingMapController : MonoBehaviour
 
     private static string BuildEncounterLabel(string prefix, TrainingMapNodeData node)
     {
-        int encounterIndex = MonsterSpawner.GetEncounterDisplayIndex(node.nodeType, node.stageIndex, node.plannedEncounter);
+        int encounterIndex = MonsterSpawner.GetEncounterDisplayIndex(node.nodeType, node.FloorNumber, node.plannedEncounter);
         if (encounterIndex <= 0)
         {
             return $"{prefix}(?)";

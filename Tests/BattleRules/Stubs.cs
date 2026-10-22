@@ -120,6 +120,8 @@ public static class GameRulesJsonParser
 
 public class Card
 {
+    public List<int> keywords = new List<int>();
+    public bool HasKeyword(int id) => keywords.Contains(id);
     public int cardId;
     public string cardName = string.Empty;
     public Character character;

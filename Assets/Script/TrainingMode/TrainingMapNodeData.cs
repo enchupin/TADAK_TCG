@@ -52,4 +52,21 @@ public class TrainingMapNodeData
     public List<int> nextNodeIds = new List<int>();
 
     public bool HasPlannedEncounter => plannedEncounter != null && plannedEncounter.Count > 0;
+    // 층 번호 (1층 시작 · 8 · 15층 탈출구)
+    public int FloorNumber => stageIndex + 1;
+
+    // 경로 보장 수치 (rules.json training.map)
+    public readonly struct MapRules
+    {
+        public readonly int minRestPerPath;
+        public readonly int minNamedPerPath;
+
+        private MapRules(int minRestPerPath, int minNamedPerPath)
+        {
+            this.minRestPerPath = minRestPerPath;
+            this.minNamedPerPath = minNamedPerPath;
+        }
+
+        public static MapRules Current => new MapRules(GameRules.Training.map.minRestPerPath, GameRules.Training.map.minNamedPerPath);
+    }
 }

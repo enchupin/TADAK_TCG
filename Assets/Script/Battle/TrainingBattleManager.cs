@@ -65,6 +65,8 @@ public class TrainingBattleManager : MonoBehaviour
     public BattleUI battleUI;
     public MonsterSpawner monsterSpawner;
     [SerializeField] private BattleDeckViewer battleDeckViewer;
+    // R-46 네임드 승리 보상(복제 / 제거) 선택 창, 비어 있으면 복제로 진행
+    [SerializeField] private NamedRewardChoicePanel namedRewardChoicePanel;
 
     [Header("Turn Settings")]
     // 드로우 수, 손패 상한, 턴당 에너지는 기본적으로 rules.json의 combat 항목에서 읽음
@@ -114,6 +116,8 @@ public class TrainingBattleManager : MonoBehaviour
     private readonly List<PendingMonsterRevive> pendingMonsterRevives = new List<PendingMonsterRevive>();
     // 저장 덱 보상(획득·초과 제거) 진행 중에는 카드 사용과 턴 종료, 전투 종료 처리를 대기
     private bool isDeckRewardInProgress;
+    // R-47a 이번 전투에서 이탈한 몬스터가 훔쳐 간 카드 (승리 시 저장 덱에서 영구 제거)
+    private readonly List<Card> pendingPermanentlyRemovedCards = new List<Card>();
 
     public float EnemyActionDelay => enemyActionDelay;
     public int MaxHandCardCount => Mathf.Max(0, overrideTurnSettingsFromInspector ? maxHandCardCount : GameRules.Combat.handLimit);
@@ -1913,6 +1917,95 @@ public class TrainingBattleManager : MonoBehaviour
         Debug.Log($"[BattleManager] 보상 카드 {battleCard.cardName}을(를) 버린 카드 더미에 넣었습니다");
     }
 
+    // R-47a 이탈한 몬스터가 훔쳐 간 전투 카드를 저장 덱에서 제거할 대상으로 등록
+    public void QueueStolenCardsForPermanentRemoval(IEnumerable<Card> stolenCards)
+    {
+        if (stolenCards == null || BossModeSession.IsActive || !TrainingRunState.IsRunActive)
+        {
+            return;
+        }
+
+        foreach (Card stolenCard in stolenCards)
+        {
+            if (stolenCard != null && stolenCard.sourceDeckIndex >= 0 && !pendingPermanentlyRemovedCards.Contains(stolenCard))
+            {
+                pendingPermanentlyRemovedCards.Add(stolenCard);
+            }
+        }
+    }
+
+    // 저장 덱 위치가 뒤인 카드부터 제거해 앞 카드의 위치가 바뀌지 않게 함
+    private void ApplyPendingPermanentCardRemovals()
+    {
+        if (buildingDeck == null || pendingPermanentlyRemovedCards.Count == 0)
+        {
+            return;
+        }
+
+        List<Card> removals = new List<Card>(pendingPermanentlyRemovedCards);
+        removals.Sort((left, right) => right.sourceDeckIndex.CompareTo(left.sourceDeckIndex));
+        foreach (Card removedCard in removals)
+        {
+            if (!buildingDeck.RemoveCardAt(removedCard.sourceDeckIndex, removedCard.cardId))
+            {
+                Debug.LogWarning($"[BattleManager] 훔쳐 간 카드를 저장 덱에서 찾지 못했습니다: {removedCard.cardName}");
+            }
+        }
+
+        pendingPermanentlyRemovedCards.Clear();
+    }
+
+    // R-46 네임드 승리 보상: 카드 복제(강화 상태 유지, 유일 제외, 8장 초과 시 R-15) 또는 카드 제거
+    private System.Collections.IEnumerator RunNamedRewardSequence()
+    {
+        isDeckRewardInProgress = true;
+        try
+        {
+            NamedRewardChoicePanel.Choice? choice = null;
+            if (namedRewardChoicePanel != null && namedRewardChoicePanel.Show(selected => choice = selected))
+            {
+                yield return new WaitUntil(() => choice.HasValue);
+            }
+            else
+            {
+                Debug.LogWarning("[BattleManager] 네임드 보상 선택 창이 없어 카드 복제로 진행합니다");
+                choice = NamedRewardChoicePanel.Choice.Duplicate;
+            }
+
+            List<Card> candidates = choice == NamedRewardChoicePanel.Choice.Duplicate
+                ? TrainingDeckRewardService.GetDuplicateCandidates(buildingDeck.GetCards())
+                : TrainingDeckRewardService.GetRemovalCandidates(buildingDeck.GetCards());
+            if (candidates.Count == 0)
+            {
+                yield break;
+            }
+
+            List<Card> pickedCards = null;
+            yield return SelectCardsCoroutine(candidates, 1, false, cards => pickedCards = cards);
+            Card picked = pickedCards != null && pickedCards.Count > 0 ? pickedCards[0] : null;
+            if (picked == null)
+            {
+                yield break;
+            }
+
+            if (choice == NamedRewardChoicePanel.Choice.Duplicate)
+            {
+                if (buildingDeck.AddCardCopy(picked))
+                {
+                    yield return TrimCharacterDeckOverflowCoroutine(picked.character);
+                }
+            }
+            else
+            {
+                buildingDeck.RemoveCard(picked);
+            }
+        }
+        finally
+        {
+            isDeckRewardInProgress = false;
+        }
+    }
+
     // R-15 캐릭터 카드가 상한을 넘으면 넘은 장수만큼 골라 저장 덱에서 제거
     public System.Collections.IEnumerator TrimCharacterDeckOverflowCoroutine(Character character)
     {
@@ -2480,6 +2573,21 @@ public class TrainingBattleManager : MonoBehaviour
         }
 
         bool shouldPersistRunDeck = isBossVictory;
+
+        if (isVictory)
+        {
+            ApplyPendingPermanentCardRemovals();
+
+            if (TrainingRunState.PendingNodeId.HasValue
+                && TrainingRunState.TryGetNode(TrainingRunState.PendingNodeId.Value, out TrainingMapNodeData rewardNode)
+                && rewardNode.nodeType == TrainingNodeType.Named
+                && buildingDeck != null)
+            {
+                yield return RunNamedRewardSequence();
+            }
+        }
+
+        pendingPermanentlyRemovedCards.Clear();
 
         if (PlayerData.Instance != null)
         {

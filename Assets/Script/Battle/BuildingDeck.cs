@@ -136,6 +136,38 @@ public class BuildingDeck
         return true;
     }
 
+    // R-46 네임드 보상 복제: 같은 카드 ID(강화 상태)와 영구 피해 증가를 그대로 유지
+    public bool AddCardCopy(Card source)
+    {
+        if (source == null)
+        {
+            return false;
+        }
+
+        Card newCard = CardManager.GetCardAsCard(source.cardId);
+        if (newCard == null || ViolatesUniqueRule(newCard))
+        {
+            Debug.LogWarning($"[BuildingDeck] 카드를 복제할 수 없습니다: {source.cardName}");
+            return false;
+        }
+
+        newCard.permanentDamageBonus = source.permanentDamageBonus;
+        deckList.Add(newCard);
+        return true;
+    }
+
+    // 저장 덱 위치와 카드 ID가 일치할 때만 제거
+    public bool RemoveCardAt(int index, int cardId)
+    {
+        if (index < 0 || index >= deckList.Count || deckList[index] == null || deckList[index].cardId != cardId)
+        {
+            return false;
+        }
+
+        deckList.RemoveAt(index);
+        return true;
+    }
+
     /// <summary>
     /// Remove card from run deck.
     /// </summary>

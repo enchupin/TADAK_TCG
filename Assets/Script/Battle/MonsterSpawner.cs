@@ -289,13 +289,13 @@ public class MonsterSpawner : MonoBehaviour
         if (TrainingRunState.PendingNodeId.HasValue
             && TrainingRunState.TryGetNode(TrainingRunState.PendingNodeId.Value, out TrainingMapNodeData pendingNode))
         {
-            return pendingNode.stageIndex;
+            return pendingNode.FloorNumber;
         }
 
         if (TrainingRunState.CurrentNodeId.HasValue
             && TrainingRunState.TryGetNode(TrainingRunState.CurrentNodeId.Value, out TrainingMapNodeData currentNode))
         {
-            return currentNode.stageIndex;
+            return currentNode.FloorNumber;
         }
 
         return 1;

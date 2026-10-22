@@ -276,5 +276,17 @@ static class Program
         Check(TrainingDeckRewardService.GetAcquisitionOptions(deck, Character.Ignia).Count == 3, "남은 후보 4종 중 3종 제시");
         Check(Enumerable.Range(0, 30).Any(_ => TrainingDeckRewardService.GetAcquisitionOptions(deck, Character.Ignia).Contains(201060)), "보유하지 않은 유일 카드는 후보에 포함");
         CardManager.UniqueCardIds.Clear();
+
+        // R-46 네임드 보상: 복제는 유일 카드 제외, 제거는 2장 이상 가진 캐릭터의 카드만
+        List<Card> rewardDeck = new List<Card>
+        {
+            new Card { cardId = 201070, character = Character.Ignia, keywords = new List<int> { CardKeywordIds.Unique } },
+            new Card { cardId = 201010, character = Character.Ignia },
+            new Card { cardId = 101010, character = Character.Isla }
+        };
+        List<Card> duplicateCandidates = TrainingDeckRewardService.GetDuplicateCandidates(rewardDeck);
+        Check(duplicateCandidates.Count == 2 && !duplicateCandidates.Contains(rewardDeck[0]), "복제 후보에서 유일 카드 제외");
+        List<Card> removalCandidates = TrainingDeckRewardService.GetRemovalCandidates(rewardDeck);
+        Check(removalCandidates.Count == 2 && !removalCandidates.Contains(rewardDeck[2]), "카드가 1장뿐인 캐릭터는 제거 후보 제외");
     }
 }

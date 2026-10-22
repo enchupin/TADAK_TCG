@@ -34,6 +34,12 @@ public sealed class ThiefBuffScript : MonsterBuffScript
     {
         if (monster != null)
         {
+            // R-47a 사망하지 않고 이탈하면 훔쳐 간 카드는 저장 덱에서 영구 제거
+            if (StolenCardsByMonster.TryGetValue(monster, out List<Card> stolenCards))
+            {
+                battleManager?.QueueStolenCardsForPermanentRemoval(stolenCards);
+            }
+
             StolenCardsByMonster.Remove(monster);
         }
     }

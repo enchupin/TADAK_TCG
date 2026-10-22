@@ -52,6 +52,46 @@ public static class TrainingDeckRewardService
     }
 
     // 캐릭터 카드가 상한을 넘은 장수 (0이면 제거 불필요)
+    // R-46 · R-25 복제 후보: 유일 카드 제외
+    public static List<Card> GetDuplicateCandidates(IReadOnlyList<Card> deckCards)
+    {
+        List<Card> candidates = new List<Card>();
+        if (deckCards == null)
+        {
+            return candidates;
+        }
+
+        foreach (Card card in deckCards)
+        {
+            if (card != null && !card.HasKeyword(CardKeywordIds.Unique))
+            {
+                candidates.Add(card);
+            }
+        }
+
+        return candidates;
+    }
+
+    // R-46 제거 후보: 저장 덱이 비지 않도록 2장 이상 가진 캐릭터의 카드만
+    public static List<Card> GetRemovalCandidates(IReadOnlyList<Card> deckCards)
+    {
+        List<Card> candidates = new List<Card>();
+        if (deckCards == null)
+        {
+            return candidates;
+        }
+
+        foreach (Card card in deckCards)
+        {
+            if (card != null && GetCharacterCards(deckCards, card.character).Count > 1)
+            {
+                candidates.Add(card);
+            }
+        }
+
+        return candidates;
+    }
+
     public static int GetOverflowCount(IReadOnlyList<Card> deckCards, Character character)
     {
         int limit = Mathf.Max(0, GameRules.Deck.maxCardsPerCharacter);
