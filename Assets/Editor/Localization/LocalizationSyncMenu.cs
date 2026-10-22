@@ -36,6 +36,49 @@ public static class LocalizationSyncMenu
         Debug.Log(builder.ToString());
     }
 
+    // 누락 · 인자 · 참조 · 복수형 · 남은 한글 · 조각 따옴표 · 토큰 잔여 검사
+    [MenuItem(MenuRoot + "번역 검증")]
+    public static void ValidateTranslations()
+    {
+        string root = GetProjectRoot();
+        SortedDictionary<string, string> source = LocalizationSourceSync.ReadLanguage(root, LocalizationSourceSync.SourceLanguage);
+        StringBuilder builder = new("[LocalizationSync] 번역 검증");
+        int total = 0;
+        foreach (string code in GetTargetLanguages(root))
+        {
+            List<LocalizationIssue> issues = LocalizationValidator.Validate(source, LocalizationSourceSync.ReadLanguage(root, code), code);
+            total += issues.Count;
+            builder.Append($"\n{code}: {issues.Count}건");
+            foreach (LocalizationIssue issue in issues.Take(30))
+            {
+                builder.Append("\n  ").Append(issue);
+            }
+        }
+
+        if (total == 0)
+        {
+            Debug.Log(builder.ToString());
+        }
+        else
+        {
+            Debug.LogWarning(builder.ToString());
+        }
+    }
+
+    // 플레이 중 영어 문구를 악센트 · 40% 늘린 문구로 표시 ([[ ]] 없는 문구 = 하드코딩)
+    [MenuItem(MenuRoot + "의사 언어 켜기 · 끄기 (플레이 중)")]
+    public static void TogglePseudoLocalization()
+    {
+        if (!Application.isPlaying)
+        {
+            EditorUtility.DisplayDialog("의사 언어", "플레이 모드에서만 사용할 수 있습니다.", "확인");
+            return;
+        }
+
+        LocalizationManager.SetPseudoLocalization(!LocalizationManager.PseudoLocalizationEnabled);
+        Debug.Log($"[LocalizationSync] 의사 언어 {(LocalizationManager.PseudoLocalizationEnabled ? "켜짐" : "꺼짐")}");
+    }
+
     [MenuItem(MenuRoot + "CSV 내보내기 (모든 번역 언어)")]
     public static void ExportCsv()
     {

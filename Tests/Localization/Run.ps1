@@ -14,6 +14,7 @@ $project = @"
     <Compile Include="$escapedRoot/Tests/Localization/*.cs" />
     <Compile Include="$escapedRoot/Assets/Script/Localization/Core/*.cs" />
     <Compile Include="$escapedRoot/Assets/Editor/Localization/LocalizationSourceSync.cs" />
+    <Compile Include="$escapedRoot/Assets/Editor/Localization/LocalizationValidator.cs" />
     <Reference Include="Newtonsoft.Json"><HintPath>$escapedNewtonsoft</HintPath></Reference>
   </ItemGroup>
 </Project>

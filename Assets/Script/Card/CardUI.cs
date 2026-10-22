@@ -417,9 +417,15 @@ public class CardUI : MonoBehaviour
         return CleanupCommonBuffTooltipText(BuffTooltipPlaceholderPattern.Replace(resolved, string.Empty));
     }
 
+    // 카드 툴팁에는 중첩 수치가 없음: 한국어는 기존처럼 수치를 지우고, 다른 언어는 문장이 깨지지 않게 X로 표시 (增加点 · на урона 방지)
     private static Dictionary<string, object> RuneBuffArguments()
     {
-        return new Dictionary<string, object> { { GameText.RuneBuffArgument, "(" + GameText.GetCurrentRuneBuffName() + ")" } };
+        string stackPlaceholder = LocalizationManager.GetCurrentLanguageCode() == "ko" ? string.Empty : "X";
+        return new Dictionary<string, object>
+        {
+            { GameText.RuneBuffArgument, "(" + GameText.GetCurrentRuneBuffName() + ")" },
+            { "stack", stackPlaceholder }
+        };
     }
 
     private static string CleanupCommonBuffTooltipText(string text)

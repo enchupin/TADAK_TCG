@@ -38,7 +38,7 @@ times,회,times,回,次,次,раз,fois,Mal,검수 필요,"Deal 3 damage 4 times
 twice,2배,twice / double,2倍,两倍,兩倍,вдвое,double,doppelt,검수 필요,
 potion,포션,Potion,ポーション,药水,藥水,зелье,potion,Trank,검수 필요,이 게임의 포션은 카드
 craft,제작(포션),Brew,調合する,调制,調製,варить,Préparer,Brauen,검수 필요,"게임 고유: 무작위 포션 카드를 만드는 동작"
-create,생성(카드),Add,加える,加入,加入,добавлять,Ajouter,Erhalte,검수 필요,"StS2 방식: Add X into your Hand. / 手札に加える / 加入你的手牌 / Добавляет в руку"
+create,생성(카드),Create / Add,生成する,生成,產生,создавать,Créer,Erschaffe,검수 필요,"놓이는 곳이 정해지지 않은 생성은 Create / 生成する / 生成 / 產生 / Создает, 손 · 더미가 정해지면 StS2처럼 Add X into your Hand"
 copy,복제 / 복사,copy,コピー,复制,複製,копия,copie,Kopie,검수 필요,
 remove,제거,remove,取り除く,移除,移除,снимать,retirer,entfernen,검수 필요,
 fatal,처치,kill,倒す,击杀,擊殺,убить,tuer,töten,검수 필요,

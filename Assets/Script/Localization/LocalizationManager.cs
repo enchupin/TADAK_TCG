@@ -20,6 +20,8 @@ public static class LocalizationManager
     private const string LanguageListResourcePath = "Localization/languages";
     private const string LanguageTableResourceRoot = "Localization/";
     private const string SourceLanguageCode = "ko";
+    // 의사 언어의 원본 (라틴 문자 변환 대상)
+    private const string PseudoSourceLanguage = "en";
 
     public static event Action LanguageChanged;
 
@@ -109,16 +111,38 @@ public static class LocalizationManager
         return true;
     }
 
+    // 개발용 의사 언어 (영어 문구를 변환해 표시, 하드코딩 · 칸 넘침 확인)
+    public static bool PseudoLocalizationEnabled { get; private set; }
+
+    public static void SetPseudoLocalization(bool enabled)
+    {
+        EnsureInitialized();
+        if (PseudoLocalizationEnabled == enabled)
+        {
+            return;
+        }
+
+        PseudoLocalizationEnabled = enabled;
+        NotifyLanguageChanged();
+    }
+
     // 현재 언어 → 폴백 순서로 키를 찾음
     public static bool TryGetText(string key, out string text)
     {
         EnsureInitialized();
-        foreach (string languageCode in catalog.GetFallbackChain(currentLanguageCode))
+        string languageCode = PseudoLocalizationEnabled ? PseudoSourceLanguage : currentLanguageCode;
+        foreach (string code in catalog.GetFallbackChain(languageCode))
         {
-            EnsureLanguageTableLoaded(languageCode);
+            EnsureLanguageTableLoaded(code);
         }
 
-        return catalog.TryGetText(currentLanguageCode, key, out text);
+        bool found = catalog.TryGetText(languageCode, key, out text);
+        if (found && PseudoLocalizationEnabled)
+        {
+            text = PseudoLocalizer.Transform(text);
+        }
+
+        return found;
     }
 
     // 키 조회 + 인자 · 복수형 · 참조 해석, 키가 없으면 키 그대로
@@ -144,7 +168,8 @@ public static class LocalizationManager
         bool substituteSimpleArguments = true)
     {
         EnsureInitialized();
-        return LocalizedTextFormatter.Format(template, currentLanguageCode, args, referenceResolver, substituteSimpleArguments);
+        string languageCode = PseudoLocalizationEnabled ? PseudoSourceLanguage : currentLanguageCode;
+        return LocalizedTextFormatter.Format(template, languageCode, args, referenceResolver, substituteSimpleArguments);
     }
 
     private static void ApplyLanguageCode(string languageCode)

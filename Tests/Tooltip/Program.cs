@@ -13,6 +13,7 @@ class Program {
   RichText();
   BuffFormat();
   BuffData(args[0]);
+  LocalizedBuffTooltips(args[0]);
   IntentFormat();
   Console.WriteLine($"툴팁 검증 {count}개 통과");
  }
@@ -167,6 +168,31 @@ class Program {
   var allowed=new HashSet<string>{"턴당 1회","강공"};
   var unexpected=unresolved.Where(n=>!allowed.Contains(n)).ToList();
   Check(unexpected.Count==0,"buffs.json에 없는 참조: "+string.Join(", ",unexpected));
+ }
+
+ // 모든 언어 버프 툴팁: 복수형 선해석 → 툴팁 포맷 후 남는 토큰 없음 (실행 중 BuffTooltipTextBuilder와 같은 순서)
+ static void LocalizedBuffTooltips(string root){
+  var meta=JsonDocument.Parse(File.ReadAllText(Path.Combine(root,"Assets/Resources/JsonData/buffs.json"))).RootElement.GetProperty("buffs").EnumerateArray()
+   .ToDictionary(b=>b.GetProperty("buffId").GetInt32(),b=>b.TryGetProperty("polarity",out var p)&&p.GetString()=="harmful");
+  var c=TooltipColors.Default;
+  foreach(var dir in Directory.GetDirectories(Path.Combine(root,"Assets/Resources/Localization"))){
+   string code=Path.GetFileName(dir);
+   string path=Path.Combine(dir,"buffs.json");
+   if(!File.Exists(path))continue;
+   var table=JsonSerializer.Deserialize<Dictionary<string,string>>(File.ReadAllText(path));
+   BuffTooltipFormatter.BuffIdLookup ids=(int id,out string name,out bool harmful)=>{
+    harmful=meta.TryGetValue(id,out var h)&&h;
+    return table.TryGetValue($"buff.{id}.name",out name);};
+   BuffTooltipFormatter.DynamicNameLookup dynamic=(string key,out string name,out bool harmful)=>{name=key=="runeBuff"||key=="동력"?"RUNE":null;harmful=false;return name!=null;};
+   foreach(int stack in new[]{1,2,5,21}){
+    foreach(var id in meta.Keys){
+     if(!table.TryGetValue($"buff.{id}.desc",out var desc))continue;
+     string pre=LocalizedTextFormatter.Format(desc,code,new Dictionary<string,object>{{"stack",stack}},null,false);
+     string text=BuffTooltipFormatter.FormatEntry(table.GetValueOrDefault($"buff.{id}.name",""),pre,stack,meta[id],c,null,dynamic,ids);
+     Check(!text.Contains('{')&&!text.Contains('}')&&!text.Contains("[buff:"),$"{code} {id} 툴팁에 토큰이 남음: {text}");
+    }
+   }
+  }
  }
 
  static string O(string n)=>$"<color=#808000>{n}</color>";

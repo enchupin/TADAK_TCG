@@ -19,6 +19,9 @@ class Program {
   Csv();
   SourceTables(args[0]);
   HardcodedKorean(args[0]);
+  Validator();
+  TranslationTables(args[0]);
+  Pseudo();
   Console.WriteLine($"로컬라이징 검증 {count}개 통과");
  }
 
@@ -252,6 +255,62 @@ class Program {
   Check(records[1].SequenceEqual(values),"CSV 왕복");
   Check(records[2].SequenceEqual(new[]{"last","1"}),"마지막 줄바꿈 없음");
   Check(LocalizationSourceSync.ParseCsv("").Count==0,"빈 CSV");
+ }
+
+ static void Pseudo(){
+  string text=PseudoLocalizer.Transform("Deal {attack} damage. Apply 1 [buff:4001]. <b>Exhaust</b>");
+  Check(text.StartsWith("[[")&&text.EndsWith("]]"),"의사 언어 표시 괄호");
+  Check(text.Contains("{attack}")&&text.Contains("[buff:4001]")&&text.Contains("<b>")&&text.Contains("</b>"),"인자 · 참조 · 리치 텍스트 유지");
+  Check(text.Contains("Ðéåĺ")||text.Contains("Ðé"),"라틴 문자 악센트 변환: "+text);
+  Check(text.Contains("~"),"길이 확장");
+  Equal(LocalizedTextFormatter.Format(text,"en",A("attack",6),(LocalizedReference r,out string t)=>{t="Corrosion";return true;}).Contains("6")?"ok":"no","ok","변환 후에도 인자 해석");
+  Equal(PseudoLocalizer.Transform(""),"","빈 문구");
+  Check(PseudoLocalizer.Transform("{n, plural, one {card} other {cards}}").Contains("{n, plural, one {card} other {cards}}"),"복수형 블록 유지");
+ }
+
+ static void Validator(){
+  var issues=new List<LocalizationIssue>();
+  LocalizationValidator.ValidateEntry("k","피해를 {attack} 입힙니다.","Deal {attack} damage.","en",issues);
+  Check(issues.Count==0,"정상 번역은 문제 없음: "+string.Join(" / ",issues));
+  issues.Clear();
+  LocalizationValidator.ValidateEntry("k","피해를 {attack} 입힙니다.","Deal {block} damage.","en",issues);
+  Check(issues.Any(i=>i.Kind==LocalizationIssueKind.Arguments),"인자 불일치 검출");
+  issues.Clear();
+  LocalizationValidator.ValidateEntry("k","[buff:4001]을 1 부여합니다.","Apply 1 [buff:4002].","en",issues);
+  Check(issues.Any(i=>i.Kind==LocalizationIssueKind.References),"참조 불일치 검출");
+  issues.Clear();
+  LocalizationValidator.ValidateEntry("k","[buff:4001]을 1 부여합니다.","Накладывает 1 [buff:4001|коррозии].","ru",issues);
+  Check(issues.Count==0,"표시 문구 덮어쓰기는 같은 참조: "+string.Join(" / ",issues));
+  issues.Clear();
+  LocalizationValidator.ValidateEntry("k","카드를 {stack장} 뽑습니다.","Draw {stack} {stack, plural, one {card} other {cards}}.","en",issues);
+  Check(issues.Count==0,"단위 자리표시 · 복수형 허용: "+string.Join(" / ",issues));
+  issues.Clear();
+  LocalizationValidator.ValidateEntry("k","카드를 {stack장} 뽑습니다.","Вы добираете {stack} {stack, plural, one {карту} other {карт}}.","ru",issues);
+  Check(issues.Count(i=>i.Kind==LocalizationIssueKind.Plural)==2,"러시아어 few · many 누락 검출");
+  issues.Clear();
+  LocalizationValidator.ValidateEntry("k","카드를 1장 뽑습니다.","카드를 1장 뽑습니다.","en",issues);
+  Check(issues.Any(i=>i.Kind==LocalizationIssueKind.Untranslated),"남은 한글 검출");
+  issues.Clear();
+  LocalizationValidator.ValidateEntry("k","조각: \"사용 시 피해를 4 입힙니다.\"를 새깁니다.","Fragment: engrave On play, deal 4 damage.","en",issues);
+  Check(issues.Any(i=>i.Kind==LocalizationIssueKind.Quote),"조각 따옴표 누락 검출");
+  issues.Clear();
+  LocalizationValidator.ValidateEntry("k","{n}","{n, plural, one {x}","en",issues);
+  Check(issues.Any(i=>i.Kind==LocalizationIssueKind.Render||i.Kind==LocalizationIssueKind.Plural),"깨진 복수형 검출");
+  issues.Clear();
+  LocalizationValidator.ValidateEntry("k","[buff:{buffId}]을 {amount} 얻습니다.","Gains {amount} [buff:{buffId}].","en",issues);
+  Check(issues.Count==0,"인자로 만드는 참조 틀 허용: "+string.Join(" / ",issues));
+  var missing=LocalizationValidator.Validate(new Dictionary<string,string>{{"a","가"},{"b","나"}},new Dictionary<string,string>{{"a","A"},{"c","C"}},"en");
+  Check(missing.Any(i=>i.Kind==LocalizationIssueKind.Missing&&i.Key=="b")&&missing.Any(i=>i.Kind==LocalizationIssueKind.Orphan&&i.Key=="c"),"누락 · 원문에 없는 키 검출");
+ }
+
+ // 사용 가능한 모든 언어 표가 검증을 통과해야 함 (원어민 검수와 별개로 형식 오류 차단)
+ static void TranslationTables(string root){
+  var list=JsonSerializer.Deserialize<LocalizationLanguageList>(File.ReadAllText(Path.Combine(root,"Assets/Resources/Localization/languages.json")),new JsonSerializerOptions{IncludeFields=true});
+  var source=LocalizationSourceSync.ReadLanguage(root,"ko");
+  foreach(var language in list.languages.Where(l=>l.enabled&&l.code!="ko")){
+   var issues=LocalizationValidator.Validate(source,LocalizationSourceSync.ReadLanguage(root,language.code),language.code);
+   Check(issues.Count==0,$"{language.code} 번역 검증 {issues.Count}건: "+string.Join(" / ",issues.Take(8)));
+  }
  }
 
  // 화면에 나오는 한국어 문장은 코드에 두지 않음 (로그 · 예외 · 주석 · 인스펙터 특성 · 데이터 키는 제외)
