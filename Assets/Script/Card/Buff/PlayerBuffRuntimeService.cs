@@ -675,6 +675,13 @@ public class PlayerBuffRuntimeService
         });
     }
 
+    // 툴팁 진행도처럼 버프 스크립트의 런타임 상태를 읽을 때 사용
+    public bool TryGetScript<T>(int buffId, out T script) where T : PlayerBuffScript
+    {
+        script = scripts.TryGetValue(buffId, out PlayerBuffScript registered) ? registered as T : null;
+        return script != null;
+    }
+
     private void Register(PlayerBuffScript script)
     {
         if (script == null || script.BuffId <= 0)

@@ -11,6 +11,7 @@ $project = @"
     <Compile Include="$escapedRoot/Tests/Tooltip/*.cs" />
     <Compile Include="$escapedRoot/Assets/Script/UI/Tooltip/TooltipLayout.cs" />
     <Compile Include="$escapedRoot/Assets/Script/UI/Tooltip/TooltipRichText.cs" />
+    <Compile Include="$escapedRoot/Assets/Script/UI/Tooltip/BuffTooltipFormatter.cs" />
   </ItemGroup>
 </Project>
 "@
@@ -20,5 +21,5 @@ $configPath = Join-Path $testRoot 'NuGet.Config'
 [IO.File]::WriteAllText($configPath, '<configuration><packageSources><clear /></packageSources></configuration>', [Text.UTF8Encoding]::new($false))
 dotnet restore $projectPath --configfile $configPath
 if ($LASTEXITCODE -ne 0) { throw '툴팁 검증 복원 실패' }
-dotnet run --project $projectPath --no-restore
+dotnet run --project $projectPath --no-restore -- $projectRoot
 if ($LASTEXITCODE -ne 0) { throw '툴팁 검증 실패' }
