@@ -1,12 +1,22 @@
 {
+    "character.101.identity": "调制3张随机药水。给予所有敌人3层[buff:4001]。",
     "character.101.name": "艾拉",
+    "character.102.identity": "从牌组中选择1张牌复制。获得[buff:1025]。",
     "character.102.name": "杰克",
+    "character.103.identity": "其他角色的身份技能充能各增加4。",
     "character.103.name": "可莉姆",
+    "character.201.identity": "获得8层[buff:3009]。给予所有敌人2层[buff:4003]。",
     "character.201.name": "伊格妮亚",
+    "character.202.identity": "获得2层[buff:3024]。获得3层[buff:3063]。",
     "character.202.name": "瓦妮莎",
+    "character.203.identity": "生成2张已升级的羽毛牌。获得1层[buff:3065]。",
     "character.203.name": "梅蕾尔",
+    "character.204.identity": "给予所有敌人10层[buff:4016]。若[buff:4016]高于敌人的最大生命，立即触发。获得2层[buff:3066]。",
     "character.204.name": "米奥",
+    "character.301.identity": "获得10点格挡。给予所有敌人2层[buff:4004]。",
     "character.301.name": "珀拉",
+    "character.302.identity": "获得5层{runeBuff}。触发1次你的回合结束效果。",
     "character.302.name": "鲁恩",
+    "character.303.identity": "获得6层[buff:3001]和12点格挡。",
     "character.303.name": "汗"
 }

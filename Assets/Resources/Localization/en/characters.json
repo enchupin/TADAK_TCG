@@ -1,12 +1,22 @@
 {
+    "character.101.identity": "Brew 3 random Potions. Apply 3 [buff:4001] to ALL enemies.",
     "character.101.name": "Isla",
+    "character.102.identity": "Choose 1 card in your deck and copy it. Gain [buff:1025].",
     "character.102.name": "Jack",
+    "character.103.identity": "Fill each other character's Identity gauge by 4.",
     "character.103.name": "Cream",
+    "character.201.identity": "Gain 8 [buff:3009]. Apply 2 [buff:4003] to ALL enemies.",
     "character.201.name": "Ignia",
+    "character.202.identity": "Gain 2 [buff:3024]. Gain 3 [buff:3063].",
     "character.202.name": "Vanessa",
+    "character.203.identity": "Create 2 Upgraded Feather cards. Gain 1 [buff:3065].",
     "character.203.name": "Merel",
+    "character.204.identity": "Apply 10 [buff:4016] to ALL enemies. If [buff:4016] exceeds an enemy's Max HP, it triggers immediately. Gain 2 [buff:3066].",
     "character.204.name": "Mio",
+    "character.301.identity": "Gain 10 Block. Apply 2 [buff:4004] to ALL enemies.",
     "character.301.name": "Polar",
+    "character.302.identity": "Gain 5 {runeBuff}. Trigger your end-of-turn effects once.",
     "character.302.name": "Rune",
+    "character.303.identity": "Gain 6 [buff:3001] and 12 Block.",
     "character.303.name": "Khan"
 }
