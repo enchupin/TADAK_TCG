@@ -7,14 +7,15 @@ namespace UnityEngine {
  public static class Debug { public static void LogWarning(object v){} public static void Log(object v){} }
  public static class Mathf {
   public static int Abs(int n)=>Math.Abs(n); public static int Min(int a,int b)=>Math.Min(a,b); public static int Max(int a,int b)=>Math.Max(a,b); public static float Max(float a,float b)=>Math.Max(a,b);
-  public static int FloorToInt(float v)=>(int)Math.Floor(v); public static int Clamp(int v,int a,int b)=>Math.Clamp(v,a,b);
+  public static int FloorToInt(float v)=>(int)Math.Floor(v); public static int RoundToInt(float v)=>(int)Math.Round(v); public static bool Approximately(float a,float b)=>Math.Abs(a-b)<1e-5f; public static int Clamp(int v,int a,int b)=>Math.Clamp(v,a,b);
  }
 }
-public enum CardCostType { Energy, Barrier, Rune }
+public enum CardCostType { Energy, Barrier, Rune, Wave }
 public enum BattleTurnState { PlayerTurnStart, PlayerAction, PlayerTurnEnd, EnemyTurnStart, EnemyAction, EnemyTurnEnd, CombatEnd }
 public enum MoveZoneType { DrawPile, DiscardPile, Source }
 public enum WuppiModeState { Attack, Guard }
 public class Card {
+ public Character character; public bool isCurious,resolvedAsCuriosity,skipExhaustOnce; public int fragmentCardId; public int baseCost=>cost;
  public List<ICardEffect> effects=new(); public int cardId,cost; public CardCostType costType; public bool power;
  public Card CloneForRuntimeCopy()=>new(){cardId=cardId,cost=cost,costType=costType,power=power,effects=new(effects)};
  public void ApplyTemplate(Card c){cardId=c.cardId;cost=c.cost;effects=new(c.effects);}
@@ -31,9 +32,9 @@ public class Card {
 }
 public static class CardKeywordIds { public const int Power=1,Shadow=2,Ghost=3,Finale=4; }
 public static class CardManager { public static Card GetCardAsCard(int id)=>new(){cardId=id}; }
-public static class BuffCardUtility { public static bool IsFeatherCard(Card c)=>c!=null&&(c.cardId==203080||c.cardId==203081); public static bool IsPotionCard(Card c)=>c.cardId==101080; }
+public static class BuffCardUtility { public const string BasePotionGroupName="potion"; public static bool IsFeatherCard(Card c)=>c!=null&&(c.cardId==203080||c.cardId==203081); public static bool IsPotionCard(Card c)=>c.cardId==101080; public static bool IsPotionCardId(int id)=>id>=101080&&id<=101139;
+ public static List<Card> CreateRandomCardsFromGroup(string group,int n)=>Enumerable.Range(0,n).Select(_=>new Card{cardId=101080}).ToList(); }
 public static class CreamBuffRuntimeUtility { public const int ComboBuffId=3048,EnergyOverflowBuffId=3053; public static void SyncEnergyOverflow(PlayerData p){} }
-public static class BuffValueUtility { public static float GetOutgoingDamageMultiplier(int id)=>0.75f; }
 public static class WuppiModeRuntimeUtility {
  public static void HandleDirectBuffStackChange(TrainingBattleManager b,PlayerData p,int id){}
  public static bool IsMode(PlayerData p,WuppiModeState mode)=>p.mode==mode;
@@ -45,13 +46,14 @@ public partial class PlayerData {
  public float GetOutgoingDamageMultiplier()=>TrainingBattleManager.Instance.playerService.GetOutgoingDamageMultiplier();
  public List<Buff> currentBuffs=new(); public int hp=50,maxHP=100,defense,hpLostThisTurn; public bool hasLostHpThisTurn; public WuppiModeState mode=WuppiModeState.Guard;
  public void Heal(int n)=>hp=Math.Min(maxHP,hp+n);
-
+ public void AddEnergy(int n)=>energy+=n;
 }
 public class Monster {
- public Dictionary<int,int> buffs=new(); public int hp=100,defense,maxHP=100; public void Heal(int n)=>hp=Math.Min(maxHP,hp+n); public int TakeDamage(int n,int unused=0){hp-=n;return n;}
+ public Dictionary<int,int> buffs=new(); public int hp=100,defense,maxHP=100; public bool stunned; public bool IsStunned=>stunned; public void Heal(int n)=>hp=Math.Min(maxHP,hp+n); public int TakeDamage(int n,int unused=0){hp-=n;return n;}
  public int GetBuffStack(int id)=>buffs.GetValueOrDefault(id);
  public void AddBuff(int id,int amount)=>buffs[id]=GetBuffStack(id)+amount;
  public void ConsumeBuffStack(int id,int amount)=>buffs[id]=Math.Max(0,GetBuffStack(id)-amount);
+ public void RemoveBuffStack(int id)=>buffs.Remove(id);
  public bool IsDead()=>hp<=0;
 }
 public class MirrorMonster : Monster { }
@@ -79,7 +81,7 @@ public partial class TrainingBattleManager {
  public int GetPlayerCalculatedCardDamageBonus(float n)=>playerService.GetCalculatedCardDamageBonus(n);
  public float GetPlayerCalculatedCardBaseMultiplier(float n)=>playerService.GetCalculatedCardBaseMultiplier(n);
  public int ResolvePlayerEffectDamage(int n)=>(int)(n*playerService.GetOutgoingDamageMultiplier());
- public int ResolvePlayerIncomingDamage(int n,Monster m)=>(int)(n*playerService.GetIncomingDamageMultiplier(m));
+ public int ResolvePlayerIncomingDamage(int n,Monster m)=>battleBuffController.ResolvePlayerIncomingDamage(n,m);
  public bool TryPreventPlayerIncomingDamage(int n,Monster m)=>playerService.TryPreventIncomingDamage(m,n);
  public void HandlePlayerHpLost(int n){playerService.OnPlayerHpLost(n);monsterService.OnPlayerHpLost(n);}
  public void TryConsumeSoulProtection()=>playerService.TryConsumeFatalDamage();
@@ -97,6 +99,9 @@ public partial class TrainingBattleManager {
  }
  public void UpdateAllUI(){}
  public void AddTurnEndTriggerRepeat(int n)=>repeats+=n;
+ public List<CharacterIdentityState> identityStates=new(){new(),new(),new()};
+ public IReadOnlyList<CharacterIdentityState> GetIdentityStates()=>identityStates;
+ public void HandlePlayerCardHpLost(int n){battleContext.OnPlayerCardHpLost(n);playerService.OnPlayerCardHpLost(n);}
 }
 
 public class Piles { public List<Card> draw=new(),discard=new(),exhaust=new();public void AddToDiscard(List<Card> c)=>discard.AddRange(c);public void AddToDiscard(Card c)=>discard.Add(c);public List<Card> GetExhaustPile()=>exhaust;public List<Card> GetDrawPile()=>draw;public List<Card> GetDiscardPile()=>discard; }
@@ -108,8 +113,9 @@ public class BattleContext {
  public Card GetContextCard(string s)=>GetContextCards(s)?.FirstOrDefault(); public Card GetLastPlayedCard()=>card;
  public List<Card> GetContextCards(string s)=>contexts.GetValueOrDefault(s); public void SetContextCards(string s,List<Card> c)=>contexts[s]=c; public void ClearContextCards(string s)=>contexts.Remove(s);public void OnCardPlayed(Card c)=>card=c;public List<Card> GetSelectedCards()=>selected;public void SetSelectedCards(List<Card> c)=>selected=c;
  public void OnDamageDealt(int n){lastDamageDealt=n;totalDamageDealt+=n;} public void OnPlayerCardHpLost(int n){} public void OnEnergySpent(int n){}
+ Card paidCard; int paidCost; public void RecordPaidCost(Card c,int n){paidCard=c;paidCost=n;} public int GetPaidCost(Card c)=>ReferenceEquals(c,paidCard)?paidCost:c.cost;
 }
-public static class FormulaEvaluator { public static int Evaluate(string s,BattleContext c,PlayerData p,Monster m,int n)=>n; public static int Evaluate(string s,BattleContext c,PlayerData p,List<int> ids,int n)=>n; }
+public static class FormulaEvaluator { public static int Evaluate(string s,BattleContext c,PlayerData p,Monster m,int n)=>n; public static int Evaluate(string s,BattleContext c,PlayerData p,List<int> ids,int n)=>n; public static int Evaluate(string s,BattleContext c,PlayerData p,List<int> ids,Monster m,int n)=>n; }
 
 public partial class TurnSystem {
  private TrainingBattleManager battleManager; private int pendingExtraTurnEndTriggers;
@@ -118,6 +124,33 @@ public partial class TurnSystem {
  private System.Collections.IEnumerator SelectTurnEndRetainCards(List<Card> cards,int n,List<Card> selected){yield break;}
 }
 
+public enum Character { Monster=0, Isla=101, Jack=102, Cream=103, Ignia=201, Vanessa=202, Merel=203, Mio=204, Polar=301, Rune=302, Khan=303 }
+public class CharacterIdentityState { }
+public static class GameRulesJsonParser { public static GameRulesData LoadOrDefault()=>new(); }
+
 public static class BuffMetadataResolver { public static BuffData Resolve(int id)=>new(){buffId=id,name=id.ToString()}; }
+
+// 실제 buffs.json의 극성·중첩 메타데이터를 읽어 BuffData 판정에 사용
+public static class BuffMetadataDatabase {
+ static Dictionary<int,BuffData> data;
+ public static IReadOnlyDictionary<int,BuffData> All { get { Load(); return data; } }
+ public static bool TryGetBuffData(int id,out BuffData buff){Load();return data.TryGetValue(id,out buff);}
+ static void Load(){
+  if(data!=null)return;
+  var dir=new System.IO.DirectoryInfo(AppContext.BaseDirectory);
+  while(dir!=null&&!System.IO.Directory.Exists(System.IO.Path.Combine(dir.FullName,"Assets")))dir=dir.Parent;
+  var json=System.Text.Json.JsonDocument.Parse(System.IO.File.ReadAllText(System.IO.Path.Combine(dir.FullName,"Assets","Resources","Localization","buffs.json")));
+  data=new();
+  foreach(var e in json.RootElement.GetProperty("buffs").EnumerateArray()){
+   var polarity=e.GetProperty("polarity").GetString();
+   data[e.GetProperty("buffId").GetInt32()]=new BuffData{
+    buffId=e.GetProperty("buffId").GetInt32(),
+    polarity=polarity=="beneficial"?BuffPolarity.Beneficial:polarity=="passive"?BuffPolarity.Passive:BuffPolarity.Harmful,
+    stackable=e.GetProperty("stackable").GetBoolean(),
+    signed=e.TryGetProperty("signed",out var signed)&&signed.GetBoolean(),
+    name=e.GetProperty("name").GetString()};
+  }
+ }
+}
 
 public static class CardEffectRuntimeUtility { public static Monster ResolveSingleEnemyTarget(TrainingBattleManager b)=>b.currentTarget??b.GetLivingMonsters().FirstOrDefault(); }

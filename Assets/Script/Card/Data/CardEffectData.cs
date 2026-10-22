@@ -20,6 +20,10 @@ public class CardEffectData
     public string durationText;
     public int effectIndex;
     public float ampMultiplier = 1f;
+    // 강공 효과 배율 (드래곤 브레스+ 등)
+    public float boostMultiplier = 1f;
+    // SelectCard 후보 카드 조건 (Disruption 등)
+    public string cardFilter;
 
     [Header("Buff")]
     public string stat;
@@ -58,6 +62,8 @@ public class CardEffectData
     public string characterFilter;
     public bool allowFewerSelection;
     public bool upgradeableOnly;
+    // R-25 선택 후보에서 유일 카드 제외
+    public bool excludeUnique;
 
     [Header("Keyword")]
     public string keyword;

@@ -53,6 +53,7 @@ static class CardCompletionTests
     {
         var manager = new TrainingBattleManager { Repeats = 2 };
         var card = new Card { cardId = 700002, cost = 3 };
+        card.InitializeRuntimeState();
         card.AddKeyword(CardKeywordIds.Shadow);
         card.AddKeyword(CardKeywordIds.Finale);
         var effect = new CountEffect();
@@ -65,7 +66,7 @@ static class CardCompletionTests
         Assert(manager.Payments == (triggered ? 0 : 1), "직접 사용만 비용을 한 번 지불");
         Assert(manager.IdentityCharges == (triggered ? 0 : 1), "직접 사용만 아이덴티티를 한 번 충전");
         var copies = manager.handManager.Cards.Where(c => c != card).ToList();
-        Assert(copies.Count == 1 && copies[0].cost == 2 && copies[0].HasKeyword(CardKeywordIds.Ghost), "그림자는 모든 반복 뒤 유령 카드 한 장 생성");
+        Assert(copies.Count == 1 && copies[0].cost == 3 && copies[0].HasKeyword(CardKeywordIds.Ghost), "그림자는 모든 반복 뒤 원래 비용의 유령 카드 한 장 생성");
         Assert(manager.Ended && manager.ForceEndCalls == 1, "피날레는 모든 반복 뒤 한 번 처리");
         Assert(manager.usableDeckManager.Discard.Count(c => c == card) == 1, "카드 행선지는 반복 뒤 한 번 처리");
         Console.WriteLine($"PASS {(triggered ? "유발" : "직접")} 사용: 반복·비용·통계·그림자·피날레");

@@ -49,5 +49,14 @@ public enum EffectType
     ApplyBuffByTargetStack = 56,
     ResolveDrowningLethal = 57,
     DamageByBuffStack = 58,
-    IncreaseBeneficialBuffStacks = 59
+    IncreaseBeneficialBuffStacks = 59,
+    // 손의 다른 카드 1장에 페이로드 카드 효과를 새김 (R-73)
+    // 새길 효과는 effects로 지정 (별도 카드 없음)
+    Fragment = 60,
+    // 무작위 이로운 효과 제거·훔치기, 해로운 효과 제거
+    RemoveRandomBuff = 61,
+    // 아이덴티티 게이지 충전
+    ChargeIdentity = 62,
+    // 몬스터 의도 큐 조작: 미루기 · 공격 의도 복사 · 봉인 (R-70)
+    IntentQueue = 63
 }

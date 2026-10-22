@@ -105,6 +105,11 @@ public class HandManager : MonoBehaviour
             return null;
         }
 
+        if (TryRouteOverflowToDiscard(card))
+        {
+            return null;
+        }
+
         card = TrainingBattleManager.Instance != null
             ? TrainingBattleManager.Instance.ApplyHandCardUpgrades(card)
             : card;
@@ -121,6 +126,17 @@ public class HandManager : MonoBehaviour
 
     public void AddCard(List<Card> cards, bool animateDraw)
     {
+        AddCardInternal(cards, animateDraw, false);
+    }
+
+    // 디버그 시작 손패처럼 손패 상한을 의도적으로 넘길 때 사용
+    public void AddCardIgnoringHandLimit(List<Card> cards)
+    {
+        AddCardInternal(cards, false, true);
+    }
+
+    private void AddCardInternal(List<Card> cards, bool animateDraw, bool ignoreHandLimit)
+    {
         if (cards == null || cards.Count == 0)
             return;
 
@@ -134,6 +150,9 @@ public class HandManager : MonoBehaviour
         foreach (Card card in cards)
         {
             if (card == null)
+                continue;
+
+            if (!ignoreHandLimit && TryRouteOverflowToDiscard(card))
                 continue;
 
             Card processedCard = TrainingBattleManager.Instance != null
@@ -155,6 +174,22 @@ public class HandManager : MonoBehaviour
         {
             TryPlayDrawAnimation(cardObj, true);
         }
+    }
+
+    // 손패가 가득 찬 상태에서 손으로 들어오는 카드는 버린 카드 더미로 보냄
+    private bool TryRouteOverflowToDiscard(Card card)
+    {
+        TrainingBattleManager battleManager = TrainingBattleManager.Instance;
+        if (card == null || battleManager == null || battleManager.handManager != this
+            || battleManager.usableDeckManager == null
+            || handCardList.Count < battleManager.MaxHandCardCount)
+        {
+            return false;
+        }
+
+        battleManager.usableDeckManager.AddToDiscard(card);
+        Debug.Log($"[HandManager] 손패가 가득 차 {card.cardName} 카드를 버린 카드 더미에 넣었습니다");
+        return true;
     }
 
     private GameObject InstantiateCardUI(Card card)

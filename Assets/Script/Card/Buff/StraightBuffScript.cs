@@ -1,89 +1,52 @@
 using System.Collections.Generic;
-using UnityEngine;
 using static BattleRuntimeDefinitions;
 
+// 1010 스트레이트: 한 턴에 비용 1·2·3 카드를 모두 쓰면 에너지 2와 카드 1장 (턴당 1회)
 public sealed class StraightBuffScript : PlayerBuffScript
 {
-    private int pendingStraightDiscardCount;
+    private static readonly int[] RequiredCosts = { 1, 2, 3 };
+    private const int EnergyAmount = 2;
+    private const int DrawAmount = 1;
+
+    private readonly HashSet<int> paidCostsThisTurn = new();
+    private bool hasTriggeredThisTurn;
 
     public override int BuffId => StraightBuffId;
 
     public override void ResetForCombat(TrainingBattleManager battleManager, PlayerData player)
     {
-        pendingStraightDiscardCount = 0;
+        ResetTurn();
     }
 
     public override void OnPlayerTurnStart(TrainingBattleManager battleManager, PlayerData player, int stack)
     {
-        if (battleManager == null || stack <= 0)
-        {
-            return;
-        }
-
-        battleManager.AddTurnStartDrawModifier(stack * 2);
-        pendingStraightDiscardCount += stack;
+        ResetTurn();
     }
 
-    public override void ResolveDeferredTurnStartEffects(TrainingBattleManager battleManager, PlayerData player, int stack)
+    public override void OnCardPlayed(TrainingBattleManager battleManager, PlayerData player, Card playedCard, Monster originalTarget, bool isRepeatedEffect, int stack)
     {
-        if (battleManager == null || pendingStraightDiscardCount <= 0 || battleManager.handManager == null || battleManager.usableDeckManager == null)
+        if (battleManager == null || player == null || playedCard == null || isRepeatedEffect || stack <= 0 || hasTriggeredThisTurn)
         {
             return;
         }
 
-        List<Card> selectableCards = battleManager.handManager.GetHandCards();
-        int discardCount = Mathf.Min(pendingStraightDiscardCount, selectableCards.Count);
-        pendingStraightDiscardCount = 0;
-        if (discardCount <= 0)
+        paidCostsThisTurn.Add(battleManager.battleContext != null ? battleManager.battleContext.GetPaidCost(playedCard) : playedCard.cost);
+        foreach (int requiredCost in RequiredCosts)
         {
-            return;
-        }
-
-        bool opened = battleManager.OpenSelectCardPanel(selectableCards, discardCount, selectedCards => DiscardStraightCards(battleManager, selectedCards));
-        if (opened)
-        {
-            return;
-        }
-
-        List<Card> fallbackSelection = new();
-        for (int i = 0; i < discardCount; i++)
-        {
-            Card card = selectableCards[i];
-            if (card != null)
+            if (!paidCostsThisTurn.Contains(requiredCost))
             {
-                fallbackSelection.Add(card);
+                return;
             }
         }
 
-        DiscardStraightCards(battleManager, fallbackSelection);
+        hasTriggeredThisTurn = true;
+        player.AddEnergy(EnergyAmount);
+        battleManager.DrawCards(DrawAmount);
     }
 
-    private static void DiscardStraightCards(TrainingBattleManager battleManager, List<Card> selectedCards)
+    private void ResetTurn()
     {
-        if (battleManager?.handManager == null || battleManager.usableDeckManager == null)
-        {
-            return;
-        }
-
-        int discardedCount = 0;
-        List<Card> safeSelectedCards = selectedCards ?? new List<Card>();
-        foreach (Card card in safeSelectedCards)
-        {
-            if (card == null || !battleManager.handManager.RemoveCard(card))
-            {
-                continue;
-            }
-
-            battleManager.usableDeckManager.AddToDiscard(card);
-            discardedCount++;
-        }
-
-        if (discardedCount > 0)
-        {
-            battleManager.battleContext?.OnCardsDiscarded(discardedCount);
-        }
-
-        battleManager.RefreshHandPlayableState();
-        battleManager.UpdateAllUI();
+        paidCostsThisTurn.Clear();
+        hasTriggeredThisTurn = false;
     }
 }

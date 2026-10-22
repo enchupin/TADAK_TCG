@@ -28,6 +28,7 @@ public class DictionarySavedDeckPanel {
 }
 public class PlayerData { public int LastDamage; public static void Reset() {} }
 public static class TrainingRunState { public static void ResetRun() {} }
+public static class TrainingRunDeckPersistence { public static int PermanentBonusResets; public static void ResetPermanentDamageBonuses() => PermanentBonusResets++; }
 public static class TrainingBattleManager { public static BuildingDeck buildingDeck; }
 public static class SelectedButtonControl { public static List<Character> selectedCharacterList; }
 public class BuildingDeck { public List<int> Cards; public void InitializeFromCardIds(List<int> ids) { Cards = new(ids); } }

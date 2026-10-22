@@ -13,4 +13,10 @@ public sealed class FlameConductionBuffScript : PlayerBuffScript
 
         battleManager.ApplyBuffToMonster(targetMonster, BurnBuffId, stack);
     }
+
+    // 이번 턴 동안만 유지되고 내 턴 종료 시 제거
+    public override void OnPlayerTurnEnd(TrainingBattleManager battleManager, PlayerData player, int stack)
+    {
+        player?.RemoveBuffStack(BuffId);
+    }
 }

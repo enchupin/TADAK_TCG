@@ -23,15 +23,15 @@ public sealed class CorrosionBuffScript : MonsterBuffScript
         return currentMultiplier * multiplier;
     }
 
-    public override bool TryConsumeIncomingDamageBuff(TrainingBattleManager battleManager, Monster monster, int stack)
+    // 보유하는 동안 모든 피해를 증폭하고 몬스터 턴 시작 시 1 감소 (R-85)
+    public override void OnMonsterTurnStart(TrainingBattleManager battleManager, Monster monster, int stack)
     {
         if (monster == null || stack <= 0 || monster.GetBuffStack(EnhancedCorrosionBuffId) > 0)
         {
-            return false;
+            return;
         }
 
         monster.ConsumeBuffStack(BuffId, 1);
-        return true;
     }
 }
 }

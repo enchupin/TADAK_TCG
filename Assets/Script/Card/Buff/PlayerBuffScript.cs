@@ -4,6 +4,9 @@ public abstract class PlayerBuffScript
 {
     public abstract int BuffId { get; }
 
+    // 힘처럼 음수 중첩일 때도 효과를 계산해야 하는 버프
+    public virtual bool AllowsNegativeStack => false;
+
     public virtual int GetRuntimeStack(TrainingBattleManager battleManager, PlayerData player)
     {
         return player != null ? player.GetBuffStack(BuffId) : 0;
@@ -243,4 +246,13 @@ public abstract class PlayerBuffScript
     public virtual void OnBattleEnded(TrainingBattleManager battleManager, PlayerData player, int stack, bool isVictory)
     {
     }
+
+    // 적이 처치되었을 때 (killedByDrowning = 익사로 사망)
+    public virtual void OnEnemyKilled(TrainingBattleManager battleManager, PlayerData player, Monster killedMonster, bool killedByDrowning, int stack) { }
+
+    // 적이 공격 의도를 실행하기 직전
+    public virtual void OnEnemyAttackActionStarted(TrainingBattleManager battleManager, PlayerData player, Monster attacker, int stack) { }
+
+    // 파티가 카드 효과로 체력을 잃었을 때
+    public virtual void OnPlayerCardHpLost(TrainingBattleManager battleManager, PlayerData player, int hpLoss, int stack) { }
 }

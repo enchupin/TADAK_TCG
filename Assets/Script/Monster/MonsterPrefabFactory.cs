@@ -10,16 +10,67 @@ public class MonsterPrefabFactory
     // 기본 몬스터 프리팹
     // 씬에 미리 배치한 프리팹에 몬스터 컴포넌트만 설정
 
-    public Monster CreateMonster(MonsterSpawner.SpawnMonsterType monsterType, Transform parent)
+    // monsters.json className → 종 컴포넌트 (빌드 코드 제거에 대비해 타입을 직접 참조)
+    private static readonly System.Collections.Generic.Dictionary<string, Type> SpeciesTypes = new System.Collections.Generic.Dictionary<string, Type>
     {
-        Type monsterComponentType = ResolveMonsterComponentType(monsterType);
-        if (monsterComponentType == null)
+        { nameof(MutantFlowerMonster), typeof(MutantFlowerMonster) },
+        { nameof(MutantCarnivorousPlantMonster), typeof(MutantCarnivorousPlantMonster) },
+        { nameof(MutantMushroomMonster), typeof(MutantMushroomMonster) },
+        { nameof(JackORipperMonster), typeof(JackORipperMonster) },
+        { nameof(FlashyScytheMonster), typeof(FlashyScytheMonster) },
+        { nameof(StoneShieldGolemMonster), typeof(StoneShieldGolemMonster) },
+        { nameof(StoneThrowGolemMonster), typeof(StoneThrowGolemMonster) },
+        { nameof(StoneStealGolemMonster), typeof(StoneStealGolemMonster) },
+        { nameof(VoidBugMonster), typeof(VoidBugMonster) },
+        { nameof(HauntedClothMonster), typeof(HauntedClothMonster) },
+        { nameof(FireSpiritMonster), typeof(FireSpiritMonster) },
+        { nameof(MutantSweetPotatoMonster), typeof(MutantSweetPotatoMonster) },
+        { nameof(MutantCarrotMonster), typeof(MutantCarrotMonster) },
+        { nameof(MirrorMonster), typeof(MirrorMonster) },
+        { nameof(CactusMonster), typeof(CactusMonster) },
+        { nameof(WoodenPuppetMonster), typeof(WoodenPuppetMonster) },
+        { nameof(RotwoodWardenMonster), typeof(RotwoodWardenMonster) },
+        { nameof(PriestessMonster), typeof(PriestessMonster) },
+        { nameof(MushroomHostMonster), typeof(MushroomHostMonster) },
+        { nameof(VoidBeastMonster), typeof(VoidBeastMonster) },
+        { nameof(GiantFlowerSpiderBossMonster), typeof(GiantFlowerSpiderBossMonster) },
+        { nameof(ProphetBossMonster), typeof(ProphetBossMonster) },
+        { nameof(IceAndFireBossMonster), typeof(IceAndFireBossMonster) },
+        { nameof(VoidLordBossMonster), typeof(VoidLordBossMonster) },
+    };
+
+    // v1.0 몬스터 ID(4자리)로 생성: monsters.json의 className 컴포넌트에 정의를 넘겨 생성
+    public Monster CreateMonster(int monsterId, Transform parent, int staggerIndex = 0)
+    {
+        MonsterDefinition definition = MonsterDatabase.Get(monsterId);
+        if (definition == null)
         {
-            Debug.LogError($"[MonsterPrefabFactory] 몬스터 타입에 대응되는 컴포넌트가 없습니다. type={monsterType}");
+            Debug.LogError($"[MonsterPrefabFactory] 몬스터 정의가 없습니다. id={monsterId}");
             return null;
         }
 
-        return CreateMonster(monsterComponentType, parent);
+        if (!SpeciesTypes.TryGetValue(definition.className ?? string.Empty, out Type monsterComponentType))
+        {
+            monsterComponentType = Type.GetType(definition.className ?? string.Empty);
+        }
+
+        if (monsterComponentType == null || !typeof(DataMonster).IsAssignableFrom(monsterComponentType))
+        {
+            Debug.LogError($"[MonsterPrefabFactory] 몬스터 타입에 대응되는 컴포넌트가 없습니다. type={definition.className}");
+            return null;
+        }
+
+        DataMonster.PendingDefinition = definition;
+        DataMonster.PendingStaggerIndex = staggerIndex;
+        try
+        {
+            return CreateMonster(monsterComponentType, parent);
+        }
+        finally
+        {
+            DataMonster.PendingDefinition = null;
+            DataMonster.PendingStaggerIndex = 0;
+        }
     }
 
     public Monster CreateMonster(Type monsterComponentType, Transform parent)
@@ -97,62 +148,5 @@ public class MonsterPrefabFactory
         monster.UpdateUI();
         spawnedObject.name = monster.name;
         return monster;
-    }
-
-    private static Type ResolveMonsterComponentType(MonsterSpawner.SpawnMonsterType monsterType)
-    {
-        switch (monsterType)
-        {
-            case MonsterSpawner.SpawnMonsterType.MutantFlower:
-                return typeof(MutantFlowerMonster);
-            case MonsterSpawner.SpawnMonsterType.MutantCarnivorousPlant:
-                return typeof(MutantCarnivorousPlantMonster);
-            case MonsterSpawner.SpawnMonsterType.MutantMushroom:
-                return typeof(MutantMushroomMonster);
-            case MonsterSpawner.SpawnMonsterType.MutantSweetPotato:
-                return typeof(MutantSweetPotatoMonster);
-            case MonsterSpawner.SpawnMonsterType.MutantCarrot:
-                return typeof(MutantCarrotMonster);
-            case MonsterSpawner.SpawnMonsterType.Mirror:
-                return typeof(MirrorMonster);
-            case MonsterSpawner.SpawnMonsterType.Cactus:
-                return typeof(CactusMonster);
-            case MonsterSpawner.SpawnMonsterType.WoodenPuppet:
-                return typeof(WoodenPuppetMonster);
-            case MonsterSpawner.SpawnMonsterType.VoidBug:
-                return typeof(VoidBugMonster);
-            case MonsterSpawner.SpawnMonsterType.JackORipper:
-                return typeof(JackORipperMonster);
-            case MonsterSpawner.SpawnMonsterType.FlashyScythe:
-                return typeof(FlashyScytheMonster);
-            case MonsterSpawner.SpawnMonsterType.GiantFlowerSpider:
-                return typeof(GiantFlowerSpiderBossMonster);
-            case MonsterSpawner.SpawnMonsterType.Prophet:
-                return typeof(ProphetBossMonster);
-            case MonsterSpawner.SpawnMonsterType.IceAndFireBoss:
-                return typeof(IceAndFireBossMonster);
-            case MonsterSpawner.SpawnMonsterType.VoidLordBoss:
-                return typeof(VoidLordBossMonster);
-            case MonsterSpawner.SpawnMonsterType.StoneShieldGolem:
-                return typeof(StoneShieldGolemMonster);
-            case MonsterSpawner.SpawnMonsterType.StoneThrowGolem:
-                return typeof(StoneThrowGolemMonster);
-            case MonsterSpawner.SpawnMonsterType.StoneStealGolem:
-                return typeof(StoneStealGolemMonster);
-            case MonsterSpawner.SpawnMonsterType.HauntedCloth:
-                return typeof(HauntedClothMonster);
-            case MonsterSpawner.SpawnMonsterType.FireSpirit:
-                return typeof(FireSpiritMonster);
-            case MonsterSpawner.SpawnMonsterType.RotwoodWarden:
-                return typeof(RotwoodWardenMonster);
-            case MonsterSpawner.SpawnMonsterType.Priestess:
-                return typeof(PriestessMonster);
-            case MonsterSpawner.SpawnMonsterType.MushroomHost:
-                return typeof(MushroomHostMonster);
-            case MonsterSpawner.SpawnMonsterType.VoidBeast:
-                return typeof(VoidBeastMonster);
-            default:
-                return null;
-        }
     }
 }

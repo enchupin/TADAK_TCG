@@ -9,6 +9,10 @@ public class AttackEffect : ICardEffect
     public List<int> cardIdList;
     public TargetType target;
     public float ampMultiplier = 1f;
+    // 소모한 강공에 곱하는 배율
+    public float boostMultiplier = 1f;
+    // 전체 공격 시 후속 효과를 대상마다 그 대상의 피해로 실행 (PerTarget)
+    public bool perTargetOnAction;
     public List<ICardEffect> onActions;
 
     public void Execute(TrainingBattleManager battleManager)
@@ -77,6 +81,10 @@ public class AttackEffect : ICardEffect
                     totalDamageDealt += dealtDamage;
                     battleManager.Buffs.Player.OnPlayerDamageDealt(monster, dealtDamage);
                     battleManager.HandlePlayerAttackResolved(monster, barrierBefore, monster.defense);
+                    if (perTargetOnAction)
+                    {
+                        ExecuteOnActionsForTarget(battleManager, monster, dealtDamage);
+                    }
                 }
                 break;
 
@@ -139,7 +147,7 @@ public class AttackEffect : ICardEffect
                 ConsumeAttackBoost(battleManager, attackBoostStack);
                 battleManager.Buffs.Player.OnPlayerAttackStarted();
                 int selfDamage = battleManager.playerData.TakeDamage(finalAmount);
-                battleManager.battleContext?.OnPlayerCardHpLost(selfDamage);
+                battleManager.HandlePlayerCardHpLost(selfDamage);
                 break;
         }
 
@@ -149,12 +157,34 @@ public class AttackEffect : ICardEffect
             Debug.Log($"[AttackEffect] Damage dealt: {totalDamageDealt}, LastDamage: {battleManager.battleContext.lastDamageDealt}, ThisTurnTotal: {battleManager.battleContext.totalDamageDealt}");
         }
 
-        if (onActions != null)
+        if (onActions != null && !(perTargetOnAction && target == TargetType.AllEnemies))
         {
             foreach (ICardEffect onAction in onActions)
             {
                 onAction?.Execute(battleManager, totalDamageDealt);
             }
+        }
+    }
+
+    private void ExecuteOnActionsForTarget(TrainingBattleManager battleManager, Monster monster, int dealtDamage)
+    {
+        if (onActions == null || monster == null || monster.IsDead())
+        {
+            return;
+        }
+
+        Monster previousTarget = battleManager.currentTarget;
+        battleManager.currentTarget = monster;
+        try
+        {
+            foreach (ICardEffect onAction in onActions)
+            {
+                onAction?.Execute(battleManager, dealtDamage);
+            }
+        }
+        finally
+        {
+            battleManager.currentTarget = previousTarget;
         }
     }
 
@@ -165,6 +195,12 @@ public class AttackEffect : ICardEffect
         ResolveAttackAmount(battleManager, forwardedAmount, out int baseAmount, out float cardMultiplier);
         baseAmount += Mathf.Max(0, battleManager != null ? battleManager.GetCardBaseDamageBonus(sourceCard, true) : 0);
         if (sourceCard != null) baseAmount += consumedAttackBoost;
+        // 강공 배율: 소모 전(버프 보너스로 더해짐) 또는 소모 후(consumedAttackBoost) 강공에 추가 배율 적용
+        if (sourceCard != null && !Mathf.Approximately(boostMultiplier, 1f) && battleManager?.playerData != null)
+        {
+            int boostStack = Mathf.Max(0, battleManager.playerData.GetBuffStack(BattleRuntimeDefinitions.AttackBoostBuffId)) + consumedAttackBoost;
+            baseAmount += Mathf.RoundToInt(boostStack * (Mathf.Max(0f, boostMultiplier) - 1f));
+        }
 
         if (battleManager.playerData == null)
         {
@@ -205,7 +241,9 @@ public class AttackEffect : ICardEffect
             return;
         }
 
-        baseAmount = FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, cardIdList, formulaBaseValue);
+        // TargetBuff 등 대상 기준 수식을 위해 현재 대상 적을 함께 전달
+        Monster formulaTarget = CardEffectRuntimeUtility.ResolveSingleEnemyTarget(battleManager);
+        baseAmount = FormulaEvaluator.Evaluate(amountFormula, battleManager.battleContext, battleManager.playerData, cardIdList, formulaTarget, formulaBaseValue);
     }
 
     private bool TryParseMultiplierFormula(string formula, out float multiplier)

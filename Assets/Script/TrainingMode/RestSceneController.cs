@@ -23,6 +23,8 @@ public class RestSceneController : MonoBehaviour
     [SerializeField] private Button escapeButton;
     [SerializeField] private Button nextButton;
     [SerializeField] private int healAmount = 20;
+    // QA용: 켜면 rules.json 회복 비율(R-43, 최대 체력의 40%) 대신 위의 고정 회복량 사용
+    [SerializeField] private bool overrideHealAmountFromInspector;
     [SerializeField] private string escapeSceneName = "LobbyScene";
 
     [Header("강화 목록")]
@@ -106,7 +108,10 @@ public class RestSceneController : MonoBehaviour
             return;
         }
 
-        int nextHp = Mathf.Clamp(hp + healAmount, 0, maxHp);
+        int resolvedHealAmount = overrideHealAmountFromInspector
+            ? healAmount
+            : Mathf.FloorToInt(maxHp * Mathf.Max(0f, GameRules.Training.restHealRatio));
+        int nextHp = Mathf.Clamp(hp + resolvedHealAmount, 0, maxHp);
         TrainingRunState.SetPlayerHealthState(nextHp, maxHp);
         RefreshHpText();
 

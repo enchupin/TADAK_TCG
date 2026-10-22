@@ -17,14 +17,14 @@ public sealed class EnhancedCorrosionBuffScript : PlayerBuffScript
         return currentMultiplier * multiplier;
     }
 
-    public override bool TryConsumeIncomingDamageBuff(TrainingBattleManager battleManager, PlayerData player, Monster attacker, int incomingDamage, int stack)
+    // 관통도 부식과 같은 규칙으로 보유자의 턴 시작 시 1 감소 (R-85)
+    public override void OnPlayerTurnStart(TrainingBattleManager battleManager, PlayerData player, int stack)
     {
         if (player == null || stack <= 0)
         {
-            return false;
+            return;
         }
 
         player.ConsumeBuffStack(BuffId, 1);
-        return true;
     }
 }

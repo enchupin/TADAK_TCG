@@ -7,27 +7,26 @@ using UnityEngine;
 /// </summary>
 public static class TrainingRunState
 {
-    private const int DefaultFloorCount = 15;
-    private const int TotalStageCount = DefaultFloorCount + 1;
-    private const int DefaultMaxNodesPerFloor = 4;
-    private const int DefaultTotalNodeCount = 46;
+    // v1.0 맵: 층 = stageIndex + 1, 층별 노드 수·탈출구·종류 비율·경로 보장은 rules.json training (R-50 ~ R-56)
     private const int StartStageIndex = 0;
     private const int FirstCombatStageIndex = 1;
-    private const int MidTowerSingleNodeStageIndex = 8;
-    private const int FinalEscapeStageIndex = DefaultFloorCount;
-    private const int PreFinalEscapeMonsterStageIndex = DefaultFloorCount - 1;
-    private const int SingleNodeFloorNodeCount = 1;
-    private const int MinNodesPerRegularFloor = 2;
     private const int MapBuildRetryWarningInterval = 100;
-    private const int NoSpecialNodeUntilStageIndex = 3;
-    private const int RequiredRestNodeCount = 9;
-    private const int RequiredNamedNodeCount = 9;
+    // 노드 종류를 다시 뽑는 횟수 (넘으면 간선부터 다시 생성)
+    private const int NodeTypeAssignAttempts = 200;
+    // 이 층까지는 휴식 · 네임드 없이 일반 전투만 (사용자 결정 2026-10-22: 2 – 3층)
+    private const int NoSpecialNodeUntilFloor = 3;
+    // 조우 배정 탐색 상한 (넘으면 맵을 다시 생성)
+    private const int EncounterAssignStepLimit = 20000;
+    private static int encounterAssignSteps;
+    private static int TotalStageCount => Mathf.Max(1, GameRules.Training.map.nodesPerFloor.Count);
+    private static int FinalEscapeStageIndex => TotalStageCount - 1;
 
     private static readonly Dictionary<int, TrainingMapNodeData> nodesById = new Dictionary<int, TrainingMapNodeData>();
     private static readonly List<TrainingMapNodeData> orderedNodes = new List<TrainingMapNodeData>();
     private static readonly HashSet<int> selectableNodeIds = new HashSet<int>();
     private static readonly HashSet<int> clearedNodeIds = new HashSet<int>();
     private static readonly Dictionary<int, List<int>> validConnectionMasksByShape = new Dictionary<int, List<int>>();
+    private static readonly Dictionary<Character, int> identityGaugeByCharacter = new Dictionary<Character, int>();
 
     public static bool IsRunActive { get; private set; }
     public static bool IsRunCompleted { get; private set; }
@@ -84,6 +83,26 @@ public static class TrainingRunState
         return true;
     }
 
+    // 훈련 동안 아이덴티티 충전 진행도는 전투가 끝나도 유지
+    public static void SetIdentityGauges(IReadOnlyDictionary<Character, int> gauges)
+    {
+        identityGaugeByCharacter.Clear();
+        if (gauges == null)
+        {
+            return;
+        }
+
+        foreach (KeyValuePair<Character, int> entry in gauges)
+        {
+            identityGaugeByCharacter[entry.Key] = Mathf.Max(0, entry.Value);
+        }
+    }
+
+    public static IReadOnlyDictionary<Character, int> GetIdentityGauges()
+    {
+        return identityGaugeByCharacter;
+    }
+
     public static void StartNewRun(string battleSceneName)
     {
         ResetRun();
@@ -111,6 +130,7 @@ public static class TrainingRunState
         HasPlayerHealthState = false;
         PlayerCurrentHp = 0;
         PlayerMaxHp = 0;
+        identityGaugeByCharacter.Clear();
 
         BattleSceneName = string.Empty;
 
@@ -164,7 +184,7 @@ public static class TrainingRunState
                     stageIndex = stage,
                     laneIndex = lane,
                     nodeType = nodeType,
-                    plannedEncounter = new List<MonsterSpawner.SpawnMonsterType>()
+                    plannedEncounter = new List<int>()
                 };
 
                 nodesById[node.nodeId] = node;
@@ -179,12 +199,7 @@ public static class TrainingRunState
             ApplyRandomStageConnections(stageNodeIds[stage], stageNodeIds[stage + 1]);
         }
 
-        if (!TryAssignRestNodeTypes(stageNodeIds))
-        {
-            return false;
-        }
-
-        if (!TryAssignNamedNodeTypes())
+        if (!TryAssignNodeTypes(stageNodeIds))
         {
             return false;
         }
@@ -203,369 +218,267 @@ public static class TrainingRunState
         if (stage == StartStageIndex)
             return TrainingNodeType.Start;
 
-        if (stage == MidTowerSingleNodeStageIndex || stage == FinalEscapeStageIndex)
+        // 8 · 15층 탈출구
+        if (IsEscapeStage(stage))
             return TrainingNodeType.Event;
 
         return TrainingNodeType.Monster;
     }
 
-    private static bool TryAssignRestNodeTypes(IReadOnlyList<List<int>> stageNodeIds)
+    private static bool IsEscapeStage(int stageIndex)
     {
-        if (stageNodeIds == null || stageNodeIds.Count <= FinalEscapeStageIndex)
+        return GameRules.Training.exitFloors.Contains(stageIndex + 1);
+    }
+
+    // R-51 2–7층 · 9–14층 노드는 휴식 / 일반 / 네임드 (시작 · 탈출구 제외)
+    private static bool IsTypableStage(int stageIndex)
+    {
+        return stageIndex != StartStageIndex && !IsEscapeStage(stageIndex);
+    }
+
+    // 초반 층은 일반 전투만
+    private static bool CanHoldSpecialNode(TrainingMapNodeData node)
+    {
+        return IsTypableStage(node.stageIndex) && node.FloorNumber > NoSpecialNodeUntilFloor;
+    }
+
+    // 휴식 연속 금지: 앞뒤로 연결된 노드에 휴식이 없어야 함
+    private static bool CanBecomeRest(TrainingMapNodeData node)
+    {
+        if (!CanHoldSpecialNode(node))
         {
             return false;
         }
 
-        if (GetMaximumRestNodeCountBeforeFinalEscapeStage(stageNodeIds, FirstCombatStageIndex) < RequiredRestNodeCount)
+        foreach (int nextNodeId in node.nextNodeIds)
         {
-            return false;
+            if (nodesById[nextNodeId].nodeType == TrainingNodeType.Rest)
+            {
+                return false;
+            }
         }
 
-        Dictionary<int, int> restMaskByStage = new Dictionary<int, int>();
-        HashSet<int> failedStateKeys = new HashSet<int>();
-        int startRestFreeMask = stageNodeIds[StartStageIndex].Count > 0 ? 1 : 0;
-
-        if (!TryAssignRestNodeTypesRecursive(
-                stageNodeIds,
-                FirstCombatStageIndex,
-                0,
-                startRestFreeMask,
-                0,
-                RequiredRestNodeCount,
-                restMaskByStage,
-                failedStateKeys))
+        foreach (TrainingMapNodeData previous in orderedNodes)
         {
-            return false;
+            if (previous.nodeType == TrainingNodeType.Rest && previous.nextNodeIds.Contains(node.nodeId))
+            {
+                return false;
+            }
         }
 
-        ApplyRestNodeTypes(stageNodeIds, restMaskByStage);
         return true;
     }
 
-    private static bool TryAssignRestNodeTypesRecursive(
-        IReadOnlyList<List<int>> stageNodeIds,
-        int stageIndex,
-        int previousRestMask,
-        int previousRestFreeMask,
-        int assignedRestNodeCount,
-        int targetRestNodeCount,
-        Dictionary<int, int> restMaskByStage,
-        HashSet<int> failedStateKeys)
+    // type_weights 비율로 종류를 뽑은 뒤, R-55 경로 보장(1 → 15층 모든 경로에 휴식 2, 네임드 1 이상)이 부족한 경로의 일반 노드를 바꿔 채움
+    // 비율만으로 다시 뽑으면 경로 수가 많아 거의 만족하지 못하므로 보정 방식 사용
+    private static bool TryAssignNodeTypes(IReadOnlyList<List<int>> stageNodeIds)
     {
-        if (stageIndex >= FinalEscapeStageIndex)
+        for (int stage = 0; stage < stageNodeIds.Count; stage++)
         {
-            return previousRestFreeMask == 0 && assignedRestNodeCount == targetRestNodeCount;
-        }
-
-        int stateKey = BuildRestPlacementStateKey(stageIndex, previousRestMask, previousRestFreeMask, assignedRestNodeCount);
-        if (failedStateKeys.Contains(stateKey))
-        {
-            return false;
-        }
-
-        List<int> candidateMasks = BuildRestCandidateMasks(stageNodeIds, stageIndex, previousRestMask);
-        for (int i = 0; i < candidateMasks.Count; i++)
-        {
-            int currentRestMask = candidateMasks[i];
-            int nextAssignedRestNodeCount = assignedRestNodeCount + CountMaskBits(currentRestMask);
-            if (nextAssignedRestNodeCount > targetRestNodeCount)
+            if (!IsTypableStage(stage))
             {
                 continue;
             }
 
-            if (nextAssignedRestNodeCount + GetMaximumRestNodeCountBeforeFinalEscapeStage(stageNodeIds, stageIndex + 1) < targetRestNodeCount)
+            foreach (int nodeId in stageNodeIds[stage])
             {
-                continue;
+                TrainingMapNodeData node = nodesById[nodeId];
+                TrainingNodeType pickedType = CanHoldSpecialNode(node) ? PickWeightedNodeType() : TrainingNodeType.Monster;
+                node.nodeType = pickedType == TrainingNodeType.Rest && !CanBecomeRest(node) ? TrainingNodeType.Monster : pickedType;
             }
+        }
 
-            int currentRestFreeMask = BuildRestFreeReachableMask(stageNodeIds, stageIndex, previousRestFreeMask, currentRestMask);
-
-            restMaskByStage[stageIndex] = currentRestMask;
-            if (TryAssignRestNodeTypesRecursive(
-                    stageNodeIds,
-                    stageIndex + 1,
-                    currentRestMask,
-                    currentRestFreeMask,
-                    nextAssignedRestNodeCount,
-                    targetRestNodeCount,
-                    restMaskByStage,
-                    failedStateKeys))
+        TrainingMapNodeData.MapRules rules = TrainingMapNodeData.MapRules.Current;
+        for (int attempt = 0; attempt < NodeTypeAssignAttempts; attempt++)
+        {
+            List<TrainingMapNodeData> weakestPath = FindWeakestFullPath(stageNodeIds, out int restCount, out int namedCount);
+            bool needsRest = restCount < rules.minRestPerPath;
+            bool needsNamed = namedCount < rules.minNamedPerPath;
+            if (!needsRest && !needsNamed)
             {
                 return true;
             }
-        }
 
-        restMaskByStage.Remove(stageIndex);
-        failedStateKeys.Add(stateKey);
-        return false;
-    }
-
-    private static int BuildRestPlacementStateKey(int stageIndex, int previousRestMask, int previousRestFreeMask, int assignedRestNodeCount)
-    {
-        return stageIndex | (previousRestMask << 8) | (previousRestFreeMask << 16) | (assignedRestNodeCount << 24);
-    }
-
-    private static int GetMaximumRestNodeCountBeforeFinalEscapeStage(IReadOnlyList<List<int>> stageNodeIds, int startStageIndex)
-    {
-        int maxRestNodeCount = 0;
-        int clampedStartStageIndex = Mathf.Max(startStageIndex, FirstCombatStageIndex);
-        int lastOptionalRestStageIndex = Mathf.Min(FinalEscapeStageIndex - 1, stageNodeIds.Count - 1);
-
-        for (int stageIndex = clampedStartStageIndex; stageIndex <= lastOptionalRestStageIndex; stageIndex++)
-        {
-            int nodeCount = stageNodeIds[stageIndex].Count;
-            if (TryGetFixedRestMask(stageIndex, nodeCount, out int fixedRestMask))
+            // 부족한 종류로 바꿀 일반 노드 (없으면 남는 쪽 특수 노드)
+            List<TrainingMapNodeData> candidates = weakestPath.FindAll(node => node.nodeType == TrainingNodeType.Monster
+                && (needsRest ? CanBecomeRest(node) : CanHoldSpecialNode(node)));
+            if (candidates.Count == 0)
             {
-                maxRestNodeCount += CountMaskBits(fixedRestMask);
-                continue;
-            }
-
-            maxRestNodeCount += nodeCount;
-        }
-
-        return maxRestNodeCount;
-    }
-
-    private static int CountMaskBits(int mask)
-    {
-        int bitCount = 0;
-        while (mask != 0)
-        {
-            bitCount += mask & 1;
-            mask >>= 1;
-        }
-
-        return bitCount;
-    }
-
-    private static List<int> BuildRestCandidateMasks(IReadOnlyList<List<int>> stageNodeIds, int stageIndex, int previousRestMask)
-    {
-        int nodeCount = stageNodeIds[stageIndex].Count;
-        List<int> candidateMasks = new List<int>();
-
-        if (TryGetFixedRestMask(stageIndex, nodeCount, out int fixedRestMask))
-        {
-            if (IsRestMaskCompatibleWithPreviousStage(stageNodeIds, stageIndex, previousRestMask, fixedRestMask))
-            {
-                candidateMasks.Add(fixedRestMask);
-            }
-
-            return candidateMasks;
-        }
-
-        int maxMask = 1 << nodeCount;
-        for (int mask = 0; mask < maxMask; mask++)
-        {
-            if (IsRestMaskCompatibleWithPreviousStage(stageNodeIds, stageIndex, previousRestMask, mask))
-            {
-                candidateMasks.Add(mask);
-            }
-        }
-
-        ShuffleList(candidateMasks);
-        return candidateMasks;
-    }
-
-    private static bool TryGetFixedRestMask(int stageIndex, int nodeCount, out int fixedRestMask)
-    {
-        fixedRestMask = 0;
-
-        if (stageIndex <= NoSpecialNodeUntilStageIndex
-            || stageIndex == MidTowerSingleNodeStageIndex
-            || stageIndex == PreFinalEscapeMonsterStageIndex - 1
-            || stageIndex == PreFinalEscapeMonsterStageIndex)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    private static bool IsRestMaskCompatibleWithPreviousStage(
-        IReadOnlyList<List<int>> stageNodeIds,
-        int stageIndex,
-        int previousRestMask,
-        int currentRestMask)
-    {
-        if (previousRestMask == 0 || currentRestMask == 0)
-        {
-            return true;
-        }
-
-        List<int> previousStageNodeIds = stageNodeIds[stageIndex - 1];
-        List<int> currentStageNodeIds = stageNodeIds[stageIndex];
-
-        for (int currentIndex = 0; currentIndex < currentStageNodeIds.Count; currentIndex++)
-        {
-            if ((currentRestMask & (1 << currentIndex)) == 0)
-            {
-                continue;
-            }
-
-            int currentNodeId = currentStageNodeIds[currentIndex];
-            for (int previousIndex = 0; previousIndex < previousStageNodeIds.Count; previousIndex++)
-            {
-                if ((previousRestMask & (1 << previousIndex)) == 0)
-                {
-                    continue;
-                }
-
-                if (nodesById.TryGetValue(previousStageNodeIds[previousIndex], out TrainingMapNodeData previousNode)
-                    && previousNode.nextNodeIds.Contains(currentNodeId))
+                TrainingNodeType surplusType = needsRest ? TrainingNodeType.Named : TrainingNodeType.Rest;
+                int surplusCount = needsRest ? namedCount - rules.minNamedPerPath : restCount - rules.minRestPerPath;
+                if (surplusCount <= 0)
                 {
                     return false;
                 }
-            }
-        }
 
-        return true;
-    }
-
-    private static int BuildRestFreeReachableMask(
-        IReadOnlyList<List<int>> stageNodeIds,
-        int stageIndex,
-        int previousRestFreeMask,
-        int currentRestMask)
-    {
-        int currentRestFreeMask = 0;
-        List<int> previousStageNodeIds = stageNodeIds[stageIndex - 1];
-        List<int> currentStageNodeIds = stageNodeIds[stageIndex];
-
-        for (int currentIndex = 0; currentIndex < currentStageNodeIds.Count; currentIndex++)
-        {
-            if ((currentRestMask & (1 << currentIndex)) != 0)
-            {
-                continue;
+                candidates = needsRest
+                    ? weakestPath.FindAll(node => node.nodeType == surplusType && CanBecomeRest(node))
+                    : weakestPath.FindAll(node => node.nodeType == surplusType && CanHoldSpecialNode(node));
             }
 
-            int currentNodeId = currentStageNodeIds[currentIndex];
-            for (int previousIndex = 0; previousIndex < previousStageNodeIds.Count; previousIndex++)
-            {
-                if ((previousRestFreeMask & (1 << previousIndex)) == 0)
-                {
-                    continue;
-                }
-
-                if (nodesById.TryGetValue(previousStageNodeIds[previousIndex], out TrainingMapNodeData previousNode)
-                    && previousNode.nextNodeIds.Contains(currentNodeId))
-                {
-                    currentRestFreeMask |= 1 << currentIndex;
-                    break;
-                }
-            }
-        }
-
-        return currentRestFreeMask;
-    }
-
-    private static void ApplyRestNodeTypes(IReadOnlyList<List<int>> stageNodeIds, IReadOnlyDictionary<int, int> restMaskByStage)
-    {
-        foreach (KeyValuePair<int, int> restMaskEntry in restMaskByStage)
-        {
-            List<int> stageNodeIdList = stageNodeIds[restMaskEntry.Key];
-            for (int nodeIndex = 0; nodeIndex < stageNodeIdList.Count; nodeIndex++)
-            {
-                if ((restMaskEntry.Value & (1 << nodeIndex)) == 0)
-                {
-                    continue;
-                }
-
-                if (nodesById.TryGetValue(stageNodeIdList[nodeIndex], out TrainingMapNodeData restNode))
-                {
-                    restNode.nodeType = TrainingNodeType.Rest;
-                }
-            }
-        }
-    }
-
-    private static bool TryAssignNamedNodeTypes()
-    {
-        Dictionary<int, HashSet<int>> directConflictNodeIdsByNodeId = BuildDirectConflictNodeIdsByNodeId();
-        HashSet<int> blockedNodeIds = new HashSet<int>();
-
-        for (int assignedCount = 0; assignedCount < RequiredNamedNodeCount; assignedCount++)
-        {
-            List<TrainingMapNodeData> candidates = CollectAvailableNamedNodeCandidates(blockedNodeIds);
             if (candidates.Count == 0)
             {
                 return false;
             }
 
-            int pickedIndex = UnityEngine.Random.Range(0, candidates.Count);
-            TrainingMapNodeData selectedNode = candidates[pickedIndex];
-            selectedNode.nodeType = TrainingNodeType.Named;
+            candidates[UnityEngine.Random.Range(0, candidates.Count)].nodeType = needsRest ? TrainingNodeType.Rest : TrainingNodeType.Named;
+        }
 
-            blockedNodeIds.Add(selectedNode.nodeId);
-            if (directConflictNodeIdsByNodeId.TryGetValue(selectedNode.nodeId, out HashSet<int> conflictNodeIds))
+        return SatisfiesPathGuarantees(stageNodeIds);
+    }
+
+    // 시작 노드에서 마지막 층까지 휴식이 가장 적은 경로 (같으면 네임드가 적은 경로)
+    private static List<TrainingMapNodeData> FindWeakestFullPath(IReadOnlyList<List<int>> stageNodeIds, out int restCount, out int namedCount)
+    {
+        Dictionary<int, (int rest, int named, int next)> bestByNodeId = new Dictionary<int, (int rest, int named, int next)>();
+        for (int stage = stageNodeIds.Count - 1; stage >= 0; stage--)
+        {
+            foreach (int nodeId in stageNodeIds[stage])
             {
-                foreach (int conflictNodeId in conflictNodeIds)
+                TrainingMapNodeData node = nodesById[nodeId];
+                (int rest, int named, int next) best = (0, 0, -1);
+                if (node.nextNodeIds.Count > 0)
                 {
-                    blockedNodeIds.Add(conflictNodeId);
+                    best = (int.MaxValue, int.MaxValue, -1);
+                    foreach (int nextNodeId in node.nextNodeIds)
+                    {
+                        (int rest, int named, int next) candidate = bestByNodeId[nextNodeId];
+                        if (candidate.rest < best.rest || (candidate.rest == best.rest && candidate.named < best.named))
+                        {
+                            best = (candidate.rest, candidate.named, nextNodeId);
+                        }
+                    }
                 }
+
+                bestByNodeId[nodeId] = (best.rest + (node.nodeType == TrainingNodeType.Rest ? 1 : 0),
+                    best.named + (node.nodeType == TrainingNodeType.Named ? 1 : 0), best.next);
+            }
+        }
+
+        // 휴식이 충분하면 네임드가 가장 적은 경로를 다시 찾음
+        int startNodeId = stageNodeIds[StartStageIndex][0];
+        List<TrainingMapNodeData> path = TracePath(startNodeId, bestByNodeId);
+        restCount = bestByNodeId[startNodeId].rest;
+        namedCount = bestByNodeId[startNodeId].named;
+        if (restCount >= TrainingMapNodeData.MapRules.Current.minRestPerPath)
+        {
+            Dictionary<int, (int rest, int named, int next)> namedByNodeId = new Dictionary<int, (int rest, int named, int next)>();
+            for (int stage = stageNodeIds.Count - 1; stage >= 0; stage--)
+            {
+                foreach (int nodeId in stageNodeIds[stage])
+                {
+                    TrainingMapNodeData node = nodesById[nodeId];
+                    (int rest, int named, int next) best = (0, 0, -1);
+                    if (node.nextNodeIds.Count > 0)
+                    {
+                        best = (int.MaxValue, int.MaxValue, -1);
+                        foreach (int nextNodeId in node.nextNodeIds)
+                        {
+                            (int rest, int named, int next) candidate = namedByNodeId[nextNodeId];
+                            if (candidate.named < best.named)
+                            {
+                                best = (candidate.rest, candidate.named, nextNodeId);
+                            }
+                        }
+                    }
+
+                    namedByNodeId[nodeId] = (best.rest + (node.nodeType == TrainingNodeType.Rest ? 1 : 0),
+                        best.named + (node.nodeType == TrainingNodeType.Named ? 1 : 0), best.next);
+                }
+            }
+
+            if (namedByNodeId[startNodeId].named < TrainingMapNodeData.MapRules.Current.minNamedPerPath)
+            {
+                path = TracePath(startNodeId, namedByNodeId);
+                restCount = namedByNodeId[startNodeId].rest;
+                namedCount = namedByNodeId[startNodeId].named;
+            }
+            else
+            {
+                namedCount = namedByNodeId[startNodeId].named;
+            }
+        }
+
+        return path;
+    }
+
+    private static List<TrainingMapNodeData> TracePath(int startNodeId, Dictionary<int, (int rest, int named, int next)> bestByNodeId)
+    {
+        List<TrainingMapNodeData> path = new List<TrainingMapNodeData>();
+        int nodeId = startNodeId;
+        while (nodeId >= 0)
+        {
+            path.Add(nodesById[nodeId]);
+            nodeId = bestByNodeId[nodeId].next;
+        }
+
+        return path;
+    }
+
+    private static TrainingNodeType PickWeightedNodeType()
+    {
+        MapTypeWeightsData weights = GameRules.Training.map.typeWeights ?? new MapTypeWeightsData();
+        float rest = Mathf.Max(0f, weights.rest);
+        float normal = Mathf.Max(0f, weights.normal);
+        float named = Mathf.Max(0f, weights.named);
+        float roll = UnityEngine.Random.value * Mathf.Max(0.0001f, rest + normal + named);
+        if (roll < rest)
+        {
+            return TrainingNodeType.Rest;
+        }
+
+        return roll < rest + normal ? TrainingNodeType.Monster : TrainingNodeType.Named;
+    }
+
+    // 마지막 층까지 이어지는 모든 경로 중 휴식 · 네임드가 가장 적은 경로 기준 (8층 탈출 경로는 보장하지 않음)
+    public static bool SatisfiesPathGuarantees(IReadOnlyList<List<int>> stageNodeIds)
+    {
+        Dictionary<int, int> minRestByNodeId = new Dictionary<int, int>();
+        Dictionary<int, int> minNamedByNodeId = new Dictionary<int, int>();
+        for (int stage = stageNodeIds.Count - 1; stage >= 0; stage--)
+        {
+            foreach (int nodeId in stageNodeIds[stage])
+            {
+                TrainingMapNodeData node = nodesById[nodeId];
+                int restAfter = 0;
+                int namedAfter = 0;
+                if (node.nextNodeIds.Count > 0)
+                {
+                    restAfter = int.MaxValue;
+                    namedAfter = int.MaxValue;
+                    foreach (int nextNodeId in node.nextNodeIds)
+                    {
+                        restAfter = Mathf.Min(restAfter, minRestByNodeId[nextNodeId]);
+                        namedAfter = Mathf.Min(namedAfter, minNamedByNodeId[nextNodeId]);
+                    }
+                }
+
+                minRestByNodeId[nodeId] = restAfter + (node.nodeType == TrainingNodeType.Rest ? 1 : 0);
+                minNamedByNodeId[nodeId] = namedAfter + (node.nodeType == TrainingNodeType.Named ? 1 : 0);
+            }
+        }
+
+        TrainingMapNodeData.MapRules rules = TrainingMapNodeData.MapRules.Current;
+        foreach (int startNodeId in stageNodeIds[StartStageIndex])
+        {
+            if (minRestByNodeId[startNodeId] < rules.minRestPerPath || minNamedByNodeId[startNodeId] < rules.minNamedPerPath)
+            {
+                return false;
             }
         }
 
         return true;
     }
 
-    private static Dictionary<int, HashSet<int>> BuildDirectConflictNodeIdsByNodeId()
-    {
-        Dictionary<int, HashSet<int>> directConflictNodeIdsByNodeId = new Dictionary<int, HashSet<int>>();
-        for (int i = 0; i < orderedNodes.Count; i++)
-        {
-            directConflictNodeIdsByNodeId[orderedNodes[i].nodeId] = new HashSet<int>();
-        }
-
-        for (int i = 0; i < orderedNodes.Count; i++)
-        {
-            TrainingMapNodeData node = orderedNodes[i];
-            if (!directConflictNodeIdsByNodeId.TryGetValue(node.nodeId, out HashSet<int> currentNodeConflictIds))
-            {
-                continue;
-            }
-
-            for (int nextIndex = 0; nextIndex < node.nextNodeIds.Count; nextIndex++)
-            {
-                int nextNodeId = node.nextNodeIds[nextIndex];
-                currentNodeConflictIds.Add(nextNodeId);
-                if (directConflictNodeIdsByNodeId.TryGetValue(nextNodeId, out HashSet<int> nextNodeConflictIds))
-                {
-                    nextNodeConflictIds.Add(node.nodeId);
-                }
-            }
-        }
-
-        return directConflictNodeIdsByNodeId;
-    }
-
-    private static List<TrainingMapNodeData> CollectAvailableNamedNodeCandidates(HashSet<int> blockedNodeIds)
-    {
-        List<TrainingMapNodeData> candidates = new List<TrainingMapNodeData>();
-        for (int i = 0; i < orderedNodes.Count; i++)
-        {
-            TrainingMapNodeData node = orderedNodes[i];
-            if (node.stageIndex <= NoSpecialNodeUntilStageIndex
-                || node.stageIndex == PreFinalEscapeMonsterStageIndex
-                || node.nodeType != TrainingNodeType.Monster
-                || blockedNodeIds.Contains(node.nodeId))
-            {
-                continue;
-            }
-
-            candidates.Add(node);
-        }
-
-        return candidates;
-    }
-
-    private static List<MonsterSpawner.SpawnMonsterType> CreatePlannedEncounter(TrainingNodeType nodeType, int stageIndex)
+    private static List<int> CreatePlannedEncounter(TrainingNodeType nodeType, int stageIndex)
     {
         if (!TrainingNodeTypeUtility.RequiresBattle(nodeType))
         {
-            return new List<MonsterSpawner.SpawnMonsterType>();
+            return new List<int>();
         }
 
-        return MonsterSpawner.CreateEncounterPlan(nodeType, stageIndex);
+        // 조우 계층은 층 번호(stageIndex + 1) 기준
+        return MonsterSpawner.CreateEncounterPlan(nodeType, stageIndex + 1);
     }
 
     private static void AssignRandomEncountersToNonMonsterNodes()
@@ -579,7 +492,7 @@ public static class TrainingRunState
                 continue;
             }
 
-            if (node.nodeType == TrainingNodeType.Monster)
+            if (node.nodeType == TrainingNodeType.Monster || node.nodeType == TrainingNodeType.Named)
             {
                 node.plannedEncounter.Clear();
                 continue;
@@ -601,11 +514,57 @@ public static class TrainingRunState
         Dictionary<int, List<MonsterEncounterCandidate>> candidatesByNodeId = BuildMonsterCandidatesByNodeId(monsterNodes);
         Dictionary<int, string> assignedSignatureByNodeId = new Dictionary<int, string>();
 
+        // 한 경로에서 같은 계층 · 종류 노드가 그 조우 풀보다 많으면 배정할 수 없으므로 바로 다시 생성 (R-56)
+        if (!HasEnoughEncountersOnEveryPath(candidatesByNodeId))
+        {
+            return false;
+        }
+
+        encounterAssignSteps = 0;
         return TryAssignMonsterEncountersRecursive(
             monsterNodes,
             conflictNodeIdsByNodeId,
             candidatesByNodeId,
             assignedSignatureByNodeId);
+    }
+
+    // 계층 · 종류별로, 어떤 경로든 그 묶음 노드 수가 후보 조우 수를 넘지 않는지 확인
+    private static bool HasEnoughEncountersOnEveryPath(Dictionary<int, List<MonsterEncounterCandidate>> candidatesByNodeId)
+    {
+        Dictionary<string, int> poolSizeByGroup = new Dictionary<string, int>();
+        foreach (KeyValuePair<int, List<MonsterEncounterCandidate>> entry in candidatesByNodeId)
+        {
+            poolSizeByGroup[BuildEncounterGroupKey(nodesById[entry.Key])] = entry.Value.Count;
+        }
+
+        foreach (KeyValuePair<string, int> group in poolSizeByGroup)
+        {
+            // 마지막 층부터 역순으로 경로상 같은 묶음 노드의 최대 수
+            Dictionary<int, int> maxCountByNodeId = new Dictionary<int, int>();
+            for (int i = orderedNodes.Count - 1; i >= 0; i--)
+            {
+                TrainingMapNodeData node = orderedNodes[i];
+                int best = 0;
+                foreach (int nextNodeId in node.nextNodeIds)
+                {
+                    best = Mathf.Max(best, maxCountByNodeId.TryGetValue(nextNodeId, out int nextCount) ? nextCount : 0);
+                }
+
+                bool inGroup = candidatesByNodeId.ContainsKey(node.nodeId) && BuildEncounterGroupKey(node) == group.Key;
+                maxCountByNodeId[node.nodeId] = best + (inGroup ? 1 : 0);
+                if (maxCountByNodeId[node.nodeId] > group.Value)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private static string BuildEncounterGroupKey(TrainingMapNodeData node)
+    {
+        return $"{node.nodeType}:{MonsterSpawner.ResolveEncounterTier(node.FloorNumber)}";
     }
 
     private static List<TrainingMapNodeData> CollectMonsterNodes()
@@ -614,7 +573,8 @@ public static class TrainingRunState
         for (int i = 0; i < orderedNodes.Count; i++)
         {
             TrainingMapNodeData node = orderedNodes[i];
-            if (node.nodeType != TrainingNodeType.Monster)
+            // R-56 일반 · 네임드 조우 모두 한 경로에서 중복 금지
+            if (node.nodeType != TrainingNodeType.Monster && node.nodeType != TrainingNodeType.Named)
             {
                 continue;
             }
@@ -631,7 +591,7 @@ public static class TrainingRunState
         for (int i = 0; i < monsterNodes.Count; i++)
         {
             TrainingMapNodeData node = monsterNodes[i];
-            List<List<MonsterSpawner.SpawnMonsterType>> rawCandidates = MonsterSpawner.GetEncounterCandidates(node.nodeType, node.stageIndex);
+            List<List<int>> rawCandidates = MonsterSpawner.GetEncounterCandidates(node.nodeType, node.FloorNumber);
             ShuffleList(rawCandidates);
 
             HashSet<string> addedSignatures = new HashSet<string>();
@@ -728,6 +688,11 @@ public static class TrainingRunState
             return true;
         }
 
+        if (++encounterAssignSteps > EncounterAssignStepLimit)
+        {
+            return false;
+        }
+
         TrainingMapNodeData nextNode = SelectNextMonsterAssignmentNode(
             monsterNodes,
             conflictNodeIdsByNodeId,
@@ -749,7 +714,7 @@ public static class TrainingRunState
                 continue;
             }
 
-            nextNode.plannedEncounter = new List<MonsterSpawner.SpawnMonsterType>(candidate.encounter);
+            nextNode.plannedEncounter = new List<int>(candidate.encounter);
             assignedSignatureByNodeId[nextNode.nodeId] = candidate.signature;
 
             if (TryAssignMonsterEncountersRecursive(
@@ -863,10 +828,10 @@ public static class TrainingRunState
 
     private sealed class MonsterEncounterCandidate
     {
-        public readonly List<MonsterSpawner.SpawnMonsterType> encounter;
+        public readonly List<int> encounter;
         public readonly string signature;
 
-        public MonsterEncounterCandidate(List<MonsterSpawner.SpawnMonsterType> encounter)
+        public MonsterEncounterCandidate(List<int> encounter)
         {
             this.encounter = encounter;
             signature = MonsterSpawner.BuildEncounterSignature(encounter);
@@ -875,33 +840,14 @@ public static class TrainingRunState
 
     private static List<int> BuildStageNodeCounts()
     {
+        // R-50 층별 노드 수 (rules.json training.map.nodesPerFloor)
         List<int> stageNodeCounts = new List<int>(TotalStageCount);
-        HashSet<int> singleNodeStageIndices = BuildSingleNodeStageIndices();
-
-        int currentTotalNodeCount = 0;
-        for (int stage = 0; stage < TotalStageCount; stage++)
+        foreach (int count in GameRules.Training.map.nodesPerFloor)
         {
-            int nodeCount = singleNodeStageIndices.Contains(stage)
-                ? SingleNodeFloorNodeCount
-                : MinNodesPerRegularFloor;
-            stageNodeCounts.Add(nodeCount);
-            currentTotalNodeCount += nodeCount;
+            stageNodeCounts.Add(Mathf.Max(1, count));
         }
 
-        int additionalNodeCount = DefaultTotalNodeCount - currentTotalNodeCount;
-        DistributeAdditionalNodes(stageNodeCounts, singleNodeStageIndices, additionalNodeCount);
-
         return stageNodeCounts;
-    }
-
-    private static HashSet<int> BuildSingleNodeStageIndices()
-    {
-        return new HashSet<int>
-        {
-            StartStageIndex,
-            MidTowerSingleNodeStageIndex,
-            FinalEscapeStageIndex
-        };
     }
 
     private static void InitializeRunStartState()
@@ -932,41 +878,6 @@ public static class TrainingRunState
             {
                 selectableNodeIds.Add(node.nodeId);
             }
-        }
-    }
-
-    private static void DistributeAdditionalNodes(List<int> stageNodeCounts, HashSet<int> singleNodeStageIndices, int additionalNodeCount)
-    {
-        if (stageNodeCounts == null || stageNodeCounts.Count == 0 || additionalNodeCount <= 0)
-        {
-            return;
-        }
-
-        while (additionalNodeCount > 0)
-        {
-            List<int> candidateIndices = new List<int>();
-            for (int stage = 0; stage < stageNodeCounts.Count; stage++)
-            {
-                if (singleNodeStageIndices.Contains(stage))
-                {
-                    continue;
-                }
-
-                if (stageNodeCounts[stage] < DefaultMaxNodesPerFloor)
-                {
-                    candidateIndices.Add(stage);
-                }
-            }
-
-            if (candidateIndices.Count == 0)
-            {
-                Debug.LogWarning("[TrainingRunState] No more floors can receive additional nodes.");
-                return;
-            }
-
-            int pickedIndex = UnityEngine.Random.Range(0, candidateIndices.Count);
-            stageNodeCounts[candidateIndices[pickedIndex]]++;
-            additionalNodeCount--;
         }
     }
 
@@ -1050,9 +961,10 @@ public static class TrainingRunState
             }
         }
 
+        int maxOutDegree = Mathf.Max(1, GameRules.Training.map.maxOutDegree);
         for (int currentIndex = 0; currentIndex < currentNodeCount; currentIndex++)
         {
-            if (outgoingCounts[currentIndex] <= 0)
+            if (outgoingCounts[currentIndex] <= 0 || outgoingCounts[currentIndex] > maxOutDegree)
             {
                 return false;
             }
@@ -1089,6 +1001,18 @@ public static class TrainingRunState
         }
 
         return true;
+    }
+
+    private static int CountMaskBits(int mask)
+    {
+        int bitCount = 0;
+        while (mask != 0)
+        {
+            bitCount += mask & 1;
+            mask >>= 1;
+        }
+
+        return bitCount;
     }
 
     private static int GetMaxConnectionCount(int currentNodeCount, int nextNodeCount)

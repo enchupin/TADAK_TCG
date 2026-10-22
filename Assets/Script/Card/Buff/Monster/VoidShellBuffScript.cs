@@ -5,7 +5,8 @@ namespace MonsterBuffs
 {
 public sealed class VoidShellBuffScript : MonsterBuffScript
 {
-    private readonly HashSet<Monster> triggeredMonsters = new();
+    // 몬스터별로 발동한 턴 번호 (내 턴과 몬스터 턴은 서로 다른 번호)
+    private readonly Dictionary<Monster, int> triggeredTurnSequence = new();
 
     public override int BuffId => VoidShellBuffId;
 
@@ -13,7 +14,7 @@ public sealed class VoidShellBuffScript : MonsterBuffScript
     {
         if (monster != null)
         {
-            triggeredMonsters.Remove(monster);
+            triggeredTurnSequence.Remove(monster);
         }
     }
 
@@ -21,7 +22,7 @@ public sealed class VoidShellBuffScript : MonsterBuffScript
     {
         if (monster != null)
         {
-            triggeredMonsters.Remove(monster);
+            triggeredTurnSequence.Remove(monster);
         }
     }
 
@@ -29,7 +30,7 @@ public sealed class VoidShellBuffScript : MonsterBuffScript
     {
         if (monster != null)
         {
-            triggeredMonsters.Remove(monster);
+            triggeredTurnSequence.Remove(monster);
         }
     }
 
@@ -37,7 +38,7 @@ public sealed class VoidShellBuffScript : MonsterBuffScript
     {
         if (monster != null)
         {
-            triggeredMonsters.Remove(monster);
+            triggeredTurnSequence.Remove(monster);
         }
     }
 
@@ -48,10 +49,13 @@ public sealed class VoidShellBuffScript : MonsterBuffScript
             return;
         }
 
-        if (!triggeredMonsters.Add(monster))
+        int turnSequence = (battleManager ?? TrainingBattleManager.Instance)?.TurnSequence ?? 0;
+        if (triggeredTurnSequence.TryGetValue(monster, out int triggeredSequence) && triggeredSequence == turnSequence)
         {
             return;
         }
+
+        triggeredTurnSequence[monster] = turnSequence;
 
         monster.AddDefense(stack);
     }

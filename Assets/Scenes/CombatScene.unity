@@ -1995,6 +1995,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8a26f1d912a4d8590963d457ff68d32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHoverSpriteEffect
+  targetImage: {fileID: 0}
   hoverSprite: {fileID: 8479970880628446919, guid: ea7fcd93682fe1441a78c5a6a4cdeb49, type: 3}
 --- !u!1 &380076995
 GameObject:
@@ -2141,6 +2142,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8a26f1d912a4d8590963d457ff68d32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHoverSpriteEffect
+  targetImage: {fileID: 0}
   hoverSprite: {fileID: 8479970880628446919, guid: ea7fcd93682fe1441a78c5a6a4cdeb49, type: 3}
 --- !u!1 &403357182
 GameObject:
@@ -3100,6 +3102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8a26f1d912a4d8590963d457ff68d32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHoverSpriteEffect
+  targetImage: {fileID: 0}
   hoverSprite: {fileID: 8479970880628446919, guid: ea7fcd93682fe1441a78c5a6a4cdeb49, type: 3}
 --- !u!1 &506775189
 GameObject:
@@ -4387,6 +4390,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8a26f1d912a4d8590963d457ff68d32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHoverSpriteEffect
+  targetImage: {fileID: 0}
   hoverSprite: {fileID: -4646867088270418589, guid: df7782a656f972b449bd8502b00e3b54, type: 3}
 --- !u!1 &762763813
 GameObject:
@@ -6634,6 +6638,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8a26f1d912a4d8590963d457ff68d32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHoverSpriteEffect
+  targetImage: {fileID: 0}
   hoverSprite: {fileID: 118611341925778174, guid: 74d5e4807371c8b4aa57ae5628d2befe, type: 3}
 --- !u!1 &1188217565
 GameObject:
@@ -7986,6 +7991,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8a26f1d912a4d8590963d457ff68d32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHoverSpriteEffect
+  targetImage: {fileID: 0}
   hoverSprite: {fileID: -3628759184607107724, guid: 83d89a9c01f4bde48b89e93abbb17352, type: 3}
 --- !u!1 &1389178374
 GameObject:
@@ -8685,9 +8691,10 @@ MonoBehaviour:
   battleUI: {fileID: 508993668}
   monsterSpawner: {fileID: 2073456888}
   battleDeckViewer: {fileID: 508993666}
-  drawCardCount: 6
+  overrideTurnSettingsFromInspector: 0
+  drawCardCount: 5
   maxHandCardCount: 10
-  playerBaseEnergyPerTurn: 3
+  playerBaseEnergyPerTurn: 5
   enemyActionDelay: 0.2
   endTurnButton: {fileID: 1007523897}
   instantWinButton: {fileID: 2201000002}
@@ -12460,7 +12467,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8a26f1d912a4d8590963d457ff68d32, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHoverSpriteEffect
   targetImage: {fileID: 1843472243}
   hoverSprite: {fileID: 21300000, guid: a608bb2d95ea93f46ae240d79e0be076, type: 3}
@@ -12474,7 +12481,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8a26f1d912a4d8590963d457ff68d32, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHoverSpriteEffect
   targetImage: {fileID: 105839036}
   hoverSprite: {fileID: 21300000, guid: a608bb2d95ea93f46ae240d79e0be076, type: 3}
@@ -12488,7 +12495,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8a26f1d912a4d8590963d457ff68d32, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHoverSpriteEffect
   targetImage: {fileID: 1440866283}
   hoverSprite: {fileID: 21300000, guid: a608bb2d95ea93f46ae240d79e0be076, type: 3}

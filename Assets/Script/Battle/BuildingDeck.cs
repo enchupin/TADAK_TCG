@@ -41,6 +41,12 @@ public class BuildingDeck
 
     public void InitializeFromCardIds(List<int> cardIds)
     {
+        InitializeFromCardIds(cardIds, null);
+    }
+
+    // permanentDamageBonuses: cardIds와 같은 위치의 R-22a 영구 피해 증가량
+    public void InitializeFromCardIds(List<int> cardIds, List<int> permanentDamageBonuses)
+    {
         deckList.Clear();
 
         if (cardIds == null)
@@ -49,8 +55,9 @@ public class BuildingDeck
             return;
         }
 
-        foreach (int cardId in cardIds)
+        for (int index = 0; index < cardIds.Count; index++)
         {
+            int cardId = cardIds[index];
             Card newCard = CardManager.GetCardAsCard(cardId);
             if (newCard == null)
             {
@@ -64,6 +71,11 @@ public class BuildingDeck
                 continue;
             }
 
+            if (permanentDamageBonuses != null && index < permanentDamageBonuses.Count)
+            {
+                newCard.permanentDamageBonus = Mathf.Max(0, permanentDamageBonuses[index]);
+            }
+
             deckList.Add(newCard);
         }
 
@@ -73,22 +85,29 @@ public class BuildingDeck
     /// <summary>
     /// Add reward card.
     /// </summary>
-    public void AddCard(int cardId)
+    public bool AddCard(int cardId)
     {
         Card newCard = CardManager.GetCardAsCard(cardId);
         if (newCard == null)
         {
-            return;
+            return false;
         }
 
         if (ViolatesUniqueRule(newCard))
         {
             Debug.LogWarning($"[BuildingDeck] 유일 키워드로 인해 카드를 추가할 수 없습니다: {newCard.cardName}");
-            return;
+            return false;
         }
 
         deckList.Add(newCard);
         Debug.Log($"[BuildingDeck] card added: {newCard.cardName} (total {deckList.Count})");
+        return true;
+    }
+
+    // 저장 덱의 카드 인스턴스 목록 (선택 UI에서 제거 대상 지정용, 전투에는 CopyDeck 사용)
+    public IReadOnlyList<Card> GetCards()
+    {
+        return deckList;
     }
 
     public bool ReplaceCardAt(int index, int cardId)
@@ -117,6 +136,38 @@ public class BuildingDeck
         return true;
     }
 
+    // R-46 네임드 보상 복제: 같은 카드 ID(강화 상태)와 영구 피해 증가를 그대로 유지
+    public bool AddCardCopy(Card source)
+    {
+        if (source == null)
+        {
+            return false;
+        }
+
+        Card newCard = CardManager.GetCardAsCard(source.cardId);
+        if (newCard == null || ViolatesUniqueRule(newCard))
+        {
+            Debug.LogWarning($"[BuildingDeck] 카드를 복제할 수 없습니다: {source.cardName}");
+            return false;
+        }
+
+        newCard.permanentDamageBonus = source.permanentDamageBonus;
+        deckList.Add(newCard);
+        return true;
+    }
+
+    // 저장 덱 위치와 카드 ID가 일치할 때만 제거
+    public bool RemoveCardAt(int index, int cardId)
+    {
+        if (index < 0 || index >= deckList.Count || deckList[index] == null || deckList[index].cardId != cardId)
+        {
+            return false;
+        }
+
+        deckList.RemoveAt(index);
+        return true;
+    }
+
     /// <summary>
     /// Remove card from run deck.
     /// </summary>
@@ -140,8 +191,9 @@ public class BuildingDeck
     {
         List<Card> copiedDeck = new List<Card>(deckList.Count);
 
-        foreach (Card sourceCard in deckList)
+        for (int deckIndex = 0; deckIndex < deckList.Count; deckIndex++)
         {
+            Card sourceCard = deckList[deckIndex];
             if (sourceCard == null)
                 continue;
 
@@ -166,8 +218,11 @@ public class BuildingDeck
             clonedCard.keywords = sourceCard.keywords != null
                 ? new List<int>(sourceCard.keywords)
                 : new List<int>();
+            clonedCard.permanentDamageBonus = sourceCard.permanentDamageBonus;
 
             LocalizationManager.ApplyToRuntimeCard(clonedCard);
+            // 호기심 강화를 저장 덱에 반영하기 위한 원본 위치
+            clonedCard.sourceDeckIndex = deckIndex;
 
             copiedDeck.Add(clonedCard);
         }
@@ -190,6 +245,18 @@ public class BuildingDeck
         }
 
         return cardIds;
+    }
+
+    // R-22a 덱 위치의 카드에 영구 피해 증가 누적
+    public bool AddPermanentDamageBonusAt(int index, int cardId, int amount)
+    {
+        if (index < 0 || index >= deckList.Count || deckList[index] == null || deckList[index].cardId != cardId)
+        {
+            return false;
+        }
+
+        deckList[index].permanentDamageBonus = Mathf.Max(0, deckList[index].permanentDamageBonus + amount);
+        return true;
     }
 
     public void RefreshLocalizedTexts()
@@ -242,7 +309,8 @@ public static class TrainingRunDeckPersistence
     public static BuildingDeck CreateRunDeck(List<Character> selectedCharacters)
     {
         BuildingDeck deck = new BuildingDeck();
-        deck.InitializeFromCardIds(LoadPermanentDeckCardIds(selectedCharacters));
+        List<int> permanentDamageBonuses = new List<int>();
+        deck.InitializeFromCardIds(LoadPermanentDeckCardIds(selectedCharacters, permanentDamageBonuses), permanentDamageBonuses);
         return deck;
     }
 
@@ -287,6 +355,7 @@ public static class TrainingRunDeckPersistence
             }
 
             deckSave.cardIds = ExtractCardIdsForCharacter(runCards, character);
+            deckSave.permanentDamageBonuses = ExtractPermanentDamageBonusesForCharacter(runCards, character);
             deckSave.isRunSavedDeck = true;
             deckSave.runSavedAtUtc = System.DateTime.UtcNow.ToString("o");
             hasChanges = true;
@@ -301,7 +370,7 @@ public static class TrainingRunDeckPersistence
         Debug.Log($"[TrainingRunDeckPersistence] {saveReasonLog}");
     }
 
-    private static List<int> LoadPermanentDeckCardIds(List<Character> selectedCharacters)
+    private static List<int> LoadPermanentDeckCardIds(List<Character> selectedCharacters, List<int> permanentDamageBonuses)
     {
         List<int> mergedCardIds = new List<int>();
         if (selectedCharacters == null || selectedCharacters.Count == 0)
@@ -323,7 +392,9 @@ public static class TrainingRunDeckPersistence
             CharacterDeckListSave library = ProfileSaveManager.GetOrCreateLibrary(character);
             if (library == null)
             {
-                mergedCardIds.AddRange(CharacterManager.GetStarterCardIds(character));
+                List<int> starterCardIds = CharacterManager.GetStarterCardIds(character);
+                mergedCardIds.AddRange(starterCardIds);
+                AppendPermanentDamageBonuses(permanentDamageBonuses, null, starterCardIds.Count);
                 continue;
             }
 
@@ -337,6 +408,7 @@ public static class TrainingRunDeckPersistence
             if (selectedDeck?.cardIds != null)
             {
                 mergedCardIds.AddRange(selectedDeck.cardIds);
+                AppendPermanentDamageBonuses(permanentDamageBonuses, selectedDeck.permanentDamageBonuses, selectedDeck.cardIds.Count);
             }
         }
 
@@ -370,6 +442,77 @@ public static class TrainingRunDeckPersistence
         library.decks.Add(starterDeck);
         library.selectedDeckId = starterDeck.deckId;
         return starterDeck;
+    }
+
+    // 덱 카드 수만큼 위치를 맞춰 영구 피해 증가량 추가 (없는 위치는 0)
+    private static void AppendPermanentDamageBonuses(List<int> target, List<int> source, int count)
+    {
+        if (target == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            target.Add(source != null && i < source.Count ? Mathf.Max(0, source[i]) : 0);
+        }
+    }
+
+    // R-22a 보스전 시작 시 모든 저장 덱의 영구 피해 증가 초기화
+    public static void ResetPermanentDamageBonuses()
+    {
+        PlayerProfileSave profile = ProfileSaveManager.CurrentProfile;
+        if (profile?.characters == null)
+        {
+            return;
+        }
+
+        bool hasChanges = false;
+        foreach (CharacterDeckListSave library in profile.characters)
+        {
+            if (library?.decks == null)
+            {
+                continue;
+            }
+
+            foreach (CharacterDeckSave deck in library.decks)
+            {
+                if (deck?.permanentDamageBonuses != null && deck.permanentDamageBonuses.Count > 0)
+                {
+                    deck.permanentDamageBonuses.Clear();
+                    hasChanges = true;
+                }
+            }
+        }
+
+        if (hasChanges)
+        {
+            ProfileSaveManager.Save(profile);
+        }
+    }
+
+    private static List<int> ExtractPermanentDamageBonusesForCharacter(List<Card> cards, Character character)
+    {
+        List<int> bonuses = new List<int>();
+        bool hasBonus = false;
+        if (cards == null)
+        {
+            return bonuses;
+        }
+
+        foreach (Card card in cards)
+        {
+            if (card == null || card.character != character)
+            {
+                continue;
+            }
+
+            bonuses.Add(Mathf.Max(0, card.permanentDamageBonus));
+            hasBonus |= card.permanentDamageBonus > 0;
+        }
+
+        // 누적이 없으면 빈 목록으로 저장
+        return hasBonus ? bonuses : new List<int>();
     }
 
     private static List<int> ExtractCardIdsForCharacter(List<Card> cards, Character character)

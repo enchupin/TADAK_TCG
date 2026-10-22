@@ -7,7 +7,21 @@ public sealed class FeatherBuffScript : PlayerBuffScript
     private readonly TrainingBattleManager battleManager;
     private readonly PlayerBuffRuntimeService playerBuffRuntimeService;
 
+    // 발동 피해 = 중첩 + 대상 최대 체력의 (중첩 × 1)%
+    private const float MaxHpPercentPerStack = 1f;
+
     public override int BuffId => FeatherBuffId;
+
+    public static int CalculateTriggerDamage(int featherStack, int targetMaxHp)
+    {
+        if (featherStack <= 0)
+        {
+            return 0;
+        }
+
+        int maxHpBonus = UnityEngine.Mathf.FloorToInt(UnityEngine.Mathf.Max(0, targetMaxHp) * featherStack * MaxHpPercentPerStack / 100f);
+        return featherStack + maxHpBonus;
+    }
 
     public FeatherBuffScript(TrainingBattleManager battleManager, PlayerBuffRuntimeService playerBuffRuntimeService)
     {
@@ -187,7 +201,7 @@ public sealed class FeatherBuffScript : PlayerBuffScript
                 break;
             }
 
-            int damage = battleManager.ResolvePlayerEffectDamage(featherStack);
+            int damage = battleManager.ResolvePlayerEffectDamage(CalculateTriggerDamage(featherStack, monster.maxHP));
             int dealtDamage = damage > 0 ? monster.TakeDamage(damage, 0) : 0;
             monster.ConsumeBuffStack(FeatherBuffId, 1);
             if (dealtDamage > 0)
@@ -218,7 +232,7 @@ public sealed class FeatherBuffScript : PlayerBuffScript
                 break;
             }
 
-            totalDamage += player.TakeDamage(featherStack);
+            totalDamage += player.TakeDamage(CalculateTriggerDamage(featherStack, player.maxHP));
             player.ConsumeBuffStack(FeatherBuffId, 1);
         }
 

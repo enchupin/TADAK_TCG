@@ -2,6 +2,8 @@ using static BattleRuntimeDefinitions;
 
 public sealed class BurningWillBuffScript : PlayerBuffScript
 {
+    private const int HpLossPerTurn = 2;
+
     public override int BuffId => BurningWillBuffId;
 
     public override void OnPlayerTurnStart(TrainingBattleManager battleManager, PlayerData player, int stack)
@@ -11,7 +13,7 @@ public sealed class BurningWillBuffScript : PlayerBuffScript
             return;
         }
 
-        player.LoseHp(1);
+        player.LoseHp(HpLossPerTurn);
         player.AddDefense(stack);
     }
 }

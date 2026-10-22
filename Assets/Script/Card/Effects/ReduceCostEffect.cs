@@ -26,10 +26,8 @@ public class ReduceCostEffect : ICardEffect
         }
 
         int reduceAmount = Mathf.Abs(CardEffectRuntimeUtility.ResolveCardValueAmount(battleManager, amount, amountFormula, forwardedAmount));
-        bool turnOnly = string.Equals(durationText, "Turn", System.StringComparison.OrdinalIgnoreCase);
-
         foreach (Card card in targetCards) {
-            card?.ApplyCostModifier(-reduceAmount, turnOnly);
+            card?.ApplyCostModifier(-reduceAmount, durationText);
         }
 
         CardEffectRuntimeUtility.RefreshCardDisplays(battleManager, targetCards);

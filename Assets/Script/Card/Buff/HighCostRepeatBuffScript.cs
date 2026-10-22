@@ -2,6 +2,8 @@ using static BattleRuntimeDefinitions;
 
 public sealed class HighCostRepeatBuffScript : PlayerBuffScript
 {
+    private const int MinimumCost = 3;
+
     private bool hasRepeatedThisTurn;
 
     public override int BuffId => HighCostRepeatBuffId;
@@ -18,7 +20,9 @@ public sealed class HighCostRepeatBuffScript : PlayerBuffScript
 
     public override int ConsumeRepeatCount(TrainingBattleManager battleManager, PlayerData player, Card playedCard, bool isRepeatedEffect, int stack)
     {
-        if (playedCard == null || isRepeatedEffect || stack <= 0 || hasRepeatedThisTurn || playedCard.cost < 2)
+        // 할인 후 실제로 지불하는 비용 기준
+        if (playedCard == null || isRepeatedEffect || stack <= 0 || hasRepeatedThisTurn
+            || battleManager?.battleContext == null || battleManager.battleContext.GetPaidCost(playedCard) < MinimumCost)
         {
             return 0;
         }

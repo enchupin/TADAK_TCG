@@ -5,12 +5,12 @@
             "name": "명령: 공격",
             "characterId": 302,
             "cost": 1,
-            "description": "피해를 {amount} 입힙니다.",
+            "description": "피해를 {attack} 입힙니다.",
             "effects": [
                 {
                     "type": "Attack",
-                    "amount": 5,
-                    "target": "SingleEnemy"
+                    "target": "SingleEnemy",
+                    "amount": 4
                 }
             ]
         },
@@ -19,12 +19,12 @@
             "name": "명령: 보호",
             "characterId": 302,
             "cost": 1,
-            "description": "보호막을 {amount} 얻습니다.",
+            "description": "보호막을 {block} 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",
-                    "amount": 7,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 8
                 }
             ]
         },
@@ -33,52 +33,89 @@
             "name": "에너지 쿠키",
             "characterId": 302,
             "cost": 1,
-            "description": "{동력}을 {amount} 얻습니다.",
+            "description": "{동력}을 3 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 3031,
-                    "amount": 3,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 3
                 }
             ],
             "enforceGroup": "enforce_302030"
         },
         {
             "cardId": 302031,
-            "name": "에너지 쿠키 +",
+            "name": "에너지 쿠키+",
             "characterId": 302,
             "cost": 1,
-            "description": "{동력}을 {amount} 얻습니다. 사용할 때마다 획득량이 2 증가합니다.",
+            "description": "보호막을 6씩 2회 얻습니다.",
+            "effects": [
+                {
+                    "type": "Barrier",
+                    "target": "Self",
+                    "amount": 6
+                },
+                {
+                    "type": "Barrier",
+                    "target": "Self",
+                    "amount": 6
+                }
+            ]
+        },
+        {
+            "cardId": 302032,
+            "name": "에너지 쿠키+",
+            "characterId": 302,
+            "cost": 2,
+            "keywords": [
+                4
+            ],
+            "description": "매 턴 시작 시 {동력}을 2 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3032,
+                    "target": "Self",
+                    "amount": 2
+                }
+            ]
+        },
+        {
+            "cardId": 302033,
+            "name": "에너지 쿠키+",
+            "characterId": 302,
+            "cost": 1,
+            "description": "{동력}을 2 얻습니다. 이번 전투에서 사용할 때마다 획득량이 2씩 증가합니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 3031,
-                    "amount": 2,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 2
                 },
                 {
                     "type": "ModifyCard",
                     "source": "ThisCard",
                     "param": "EffectAmount",
                     "effectIndex": 0,
-                    "amount": 2,
-                    "operation": "Add"
+                    "operation": "Add",
+                    "amount": 2
                 }
             ]
         },
         {
-            "cardId": 302032,
-            "name": "에너지 쿠키 +",
+            "cardId": 302034,
+            "name": "에너지 쿠키+",
             "characterId": 302,
             "cost": 1,
-            "description": "{동력}을 {amount} 얻습니다. 이 카드는 사용한 후 뽑을 카드 더미 위로 이동합니다.",
+            "description": "{동력}을 5 얻습니다. 이 카드를 뽑을 카드 더미 맨 위에 놓습니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 3031,
-                    "amount": 5,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 5
                 },
                 {
                     "type": "Move",
@@ -90,54 +127,22 @@
             ]
         },
         {
-            "cardId": 302033,
-            "name": "에너지 쿠키 +",
-            "characterId": 302,
-            "cost": 1,
-            "description": "보호막을 {amount}씩 2회 얻습니다.",
-            "effects": [
-                {
-                    "type": "Barrier",
-                    "amount": 6,
-                    "target": "Self"
-                },
-                {
-                    "type": "Barrier",
-                    "amount": 6,
-                    "target": "Self"
-                }
-            ]
-        },
-        {
-            "cardId": 302034,
-            "name": "에너지 쿠키 +",
-            "characterId": 302,
-            "cost": 1,
-            "description": "(강공)을 {amount} 얻습니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffId": 3009,
-                    "amount": 6,
-                    "target": "Self"
-                }
-            ]
-        },
-        {
             "cardId": 302035,
-            "name": "에너지 쿠키 +",
+            "name": "에너지 쿠키+",
             "characterId": 302,
-            "cost": 2,
-            "keywords": [
-                4
-            ],
-            "description": "(배터리)를 {amount} 얻습니다.",
+            "cost": 1,
+            "description": "조각: 손에서 카드를 1장 선택해 \"사용 시 {동력}을 1 얻습니다.\"를 새깁니다.",
             "effects": [
                 {
-                    "type": "Buff",
-                    "buffId": 3032,
-                    "amount": 2,
-                    "target": "Self"
+                    "type": "Fragment",
+                    "effects": [
+                        {
+                            "type": "Buff",
+                            "buffId": 3031,
+                            "target": "Self",
+                            "amount": 1
+                        }
+                    ]
                 }
             ]
         },
@@ -146,116 +151,116 @@
             "name": "프로토콜: 보호",
             "characterId": 302,
             "cost": 1,
-            "description": "우피가 (보호) 모드로 전환됩니다.",
+            "description": "우피가 보호 모드로 전환됩니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 3043,
-                    "amount": 1,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 1
                 }
             ],
             "enforceGroup": "enforce_302040"
         },
         {
             "cardId": 302041,
-            "name": "프로토콜: 보호 +",
+            "name": "프로토콜: 보호+",
             "characterId": 302,
             "cost": 1,
-            "description": "{동력}을 {amount} 얻습니다. 우피가 (보호) 모드로 전환됩니다.",
+            "description": "{동력}을 2 얻습니다. 우피가 보호 모드로 전환됩니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 3031,
-                    "amount": 2,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 2
                 },
                 {
                     "type": "Buff",
                     "buffId": 3043,
-                    "amount": 1,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 1
                 }
             ]
         },
         {
             "cardId": 302042,
-            "name": "프로토콜: 보호 +",
-            "characterId": 302,
-            "cost": 2,
-            "description": "보호막을 {amount} 얻습니다. (예방)을 {amount2} 얻습니다.",
-            "effects": [
-                {
-                    "type": "Barrier",
-                    "amount": 16,
-                    "target": "Self"
-                },
-                {
-                    "type": "Buff",
-                    "buffId": 3011,
-                    "amount": 1,
-                    "target": "Self"
-                }
-            ]
-        },
-        {
-            "cardId": 302043,
-            "name": "프로토콜: 보호 +",
-            "characterId": 302,
-            "cost": 1,
-            "description": "보호막을 {amount} 얻습니다. (가시)를 {amount2} 얻습니다.",
-            "effects": [
-                {
-                    "type": "Barrier",
-                    "amount": 8,
-                    "target": "Self"
-                },
-                {
-                    "type": "Buff",
-                    "buffId": 3010,
-                    "amount": 3,
-                    "target": "Self"
-                }
-            ]
-        },
-        {
-            "cardId": 302044,
-            "name": "프로토콜: 보호 +",
-            "characterId": 302,
-            "cost": 1,
-            "keywords": [
-                10
-            ],
-            "description": "{동력}을 {amount} 얻습니다. 보호막을 {amount2} 얻습니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffId": 3031,
-                    "amount": 1,
-                    "target": "Self"
-                },
-                {
-                    "type": "Barrier",
-                    "amount": 4,
-                    "target": "Self"
-                }
-            ]
-        },
-        {
-            "cardId": 302045,
-            "name": "프로토콜: 보호 +",
+            "name": "프로토콜: 보호+",
             "characterId": 302,
             "cost": 1,
             "keywords": [
                 4,
                 9
             ],
-            "description": "(전환: 보호)를 얻습니다.",
+            "description": "내 턴 종료 시 자동으로 우피가 보호 모드가 됩니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 1014,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "cardId": 302043,
+            "name": "프로토콜: 보호+",
+            "characterId": 302,
+            "cost": 2,
+            "description": "보호막을 {block} 얻습니다. 다음 턴 시작 시 보호막을 잃지 않습니다.",
+            "effects": [
+                {
+                    "type": "Barrier",
+                    "target": "Self",
+                    "amount": 14
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3011,
+                    "target": "Self",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "cardId": 302044,
+            "name": "프로토콜: 보호+",
+            "characterId": 302,
+            "cost": 1,
+            "keywords": [
+                10
+            ],
+            "description": "{동력}을 1 얻습니다. 보호막을 {block} 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3031,
+                    "target": "Self",
+                    "amount": 1
+                },
+                {
+                    "type": "Barrier",
+                    "target": "Self",
+                    "amount": 4
+                }
+            ]
+        },
+        {
+            "cardId": 302045,
+            "name": "프로토콜: 보호+",
+            "characterId": 302,
+            "cost": 1,
+            "description": "조각: 손에서 카드를 1장 선택해 \"사용 시 보호막을 4 얻습니다.\"를 새깁니다.",
+            "effects": [
+                {
+                    "type": "Fragment",
+                    "effects": [
+                        {
+                            "type": "Barrier",
+                            "target": "Self",
+                            "amount": 4
+                        }
+                    ]
                 }
             ]
         },
@@ -263,114 +268,113 @@
             "cardId": 302050,
             "name": "프로토콜: 공격",
             "characterId": 302,
-            "cost": 2,
-            "description": "우피가 (공격) 모드로 전환됩니다.",
+            "cost": 0,
+            "description": "우피가 공격 모드로 전환됩니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 3044,
-                    "amount": 1,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 1
                 }
             ],
             "enforceGroup": "enforce_302050"
         },
         {
             "cardId": 302051,
-            "name": "프로토콜: 공격 +",
+            "name": "프로토콜: 공격+",
             "characterId": 302,
-            "cost": 0,
-            "keywords": [
-                5
-            ],
-            "description": "우피가 (공격) 모드로 전환됩니다. 피해를 {amount2} 입힙니다.",
+            "cost": 2,
+            "description": "보호막을 {block} 얻습니다. 피해를 {attack} 입힙니다.",
             "effects": [
                 {
-                    "type": "Buff",
-                    "buffId": 3044,
-                    "amount": 1,
-                    "target": "Self"
+                    "type": "Barrier",
+                    "target": "Self",
+                    "amount": 12
                 },
                 {
                     "type": "Attack",
-                    "amount": 5,
-                    "target": "SingleEnemy"
+                    "target": "SingleEnemy",
+                    "amount": 8
                 }
             ]
         },
         {
             "cardId": 302052,
-            "name": "프로토콜: 공격 +",
-            "characterId": 302,
-            "cost": 2,
-            "description": "{동력}을 {amount} 얻습니다. 우피가 (공격) 모드로 전환됩니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffId": 3031,
-                    "amount": 2,
-                    "target": "Self"
-                },
-                {
-                    "type": "Buff",
-                    "buffId": 3044,
-                    "amount": 1,
-                    "target": "Self"
-                }
-            ]
-        },
-        {
-            "cardId": 302053,
-            "name": "프로토콜: 공격 +",
-            "characterId": 302,
-            "cost": 2,
-            "description": "보호막을 {amount} 얻습니다. 피해를 {amount2} 입힙니다.",
-            "effects": [
-                {
-                    "type": "Barrier",
-                    "amount": 14,
-                    "target": "Self"
-                },
-                {
-                    "type": "Attack",
-                    "amount": 14,
-                    "target": "SingleEnemy"
-                }
-            ]
-        },
-        {
-            "cardId": 302054,
-            "name": "프로토콜: 공격 +",
+            "name": "프로토콜: 공격+",
             "characterId": 302,
             "cost": 1,
             "keywords": [
                 4
             ],
-            "description": "(과충전)을 {amount} 얻습니다.",
+            "description": "{동력}을 얻을 때마다 1 더 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 3047,
-                    "amount": 1,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 1
                 }
             ]
         },
         {
-            "cardId": 302055,
-            "name": "프로토콜: 공격 +",
+            "cardId": 302053,
+            "name": "프로토콜: 공격+",
+            "characterId": 302,
+            "cost": 0,
+            "keywords": [
+                5
+            ],
+            "description": "우피가 공격 모드로 전환됩니다. 피해를 {attack} 입힙니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3044,
+                    "target": "Self",
+                    "amount": 1
+                },
+                {
+                    "type": "Attack",
+                    "target": "SingleEnemy",
+                    "amount": 5
+                }
+            ]
+        },
+        {
+            "cardId": 302054,
+            "name": "프로토콜: 공격+",
             "characterId": 302,
             "cost": 1,
             "keywords": [
                 4,
                 9
             ],
-            "description": "(전환: 공격)을 얻습니다.",
+            "description": "턴 시작 시 자동으로 우피가 공격 모드로 전환됩니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 1018,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "cardId": 302055,
+            "name": "프로토콜: 공격+",
+            "characterId": 302,
+            "cost": 1,
+            "description": "조각: 손에서 카드를 1장 선택해 \"사용 시 피해를 4 입힙니다.\"를 새깁니다.",
+            "effects": [
+                {
+                    "type": "Fragment",
+                    "effects": [
+                        {
+                            "type": "Attack",
+                            "target": "SingleEnemy",
+                            "amount": 4
+                        }
+                    ]
                 }
             ]
         },
@@ -396,33 +400,10 @@
         },
         {
             "cardId": 302061,
-            "name": "우피 폭주 +",
-            "characterId": 302,
-            "cost": 0,
-            "description": "우피의 모드를 해제합니다. 카드를 {amount}장 뽑습니다.",
-            "effects": [
-                {
-                    "type": "RemoveBuff",
-                    "buffId": 3043,
-                    "target": "Self"
-                },
-                {
-                    "type": "RemoveBuff",
-                    "buffId": 3044,
-                    "target": "Self"
-                },
-                {
-                    "type": "Draw",
-                    "amount": 1
-                }
-            ]
-        },
-        {
-            "cardId": 302062,
-            "name": "우피 폭주 +",
+            "name": "우피 폭주+",
             "characterId": 302,
             "cost": 1,
-            "description": "턴 종료 효과를 모두 발동합니다.",
+            "description": "보유한 내 턴 종료 시 효과를 모두 발동합니다.",
             "effects": [
                 {
                     "type": "Trigger",
@@ -431,20 +412,38 @@
             ]
         },
         {
+            "cardId": 302062,
+            "name": "우피 폭주+",
+            "characterId": 302,
+            "cost": 3,
+            "keywords": [
+                4
+            ],
+            "description": "내 턴 종료 효과가 1회 더 발동합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3045,
+                    "target": "Self",
+                    "amount": 1
+                }
+            ]
+        },
+        {
             "cardId": 302063,
-            "name": "우피 폭주 +",
+            "name": "우피 폭주+",
             "characterId": 302,
             "cost": 1,
             "keywords": [
                 3
             ],
-            "description": "{동력} 중첩을 {amount}배로 만듭니다.",
+            "description": "{동력} 중첩을 2배로 늘립니다.",
             "effects": [
                 {
                     "type": "ChangeStat",
                     "stat": "Buff",
-                    "buffId": 3031,
                     "change": "Multiply",
+                    "buffId": 3031,
                     "amount": 2,
                     "target": "Self"
                 }
@@ -452,37 +451,37 @@
         },
         {
             "cardId": 302064,
-            "name": "우피 폭주 +",
-            "characterId": 302,
-            "cost": 2,
-            "keywords": [
-                4
-            ],
-            "description": "(이중 동작)을 {amount} 얻습니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffId": 3045,
-                    "amount": 1,
-                    "target": "Self"
-                }
-            ]
-        },
-        {
-            "cardId": 302065,
-            "name": "우피 폭주 +",
+            "name": "우피 폭주+",
             "characterId": 302,
             "cost": 1,
             "keywords": [
                 4
             ],
-            "description": "(순환: 모드)를 {amount} 얻습니다.",
+            "description": "우피의 모드가 바뀔 때마다 카드를 1장 뽑습니다.",
             "effects": [
                 {
                     "type": "Buff",
                     "buffId": 3046,
-                    "amount": 1,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "cardId": 302065,
+            "name": "우피 폭주+",
+            "characterId": 302,
+            "cost": 3,
+            "description": "조각: 손에서 카드를 1장 선택해 \"사용 시 내 턴 종료 효과를 1회 발동합니다.\"를 새깁니다.",
+            "effects": [
+                {
+                    "type": "Fragment",
+                    "effects": [
+                        {
+                            "type": "Trigger",
+                            "timing": "OnTurnEnd"
+                        }
+                    ]
                 }
             ]
         },
@@ -492,114 +491,131 @@
             "characterId": 302,
             "cost": 2,
             "costType": "Rune",
-            "description": "에너지 대신 {동력}을 사용합니다. 적에게 취약을 {amount}, (약화)를 {amount2} 부여합니다.",
+            "description": "피해를 {attack} 입힙니다.",
             "effects": [
                 {
-                    "type": "Buff",
-                    "buffId": 4001,
-                    "amount": 2,
-                    "target": "SingleEnemy"
-                },
-                {
-                    "type": "Buff",
-                    "buffId": 4008,
-                    "amount": 2,
-                    "target": "SingleEnemy"
+                    "type": "Attack",
+                    "target": "SingleEnemy",
+                    "amount": 12
                 }
             ],
             "enforceGroup": "enforce_302070"
         },
         {
             "cardId": 302071,
-            "name": "과부하 +",
-            "characterId": 302,
-            "cost": 2,
-            "costType": "Rune",
-            "description": "에너지 대신 {동력}을 사용합니다. 피해를 {amount} 입힙니다.",
-            "effects": [
-                {
-                    "type": "Attack",
-                    "amount": 15,
-                    "target": "SingleEnemy"
-                }
-            ]
-        },
-        {
-            "cardId": 302072,
-            "name": "과부하 +",
+            "name": "과부하+",
             "characterId": 302,
             "cost": 1,
             "costType": "Rune",
             "keywords": [
                 6
             ],
-            "description": "에너지 대신 {동력}을 사용합니다. 보호막을 {amount} 얻습니다.",
+            "description": "보호막을 {block} 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",
-                    "amount": 4,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 4
+                }
+            ]
+        },
+        {
+            "cardId": 302072,
+            "name": "과부하+",
+            "characterId": 302,
+            "cost": 3,
+            "costType": "Rune",
+            "description": "체력을 6 회복합니다. 보유한 해로운 효과마다 회복량이 1씩 증가합니다.",
+            "effects": [
+                {
+                    "type": "Heal",
+                    "target": "Self",
+                    "amountFormula": "6 + HarmfulBuffKinds"
                 }
             ]
         },
         {
             "cardId": 302073,
-            "name": "과부하 +",
+            "name": "과부하+",
             "characterId": 302,
-            "cost": 3,
+            "cost": 2,
             "costType": "Rune",
-            "keywords": [
-                6
-            ],
-            "description": "에너지 대신 {동력}을 사용합니다. (결속)을 {amount} 얻습니다.",
+            "description": "피해를 {attack} 입힙니다. 우피가 공격 모드라면 {동력}을 1 얻습니다.",
             "effects": [
                 {
-                    "type": "Buff",
-                    "buffId": 3012,
-                    "amount": 1,
-                    "target": "Self"
+                    "type": "Attack",
+                    "target": "SingleEnemy",
+                    "amount": 15
+                },
+                {
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "Source",
+                                "operator": "Eq",
+                                "value": true,
+                                "property": "HasBuff",
+                                "param": 3044
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "Buff",
+                                "buffId": 3031,
+                                "target": "Self",
+                                "amount": 1
+                            }
+                        ]
+                    }
                 }
             ]
         },
         {
             "cardId": 302074,
-            "name": "과부하 +",
+            "name": "과부하+",
             "characterId": 302,
-            "cost": 5,
+            "cost": 3,
             "costType": "Rune",
-            "description": "에너지 대신 {동력}을 사용합니다. 해로운 효과를 {amount}개 무작위로 제거합니다.",
+            "description": "적 1명의 다음 턴 행동을 봉인합니다.",
             "effects": [
                 {
-                    "type": "ChangeStat",
-                    "stat": "Buff",
-                    "change": "Remove",
-                    "amount": 1,
-                    "target": "Self",
-                    "random": true,
-                    "buffIds": [
-                        4
-                    ]
+                    "type": "IntentQueue",
+                    "operation": "Seal",
+                    "target": "SingleEnemy"
                 }
             ]
         },
         {
             "cardId": 302075,
-            "name": "과부하 +",
+            "name": "과부하+",
             "characterId": 302,
-            "cost": 3,
+            "cost": 4,
             "costType": "Rune",
-            "keywords": [
-                3
-            ],
-            "description": "에너지 대신 {동력}을 사용합니다. 에너지를 {amount} 얻고 카드를 {amount2}장 뽑습니다.",
+            "description": "모든 적에게 피해를 {attack} 입힙니다. 이번 턴에 조각된 카드를 사용했다면 {동력}을 2 얻습니다.",
             "effects": [
                 {
-                    "type": "Stamina",
-                    "amount": 2
+                    "type": "Attack",
+                    "target": "AllEnemies",
+                    "amount": 10
                 },
                 {
-                    "type": "Draw",
-                    "amount": 2
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "FragmentedCardPlayedThisTurn",
+                                "operator": "Eq",
+                                "value": 1
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "Buff",
+                                "buffId": 3031,
+                                "target": "Self",
+                                "amount": 2
+                            }
+                        ]
+                    }
                 }
             ]
         }

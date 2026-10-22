@@ -3,7 +3,7 @@
         {
             "cardId": 10,
             "koName": "자상",
-            "koDescription": "턴 종료 시 피해를 2 받습니다.",
+            "koDescription": "턴 종료 시 손에 있으면 피해를 2 받습니다.",
             "enName": "Laceration",
             "enDescription": "At the end of the turn, take 2 damage.",
             "jaName": "裂傷",
@@ -18,7 +18,7 @@
         {
             "cardId": 20,
             "koName": "중독",
-            "koDescription": "턴 종료 시 피해를 4 받습니다.",
+            "koDescription": "턴 종료 시 손에 있으면 피해를 4 입습니다.",
             "enName": "Poisoned",
             "enDescription": "At the end of the turn, take 4 damage.",
             "jaName": "中毒",
@@ -33,7 +33,7 @@
         {
             "cardId": 21,
             "koName": "중독+",
-            "koDescription": "턴 종료 시 피해를 6 받습니다.",
+            "koDescription": "턴 종료 시 손에 있으면 피해를 6 입습니다.",
             "enName": "Poisoned+",
             "enDescription": "At the end of the turn, take 6 damage.",
             "jaName": "中毒+",
@@ -48,7 +48,7 @@
         {
             "cardId": 30,
             "koName": "공허의 부름",
-            "koDescription": "턴 종료 시 (빈약)을 2 얻습니다.",
+            "koDescription": "턴 종료 시 손에 있으면 (빈약)을 2 얻습니다.",
             "enName": "Call of the Void",
             "enDescription": "Gain 2 (Frail) at the end of the turn.",
             "jaName": "虚空の呼び声",
@@ -63,7 +63,7 @@
         {
             "cardId": 40,
             "koName": "뿌리 흡수",
-            "koDescription": "손에 있는 동안 카드를 뽑을 수 없습니다.",
+            "koDescription": "이 카드가 손에 있는 동안 카드를 더 뽑을 수 없습니다.",
             "enName": "Root Drain",
             "enDescription": "While this is in your hand, you cannot draw cards.",
             "jaName": "根の吸収",

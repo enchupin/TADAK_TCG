@@ -49,6 +49,8 @@ public class CardJSONConverter : EditorWindow
             case "Basic": return MoveZoneType.Basic;
             case "Unique": return MoveZoneType.Unique;
             case "AllUnique": return MoveZoneType.AllUnique;
+            case "Exhaust":
+            case "ExhaustPile": return MoveZoneType.ExhaustPile;
             default:
                 Debug.LogWarning($"[CardJSONConverter] Unknown move zone: {zone}. Fallback to {defaultZone}.");
                 return defaultZone;
@@ -91,6 +93,8 @@ public class CardJSONConverter : EditorWindow
             case "Basic":
             case "Unique":
             case "AllUnique":
+            case "Exhaust":
+            case "ExhaustPile":
                 return true;
             default:
                 return false;
@@ -575,6 +579,8 @@ public class CardJSONConverter : EditorWindow
             durationText = ReadJsonString(effectObject, "duration"),
             effectIndex = ReadJsonInt(effectObject, "effectIndex", -1),
             ampMultiplier = ReadJsonFloat(effectObject, "ampMultiplier", 1f),
+            boostMultiplier = ReadJsonFloat(effectObject, "boostMultiplier", 1f),
+            cardFilter = ReadJsonString(effectObject, "filter"),
             multiplier = ReadJsonFloat(effectObject, "multiplier", 0f),
             count = ReadJsonInt(effectObject, "count"),
             stat = ReadJsonString(effectObject, "stat"),
@@ -584,11 +590,13 @@ public class CardJSONConverter : EditorWindow
             random = ReadJsonBool(effectObject, "random"),
             allowFewerSelection = ReadJsonBool(effectObject, "allowFewer"),
             upgradeableOnly = ReadJsonBool(effectObject, "upgradeableOnly"),
+            excludeUnique = ReadJsonBool(effectObject, "excludeUnique"),
             duration = ReadJsonInt(effectObject, "duration"),
             cardId = ReadJsonString(effectObject, "cardId"),
             subject = ReadJsonString(effectObject, "subject"),
             characterFilter = ReadJsonString(effectObject, "character", ReadJsonString(effectObject, "characterFilter")),
             timing = ReadJsonString(effectObject, "timing"),
+            keyword = ReadJsonString(effectObject, "keyword"),
             repeatNextEffect = string.Equals(effectTypeRaw, "Repeat", StringComparison.OrdinalIgnoreCase)
         };
 
@@ -960,11 +968,16 @@ public class CardJSONConverter : EditorWindow
             case "MultiplyEnemyDebuffs": return EffectType.MultiplyEnemyDebuffs;
             case "ScaleIntent": return EffectType.ScaleIntent;
             case "ReplanIntent": return EffectType.ReplanIntent;
+            case "IntentQueue": return EffectType.IntentQueue;
             case "ReplayExhaustedCards": return EffectType.ReplayExhaustedCards;
             case "UseTopDeckCards": return EffectType.UseTopDeckCards;
             case "BindCard": return EffectType.BindCard;
+            case "Fragment": return EffectType.Fragment;
+            case "RemoveRandomBuff": return EffectType.RemoveRandomBuff;
+            case "ChargeIdentity": return EffectType.ChargeIdentity;
             case "EnemyHpLossHealPlayer": return EffectType.EnemyHpLossHealPlayer;
             case "Party": return EffectType.Party;
+            case "Keyword": return EffectType.Keyword;
             case "CopyEnemyDebuffs": return EffectType.CopyEnemyDebuffs;
             case "ApplyBuffByTargetStack": return EffectType.ApplyBuffByTargetStack;
             case "ResolveDrowningLethal": return EffectType.ResolveDrowningLethal;
@@ -987,6 +1000,7 @@ public class CardJSONConverter : EditorWindow
             case "Energy": return CardCostType.Energy;
             case "Barrier": return CardCostType.Barrier;
             case "Rune": return CardCostType.Rune;
+            case "Wave": return CardCostType.Wave;
             default:
                 Debug.LogWarning($"[CardJSONConverter] Unknown cost type: {type}. Fallback to Energy.");
                 return CardCostType.Energy;

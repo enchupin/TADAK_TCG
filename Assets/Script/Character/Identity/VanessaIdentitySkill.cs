@@ -9,7 +9,9 @@ public sealed class VanessaIdentitySkill : CharacterIdentitySkill
             return false;
         }
 
-        battleManager.ApplyBuffToPlayer(ThornBuffId, 7);
+        // v1.0: 연격 2, 득점 3
+        battleManager.ApplyBuffToPlayer(CardUseAllEnemiesDamageBuffId, 2);
+        battleManager.ApplyBuffToPlayer(ScoreBuffId, 3);
         return true;
     }
 }

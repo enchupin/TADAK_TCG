@@ -3,7 +3,8 @@ using UnityEngine;
 
 public static class BuffCardUtility
 {
-    public const string BasePotionGroupName = "isla_potion_even_base_pool";
+    // v1.0 무작위 포션: 폭발·마비·회복·독·산성·반응 포션 기본형
+    public const string BasePotionGroupName = "isla_potion_base_pool";
     public const string JokerUpgradeGroupName = "enforce_102040";
     private const int BaseFeatherCardId = 203080;
     private const int EnhancedFeatherCardId = 203081;
@@ -15,7 +16,8 @@ public static class BuffCardUtility
 
     public static bool IsPotionCardId(int cardId)
     {
-        return cardId >= 101080 && cardId <= 101087;
+        // 포션은 카드 그룹 10108 ~ 10113 (기본형 x0, 강화형 x1)
+        return cardId >= 101080 && cardId <= 101139;
     }
 
     public static bool IsFeatherCard(Card card)
@@ -55,9 +57,10 @@ public static class BuffCardUtility
         return generatedCards;
     }
 
-    public static List<Card> CreateRandomUniqueUpgradeCards(int count)
+    // onlyCharacter를 지정하면 해당 캐릭터의 강화된 고유 카드만 후보로 사용
+    public static List<Card> CreateRandomUniqueUpgradeCards(int count, Character? onlyCharacter = null)
     {
-        List<int> pool = GetUniqueUpgradeCardPool();
+        List<int> pool = GetUniqueUpgradeCardPool(onlyCharacter);
         if (pool.Count == 0)
         {
             return CreateRandomCardsFromGroup(JokerUpgradeGroupName, count);
@@ -199,11 +202,15 @@ public static class BuffCardUtility
         return false;
     }
 
-    private static List<int> GetUniqueUpgradeCardPool()
+    private static List<int> GetUniqueUpgradeCardPool(Character? onlyCharacter = null)
     {
         List<int> pool = new();
         HashSet<Character> selectedCharacters = null;
-        if (SelectedButtonControl.selectedCharacterList != null && SelectedButtonControl.selectedCharacterList.Count > 0)
+        if (onlyCharacter.HasValue)
+        {
+            selectedCharacters = new HashSet<Character> { onlyCharacter.Value };
+        }
+        else if (SelectedButtonControl.selectedCharacterList != null && SelectedButtonControl.selectedCharacterList.Count > 0)
         {
             selectedCharacters = new HashSet<Character>(SelectedButtonControl.selectedCharacterList);
         }

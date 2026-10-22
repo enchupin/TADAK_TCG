@@ -45,10 +45,12 @@ static class Program {
   BossModeSession.AddDamage(10);BossModeSession.SaveResult();Check(ProfileSaveManager.CurrentProfile.bossModeBestDamage==20,"최고 기록 보존");
   BossModeSession.Reset();Check(!BossModeSession.IsActive,"훈련 복귀 상태 초기화");
   Check(BossModeSession.SelectedBossId==0,"선택 보스 초기화");
-  Check(BossModeSession.GetBossType(301)==typeof(GiantFlowerSpiderBossMonster),"아라크네 생성 타입");
-  Check(BossModeSession.GetBossType(302)==typeof(ProphetBossMonster),"선지자 생성 타입");
-  Check(BossModeSession.GetBossType(303)==typeof(IceAndFireBossMonster),"얼음과 불 생성 타입");
-  Check(BossModeSession.GetBossType(304)==typeof(VoidLordBossMonster),"공허 군주 생성 타입");
+  // v1.0 보스는 조우 BS01 ~ BS04로 생성 (원본 ID 301 ~ 304와 v1.0 ID 5301 ~ 5304 모두 허용)
+  Check(BossModeSession.GetBossEncounterId(301)=="BS01","아라크네 생성 타입");
+  Check(BossModeSession.GetBossEncounterId(302)=="BS02","선지자 생성 타입");
+  Check(BossModeSession.GetBossEncounterId(303)=="BS03","얼음과 불 생성 타입");
+  Check(BossModeSession.GetBossEncounterId(304)=="BS04","공허 군주 생성 타입");
+  Check(BossModeSession.GetBossEncounterId(5302)=="BS02"&&!BossModeSession.IsValidBoss(305),"v1.0 보스 ID와 잘못된 ID 처리");
   typeof(BossModeDeckSelection).GetMethod("OnEnable",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(selection,null);
   Check(!button.interactable,"패널 재진입 시 선택 초기화");
   selection.SelectBoss(303);

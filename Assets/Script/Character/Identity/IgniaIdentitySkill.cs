@@ -9,7 +9,8 @@ public sealed class IgniaIdentitySkill : CharacterIdentitySkill
             return false;
         }
 
-        battleManager.ApplyBuffToPlayer(AttackBoostBuffId, 20);
+        battleManager.ApplyBuffToPlayer(AttackBoostBuffId, 8);
+        battleManager.ApplyBuffToAllEnemies(BurnBuffId, 2);
         return true;
     }
 }

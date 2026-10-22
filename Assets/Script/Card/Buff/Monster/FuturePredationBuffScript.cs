@@ -5,6 +5,8 @@ namespace MonsterBuffs
 {
 public sealed class FuturePredationBuffScript : MonsterBuffScript
 {
+    private const int HealAmount = 11;
+
     public override int BuffId => FuturePredationBuffId;
     private readonly Dictionary<Monster, int> activationCounts = new();
 
@@ -29,7 +31,7 @@ public sealed class FuturePredationBuffScript : MonsterBuffScript
         }
 
         if (BuffCombatUtility.RemoveRandomBeneficialBuff(monster, BuffId) == null) return;
-        monster.Heal(20);
+        monster.Heal(HealAmount);
         monster.AddBuff(StrengthBuffId, 2);
         activationCounts[monster] = GetActivationCount(monster) + 1;
     }

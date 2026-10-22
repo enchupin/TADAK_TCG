@@ -11,8 +11,9 @@ public sealed class MerelIdentitySkill : CharacterIdentitySkill
             return false;
         }
 
-        AddRepeatedCardToHand(battleManager, EnhancedFeatherCardId, 3);
-        battleManager.ApplyBuffToPlayer(PrecisionBuffId, 3);
+        // v1.0: 강화된 깃털 카드 2장, 은신 1
+        AddRepeatedCardToHand(battleManager, EnhancedFeatherCardId, 2);
+        battleManager.ApplyBuffToPlayer(StealthBuffId, 1);
         return true;
     }
 }

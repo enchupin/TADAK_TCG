@@ -63,6 +63,8 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     private readonly Dictionary<SpriteRenderer, Color> originalSpriteColors = new();
 
     public bool HasAttackIntent => hasAttackIntent;
+    // 이번 턴 행동을 쉬는 기절 상태
+    public bool IsStunned => skipCurrentTurnAction && !IsDead();
     public int PlannedIntentValue => plannedIntentValue;
     public int PlannedPatternId => plannedPatternId;
     public IReadOnlyList<MonsterIntentIconType> PlannedIntentIcons => plannedIntentIcons;
@@ -71,12 +73,18 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         : throw new System.InvalidOperationException($"[Monster] {gameObject.name}의 MonsterStateController가 인스펙터에 연결되지 않았습니다");
     public abstract int MonsterId { get; }
     protected virtual string MonsterName => GetType().Name;
+    // 표시용 이름 (데이터 몬스터는 계층 포함 이름)
+    public string DisplayName => MonsterName;
     protected abstract int BaseMaxHp { get; }
     protected virtual int BaseAttackPower => 0;
     protected virtual int BaseDefense => 0;
     protected virtual bool IsBossMonster => false;
     public bool IsBoss => IsBossMonster;
     private int permanentDefense;
+    // 이번 내 턴 동안 잃은 체력 (내 턴 시작 시 초기화)
+    public int HpLostThisTurn { get; private set; }
+    // 합체 등으로 커진 패턴 배수 (공격 피해·보호막 획득에 곱함)
+    public int patternMultiplier = 1;
 
     protected virtual void Awake()
     {
@@ -193,6 +201,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         {
             Debug.Log($"[Enemy Turn] {name}은(는) 기절 상태로 이번 턴 행동을 쉬었습니다.");
             skipCurrentTurnAction = false;
+            OnTurnActionSkipped();
             ClearPlannedAction();
             UpdateUI();
             return;
@@ -203,6 +212,12 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         {
             stateController.EnterAttack();
             TrainingBattleManager.Instance?.HandleMonsterAttackActionStarted(this);
+            // 덫 등 공격 직전 효과로 사망했다면 행동하지 않음
+            if (IsDead())
+            {
+                TrainingBattleManager.Instance?.HandleMonsterAttackActionEnded(this);
+                return;
+            }
         }
 
         ExecuteAction(target);
@@ -245,6 +260,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
         if (damageAfterDefense > 0)
         {
+            HpLostThisTurn += actualHpLoss;
             TrainingBattleManager.Instance?.HandleMonsterHpLost(this, actualHpLoss);
         }
 
@@ -271,6 +287,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         }
 
         hp -= lostAmount;
+        HpLostThisTurn += lostAmount;
         TrainingBattleManager.Instance?.HandleMonsterHpLost(this, lostAmount);
         HandleDeathIfNeeded();
         UpdateUI();
@@ -332,9 +349,14 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         UpdateUI();
     }
 
+    public void ResetTurnHpLoss()
+    {
+        HpLostThisTurn = 0;
+    }
+
     public void AddDefense(int amount)
     {
-        int finalAmount = Mathf.Max(0, amount);
+        int finalAmount = Mathf.Max(0, amount) * Mathf.Max(1, patternMultiplier);
         TrainingBattleManager battleManager = TrainingBattleManager.Instance;
         if (battleManager != null)
         {
@@ -372,8 +394,26 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     public void AddBuff(int buffId, int amount)
     {
-        if (amount <= 0)
+        if (amount == 0)
         {
+            return;
+        }
+
+        // 힘처럼 음수 중첩을 허용하는 효과는 부호 그대로 더함
+        if (BuffData.AllowsNegativeStack(buffId) && (amount < 0 || GetBuffStack(buffId) < 0))
+        {
+            AddSignedBuffStack(buffId, amount);
+            return;
+        }
+
+        if (amount < 0)
+        {
+            // 중첩 불가 효과에 음수를 부여하면 효과 제거 (E-26)
+            if (IsNonStackableBuff(buffId))
+            {
+                RemoveBuff(buffId);
+                UpdateUI();
+            }
             return;
         }
 
@@ -412,7 +452,35 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         UpdateUI();
     }
 
-    public void OnTurnStart()
+    // 음수 중첩 허용 효과의 중첩 변경 (0이 되면 제거)
+    private void AddSignedBuffStack(int buffId, int amount)
+    {
+        Buff existingBuff = currentBuffs.Find(b =>
+            b.data != null &&
+            b.data.buffId == buffId);
+        int nextStack = (existingBuff != null ? existingBuff.stack : 0) + amount;
+        if (nextStack == 0)
+        {
+            if (existingBuff != null)
+            {
+                currentBuffs.Remove(existingBuff);
+            }
+        }
+        else if (existingBuff != null)
+        {
+            existingBuff.data = BuffMetadataResolver.Resolve(buffId);
+            existingBuff.stack = nextStack;
+        }
+        else
+        {
+            currentBuffs.Add(new Buff(BuffMetadataResolver.Resolve(buffId), nextStack));
+        }
+
+        UpdateUI();
+    }
+
+    // 몬스터 턴은 모든 몬스터의 보호막 제거를 먼저 끝낸 뒤 턴 시작 효과를 처리
+    public void RemoveTurnStartBarrier()
     {
         TrainingBattleManager battleManager = TrainingBattleManager.Instance;
         int retainedDefense = Mathf.Clamp(permanentDefense, 0, defense);
@@ -421,6 +489,12 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
             SetDefenseValue(retainedDefense);
             Debug.Log($"[Monster] {name} 턴 시작으로 보호막이 제거됩니다.");
         }
+        UpdateUI();
+    }
+
+    public void OnTurnStart()
+    {
+        TrainingBattleManager battleManager = TrainingBattleManager.Instance;
         OnTurnStarted();
         battleManager?.ApplyMonsterTurnStartEffects(this);
         UpdateUI();
@@ -497,7 +571,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         UpdateIntentUI();
     }
 
-    public void ScalePlannedIntent(float multiplier)
+    public virtual void ScalePlannedIntent(float multiplier)
     {
         if (multiplier < 0f || !hasAttackIntent || plannedIntentValue <= 0)
         {
@@ -573,7 +647,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     protected int PreviewBarrierGain(int baseAmount)
     {
-        int safeAmount = Mathf.Max(0, baseAmount);
+        int safeAmount = Mathf.Max(0, baseAmount) * Mathf.Max(1, patternMultiplier);
         int resolvedAmount = TrainingBattleManager.Instance != null
             ? TrainingBattleManager.Instance.ResolveMonsterBarrierGain(this, safeAmount)
             : safeAmount;
@@ -752,6 +826,8 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         hp = maxHP;
         defense = UnityEngine.Mathf.Max(0, BaseDefense);
         permanentDefense = 0;
+        patternMultiplier = 1;
+        HpLostThisTurn = 0;
         attackPower = UnityEngine.Mathf.Max(0, BaseAttackPower);
         name = GetType().Name;
 
@@ -915,9 +991,10 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
             return 0;
         }
 
+        int scaledDamage = baseDamage * Mathf.Max(1, patternMultiplier);
         return TrainingBattleManager.Instance != null
-            ? TrainingBattleManager.Instance.ModifyMonsterOutgoingDamage(this, baseDamage)
-            : Mathf.Max(0, baseDamage);
+            ? TrainingBattleManager.Instance.ModifyMonsterOutgoingDamage(this, scaledDamage)
+            : Mathf.Max(0, scaledDamage);
     }
 
     private int ResolveMonsterBuffAmount(int amount, bool isNonStackable)
@@ -969,6 +1046,11 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     }
 
     protected virtual void OnRevivedTriggered()
+    {
+    }
+
+    // 기절로 이번 턴 행동을 쉬었을 때
+    protected virtual void OnTurnActionSkipped()
     {
     }
 

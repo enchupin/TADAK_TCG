@@ -153,6 +153,8 @@ public class CardInteractionHandler : UIHoverEffect,
 
         bool hasSingleEnemyTarget = false;
         CollectTargetingFlags(cc.Card.effects, ref hasSingleEnemyTarget);
+        // 조각으로 새긴 효과가 단일 적을 대상으로 하면 대상 지정 필요
+        CollectTargetingFlags(cc.Card.fragmentEffects, ref hasSingleEnemyTarget);
         return hasSingleEnemyTarget;
     }
 
@@ -261,6 +263,33 @@ public class CardInteractionHandler : UIHoverEffect,
         if (effect is RepeatEffect repeatEffect) {
             CollectTargetingFlags(repeatEffect.effectToRepeat, ref hasSingleEnemyTarget);
             return;
+        }
+
+        // 위에서 다루지 않은 효과(회수·의도 변경·해로운 효과 배수 등): target 필드가 단일 적이면 대상 지정, 하위 효과도 확인
+        CollectTargetingFlagsByFields(effect, ref hasSingleEnemyTarget);
+    }
+
+    private void CollectTargetingFlagsByFields(ICardEffect effect, ref bool hasSingleEnemyTarget)
+    {
+        foreach (System.Reflection.FieldInfo field in effect.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)) {
+            object value = field.GetValue(effect);
+            if (value is TargetType targetType) {
+                if (targetType == TargetType.SingleEnemy) {
+                    hasSingleEnemyTarget = true;
+                }
+                continue;
+            }
+
+            if (value is ICardEffect nestedEffect) {
+                CollectTargetingFlags(nestedEffect, ref hasSingleEnemyTarget);
+                continue;
+            }
+
+            if (value is System.Collections.Generic.IEnumerable<ICardEffect> nestedEffects) {
+                foreach (ICardEffect nested in nestedEffects) {
+                    CollectTargetingFlags(nested, ref hasSingleEnemyTarget);
+                }
+            }
         }
     }
     public void OnBeginDrag(PointerEventData eventData)

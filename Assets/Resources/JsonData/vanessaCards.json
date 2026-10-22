@@ -4,13 +4,20 @@
             "cardId": 202010,
             "name": "아따끄",
             "characterId": 202,
-            "cost": 0,
-            "description": "피해를 {amount} 입힙니다.",
+            "cost": 1,
+            "description": "피해를 {attack} 입힙니다. 막히지 않으면 (득점)을 1 얻습니다.",
             "effects": [
                 {
                     "type": "Attack",
-                    "amount": 4,
-                    "target": "SingleEnemy"
+                    "target": "SingleEnemy",
+                    "amount": 6,
+                    "subject": "UnblockedDamage",
+                    "onAction": {
+                        "type": "Buff",
+                        "buffId": 3063,
+                        "target": "Self",
+                        "amountFormula": "Min(UnblockedDamage,1)"
+                    }
                 }
             ]
         },
@@ -19,12 +26,12 @@
             "name": "빠라드",
             "characterId": 202,
             "cost": 1,
-            "description": "보호막을 {amount} 얻습니다.",
+            "description": "보호막을 {block} 얻습니다.",
             "effects": [
                 {
                     "type": "Barrier",
-                    "amount": 6,
-                    "target": "Self"
+                    "target": "Self",
+                    "amount": 6
                 }
             ]
         },
@@ -33,373 +40,202 @@
             "name": "팡트",
             "characterId": 202,
             "cost": 1,
-            "description": "피해를 {amount} 입힙니다. (부식)을 {amount2} 부여합니다.",
+            "description": "피해를 {attack} 입힙니다. 막히지 않으면 (득점)을 1 얻습니다.",
             "effects": [
                 {
                     "type": "Attack",
-                    "amount": 6,
-                    "target": "SingleEnemy"
-                },
-                {
-                    "type": "Buff",
-                    "buffId": 4001,
-                    "amount": 1,
-                    "target": "SingleEnemy"
+                    "target": "SingleEnemy",
+                    "amount": 7,
+                    "subject": "UnblockedDamage",
+                    "onAction": {
+                        "type": "Buff",
+                        "buffId": 3063,
+                        "target": "Self",
+                        "amountFormula": "Min(UnblockedDamage,1)"
+                    }
                 }
             ],
             "enforceGroup": "enforce_202030"
         },
         {
             "cardId": 202031,
-            "name": "팡트 +",
+            "name": "팡트+",
             "characterId": 202,
             "cost": 0,
-            "keywords": [
-                5
-            ],
-            "description": "피해를 {amount} 입힙니다. (부식)을 {amount2} 부여합니다.",
+            "description": "피해를 {attack} 입힙니다. 막히지 않으면 (득점)을 1 얻습니다.",
             "effects": [
                 {
                     "type": "Attack",
+                    "target": "SingleEnemy",
                     "amount": 4,
-                    "target": "SingleEnemy"
-                },
-                {
-                    "type": "Buff",
-                    "buffId": 4001,
-                    "amount": 2,
-                    "target": "SingleEnemy"
+                    "subject": "UnblockedDamage",
+                    "onAction": {
+                        "type": "Buff",
+                        "buffId": 3063,
+                        "target": "Self",
+                        "amountFormula": "Min(UnblockedDamage,1)"
+                    }
                 }
             ]
         },
         {
             "cardId": 202032,
-            "name": "팡트 +",
+            "name": "팡트+",
             "characterId": 202,
-            "cost": 0,
-            "description": "모든 적에게 피해를 {amount} 입힙니다.",
+            "cost": 1,
+            "description": "피해를 {attack} 입힙니다. (연격)을 1 얻습니다.",
             "effects": [
                 {
                     "type": "Attack",
-                    "amount": 4,
-                    "target": "AllEnemies"
+                    "target": "SingleEnemy",
+                    "amount": 7
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3024,
+                    "target": "Self",
+                    "amount": 1
                 }
             ]
         },
         {
             "cardId": 202033,
-            "name": "팡트 +",
+            "name": "팡트+",
             "characterId": 202,
-            "cost": 2,
-            "description": "피해를 {amount} 입힙니다. 이 카드는 (힘)의 효과를 2배로 받습니다.",
+            "cost": 1,
+            "description": "피해를 {attack} 입힙니다. 막히지 않으면 (득점)을 2 얻습니다.",
             "effects": [
                 {
                     "type": "Attack",
-                    "amount": 10,
                     "target": "SingleEnemy",
-                    "ampMultiplier": 2
+                    "amount": 6,
+                    "subject": "UnblockedDamage",
+                    "onAction": {
+                        "type": "Buff",
+                        "buffId": 3063,
+                        "target": "Self",
+                        "amountFormula": "Min(UnblockedDamage,1) * 2"
+                    }
                 }
             ]
         },
         {
             "cardId": 202034,
-            "name": "팡트 +",
-            "characterId": 202,
-            "cost": 1,
-            "description": "피해를 {amount} 입힙니다. (힘)을 {amount2} 잃습니다.",
-            "effects": [
-                {
-                    "type": "Attack",
-                    "amount": 14,
-                    "target": "SingleEnemy"
-                },
-                {
-                    "type": "RemoveBuff",
-                    "buffId": 3002,
-                    "amount": 2,
-                    "target": "Self"
-                }
-            ]
-        },
-        {
-            "cardId": 202035,
-            "name": "팡트 +",
-            "characterId": 202,
-            "cost": 1,
-            "description": "체력을 {amount} 잃습니다. 피해를 {amount2} 입힙니다.",
-            "effects": [
-                {
-                    "type": "Damage",
-                    "amount": 3,
-                    "target": "Self"
-                },
-                {
-                    "type": "Attack",
-                    "amount": 14,
-                    "target": "SingleEnemy"
-                }
-            ]
-        },
-        {
-            "cardId": 202040,
-            "name": "갸르드",
-            "characterId": 202,
-            "cost": 0,
-            "description": "다음 뽑을 카드 {amount}장을 봅니다. 그 중 하나를 선택해 뽑습니다.",
-            "effects": [
-                {
-                    "type": "Scry",
-                    "amount": 2
-                }
-            ],
-            "enforceGroup": "enforce_202040"
-        },
-        {
-            "cardId": 202041,
-            "name": "갸르드 +",
-            "characterId": 202,
-            "cost": 1,
-            "description": "카드를 {amount}장 뽑습니다. 그 중 비용이 0이 아닌 카드를 버립니다.",
-            "effects": [
-                {
-                    "type": "Repeat",
-                    "amount": 4
-                },
-                {
-                    "type": "Draw",
-                    "amount": 1,
-                    "onAction": {
-                        "condition": {
-                            "checks": [
-                                {
-                                    "subject": "DrawnCard",
-                                    "property": "Cost",
-                                    "operator": "Neq",
-                                    "value": 0
-                                }
-                            ]
-                        },
-                        "effects": [
-                            {
-                                "type": "Move",
-                                "from": "Source",
-                                "to": "DiscardPile"
-                            }
-                        ]
-                    },
-                    "subject": "DrawnCard"
-                }
-            ]
-        },
-        {
-            "cardId": 202042,
-            "name": "갸르드 +",
-            "characterId": 202,
-            "cost": 1,
-            "description": "손에서 카드를 {amount}장 선택해 버리고 카드를 {amount2}장 뽑습니다.",
-            "effects": [
-                {
-                    "type": "SelectCard",
-                    "from": "Hand",
-                    "count": 2,
-                    "onAction": {
-                        "type": "Move",
-                        "from": "Source",
-                        "to": "DiscardPile"
-                    },
-                    "subject": "SelectedCard"
-                },
-                {
-                    "type": "Draw",
-                    "amount": 2
-                }
-            ]
-        },
-        {
-            "cardId": 202043,
-            "name": "갸르드 +",
-            "characterId": 202,
-            "cost": 1,
-            "keywords": [
-                3
-            ],
-            "description": "카드를 {amount}장 뽑습니다. 그 중 바네사 카드 수 만큼 (힘)을 얻습니다.",
-            "effects": [
-                {
-                    "type": "Repeat",
-                    "amount": 3
-                },
-                {
-                    "type": "Draw",
-                    "amount": 1,
-                    "onAction": {
-                        "condition": {
-                            "checks": [
-                                {
-                                    "subject": "DrawnCard",
-                                    "property": "CharacterId",
-                                    "operator": "Eq",
-                                    "value": 202
-                                }
-                            ]
-                        },
-                        "effects": [
-                            {
-                                "type": "Buff",
-                                "buffId": 3002,
-                                "amount": 1,
-                                "target": "Self"
-                            }
-                        ]
-                    },
-                    "subject": "DrawnCard"
-                }
-            ]
-        },
-        {
-            "cardId": 202044,
-            "name": "갸르드 +",
-            "characterId": 202,
-            "cost": 0,
-            "description": "(힘)을 {amount} 얻습니다. 턴 종료 시 사라집니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffId": 3002,
-                    "amount": 2,
-                    "target": "Self"
-                },
-                {
-                    "type": "Buff",
-                    "buffId": 4006,
-                    "amount": 2,
-                    "target": "Self"
-                }
-            ]
-        },
-        {
-            "cardId": 202045,
-            "name": "갸르드 +",
-            "characterId": 202,
-            "cost": 0,
-            "description": "카드를 {amount}장 뽑습니다. (드로우 불가)를 얻습니다.",
-            "effects": [
-                {
-                    "type": "Draw",
-                    "amount": 4
-                },
-                {
-                    "type": "Buff",
-                    "buffId": 2001,
-                    "target": "Self"
-                }
-            ]
-        },
-        {
-            "cardId": 202050,
-            "name": "리포스트",
-            "characterId": 202,
-            "cost": 1,
-            "description": "이번 턴에 (가시)를 {amount} 얻습니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffId": 3010,
-                    "amount": 5,
-                    "target": "Self"
-                },
-                {
-                    "type": "Buff",
-                    "buffId": 4005,
-                    "amount": 5,
-                    "target": "Self"
-                }
-            ],
-            "enforceGroup": "enforce_202050"
-        },
-        {
-            "cardId": 202051,
-            "name": "리포스트 +",
+            "name": "팡트+",
             "characterId": 202,
             "cost": 1,
             "keywords": [
                 4
             ],
-            "description": "(가시)를 {amount} 얻습니다.",
+            "description": "막히지 않은 공격 피해를 입힐 때마다 (득점)을 1 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3010,
-                    "amount": 3,
-                    "target": "Self"
+                    "buffId": 3064,
+                    "target": "Self",
+                    "amount": 1
                 }
             ]
         },
         {
-            "cardId": 202052,
-            "name": "리포스트 +",
-            "characterId": 202,
-            "cost": 2,
-            "description": "(회피)를 {amount} 얻습니다.",
-            "effects": [
-                {
-                    "type": "Buff",
-                    "buffId": 3016,
-                    "amount": 1,
-                    "target": "Self"
-                }
-            ]
-        },
-        {
-            "cardId": 202053,
-            "name": "리포스트 +",
+            "cardId": 202035,
+            "name": "팡트+",
             "characterId": 202,
             "cost": 1,
-            "description": "체력을 {amount} 회복합니다. (힘)을 {amount2} 얻습니다.",
+            "description": "피해를 {attack} 입힙니다. (관통)을 1 부여합니다.",
             "effects": [
                 {
-                    "type": "Heal",
-                    "amount": 3,
-                    "target": "Self"
+                    "type": "Attack",
+                    "target": "SingleEnemy",
+                    "amount": 6
                 },
                 {
                     "type": "Buff",
-                    "buffId": 3002,
-                    "amount": 1,
-                    "target": "Self"
+                    "buffId": 4002,
+                    "target": "SingleEnemy",
+                    "amount": 1
                 }
             ]
         },
         {
-            "cardId": 202054,
-            "name": "리포스트 +",
+            "cardId": 202040,
+            "name": "플레슈",
             "characterId": 202,
-            "cost": 0,
-            "description": "피해를 {amount} 입힙니다. 이번 턴에 체력을 잃었다면 대신 3배의 피해를 입힙니다.",
+            "cost": 1,
+            "description": "피해를 5 입힙니다. (득점) 2 소모: 대신 피해를 14 입힙니다.",
             "effects": [
                 {
                     "condition": {
                         "checks": [
                             {
                                 "subject": "Source",
-                                "property": "HasLostHpThisTurn",
-                                "operator": "Eq",
-                                "value": 1
+                                "operator": "Gte",
+                                "value": 2,
+                                "property": "Buff",
+                                "param": 3063
                             }
                         ],
                         "effects": [
                             {
+                                "type": "RemoveBuff",
+                                "buffId": 3063,
+                                "amount": 2,
+                                "target": "Self"
+                            },
+                            {
                                 "type": "Attack",
-                                "amount": 3,
-                                "amountFormula": "*3",
-                                "target": "SingleEnemy"
+                                "target": "SingleEnemy",
+                                "amount": 14
                             }
                         ],
                         "elseEffects": [
                             {
                                 "type": "Attack",
-                                "amount": 3,
-                                "target": "SingleEnemy"
+                                "target": "SingleEnemy",
+                                "amount": 5
+                            }
+                        ]
+                    }
+                }
+            ],
+            "enforceGroup": "enforce_202040"
+        },
+        {
+            "cardId": 202041,
+            "name": "플레슈+",
+            "characterId": 202,
+            "cost": 2,
+            "description": "피해를 5 입힙니다. (득점) 4 소모: 대신 이번 턴에 사용한 카드 수의 4배만큼 피해를 입힙니다.",
+            "effects": [
+                {
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "Source",
+                                "operator": "Gte",
+                                "value": 4,
+                                "property": "Buff",
+                                "param": 3063
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "RemoveBuff",
+                                "buffId": 3063,
+                                "amount": 4,
+                                "target": "Self"
+                            },
+                            {
+                                "type": "Attack",
+                                "target": "SingleEnemy",
+                                "amountFormula": "UseCardInTurn * 4"
+                            }
+                        ],
+                        "elseEffects": [
+                            {
+                                "type": "Attack",
+                                "target": "SingleEnemy",
+                                "amount": 5
                             }
                         ]
                     }
@@ -407,38 +243,318 @@
             ]
         },
         {
-            "cardId": 202055,
-            "name": "리포스트 +",
+            "cardId": 202042,
+            "name": "플레슈+",
             "characterId": 202,
-            "cost": 1,
-            "description": "피해를 {amount} 입힙니다. 적에게 공격할 의도가 있다면 피해를 2배로 입힙니다.",
+            "cost": 0,
+            "description": "피해를 3 입힙니다. (득점) 2 소모: 대신 피해를 9 입힙니다.",
             "effects": [
                 {
                     "condition": {
                         "checks": [
                             {
-                                "subject": "Target",
-                                "property": "HasAttackIntent",
-                                "operator": "Eq",
-                                "value": 1
+                                "subject": "Source",
+                                "operator": "Gte",
+                                "value": 2,
+                                "property": "Buff",
+                                "param": 3063
                             }
                         ],
                         "effects": [
                             {
+                                "type": "RemoveBuff",
+                                "buffId": 3063,
+                                "amount": 2,
+                                "target": "Self"
+                            },
+                            {
                                 "type": "Attack",
-                                "amount": 6,
-                                "amountFormula": "*2",
-                                "target": "SingleEnemy"
+                                "target": "SingleEnemy",
+                                "amount": 9
                             }
                         ],
                         "elseEffects": [
                             {
                                 "type": "Attack",
-                                "amount": 6,
-                                "target": "SingleEnemy"
+                                "target": "SingleEnemy",
+                                "amount": 3
                             }
                         ]
                     }
+                }
+            ]
+        },
+        {
+            "cardId": 202043,
+            "name": "플레슈+",
+            "characterId": 202,
+            "cost": 1,
+            "description": "피해를 4 입힙니다. (득점) 1 소모: 대신 피해를 9 입힙니다.",
+            "effects": [
+                {
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "Source",
+                                "operator": "Gte",
+                                "value": 1,
+                                "property": "Buff",
+                                "param": 3063
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "RemoveBuff",
+                                "buffId": 3063,
+                                "amount": 1,
+                                "target": "Self"
+                            },
+                            {
+                                "type": "Attack",
+                                "target": "SingleEnemy",
+                                "amount": 9
+                            }
+                        ],
+                        "elseEffects": [
+                            {
+                                "type": "Attack",
+                                "target": "SingleEnemy",
+                                "amount": 4
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "cardId": 202044,
+            "name": "플레슈+",
+            "characterId": 202,
+            "cost": 2,
+            "description": "피해를 6 입힙니다. (득점) 2 소모: 대신 피해를 10 입힙니다. 대상의 체력이 30% 이하라면 3배로 입힙니다.",
+            "effects": [
+                {
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "Source",
+                                "operator": "Gte",
+                                "value": 2,
+                                "property": "Buff",
+                                "param": 3063
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "RemoveBuff",
+                                "buffId": 3063,
+                                "amount": 2,
+                                "target": "Self"
+                            },
+                            {
+                                "condition": {
+                                    "checks": [
+                                        {
+                                            "subject": "Target",
+                                            "operator": "Lte",
+                                            "value": 30,
+                                            "property": "HpPercent"
+                                        }
+                                    ],
+                                    "effects": [
+                                        {
+                                            "type": "Attack",
+                                            "target": "SingleEnemy",
+                                            "amount": 30
+                                        }
+                                    ],
+                                    "elseEffects": [
+                                        {
+                                            "type": "Attack",
+                                            "target": "SingleEnemy",
+                                            "amount": 10
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "elseEffects": [
+                            {
+                                "type": "Attack",
+                                "target": "SingleEnemy",
+                                "amount": 6
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "cardId": 202045,
+            "name": "플레슈+",
+            "characterId": 202,
+            "cost": 1,
+            "description": "(회피)를 1 얻습니다. (득점) 2 소모: 피해를 10 입힙니다. (관통)을 2 부여합니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3016,
+                    "target": "Self",
+                    "amount": 1
+                },
+                {
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "Source",
+                                "operator": "Gte",
+                                "value": 2,
+                                "property": "Buff",
+                                "param": 3063
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "RemoveBuff",
+                                "buffId": 3063,
+                                "amount": 2,
+                                "target": "Self"
+                            },
+                            {
+                                "type": "Attack",
+                                "target": "SingleEnemy",
+                                "amount": 10
+                            },
+                            {
+                                "type": "Buff",
+                                "buffId": 4002,
+                                "target": "SingleEnemy",
+                                "amount": 2
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "cardId": 202050,
+            "name": "에스키브",
+            "characterId": 202,
+            "cost": 1,
+            "description": "(회피)를 1 얻습니다. 피해를 {attack} 입힙니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3016,
+                    "target": "Self",
+                    "amount": 1
+                },
+                {
+                    "type": "Attack",
+                    "target": "SingleEnemy",
+                    "amount": 4
+                }
+            ],
+            "enforceGroup": "enforce_202050"
+        },
+        {
+            "cardId": 202051,
+            "name": "에스키브+",
+            "characterId": 202,
+            "cost": 0,
+            "description": "(회피)를 1 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3016,
+                    "target": "Self",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "cardId": 202052,
+            "name": "에스키브+",
+            "characterId": 202,
+            "cost": 1,
+            "description": "피해 3씩 2회 입힙니다. 다음 카드의 비용이 0이 됩니다.",
+            "effects": [
+                {
+                    "type": "Repeat",
+                    "amount": 2
+                },
+                {
+                    "type": "Attack",
+                    "target": "SingleEnemy",
+                    "amount": 3
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3027,
+                    "target": "Self",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "cardId": 202053,
+            "name": "에스키브+",
+            "characterId": 202,
+            "cost": 1,
+            "description": "(회피)를 1, (득점)을 1 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3016,
+                    "target": "Self",
+                    "amount": 1
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3063,
+                    "target": "Self",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "cardId": 202054,
+            "name": "에스키브+",
+            "characterId": 202,
+            "cost": 2,
+            "description": "(회피)를 2, (득점)을 2 얻습니다.",
+            "effects": [
+                {
+                    "type": "Buff",
+                    "buffId": 3016,
+                    "target": "Self",
+                    "amount": 2
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3063,
+                    "target": "Self",
+                    "amount": 2
+                }
+            ]
+        },
+        {
+            "cardId": 202055,
+            "name": "에스키브+",
+            "characterId": 202,
+            "cost": 1,
+            "description": "피해를 {attack} 입힙니다. (관통)을 2 부여합니다.",
+            "effects": [
+                {
+                    "type": "Attack",
+                    "target": "SingleEnemy",
+                    "amount": 5
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 4002,
+                    "target": "SingleEnemy",
+                    "amount": 2
                 }
             ]
         },
@@ -447,26 +563,26 @@
             "name": "르미즈",
             "characterId": 202,
             "cost": 2,
-            "description": "피해를 {amount}씩 {amount2}번 입힙니다.",
+            "description": "피해를 4씩 4회 입힙니다.",
             "effects": [
                 {
                     "type": "Repeat",
-                    "amount": 5
+                    "amount": 4
                 },
                 {
                     "type": "Attack",
-                    "amount": 4,
-                    "target": "SingleEnemy"
+                    "target": "SingleEnemy",
+                    "amount": 4
                 }
             ],
             "enforceGroup": "enforce_202060"
         },
         {
             "cardId": 202061,
-            "name": "르미즈 +",
+            "name": "르미즈+",
             "characterId": 202,
-            "cost": 0,
-            "description": "피해를 {amount}씩 {amount2}번 입힙니다.",
+            "cost": 1,
+            "description": "피해를 2씩 5회 입힙니다.",
             "effects": [
                 {
                     "type": "Repeat",
@@ -474,20 +590,35 @@
                 },
                 {
                     "type": "Attack",
-                    "amount": 1,
-                    "target": "SingleEnemy"
+                    "target": "SingleEnemy",
+                    "amount": 2
                 }
             ]
         },
         {
             "cardId": 202062,
-            "name": "르미즈 +",
+            "name": "르미즈+",
+            "characterId": 202,
+            "cost": 0,
+            "description": "피해를 1씩 4회 입힙니다.",
+            "effects": [
+                {
+                    "type": "Repeat",
+                    "amount": 4
+                },
+                {
+                    "type": "Attack",
+                    "target": "SingleEnemy",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "cardId": 202063,
+            "name": "르미즈+",
             "characterId": 202,
             "cost": 1,
-            "keywords": [
-                6
-            ],
-            "description": "피해를 {amount}씩 {amount2}번 입힙니다.",
+            "description": "피해를 3씩 3회 입힙니다. 막히지 않은 공격마다 (득점)을 1 얻습니다.",
             "effects": [
                 {
                     "type": "Repeat",
@@ -495,198 +626,197 @@
                 },
                 {
                     "type": "Attack",
-                    "amount": 4,
-                    "target": "SingleEnemy"
-                }
-            ]
-        },
-        {
-            "cardId": 202063,
-            "name": "르미즈 +",
-            "characterId": 202,
-            "cost": 0,
-            "keywords": [
-                3
-            ],
-            "description": "피해를 {amount} 입힙니다. 이 카드를 {amount2}장 복사해 뽑을 카드 더미에 섞어 넣습니다.",
-            "effects": [
-                {
-                    "type": "Attack",
-                    "amount": 4,
-                    "target": "SingleEnemy"
-                },
-                {
-                    "type": "Copy",
-                    "from": "CardId",
-                    "cardIds": [
-                        202063
-                    ],
-                    "amount": 1,
-                    "to": "DrawPile"
+                    "target": "SingleEnemy",
+                    "amount": 3,
+                    "subject": "UnblockedDamage",
+                    "onAction": {
+                        "type": "Buff",
+                        "buffId": 3063,
+                        "target": "Self",
+                        "amountFormula": "Min(UnblockedDamage,1)"
+                    }
                 }
             ]
         },
         {
             "cardId": 202064,
-            "name": "르미즈 +",
+            "name": "르미즈+",
             "characterId": 202,
-            "cost": 1,
-            "keywords": [
-                3
-            ],
-            "description": "다음에 사용하는 카드가 {amount}회 더 사용됩니다.",
+            "cost": 2,
+            "description": "피해를 (득점) 중첩의 2배만큼 입힙니다. (득점) 5 소모: 대신 3배만큼 입힙니다.",
             "effects": [
                 {
-                    "type": "Buff",
-                    "buffId": 3023,
-                    "amount": 1,
-                    "target": "Self"
+                    "condition": {
+                        "checks": [
+                            {
+                                "subject": "Source",
+                                "operator": "Gte",
+                                "value": 5,
+                                "property": "Buff",
+                                "param": 3063
+                            }
+                        ],
+                        "effects": [
+                            {
+                                "type": "Attack",
+                                "target": "SingleEnemy",
+                                "amountFormula": "Stack(3063) * 3"
+                            },
+                            {
+                                "type": "RemoveBuff",
+                                "buffId": 3063,
+                                "amount": 5,
+                                "target": "Self"
+                            }
+                        ],
+                        "elseEffects": [
+                            {
+                                "type": "Attack",
+                                "target": "SingleEnemy",
+                                "amountFormula": "Stack(3063) * 2"
+                            }
+                        ]
+                    }
                 }
             ]
         },
         {
             "cardId": 202065,
-            "name": "르미즈 +",
+            "name": "르미즈+",
             "characterId": 202,
-            "cost": 1,
-            "description": "(연격)을 {amount} 얻습니다.",
+            "cost": 2,
+            "description": "(관통)을 1 부여합니다. 피해를 3씩 4회 입힙니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3024,
-                    "amount": 1,
-                    "target": "Self"
+                    "buffId": 4002,
+                    "target": "SingleEnemy",
+                    "amount": 1
+                },
+                {
+                    "type": "Repeat",
+                    "amount": 4
+                },
+                {
+                    "type": "Attack",
+                    "target": "SingleEnemy",
+                    "amount": 3
                 }
             ]
         },
         {
             "cardId": 202070,
-            "name": "뚜셰",
+            "name": "아땅트",
             "characterId": 202,
             "cost": 1,
-            "description": "피해를 {amount} 입힙니다. 보호막에 막히지 않은 피해만큼 (힘)을 얻습니다.",
+            "description": "(연격)을 1 얻습니다. 다음 카드의 비용이 0이 됩니다.",
             "effects": [
                 {
-                    "type": "Attack",
-                    "amount": 1,
-                    "target": "SingleEnemy",
-                    "onAction": {
-                        "type": "Buff",
-                        "buffId": 3002,
-                        "amountFormula": "UnblockedDamage",
-                        "target": "Self"
-                    },
-                    "subject": "UnblockedDamage"
+                    "type": "Buff",
+                    "buffId": 3024,
+                    "target": "Self",
+                    "amount": 1
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3027,
+                    "target": "Self",
+                    "amount": 1
                 }
             ],
             "enforceGroup": "enforce_202070"
         },
         {
             "cardId": 202071,
-            "name": "뚜셰 +",
+            "name": "아땅트+",
             "characterId": 202,
-            "cost": 0,
-            "description": "피해를 {amount} 입힙니다. 보호막에 막히지 않은 피해만큼 (힘)을 얻습니다.",
+            "cost": 1,
+            "description": "(연격)을 2 얻습니다.",
             "effects": [
                 {
-                    "type": "Attack",
-                    "amount": 1,
-                    "target": "SingleEnemy",
-                    "onAction": {
-                        "type": "Buff",
-                        "buffId": 3002,
-                        "amountFormula": "UnblockedDamage",
-                        "target": "Self"
-                    },
-                    "subject": "UnblockedDamage"
+                    "type": "Buff",
+                    "buffId": 3024,
+                    "target": "Self",
+                    "amount": 2
                 }
             ]
         },
         {
             "cardId": 202072,
-            "name": "뚜셰 +",
+            "name": "아땅트+",
             "characterId": 202,
             "cost": 1,
-            "description": "피해를 {amount} 입힙니다. 보호막에 막히지 않은 피해만큼 (힘)을 얻습니다.",
+            "description": "손에서 카드를 2장 선택해 이번 턴에 비용을 1 감소시킵니다.",
             "effects": [
                 {
-                    "type": "Attack",
+                    "type": "SelectCard",
+                    "from": "Hand",
                     "amount": 2,
-                    "target": "SingleEnemy",
+                    "subject": "Selected",
                     "onAction": {
-                        "type": "Buff",
-                        "buffId": 3002,
-                        "amountFormula": "UnblockedDamage",
-                        "target": "Self"
+                        "type": "ReduceCost",
+                        "amount": 1,
+                        "duration": "Turn",
+                        "subject": "Selected"
                     },
-                    "subject": "UnblockedDamage"
+                    "allowFewer": true
                 }
             ]
         },
         {
             "cardId": 202073,
-            "name": "뚜셰 +",
+            "name": "아땅트+",
             "characterId": 202,
             "cost": 1,
-            "keywords": [
-                4
-            ],
-            "description": "(위압)을 {amount} 얻습니다.",
+            "description": "(연격)을 (득점) 중첩의 절반만큼 얻습니다.",
             "effects": [
                 {
                     "type": "Buff",
-                    "buffId": 3022,
-                    "amount": 1,
-                    "target": "Self"
+                    "buffId": 3024,
+                    "target": "Self",
+                    "amountFormula": "Floor(Stack(3063) / 2)"
                 }
             ]
         },
         {
             "cardId": 202074,
-            "name": "뚜셰 +",
+            "name": "아땅트+",
             "characterId": 202,
-            "cost": 0,
-            "keywords": [
-                1
-            ],
-            "description": "피해를 {amount} 입힙니다. 보존: 피해량이 내 (힘)만큼 증가합니다.",
+            "cost": 1,
+            "description": "(득점)을 1, (연격)을 1 얻습니다.",
             "effects": [
                 {
-                    "type": "Attack",
-                    "amount": 0,
-                    "target": "SingleEnemy"
+                    "type": "Buff",
+                    "buffId": 3063,
+                    "target": "Self",
+                    "amount": 1
                 },
                 {
-                    "type": "Keep",
-                    "effects": [
-                        {
-                            "type": "ModifyCard",
-                            "param": "Damage",
-                            "amountFormula": "Stack(3002)",
-                            "target": "Self"
-                        }
-                    ]
+                    "type": "Buff",
+                    "buffId": 3024,
+                    "target": "Self",
+                    "amount": 1
                 }
             ]
         },
         {
             "cardId": 202075,
-            "name": "뚜셰 +",
+            "name": "아땅트+",
             "characterId": 202,
             "cost": 1,
-            "description": "피해를 {amount} 입힙니다. 보호막에 막히지 않은 피해만큼 (가시)를 얻습니다.",
+            "description": "(회피)를 1, (연격)을 1 얻습니다.",
             "effects": [
                 {
-                    "type": "Attack",
-                    "amount": 2,
-                    "target": "SingleEnemy",
-                    "onAction": {
-                        "type": "Buff",
-                        "buffId": 3010,
-                        "amountFormula": "UnblockedDamage",
-                        "target": "Self"
-                    },
-                    "subject": "UnblockedDamage"
+                    "type": "Buff",
+                    "buffId": 3016,
+                    "target": "Self",
+                    "amount": 1
+                },
+                {
+                    "type": "Buff",
+                    "buffId": 3024,
+                    "target": "Self",
+                    "amount": 1
                 }
             ]
         }

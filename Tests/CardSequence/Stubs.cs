@@ -56,7 +56,7 @@ public static class FormulaEvaluator
     public static int Evaluate(string formula, BattleContext context, object player, int amount = 0) => int.Parse(formula);
 }
 public class ConditionData { public List<int> checks = new(); }
-public static class ConditionEvaluator { public static bool Evaluate(ConditionData data, TrainingBattleManager manager) => true; }
+public static class ConditionEvaluator { public static bool Evaluate(ConditionData data, TrainingBattleManager manager) => true; public static bool IsDisruptionCard(Card card) => false; }
 public enum TargetType { None, Hand, Discard, Deck }
 public class RandomCardData { }
 public class GenerateCardEffect
@@ -81,8 +81,10 @@ public class HandManager
     public void AddCard(Card card) { if (Cards.Count < Capacity) Cards.Add(card); }
     public void AddCard(List<Card> cards) { foreach (var card in cards) AddCard(card); }
     public bool RemoveCard(Card card) => Cards.Remove(card);
+    public void RefreshCardDisplay(Card card) {}
     public UnityEngine.Coroutine RemoveCardFromHandWithUseAnimation(CardUI ui) { Cards.Remove(ui.Card); return null; }
 }
+public sealed class CharacterIdentityState { public Character Character { get; set; } }
 public class UsableDeckManager
 {
     public List<Card> Draw = new(), Discard = new(), Exhaust = new();
@@ -94,6 +96,7 @@ public class UsableDeckManager
     public void AddToDrawPileRandom(Card card) => Draw.Add(card);
     public bool RemoveFromDrawPile(Card card) => Draw.Remove(card);
     public void RemoveFromDiscard(Card card) => Discard.Remove(card);
+    public void RemoveFromExhaust(Card card) => Exhaust.Remove(card);
     public Card DrawCard() { var c = Draw.FirstOrDefault(); if (c != null) Draw.Remove(c); return c; }
 }
 public class TrainingBattleManager
@@ -115,6 +118,9 @@ public class TrainingBattleManager
     public List<Card> Candidates;
     private Action<List<Card>> callback;
     private readonly List<IEnumerator> routines = new();
+    public int CuriosityPlays;
+    public IReadOnlyList<CharacterIdentityState> GetIdentityStates() => new List<CharacterIdentityState>();
+    public IEnumerator PlayCuriositySequence(Card card) { CuriosityPlays++; card.isCurious = false; card.resolvedAsCuriosity = true; yield break; }
     public UnityEngine.Coroutine StartCoroutine(IEnumerator sequence)
     {
         if (sequence.MoveNext()) routines.Add(sequence);
@@ -162,7 +168,7 @@ public class TrainingBattleManager
     public int ConsumeRepeatedPlayCount(Card card, bool repeat) { int n = Repeats; Repeats = 0; return n; }
     public int GetCardUseAllEnemiesDamage() => 0;
     public void ApplyCardUseAllEnemiesDamage(int amount) { }
-    public void ChargeIdentityGauge(Character character) { IdentityCharges++; }
+    public void ChargeIdentityGaugeForPlayedCard(Card card, int paidCost) { IdentityCharges++; }
     public void RefreshHandPlayableState() { }
     public void UpdateAllUI() { }
     public void UpdateEndTurnButtonState() { }

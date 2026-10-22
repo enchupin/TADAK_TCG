@@ -5,88 +5,18 @@ using UnityEngine;
 
 public class MonsterSpawner : MonoBehaviour
 {
-    private const int MaxMonsterCount = 5;
-
-    public enum SpawnMonsterType
-    {
-        MutantFlower,
-        MutantCarnivorousPlant,
-        MutantMushroom,
-        MutantSweetPotato,
-        MutantCarrot,
-        Mirror,
-        Cactus,
-        WoodenPuppet,
-        VoidBug,
-        JackORipper,
-        GiantFlowerSpider,
-        Prophet,
-        IceAndFireBoss,
-        VoidLordBoss,
-        StoneShieldGolem,
-        StoneThrowGolem,
-        StoneStealGolem,
-        HauntedCloth,
-        FireSpirit,
-        RotwoodWarden,
-        Priestess,
-        MushroomHost,
-        VoidBeast,
-        FlashyScythe
-    }
+    // 동시 적 수 상한은 rules.json의 combat.maxEnemies에서 읽음
+    private static int MaxMonsterCount => Mathf.Max(0, GameRules.Combat.maxEnemies);
 
     // 몬스터 생성 프리팹
     private readonly MonsterPrefabFactory monsterPrefabFactory = new MonsterPrefabFactory();
-
-    private static readonly SpawnMonsterType[][] earlyNormalNodeEncounterTable =
-    {
-        new[] { SpawnMonsterType.MutantFlower, SpawnMonsterType.MutantCarnivorousPlant },
-        new[] { SpawnMonsterType.MutantFlower, SpawnMonsterType.MutantMushroom },
-        new[] { SpawnMonsterType.MutantCarnivorousPlant, SpawnMonsterType.MutantMushroom },
-        new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneThrowGolem, SpawnMonsterType.StoneStealGolem },
-        new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneThrowGolem, SpawnMonsterType.StoneThrowGolem },
-        new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem },
-        new[] { SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem, SpawnMonsterType.StoneStealGolem },
-        new[] { SpawnMonsterType.VoidBug, SpawnMonsterType.VoidBug },
-        new[] { SpawnMonsterType.MutantSweetPotato, SpawnMonsterType.MutantCarrot },
-        new[] { SpawnMonsterType.FireSpirit, SpawnMonsterType.FireSpirit },
-        new[] { SpawnMonsterType.Mirror },
-        new[] { SpawnMonsterType.WoodenPuppet, SpawnMonsterType.WoodenPuppet }
-    };
-
-    private static readonly SpawnMonsterType[][] lateNormalNodeEncounterTable =
-    {
-        new[] { SpawnMonsterType.MutantFlower, SpawnMonsterType.MutantCarnivorousPlant, SpawnMonsterType.MutantMushroom },
-        new[] { SpawnMonsterType.StoneShieldGolem, SpawnMonsterType.StoneThrowGolem, SpawnMonsterType.StoneThrowGolem, SpawnMonsterType.StoneStealGolem },
-        new[] { SpawnMonsterType.VoidBug, SpawnMonsterType.VoidBug, SpawnMonsterType.VoidBug },
-        new[] { SpawnMonsterType.MutantSweetPotato, SpawnMonsterType.MutantSweetPotato, SpawnMonsterType.MutantCarrot },
-        new[] { SpawnMonsterType.MutantSweetPotato, SpawnMonsterType.MutantCarrot, SpawnMonsterType.MutantCarrot },
-        new[] { SpawnMonsterType.JackORipper },
-        new[] { SpawnMonsterType.HauntedCloth },
-        new[] { SpawnMonsterType.FireSpirit, SpawnMonsterType.FireSpirit, SpawnMonsterType.FireSpirit },
-        new[] { SpawnMonsterType.Cactus, SpawnMonsterType.Cactus }
-    };
-
-    private static readonly SpawnMonsterType[][] namedNodeEncounterTable =
-    {
-        new[] { SpawnMonsterType.RotwoodWarden },
-        new[] { SpawnMonsterType.Priestess },
-        new[] { SpawnMonsterType.MushroomHost },
-        new[] { SpawnMonsterType.VoidBeast }
-    };
-
-    private static readonly SpawnMonsterType[][] bossNodeEncounterTable =
-    {
-        new[] { SpawnMonsterType.GiantFlowerSpider },
-        new[] { SpawnMonsterType.Mirror, SpawnMonsterType.Mirror, SpawnMonsterType.Prophet },
-        new[] { SpawnMonsterType.IceAndFireBoss },
-        new[] { SpawnMonsterType.VoidBug, SpawnMonsterType.VoidBeast, SpawnMonsterType.VoidLordBoss }
-    };
 
     [Header("스폰 위치")]
     [SerializeField] private List<Transform> spawnPoints = new List<Transform>();
 
     private int reservedSummonCount;
+    // 이번 조우에서 몬스터 ID별 생성 수 (R-86 패턴 엇갈림 순번)
+    private readonly System.Collections.Generic.Dictionary<int, int> spawnedCountById = new System.Collections.Generic.Dictionary<int, int>();
 
     private void Awake()
     {
@@ -96,6 +26,7 @@ public class MonsterSpawner : MonoBehaviour
     public void ClearEncounter()
     {
         reservedSummonCount = 0;
+        spawnedCountById.Clear();
         foreach (Transform point in spawnPoints)
         {
             if (point != null)
@@ -113,11 +44,25 @@ public class MonsterSpawner : MonoBehaviour
         return SpawnEncounter(CreateEncounterPlan(nodeType, ResolveCurrentFloorNumber()));
     }
 
+    // 조우 ID(E101 · NM02-1 · BS01)로 생성
+    public List<Monster> SpawnEncounter(string encounterId)
+    {
+        EncounterDefinition encounter = MonsterDatabase.GetEncounter(encounterId);
+        if (encounter == null)
+        {
+            Debug.LogWarning($"[MonsterSpawner] 조우 {encounterId}를 찾을 수 없습니다");
+            return new List<Monster>();
+        }
+
+        return SpawnEncounter(encounter.monsters);
+    }
+
     /// <summary>
     /// 전달받은 몬스터 타입 목록을 실제 전투 몬스터 인스턴스로 생성합니다
     /// </summary>
-    public List<Monster> SpawnEncounter(IReadOnlyList<SpawnMonsterType> encounter)
+    public List<Monster> SpawnEncounter(IReadOnlyList<int> encounter)
     {
+        // 몬스터 타입 대신 v1.0 몬스터 ID(4자리) 목록
 
         if (encounter == null || encounter.Count == 0)
         {
@@ -157,22 +102,22 @@ public class MonsterSpawner : MonoBehaviour
     /// <summary>
     /// 노드 타입과 층수에 맞는 몬스터 조합 계획을 생성합니다
     /// </summary>
-    public static List<SpawnMonsterType> CreateEncounterPlan(TrainingNodeType nodeType, int floorNumber)
+    public static List<int> CreateEncounterPlan(TrainingNodeType nodeType, int floorNumber)
     {
-        SpawnMonsterType[] encounter = ResolveEncounter(nodeType, floorNumber);
-        return new List<SpawnMonsterType>(encounter);
+        EncounterDefinition encounter = ResolveEncounter(nodeType, floorNumber);
+        return encounter != null ? new List<int>(encounter.monsters) : new List<int>();
     }
 
     /// <summary>
     /// 노드 타입과 층수에서 등장 가능한 몬스터 조합 후보를 반환합니다
     /// </summary>
-    public static List<List<SpawnMonsterType>> GetEncounterCandidates(TrainingNodeType nodeType, int floorNumber)
+    public static List<List<int>> GetEncounterCandidates(TrainingNodeType nodeType, int floorNumber)
     {
-        SpawnMonsterType[][] encounterTable = ResolveEncounterTable(nodeType, floorNumber);
-        List<List<SpawnMonsterType>> candidates = new List<List<SpawnMonsterType>>(encounterTable.Length);
-        for (int i = 0; i < encounterTable.Length; i++)
+        List<EncounterDefinition> encounterTable = ResolveEncounterTable(nodeType, floorNumber);
+        List<List<int>> candidates = new List<List<int>>(encounterTable.Count);
+        for (int i = 0; i < encounterTable.Count; i++)
         {
-            candidates.Add(new List<SpawnMonsterType>(encounterTable[i]));
+            candidates.Add(new List<int>(encounterTable[i].monsters));
         }
 
         return candidates;
@@ -181,7 +126,7 @@ public class MonsterSpawner : MonoBehaviour
     /// <summary>
     /// 몬스터 조합을 순서와 무관하게 비교할 수 있는 문자열 키로 변환합니다
     /// </summary>
-    public static string BuildEncounterSignature(IReadOnlyList<SpawnMonsterType> encounter)
+    public static string BuildEncounterSignature(IReadOnlyList<int> encounter)
     {
         if (encounter == null || encounter.Count == 0)
         {
@@ -191,7 +136,7 @@ public class MonsterSpawner : MonoBehaviour
         List<int> sortedMonsterTypes = new List<int>(encounter.Count);
         for (int i = 0; i < encounter.Count; i++)
         {
-            sortedMonsterTypes.Add((int)encounter[i]);
+            sortedMonsterTypes.Add(encounter[i]);
         }
 
         sortedMonsterTypes.Sort();
@@ -213,23 +158,23 @@ public class MonsterSpawner : MonoBehaviour
     /// <summary>
     /// 선택된 몬스터 조합이 후보 목록에서 몇 번째 조합인지 반환합니다
     /// </summary>
-    public static int GetEncounterDisplayIndex(TrainingNodeType nodeType, int floorNumber, IReadOnlyList<SpawnMonsterType> encounter)
+    public static int GetEncounterDisplayIndex(TrainingNodeType nodeType, int floorNumber, IReadOnlyList<int> encounter)
     {
         if (encounter == null || encounter.Count == 0)
         {
             return 0;
         }
 
-        SpawnMonsterType[][] encounterTable = ResolveEncounterTable(nodeType, floorNumber);
-        if (encounterTable == null || encounterTable.Length == 0)
+        List<EncounterDefinition> encounterTable = ResolveEncounterTable(nodeType, floorNumber);
+        if (encounterTable == null || encounterTable.Count == 0)
         {
             return 0;
         }
 
         string targetSignature = BuildEncounterSignature(encounter);
-        for (int i = 0; i < encounterTable.Length; i++)
+        for (int i = 0; i < encounterTable.Count; i++)
         {
-            if (BuildEncounterSignature(encounterTable[i]) == targetSignature)
+            if (BuildEncounterSignature(encounterTable[i].monsters) == targetSignature)
             {
                 return i + 1;
             }
@@ -241,9 +186,9 @@ public class MonsterSpawner : MonoBehaviour
     /// <summary>
     /// 전투 중 소환되는 몬스터를 빈 스폰 위치에 생성합니다
     /// </summary>
-    public Monster SpawnSummonedMonster(SpawnMonsterType monsterType)
+    public Monster SpawnSummonedMonster(int monsterId)
     {
-        return SpawnMonsterToAvailableSlot(monsterType);
+        return SpawnMonsterToAvailableSlot(monsterId);
     }
 
     /// <summary>
@@ -271,7 +216,7 @@ public class MonsterSpawner : MonoBehaviour
     /// <summary>
     /// 노드 타입과 층수에 맞는 후보 테이블에서 실제 등장 조합을 선택합니다
     /// </summary>
-    private static SpawnMonsterType[] ResolveEncounter(TrainingNodeType nodeType, int floorNumber)
+    private static EncounterDefinition ResolveEncounter(TrainingNodeType nodeType, int floorNumber)
     {
         return PickRandomEncounter(ResolveEncounterTable(nodeType, floorNumber));
     }
@@ -279,42 +224,61 @@ public class MonsterSpawner : MonoBehaviour
     /// <summary>
     /// 노드 타입과 층수에 대응하는 인카운터 후보 테이블을 반환합니다
     /// </summary>
-    private static SpawnMonsterType[][] ResolveEncounterTable(TrainingNodeType nodeType, int floorNumber)
+    private static List<EncounterDefinition> ResolveEncounterTable(TrainingNodeType nodeType, int floorNumber)
     {
+        // 8절: 층이 속한 계층의 조우 풀 (보스는 BS01 ~ BS04)
         switch (nodeType)
         {
             case TrainingNodeType.Named:
-                return namedNodeEncounterTable;
+                return MonsterDatabase.GetEncounters(MonsterDefinition.KindNamed, ResolveEncounterTier(floorNumber));
             case TrainingNodeType.Boss:
-                return bossNodeEncounterTable;
+                return MonsterDatabase.GetEncounters(MonsterDefinition.KindBoss, 0);
             case TrainingNodeType.Monster:
-                return IsLateGameEncounterFloor(floorNumber)
-                    ? lateNormalNodeEncounterTable
-                    : earlyNormalNodeEncounterTable;
+                return MonsterDatabase.GetEncounters(MonsterDefinition.KindNormal, ResolveEncounterTier(floorNumber));
             default:
-                return Array.Empty<SpawnMonsterType[]>();
+                return new List<EncounterDefinition>();
         }
     }
 
     /// <summary>
     /// 후보 테이블에서 무작위 몬스터 조합 하나를 선택합니다
     /// </summary>
-    private static SpawnMonsterType[] PickRandomEncounter(SpawnMonsterType[][] encounterTable)
+    private static EncounterDefinition PickRandomEncounter(List<EncounterDefinition> encounterTable)
     {
-        if (encounterTable == null || encounterTable.Length == 0)
+        if (encounterTable == null || encounterTable.Count == 0)
         {
-            return new SpawnMonsterType[0];
+            return null;
         }
 
-        return encounterTable[UnityEngine.Random.Range(0, encounterTable.Length)];
+        return encounterTable[UnityEngine.Random.Range(0, encounterTable.Count)];
     }
 
     /// <summary>
     /// 현재 층수가 후반부 일반 전투 테이블을 사용할 구간인지 확인합니다
     /// </summary>
-    private static bool IsLateGameEncounterFloor(int floorNumber)
+    // 층 번호를 rules.json training.map.segments 기준 계층(1 ~ 4)으로 변환, 구간 밖 층은 직전 구간 계층
+    public static int ResolveEncounterTier(int floorNumber)
     {
-        return floorNumber >= 9;
+        int tier = 1;
+        foreach (MapSegmentData segment in GameRules.Training.map.segments)
+        {
+            if (segment == null)
+            {
+                continue;
+            }
+
+            if (floorNumber >= segment.fromFloor && floorNumber <= segment.toFloor)
+            {
+                return segment.tier;
+            }
+
+            if (floorNumber > segment.toFloor)
+            {
+                tier = Mathf.Max(tier, segment.tier);
+            }
+        }
+
+        return tier;
     }
 
     /// <summary>
@@ -325,13 +289,13 @@ public class MonsterSpawner : MonoBehaviour
         if (TrainingRunState.PendingNodeId.HasValue
             && TrainingRunState.TryGetNode(TrainingRunState.PendingNodeId.Value, out TrainingMapNodeData pendingNode))
         {
-            return pendingNode.stageIndex;
+            return pendingNode.FloorNumber;
         }
 
         if (TrainingRunState.CurrentNodeId.HasValue
             && TrainingRunState.TryGetNode(TrainingRunState.CurrentNodeId.Value, out TrainingMapNodeData currentNode))
         {
-            return currentNode.stageIndex;
+            return currentNode.FloorNumber;
         }
 
         return 1;
@@ -340,15 +304,22 @@ public class MonsterSpawner : MonoBehaviour
     /// <summary>
     /// 몬스터 타입을 공통 프리팹 기반으로 생성해 빈 스폰 위치에 배치합니다
     /// </summary>
-    private Monster SpawnMonsterToAvailableSlot(SpawnMonsterType monsterType)
+    private Monster SpawnMonsterToAvailableSlot(int monsterId)
     {
         if (!TryGetAvailableSpawnPoint(out Transform spawnPoint))
         {
-            Debug.LogWarning($"[MonsterSpawner] 남은 스폰 위치가 없어 '{monsterType}' 생성이 취소되었습니다");
+            Debug.LogWarning($"[MonsterSpawner] 남은 스폰 위치가 없어 '{monsterId}' 생성이 취소되었습니다");
             return null;
         }
 
-        return monsterPrefabFactory.CreateMonster(monsterType, spawnPoint);
+        spawnedCountById.TryGetValue(monsterId, out int staggerIndex);
+        Monster monster = monsterPrefabFactory.CreateMonster(monsterId, spawnPoint, staggerIndex);
+        if (monster != null)
+        {
+            spawnedCountById[monsterId] = staggerIndex + 1;
+        }
+
+        return monster;
     }
 
     /// <summary>

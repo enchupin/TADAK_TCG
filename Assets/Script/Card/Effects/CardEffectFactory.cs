@@ -90,6 +90,8 @@ public static class CardEffectFactory
                     cardIdList = effectData.formulaCardIdFilter,
                     target = effectData.target,
                     ampMultiplier = effectData.ampMultiplier > 0f ? effectData.ampMultiplier : 1f,
+                    boostMultiplier = effectData.boostMultiplier > 0f ? effectData.boostMultiplier : 1f,
+                    perTargetOnAction = string.Equals(effectData.operation, "PerTarget", System.StringComparison.OrdinalIgnoreCase),
                     onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
                 };
 
@@ -109,7 +111,8 @@ public static class CardEffectFactory
                     amount = effectData.amount,
                     amountFormula = effectData.amountFormula,
                     duration = effectData.duration,
-                    target = effectData.target
+                    target = effectData.target,
+                    cardIdList = effectData.formulaCardIdFilter
                 };
 
             case EffectType.ChangeStat:
@@ -187,7 +190,8 @@ public static class CardEffectFactory
                 {
                     amount = effectData.amount,
                     amountFormula = effectData.amountFormula,
-                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
+                    onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject),
+                    operation = effectData.operation
                 };
 
             case EffectType.ExhaustCard:
@@ -216,7 +220,8 @@ public static class CardEffectFactory
                     amount = effectData.amount,
                     amountFormula = effectData.amountFormula,
                     cardIdList = effectData.formulaCardIdFilter,
-                    target = effectData.target
+                    target = effectData.target,
+                    operation = effectData.operation
                 };
 
             case EffectType.HpLoss:
@@ -232,7 +237,8 @@ public static class CardEffectFactory
                 {
                     keyword = effectData.keyword,
                     amount = effectData.amount,
-                    amountFormula = effectData.amountFormula
+                    amountFormula = effectData.amountFormula,
+                    operation = effectData.operation
                 };
 
             case EffectType.Kill:
@@ -274,7 +280,8 @@ public static class CardEffectFactory
                 {
                     amount = effectData.amount,
                     amountFormula = effectData.amountFormula,
-                    target = effectData.target
+                    target = effectData.target,
+                    multiplierValue = effectData.multiplier
                 };
 
             case EffectType.RandGenerate:
@@ -322,6 +329,8 @@ public static class CardEffectFactory
                     random = effectData.random,
                     allowFewerSelection = effectData.allowFewerSelection,
                     upgradeableOnly = effectData.upgradeableOnly,
+                    excludeUnique = effectData.excludeUnique,
+                    cardFilter = effectData.cardFilter,
                     onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
                 };
 
@@ -404,7 +413,8 @@ public static class CardEffectFactory
                 return new MultiplyEnemyDebuffsEffect
                 {
                     amount = effectData.amount,
-                    target = effectData.target
+                    target = effectData.target,
+                    buffFilterIds = effectData.buffFilterIds == null ? null : new List<int>(effectData.buffFilterIds)
                 };
 
             case EffectType.ScaleIntent:
@@ -418,6 +428,15 @@ public static class CardEffectFactory
                 return new ReplanIntentEffect
                 {
                     target = effectData.target
+                };
+
+            case EffectType.IntentQueue:
+                return new IntentQueueEffect
+                {
+                    target = effectData.target,
+                    operation = effectData.operation,
+                    amount = effectData.amount > 0 ? effectData.amount : 1,
+                    maxAmount = effectData.count
                 };
 
             case EffectType.ReplayExhaustedCards:
@@ -440,10 +459,17 @@ public static class CardEffectFactory
                     count = effectData.count > 0 ? effectData.count : effectData.amount
                 };
 
+            case EffectType.Fragment:
+                return new FragmentEffect
+                {
+                    payloadEffects = BuildRuntimeEffects(effectData.subEffects)
+                };
+
             case EffectType.CopyEnemyDebuffs:
                 return new CopyEnemyDebuffsEffect
                 {
-                    target = effectData.target
+                    target = effectData.target,
+                    random = effectData.random
                 };
 
             case EffectType.ApplyBuffByTargetStack:
@@ -474,7 +500,8 @@ public static class CardEffectFactory
                 return new IncreaseBeneficialBuffStacksEffect
                 {
                     amount = effectData.amount,
-                    target = effectData.target
+                    target = effectData.target,
+                    buffFilterIds = effectData.buffFilterIds == null ? null : new List<int>(effectData.buffFilterIds)
                 };
 
             case EffectType.EnemyHpLossHealPlayer:
@@ -484,7 +511,25 @@ public static class CardEffectFactory
                 };
 
             case EffectType.Party:
-                return new PartyEffect();
+                return new PartyEffect
+                {
+                    operation = effectData.operation
+                };
+
+            case EffectType.RemoveRandomBuff:
+                return new RemoveRandomBuffEffect
+                {
+                    amount = effectData.amount > 0 ? effectData.amount : 1,
+                    operation = effectData.operation,
+                    target = effectData.target
+                };
+
+            case EffectType.ChargeIdentity:
+                return new ChargeIdentityEffect
+                {
+                    amount = effectData.amount,
+                    operation = effectData.operation
+                };
 
             default:
                 Debug.LogWarning($"[CardData] Unknown effect type: {effectData.type}");

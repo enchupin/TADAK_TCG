@@ -109,7 +109,12 @@ public class TurnSystem
             battleManager.battleContext = new BattleContext();
         }
         battleManager.battleContext.OnTurnStart();
+        foreach (Monster monster in battleManager.GetLivingMonsters())
+        {
+            monster.ResetTurnHpLoss();
+        }
 
+        // 처리 순서 고정: 보호막 제거 → 에너지 지급 → 턴 시작 버프 → 드로우
         if (battleManager.playerData != null)
         {
             battleManager.playerData.OnTurnStart();
@@ -183,9 +188,21 @@ public class TurnSystem
         }
 
         battleManager.SetState(BattleTurnState.EnemyTurnStart);
+        // 보호막 제거 → 턴 시작 효과 순서로 단계마다 모든 몬스터를 순회
+        foreach (Monster monster in battleManager.GetLivingMonsters())
+        {
+            monster.RemoveTurnStartBarrier();
+        }
+
         foreach (Monster monster in battleManager.GetLivingMonsters())
         {
             monster.OnTurnStart();
+        }
+
+        if (battleManager.TryHandleCombatEnd())
+        {
+            IsTurnTransitioning = false;
+            yield break;
         }
 
         yield return new WaitForSeconds(battleManager.EnemyActionDelay);
@@ -234,7 +251,7 @@ public class TurnSystem
 
     private int GetTurnStartDrawCount()
     {
-        int total = Mathf.Max(0, battleManager.drawCardCount + pendingExtraDrawAtTurnStart);
+        int total = Mathf.Max(0, battleManager.DrawCardCount + pendingExtraDrawAtTurnStart);
         pendingExtraDrawAtTurnStart = 0;
         return total;
     }

@@ -10,6 +10,8 @@ public class HealEffect : ICardEffect
     public string amountFormula;
     public List<int> cardIdList;
     public TargetType target;
+    // OverflowToBarrier: 최대 체력을 넘는 회복량을 보호막으로 전환
+    public string operation;
 
     public void Execute(TrainingBattleManager battleManager)
     {
@@ -27,7 +29,12 @@ public class HealEffect : ICardEffect
 
         if (target == TargetType.Self)
         {
+            int overflowAmount = Mathf.Max(0, healAmount - (battleManager.playerData.maxHP - battleManager.playerData.hp));
             battleManager.playerData.Heal(healAmount);
+            if (overflowAmount > 0 && string.Equals(operation, "OverflowToBarrier", System.StringComparison.OrdinalIgnoreCase))
+            {
+                battleManager.playerData.AddDefense(overflowAmount, true);
+            }
             Debug.Log($"[HealEffect] 플레이어 체력 +{healAmount} 회복");
         }
 

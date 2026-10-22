@@ -30,6 +30,20 @@ public static class ConditionEvaluator
         // { "subject": "EnemyCount", "operator": "Eq", "value": 1 }
         string op = string.IsNullOrEmpty(check.@operator) ? "Eq" : check.@operator;
 
+        // 동전: 앞면이면 1, 뒷면이면 0 (R-72)
+        if (check.subject == "Coin")
+        {
+            Card coinCard = battleManager.battleContext?.GetContextCard("ThisCard");
+            bool isHeads = battleManager.battleContext != null && battleManager.battleContext.ResolveCoinFlip(coinCard, () => TryConsumeLuck(battleManager));
+            return Compare(isHeads ? 1f : 0f, op, check.value);
+        }
+
+        if (check.subject == "FragmentedCardPlayedThisTurn")
+        {
+            int fragmentedPlays = battleManager.battleContext != null ? battleManager.battleContext.fragmentedCardsPlayedThisTurn : 0;
+            return Compare(fragmentedPlays, op, check.value);
+        }
+
         if (check.subject == "EnemyCount" || check.property == "EnemyCount")
         {
             int enemyCount = 0;
@@ -66,6 +80,17 @@ public static class ConditionEvaluator
             return Compare(cardsPlayed, op, check.value);
         }
 
+        // 이번 턴에 해당 캐릭터(param) 카드를 사용한 수 / 다른 아군 카드를 사용한 수 (현재 카드 포함)
+        if (check.subject == "CharacterCardsPlayedThisTurn" || check.subject == "OtherCharacterCardsPlayedThisTurn")
+        {
+            int.TryParse(check.param, out int characterId);
+            bool countOthers = check.subject == "OtherCharacterCardsPlayedThisTurn";
+            int count = battleManager.battleContext != null
+                ? battleManager.battleContext.GetCardsPlayedThisTurnByCharacter((Character)characterId, countOthers)
+                : 0;
+            return Compare(count, op, check.value);
+        }
+
         if (check.subject == "EnemyDebuffAppliedThisTurn")
         {
             int buffId = 0;
@@ -80,6 +105,25 @@ public static class ConditionEvaluator
 
         float subjectValue = GetPropertyValue(subjectObj, check.property, check.param);
         return Compare(subjectValue, op, check.value);
+    }
+
+    // 방해 카드: 몬스터가 만든 카드 또는 사용불가 카드
+    public static bool IsDisruptionCard(Card card)
+    {
+        return card != null && (card.character == Character.Monster || card.HasKeyword(CardKeywordIds.Unplayable));
+    }
+
+    private static bool TryConsumeLuck(TrainingBattleManager battleManager)
+    {
+        PlayerData player = battleManager?.playerData;
+        if (player == null || player.GetBuffStack(BattleRuntimeDefinitions.LuckBuffId) <= 0)
+        {
+            return false;
+        }
+
+        player.RemoveBuffStack(BattleRuntimeDefinitions.LuckBuffId);
+        battleManager.UpdateAllUI();
+        return true;
     }
 
     private static object GetSubject(string subjectType, TrainingBattleManager bm)
@@ -133,6 +177,8 @@ public static class ConditionEvaluator
                 case "Cost": return card.cost;
                 case "CharacterId": return (int)card.character;
                 case "IsPotion": return IsPotionCard(card) ? 1f : 0f;
+                // 방해 카드: 몬스터가 만든 카드 또는 사용불가 카드
+                case "IsDisruption": return IsDisruptionCard(card) ? 1f : 0f;
                 case "HasKeyword":
                     return card.HasKeyword(ResolveKeywordId(param)) ? 1f : 0f;
             }
@@ -144,6 +190,8 @@ public static class ConditionEvaluator
             {
                 case "Count":
                     return cards.Count;
+                case "AllSameCost":
+                    return cards.Count > 0 && cards.TrueForAll(card => card != null && card.cost == cards[0].cost) ? 1f : 0f;
                 case "HasCharacterId":
                     if (int.TryParse(param, out int characterId))
                     {
@@ -175,8 +223,12 @@ public static class ConditionEvaluator
             switch (property)
             {
                 case "Hp": return monster.hp;
+                // 체력 비율(%)
+                case "HpPercent": return monster.maxHP > 0 ? monster.hp * 100f / monster.maxHP : 0f;
                 case "Defense": return monster.defense;
                 case "HasAttackIntent": return monster.HasAttackIntent ? 1f : 0f;
+                // 기절 또는 덫 상태
+                case "IsStunnedOrTrapped": return monster.IsStunned || monster.GetBuffStack(BattleRuntimeDefinitions.TrapStateBuffId) > 0 ? 1f : 0f;
                 case "Buff":
                     int monsterBuffId = int.Parse(param);
                     return monster.GetBuffStack(monsterBuffId);
@@ -198,10 +250,7 @@ public static class ConditionEvaluator
 
     private static bool IsPotionCard(Card card)
     {
-        if (card == null) return false;
-        if (card.character != Character.Isla) return false;
-
-        return card.cardId >= 101080 && card.cardId <= 101087;
+        return BuffCardUtility.IsPotionCard(card);
     }
 
     private static int ResolveKeywordId(string rawKeyword)

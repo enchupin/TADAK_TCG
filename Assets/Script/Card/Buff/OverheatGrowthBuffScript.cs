@@ -11,6 +11,7 @@ public sealed class OverheatGrowthBuffScript : PlayerBuffScript
             return;
         }
 
-        battleManager.ApplyBuffToPlayer(OverheatBuffId, stack);
+        // v1.0 발열은 과열 대신 강공을 얻음
+        battleManager.ApplyBuffToPlayer(AttackBoostBuffId, stack);
     }
 }

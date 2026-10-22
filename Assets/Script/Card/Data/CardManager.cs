@@ -145,10 +145,8 @@ public static class CardManager
 
         return groupName switch
         {
-            "isla_potion_all" => new List<int> { 101080, 101081, 101082, 101083, 101084, 101085, 101086, 101087 },
-            "isla_potion_enhanced_even_pool" => new List<int> { 101080, 101082, 101084, 101086 },
-            "isla_potion_enhanced_odd_pool" => new List<int> { 101081, 101083, 101085, 101087 },
-            "isla_potion_even_base_pool" => new List<int> { 101080, 101082, 101084, 101086 },
+            "isla_potion_all" => new List<int> { 101080, 101081, 101090, 101091, 101100, 101101, 101110, 101111, 101120, 101121, 101130, 101131 },
+            "isla_potion_base_pool" => new List<int> { 101080, 101090, 101100, 101110, 101120, 101130 },
             _ => new List<int>()
         };
     }

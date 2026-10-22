@@ -96,6 +96,9 @@ public static class BuffMetadataDatabase
         return new BuffData
         {
             buffId = sourceData.buffId,
+            polarity = ParsePolarity(sourceData),
+            stackable = sourceData.stackable,
+            signed = sourceData.signed,
             name = sourceData.name,
             description = sourceData.description,
             koName = sourceData.name,
@@ -111,6 +114,22 @@ public static class BuffMetadataDatabase
             ruName = sourceData.ruName,
             ruDescription = sourceData.ruDescription
         };
+    }
+
+    private static BuffPolarity ParsePolarity(BuffMetadataJsonData sourceData)
+    {
+        switch (sourceData.polarity?.Trim().ToLowerInvariant())
+        {
+            case "beneficial":
+                return BuffPolarity.Beneficial;
+            case "harmful":
+                return BuffPolarity.Harmful;
+            case "passive":
+                return BuffPolarity.Passive;
+            default:
+                UnityEngine.Debug.LogWarning($"[BuffMetadataDatabase] polarity 값이 올바르지 않아 해로운 효과로 처리합니다: {sourceData.buffId} ({sourceData.polarity})");
+                return BuffPolarity.Harmful;
+        }
     }
 
     private static void ApplyCurrentLanguage()

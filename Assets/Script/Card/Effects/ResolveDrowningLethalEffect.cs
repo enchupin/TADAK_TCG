@@ -23,7 +23,7 @@ public sealed class ResolveDrowningLethalEffect : ICardEffect
 
             if (monster.GetBuffStack(resolvedBuffId) > monster.maxHP)
             {
-                monster.Kill();
+                BuffCombatUtility.KillByDrowning(battleManager, monster);
             }
         }
 

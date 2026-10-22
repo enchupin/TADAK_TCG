@@ -7,6 +7,8 @@ using UnityEngine;
 public class KeywordEffect : ICardEffect
 {
     public string keyword;  // "보존", "휘발", "소멸", "연쇄" 등
+    // SkipExhaustOnce: 이번 사용에 한해 소멸하지 않고 버린 카드 더미로
+    public string operation;
     public int amount;
     public string amountFormula;
     
@@ -14,6 +16,16 @@ public class KeywordEffect : ICardEffect
     {
         if (battleManager == null)
         {
+            return;
+        }
+
+        if (string.Equals(operation, "SkipExhaustOnce", System.StringComparison.OrdinalIgnoreCase))
+        {
+            Card thisCard = battleManager.battleContext?.GetContextCard("ThisCard");
+            if (thisCard != null)
+            {
+                thisCard.skipExhaustOnce = true;
+            }
             return;
         }
 

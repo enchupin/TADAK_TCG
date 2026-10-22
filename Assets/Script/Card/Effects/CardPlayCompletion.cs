@@ -8,6 +8,13 @@ public static class CardPlayCompletion
             return;
         }
 
+        // 호기심으로 강화된 카드는 강화 계열의 키워드와 무관하게 버린 더미로 이동 (E-12)
+        if (playedCard.resolvedAsCuriosity)
+        {
+            battleManager.usableDeckManager?.AddToDiscard(playedCard);
+            return;
+        }
+
         if (battleManager.ShouldPotionGoToDiscardInsteadOfExhaust(playedCard))
         {
             battleManager.usableDeckManager?.AddToDiscard(playedCard);
@@ -16,6 +23,13 @@ public static class CardPlayCompletion
 
         if (playedCard.ShouldExhaustWhenPlayed())
         {
+            if (playedCard.skipExhaustOnce)
+            {
+                playedCard.skipExhaustOnce = false;
+                battleManager.usableDeckManager?.AddToDiscard(playedCard);
+                return;
+            }
+
             battleManager.MoveCardToExhaust(playedCard);
             return;
         }
@@ -59,6 +73,12 @@ public static class CardPlayCompletion
             return;
         }
 
+        if (playedCard.resolvedAsCuriosity)
+        {
+            playedCard.resolvedAsCuriosity = false;
+            return;
+        }
+
         if (playedCard.HasKeyword(CardKeywordIds.Shadow))
         {
             CreateShadowCopy(battleManager, playedCard);
@@ -84,7 +104,8 @@ public static class CardPlayCompletion
         }
 
         shadowCopy.AddKeyword(CardKeywordIds.Ghost);
-        shadowCopy.SetCost(UnityEngine.Mathf.Max(1, sourceCard.cost - 1), false);
+        // 복제 카드는 원래 비용을 그대로 유지하며 최소 1 (R-21a)
+        shadowCopy.SetCost(UnityEngine.Mathf.Max(1, sourceCard.baseCost), false);
         battleManager.handManager.AddCard(shadowCopy);
     }
 }

@@ -65,8 +65,13 @@ public class TrainingBattleManager : MonoBehaviour
     public BattleUI battleUI;
     public MonsterSpawner monsterSpawner;
     [SerializeField] private BattleDeckViewer battleDeckViewer;
+    // R-46 네임드 승리 보상(복제 / 제거) 선택 창, 비어 있으면 복제로 진행
+    [SerializeField] private NamedRewardChoicePanel namedRewardChoicePanel;
 
     [Header("Turn Settings")]
+    // 드로우 수, 손패 상한, 턴당 에너지는 기본적으로 rules.json의 combat 항목에서 읽음
+    // 실시간 테스트와 QA용으로 체크하면 아래 인스펙터 값을 대신 사용
+    [SerializeField] private bool overrideTurnSettingsFromInspector = false;
     public int drawCardCount = 6;
     [SerializeField] private int maxHandCardCount = 10;
     [SerializeField] private int playerBaseEnergyPerTurn = 3;
@@ -109,9 +114,16 @@ public class TrainingBattleManager : MonoBehaviour
     [SerializeField] private TrainingMapController trainingMap;
     private bool hasStartedEncounter;
     private readonly List<PendingMonsterRevive> pendingMonsterRevives = new List<PendingMonsterRevive>();
+    // 저장 덱 보상(획득·초과 제거) 진행 중에는 카드 사용과 턴 종료, 전투 종료 처리를 대기
+    private bool isDeckRewardInProgress;
+    // R-47a 이번 전투에서 이탈한 몬스터가 훔쳐 간 카드 (승리 시 저장 덱에서 영구 제거)
+    private readonly List<Card> pendingPermanentlyRemovedCards = new List<Card>();
 
     public float EnemyActionDelay => enemyActionDelay;
-    public int MaxHandCardCount => Mathf.Max(0, maxHandCardCount);
+    public int MaxHandCardCount => Mathf.Max(0, overrideTurnSettingsFromInspector ? maxHandCardCount : GameRules.Combat.handLimit);
+    public int DrawCardCount => Mathf.Max(0, overrideTurnSettingsFromInspector ? drawCardCount : GameRules.Combat.drawPerTurn);
+    public int PlayerBaseEnergyPerTurn => Mathf.Max(0, overrideTurnSettingsFromInspector ? playerBaseEnergyPerTurn : GameRules.Combat.energyPerTurn);
+    public bool IsHandFull => handManager != null && handManager.GetHandCount() >= MaxHandCardCount;
     public CharacterIdentityService CharacterIdentityService => characterIdentityService;
 
     // 버프 전용 호출은 이 진입점에서 담당 실행기에 바로 접근
@@ -341,8 +353,13 @@ public class TrainingBattleManager : MonoBehaviour
             }
         }
 
-        playerData.Initialize(totalMaxHp, totalDefense, playerBaseEnergyPerTurn);
+        playerData.Initialize(totalMaxHp, totalDefense, PlayerBaseEnergyPerTurn);
         characterIdentityService?.Initialize(SelectedButtonControl.selectedCharacterList);
+        // 훈련 중에는 이전 전투의 아이덴티티 충전 진행도를 이어받고 보스전은 0에서 시작
+        if (!BossModeSession.IsActive && TrainingRunState.IsRunActive)
+        {
+            characterIdentityService?.RestoreGauges(TrainingRunState.GetIdentityGauges());
+        }
 
         if (TrainingRunState.IsRunActive)
         {
@@ -407,6 +424,7 @@ public class TrainingBattleManager : MonoBehaviour
 
         turnSystem.ResetForCombat();
         battleBuffController?.ResetForCombat();
+        ApplyCuriosityAtCombatStart();
         ApplyCombatStartEffects();
 
         if (TryHandleCombatEnd())
@@ -466,6 +484,12 @@ public class TrainingBattleManager : MonoBehaviour
         DrawCharacterCardsAndGet(count, characterFilter, ignoreRootAbsorption);
     }
 
+    // 조건에 맞는 카드만 드로우 (다른 아군 카드, 피해를 입히는 카드 등)
+    public List<Card> DrawMatchingCardsAndGet(int count, Predicate<Card> match, bool ignoreRootAbsorption = false)
+    {
+        return DrawCardsSequentially(count, ignoreRootAbsorption, () => usableDeckManager?.DrawMatchingCard(match));
+    }
+
     public List<Card> DrawCharacterCardsAndGet(int count, Character? characterFilter = null, bool ignoreRootAbsorption = false)
     {
         return DrawCardsSequentially(count, ignoreRootAbsorption, () =>
@@ -509,7 +533,7 @@ public class TrainingBattleManager : MonoBehaviour
 
         if (matchingCards.Count > 0) {
             Debug.Log($"[Debug] 디버그 시작 카드 {matchingCards.Count}장을 추가했습니다. 기준: {GetDebugTargetSummary()}");
-            handManager.AddCard(matchingCards);
+            handManager.AddCardIgnoringHandLimit(matchingCards);
             if (battleContext != null) {
                 battleContext.OnCardsDrawn(matchingCards.Count);
             }
@@ -842,8 +866,8 @@ public class TrainingBattleManager : MonoBehaviour
 
         int currentHandCount = handManager != null ? handManager.GetHandCount() : 0;
         int availableHandSpace = Mathf.Max(0, MaxHandCardCount - currentHandCount);
-        int targetStartDrawCount = Mathf.Min(availableHandSpace, Mathf.Max(drawCardCount, openingCards.Count));
-        int drawModifier = targetStartDrawCount - drawCardCount;
+        int targetStartDrawCount = Mathf.Min(availableHandSpace, Mathf.Max(DrawCardCount, openingCards.Count));
+        int drawModifier = targetStartDrawCount - DrawCardCount;
         if (drawModifier != 0)
         {
             turnSystem.AddTurnStartDrawModifier(drawModifier);
@@ -964,14 +988,14 @@ public class TrainingBattleManager : MonoBehaviour
     public bool CanPlayerPlayCard()
     {
         return !(trainingMap != null && trainingMap.IsVisible)
-            && !HasPendingSelection && !(combatResolver?.IsResolvingCardPlay ?? false)
+            && !HasPendingSelection && !isDeckRewardInProgress && !(combatResolver?.IsResolvingCardPlay ?? false)
             && turnSystem.CanPlayerPlayCard();
     }
 
     public bool CanEndPlayerTurn()
     {
         return !(trainingMap != null && trainingMap.IsVisible)
-            && !HasPendingSelection && !(combatResolver?.IsResolvingCardPlay ?? false)
+            && !HasPendingSelection && !isDeckRewardInProgress && !(combatResolver?.IsResolvingCardPlay ?? false)
             && turnSystem.CanEndPlayerTurn();
     }
 
@@ -1067,7 +1091,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     public int GetEffectiveCardCost(Card card)
     {
-        if (card == null)
+        if (card == null || card.isCurious)
         {
             return 0;
         }
@@ -1094,6 +1118,8 @@ public class TrainingBattleManager : MonoBehaviour
                 return playerData.defense >= effectiveCost;
             case CardCostType.Rune:
                 return playerData.GetBuffStack(BattleRuntimeDefinitions.RuneBuffId) >= effectiveCost;
+            case CardCostType.Wave:
+                return playerData.GetBuffStack(BattleRuntimeDefinitions.WaveBuffId) >= effectiveCost;
             default:
                 return playerData.energy >= effectiveCost;
         }
@@ -1127,6 +1153,17 @@ public class TrainingBattleManager : MonoBehaviour
 
             playerData.ConsumeBuffStack(BattleRuntimeDefinitions.RuneBuffId, effectiveCost);
             WuppiModeRuntimeUtility.HandleDirectBuffStackChange(this, playerData, BattleRuntimeDefinitions.RuneBuffId);
+            return true;
+        }
+
+        if (card.costType == CardCostType.Wave)
+        {
+            if (playerData.GetBuffStack(BattleRuntimeDefinitions.WaveBuffId) < effectiveCost)
+            {
+                return false;
+            }
+
+            playerData.ConsumeBuffStack(BattleRuntimeDefinitions.WaveBuffId, effectiveCost);
             return true;
         }
 
@@ -1171,9 +1208,24 @@ public class TrainingBattleManager : MonoBehaviour
 
     public int GetCardBaseDamageBonus(Card sourceCard, bool isAttackEffect)
     {
-        return battleBuffController != null
+        int permanentBonus = sourceCard != null ? Mathf.Max(0, sourceCard.permanentDamageBonus) : 0;
+        return permanentBonus + (battleBuffController != null
             ? battleBuffController.Player.GetCardBaseDamageBonus(sourceCard, isAttackEffect)
-            : 0;
+            : 0);
+    }
+
+    // R-22a 런 덱(저장 덱 원본)에 영구 피해 증가를 반영 (보스전에서는 반영하지 않음)
+    public void RecordPermanentDamageBonus(Card card, int amount)
+    {
+        if (card == null || amount == 0 || BossModeSession.IsActive || !TrainingRunState.IsRunActive || buildingDeck == null)
+        {
+            return;
+        }
+
+        if (!buildingDeck.AddPermanentDamageBonusAt(card.sourceDeckIndex, card.cardId, amount))
+        {
+            Debug.LogWarning($"[BattleManager] 저장 덱에서 카드 위치를 찾지 못해 이번 전투에만 피해를 늘렸습니다: {card.cardName}");
+        }
     }
 
     public int ApplyCardDamageRuntimeModifiers(Card sourceCard, int damage)
@@ -1237,6 +1289,13 @@ public class TrainingBattleManager : MonoBehaviour
         battleBuffController?.Monsters.OnMonsterHpLost(monster, hpLoss);
     }
 
+    // 카드 효과로 파티가 체력을 잃었을 때 통계와 버프 알림을 함께 처리
+    public void HandlePlayerCardHpLost(int hpLoss)
+    {
+        battleContext?.OnPlayerCardHpLost(hpLoss);
+        battleBuffController?.Player.OnPlayerCardHpLost(hpLoss);
+    }
+
     public void HandlePlayerHpLost(int hpLoss)
     {
         battleBuffController?.HandlePlayerHpLost(hpLoss);
@@ -1256,7 +1315,10 @@ public class TrainingBattleManager : MonoBehaviour
         => battleBuffController?.Monsters.GetActivationCount(monster, buffId) ?? 0;
 
     public void HandleMonsterAttackActionStarted(Monster monster)
-        => battleBuffController?.Monsters.OnAttackActionStarted(monster);
+    {
+        battleBuffController?.Monsters.OnAttackActionStarted(monster);
+        battleBuffController?.Player.OnEnemyAttackActionStarted(monster);
+    }
 
     public void HandleMonsterAttackActionEnded(Monster monster)
         => battleBuffController?.Monsters.OnAttackActionEnded(monster);
@@ -1284,6 +1346,25 @@ public class TrainingBattleManager : MonoBehaviour
     public void HandleMonsterDefenseChanged(Monster monster, int previousDefense, int currentDefense)
     {
         battleBuffController?.Monsters.OnDefenseChanged(monster, previousDefense, currentDefense);
+        // 보호막 보유 여부가 바뀌면 조건 규칙형 의도 재판정
+        if ((previousDefense > 0) != (currentDefense > 0))
+        {
+            ReevaluateConditionalMonsterIntents();
+        }
+    }
+
+    // E-40 조건 규칙형 몬스터는 조건에 영향을 주는 이벤트(사망·이탈·보호막 변화) 직후 의도를 다시 정함
+    public void ReevaluateConditionalMonsterIntents()
+    {
+        if (CurrentTurnState != BattleTurnState.PlayerAction)
+        {
+            return;
+        }
+
+        foreach (Monster livingMonster in GetLivingMonsters())
+        {
+            (livingMonster as DataMonster)?.ReevaluateConditionalIntent();
+        }
     }
 
     public int ResolveMonsterBarrierGain(Monster monster, int amount)
@@ -1382,7 +1463,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void HandleEnemyDebuffApplied(Monster monster, int buffId, int amount, int crueltyStackBeforeApply = -1)
     {
-        if (BuffData.IsBeneficialBuffId(buffId))
+        if (!BuffData.IsHarmfulBuffId(buffId))
         {
             return;
         }
@@ -1394,6 +1475,7 @@ public class TrainingBattleManager : MonoBehaviour
     public void HandleMonsterDeath(Monster monster)
     {
         battleBuffController?.Monsters.OnMonsterDeath(monster);
+        battleBuffController?.Player.OnEnemyKilled(monster);
 
         if (monster == null)
         {
@@ -1419,6 +1501,7 @@ public class TrainingBattleManager : MonoBehaviour
             monster.gameObject.SetActive(false);
         }
 
+        ReevaluateConditionalMonsterIntents();
         UpdateAllUI();
     }
 
@@ -1450,6 +1533,7 @@ public class TrainingBattleManager : MonoBehaviour
             monster.gameObject.SetActive(false);
         }
 
+        ReevaluateConditionalMonsterIntents();
         UpdateAllUI();
     }
 
@@ -1591,8 +1675,7 @@ public class TrainingBattleManager : MonoBehaviour
 
     public Card ApplyHandCardUpgrades(Card card)
     {
-        ApplyPersistentUpgradeToCard(card);
-        return ApplyPersistentUpgradeToCard(card, BattleRuntimeDefinitions.FeatherEnhanceBuffId);
+        return ApplyPersistentUpgradeToCard(card);
     }
 
     public Card ApplyPersistentUpgradeToCard(Card card)
@@ -1632,6 +1715,12 @@ public class TrainingBattleManager : MonoBehaviour
         characterIdentityService.AddGauge(character, amount);
     }
 
+    // 직접 사용한 카드로 아이덴티티를 충전 (충전량은 rules.json의 chargeMode 기준)
+    public void ChargeIdentityGaugeForPlayedCard(Card playedCard, int paidCost)
+    {
+        characterIdentityService?.ChargeForPlayedCard(playedCard, paidCost);
+    }
+
     public void AddIdentityGaugeToOtherCharacters(Character sourceCharacter, int amount)
     {
         if (amount <= 0 || characterIdentityService == null)
@@ -1663,10 +1752,305 @@ public class TrainingBattleManager : MonoBehaviour
             return false;
         }
 
+        // 훈련 중 전투마다 처음 조건을 채운 아이덴티티 사용은 해당 캐릭터의 신규 카드 획득 보상
+        if (CanGrantIdentityCardReward() && characterIdentityService.TryClaimCardReward(character))
+        {
+            StartCoroutine(RunIdentityCardRewardSequence(character));
+        }
+
         RefreshHandPlayableState();
         UpdateAllUI();
         TryHandleCombatEnd();
         return true;
+    }
+
+    // R-20 전투 시작 시 강화되지 않은 카드 중 무작위 curiosityPerCombat장을 호기심 상태로 만듦
+    // 보스전에는 호기심이 없음 (R-62)
+    private void ApplyCuriosityAtCombatStart()
+    {
+        if (BossModeSession.IsActive || !TrainingRunState.IsRunActive || buildingDeck == null || usableDeckManager == null)
+        {
+            return;
+        }
+
+        List<Card> candidates = new List<Card>();
+        foreach (Card card in usableDeckManager.GetDrawPile())
+        {
+            if (card != null && !card.isCurious && card.sourceDeckIndex >= 0
+                && card.enforceCardIds != null && card.enforceCardIds.Count > 0)
+            {
+                candidates.Add(card);
+            }
+        }
+
+        int curiosityCount = Mathf.Min(GameRules.Combat.curiosityPerCombat, candidates.Count);
+        for (int i = 0; i < curiosityCount; i++)
+        {
+            int index = UnityEngine.Random.Range(0, candidates.Count);
+            Card curiousCard = candidates[index];
+            candidates.RemoveAt(index);
+            curiousCard.isCurious = true;
+            curiousCard.SetCost(0, false);
+            Debug.Log($"[BattleManager] 호기심 카드: {curiousCard.cardName}");
+        }
+    }
+
+    // R-22 호기심 카드 사용: 강화 계열 중 3개를 제시하고 고른 강화를 이번 전투와 저장 덱에 즉시 반영
+    public System.Collections.IEnumerator PlayCuriositySequence(Card curiousCard)
+    {
+        if (curiousCard == null)
+        {
+            yield break;
+        }
+
+        List<int> upgradeIds = new List<int>(curiousCard.enforceCardIds ?? new List<int>());
+        List<Card> options = new List<Card>();
+        while (upgradeIds.Count > 0 && options.Count < GameRules.Deck.choiceCount)
+        {
+            int index = UnityEngine.Random.Range(0, upgradeIds.Count);
+            Card option = CardManager.GetCardAsCard(upgradeIds[index]);
+            upgradeIds.RemoveAt(index);
+            if (option != null)
+            {
+                options.Add(option);
+            }
+        }
+
+        curiousCard.isCurious = false;
+        curiousCard.resolvedAsCuriosity = true;
+        if (options.Count == 0)
+        {
+            Debug.LogWarning($"[BattleManager] {curiousCard.cardName}의 강화 선택지가 없어 호기심을 종료합니다");
+            yield break;
+        }
+
+        List<Card> pickedCards = null;
+        yield return SelectCardsCoroutine(options, 1, false, cards => pickedCards = cards);
+        Card picked = pickedCards != null && pickedCards.Count > 0 ? pickedCards[0] : options[0];
+
+        int originalCardId = curiousCard.cardId;
+        int deckIndex = curiousCard.sourceDeckIndex;
+        curiousCard.ApplyTemplate(picked);
+        LocalizationManager.ApplyToRuntimeCard(curiousCard);
+        if (buildingDeck != null && deckIndex >= 0 && deckIndex < buildingDeck.GetCards().Count
+            && buildingDeck.GetCards()[deckIndex]?.cardId == originalCardId)
+        {
+            buildingDeck.ReplaceCardAt(deckIndex, picked.cardId);
+        }
+        else
+        {
+            Debug.LogWarning($"[BattleManager] 저장 덱에서 호기심 카드 위치를 찾지 못해 이번 전투에만 강화했습니다: {curiousCard.cardName}");
+        }
+
+        UpdateAllUI();
+    }
+
+    private bool CanGrantIdentityCardReward()
+    {
+        return !BossModeSession.IsActive && TrainingRunState.IsRunActive && buildingDeck != null;
+    }
+
+    private System.Collections.IEnumerator RunIdentityCardRewardSequence(Character character)
+    {
+        isDeckRewardInProgress = true;
+        try
+        {
+            // 스킬 효과가 연 선택 창이 끝난 뒤 보상 선택을 진행
+            while (HasPendingSelection)
+            {
+                yield return null;
+            }
+
+            List<Card> options = new List<Card>();
+            foreach (int cardId in TrainingDeckRewardService.GetAcquisitionOptions(buildingDeck.GetCards(), character))
+            {
+                Card option = CardManager.GetCardAsCard(cardId);
+                if (option != null)
+                {
+                    options.Add(option);
+                }
+            }
+
+            if (options.Count == 0)
+            {
+                Debug.LogWarning($"[BattleManager] {character}의 획득 가능한 고유 카드가 없어 보상을 건너뜁니다");
+                yield break;
+            }
+
+            List<Card> pickedCards = null;
+            yield return SelectCardsCoroutine(options, 1, false, cards => pickedCards = cards);
+            Card pickedCard = pickedCards != null && pickedCards.Count > 0 ? pickedCards[0] : options[0];
+            if (buildingDeck.AddCard(pickedCard.cardId))
+            {
+                Debug.Log($"[BattleManager] 아이덴티티 보상으로 {pickedCard.cardName} 카드를 저장 덱에 추가했습니다");
+                AddRewardCardToCurrentBattle(pickedCard.cardId);
+            }
+
+            yield return TrimCharacterDeckOverflowCoroutine(character);
+        }
+        finally
+        {
+            isDeckRewardInProgress = false;
+            // 보상 진행 중 막아 둔 카드 사용과 턴 종료 상태를 다시 계산
+            UpdateEndTurnButtonState();
+            RefreshHandPlayableState();
+            UpdateAllUI();
+        }
+    }
+
+    // 전투 중 획득한 보상 카드는 이번 전투에서도 쓸 수 있도록 버린 카드 더미에 넣음
+    private void AddRewardCardToCurrentBattle(int cardId)
+    {
+        if (usableDeckManager == null)
+        {
+            return;
+        }
+
+        Card battleCard = CardManager.GetCardAsCard(cardId);
+        if (battleCard == null)
+        {
+            return;
+        }
+
+        LocalizationManager.ApplyToRuntimeCard(battleCard);
+        usableDeckManager.AddToDiscard(battleCard);
+        Debug.Log($"[BattleManager] 보상 카드 {battleCard.cardName}을(를) 버린 카드 더미에 넣었습니다");
+    }
+
+    // R-47a 이탈한 몬스터가 훔쳐 간 전투 카드를 저장 덱에서 제거할 대상으로 등록
+    public void QueueStolenCardsForPermanentRemoval(IEnumerable<Card> stolenCards)
+    {
+        if (stolenCards == null || BossModeSession.IsActive || !TrainingRunState.IsRunActive)
+        {
+            return;
+        }
+
+        foreach (Card stolenCard in stolenCards)
+        {
+            if (stolenCard != null && stolenCard.sourceDeckIndex >= 0 && !pendingPermanentlyRemovedCards.Contains(stolenCard))
+            {
+                pendingPermanentlyRemovedCards.Add(stolenCard);
+            }
+        }
+    }
+
+    // 저장 덱 위치가 뒤인 카드부터 제거해 앞 카드의 위치가 바뀌지 않게 함
+    private void ApplyPendingPermanentCardRemovals()
+    {
+        if (buildingDeck == null || pendingPermanentlyRemovedCards.Count == 0)
+        {
+            return;
+        }
+
+        List<Card> removals = new List<Card>(pendingPermanentlyRemovedCards);
+        removals.Sort((left, right) => right.sourceDeckIndex.CompareTo(left.sourceDeckIndex));
+        foreach (Card removedCard in removals)
+        {
+            if (!buildingDeck.RemoveCardAt(removedCard.sourceDeckIndex, removedCard.cardId))
+            {
+                Debug.LogWarning($"[BattleManager] 훔쳐 간 카드를 저장 덱에서 찾지 못했습니다: {removedCard.cardName}");
+            }
+        }
+
+        pendingPermanentlyRemovedCards.Clear();
+    }
+
+    // R-46 네임드 승리 보상: 카드 복제(강화 상태 유지, 유일 제외, 8장 초과 시 R-15) 또는 카드 제거
+    private System.Collections.IEnumerator RunNamedRewardSequence()
+    {
+        isDeckRewardInProgress = true;
+        try
+        {
+            NamedRewardChoicePanel.Choice? choice = null;
+            if (namedRewardChoicePanel != null && namedRewardChoicePanel.Show(selected => choice = selected))
+            {
+                yield return new WaitUntil(() => choice.HasValue);
+            }
+            else
+            {
+                Debug.LogWarning("[BattleManager] 네임드 보상 선택 창이 없어 카드 복제로 진행합니다");
+                choice = NamedRewardChoicePanel.Choice.Duplicate;
+            }
+
+            List<Card> candidates = choice == NamedRewardChoicePanel.Choice.Duplicate
+                ? TrainingDeckRewardService.GetDuplicateCandidates(buildingDeck.GetCards())
+                : TrainingDeckRewardService.GetRemovalCandidates(buildingDeck.GetCards());
+            if (candidates.Count == 0)
+            {
+                yield break;
+            }
+
+            List<Card> pickedCards = null;
+            yield return SelectCardsCoroutine(candidates, 1, false, cards => pickedCards = cards);
+            Card picked = pickedCards != null && pickedCards.Count > 0 ? pickedCards[0] : null;
+            if (picked == null)
+            {
+                yield break;
+            }
+
+            if (choice == NamedRewardChoicePanel.Choice.Duplicate)
+            {
+                if (buildingDeck.AddCardCopy(picked))
+                {
+                    yield return TrimCharacterDeckOverflowCoroutine(picked.character);
+                }
+            }
+            else
+            {
+                buildingDeck.RemoveCard(picked);
+            }
+        }
+        finally
+        {
+            isDeckRewardInProgress = false;
+        }
+    }
+
+    // R-15 캐릭터 카드가 상한을 넘으면 넘은 장수만큼 골라 저장 덱에서 제거
+    public System.Collections.IEnumerator TrimCharacterDeckOverflowCoroutine(Character character)
+    {
+        if (buildingDeck == null)
+        {
+            yield break;
+        }
+
+        int overflowCount = TrainingDeckRewardService.GetOverflowCount(buildingDeck.GetCards(), character);
+        if (overflowCount <= 0)
+        {
+            yield break;
+        }
+
+        List<Card> characterCards = TrainingDeckRewardService.GetCharacterCards(buildingDeck.GetCards(), character);
+        List<Card> removedCards = null;
+        yield return SelectCardsCoroutine(characterCards, overflowCount, false, cards => removedCards = cards);
+        if (removedCards == null || removedCards.Count < overflowCount)
+        {
+            // 선택 창이 없으면 가장 최근에 얻은 카드부터 제거
+            removedCards = characterCards.GetRange(characterCards.Count - overflowCount, overflowCount);
+        }
+
+        foreach (Card removedCard in removedCards)
+        {
+            buildingDeck.RemoveCard(removedCard);
+        }
+    }
+
+    private System.Collections.IEnumerator SelectCardsCoroutine(List<Card> cards, int selectCount, bool allowFewer, Action<List<Card>> onSelected)
+    {
+        bool isCompleted = false;
+        List<Card> selectedCards = null;
+        bool opened = OpenSelectCardPanel(cards, selectCount, result =>
+        {
+            selectedCards = result;
+            isCompleted = true;
+        }, allowFewer);
+
+        if (opened)
+        {
+            yield return new WaitUntil(() => isCompleted);
+        }
+
+        onSelected?.Invoke(selectedCards);
     }
 
     public bool TryUseIdentitySkill(int characterId)
@@ -1966,7 +2350,11 @@ public class TrainingBattleManager : MonoBehaviour
 
         if (BossModeSession.IsActive)
         {
-            RegisterMonster(monsterSpawner.SpawnMonsterToAvailableSlot(BossModeSession.GetBossType(BossModeSession.SelectedBossId)));
+            // 보스 조우(BS01 ~ BS04)의 동행 몬스터까지 함께 생성
+            foreach (Monster bossEncounterMonster in monsterSpawner.SpawnEncounter(BossModeSession.GetBossEncounterId(BossModeSession.SelectedBossId)))
+            {
+                RegisterMonster(bossEncounterMonster);
+            }
             return;
         }
 
@@ -2049,6 +2437,12 @@ public class TrainingBattleManager : MonoBehaviour
                 break;
             }
 
+            // 손패가 가득 차면 더 뽑지 않고 남은 카드는 덱에 그대로 둠
+            if (IsHandFull)
+            {
+                break;
+            }
+
             Card drawnCard = drawCard();
             if (drawnCard == null)
             {
@@ -2091,6 +2485,12 @@ public class TrainingBattleManager : MonoBehaviour
         for (int drawIndex = 0; drawIndex < count; drawIndex++)
         {
             if (!ignoreRootAbsorption && HasRootAbsorptionInHand())
+            {
+                break;
+            }
+
+            // 손패가 가득 차면 더 뽑지 않고 남은 카드는 덱에 그대로 둠
+            if (IsHandFull)
             {
                 break;
             }
@@ -2155,6 +2555,12 @@ public class TrainingBattleManager : MonoBehaviour
         // 승리를 판정한 카드 효과와 턴 처리가 현재 프레임에서 마무리되도록 대기
         yield return null;
 
+        // 마지막 행동이 아이덴티티였다면 카드 획득 보상을 마친 뒤 저장 덱을 처리
+        while (isDeckRewardInProgress)
+        {
+            yield return null;
+        }
+
         if (!TrainingRunState.HasMapData)
             yield break;
 
@@ -2168,9 +2574,29 @@ public class TrainingBattleManager : MonoBehaviour
 
         bool shouldPersistRunDeck = isBossVictory;
 
+        if (isVictory)
+        {
+            ApplyPendingPermanentCardRemovals();
+
+            if (TrainingRunState.PendingNodeId.HasValue
+                && TrainingRunState.TryGetNode(TrainingRunState.PendingNodeId.Value, out TrainingMapNodeData rewardNode)
+                && rewardNode.nodeType == TrainingNodeType.Named
+                && buildingDeck != null)
+            {
+                yield return RunNamedRewardSequence();
+            }
+        }
+
+        pendingPermanentlyRemovedCards.Clear();
+
         if (PlayerData.Instance != null)
         {
             TrainingRunState.SetPlayerHealthState(PlayerData.Instance.hp, PlayerData.Instance.maxHP);
+        }
+
+        if (characterIdentityService != null)
+        {
+            TrainingRunState.SetIdentityGauges(characterIdentityService.ExportGauges());
         }
 
         if (shouldPersistRunDeck)

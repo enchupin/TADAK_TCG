@@ -133,3 +133,6 @@ Assets/Resources/CharacterCollection.asset
 Assets/Resources/CharacterCollection.asset.meta
 
 /steam_appid.txt
+
+# Claude 작업용 문서
+/.claude-work/

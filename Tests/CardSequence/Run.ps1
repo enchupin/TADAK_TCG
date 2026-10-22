@@ -10,7 +10,8 @@ $sources = @(
     'Card/Effects/SelectCardEffect.cs', 'Card/Effects/RepeatEffect.cs',
     'Card/Effects/ConditionalEffect.cs', 'Card/Effects/TriggeredCardExecutionUtility.cs',
     'Card/Effects/UseTopDeckCardsEffect.cs', 'Card/Effects/ReplayExhaustedCardsEffect.cs',
-    'Card/Effects/MoveEffect.cs', 'Card/Effects/DrawEffect.cs', 'Card/Effects/RandGenerateEffect.cs'
+    'Card/Effects/MoveEffect.cs', 'Card/Effects/DrawEffect.cs', 'Card/Effects/RandGenerateEffect.cs',
+    'Card/Effects/FragmentEffect.cs'
 )
 $includes = ($sources | ForEach-Object {
     '<Compile Include="' + [Security.SecurityElement]::Escape("$projectRoot/Assets/Script/$_") + '" />'

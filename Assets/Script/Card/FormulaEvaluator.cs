@@ -109,7 +109,8 @@ public static class FormulaEvaluator
             }
 
             expression = ReplaceFunctionCalls(expression, player, targetMonster);
-            expression = ReplaceKnownKeywords(expression, context, cardsPlayedInCombat, cardsPlayedInTurn, hpLostThisTurn, hasLostHpThisTurn, missingHp, playerCardHpLostThisCombat, baseValue);
+            expression = ReplaceKnownKeywords(expression, context, player, cardsPlayedInCombat, cardsPlayedInTurn, hpLostThisTurn, hasLostHpThisTurn, missingHp, playerCardHpLostThisCombat, baseValue);
+            expression = EvaluateFloorFunctions(expression);
             expression = EvaluateMinFunctions(expression);
 
             return EvaluateSimpleExpression(expression);
@@ -121,7 +122,7 @@ public static class FormulaEvaluator
         }
     }
 
-    private static string ReplaceKnownKeywords(string expression, BattleContext context, int cardsPlayedInCombat, int cardsPlayedInTurn, int hpLostThisTurn, int hasLostHpThisTurn, int missingHp, int playerCardHpLostThisCombat, int baseValue)
+    private static string ReplaceKnownKeywords(string expression, BattleContext context, PlayerData player, int cardsPlayedInCombat, int cardsPlayedInTurn, int hpLostThisTurn, int hasLostHpThisTurn, int missingHp, int playerCardHpLostThisCombat, int baseValue)
     {
         expression = expression.Replace("UseCardInCombat", cardsPlayedInCombat.ToString());
         expression = expression.Replace("UseCardInTurn", cardsPlayedInTurn.ToString());
@@ -139,7 +140,53 @@ public static class FormulaEvaluator
         expression = expression.Replace("MissingHp", missingHp.ToString());
         expression = expression.Replace("CardHpLostThisCombat", playerCardHpLostThisCombat.ToString());
         expression = expression.Replace("EnergySpentThisTurn", (context != null ? context.energySpentThisTurn : 0).ToString());
+        // 이번 턴에 적에게 부여한 해로운 효과 종류 수
+        expression = expression.Replace("DebuffKindsThisTurn", (context != null ? context.GetEnemyDebuffKindsAppliedThisTurn() : 0).ToString());
+        // 현재 보호막, 보유한 해로운 효과 종류 수, 이번 전투 회복량, 기절한 적 수
+        expression = expression.Replace("CurrentBarrier", (player != null ? Mathf.Max(0, player.defense) : 0).ToString());
+        expression = expression.Replace("HarmfulBuffKinds", CountHarmfulBuffs(player).ToString());
+        expression = expression.Replace("HealedThisCombat", (context != null ? context.playerHealedThisCombat : 0).ToString());
+        expression = expression.Replace("StunnedEnemies", CountStunnedEnemies().ToString());
         return expression;
+    }
+
+    private static int CountHarmfulBuffs(PlayerData player)
+    {
+        if (player?.currentBuffs == null)
+        {
+            return 0;
+        }
+
+        int count = 0;
+        foreach (Buff buff in player.currentBuffs)
+        {
+            if (buff?.data != null && buff.stack != 0 && BuffData.IsHarmfulBuffId(buff.data.buffId))
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    private static int CountStunnedEnemies()
+    {
+        List<Monster> monsters = TrainingBattleManager.Instance?.GetLivingMonsters();
+        if (monsters == null)
+        {
+            return 0;
+        }
+
+        int count = 0;
+        foreach (Monster monster in monsters)
+        {
+            if (monster != null && monster.IsStunned)
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     private static string ReplaceFunctionCalls(string expression, PlayerData player, Monster targetMonster)
@@ -184,6 +231,24 @@ public static class FormulaEvaluator
             int buffId = int.Parse(match.Groups[1].Value);
             int stack = targetMonster != null ? targetMonster.GetBuffStack(buffId) : 0;
             expression = expression.Replace(match.Value, stack.ToString());
+        }
+
+        return expression;
+    }
+
+    // Floor(식): 소수점 버림 (절반 등)
+    private static string EvaluateFloorFunctions(string expression)
+    {
+        string pattern = @"Floor\(([^()]+)\)";
+        while (Regex.IsMatch(expression, pattern))
+        {
+            Match match = Regex.Match(expression, pattern);
+            if (!match.Success || !TryEvaluateFlatExpression(match.Groups[1].Value, out float value))
+            {
+                break;
+            }
+
+            expression = expression.Replace(match.Value, Mathf.FloorToInt(value).ToString());
         }
 
         return expression;
