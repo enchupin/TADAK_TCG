@@ -131,40 +131,7 @@ public static class BuffTooltipFormatter
     // 이름의 마지막 글자 받침에 맞춰 조사 선택
     public static string AdjustJosa(string word, string josa)
     {
-        if (string.IsNullOrEmpty(josa) || string.IsNullOrEmpty(word))
-        {
-            return josa ?? string.Empty;
-        }
-
-        char last = word[word.Length - 1];
-        if (last < '가' || last > '힣')
-        {
-            return josa;
-        }
-
-        int finalConsonant = (last - '가') % 28;
-        bool hasFinal = finalConsonant != 0;
-        // ㄹ 받침은 으로가 아니라 로
-        bool isRieul = finalConsonant == 8;
-        switch (josa)
-        {
-            case "을":
-            case "를":
-                return hasFinal ? "을" : "를";
-            case "이":
-            case "가":
-                return hasFinal ? "이" : "가";
-            case "은":
-            case "는":
-                return hasFinal ? "은" : "는";
-            case "과":
-            case "와":
-                return hasFinal ? "과" : "와";
-            case "으로":
-            case "로":
-                return hasFinal && !isRieul ? "으로" : "로";
-            default:
-                return josa;
-        }
+        // 받침 판정 · ㄹ 받침 으로/로 처리는 KoreanJosa로 통합
+        return KoreanJosa.Select(word, josa);
     }
 }
