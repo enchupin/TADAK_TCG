@@ -90,9 +90,26 @@ public class RestSceneController : MonoBehaviour
         OnClickEscape();
     }
 
+    private void OnEnable()
+    {
+        LocalizationManager.LanguageChanged += RefreshLocalizedTexts;
+    }
+
+    private void OnDisable()
+    {
+        LocalizationManager.LanguageChanged -= RefreshLocalizedTexts;
+    }
+
     private void OnDestroy()
     {
         IsEventEscapeContextActive = false;
+    }
+
+    // 언어 변경 시 체력 · 버튼 문구 갱신
+    private void RefreshLocalizedTexts()
+    {
+        RefreshHpText();
+        RefreshActionButtons();
     }
 
     public void OnClickHeal()
@@ -241,7 +258,7 @@ public class RestSceneController : MonoBehaviour
         {
             if (hpText != null)
             {
-                hpText.text = $"HP {hp} / {maxHp}";
+                hpText.text = GameText.Ui("ui.rest.hp", new Dictionary<string, object> { { "hp", hp }, { "maxHp", maxHp } });
             }
 
             return;
@@ -249,7 +266,7 @@ public class RestSceneController : MonoBehaviour
 
         if (hpText != null)
         {
-            hpText.text = "HP ? / ?";
+            hpText.text = GameText.Ui("ui.rest.hpUnknown");
         }
     }
 
@@ -281,7 +298,7 @@ public class RestSceneController : MonoBehaviour
             escapeButton.interactable = isEvent;
             if (isFinalEventNode)
             {
-                SetButtonLabel(escapeButton, "덱 저장");
+                SetButtonLabel(escapeButton, GameText.Ui("ui.rest.saveDeck"));
             }
         }
 
@@ -289,7 +306,7 @@ public class RestSceneController : MonoBehaviour
         {
             nextButton.gameObject.SetActive(!isFinalEventNode);
             nextButton.interactable = !isFinalEventNode && (isEvent || actionResolved);
-            SetButtonLabel(nextButton, isEvent ? "계속 진행" : "다음");
+            SetButtonLabel(nextButton, GameText.Ui(isEvent ? "ui.rest.continue" : "ui.rest.next"));
         }
 
         if (!isRest || actionResolved)

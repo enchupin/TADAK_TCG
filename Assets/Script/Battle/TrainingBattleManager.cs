@@ -262,7 +262,7 @@ public class TrainingBattleManager : MonoBehaviour
         instantWinButton.onClick.AddListener(OnClickInstantWin);
         instantWinButton.gameObject.SetActive(!BossModeSession.IsActive && (Application.isEditor || Debug.isDebugBuild));
 
-        SetButtonLabel(instantWinButton, "승리");
+        SetButtonLabel(instantWinButton, GameText.Ui("ui.debug.instantWin"));
         UpdateEndTurnButtonState();
     }
 

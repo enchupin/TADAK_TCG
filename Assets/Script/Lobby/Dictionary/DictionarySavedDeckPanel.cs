@@ -678,11 +678,7 @@ public class DictionarySavedDeckPanel : MonoBehaviour
 
     private string ResolveDeckName(CharacterDeckSave deck)
     {
-        if (deck == null || string.IsNullOrWhiteSpace(deck.name))
-        {
-            return "이름 없는 덱";
-        }
-
-        return deck.name;
+        // 저장된 기본 이름(기본 덱 · 새 덱 · 이름 없는 덱)은 현재 언어로 표시
+        return GameText.DeckDisplayName(deck?.name);
     }
 }

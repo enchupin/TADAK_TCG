@@ -139,7 +139,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     public void UpdateUI()
     {
         if (hpText != null)
-            hpText.text = $"HP : {hp}/{maxHP}";
+            hpText.text = GameText.Ui("ui.combat.monsterHp", new Dictionary<string, object> { { "hp", hp }, { "maxHp", maxHP } });
 
         if (defenseText != null)
             defenseText.text = defense > 0 ? $"DEF {defense}" : string.Empty;

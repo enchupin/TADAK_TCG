@@ -18,6 +18,7 @@ class Program {
   SyncCore();
   Csv();
   SourceTables(args[0]);
+  HardcodedKorean(args[0]);
   Console.WriteLine($"로컬라이징 검증 {count}개 통과");
  }
 
@@ -251,6 +252,35 @@ class Program {
   Check(records[1].SequenceEqual(values),"CSV 왕복");
   Check(records[2].SequenceEqual(new[]{"last","1"}),"마지막 줄바꿈 없음");
   Check(LocalizationSourceSync.ParseCsv("").Count==0,"빈 CSV");
+ }
+
+ // 화면에 나오는 한국어 문장은 코드에 두지 않음 (로그 · 예외 · 주석 · 인스펙터 특성 · 데이터 키는 제외)
+ static void HardcodedKorean(string root){
+  // 파일 전체가 데이터 키 · 조사 규칙인 곳
+  var allowedFiles=new HashSet<string>{"Battle/BattleRuntimeDefinitions.cs","Card/Effects/KeywordEffect.cs","Localization/Core/KoreanJosa.cs","UI/Tooltip/BuffTooltipFormatter.cs","UI/Tooltip/IntentTooltipFormatter.cs"};
+  // 저장 데이터의 기본 덱 이름(표시할 때 GameText.DeckDisplayName으로 변환) · 로그 문구 · 누락 버프 임시 이름
+  var allowedLiterals=new HashSet<string>{
+   "Localization/GameText.cs|기본 덱","Localization/GameText.cs|새 덱","Localization/GameText.cs|이름 없는 덱",
+   "Save/CharacterDeckSave.cs|새 덱","Save/ProfileSaveManager.cs|기본 덱","Save/ProfileSaveManager.cs|이름 없는 덱","Battle/BuildingDeck.cs|기본 덱",
+   "Battle/BuildingDeck.cs|저장덱을 갱신했습니다","Battle/TrainingBattleManager.cs|보스 클리어로 저장덱을 갱신했습니다","TrainingMode/RestSceneController.cs|이벤트 탈출로 저장덱을 갱신했습니다",
+   "Battle/PlayerData.cs|턴 시작: 보호막 유지 발동, 에너지 회복","Battle/PlayerData.cs|턴 시작: 방어력 리셋, 에너지 회복","Card/Buff/BuffMetadataResolver.cs|버프 {buffId}"};
+  var literal=new System.Text.RegularExpressions.Regex("\"((?:[^\"\\\\]|\\\\.)*)\"");
+  var skipLine=new System.Text.RegularExpressions.Regex(@"Debug\.Log|throw new|\[Header\(|\[Tooltip\(|Exception\(");
+  string scriptRoot=Path.Combine(root,"Assets/Script");
+  var found=new List<string>();
+  foreach(var file in Directory.GetFiles(scriptRoot,"*.cs",SearchOption.AllDirectories)){
+   string relative=Path.GetRelativePath(scriptRoot,file).Replace('\\','/');
+   if(relative.Contains("/Editor/")||allowedFiles.Contains(relative))continue;
+   foreach(var line in File.ReadLines(file)){
+    string trimmed=line.Trim();
+    if(trimmed.StartsWith("//")||skipLine.IsMatch(trimmed))continue;
+    foreach(System.Text.RegularExpressions.Match m in literal.Matches(trimmed)){
+     string value=m.Groups[1].Value;
+     if(value.Any(ch=>ch>='\uAC00'&&ch<='\uD7A3')&&!allowedLiterals.Contains(relative+"|"+value))found.Add(relative+"|"+value);
+    }
+   }
+  }
+  Check(found.Count==0,"코드에 화면용 한국어 문장이 있습니다. Localization/ko/ui.json 키로 옮기세요: "+string.Join(" / ",found.Take(10)));
  }
 
  // ko 생성 표가 JsonData와 같아야 함 (원문 수정 후 동기화를 빼먹으면 실패)

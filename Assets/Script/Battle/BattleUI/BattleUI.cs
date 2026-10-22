@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -95,7 +96,7 @@ public class BattleUI : MonoBehaviour
     {
         if (PlayerData.Instance == null) return;
         if (playerDefenseText != null)
-            playerDefenseText.text = $"Defense : {PlayerData.Instance.defense}";
+            playerDefenseText.text = GameText.Ui("ui.combat.defense", new Dictionary<string, object> { { "value", PlayerData.Instance.defense } });
     }
 
 
@@ -107,15 +108,15 @@ public class BattleUI : MonoBehaviour
         }
 
         if (drawPileCountText != null) {
-            drawPileCountText.text = $"Deck : {battleManager.usableDeckManager.GetRemainingCardCount()}";
+            drawPileCountText.text = GameText.Ui("ui.combat.drawPile", new Dictionary<string, object> { { "count", battleManager.usableDeckManager.GetRemainingCardCount() } });
         }
 
         if (discardPileCountText != null) {
-            discardPileCountText.text = $"Discard Pile : {battleManager.usableDeckManager.GetDiscardPileCount()}";
+            discardPileCountText.text = GameText.Ui("ui.combat.discardPile", new Dictionary<string, object> { { "count", battleManager.usableDeckManager.GetDiscardPileCount() } });
         }
 
         if (handCountText != null && battleManager.handManager != null) {
-            handCountText.text = $"Hand : {battleManager.handManager.GetHandCount()}";
+            handCountText.text = GameText.Ui("ui.combat.hand", new Dictionary<string, object> { { "count", battleManager.handManager.GetHandCount() } });
         }
     }
     

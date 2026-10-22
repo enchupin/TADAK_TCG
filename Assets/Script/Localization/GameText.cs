@@ -64,6 +64,23 @@ public static class GameText
         return Lookup("monster.pattern." + ToKeyId(patternId) + ".text", fallback);
     }
 
+    // 저장 데이터에 한국어로 들어가는 기본 덱 이름 → 현재 언어
+    public static string DeckDisplayName(string savedName)
+    {
+        if (string.IsNullOrWhiteSpace(savedName))
+        {
+            return Ui("ui.deck.unnamed");
+        }
+
+        return savedName.Trim() switch
+        {
+            "기본 덱" => Ui("ui.deck.default"),
+            "새 덱" => Ui("ui.deck.new"),
+            "이름 없는 덱" => Ui("ui.deck.unnamed"),
+            _ => savedName
+        };
+    }
+
     // UI 문구: 인자 · 복수형 · 참조를 현재 언어로 해석
     public static string Ui(string key, IReadOnlyDictionary<string, object> args = null)
     {

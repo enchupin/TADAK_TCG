@@ -48,6 +48,20 @@ public static class LocalizationManager
         return currentLanguageCode;
     }
 
+    // 저장된 언어 없이 시스템 언어를 따르는 중인지 (설정 화면 표시용)
+    public static bool IsFollowingSystemLanguage()
+    {
+        EnsureInitialized();
+        return !PlayerPrefs.HasKey(LanguagePlayerPrefsKey);
+    }
+
+    // 현재 언어 → languages.json 폴백 → 원문 언어 순서
+    public static IReadOnlyList<string> GetFallbackChain()
+    {
+        EnsureInitialized();
+        return catalog.GetFallbackChain(currentLanguageCode);
+    }
+
     // 설정 화면 목록용 (enabled: false 언어는 기본 제외)
     public static IReadOnlyList<LocalizationLanguageInfo> GetLanguages(bool includeDisabled = false)
     {
