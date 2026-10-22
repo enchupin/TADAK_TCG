@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 /// <summary>
@@ -33,6 +34,7 @@ public class TooltipView : MonoBehaviour
     private TooltipTrigger currentTrigger;
     private Canvas anchorCanvas;
     private string shownText;
+    private bool hasLoggedMissingReference;
 
     // 포맷터가 사용하는 강조 색상, 툴팁이 없는 씬에서는 기본값
     public static TooltipColors Colors => Instance != null && Instance.palette != null
@@ -99,6 +101,14 @@ public class TooltipView : MonoBehaviour
             return;
         }
 
+        // 카드를 끌어 대상 위에 올릴 때 툴팁이 가리지 않도록 숨기고, 놓은 뒤 아직 호버 중이면 다시 표시
+        if (IsCardDragging())
+        {
+            SetPanelVisible(false);
+            shownText = null;
+            return;
+        }
+
         // 표시 중에도 매 프레임 문구를 다시 받아 수치 변화를 반영
         string nextText = currentTrigger.GetText();
         if (string.IsNullOrWhiteSpace(nextText))
@@ -122,7 +132,13 @@ public class TooltipView : MonoBehaviour
     {
         if (panel == null || text == null)
         {
-            Debug.LogError("[TooltipView] 툴팁 패널 또는 텍스트가 인스펙터에 연결되지 않았습니다");
+            // 호버할 때마다 반복 출력되지 않도록 한 번만 기록
+            if (!hasLoggedMissingReference)
+            {
+                hasLoggedMissingReference = true;
+                Debug.LogError("[TooltipView] 툴팁 패널 또는 텍스트가 인스펙터에 연결되지 않았습니다");
+            }
+
             return;
         }
 
@@ -171,6 +187,14 @@ public class TooltipView : MonoBehaviour
             canvasGroup.blocksRaycasts = false;
             canvasGroup.interactable = false;
         }
+    }
+
+    // 드래그 플래그가 남아 있어도 버튼을 놓았다면 드래그 중이 아님
+    private static bool IsCardDragging()
+    {
+        return CardInteractionHandler.IsAnyCardDragging
+            && Mouse.current != null
+            && Mouse.current.leftButton.isPressed;
     }
 
     private void SetPanelVisible(bool visible)
