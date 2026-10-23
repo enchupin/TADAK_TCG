@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 501974c78ecab8642af88de9f9f27fae, type: 3}
   m_Name: LocalizedTMPFontProfile
   m_EditorClassIdentifier: Assembly-CSharp::LocalizedTMPFontProfile
-  defaultFont: {fileID: 11400000, guid: 6f7bf3d360620c2459502dff08ee581e, type: 2}
+  defaultFont: {fileID: 11400000, guid: 19af3c75d57839941827b61d0153c210, type: 2}
   koreanFont: {fileID: 11400000, guid: 19af3c75d57839941827b61d0153c210, type: 2}
   englishFont: {fileID: 11400000, guid: 6f7bf3d360620c2459502dff08ee581e, type: 2}
   japaneseFont: {fileID: 11400000, guid: 5a51ef267beb6dc45ba8f4fa17077942, type: 2}
@@ -20,4 +20,11 @@ MonoBehaviour:
   chineseSimplifiedFont: {fileID: 11400000, guid: b439bc6b31a783849b699d32ce60694f, type: 2}
   russianFont: {fileID: 11400000, guid: 6f7bf3d360620c2459502dff08ee581e, type: 2}
   additionalFonts: []
-  autoApplyToScenes: 0
+  defaultMaterial: {fileID: 2100000, guid: b3701be0992e9834eb3673f1d1ea814f, type: 2}
+  koreanMaterial: {fileID: 2100000, guid: b3701be0992e9834eb3673f1d1ea814f, type: 2}
+  englishMaterial: {fileID: 2100000, guid: b3466e095b5f6044fa165937bda7b993, type: 2}
+  japaneseMaterial: {fileID: 2100000, guid: 466b65a8571bcc1429f6a8ef48fcaa0e, type: 2}
+  chineseTraditionalMaterial: {fileID: 2100000, guid: 2b4c19ef8f225e241a09cf6c36166589, type: 2}
+  chineseSimplifiedMaterial: {fileID: 2100000, guid: ce98f9a0e76d1bb4499275d7540b7d5a, type: 2}
+  russianMaterial: {fileID: 2100000, guid: b3466e095b5f6044fa165937bda7b993, type: 2}
+  autoApplyToScenes: 1

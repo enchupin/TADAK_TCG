@@ -45,11 +45,35 @@ public static class LocalizedFontApplier
             return;
         }
 
-        TMP_FontAsset font = currentProfile.GetFont(LocalizationManager.GetCurrentLanguageCode());
+        // 폰트를 바꾸면 TMP가 머터리얼을 새 폰트 기본값으로 되돌리므로 교체 전에 프리셋 사용 여부를 기억
+        bool usesPreset = currentProfile.IsManagedMaterial(text.fontSharedMaterial);
+        string languageCode = LocalizationManager.GetCurrentLanguageCode();
+
+        TMP_FontAsset font = currentProfile.GetFont(languageCode);
         if (font != null && text.font != font)
         {
             text.font = font;
         }
+
+        if (!usesPreset)
+        {
+            return;
+        }
+
+        Material material = currentProfile.GetMaterial(languageCode);
+        if (material == null || text.fontSharedMaterial == material)
+        {
+            return;
+        }
+
+        // 아틀라스가 다른 머터리얼을 쓰면 글자가 깨지므로 같은 폰트용 프리셋일 때만 적용
+        if (!material.HasProperty(ShaderUtilities.ID_MainTex) || material.GetTexture(ShaderUtilities.ID_MainTex) != text.font.atlasTexture)
+        {
+            Debug.LogWarning($"[LocalizedFontApplier] '{material.name}' 머터리얼의 아틀라스가 '{text.font.name}' 폰트와 달라 적용하지 않음");
+            return;
+        }
+
+        text.fontSharedMaterial = material;
     }
 
     private static void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
