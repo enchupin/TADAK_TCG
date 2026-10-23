@@ -5,6 +5,9 @@ public static class BuffMetadataDatabase
 {
     private static readonly Dictionary<int, BuffData> BuffDatabase = new Dictionary<int, BuffData>();
     private static readonly Dictionary<string, int> BuffIdByName = new Dictionary<string, int>(StringComparer.Ordinal);
+    // 현재 언어 이름 → ID (언어 변경 시 다시 만듦)
+    private static readonly Dictionary<string, int> BuffIdByDisplayName = new Dictionary<string, int>(StringComparer.Ordinal);
+    private static bool displayNameIndexDirty = true;
     private static bool isLoaded;
 
     public static void Preload()
@@ -34,6 +37,35 @@ public static class BuffMetadataDatabase
         }
 
         return BuffIdByName.TryGetValue(buffName, out buffId);
+    }
+
+    // 원문 이름 또는 현재 언어 이름으로 조회 (의도 문장의 (이름) 표기용)
+    public static bool TryGetBuffIdByAnyName(string buffName, out int buffId)
+    {
+        if (TryGetBuffId(buffName, out buffId))
+        {
+            return true;
+        }
+
+        if (string.IsNullOrWhiteSpace(buffName))
+        {
+            return false;
+        }
+
+        if (displayNameIndexDirty)
+        {
+            displayNameIndexDirty = false;
+            BuffIdByDisplayName.Clear();
+            foreach (BuffData data in BuffDatabase.Values)
+            {
+                if (!string.IsNullOrWhiteSpace(data?.name) && !BuffIdByDisplayName.ContainsKey(data.name))
+                {
+                    BuffIdByDisplayName.Add(data.name, data.buffId);
+                }
+            }
+        }
+
+        return BuffIdByDisplayName.TryGetValue(buffName.Trim(), out buffId);
     }
 
     private static void EnsureLoaded()
@@ -101,18 +133,8 @@ public static class BuffMetadataDatabase
             signed = sourceData.signed,
             name = sourceData.name,
             description = sourceData.description,
-            koName = sourceData.name,
-            koDescription = sourceData.description,
-            enName = sourceData.enName,
-            enDescription = sourceData.enDescription,
-            jaName = sourceData.jaName,
-            jaDescription = sourceData.jaDescription,
-            zhHantName = sourceData.zhHantName,
-            zhHantDescription = sourceData.zhHantDescription,
-            zhHansName = sourceData.zhHansName,
-            zhHansDescription = sourceData.zhHansDescription,
-            ruName = sourceData.ruName,
-            ruDescription = sourceData.ruDescription
+            sourceName = sourceData.name,
+            sourceDescription = sourceData.description
         };
     }
 
@@ -147,32 +169,17 @@ public static class BuffMetadataDatabase
             return;
         }
 
-        LocalizationLanguage currentLanguage = LocalizationManager.GetCurrentLanguage();
-        runtimeData.name = LocalizationManager.ResolveLocalizedText(
-            currentLanguage,
-            runtimeData.koName,
-            runtimeData.enName,
-            runtimeData.jaName,
-            runtimeData.zhHantName,
-            runtimeData.zhHansName,
-            runtimeData.ruName,
-            runtimeData.name);
-        runtimeData.description = LocalizationManager.ResolveLocalizedText(
-            currentLanguage,
-            runtimeData.koDescription,
-            runtimeData.enDescription,
-            runtimeData.jaDescription,
-            runtimeData.zhHantDescription,
-            runtimeData.zhHansDescription,
-            runtimeData.ruDescription,
-            runtimeData.description);
+        // 설명은 [buff:id] 참조 · {stack} 자리표시가 남은 틀 (툴팁에서 해석)
+        runtimeData.name = GameText.BuffName(runtimeData.buffId, runtimeData.sourceName);
+        runtimeData.description = GameText.BuffDescription(runtimeData.buffId, runtimeData.sourceDescription);
+        displayNameIndexDirty = true;
     }
 
     private static string GetLookupName(BuffData runtimeData)
     {
-        if (!string.IsNullOrWhiteSpace(runtimeData?.koName))
+        if (!string.IsNullOrWhiteSpace(runtimeData?.sourceName))
         {
-            return runtimeData.koName;
+            return runtimeData.sourceName;
         }
 
         return runtimeData?.name ?? string.Empty;

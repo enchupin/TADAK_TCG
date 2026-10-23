@@ -139,7 +139,7 @@ public static class BuffMetadataDatabase {
   if(data!=null)return;
   var dir=new System.IO.DirectoryInfo(AppContext.BaseDirectory);
   while(dir!=null&&!System.IO.Directory.Exists(System.IO.Path.Combine(dir.FullName,"Assets")))dir=dir.Parent;
-  var json=System.Text.Json.JsonDocument.Parse(System.IO.File.ReadAllText(System.IO.Path.Combine(dir.FullName,"Assets","Resources","Localization","buffs.json")));
+  var json=System.Text.Json.JsonDocument.Parse(System.IO.File.ReadAllText(System.IO.Path.Combine(dir.FullName,"Assets","Resources","JsonData","buffs.json")));
   data=new();
   foreach(var e in json.RootElement.GetProperty("buffs").EnumerateArray()){
    var polarity=e.GetProperty("polarity").GetString();

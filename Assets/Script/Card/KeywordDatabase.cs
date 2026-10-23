@@ -6,18 +6,9 @@ using UnityEngine;
 public class KeywordData
 {
     public int keywordId;
+    // 한국어 원문 (JsonData/keywords.json), 번역은 Localization/<언어>/keywords.json
     public string name;
     public string description;
-    public string enName;
-    public string enDescription;
-    public string jaName;
-    public string jaDescription;
-    public string zhHantName;
-    public string zhHantDescription;
-    public string zhHansName;
-    public string zhHansDescription;
-    public string ruName;
-    public string ruDescription;
 }
 
 public static class KeywordDatabase
@@ -34,14 +25,7 @@ public static class KeywordDatabase
             return string.Empty;
         }
 
-        return LocalizationManager.ResolveLocalizedText(
-            keywordData.name,
-            keywordData.enName,
-            keywordData.jaName,
-            keywordData.zhHantName,
-            keywordData.zhHansName,
-            keywordData.ruName,
-            keywordData.name);
+        return GameText.KeywordName(keywordId, keywordData.name);
     }
 
     public static bool TryGetKeywordId(string keywordName, out int keywordId)
@@ -64,14 +48,8 @@ public static class KeywordDatabase
             return string.Empty;
         }
 
-        return LocalizationManager.ResolveLocalizedText(
-            keywordData.description,
-            keywordData.enDescription,
-            keywordData.jaDescription,
-            keywordData.zhHantDescription,
-            keywordData.zhHansDescription,
-            keywordData.ruDescription,
-            keywordData.description);
+        // 설명 안의 [buff:id] 참조는 현재 언어 이름으로
+        return GameText.FormatPlain(GameText.KeywordDescription(keywordId, keywordData.description));
     }
 
     private static void EnsureLoaded()
@@ -98,12 +76,8 @@ public static class KeywordDatabase
             }
 
             keywordById[keywordData.keywordId] = keywordData;
+            // 카드 효과 데이터의 키워드 이름은 한국어 원문 기준
             RegisterKeywordName(keywordData.name, keywordData.keywordId);
-            RegisterKeywordName(keywordData.enName, keywordData.keywordId);
-            RegisterKeywordName(keywordData.jaName, keywordData.keywordId);
-            RegisterKeywordName(keywordData.zhHantName, keywordData.keywordId);
-            RegisterKeywordName(keywordData.zhHansName, keywordData.keywordId);
-            RegisterKeywordName(keywordData.ruName, keywordData.keywordId);
         }
     }
 

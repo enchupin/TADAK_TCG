@@ -1,7 +1,8 @@
 public class ScareCrowMonster : Monster
 {
     public override int MonsterId => 9001;
-    protected override string MonsterName => "허수아비";
+    // ko: 허수아비
+    protected override string MonsterName => GameText.Ui("ui.monster.scareCrow");
     protected override int BaseMaxHp => 1;
 
     protected override void BuildNextAction()

@@ -1,0 +1,22 @@
+{
+    "keyword.1.desc": "回合结束时，此牌不会从手牌中丢弃，并触发其保留：效果。",
+    "keyword.1.name": "保留",
+    "keyword.10.desc": "额外重复指定的效果。",
+    "keyword.10.name": "重复",
+    "keyword.2.desc": "此牌不能被打出。",
+    "keyword.2.name": "不能被打出",
+    "keyword.3.desc": "此牌打出后会被消耗，而不是丢弃。",
+    "keyword.3.name": "消耗",
+    "keyword.4.desc": "此牌打出后不会丢弃，而是在本场战斗中依附于队伍。不视为消耗。",
+    "keyword.4.name": "铭刻",
+    "keyword.5.desc": "战斗开始时抽到此牌。",
+    "keyword.5.name": "开局",
+    "keyword.6.desc": "打出时，将一张带有幽灵的此牌复制品加入你的手牌。复制品保持原耗能（至少为1）。",
+    "keyword.6.name": "暗影",
+    "keyword.7.desc": "打出此牌后，你的回合强制结束。",
+    "keyword.7.name": "终幕",
+    "keyword.8.desc": "此牌在打出时或回合结束时被消耗。",
+    "keyword.8.name": "幽灵",
+    "keyword.9.desc": "牌组中不能存在同类型的牌。",
+    "keyword.9.name": "唯一"
+}

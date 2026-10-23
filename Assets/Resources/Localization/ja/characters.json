@@ -1,0 +1,22 @@
+{
+    "character.101.identity": "ランダムなポーションを3枚調合する。すべての敵に[buff:4001]3を付与する。",
+    "character.101.name": "アイラ",
+    "character.102.identity": "デッキのカードを1枚選んでコピーする。[buff:1025]を得る。",
+    "character.102.name": "ジャック",
+    "character.103.identity": "他のキャラクターのアイデンティティゲージをそれぞれ4ずつ溜める。",
+    "character.103.name": "クリーム",
+    "character.201.identity": "[buff:3009]8を得る。すべての敵に[buff:4003]2を付与する。",
+    "character.201.name": "イグニア",
+    "character.202.identity": "[buff:3024]2を得る。[buff:3063]3を得る。",
+    "character.202.name": "ヴァネッサ",
+    "character.203.identity": "アップグレード済みの羽根カードを2枚生成する。[buff:3065]1を得る。",
+    "character.203.name": "メレル",
+    "character.204.identity": "すべての敵に[buff:4016]10を付与する。[buff:4016]が敵の最大HPより高ければ即座に発動する。[buff:3066]2を得る。",
+    "character.204.name": "ミオ",
+    "character.301.identity": "10ブロックを得る。すべての敵に[buff:4004]2を付与する。",
+    "character.301.name": "ポーラー",
+    "character.302.identity": "{runeBuff}5を得る。自分のターン終了時の効果を1回発動する。",
+    "character.302.name": "ルーン",
+    "character.303.identity": "[buff:3001]6と12ブロックを得る。",
+    "character.303.name": "カーン"
+}

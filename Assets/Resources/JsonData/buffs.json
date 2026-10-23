@@ -1,0 +1,811 @@
+{
+    "buffs": [
+        {
+            "buffId": 1001,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "강화: 부식",
+            "description": "적의 (부식)이 강화됩니다. 이 효과가 있는 동안 모든 적의 (부식)이 (관통)으로 적용됩니다."
+        },
+        {
+            "buffId": 1002,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "강화: 포션",
+            "description": "모든 포션 카드가 강화됩니다."
+        },
+        {
+            "buffId": 1003,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "순환: 포션",
+            "description": "포션 카드를 사용할 때마다 카드를 1장 뽑습니다."
+        },
+        {
+            "buffId": 1004,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "강화: 빙하",
+            "description": "빙하 조형 카드가 강화됩니다."
+        },
+        {
+            "buffId": 1006,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "금기 해제",
+            "description": "사용불가 카드를 사용할 수 있습니다. 사용한 사용불가 카드는 소멸됩니다."
+        },
+        {
+            "buffId": 1007,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "더블",
+            "description": "같은 비용의 카드를 연속 2장 쓸 때마다 카드를 1장 뽑습니다."
+        },
+        {
+            "buffId": 1008,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "복제 생성",
+            "description": "카드를 생성할 때 마다 그 카드를 복제합니다."
+        },
+        {
+            "buffId": 1009,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "풀하우스",
+            "description": "매 턴 처음으로 쓰는 비용이 3 이상인 카드가 1번 더 발동됩니다."
+        },
+        {
+            "buffId": 1010,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "스트레이트",
+            "description": "한 턴에 비용 1·2·3 카드를 모두 쓰면 에너지를 2 얻고 카드를 1장 뽑습니다. (턴당 1회)"
+        },
+        {
+            "buffId": 1013,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "영구 동결",
+            "description": "매 턴 시작 시 보호막을 잃지 않습니다."
+        },
+        {
+            "buffId": 1014,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "전환: 보호",
+            "description": "턴 종료 시 우피가 보호 모드가 됩니다."
+        },
+        {
+            "buffId": 1015,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "순환: 깃털",
+            "description": "깃털 카드를 사용할 때마다 카드를 1장 뽑습니다."
+        },
+        {
+            "buffId": 1017,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "영혼 보호",
+            "description": "사망 시 체력이 1인 상태로 한 번 살아납니다."
+        },
+        {
+            "buffId": 1018,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "전환: 공격",
+            "description": "턴 시작 시 우피가 공격 모드가 됩니다."
+        },
+        {
+            "buffId": 1019,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "의도된 분노",
+            "description": "내가 입히는 피해량이 2배가 됩니다. 대신 다른 아군이 입히는 피해량이 절반이 됩니다."
+        },
+        {
+            "buffId": 1020,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "혈투",
+            "description": "내 체력을 잃게 하는 카드들이 반복을 얻습니다."
+        },
+        {
+            "buffId": 1021,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "구사일생",
+            "description": "죽음에 이르는 피해를 받을 시, 해당 턴 동안 체력이 1 미만으로 내려가지 않습니다."
+        },
+        {
+            "buffId": 1022,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "이중 깃털",
+            "description": "(깃털) 카드가 반복을 얻습니다."
+        },
+        {
+            "buffId": 1024,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "로열",
+            "description": "한 턴에 파티 3명의 카드를 모두 쓸 때마다 에너지를 1 얻습니다."
+        },
+        {
+            "buffId": 1025,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "행운",
+            "description": "다음 동전이 앞면으로 확정됩니다. 동전으로만 소모됩니다."
+        },
+        {
+            "buffId": 1026,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "처형자",
+            "description": "(깃털)을 보유한 적을 처치할 때마다 에너지를 1 얻고 카드를 1장 뽑습니다."
+        },
+        {
+            "buffId": 1027,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "사냥꾼",
+            "description": "기절·(덫 상태)인 적은 항상 (관통) 상태로 피해를 받습니다."
+        },
+        {
+            "buffId": 1028,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "족보",
+            "description": "(더블), (풀하우스), (스트레이트), (로열)을 종속합니다."
+        },
+        {
+            "buffId": 2001,
+            "polarity": "harmful",
+            "stackable": false,
+            "name": "드로우 불가",
+            "description": "이번 턴에 더 이상 카드를 뽑을 수 없습니다."
+        },
+        {
+            "buffId": 2002,
+            "polarity": "harmful",
+            "stackable": false,
+            "name": "화염 전이",
+            "description": "사망 시 내 (발화) 수치만큼 아군이 (발화)를 얻습니다."
+        },
+        {
+            "buffId": 2003,
+            "polarity": "harmful",
+            "stackable": false,
+            "name": "덫 상태",
+            "description": "이번 턴에 보호막을 얻을 수 없습니다."
+        },
+        {
+            "buffId": 3001,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "재생",
+            "description": "턴 종료 시 체력을 {stack} 회복합니다. 턴 종료 시 1 감소합니다."
+        },
+        {
+            "buffId": 3002,
+            "polarity": "beneficial",
+            "stackable": true,
+            "signed": true,
+            "name": "힘",
+            "description": "공격할 때 피해량이 {stack} 증가합니다."
+        },
+        {
+            "buffId": 3003,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "제조",
+            "description": "매 턴 시작 시 무작위 포션 카드를 {stack장} 생성합니다."
+        },
+        {
+            "buffId": 3004,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "폐기물",
+            "description": "포션 카드를 사용할 때마다 무작위 적에게 (부식)을 {stack} 부여합니다."
+        },
+        {
+            "buffId": 3006,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "잔악무도",
+            "description": "부정적인 효과를 부여할 때마다 모든 적에게 피해를 {stack} 입힙니다."
+        },
+        {
+            "buffId": 3008,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "강화: 드로우",
+            "description": "매 턴 시작 시 카드를 {stack장} 더 뽑습니다."
+        },
+        {
+            "buffId": 3009,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "강공",
+            "description": "다음 공격의 피해량이 {stack} 증가합니다."
+        },
+        {
+            "buffId": 3010,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "가시",
+            "description": "공격받을 때마다 공격한 적이 피해를 {stack} 받습니다."
+        },
+        {
+            "buffId": 3011,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "예방",
+            "description": "다음 턴 시작 시 보호막을 잃지 않습니다."
+        },
+        {
+            "buffId": 3012,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "결속",
+            "description": "카드로 얻는 보호막이 {stack} 증가합니다."
+        },
+        {
+            "buffId": 3013,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "절대영도",
+            "description": "턴 시작 시 모든 적에게 (빙결)을 {stack} 부여합니다."
+        },
+        {
+            "buffId": 3014,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "산산조각",
+            "description": "매 턴 시작 시 빙하 조형 카드를 {stack장} 생성합니다."
+        },
+        {
+            "buffId": 3015,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "냉기",
+            "description": "내 보호막이 감소할 때마다 모든 적에게 (빙결)을 {stack} 부여합니다."
+        },
+        {
+            "buffId": 3016,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "회피",
+            "description": "다음 공격을 {stack회} 회피합니다."
+        },
+        {
+            "buffId": 3018,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "발열",
+            "description": "매 턴 시작 시 (강공)을 {stack} 얻습니다."
+        },
+        {
+            "buffId": 3019,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "불주먹",
+            "description": "이번 턴 동안 공격할 때마다 적에게 (발화)를 {stack} 부여합니다."
+        },
+        {
+            "buffId": 3020,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "용암 피부",
+            "description": "공격받을 때마다 공격한 적에게 (발화)를 {stack} 부여합니다."
+        },
+        {
+            "buffId": 3023,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "재사용",
+            "description": "다음 {stack}번 동안 사용하는 카드가 1번 더 사용됩니다"
+        },
+        {
+            "buffId": 3024,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "연격",
+            "description": "이번 턴에 카드를 사용할 때마다 모든 적에게 피해를 {stack} 입힙니다."
+        },
+        {
+            "buffId": 3026,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "아슬아슬",
+            "description": "이번 턴에 받는 피해가 1로 고정됩니다. 턴 종료 시 1 감소합니다."
+        },
+        {
+            "buffId": 3027,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "예고",
+            "description": "다음에 사용하는 카드의 비용이 0이 됩니다."
+        },
+        {
+            "buffId": 3028,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "준비",
+            "description": "매 턴 종료 시 카드를 {stack장} 선택하여 보존합니다."
+        },
+        {
+            "buffId": 3029,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "광대",
+            "description": "매 턴 시작 시 무작위로 강화된 잭의 고유 카드를 {stack장} 획득합니다."
+        },
+        {
+            "buffId": 3031,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "동력",
+            "description": "현재 동력이 {stack} 중첩되어 있습니다. 우피가 동력에 영향을 받습니다."
+        },
+        {
+            "buffId": 3032,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "배터리",
+            "description": "매 턴 시작 시 {동력}을 {stack} 얻습니다."
+        },
+        {
+            "buffId": 3034,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "겹치기",
+            "description": "(깃털)을 부여할 때마다 {stack} 더 부여합니다."
+        },
+        {
+            "buffId": 3035,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "각인 반복",
+            "description": "다음에 사용하는 각인 카드 {stack장}을 반복합니다."
+        },
+        {
+            "buffId": 3036,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "자라나는 깃털",
+            "description": "매 턴 시작 시 깃털 카드를 {stack장} 생성합니다."
+        },
+        {
+            "buffId": 3037,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "정밀",
+            "description": "깃털 카드의 피해량이 {stack} 증가합니다."
+        },
+        {
+            "buffId": 3041,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "계약: 카드",
+            "description": "카드가 소멸될 때마다 카드를 {stack장} 뽑습니다."
+        },
+        {
+            "buffId": 3042,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "계약: 힘",
+            "description": "매 턴 시작 시 (결속)을 {stack} 잃고 (힘)을 {stack} 얻습니다."
+        },
+        {
+            "buffId": 3043,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "우피: 보호",
+            "description": "턴 종료 시 또는 모드 변경 시 보호막을 {stack} 얻습니다."
+        },
+        {
+            "buffId": 3044,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "우피: 공격",
+            "description": "모든 피해량이 2배가 됩니다."
+        },
+        {
+            "buffId": 3045,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "이중 동작",
+            "description": "턴 종료 효과가 {stack회} 더 발동됩니다."
+        },
+        {
+            "buffId": 3046,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "순환: 모드",
+            "description": "우피의 모드가 바뀔 때마다 카드를 {stack장} 뽑습니다."
+        },
+        {
+            "buffId": 3047,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "과충전",
+            "description": "{동력}을 얻을 때 {stack} 더 얻습니다."
+        },
+        {
+            "buffId": 3048,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "콤보",
+            "description": "피해를 7회 입힐 때마다 피해량이 2배가 됩니다."
+        },
+        {
+            "buffId": 3049,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "불타는 투지",
+            "description": "매 턴 시작 시 체력을 2 잃고 보호막을 {stack} 얻습니다."
+        },
+        {
+            "buffId": 3050,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "불굴",
+            "description": "내 턴 동안 체력을 잃을 때마다 보호막을 {stack} 얻습니다."
+        },
+        {
+            "buffId": 3051,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "승자의 휴식",
+            "description": "전투가 종료될 때 체력을 {stack} 회복합니다."
+        },
+        {
+            "buffId": 3052,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "광전사",
+            "description": "내 턴 동안 체력을 잃을 때마다 모든 적에게 피해를 {stack} 입힙니다."
+        },
+        {
+            "buffId": 3053,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "기력 초과",
+            "description": "최대 에너지가 {stack} 증가합니다."
+        },
+        {
+            "buffId": 3056,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "수중 호흡",
+            "description": "(익사)를 부여할 때마다 보호막을 {stack} 얻습니다."
+        },
+        {
+            "buffId": 3057,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "잠식",
+            "description": "매 턴 시작 시 무작위 적에게 (익사)를 {stack} 부여합니다."
+        },
+        {
+            "buffId": 3059,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "부정한 물",
+            "description": "적에게 해로운 효과를 부여할 때마다 대상에게 (익사)를 {stack} 부여합니다."
+        },
+        {
+            "buffId": 3061,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "촉매",
+            "description": "다음에 사용하는 포션은 추가로 대상이 보유한 반응 상태를 각각 {stack}만큼 부여합니다."
+        },
+        {
+            "buffId": 3062,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "반격",
+            "description": "이번 턴 동안 공격을 완전히 막을 때마다 공격자에게 피해를 {stack} 입힙니다."
+        },
+        {
+            "buffId": 3063,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "득점",
+            "description": "득점 {stack}점. 득점 소모 카드는 득점이 기준보다 많으면 항상 소모합니다."
+        },
+        {
+            "buffId": 3064,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "유효타",
+            "description": "막히지 않은 공격 피해를 입힐 때마다 (득점)을 {stack} 얻습니다."
+        },
+        {
+            "buffId": 3065,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "은신",
+            "description": "받는 피해가 25% 감소합니다. 피격될 때마다 1 감소합니다."
+        },
+        {
+            "buffId": 3066,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "물결",
+            "description": "물결 {stack}. 소모 카드가 피해로 바꿉니다."
+        },
+        {
+            "buffId": 3067,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "만조",
+            "description": "매 턴 시작 시 (물결)을 {stack} 얻습니다."
+        },
+        {
+            "buffId": 3068,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "조류",
+            "description": "팽창 카드를 쓸 때마다 (물결)을 {stack} 얻습니다."
+        },
+        {
+            "buffId": 3069,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "물의 품",
+            "description": "(익사)로 적이 죽을 때마다 (물결)을 {stack} 얻습니다."
+        },
+        {
+            "buffId": 3070,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "동면",
+            "description": "매 턴 보호막으로 막은 공격 피해의 {stack}×10%만큼 턴 종료 시 회복합니다."
+        },
+        {
+            "buffId": 3071,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "계약: 피",
+            "description": "파티가 카드로 체력을 잃을 때마다 (힘)을 {stack} 얻습니다."
+        },
+        {
+            "buffId": 3072,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "성역",
+            "description": "이번 턴에 받는 공격 피해가 {stack} 감소합니다."
+        },
+        {
+            "buffId": 3073,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "덫 설치",
+            "description": "적이 공격할 때마다 1 소모해 그 적에게 피해를 6 주고 (덫 상태)로 만듭니다."
+        },
+        {
+            "buffId": 3074,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "부엉이의 눈",
+            "description": "적에게 해로운 효과를 부여할 때마다 그 적에게 (깃털)을 {stack} 부여합니다."
+        },
+        {
+            "buffId": 3075,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "저주 회복",
+            "description": "내 턴 종료 시 (힘)을 {stack} 얻습니다."
+        },
+        {
+            "buffId": 4001,
+            "polarity": "harmful",
+            "stackable": true,
+            "name": "부식",
+            "description": "받는 피해가 25% 증가합니다. 보유자의 턴이 시작될 때 1 감소합니다."
+        },
+        {
+            "buffId": 4002,
+            "polarity": "harmful",
+            "stackable": true,
+            "name": "관통",
+            "description": "받는 피해가 50% 증가합니다. 보유자의 턴이 시작될 때 1 감소합니다."
+        },
+        {
+            "buffId": 4003,
+            "polarity": "harmful",
+            "stackable": true,
+            "name": "발화",
+            "description": "턴 종료 시 피해를 {stack} 입습니다."
+        },
+        {
+            "buffId": 4004,
+            "polarity": "harmful",
+            "stackable": true,
+            "name": "빙결",
+            "description": "중첩이 7이 되면 중첩을 잃고 기절 상태가 됩니다. 보스는 기절하는 대신 피해를 20 받습니다."
+        },
+        {
+            "buffId": 4006,
+            "polarity": "harmful",
+            "stackable": true,
+            "signed": true,
+            "name": "근육 이완",
+            "description": "턴 종료 시 (힘)이 {stack} 감소합니다. 음수일 경우 (힘)이 증가합니다."
+        },
+        {
+            "buffId": 4008,
+            "polarity": "harmful",
+            "stackable": true,
+            "name": "약화",
+            "description": "공격 시 입히는 피해가 25% 감소합니다."
+        },
+        {
+            "buffId": 4009,
+            "polarity": "harmful",
+            "stackable": true,
+            "name": "잔혹",
+            "description": "부정적인 효과를 얻을 때마다 피해를 {stack} 받습니다."
+        },
+        {
+            "buffId": 4011,
+            "polarity": "harmful",
+            "stackable": true,
+            "name": "빈약",
+            "description": "보호막의 획득량이 50% 감소합니다."
+        },
+        {
+            "buffId": 4012,
+            "polarity": "harmful",
+            "stackable": true,
+            "name": "드로우 방해",
+            "description": "다음 턴에 카드를 {stack장} 덜 뽑습니다."
+        },
+        {
+            "buffId": 4013,
+            "polarity": "harmful",
+            "stackable": true,
+            "name": "생명 연결",
+            "description": "이번 턴 동안 내가 체력을 잃는 만큼 적의 체력이 회복됩니다."
+        },
+        {
+            "buffId": 4014,
+            "polarity": "harmful",
+            "stackable": true,
+            "name": "깃털",
+            "description": "현재 (깃털)이 {stack} 중첩되어 있습니다. 발동될 때마다 중첩 + 최대 체력의 중첩%만큼 피해를 입히고 1 감소합니다."
+        },
+        {
+            "buffId": 4015,
+            "polarity": "harmful",
+            "stackable": true,
+            "name": "해체",
+            "description": "턴 종료 시 (결속)이 {stack} 감소합니다."
+        },
+        {
+            "buffId": 4016,
+            "polarity": "harmful",
+            "stackable": true,
+            "name": "익사",
+            "description": "턴 종료 시 (익사)보다 체력이 낮다면 죽습니다."
+        },
+        {
+            "buffId": 4017,
+            "polarity": "harmful",
+            "stackable": true,
+            "name": "소용돌이",
+            "description": "턴 시작 시 (익사)를 {stack} 얻습니다."
+        },
+        {
+            "buffId": 4018,
+            "polarity": "harmful",
+            "stackable": true,
+            "name": "표식",
+            "description": "공격 피해를 받으면 표식을 모두 소모하고 최대 체력의 {stack}%만큼 추가 피해를 받습니다."
+        },
+        {
+            "buffId": 5001,
+            "polarity": "passive",
+            "stackable": true,
+            "name": "체력 강탈",
+            "description": "막히지 않은 피해를 입히면 최대 체력을 1 빼앗습니다."
+        },
+        {
+            "buffId": 5002,
+            "polarity": "passive",
+            "stackable": true,
+            "name": "공허 껍질",
+            "description": "매 턴 처음 피해를 입을 때 보호막을 {stack} 얻습니다."
+        },
+        {
+            "buffId": 5003,
+            "polarity": "passive",
+            "stackable": false,
+            "name": "신실한 기도",
+            "description": "턴을 종료할 때마다 (힘), (결속)을 1씩 얻습니다."
+        },
+        {
+            "buffId": 5004,
+            "polarity": "passive",
+            "stackable": false,
+            "name": "기생하는 버섯",
+            "description": "막히지 않은 피해를 입히면 최대 체력을 2 감소시킵니다."
+        },
+        {
+            "buffId": 5005,
+            "polarity": "beneficial",
+            "stackable": false,
+            "name": "강화: 중독",
+            "description": "모든 중독 카드가 강화됩니다."
+        },
+        {
+            "buffId": 5006,
+            "polarity": "passive",
+            "stackable": true,
+            "name": "장난꾸러기 유령",
+            "description": "{stack} 턴 뒤에 전투에서 이탈하려고 합니다."
+        },
+        {
+            "buffId": 5007,
+            "polarity": "beneficial",
+            "stackable": true,
+            "name": "도둑",
+            "description": "사망 시 훔친 카드들이 덱으로 돌아갑니다."
+        },
+        {
+            "buffId": 5008,
+            "polarity": "passive",
+            "stackable": true,
+            "name": "타오르는 불꽃",
+            "description": "사망한 뒤 아직 살아있는 다른 불꽃 정령이 있다면 2턴 뒤 부활합니다."
+        },
+        {
+            "buffId": 5009,
+            "polarity": "passive",
+            "stackable": true,
+            "name": "여덟 다리",
+            "description": "체력을 50 잃을 때마다 다리를 1개 잃고 (힘)을 3 얻습니다."
+        },
+        {
+            "buffId": 5010,
+            "polarity": "passive",
+            "stackable": true,
+            "name": "미래 포식",
+            "description": "내 턴 시작 시 이로운 효과를 하나 제거하고, 체력을 11 회복하고 (힘)을 2 얻습니다."
+        },
+        {
+            "buffId": 5011,
+            "polarity": "passive",
+            "stackable": false,
+            "name": "뿌리내림",
+            "description": "보호막이 사라지지 않고 패턴이 강화됩니다. 보호막을 모두 잃으면 기절합니다."
+        },
+        {
+            "buffId": 5012,
+            "polarity": "passive",
+            "stackable": true,
+            "name": "거울",
+            "description": "받은 피해만큼 중첩됩니다. 공격하면 0으로 초기화됩니다."
+        },
+        {
+            "buffId": 5013,
+            "polarity": "passive",
+            "stackable": false,
+            "name": "독버섯",
+            "description": "사망 시 적에게 (관통)을 2 부여합니다."
+        },
+        {
+            "buffId": 5014,
+            "polarity": "passive",
+            "stackable": false,
+            "name": "조화",
+            "description": "피해를 입힐 때마다 같은 수치의 영구적인 보호막을 얻습니다."
+        }
+    ]
+}

@@ -18,7 +18,9 @@ public class CardUI : MonoBehaviour
     private static readonly Regex BuffTooltipPlaceholderPattern = new(@"\{(?<content>[^{}]+)\}", RegexOptions.Compiled);
     private static readonly Regex BuffTooltipMultipleWhitespacePattern = new(@"\s{2,}", RegexOptions.Compiled);
     private static readonly Regex BuffTooltipWhitespaceBeforePunctuationPattern = new(@"\s+([.,!?])", RegexOptions.Compiled);
-    private static readonly Regex ReferencedBuffNamePattern = new(@"\((?<name>[^()]+)\)", RegexOptions.Compiled);
+    // 카드 툴팁에서 복수형을 고를 때 쓰는 일반 수량 (en other · ru many · fr other)
+    private const int GenericPluralCount = 5;
+    private static readonly Dictionary<string, object> GenericPluralArguments = new() { { "stack", GenericPluralCount } };
     private static readonly Dictionary<Character, Sprite> CharacterBackgroundCache = new();
     private static readonly Dictionary<int, Sprite> CardArtworkCache = new();
     [Header("UI Components")]
@@ -408,7 +410,22 @@ public class CardUI : MonoBehaviour
             return string.Empty;
         }
 
-        return CleanupCommonBuffTooltipText(BuffTooltipPlaceholderPattern.Replace(description, string.Empty));
+        // 카드 툴팁은 기존처럼 참조 버프를 (이름)으로 표시하고 중첩 수치 자리표시는 지움
+        // 중첩 수치를 모르므로 복수형은 일반 복수(GenericPluralCount)로 고름
+        string resolved = LocalizationManager.Format(description, GenericPluralArguments, GameText.ResolveParenthesizedReference, false);
+        resolved = LocalizationManager.Format(resolved, RuneBuffArguments(), GameText.ResolveParenthesizedReference);
+        return CleanupCommonBuffTooltipText(BuffTooltipPlaceholderPattern.Replace(resolved, string.Empty));
+    }
+
+    // 카드 툴팁에는 중첩 수치가 없음: 한국어는 기존처럼 수치를 지우고, 다른 언어는 문장이 깨지지 않게 X로 표시 (增加点 · на урона 방지)
+    private static Dictionary<string, object> RuneBuffArguments()
+    {
+        string stackPlaceholder = LocalizationManager.GetCurrentLanguageCode() == "ko" ? string.Empty : "X";
+        return new Dictionary<string, object>
+        {
+            { GameText.RuneBuffArgument, "(" + GameText.GetCurrentRuneBuffName() + ")" },
+            { "stack", stackPlaceholder }
+        };
     }
 
     private static string CleanupCommonBuffTooltipText(string text)
@@ -423,6 +440,7 @@ public class CardUI : MonoBehaviour
         return cleaned.Trim();
     }
 
+    // 설명 틀의 [buff:id] 참조 (언어와 무관하게 ID로 추출)
     private static List<int> ExtractReferencedBuffIds(string text)
     {
         List<int> referencedBuffIds = new();
@@ -431,21 +449,17 @@ public class CardUI : MonoBehaviour
             return referencedBuffIds;
         }
 
-        MatchCollection matches = ReferencedBuffNamePattern.Matches(text);
-        foreach (Match match in matches)
+        foreach (LocalizedReference reference in LocalizedTextFormatter.ExtractReferences(text))
         {
-            string buffName = match.Groups["name"].Value.Trim();
-            if (string.IsNullOrWhiteSpace(buffName))
+            if (reference.Kind != LocalizedReference.Buff || referencedBuffIds.Contains(reference.Id))
             {
                 continue;
             }
 
-            if (!BuffMetadataDatabase.TryGetBuffId(buffName, out int buffId) || referencedBuffIds.Contains(buffId))
+            if (BuffMetadataDatabase.TryGetBuffData(reference.Id, out _))
             {
-                continue;
+                referencedBuffIds.Add(reference.Id);
             }
-
-            referencedBuffIds.Add(buffId);
         }
 
         return referencedBuffIds;
@@ -504,17 +518,19 @@ public class CardUI : MonoBehaviour
 public static class CardDescriptionFormatter
 {
     private static readonly Regex AmountPlaceholderPattern = new(@"\{amount(?<index>\d*)\}", RegexOptions.Compiled);
-    private static readonly Regex ReferencedBuffNamePattern = new(@"\((?<name>[^()]+)\)", RegexOptions.Compiled);
     // {attack}, {attack2}는 공격·피해 효과 수치, {block}, {block2}는 보호막 효과 수치만 순서대로 가리킴
     private static readonly Regex KindPlaceholderPattern = new(@"\{(?<kind>attack|block)(?<index>\d*)\}", RegexOptions.Compiled);
 
-    private const string CuriosityDescription = "강화됩니다.";
+    // 호기심 카드 설명 (ko: 강화됩니다.)
+    private const string CuriosityDescriptionKey = "ui.card.curious";
+    // 조각 줄 (ko: 조각: {description})
+    private const string FragmentDescriptionKey = "ui.card.fragment";
 
     public static string Format(Card card, TrainingBattleManager battleManager)
     {
         if (card != null && card.isCurious)
         {
-            return CuriosityDescription;
+            return GameText.Ui(CuriosityDescriptionKey);
         }
 
         string fragmentDescription = BuildFragmentDescription(card);
@@ -534,7 +550,7 @@ public static class CardDescriptionFormatter
             return string.Empty;
         }
 
-        return $"조각: {RemoveReferencedBuffParentheses(card.fragmentDescription)}";
+        return GameText.Ui(FragmentDescriptionKey, new Dictionary<string, object> { { "description", GameText.FormatPlain(card.fragmentDescription) } });
     }
 
     private static string FormatBody(Card card, TrainingBattleManager battleManager)
@@ -544,10 +560,12 @@ public static class CardDescriptionFormatter
             return string.Empty;
         }
 
-        string description = ReplaceKindPlaceholders(card.description, card, battleManager);
+        // 수치는 번역문의 복수형 인자로도 넘김 ({attack, plural, …})
+        Dictionary<string, object> args = new();
+        string description = ReplaceKindPlaceholders(card.description, card, battleManager, args);
         if (description.IndexOf("{amount", System.StringComparison.Ordinal) < 0)
         {
-            return RemoveReferencedBuffParentheses(description);
+            return GameText.FormatPlain(description, args);
         }
 
         List<int> amounts = ResolveAmounts(card.effects, battleManager, card);
@@ -555,6 +573,8 @@ public static class CardDescriptionFormatter
         {
             amounts.Add(0);
         }
+
+        AddIndexedArguments(args, "amount", amounts);
 
         string formattedDescription = AmountPlaceholderPattern.Replace(description, match =>
         {
@@ -574,12 +594,13 @@ public static class CardDescriptionFormatter
             return amounts[amountIndex].ToString();
         });
 
-        return RemoveReferencedBuffParentheses(formattedDescription);
+        return GameText.FormatPlain(formattedDescription, args);
     }
 
-    private static string ReplaceKindPlaceholders(string description, Card card, TrainingBattleManager battleManager)
+    private static string ReplaceKindPlaceholders(string description, Card card, TrainingBattleManager battleManager, Dictionary<string, object> args)
     {
-        if (string.IsNullOrEmpty(description) || !KindPlaceholderPattern.IsMatch(description))
+        if (string.IsNullOrEmpty(description)
+            || (description.IndexOf("{attack", System.StringComparison.Ordinal) < 0 && description.IndexOf("{block", System.StringComparison.Ordinal) < 0))
         {
             return description;
         }
@@ -587,6 +608,8 @@ public static class CardDescriptionFormatter
         List<int> attackAmounts = new List<int>();
         List<int> blockAmounts = new List<int>();
         CollectKindAmounts(card.effects, battleManager, card, attackAmounts, blockAmounts);
+        AddIndexedArguments(args, "attack", attackAmounts);
+        AddIndexedArguments(args, "block", blockAmounts);
         return KindPlaceholderPattern.Replace(description, match =>
         {
             List<int> source = match.Groups["kind"].Value == "attack" ? attackAmounts : blockAmounts;
@@ -650,14 +673,19 @@ public static class CardDescriptionFormatter
         }
     }
 
-    private static string RemoveReferencedBuffParentheses(string description)
+    // attack = 첫 값, attack1 · attack2 … = 순서별 값
+    private static void AddIndexedArguments(Dictionary<string, object> args, string name, List<int> values)
     {
-        if (string.IsNullOrWhiteSpace(description))
+        if (args == null || values == null || values.Count == 0)
         {
-            return string.Empty;
+            return;
         }
 
-        return ReferencedBuffNamePattern.Replace(description, "${name}");
+        args[name] = values[0];
+        for (int i = 0; i < values.Count; i++)
+        {
+            args[name + (i + 1)] = values[i];
+        }
     }
 
     private static List<int> ResolveAmounts(List<ICardEffect> effects, TrainingBattleManager battleManager, Card sourceCard)

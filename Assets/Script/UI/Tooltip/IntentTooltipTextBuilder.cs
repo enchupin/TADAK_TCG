@@ -5,22 +5,24 @@ using System.Collections.Generic;
 /// </summary>
 public static class IntentTooltipTextBuilder
 {
+    // 의도 이름 (ko: 공격 · 방어 · 강화 · 약화 · 소환 · 자폭 · 방해 · 회복 · 기절 · 이탈)
     public static string GetIntentName(MonsterIntentIconType iconType)
     {
-        return iconType switch
+        string key = iconType switch
         {
-            MonsterIntentIconType.Attack => "공격",
-            MonsterIntentIconType.Protection => "방어",
-            MonsterIntentIconType.BeneficialEffect => "강화",
-            MonsterIntentIconType.HarmfulEffect => "약화",
-            MonsterIntentIconType.Summon => "소환",
-            MonsterIntentIconType.Bomb => "자폭",
-            MonsterIntentIconType.DisruptCard => "방해",
-            MonsterIntentIconType.Heal => "회복",
-            MonsterIntentIconType.Stun => "기절",
-            MonsterIntentIconType.Leave => "이탈",
-            _ => string.Empty
+            MonsterIntentIconType.Attack => "intent.name.attack",
+            MonsterIntentIconType.Protection => "intent.name.protection",
+            MonsterIntentIconType.BeneficialEffect => "intent.name.beneficialEffect",
+            MonsterIntentIconType.HarmfulEffect => "intent.name.harmfulEffect",
+            MonsterIntentIconType.Summon => "intent.name.summon",
+            MonsterIntentIconType.Bomb => "intent.name.bomb",
+            MonsterIntentIconType.DisruptCard => "intent.name.disruptCard",
+            MonsterIntentIconType.Heal => "intent.name.heal",
+            MonsterIntentIconType.Stun => "intent.name.stun",
+            MonsterIntentIconType.Leave => "intent.name.leave",
+            _ => null
         };
+        return key != null ? GameText.Ui(key) : string.Empty;
     }
 
     public static string Build(IReadOnlyList<MonsterIntentLine> lines)
@@ -36,7 +38,7 @@ public static class IntentTooltipTextBuilder
             formattedLines.Add((BuildIntentName(line.IconTypes), line.Sentence));
         }
 
-        return IntentTooltipFormatter.FormatLines(formattedLines, TooltipView.Colors, BuffTooltipTextBuilder.TryResolveReference);
+        return IntentTooltipFormatter.FormatLines(formattedLines, TooltipView.Colors, BuffTooltipTextBuilder.TryResolveReference, BuffTooltipTextBuilder.TryResolveBuffId);
     }
 
     // 특수 패턴처럼 한 문장에 여러 의도가 섞이면 이름을 이어서 표시

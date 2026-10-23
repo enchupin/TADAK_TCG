@@ -106,6 +106,7 @@ public abstract class Monster {
  public bool selfDestructed; public void SelfDestruct(){hp=0;defense=0;selfDestructed=true;}
  public void UpdateUI(){}
  public virtual void ScalePlannedIntent(float m){}
+ protected virtual void OnRefreshIntentText(){}
  protected int PreviewOutgoingDamage(int n)=>n+GetBuffStack(BattleRuntimeDefinitions.StrengthBuffId)+TrainingBattleManager.Instance.attackBoost.GetOutgoingDamageFlatBonus(null,this,GetBuffStack(BattleRuntimeDefinitions.AttackBoostBuffId),0);
  protected int PreviewBarrierGain(int n)=>n;
  protected int PreviewMonsterBuffAmount(int id,int n)=>n;
@@ -126,3 +127,22 @@ public abstract class Monster {
 }
 // 종 클래스 없이 데이터만으로 동작하는 일반 몬스터 검증용
 public class TestDataMonster : DataMonster {}
+
+// 몬스터 의도 문구: 실제 ko 표(intents · monsters)와 로컬라이징 포매터로 한국어 결과 검증
+public static class MonsterIntentText {
+ static Dictionary<string,string> table;
+ static Dictionary<string,string> Table(){
+  if(table!=null)return table;
+  table=new();
+  foreach(var name in new[]{"intents","monsters","ui"}){
+   string file=Path.Combine(UnityEngine.Resources.Root,"Assets/Resources/Localization/ko",name+".json");
+   if(!File.Exists(file))continue;
+   foreach(var p in Newtonsoft.Json.Linq.JObject.Parse(File.ReadAllText(file)).Properties())table[p.Name]=(string)p.Value;
+  }
+  return table;
+ }
+ public static string Line(string key,IReadOnlyDictionary<string,object> args=null)=>Table().TryGetValue(key,out var t)?LocalizedTextFormatter.Format(t,"ko",args):key;
+ public static string Plain(string line)=>LocalizedTextFormatter.Format(line,"ko",null,(LocalizedReference r,out string text)=>{text=r.HasDisplayOverride?r.DisplayOverride:BuffMetadataResolver.Names.TryGetValue(r.Id,out var n)?n:null;return text!=null;});
+ public static string MonsterName(MonsterDefinition d)=>d==null?"":Table().TryGetValue($"monster.{d.id}.name",out var t)?t:d.name;
+ public static string PatternText(MonsterPatternDefinition p)=>p==null?"":Table().TryGetValue($"monster.pattern.{p.id}.text",out var t)?t:p.text;
+}

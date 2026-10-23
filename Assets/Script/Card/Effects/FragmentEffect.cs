@@ -26,12 +26,13 @@ public class FragmentEffect : ICardEffect
         }
 
         string description = ExtractQuotedText(hostCard?.description);
-        if (battleManager.OpenSelectCardPanel(candidates, 1, selectedCards => ApplyFragment(battleManager, selectedCards, description)))
+        int sourceCardId = hostCard != null ? hostCard.cardId : 0;
+        if (battleManager.OpenSelectCardPanel(candidates, 1, selectedCards => ApplyFragment(battleManager, selectedCards, description, sourceCardId)))
         {
             return;
         }
 
-        ApplyFragment(battleManager, new List<Card> { candidates[0] }, description);
+        ApplyFragment(battleManager, new List<Card> { candidates[0] }, description, sourceCardId);
     }
 
     // 조각 카드 설명의 따옴표 안 문구를 새긴 효과의 표시 문구로 사용 (현지화된 설명 기준)
@@ -75,7 +76,7 @@ public class FragmentEffect : ICardEffect
         return candidates;
     }
 
-    private void ApplyFragment(TrainingBattleManager battleManager, List<Card> selectedCards, string description)
+    private void ApplyFragment(TrainingBattleManager battleManager, List<Card> selectedCards, string description, int sourceCardId)
     {
         if (selectedCards == null || selectedCards.Count == 0 || selectedCards[0] == null || selectedCards[0].HasFragment)
         {
@@ -85,6 +86,7 @@ public class FragmentEffect : ICardEffect
         Card targetCard = selectedCards[0];
         targetCard.fragmentEffects = new List<ICardEffect>(payloadEffects);
         targetCard.fragmentDescription = description;
+        targetCard.fragmentSourceCardId = sourceCardId;
         battleManager.handManager?.RefreshCardDisplay(targetCard);
         battleManager.RefreshHandPlayableState();
         battleManager.UpdateAllUI();

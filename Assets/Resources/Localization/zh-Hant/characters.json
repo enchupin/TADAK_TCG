@@ -1,0 +1,22 @@
+{
+    "character.101.identity": "調製 3 張隨機藥水。對所有敵人施加 3 層[buff:4001]。",
+    "character.101.name": "艾拉",
+    "character.102.identity": "從牌組中選擇 1 張牌複製。獲得[buff:1025]。",
+    "character.102.name": "傑克",
+    "character.103.identity": "其他角色的身分技能充能各增加 4。",
+    "character.103.name": "可莉姆",
+    "character.201.identity": "獲得 8 層[buff:3009]。對所有敵人施加 2 層[buff:4003]。",
+    "character.201.name": "伊格妮亞",
+    "character.202.identity": "獲得 2 層[buff:3024]。獲得 3 層[buff:3063]。",
+    "character.202.name": "瓦妮莎",
+    "character.203.identity": "產生 2 張已升級的羽毛牌。獲得 1 層[buff:3065]。",
+    "character.203.name": "梅蕾爾",
+    "character.204.identity": "對所有敵人施加 10 層[buff:4016]。若[buff:4016]高於敵人的最大生命，立即觸發。獲得 2 層[buff:3066]。",
+    "character.204.name": "米奧",
+    "character.301.identity": "獲得 10 點格擋。對所有敵人施加 2 層[buff:4004]。",
+    "character.301.name": "珀拉",
+    "character.302.identity": "獲得 5 層{runeBuff}。觸發 1 次你的回合結束效果。",
+    "character.302.name": "魯恩",
+    "character.303.identity": "獲得 6 層[buff:3001]和 12 點格擋。",
+    "character.303.name": "汗"
+}

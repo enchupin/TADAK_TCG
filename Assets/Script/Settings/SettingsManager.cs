@@ -27,8 +27,12 @@ public class SettingsManager : MonoBehaviour
     [SerializeField] private Button openSettingsButton;
     [SerializeField] private Slider bgmSlider;
     [SerializeField] private Slider sfxSlider;
+    [Tooltip("언어 선택 드롭다운 (languages.json 목록으로 채움, 비워 두면 기존 언어 버튼만 사용)")]
+    [SerializeField] private TMP_Dropdown languageDropdown;
 
     private readonly HashSet<Button> boundResolutionButtons = new();
+    // 드롭다운 항목 순서의 언어 코드 (0번은 시스템 언어)
+    private readonly List<string> languageDropdownCodes = new();
     private static AudioClip buttonClickSound;
     private Vector2Int lastObservedResolution;
     private Vector2Int pendingResizeResolution;
@@ -48,6 +52,15 @@ public class SettingsManager : MonoBehaviour
         BindOpenSettingsButton(openSettingsButton);
         BindResolutionButtons();
         InitializeResolutionState();
+        InitializeLanguageDropdown();
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            LocalizationManager.LanguageChanged -= RefreshLanguageDropdown;
+        }
     }
 
     private void BindOpenSettingsButton(Button button)
@@ -156,6 +169,64 @@ public class SettingsManager : MonoBehaviour
     public void SetGameLanguageToSystem()
     {
         LocalizationManager.UseSystemLanguage();
+    }
+
+    // languages.json의 언어 코드로 변경 (버튼 OnClick에서 문자열 인자로 연결 가능)
+    public void SetGameLanguage(string languageCode)
+    {
+        LocalizationManager.SetCurrentLanguage(languageCode);
+    }
+
+    private void InitializeLanguageDropdown()
+    {
+        if (languageDropdown == null)
+        {
+            return;
+        }
+
+        languageDropdown.onValueChanged.RemoveListener(OnLanguageDropdownChanged);
+        languageDropdown.onValueChanged.AddListener(OnLanguageDropdownChanged);
+        LocalizationManager.LanguageChanged -= RefreshLanguageDropdown;
+        LocalizationManager.LanguageChanged += RefreshLanguageDropdown;
+        RefreshLanguageDropdown();
+    }
+
+    // 항목: 시스템 언어(현재 언어로) + 각 언어의 자기 언어 이름
+    private void RefreshLanguageDropdown()
+    {
+        if (languageDropdown == null)
+        {
+            return;
+        }
+
+        languageDropdownCodes.Clear();
+        List<TMP_Dropdown.OptionData> options = new();
+        languageDropdownCodes.Add(null);
+        options.Add(new TMP_Dropdown.OptionData(GameText.Ui("ui.settings.systemLanguage")));
+        foreach (LocalizationLanguageInfo language in LocalizationManager.GetLanguages())
+        {
+            languageDropdownCodes.Add(language.code);
+            options.Add(new TMP_Dropdown.OptionData(string.IsNullOrWhiteSpace(language.nativeName) ? language.code : language.nativeName));
+        }
+
+        languageDropdown.ClearOptions();
+        languageDropdown.AddOptions(options);
+        int selectedIndex = LocalizationManager.IsFollowingSystemLanguage()
+            ? 0
+            : Mathf.Max(0, languageDropdownCodes.IndexOf(LocalizationManager.GetCurrentLanguageCode()));
+        languageDropdown.SetValueWithoutNotify(selectedIndex);
+        languageDropdown.RefreshShownValue();
+    }
+
+    private void OnLanguageDropdownChanged(int index)
+    {
+        if (index <= 0 || index >= languageDropdownCodes.Count)
+        {
+            LocalizationManager.UseSystemLanguage();
+            return;
+        }
+
+        LocalizationManager.SetCurrentLanguage(languageDropdownCodes[index]);
     }
 
     public void SetGameLanguageToKorean()

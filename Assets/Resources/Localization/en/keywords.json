@@ -1,0 +1,22 @@
+{
+    "keyword.1.desc": "This card is not discarded from your Hand at the end of your turn and triggers its Retain: effect.",
+    "keyword.1.name": "Retain",
+    "keyword.10.desc": "Repeats the designated effect additional times.",
+    "keyword.10.name": "Repeat",
+    "keyword.2.desc": "This card cannot be played.",
+    "keyword.2.name": "Unplayable",
+    "keyword.3.desc": "When played, this card is Exhausted instead of discarded.",
+    "keyword.3.name": "Exhaust",
+    "keyword.4.desc": "When played, this card is bound to the party for this combat instead of being discarded. It does not count as Exhausted.",
+    "keyword.4.name": "Imprint",
+    "keyword.5.desc": "This card is drawn at the start of combat.",
+    "keyword.5.name": "Opening",
+    "keyword.6.desc": "When played, add a copy of this card with Ghost into your Hand. The copy keeps its original cost (minimum 1).",
+    "keyword.6.name": "Shadow",
+    "keyword.7.desc": "Playing this card ends your turn.",
+    "keyword.7.name": "Finale",
+    "keyword.8.desc": "This card is Exhausted when played or at the end of your turn.",
+    "keyword.8.name": "Ghost",
+    "keyword.9.desc": "Your deck cannot contain another card of the same type.",
+    "keyword.9.name": "Unique"
+}

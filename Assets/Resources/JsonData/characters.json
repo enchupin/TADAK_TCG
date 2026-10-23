@@ -5,6 +5,7 @@
       "name": "아일라",
       "maxHp": 30,
       "identityCost": 6,
+      "identityDescription": "무작위 포션 3장을 제작합니다. 모든 적에게 (부식)을 3 부여합니다.",
       "starterDeck": [101010, 101010, 101020, 101020, 101030, 101040]
     },
     {
@@ -12,6 +13,7 @@
       "name": "잭",
       "maxHp": 30,
       "identityCost": 6,
+      "identityDescription": "덱에서 카드 1장을 선택해 복사합니다. (행운)을 얻습니다.",
       "starterDeck": [102010, 102010, 102020, 102020, 102030, 102040]
     },
     {
@@ -19,6 +21,7 @@
       "name": "이그니아",
       "maxHp": 35,
       "identityCost": 10,
+      "identityDescription": "(강공)을 8 얻습니다. 모든 적에게 (발화)를 2 부여합니다.",
       "starterDeck": [201010, 201010, 201020, 201020, 201030, 201040]
     },
     {
@@ -26,6 +29,7 @@
       "name": "바네사",
       "maxHp": 35,
       "identityCost": 10,
+      "identityDescription": "(연격)을 2 얻습니다. (득점)을 3 얻습니다.",
       "starterDeck": [202010, 202010, 202020, 202020, 202030, 202040]
     },
     {
@@ -33,6 +37,7 @@
       "name": "메렐",
       "maxHp": 35,
       "identityCost": 10,
+      "identityDescription": "강화된 깃털 카드를 2장 생성합니다. (은신)을 1 얻습니다.",
       "starterDeck": [203010, 203010, 203020, 203020, 203030, 203040]
     },
     {
@@ -40,6 +45,7 @@
       "name": "미오",
       "maxHp": 35,
       "identityCost": 10,
+      "identityDescription": "모든 적에게 (익사)를 10 부여합니다. (익사)가 적의 최대 체력보다 높다면 즉시 발동합니다. (물결)을 2 얻습니다.",
       "starterDeck": [204010, 204010, 204020, 204020, 204030, 204040]
     },
     {
@@ -47,6 +53,7 @@
       "name": "폴라",
       "maxHp": 55,
       "identityCost": 8,
+      "identityDescription": "보호막을 10 얻습니다. 모든 적에게 (빙결)을 2 부여합니다.",
       "starterDeck": [301010, 301010, 301020, 301020, 301030, 301040]
     },
     {
@@ -54,6 +61,7 @@
       "name": "룬",
       "maxHp": 55,
       "identityCost": 8,
+      "identityDescription": "{동력}을 5 얻습니다. 내 턴 종료 시 효과들을 1회 발동합니다.",
       "starterDeck": [302010, 302010, 302020, 302020, 302030, 302040]
     },
     {
@@ -61,6 +69,7 @@
       "name": "크림",
       "maxHp": 30,
       "identityCost": 6,
+      "identityDescription": "다른 캐릭터의 아이덴티티 게이지를 4씩 채웁니다.",
       "starterDeck": [103010, 103010, 103020, 103020, 103030, 103040]
     },
     {
@@ -68,6 +77,7 @@
       "name": "칸",
       "maxHp": 55,
       "identityCost": 8,
+      "identityDescription": "(재생)을 6 얻고 보호막을 12 얻습니다.",
       "starterDeck": [303010, 303010, 303020, 303020, 303030, 303040]
     }
   ]

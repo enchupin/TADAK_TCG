@@ -57,6 +57,8 @@ public class CardData : ScriptableObject
         card.keepEffects = CardEffectFactory.CreateKeepEffects(effects);
         card.endTurnInHandEffects = CardEffectFactory.CreateEffects(endTurnInHandEffects);
         card.InitializeRuntimeState();
+        // 이름 · 설명은 현재 언어 표에서 (SO 원본은 한국어 그대로)
+        LocalizationManager.ApplyToRuntimeCard(card);
 
         return card;
     }

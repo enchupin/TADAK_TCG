@@ -91,9 +91,29 @@ public class TrainingMapController : MonoBehaviour
         return true;
     }
 
+    private void OnEnable()
+    {
+        LocalizationManager.LanguageChanged += RefreshLocalizedTexts;
+    }
+
     private void OnDisable()
     {
+        LocalizationManager.LanguageChanged -= RefreshLocalizedTexts;
         if (activePreview == this) activePreview = null;
+    }
+
+    // 언어 변경 시 노드 이름 · 상태 문구 갱신
+    private void RefreshLocalizedTexts()
+    {
+        foreach (var entry in nodeButtons)
+        {
+            if (TrainingRunState.TryGetNode(entry.Key, out TrainingMapNodeData node))
+            {
+                ApplyNodeLabel(entry.Value, node);
+            }
+        }
+
+        UpdateStatusText();
     }
 
     public void ShowMap()
@@ -424,7 +444,7 @@ public class TrainingMapController : MonoBehaviour
         }
         else if (node.nodeType == TrainingNodeType.Event)
         {
-            label.text = "이벤트";
+            label.text = GameText.Ui("ui.map.event");
         }
     }
 
@@ -480,28 +500,28 @@ public class TrainingMapController : MonoBehaviour
 
         if (isPreview)
         {
-            statusText.text = "현재 위치 확인 · ESC로 닫기";
+            statusText.text = GameText.Ui("ui.map.status.preview");
             return;
         }
         if (TrainingRunState.IsRunCompleted)
         {
-            statusText.text = "훈련 모드 완료";
+            statusText.text = GameText.Ui("ui.map.status.completed");
             return;
         }
 
         if (TrainingRunState.IsRunFailed)
         {
-            statusText.text = "훈련 모드 실패";
+            statusText.text = GameText.Ui("ui.map.status.failed");
             return;
         }
 
         if (TrainingRunState.PendingNodeId.HasValue)
         {
-            statusText.text = "전투 진행 중";
+            statusText.text = GameText.Ui("ui.map.status.inBattle");
             return;
         }
 
-        statusText.text = "다음 노드를 선택하세요";
+        statusText.text = GameText.Ui("ui.map.status.selectNext");
     }
 
     private void UpdateLayoutMetrics(IReadOnlyList<TrainingMapNodeData> nodes)

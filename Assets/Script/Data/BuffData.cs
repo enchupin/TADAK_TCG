@@ -20,18 +20,9 @@ public class BuffData
     public bool signed;
     public string name;
     public string description;
-    public string koName;
-    public string koDescription;
-    public string enName;
-    public string enDescription;
-    public string jaName;
-    public string jaDescription;
-    public string zhHantName;
-    public string zhHantDescription;
-    public string zhHansName;
-    public string zhHansDescription;
-    public string ruName;
-    public string ruDescription;
+    // name · description은 현재 언어 문구, 아래는 JsonData/buffs.json 한국어 원문 (내부 이름 조회용)
+    public string sourceName;
+    public string sourceDescription;
 
     // 극성과 중첩 규칙은 buffs.json 메타데이터를 우선 사용하고 없으면 ID 규칙으로 판정
     public static BuffPolarity GetPolarity(int targetBuffId)

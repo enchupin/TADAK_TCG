@@ -13,6 +13,7 @@ class Program {
   RichText();
   BuffFormat();
   BuffData(args[0]);
+  LocalizedBuffTooltips(args[0]);
   IntentFormat();
   Console.WriteLine($"툴팁 검증 {count}개 통과");
  }
@@ -106,6 +107,15 @@ class Program {
   Check(BuffTooltipFormatter.FormatDescription("{동력}을 얻습니다.",1,c)=="동력을 얻습니다.","조회 없으면 중괄호만 제거");
   // 치환 결과가 다시 해석되지 않음
   Check(BuffTooltipFormatter.FormatDescription("(부식)과 (발화)",0,c,refs)==$"{H("부식")}과 {H("발화")}","여러 참조");
+  // 로컬라이징 표의 ID 참조: 현재 언어 이름 · 극성 색 · 조사 보정, 표시 문구 덮어쓰기
+  BuffTooltipFormatter.BuffIdLookup ids=(int id,out string name,out bool harmful)=>{
+   name=id==4001?"부식":id==3031?"보호":id==4011?"Хрупкость":null;harmful=id==4001||id==4011;return name!=null;};
+  Check(BuffTooltipFormatter.FormatDescription("적에게 [buff:4001]를 {stack} 부여합니다.",3,c,refs,null,ids)==$"적에게 {H("부식")}을 {V(3)} 부여합니다.","ID 참조 · 조사 보정");
+  Check(BuffTooltipFormatter.FormatDescription("[buff:3031]을 얻습니다.",0,c,refs,null,ids)==$"{B("보호")}를 얻습니다.","ID 참조 받침 없음");
+  Check(BuffTooltipFormatter.FormatDescription("Получает 2 [buff:4011|Хрупкости].",0,c,refs,null,ids)==$"Получает 2 {H("Хрупкости")}.","표시 문구 덮어쓰기 · 극성 색");
+  Check(BuffTooltipFormatter.FormatDescription("[buff:9999]을 얻습니다.",0,c,refs,null,ids)=="[buff:9999]을 얻습니다.","조회 실패 시 원문");
+  Check(BuffTooltipFormatter.FormatDescription("[buff:9999|word] x",0,c,refs,null,ids)=="word x","조회 실패 시 표시 문구");
+  Check(BuffTooltipFormatter.FormatDescription("{runeBuff}을 {stack} 얻습니다.",2,c,refs,(string key,out string name,out bool harmful)=>{name=key=="runeBuff"?"우피: 보호":null;harmful=false;return name!=null;})==$"{B("우피: 보호")}를 {V(2)} 얻습니다.","runeBuff 동적 이름");
   Check(BuffTooltipFormatter.FormatEntry("족보","",0,false,c)==B("족보"),"설명 없으면 이름만");
   Check(BuffTooltipFormatter.FormatEntry("","설명",0,false,c)=="설명","이름 없으면 설명만");
   // 족보 한 줄: 이름: 조건 → 보상, 달성 조건은 기본 색 · 미달성은 회색, 구분자는 기본 색
@@ -134,7 +144,7 @@ class Program {
 
  // buffs.json 전체: 남는 중괄호 없음, 괄호 참조는 버프 이름이거나 알려진 문구
  static void BuffData(string root){
-  using var doc=JsonDocument.Parse(File.ReadAllText(Path.Combine(root,"Assets/Resources/Localization/buffs.json")));
+  using var doc=JsonDocument.Parse(File.ReadAllText(Path.Combine(root,"Assets/Resources/JsonData/buffs.json")));
   var buffs=doc.RootElement.GetProperty("buffs").EnumerateArray().Select(b=>(
    id:b.GetProperty("buffId").GetInt32(),
    name:b.GetProperty("name").GetString(),
@@ -160,6 +170,31 @@ class Program {
   Check(unexpected.Count==0,"buffs.json에 없는 참조: "+string.Join(", ",unexpected));
  }
 
+ // 모든 언어 버프 툴팁: 복수형 선해석 → 툴팁 포맷 후 남는 토큰 없음 (실행 중 BuffTooltipTextBuilder와 같은 순서)
+ static void LocalizedBuffTooltips(string root){
+  var meta=JsonDocument.Parse(File.ReadAllText(Path.Combine(root,"Assets/Resources/JsonData/buffs.json"))).RootElement.GetProperty("buffs").EnumerateArray()
+   .ToDictionary(b=>b.GetProperty("buffId").GetInt32(),b=>b.TryGetProperty("polarity",out var p)&&p.GetString()=="harmful");
+  var c=TooltipColors.Default;
+  foreach(var dir in Directory.GetDirectories(Path.Combine(root,"Assets/Resources/Localization"))){
+   string code=Path.GetFileName(dir);
+   string path=Path.Combine(dir,"buffs.json");
+   if(!File.Exists(path))continue;
+   var table=JsonSerializer.Deserialize<Dictionary<string,string>>(File.ReadAllText(path));
+   BuffTooltipFormatter.BuffIdLookup ids=(int id,out string name,out bool harmful)=>{
+    harmful=meta.TryGetValue(id,out var h)&&h;
+    return table.TryGetValue($"buff.{id}.name",out name);};
+   BuffTooltipFormatter.DynamicNameLookup dynamic=(string key,out string name,out bool harmful)=>{name=key=="runeBuff"||key=="동력"?"RUNE":null;harmful=false;return name!=null;};
+   foreach(int stack in new[]{1,2,5,21}){
+    foreach(var id in meta.Keys){
+     if(!table.TryGetValue($"buff.{id}.desc",out var desc))continue;
+     string pre=LocalizedTextFormatter.Format(desc,code,new Dictionary<string,object>{{"stack",stack}},null,false);
+     string text=BuffTooltipFormatter.FormatEntry(table.GetValueOrDefault($"buff.{id}.name",""),pre,stack,meta[id],c,null,dynamic,ids);
+     Check(!text.Contains('{')&&!text.Contains('}')&&!text.Contains("[buff:"),$"{code} {id} 툴팁에 토큰이 남음: {text}");
+    }
+   }
+  }
+ }
+
  static string O(string n)=>$"<color=#808000>{n}</color>";
 
  static void IntentFormat(){
@@ -173,6 +208,12 @@ class Program {
   Check(IntentTooltipFormatter.FormatSentence("(힘)을 3 얻습니다.",c,refs)==$"{B("힘")}을 {V(3)} 얻습니다.","이로운 효과 획득");
   Check(IntentTooltipFormatter.FormatSentence("(4001)을 2 부여합니다.",c,refs)==$"(4001)을 {V(2)} 부여합니다.","버프가 아닌 괄호 유지");
   Check(IntentTooltipFormatter.FormatSentence("받는 피해 25%",c)==$"받는 피해 {V(25)}%","퍼센트 수치");
+  // 로컬라이징 표의 ID 참조: ID 숫자는 수치로 보지 않고 현재 언어 이름 · 극성 색 · 조사 보정
+  BuffTooltipFormatter.BuffIdLookup ids=(int id,out string name,out bool harmful)=>{name=id==4001?"부식":id==3012?"결속":null;harmful=id==4001;return name!=null;};
+  Check(IntentTooltipFormatter.FormatSentence("[buff:4001]를 2 부여합니다.",c,refs,ids)==$"{H("부식")}을 {V(2)} 부여합니다.","ID 참조 해로운 효과");
+  Check(IntentTooltipFormatter.FormatSentence("모든 아군이 [buff:3012]을 3 얻습니다.",c,refs,ids)==$"모든 아군이 {B("결속")}을 {V(3)} 얻습니다.","ID 참조 이로운 효과");
+  Check(IntentTooltipFormatter.FormatSentence("Applies 2 [buff:4001|Corrosion].",c,refs,ids)==$"Applies {V(2)} {H("Corrosion")}.","ID 참조 표시 문구");
+  Check(IntentTooltipFormatter.FormatSentence("[buff:9999]을 2 얻습니다.",c,refs,ids)==$"[buff:9999]을 {V(2)} 얻습니다.","조회 실패 시 토큰 유지");
   // 특수 패턴: 여러 의도 이름을 이어서 표시
   Check(IntentTooltipFormatter.FormatLines(new List<(string,string)>{("강화 · 약화","이로운 효과를 훔칩니다.")},c)==$"{O("강화 · 약화")}\n이로운 효과를 훔칩니다.","여러 의도 이름");
   Check(IntentTooltipFormatter.FormatLines(new List<(string,string)>{("","설명만")},c)=="설명만","이름 없으면 문장만");

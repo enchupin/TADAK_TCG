@@ -36,7 +36,8 @@ public static class RestDeckEnhanceService
                 character = sourceCardData.character,
                 deckIndex = i,
                 sourceCardId = cardIds[i],
-                cardName = string.IsNullOrWhiteSpace(sourceCardData.cardName) ? cardIds[i].ToString() : sourceCardData.cardName,
+                // CardData 원본은 한국어라 현재 언어 이름은 표에서
+                cardName = GameText.CardName(cardIds[i], string.IsNullOrWhiteSpace(sourceCardData.cardName) ? cardIds[i].ToString() : sourceCardData.cardName),
                 characterName = characterData != null ? characterData.characterName : sourceCardData.character.ToString(),
                 duplicateOrder = order,
                 enhanceCardIds = validEnhanceIds

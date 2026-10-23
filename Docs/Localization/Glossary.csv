@@ -1,0 +1,72 @@
+id,ko,en,ja,zh-Hans,zh-Hant,ru,fr,de,status,note
+damage,피해,damage,ダメージ,伤害,傷害,урон,dégâts,Schaden,검수 필요,"StS2 동일. 문장: Deal X damage. / Xダメージを与える。 / 造成X点伤害。 / 造成 X 點傷害。 / Наносит X урона. / Infligez X dégâts. / Füge X Schaden zu."
+block,보호막,Block,ブロック,格挡,格擋,защита,Armure,Block,검수 필요,"한국어는 보호막(StS 방어도)이지만 다른 언어는 StS2 용어. 문장: Gain X Block. / Xブロックを得る。 / 获得X点格挡。 / Дает X защиты."
+hp,체력,HP,HP,生命,生命,ОЗ,PV,TP,검수 필요,"회복: Heal X HP. / HPをX回復する。 / 回复X点生命。 / 恢復 X 點生命。 / Восполняет X ОЗ. / Récupérez X PV. / Heile X TP."
+max_hp,최대 체력,Max HP,最大HP,最大生命,最大生命,максимальные ОЗ,PV Max,max. TP,검수 필요,
+lose_hp,체력을 잃다,Lose HP,HPを失う,失去生命,失去生命,теряет ОЗ,perdre des PV,TP verlieren,검수 필요,"피해와 구분 (보호막 무시). Lose X HP. / HPをX失う。 / 失去X点生命。"
+heal,회복,Heal,回復,回复,恢復,восполнять,récupérer,heilen,검수 필요,
+energy,에너지,Energy,エナジー,能量,能量,энергия,Énergie,Energie,검수 필요,
+cost,비용,cost,コスト,耗能,耗能,стоимость,coût,Kosten,검수 필요,"Costs 1 less. / コストが1減少する。 / 耗能减少1。 / Стоит на 1 меньше."
+card,카드,card,カード,牌,牌,карта,carte,Karte,검수 필요,"조수사: ja 枚, zh 张/張. ru 복수형 карту/карты/карт"
+draw,뽑다,Draw,引く,抽,抽,добирать,Piocher,Ziehen,검수 필요,"Draw X cards. / カードをX枚引く。 / 抽X张牌。 / 抽 X 張牌。 / Вы добираете X карт. / Piochez X cartes. / Ziehe X Karten."
+discard,버리다,Discard,捨てる,丢弃,丟棄,сбрасывать,Défausser,Abwerfen,검수 필요,
+hand,손,Hand,手札,手牌,手牌,рука,Main,Hand,검수 필요,
+deck,덱,Deck,デッキ,牌组,牌組,колода,Deck,Deck,검수 필요,
+draw_pile,뽑을 카드 더미,Draw Pile,山札,抽牌堆,抽牌堆,стопка добора,Pioche,Nachziehstapel,검수 필요,
+discard_pile,버린 카드 더미,Discard Pile,捨て札,弃牌堆,棄牌堆,стопка сброса,Défausse,Abwurfstapel,검수 필요,
+exhaust,소멸,Exhaust,廃棄,消耗,消耗,сжечь,Épuiser,Erschöpfen,검수 필요,키워드 겸 동사. 소멸된 카드 더미 = Exhaust Pile / 廃棄札 / 消耗牌堆 / сожженные карты
+play_card,사용하다(카드),play,プレイする,打出,打出,разыгрывать,jouer,spielen,검수 필요,"Whenever you play a card, … / カードをプレイするたび、… / 每当你打出一张牌，… / 每當你打出一張牌時，…"
+upgrade,강화(카드),Upgrade,アップグレード,升级,升級,улучшать,Améliorer,Verbessern,검수 필요,의도 이름 강화(이로운 효과)와 다른 단어
+apply,부여하다,Apply,付与する,给予,施加,накладывать,Appliquer,anwenden,검수 필요,"Apply X [buff]. / [buff]Xを付与する。 / 给予X层[buff]。 / 施加 X 層[buff]。 / Накладывает X [buff в 생격]."
+gain,얻다,Gain,得る,获得,獲得,дает / получает,Gagnez,Erhalte,검수 필요,
+lose,잃다,Lose,失う,失去,失去,теряет,Perdez,Verliere,검수 필요,
+stack,중첩,stack,スタック,层,層,заряд,cumul,Stapel,검수 필요,"카드 문장에서는 숫자만 쓰는 경우가 많음 (StS2: Apply 2 Weak / 虚弱2 / 2层虚弱)"
+buff,이로운 효과,buff,バフ,增益,增益,положительный эффект,effet bénéfique,Buff,검수 필요,StS2 의도 설명 용어
+debuff,해로운 효과,debuff,デバフ,减益,減益,отрицательный эффект,effet négatif,Debuff,검수 필요,
+enemy,적,enemy,敵,敌人,敵人,враг,ennemi,Gegner,검수 필요,의도 문장의 적(몬스터 시점)은 플레이어 → your / あなた 대신 생략 / 你 / вас / vous / dich
+all_enemies,모든 적,ALL enemies,すべての敵,所有敌人,所有敵人,ВСЕ враги,TOUS les ennemis,ALLE Gegner,검수 필요,en·ru·fr·de는 StS2처럼 ALL 대문자 강조
+ally,아군,ally,味方,友方,友方,союзник,allié,Verbündeter,검수 필요,몬스터 의도에서는 몬스터 편
+random,무작위,random,ランダムな,随机,隨機,случайный,aléatoire,zufällig,검수 필요,
+this_turn,이번 턴,this turn,このターン,本回合,本回合,в этом ходу,ce tour,in diesem Zug,검수 필요,
+next_turn,다음 턴,next turn,次のターン,下个回合,下回合,следующий ход,prochain tour,nächster Zug,검수 필요,
+turn_start,턴 시작 시,At the start of your turn,ターン開始時,在你的回合开始时,在你的回合開始時,В начале хода,Au début de votre tour,Zu Beginn deines Zuges,검수 필요,
+turn_end,턴 종료 시,At the end of your turn,ターン終了時,在你的回合结束时,在你的回合結束時,В конце хода,À la fin de votre tour,Am Ende deines Zuges,검수 필요,
+this_combat,이번 전투,this combat,この戦闘中,本场战斗,本場戰鬥,в этом бою,ce combat,in diesem Kampf,검수 필요,
+end_turn,턴 종료,End Turn,ターン終了,结束回合,結束回合,Завершить ход,Fin de tour,Zug beenden,검수 필요,버튼
+target,대상,target,対象,目标,目標,цель,cible,Ziel,검수 필요,
+times,회,times,回,次,次,раз,fois,Mal,검수 필요,"Deal 3 damage 4 times. / 3ダメージを4回与える。 / 造成3点伤害4次。 / ru 복수형 раз/раза/раз"
+twice,2배,twice / double,2倍,两倍,兩倍,вдвое,double,doppelt,검수 필요,
+potion,포션,Potion,ポーション,药水,藥水,зелье,potion,Trank,검수 필요,이 게임의 포션은 카드
+craft,제작(포션),Brew,調合する,调制,調製,варить,Préparer,Brauen,검수 필요,"게임 고유: 무작위 포션 카드를 만드는 동작"
+create,생성(카드),Create / Add,生成する,生成,產生,создавать,Créer,Erschaffe,검수 필요,"놓이는 곳이 정해지지 않은 생성은 Create / 生成する / 生成 / 產生 / Создает, 손 · 더미가 정해지면 StS2처럼 Add X into your Hand"
+copy,복제 / 복사,copy,コピー,复制,複製,копия,copie,Kopie,검수 필요,
+remove,제거,remove,取り除く,移除,移除,снимать,retirer,entfernen,검수 필요,
+fatal,처치,kill,倒す,击杀,擊殺,убить,tuer,töten,검수 필요,
+die,사망,die,死亡する,死亡,死亡,умирает,meurt,stirbt,검수 필요,
+summon,소환,Summon,召喚する,召唤,召喚,призывать,invoquer,beschwören,검수 필요,
+stun,기절,Stun,スタン,击晕,擊暈,оглушение,Étourdir,Betäuben,검수 필요,
+party,파티,party,パーティー,队伍,隊伍,отряд,groupe,Gruppe,검수 필요,
+identity,아이덴티티,Identity,アイデンティティ,身份技能,身分技能,Суть,Identité,Identität,검수 필요,게임 고유: 캐릭터 전용 스킬
+gauge,게이지,gauge,ゲージ,充能,充能,шкала,jauge,Leiste,검수 필요,
+fragment,조각,Fragment,欠片,碎片,碎片,Осколок,Fragment,Fragment,검수 필요,게임 고유: 카드에 새기는 효과
+curiosity,호기심,Curiosity,好奇心,好奇,好奇,Любопытство,Curiosité,Neugier,검수 필요,게임 고유
+kw_retain,보존,Retain,保留,保留,保留,Сохранение,Retenue,Behalten,검수 필요,키워드 (StS2와 같은 개념)
+kw_unplayable,사용불가,Unplayable,プレイ不可,不能被打出,無法打出,Неиграбельная,Injouable,Unspielbar,검수 필요,키워드
+kw_exhaust,소멸,Exhaust,廃棄,消耗,消耗,Сжигается,Épuisement,Erschöpft,검수 필요,키워드
+kw_imprint,각인,Imprint,刻印,铭刻,銘刻,Отпечаток,Empreinte,Prägung,검수 필요,키워드 (게임 고유)
+kw_opening,개시,Opening,開幕,开局,開局,Начальная,Ouverture,Eröffnung,검수 필요,키워드 (StS의 Innate와 비슷)
+kw_shadow,그림자,Shadow,シャドウ,暗影,暗影,Тень,Ombre,Schatten,검수 필요,키워드
+kw_finale,종언,Finale,終幕,终幕,終幕,Финал,Final,Finale,검수 필요,키워드
+kw_ghost,유령,Ghost,ゴースト,幽灵,幽靈,Призрак,Fantôme,Geist,검수 필요,키워드 (StS의 Ethereal과 비슷)
+kw_unique,유일,Unique,唯一,唯一,唯一,Уникальная,Unique,Einzigartig,검수 필요,키워드
+kw_repeat,반복,Repeat,反復,重复,重複,Повтор,Répétition,Wiederholung,검수 필요,키워드
+intent_attack,공격,Attack,攻撃,攻击,攻擊,Атака,Attaque,Angriff,검수 필요,의도 이름 (짧은 명사)
+intent_protection,방어,Defend,防御,防御,防禦,Защита,Défense,Verteidigung,검수 필요,의도 이름
+intent_buff,강화,Buff,強化,强化,強化,Усиление,Amélioration,Verstärkung,검수 필요,의도 이름 (카드 강화 upgrade와 다름)
+intent_debuff,약화,Debuff,弱体化,削弱,削弱,Ослабление,Affaiblissement,Schwächung,검수 필요,의도 이름
+intent_summon,소환,Summon,召喚,召唤,召喚,Призыв,Invocation,Beschwörung,검수 필요,의도 이름
+intent_bomb,자폭,Self-Destruct,自爆,自爆,自爆,Самоуничтожение,Autodestruction,Selbstzerstörung,검수 필요,의도 이름
+intent_disrupt,방해,Disrupt,妨害,干扰,干擾,Помеха,Perturbation,Störung,검수 필요,"의도 이름 (방해 카드 추가)"
+intent_heal,회복,Heal,回復,回复,恢復,Лечение,Soin,Heilung,검수 필요,의도 이름
+intent_stun,기절,Stunned,スタン,晕眩,暈眩,Оглушение,Étourdi,Betäubt,검수 필요,의도 이름
+intent_leave,이탈,Flee,逃走,逃跑,逃跑,Бегство,Fuite,Flucht,검수 필요,의도 이름
