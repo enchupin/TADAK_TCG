@@ -17,8 +17,9 @@ public class BattleUI : MonoBehaviour
     [SerializeField] private Slider playerHPSlider;
     [SerializeField] private Image playerHPFillImage;
     [SerializeField] private Color barrierHPFillColor = new Color32(135, 206, 235, 255);
+    // 파티 체력 바 중앙 수치와 좌측 보호막 표시 (상단 바의 playerHPText는 그대로 유지)
+    [SerializeField] private HealthBarView playerHealthBarView;
     [SerializeField] private TextMeshProUGUI playerEnergyText;
-    [SerializeField] private TextMeshProUGUI playerDefenseText;
     [SerializeField] private TextMeshProUGUI drawPileCountText;
     [SerializeField] private TextMeshProUGUI discardPileCountText;
     [SerializeField] private TextMeshProUGUI handCountText;
@@ -77,6 +78,7 @@ public class BattleUI : MonoBehaviour
         }
 
         UpdatePlayerHPFillColor(playerData);
+        playerHealthBarView?.Refresh(playerData.hp, playerData.maxHP, playerData.defense);
     }
 
     /// <summary>
@@ -94,9 +96,11 @@ public class BattleUI : MonoBehaviour
     /// </summary>
     public void UpdatePlayerDefense()
     {
-        if (PlayerData.Instance == null) return;
-        if (playerDefenseText != null)
-            playerDefenseText.text = GameText.Ui("ui.combat.defense", new Dictionary<string, object> { { "value", PlayerData.Instance.defense } });
+        PlayerData playerData = PlayerData.Instance;
+        if (playerData == null) return;
+        // 보호막 글자 표시 대신 체력 바의 방패 표시와 Fill 색으로 갱신
+        UpdatePlayerHPFillColor(playerData);
+        playerHealthBarView?.Refresh(playerData.hp, playerData.maxHP, playerData.defense);
     }
 
 
@@ -107,12 +111,13 @@ public class BattleUI : MonoBehaviour
             return;
         }
 
+        // 더미 아이콘 위에 숫자만 표시
         if (drawPileCountText != null) {
-            drawPileCountText.text = GameText.Ui("ui.combat.drawPile", new Dictionary<string, object> { { "count", battleManager.usableDeckManager.GetRemainingCardCount() } });
+            drawPileCountText.text = battleManager.usableDeckManager.GetRemainingCardCount().ToString();
         }
 
         if (discardPileCountText != null) {
-            discardPileCountText.text = GameText.Ui("ui.combat.discardPile", new Dictionary<string, object> { { "count", battleManager.usableDeckManager.GetDiscardPileCount() } });
+            discardPileCountText.text = battleManager.usableDeckManager.GetDiscardPileCount().ToString();
         }
 
         if (handCountText != null && battleManager.handManager != null) {

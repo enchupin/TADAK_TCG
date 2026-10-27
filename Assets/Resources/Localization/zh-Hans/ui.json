@@ -1,13 +1,9 @@
 {
     "ui.card.curious": "升级。",
     "ui.card.fragment": "碎片：{description}",
-    "ui.combat.defense": "格挡：{value}",
-    "ui.combat.discardPile": "弃牌堆：{count}",
-    "ui.combat.drawPile": "抽牌堆：{count}",
     "ui.combat.endTurn": "结束回合",
     "ui.combat.goHome": "返回大厅",
     "ui.combat.hand": "手牌：{count}",
-    "ui.combat.monsterHp": "生命：{hp}/{maxHp}",
     "ui.combat.victory": "胜利",
     "ui.common.cancel": "取消",
     "ui.common.close": "关闭",

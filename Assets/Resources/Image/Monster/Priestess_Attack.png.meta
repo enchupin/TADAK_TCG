@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 43296407aa2078b4cbf2b8a72802a919
+guid: 72950a5200dbc6b439cfb5dd7a7c0f8d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6397261850379410913
-    second: "\uACF5\uD5C8 \uAD70\uC8FC_Hit_0"
+      213: -5505586032345406632
+    second: Priestess_Attack_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -96,30 +96,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\uACF5\uD5C8 \uAD70\uC8FC_Hit_0"
+      name: Priestess_Attack_0
       rect:
         serializedVersion: 2
-        x: 44
-        y: 27
-        width: 462
-        height: 595
+        x: 45
+        y: 32
+        width: 602
+        height: 659
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1edd50f32c3a7c850800000000000000
-      internalID: 6397261850379410913
+      spriteID: 85323b56caa3893b0800000000000000
+      internalID: -5505586032345406632
       vertices: []
       indices: 
       edges: []
@@ -138,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\uACF5\uD5C8 \uAD70\uC8FC_Hit_0": 6397261850379410913
+      Priestess_Attack_0: -5505586032345406632
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

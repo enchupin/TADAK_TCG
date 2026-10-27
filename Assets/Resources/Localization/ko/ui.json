@@ -1,13 +1,9 @@
 {
     "ui.card.curious": "강화됩니다.",
     "ui.card.fragment": "조각: {description}",
-    "ui.combat.defense": "보호막 : {value}",
-    "ui.combat.discardPile": "버린 카드 : {count}",
-    "ui.combat.drawPile": "덱 : {count}",
     "ui.combat.endTurn": "턴 종료",
     "ui.combat.goHome": "로비로",
     "ui.combat.hand": "손 : {count}",
-    "ui.combat.monsterHp": "HP : {hp}/{maxHp}",
     "ui.combat.victory": "승리",
     "ui.common.cancel": "취소",
     "ui.common.close": "닫기",

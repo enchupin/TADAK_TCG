@@ -1,0 +1,32 @@
+{
+  "version": 3,
+  "pixelsPerUnit": 1,
+  "groundOffset": 10,
+  "intentGap": 10,
+  "monsters": [
+    { "image": "Cactus", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": 0.5, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": -27.162, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": 0, "offsetY": 0 } },
+    { "image": "FireSpirit", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": 0, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": -0.5, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": 0, "offsetY": 0 } },
+    { "image": "FlashyScythe", "scale": 1, "offsetX": 0, "offsetY": 50, "idle": { "scale": 1, "offsetX": 0, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": 0, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": 0, "offsetY": 0 } },
+    { "image": "GiantFlowerSpiderBoss", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": -20.372, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": -58.219, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": -15.977, "offsetY": -7.639 } },
+    { "image": "HauntedCloth", "scale": 1, "offsetX": 0, "offsetY": 50, "idle": { "scale": 1, "offsetX": 0.5, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": 0, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": 0.5, "offsetY": 0 } },
+    { "image": "IceAndFireBoss", "scale": 1, "offsetX": 0, "offsetY": 25, "idle": { "scale": 1, "offsetX": 0, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": 0, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": -0.5, "offsetY": 0 } },
+    { "image": "JackORipper", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": -37.348, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": -85, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": 27, "offsetY": 0 } },
+    { "image": "Mirror", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": 0.5, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": 0, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": 0, "offsetY": 0 } },
+    { "image": "MushroomHost", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": 0, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": -2, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": 2, "offsetY": 0 } },
+    { "image": "MutantCarnivorousPlant", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": 0, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": -67.5, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": 1.5, "offsetY": 0 } },
+    { "image": "MutantCarrot", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": 0, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": 4, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": 7, "offsetY": 0 } },
+    { "image": "MutantFlower", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": 2, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": -32, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": -18, "offsetY": 0 } },
+    { "image": "MutantMushroom", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": -12, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": -73.5, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": 15, "offsetY": 0 } },
+    { "image": "MutantSweetPotato", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": 6, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": 4.5, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": -5, "offsetY": 0 } },
+    { "image": "Priestess", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": 0, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": 0, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": 0, "offsetY": 0 } },
+    { "image": "ProphetBoss", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": 31.057, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": -23.767, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": 33.953, "offsetY": 0 } },
+    { "image": "RotwoodWarden", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": -13.5, "offsetY": -17.825 }, "attack": { "scale": 1, "offsetX": -44, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": -58, "offsetY": -12.732 } },
+    { "image": "StoneShieldGolem", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": 0, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": -16.977, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": -6.791, "offsetY": 0 } },
+    { "image": "StoneStealGolem", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": 4.5, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": -9.291, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": 1, "offsetY": 0 } },
+    { "image": "StoneThrowGolem", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": 0, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": 0, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": 0, "offsetY": 0 } },
+    { "image": "VoidBeast", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": 0, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": -40.743, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": 33.953, "offsetY": 0 } },
+    { "image": "VoidBug", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": 0, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": -27.662, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": 13.581, "offsetY": 0 } },
+    { "image": "VoidLordBoss", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": 23.767, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": -54.324, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": 26.662, "offsetY": 0 } },
+    { "image": "WoodenPuppet", "scale": 1, "offsetX": 0, "offsetY": 0, "idle": { "scale": 1, "offsetX": -0.5, "offsetY": 0 }, "attack": { "scale": 1, "offsetX": -37.348, "offsetY": 0 }, "hit": { "scale": 1, "offsetX": 16.976, "offsetY": 0 } }
+  ]
+}

@@ -129,6 +129,7 @@ public class MonsterPrefabFactory
             previous.enabled = false;
             previous.hpSlider = null;
             previous.hpFillImage = null;
+            previous.healthBarView = null;
             previous.buffUI = null;
             UnityEngine.Object.Destroy(previous);
         }
@@ -143,6 +144,7 @@ public class MonsterPrefabFactory
 
         monster.hpSlider = stateController.hpSlider;
         monster.hpFillImage = stateController.hpFillImage;
+        monster.healthBarView = stateController.healthBarView;
         monster.buffUI = stateController.buffUI;
         monster.SetStateController(stateController);
         monster.UpdateUI();

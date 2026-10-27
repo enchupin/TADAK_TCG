@@ -1,13 +1,9 @@
 {
     "ui.card.curious": "Улучшается.",
     "ui.card.fragment": "Осколок: {description}",
-    "ui.combat.defense": "Защита: {value}",
-    "ui.combat.discardPile": "Сброс: {count}",
-    "ui.combat.drawPile": "Добор: {count}",
     "ui.combat.endTurn": "Завершить ход",
     "ui.combat.goHome": "В лобби",
     "ui.combat.hand": "Рука: {count}",
-    "ui.combat.monsterHp": "ОЗ: {hp}/{maxHp}",
     "ui.combat.victory": "Победа",
     "ui.common.cancel": "Отмена",
     "ui.common.close": "Закрыть",
