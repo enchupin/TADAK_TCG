@@ -17,9 +17,14 @@ public class MonsterSpawner : MonoBehaviour
     private int reservedSummonCount;
     // 이번 조우에서 몬스터 ID별 생성 수 (R-86 패턴 엇갈림 순번)
     private readonly System.Collections.Generic.Dictionary<int, int> spawnedCountById = new System.Collections.Generic.Dictionary<int, int>();
+    // 씬에 놓인 스폰 위치 (조우 좌표가 없는 칸 · 정리 시 복귀용)
+    private readonly List<SpawnSlot> sceneSlotPositions = new List<SpawnSlot>();
+    // 이번 조우의 시작 몬스터 수, 소환은 그다음 칸부터 사용
+    private int startMonsterCount;
 
     private void Awake()
     {
+        CacheSceneSlotPositions();
         ClearEncounter();
     }
 
@@ -34,6 +39,10 @@ public class MonsterSpawner : MonoBehaviour
                 point.gameObject.SetActive(false);
             }
         }
+
+        // 조우 좌표로 옮겼던 스폰 위치를 씬 위치로 되돌림
+        startMonsterCount = 0;
+        ApplySlotPositions(sceneSlotPositions);
     }
 
     /// <summary>
@@ -70,10 +79,13 @@ public class MonsterSpawner : MonoBehaviour
         }
 
         List<Monster> spawnedMonsters = new List<Monster>(encounter.Count);
+        // 저장 데이터에는 조우 ID가 없어 몬스터 목록으로 조우를 찾아 칸 좌표 적용
+        ApplyEncounterLayout(SpawnLayoutResolver.FindEncounterId(encounter, MonsterDatabase.AllEncounters), encounter.Count);
 
         for (int i = 0; i < encounter.Count; i++)
         {
-            Monster spawnedMonster = SpawnMonsterToAvailableSlot(encounter[i]);
+            // i번째 몬스터는 조우 좌표의 i번 칸
+            Monster spawnedMonster = SpawnMonsterToAvailableSlot(encounter[i], i);
             if (spawnedMonster != null)
             {
                 spawnedMonsters.Add(spawnedMonster);
@@ -89,7 +101,8 @@ public class MonsterSpawner : MonoBehaviour
     public List<Monster> SpawnRankingScareCrow()
     {
         List<Monster> spawnedMonsters = new List<Monster>(1);
-        Monster scareCrow = SpawnMonsterToAvailableSlot(typeof(ScareCrowMonster));
+        ApplyEncounterLayout(SpawnLayoutData.RankingScareCrowId, 1);
+        Monster scareCrow = SpawnMonsterToAvailableSlot(typeof(ScareCrowMonster), 0);
 
         if (scareCrow != null)
         {
@@ -304,9 +317,10 @@ public class MonsterSpawner : MonoBehaviour
     /// <summary>
     /// 몬스터 타입을 공통 프리팹 기반으로 생성해 빈 스폰 위치에 배치합니다
     /// </summary>
-    private Monster SpawnMonsterToAvailableSlot(int monsterId)
+    // preferredSlot: 비어 있으면 먼저 쓸 칸 (시작 몬스터), 음수면 소환 칸 순서
+    private Monster SpawnMonsterToAvailableSlot(int monsterId, int preferredSlot = -1)
     {
-        if (!TryGetAvailableSpawnPoint(out Transform spawnPoint))
+        if (!TryGetAvailableSpawnPoint(preferredSlot, out Transform spawnPoint))
         {
             Debug.LogWarning($"[MonsterSpawner] 남은 스폰 위치가 없어 '{monsterId}' 생성이 취소되었습니다");
             return null;
@@ -325,9 +339,9 @@ public class MonsterSpawner : MonoBehaviour
     /// <summary>
     /// 런타임에 직접 지정한 몬스터 컴포넌트 타입을 빈 스폰 위치에 생성합니다
     /// </summary>
-    public Monster SpawnMonsterToAvailableSlot(Type monsterComponentType)
+    public Monster SpawnMonsterToAvailableSlot(Type monsterComponentType, int preferredSlot = -1)
     {
-        if (!TryGetAvailableSpawnPoint(out Transform spawnPoint))
+        if (!TryGetAvailableSpawnPoint(preferredSlot, out Transform spawnPoint))
         {
             Debug.LogWarning($"[MonsterSpawner] 남은 스폰 위치가 없어 '{monsterComponentType?.Name}' 생성이 취소되었습니다");
             return null;
@@ -339,7 +353,7 @@ public class MonsterSpawner : MonoBehaviour
     /// <summary>
     /// 현재 사용할 수 있는 비어 있는 스폰 위치를 찾습니다
     /// </summary>
-    private bool TryGetAvailableSpawnPoint(out Transform availableSpawnPoint)
+    private bool TryGetAvailableSpawnPoint(int preferredSlot, out Transform availableSpawnPoint)
     {
         availableSpawnPoint = null;
 
@@ -350,7 +364,15 @@ public class MonsterSpawner : MonoBehaviour
         }
 
         int spawnPointCount = Mathf.Min(spawnPoints.Count, MaxMonsterCount);
-        for (int i = 0; i < spawnPointCount; i++)
+        if (preferredSlot >= 0 && preferredSlot < spawnPointCount
+            && spawnPoints[preferredSlot] != null && !IsSpawnPointOccupied(spawnPoints[preferredSlot]))
+        {
+            availableSpawnPoint = spawnPoints[preferredSlot];
+            return true;
+        }
+
+        // 시작 몬스터 다음 칸(소환 자리)부터, 다 차면 앞 번호의 빈 칸
+        foreach (int i in SpawnLayoutResolver.SummonSlotOrder(startMonsterCount, spawnPointCount))
         {
             Transform spawnPoint = spawnPoints[i];
             if (spawnPoint == null || IsSpawnPointOccupied(spawnPoint))
@@ -397,4 +419,61 @@ public class MonsterSpawner : MonoBehaviour
         return spawnPoint != null && spawnPoint.gameObject.activeSelf;
     }
 
+    /// <summary>
+    /// 조우 ID의 칸 좌표로 스폰 위치를 옮깁니다 (spawnLayouts.json)
+    /// </summary>
+    private void ApplyEncounterLayout(string layoutId, int monsterCount)
+    {
+        startMonsterCount = monsterCount;
+        // Awake보다 먼저 호출된 경우 대비
+        if (sceneSlotPositions.Count != spawnPoints.Count)
+        {
+            CacheSceneSlotPositions();
+        }
+
+        SpawnLayoutEntry entry = SpawnLayoutDatabase.Data.Find(layoutId);
+        if (entry == null || entry.slots == null || entry.slots.Count < monsterCount)
+        {
+            Debug.LogWarning($"[MonsterSpawner] '{layoutId ?? "(조우 없음)"}'의 스폰 좌표가 부족해 씬 스폰 위치를 함께 사용합니다");
+        }
+
+        ApplySlotPositions(SpawnLayoutResolver.ResolveSlots(entry, sceneSlotPositions));
+    }
+
+    /// <summary>
+    /// 씬에 놓인 스폰 위치를 기억합니다
+    /// </summary>
+    private void CacheSceneSlotPositions()
+    {
+        sceneSlotPositions.Clear();
+        foreach (Transform point in spawnPoints)
+        {
+            Vector2 position = point == null
+                ? Vector2.zero
+                : point is RectTransform rectTransform ? rectTransform.anchoredPosition : (Vector2)point.localPosition;
+            sceneSlotPositions.Add(new SpawnSlot(position.x, position.y));
+        }
+    }
+
+    private void ApplySlotPositions(IReadOnlyList<SpawnSlot> slots)
+    {
+        int count = Mathf.Min(spawnPoints.Count, slots.Count);
+        for (int i = 0; i < count; i++)
+        {
+            Transform point = spawnPoints[i];
+            if (point == null || slots[i] == null)
+            {
+                continue;
+            }
+
+            if (point is RectTransform rectTransform)
+            {
+                rectTransform.anchoredPosition = new Vector2(slots[i].x, slots[i].y);
+            }
+            else
+            {
+                point.localPosition = new Vector3(slots[i].x, slots[i].y, point.localPosition.z);
+            }
+        }
+    }
 }
