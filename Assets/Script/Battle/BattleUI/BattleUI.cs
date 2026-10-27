@@ -111,12 +111,13 @@ public class BattleUI : MonoBehaviour
             return;
         }
 
+        // 더미 아이콘 위에 숫자만 표시
         if (drawPileCountText != null) {
-            drawPileCountText.text = GameText.Ui("ui.combat.drawPile", new Dictionary<string, object> { { "count", battleManager.usableDeckManager.GetRemainingCardCount() } });
+            drawPileCountText.text = battleManager.usableDeckManager.GetRemainingCardCount().ToString();
         }
 
         if (discardPileCountText != null) {
-            discardPileCountText.text = GameText.Ui("ui.combat.discardPile", new Dictionary<string, object> { { "count", battleManager.usableDeckManager.GetDiscardPileCount() } });
+            discardPileCountText.text = battleManager.usableDeckManager.GetDiscardPileCount().ToString();
         }
 
         if (handCountText != null && battleManager.handManager != null) {
