@@ -17,10 +17,9 @@ public enum MonsterStateType
 [DisallowMultipleComponent]
 public class MonsterStateController : MonoBehaviour
 {
-    private const string ImageResourceFolder = "Image/Monster";
-    private const string IdleImageSuffix = "Idle";
-    private const string AttackImageSuffix = "Attack";
-    private const string HitImageSuffix = "Hit";
+    private const string IdleImageSuffix = MonsterImagePaths.IdleImageSuffix;
+    private const string AttackImageSuffix = MonsterImagePaths.AttackImageSuffix;
+    private const string HitImageSuffix = MonsterImagePaths.HitImageSuffix;
 
     [Header("상태 애니메이션")]
     [SerializeField] private Animator animator;
@@ -242,7 +241,7 @@ public class MonsterStateController : MonoBehaviour
     {
         string resolvedImageName = !string.IsNullOrWhiteSpace(monsterImageNameOverride)
             ? monsterImageNameOverride
-            : NormalizeMonsterImageName(imageName);
+            : MonsterImagePaths.NormalizeImageName(imageName);
 
         if (monsterImageName == resolvedImageName)
         {
@@ -252,18 +251,6 @@ public class MonsterStateController : MonoBehaviour
         monsterImageName = resolvedImageName;
         stateSpriteCache.Clear();
         ApplyStateImage(CurrentState);
-    }
-
-    private static string NormalizeMonsterImageName(string imageName)
-    {
-        const string monsterSuffix = "Monster";
-
-        if (string.IsNullOrWhiteSpace(imageName) || !imageName.EndsWith(monsterSuffix, System.StringComparison.Ordinal))
-        {
-            return imageName;
-        }
-
-        return imageName.Substring(0, imageName.Length - monsterSuffix.Length);
     }
 
     private void ChangeState(MonsterStateType nextState, string triggerName, AudioClip sound, float volumeScale, float idleReturnDelay)
@@ -338,32 +325,9 @@ public class MonsterStateController : MonoBehaviour
 
     private string BuildStateImageResourcePath(MonsterStateType state)
     {
-        if (string.IsNullOrWhiteSpace(monsterImageName))
-        {
-            return string.Empty;
-        }
-
         // 보스도 일반 몬스터와 같은 상태 전환과 스프라이트 캐시를 사용
-        string bossImagePath = monsterImageName switch
-        {
-            "GiantFlowerSpiderBoss" => "Image/BossMonster/Arachne/Arachne",
-            "ProphetBoss" => "Image/BossMonster/Prophet/Prophet",
-            "IceAndFireBoss" => "Image/BossMonster/IceAndFire/IceAndFire",
-            "VoidLordBoss" => "Image/BossMonster/VoidLord/VoidLord",
-            _ => null
-        };
-        if (bossImagePath != null)
-        {
-            return $"{bossImagePath}_{GetStateImageSuffix(state)}";
-        }
-
-        string fileName = $"{monsterImageName}_{GetStateImageSuffix(state)}";
-        if (string.IsNullOrWhiteSpace(ImageResourceFolder))
-        {
-            return fileName;
-        }
-
-        return $"{ImageResourceFolder.TrimEnd('/')}/{fileName}";
+        // 경로 규칙은 여백 측정 도구 · 테스트와 공유하도록 MonsterImagePaths로 이동
+        return MonsterImagePaths.BuildResourcePath(monsterImageName, GetStateImageSuffix(state));
     }
 
     private string GetStateImageSuffix(MonsterStateType state)
