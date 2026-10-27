@@ -70,9 +70,6 @@
     { "path": "Image/Monster/VoidBug_Attack", "width": 800, "height": 500, "x": 58, "y": 25, "w": 682, "h": 290 },
     { "path": "Image/Monster/VoidBug_Hit", "width": 550, "height": 400, "x": 93, "y": 20, "w": 364, "h": 306 },
     { "path": "Image/Monster/VoidBug_Idle", "width": 550, "height": 400, "x": 71, "y": 20, "w": 408, "h": 260 },
-    { "path": "Image/Monster/VoidLordBoss_Attack", "width": 900, "height": 900, "x": 32, "y": 45, "w": 836, "h": 566 },
-    { "path": "Image/Monster/VoidLordBoss_Hit", "width": 550, "height": 900, "x": 45, "y": 28, "w": 460, "h": 593 },
-    { "path": "Image/Monster/VoidLordBoss_Idle", "width": 550, "height": 900, "x": 44, "y": 27, "w": 462, "h": 698 },
     { "path": "Image/Monster/WoodenPuppet_Attack", "width": 500, "height": 600, "x": 50, "y": 24, "w": 400, "h": 475 },
     { "path": "Image/Monster/WoodenPuppet_Hit", "width": 500, "height": 600, "x": 106, "y": 24, "w": 288, "h": 461 },
     { "path": "Image/Monster/WoodenPuppet_Idle", "width": 500, "height": 600, "x": 140, "y": 24, "w": 218, "h": 482 }
