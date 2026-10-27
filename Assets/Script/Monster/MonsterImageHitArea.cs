@@ -11,6 +11,8 @@ public class MonsterImageHitArea : MonoBehaviour, ICanvasRaycastFilter
     // 이미지 사각형 안 그림 영역 비율 (좌하단 원점)
     private Rect contentRatio = new Rect(0f, 0f, 1f, 1f);
 
+    public Rect ContentRatio => contentRatio;
+
     public void SetContentRatio(float x, float y, float width, float height)
     {
         contentRatio = new Rect(x, y, width, height);

@@ -6,13 +6,14 @@ using System.Text;
 /// <summary>
 /// 몬스터 이미지 배치 설정 (JsonData/monsterDisplay.json)
 /// 기준 칸 · 지면 높이는 공통, 배율 · 위치 보정은 몬스터 이미지 이름별
+/// 상태(Idle · Attack · Hit)별 캔버스가 달라 상태마다 추가 보정 가능 (버전 2)
 /// 비교 씬 저장 · 검증 테스트가 같은 서식을 쓰도록 Unity 의존 없이 작성
 /// </summary>
 [Serializable]
 public class MonsterDisplayData
 {
     public const string ResourcePath = "JsonData/monsterDisplay";
-    public const int CurrentVersion = 1;
+    public const int CurrentVersion = 2;
 
     public int version = CurrentVersion;
     // Idle 캔버스를 이 칸에 비율 유지로 맞춘 배율이 기본 배율 (기존 MonsterImage 150×300 칸)
@@ -56,13 +57,25 @@ public class MonsterDisplayData
         for (int i = 0; i < monsters.Count; i++)
         {
             MonsterDisplayEntry e = monsters[i];
-            builder.Append($"    {{ \"image\": \"{e.image}\", \"scale\": {Format(e.scale)}, \"offsetX\": {Format(e.offsetX)}, \"offsetY\": {Format(e.offsetY)} }}");
+            builder.Append($"    {{ \"image\": \"{e.image}\", {FormatValues(e.scale, e.offsetX, e.offsetY)}, "
+                + $"\"idle\": {FormatState(e.idle)}, \"attack\": {FormatState(e.attack)}, \"hit\": {FormatState(e.hit)} }}");
             builder.Append(i < monsters.Count - 1 ? ",\n" : "\n");
         }
 
         builder.Append("  ]\n");
         builder.Append("}\n");
         return builder.ToString();
+    }
+
+    private static string FormatValues(float scale, float offsetX, float offsetY)
+    {
+        return $"\"scale\": {Format(scale)}, \"offsetX\": {Format(offsetX)}, \"offsetY\": {Format(offsetY)}";
+    }
+
+    private static string FormatState(MonsterDisplayStateEntry state)
+    {
+        state ??= new MonsterDisplayStateEntry();
+        return $"{{ {FormatValues(state.scale, state.offsetX, state.offsetY)} }}";
     }
 
     private static string Format(float value)
@@ -79,6 +92,32 @@ public class MonsterDisplayEntry
     // 기본 배율에 곱하는 값
     public float scale = 1f;
     // 좌우 보정, 비행형 띄움 높이
+    public float offsetX;
+    public float offsetY;
+    // 상태별 추가 보정 (배율은 곱, 위치는 더함)
+    public MonsterDisplayStateEntry idle = new();
+    public MonsterDisplayStateEntry attack = new();
+    public MonsterDisplayStateEntry hit = new();
+
+    // stateSuffix: MonsterImagePaths의 상태 이름 (Idle · Attack · Hit)
+    public MonsterDisplayStateEntry GetState(string stateSuffix)
+    {
+        switch (stateSuffix)
+        {
+            case MonsterImagePaths.AttackImageSuffix:
+                return attack ??= new MonsterDisplayStateEntry();
+            case MonsterImagePaths.HitImageSuffix:
+                return hit ??= new MonsterDisplayStateEntry();
+            default:
+                return idle ??= new MonsterDisplayStateEntry();
+        }
+    }
+}
+
+[Serializable]
+public class MonsterDisplayStateEntry
+{
+    public float scale = 1f;
     public float offsetX;
     public float offsetY;
 }
@@ -106,8 +145,9 @@ public struct MonsterSpriteLayoutResult
 public static class MonsterSpriteLayout
 {
     // current: 현재 상태 이미지 측정값, idle: Idle 이미지 측정값 (배율 · 의도 위치 기준)
+    // stateSuffix: 현재 상태 이름, 상태별 보정 선택용
     public static MonsterSpriteLayoutResult Compute(MonsterSpriteBoundsEntry current, MonsterSpriteBoundsEntry idle,
-        MonsterDisplayData settings, MonsterDisplayEntry entry)
+        MonsterDisplayData settings, MonsterDisplayEntry entry, string stateSuffix = MonsterImagePaths.IdleImageSuffix)
     {
         if (current == null)
         {
@@ -122,17 +162,22 @@ public static class MonsterSpriteLayout
         float offsetX = entry?.offsetX ?? 0f;
         float offsetY = entry?.offsetY ?? 0f;
 
-        float scale = Math.Min(referenceWidth / Math.Max(1, idle.width), referenceHeight / Math.Max(1, idle.height)) * entryScale;
-        float feet = groundOffset + offsetY;
+        MonsterDisplayStateEntry state = entry?.GetState(stateSuffix) ?? new MonsterDisplayStateEntry();
+        MonsterDisplayStateEntry idleState = entry?.GetState(MonsterImagePaths.IdleImageSuffix) ?? new MonsterDisplayStateEntry();
+        float baseScale = Math.Min(referenceWidth / Math.Max(1, idle.width), referenceHeight / Math.Max(1, idle.height)) * entryScale;
+        float scale = baseScale * (state.scale > 0f ? state.scale : 1f);
+        float idleScale = baseScale * (idleState.scale > 0f ? idleState.scale : 1f);
+        float feet = groundOffset + offsetY + state.offsetY;
+        float idleFeet = groundOffset + offsetY + idleState.offsetY;
 
         MonsterSpriteLayoutResult result = new()
         {
             scale = scale,
             width = current.width * scale,
             height = current.height * scale,
-            centerX = offsetX,
+            centerX = offsetX + state.offsetX,
             bottom = feet - current.BottomPadding * scale,
-            idleContentTop = feet + (idle.IsEmpty ? idle.height : idle.h) * scale
+            idleContentTop = idleFeet + (idle.IsEmpty ? idle.height : idle.h) * idleScale
         };
 
         if (current.IsEmpty)

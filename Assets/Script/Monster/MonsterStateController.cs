@@ -236,6 +236,14 @@ public class MonsterStateController : MonoBehaviour
         return trigger;
     }
 
+    // 비교 씬용: 효과음 · 자동 복귀 없이 상태 이미지만 고정 표시
+    public void PreviewState(MonsterStateType state)
+    {
+        StopReturnToIdle();
+        CurrentState = state;
+        ApplyStateImage(state);
+    }
+
     public void EnterIdle()
     {
         ChangeState(MonsterStateType.Idle, idleTriggerName, null, 1f, 0f);
@@ -351,10 +359,18 @@ public class MonsterStateController : MonoBehaviour
                 groundOffset = inspectorGroundOffset,
                 intentGap = settings.intentGap
             };
+            // 상태별 보정은 데이터 값 유지
+            MonsterDisplayEntry dataEntry = entry;
             entry = new MonsterDisplayEntry { image = monsterImageName, scale = inspectorScale, offsetX = inspectorOffsetX, offsetY = inspectorOffsetY };
+            if (dataEntry != null)
+            {
+                entry.idle = dataEntry.idle;
+                entry.attack = dataEntry.attack;
+                entry.hit = dataEntry.hit;
+            }
         }
 
-        MonsterSpriteLayoutResult layout = MonsterSpriteLayout.Compute(current, idle, settings, entry);
+        MonsterSpriteLayoutResult layout = MonsterSpriteLayout.Compute(current, idle, settings, entry, GetStateImageSuffix(state));
 
         // 스폰 위치 하단 중앙 기준으로 이미지 캔버스를 배치 (하단 여백만큼 지면 아래로)
         imageRect.anchorMin = new Vector2(0.5f, 0f);

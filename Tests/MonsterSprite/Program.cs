@@ -66,6 +66,14 @@ class Program {
   Check(Near(a.scale,0.6f)&&Near(a.width,540),$"상태별 고정 배율 오류 {a.scale}");
   Check(Near(a.bottom,10+30-40*0.6f)&&Near(a.centerX,5),$"띄움 · 좌우 보정 오류 {a.bottom}");
   Check(Near(a.idleContentTop,40+550*0.6f),$"의도 기준 오류 {a.idleContentTop}");
+  // 상태별 보정: 공격 이미지만 배율 · 위치 추가, 의도 기준은 Idle 보정 사용
+  var entry=new MonsterDisplayEntry{scale=2,offsetY=30};
+  entry.attack.scale=0.5f;entry.attack.offsetX=7;entry.attack.offsetY=-4;entry.idle.offsetY=6;
+  var sa=MonsterSpriteLayout.Compute(attack,idle,settings,entry,"Attack");
+  Check(Near(sa.scale,0.3f)&&Near(sa.centerX,7)&&Near(sa.bottom,10+30-4-40*0.3f),$"상태별 보정 오류 {sa.scale} {sa.bottom}");
+  Check(Near(sa.idleContentTop,10+30+6+550*0.6f),$"상태별 의도 기준 오류 {sa.idleContentTop}");
+  var si=MonsterSpriteLayout.Compute(idle,idle,settings,entry,"Idle");
+  Check(Near(si.scale,0.6f)&&Near(si.bottom,10+30+6-26*0.6f),$"Idle 보정 오류 {si.bottom}");
   var empty=MonsterSpriteLayout.Compute(new MonsterSpriteBoundsEntry{path="e",width=100,height=100},null,settings,null);
   Check(Near(empty.contentWidthRatio,1)&&Near(empty.bottom,10),"빈 이미지 배치 오류");
  }
