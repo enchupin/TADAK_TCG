@@ -443,14 +443,14 @@ public class MonsterSpawner : MonoBehaviour
     /// <summary>
     /// 씬에 놓인 스폰 위치를 기억합니다
     /// </summary>
+    // 스폰 위치는 MonsterSpawner (n) 아래 몬스터 프리팹이라 부모 위치가 더해짐
+    // 좌표는 이 컴포넌트가 붙은 MonsterSpawnPositions(캔버스 우측 중앙) 기준 피벗 위치로 읽고 씀
     private void CacheSceneSlotPositions()
     {
         sceneSlotPositions.Clear();
         foreach (Transform point in spawnPoints)
         {
-            Vector2 position = point == null
-                ? Vector2.zero
-                : point is RectTransform rectTransform ? rectTransform.anchoredPosition : (Vector2)point.localPosition;
+            Vector3 position = point == null ? Vector3.zero : transform.InverseTransformPoint(point.position);
             sceneSlotPositions.Add(new SpawnSlot(position.x, position.y));
         }
     }
@@ -466,14 +466,8 @@ public class MonsterSpawner : MonoBehaviour
                 continue;
             }
 
-            if (point is RectTransform rectTransform)
-            {
-                rectTransform.anchoredPosition = new Vector2(slots[i].x, slots[i].y);
-            }
-            else
-            {
-                point.localPosition = new Vector3(slots[i].x, slots[i].y, point.localPosition.z);
-            }
+            float z = transform.InverseTransformPoint(point.position).z;
+            point.position = transform.TransformPoint(new Vector3(slots[i].x, slots[i].y, z));
         }
     }
 }
