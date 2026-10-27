@@ -1,13 +1,9 @@
 {
     "ui.card.curious": "Upgrades.",
     "ui.card.fragment": "Fragment: {description}",
-    "ui.combat.defense": "Block : {value}",
-    "ui.combat.discardPile": "Discard Pile : {count}",
-    "ui.combat.drawPile": "Deck : {count}",
     "ui.combat.endTurn": "End Turn",
     "ui.combat.goHome": "Return to Lobby",
     "ui.combat.hand": "Hand : {count}",
-    "ui.combat.monsterHp": "HP : {hp}/{maxHp}",
     "ui.combat.victory": "Victory",
     "ui.common.cancel": "Cancel",
     "ui.common.close": "Close",

@@ -1,13 +1,9 @@
 {
     "ui.card.curious": "アップグレードされる。",
     "ui.card.fragment": "欠片：{description}",
-    "ui.combat.defense": "ブロック : {value}",
-    "ui.combat.discardPile": "捨て札 : {count}",
-    "ui.combat.drawPile": "山札 : {count}",
     "ui.combat.endTurn": "ターン終了",
     "ui.combat.goHome": "ロビーへ",
     "ui.combat.hand": "手札 : {count}",
-    "ui.combat.monsterHp": "HP : {hp}/{maxHp}",
     "ui.combat.victory": "勝利",
     "ui.common.cancel": "キャンセル",
     "ui.common.close": "閉じる",
