@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -63,6 +62,16 @@ public class MonsterStateController : MonoBehaviour
     // 체력 바 중앙 수치와 좌측 보호막 표시 (비어 있으면 표시 생략)
     public HealthBarView healthBarView;
 
+    [Header("체력 바 폭")]
+    // 프리팹의 체력 바 폭이 최소값, Idle 그림이 더 넓으면 그 폭에 맞춰 늘림 (상태 전환에는 변하지 않음)
+    // 버프 영역은 체력 바와 같은 폭을 사용
+    [Tooltip("켜면 체력 바 폭을 Idle 그림 폭에 맞춰 늘림, 끄면 프리팹 폭 그대로")]
+    [SerializeField] private bool fitHealthBarToImage = true;
+    [Tooltip("Idle 그림 폭에 더할 여유 (좌우 합)")]
+    [SerializeField] private float healthBarWidthPadding;
+    [Tooltip("체력 바 최대 폭, 0이면 제한 없음 (이웃 몬스터와 겹칠 때 사용)")]
+    [SerializeField] private float healthBarMaxWidth;
+
     [Header("스폰 위치별 버프 UI")]
     // 스폰 위치 목록과 같은 순서로 각 Buff 오브젝트의 BuffUI를 연결
     // 몬스터 프리팹의 부모인 스폰 위치에 미리 배치된 버프 슬롯을 연결
@@ -70,19 +79,18 @@ public class MonsterStateController : MonoBehaviour
     // 프리팹 내부의 BuffUI와 버프 이미지 순서를 인스펙터에 연결
     public BuffUI buffUI;
 
-    [Header("의도 이미지 슬롯")]
-    [Tooltip("좌측 상단부터 표시할 순서대로 프리팹의 Intend 이미지를 연결")]
-    public List<Image> intendSlots = new();
-
-    [Tooltip("의도 이미지 슬롯과 같은 순서로 각 Intend의 수치 텍스트를 연결")]
-    public List<TextMeshProUGUI> intendValueTexts = new();
-
-    [Header("의도 툴팁")]
-    // 의도 아이콘은 추후 1개로 통합 예정이라 영역 전체를 호버 대상으로 사용
-    // 아이콘 사이 빈틈까지 호버하려면 영역에 투명 Image(레이캐스트 켬)를 두면 됨
-    [Tooltip("의도 툴팁 호버 영역, 툴팁은 이 영역 우측에 표시. 비어 있으면 아이콘마다 각자 우측에 표시")]
-    [SerializeField] private RectTransform intentTooltipArea;
-    [Tooltip("의도 영역과 툴팁 사이 간격 (TooltipTrigger를 직접 붙인 경우 그 설정 사용)")]
+    [Header("의도 아이콘 목록")]
+    // 고정 위치에 한 줄 가운데 정렬로 표시하고 툴팁은 목록 바로 위 중앙에 표시
+    // 영역 크기는 바꾸지 않고 하단 중앙에 아이콘 크기만 한 목록(IntentIconList)을 만들어 그 안에 배치
+    [Tooltip("의도 아이콘 목록을 놓을 영역, 하단 중앙에 목록을 만듦. 비어 있으면 의도 영역(intentRoot) 사용")]
+    [SerializeField] private RectTransform intentIconContainer;
+    [Tooltip("의도 아이콘 프리팹 (StatusIconView), 비어 있으면 기본 아이콘을 만들어 사용")]
+    [SerializeField] private StatusIconView intentIconPrefab;
+    [SerializeField] private float intentIconSize = 50f;
+    [SerializeField] private float intentIconSpacing = 4f;
+    [Tooltip("기본 아이콘의 수치 글자 크기 (프리팹을 쓰면 프리팹 설정 사용)")]
+    [SerializeField] private float intentValueFontSize = 20f;
+    [Tooltip("의도 목록과 툴팁 사이 간격 (TooltipTrigger를 직접 붙인 경우 그 설정 사용)")]
     [SerializeField] private float intentTooltipSpacing = 6f;
 
     [Header("의도 아이콘")]
@@ -91,6 +99,13 @@ public class MonsterStateController : MonoBehaviour
     [SerializeField] private Sprite beneficialIntendSprite;
     [SerializeField] private Sprite harmfulIntendSprite;
     [SerializeField] private Sprite defaultIntendSprite;
+    // 아직 제작되지 않은 종류는 비워 두면 검(공격) 아이콘으로 대체
+    [SerializeField] private Sprite summonIntendSprite;
+    [SerializeField] private Sprite bombIntendSprite;
+    [SerializeField] private Sprite disruptCardIntendSprite;
+    [SerializeField] private Sprite healIntendSprite;
+    [SerializeField] private Sprite stunIntendSprite;
+    [SerializeField] private Sprite leaveIntendSprite;
 
     [Header("상태 효과음")]
     [SerializeField, HideInInspector] private AudioClip attackSound;
@@ -104,6 +119,10 @@ public class MonsterStateController : MonoBehaviour
     private readonly HashSet<string> loggedMissingBounds = new();
     private readonly Dictionary<MonsterStateType, Sprite> stateSpriteCache = new();
     private readonly List<TooltipTrigger> intentTooltipTriggers = new();
+    private readonly List<StatusIconView> intentIconPool = new();
+    // 아이콘이 차지한 범위만큼의 목록 영역 (툴팁 기준)
+    private RectTransform intentIconList;
+    private float healthBarMinWidth = -1f;
 
     public MonsterStateType CurrentState { get; private set; } = MonsterStateType.Idle;
     public string MonsterImageName => monsterImageName;
@@ -111,6 +130,12 @@ public class MonsterStateController : MonoBehaviour
     private void Awake()
     {
         CacheAnimator();
+        CaptureHealthBarMinWidth();
+        if (buffUI != null && hpSlider != null)
+        {
+            buffUI.SetWidthSourceIfEmpty(hpSlider.transform as RectTransform);
+        }
+
         UpdateIntendIcons(null);
     }
 
@@ -138,60 +163,135 @@ public class MonsterStateController : MonoBehaviour
         int? attackValue = null, int? protectionValue = null)
     {
         int iconCount = iconTypes != null && isActiveAndEnabled ? iconTypes.Count : 0;
-        for (int i = 0; i < intendSlots.Count; i++)
+        UpdateIntentIconList(iconTypes, iconCount, attackValue, protectionValue);
+    }
+
+    private static int? ResolveIntentValue(MonsterIntentIconType iconType, int? attackValue, int? protectionValue)
+    {
+        return iconType switch
         {
-            Image slot = intendSlots[i];
-            if (slot == null)
+            MonsterIntentIconType.Attack => attackValue,
+            MonsterIntentIconType.Bomb => attackValue,
+            MonsterIntentIconType.Protection => protectionValue,
+            _ => null
+        };
+    }
+
+    // 종류별 그림이 비어 있으면 검(공격) 아이콘, 그것도 없으면 기본 아이콘
+    private Sprite ResolveIntentSprite(MonsterIntentIconType iconType)
+    {
+        Sprite sprite = iconType switch
+        {
+            MonsterIntentIconType.None => null,
+            MonsterIntentIconType.Attack => attackIntendSprite,
+            MonsterIntentIconType.Protection => protectionIntendSprite,
+            MonsterIntentIconType.BeneficialEffect => beneficialIntendSprite,
+            MonsterIntentIconType.HarmfulEffect => harmfulIntendSprite,
+            MonsterIntentIconType.Summon => summonIntendSprite,
+            MonsterIntentIconType.Bomb => bombIntendSprite,
+            MonsterIntentIconType.DisruptCard => disruptCardIntendSprite,
+            MonsterIntentIconType.Heal => healIntendSprite,
+            MonsterIntentIconType.Stun => stunIntendSprite,
+            MonsterIntentIconType.Leave => leaveIntendSprite,
+            _ => null
+        };
+        if (iconType != MonsterIntentIconType.None && sprite == null)
+        {
+            sprite = attackIntendSprite != null ? attackIntendSprite : defaultIntendSprite;
+        }
+
+        return sprite;
+    }
+
+    // 목록 영역을 놓을 영역 하단 중앙에 만듦 (의도 영역은 Idle 그림 상단 위로 옮겨짐)
+    // 놓을 영역 자체 크기를 바꾸면 의도 영역 위치 계산이 흔들리므로 별도 목록을 둠
+    private RectTransform ResolveIntentIconContainer()
+    {
+        RectTransform parent = intentIconContainer != null ? intentIconContainer : intentRoot;
+        if (intentIconList != null || parent == null)
+        {
+            return intentIconList;
+        }
+
+        GameObject listObject = new("IntentIconList", typeof(RectTransform));
+        listObject.layer = parent.gameObject.layer;
+        RectTransform listRect = listObject.GetComponent<RectTransform>();
+        listRect.SetParent(parent, false);
+        listRect.anchorMin = new Vector2(0.5f, 0f);
+        listRect.anchorMax = new Vector2(0.5f, 0f);
+        listRect.pivot = new Vector2(0.5f, 0f);
+        listRect.anchoredPosition = Vector2.zero;
+        listRect.sizeDelta = new Vector2(0f, intentIconSize);
+        intentIconList = listRect;
+        return intentIconList;
+    }
+
+    private void UpdateIntentIconList(IReadOnlyList<MonsterIntentIconType> iconTypes, int iconCount,
+        int? attackValue, int? protectionValue)
+    {
+        // 비활성화 중에는 계층을 바꿀 수 없으므로 표시할 아이콘이 없으면 목록을 새로 만들지 않음
+        if (iconCount == 0 && intentIconList == null)
+        {
+            return;
+        }
+
+        RectTransform container = ResolveIntentIconContainer();
+        if (container == null)
+        {
+            return;
+        }
+
+        int visibleCount = 0;
+        for (int i = 0; i < iconCount; i++)
+        {
+            Sprite sprite = ResolveIntentSprite(iconTypes[i]);
+            if (sprite == null)
             {
                 continue;
             }
 
-            MonsterIntentIconType iconType = i < iconCount ? iconTypes[i] : MonsterIntentIconType.None;
-            Sprite sprite = iconType switch
-            {
-                MonsterIntentIconType.None => null,
-                MonsterIntentIconType.Attack => attackIntendSprite,
-                MonsterIntentIconType.Protection => protectionIntendSprite,
-                MonsterIntentIconType.BeneficialEffect => beneficialIntendSprite,
-                MonsterIntentIconType.HarmfulEffect => harmfulIntendSprite,
-                _ => defaultIntendSprite
-            };
-            if (iconType != MonsterIntentIconType.None && sprite == null)
-            {
-                sprite = defaultIntendSprite;
-            }
-
-            slot.sprite = sprite;
-            slot.enabled = sprite != null;
-            // 파스텔 구분색은 편집용으로 사용하고 전투에서는 아이콘 원래 색상을 표시
-            slot.color = Color.white;
-            slot.preserveAspect = true;
-            // 의도 툴팁 호버를 받도록 표시 중인 아이콘만 레이캐스트를 켬
-            slot.raycastTarget = sprite != null;
+            StatusIconView icon = GetOrCreateIntentIcon(container, visibleCount);
+            int? value = ResolveIntentValue(iconTypes[i], attackValue, protectionValue);
+            icon.Set(sprite, value.HasValue ? value.Value.ToString() : null);
+            visibleCount++;
         }
 
-        for (int i = 0; i < intendValueTexts.Count; i++)
+        // 비활성화 도중에도 호출되므로 오브젝트는 끄지 않고 그림만 비움
+        for (int i = visibleCount; i < intentIconPool.Count; i++)
         {
-            TextMeshProUGUI valueText = intendValueTexts[i];
-            if (valueText == null)
-            {
-                continue;
-            }
-
-            MonsterIntentIconType iconType = i < iconCount ? iconTypes[i] : MonsterIntentIconType.None;
-            int? value = iconType switch
-            {
-                MonsterIntentIconType.Attack => attackValue,
-                MonsterIntentIconType.Bomb => attackValue,
-                MonsterIntentIconType.Protection => protectionValue,
-                _ => null
-            };
-            bool showValue = value.HasValue && i < intendSlots.Count
-                && intendSlots[i] != null && intendSlots[i].enabled;
-            valueText.text = showValue ? value.Value.ToString() : string.Empty;
-            valueText.enabled = showValue;
-            valueText.raycastTarget = false;
+            intentIconPool[i]?.Set(null, null);
         }
+
+        // 목록 폭을 아이콘이 차지한 범위로 맞춰 툴팁이 아이콘 바로 위 중앙에 오게 함
+        container.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,
+            IconRowLayout.CenteredRowWidth(visibleCount, intentIconSize, intentIconSpacing));
+        container.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, intentIconSize);
+        for (int i = 0; i < visibleCount; i++)
+        {
+            float centerX = IconRowLayout.CenteredCellCenterX(i, visibleCount, intentIconSize, intentIconSpacing);
+            intentIconPool[i].RectTransform.anchoredPosition = new Vector2(centerX, 0f);
+        }
+    }
+
+    private StatusIconView GetOrCreateIntentIcon(RectTransform container, int index)
+    {
+        while (intentIconPool.Count <= index)
+        {
+            StatusIconView icon = intentIconPrefab != null
+                ? Instantiate(intentIconPrefab, container, false)
+                : StatusIconView.CreateDefault(container, "IntentIcon", intentIconSize, intentValueFontSize);
+            icon.name = $"IntentIcon ({intentIconPool.Count})";
+
+            // 목록 영역 중앙 기준으로 가로 위치만 계산
+            RectTransform rect = icon.RectTransform;
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            icon.SetSize(intentIconSize);
+            intentIconPool.Add(icon);
+        }
+
+        return intentIconPool[index];
     }
 
     // 몬스터가 연결될 때 의도 툴팁 문구 제공자를 지정
@@ -210,30 +310,20 @@ public class MonsterStateController : MonoBehaviour
 
     private void SetupIntentTooltipTriggers()
     {
-        if (intentTooltipArea != null)
+        // 목록 영역 전체를 호버 대상으로 쓰고 툴팁은 목록 바로 위 중앙
+        RectTransform listContainer = ResolveIntentIconContainer();
+        if (listContainer == null)
         {
-            intentTooltipTriggers.Add(GetOrAddTooltipTrigger(intentTooltipArea.gameObject));
             return;
         }
 
-        foreach (Image slot in intendSlots)
+        if (!listContainer.TryGetComponent(out TooltipTrigger listTrigger))
         {
-            if (slot != null)
-            {
-                intentTooltipTriggers.Add(GetOrAddTooltipTrigger(slot.gameObject));
-            }
-        }
-    }
-
-    private TooltipTrigger GetOrAddTooltipTrigger(GameObject target)
-    {
-        if (!target.TryGetComponent(out TooltipTrigger trigger))
-        {
-            trigger = target.AddComponent<TooltipTrigger>();
-            trigger.SetPlacement(TooltipPlacement.Right, intentTooltipSpacing);
+            listTrigger = listContainer.gameObject.AddComponent<TooltipTrigger>();
+            listTrigger.SetPlacement(TooltipPlacement.Top, intentTooltipSpacing);
         }
 
-        return trigger;
+        intentTooltipTriggers.Add(listTrigger);
     }
 
     // 비교 씬용: 효과음 · 자동 복귀 없이 상태 이미지만 고정 표시
@@ -385,6 +475,7 @@ public class MonsterStateController : MonoBehaviour
         }
 
         hitArea.SetContentRatio(layout.contentXRatio, layout.contentYRatio, layout.contentWidthRatio, layout.contentHeightRatio);
+        ApplyHealthBarWidth(layout.idleContentWidth);
 
         if (intentRoot != null && intentRoot.parent == parentRect)
         {
@@ -393,6 +484,40 @@ public class MonsterStateController : MonoBehaviour
             intentPosition.y = parentRect.rect.yMin + layout.idleContentTop + settings.intentGap
                 + intentRoot.rect.height * intentRoot.pivot.y;
             intentRoot.localPosition = intentPosition;
+        }
+    }
+
+    // 프리팹에 배치된 체력 바 폭을 최소값으로 기억
+    private void CaptureHealthBarMinWidth()
+    {
+        if (healthBarMinWidth >= 0f || hpSlider == null)
+        {
+            return;
+        }
+
+        RectTransform barRect = hpSlider.transform as RectTransform;
+        if (barRect != null)
+        {
+            healthBarMinWidth = barRect.rect.width;
+        }
+    }
+
+    // Idle 그림 폭 기준이라 상태가 바뀌어도 같은 값, 몬스터가 바뀔 때만 달라짐
+    private void ApplyHealthBarWidth(float idleContentWidth)
+    {
+        CaptureHealthBarMinWidth();
+        RectTransform barRect = hpSlider != null ? hpSlider.transform as RectTransform : null;
+        if (barRect == null || healthBarMinWidth < 0f)
+        {
+            return;
+        }
+
+        float width = fitHealthBarToImage
+            ? MonsterSpriteLayout.ResolveHealthBarWidth(healthBarMinWidth, idleContentWidth, healthBarWidthPadding, healthBarMaxWidth)
+            : healthBarMinWidth;
+        if (!Mathf.Approximately(barRect.rect.width, width))
+        {
+            barRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
         }
     }
 

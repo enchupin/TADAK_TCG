@@ -3,10 +3,10 @@ using System;
 // 기준 영역을 기준으로 툴팁을 놓을 방향
 public enum TooltipPlacement
 {
-    // 기준 영역 우측, 상단 맞춤 (의도)
-    Right,
     // 기준 영역 하단, 좌측 맞춤 (버프)
-    Bottom
+    Bottom,
+    // 기준 영역 상단, 가로 중앙 맞춤 (의도 아이콘 목록)
+    Top
 }
 
 // 같은 부모 좌표계의 사각형 (y는 위쪽이 큼)
@@ -46,9 +46,9 @@ public static class TooltipLayout
         float top;
         switch (placement)
         {
-            case TooltipPlacement.Right:
-                left = anchor.XMax + spacing;
-                top = anchor.YMax;
+            case TooltipPlacement.Top:
+                left = (anchor.XMin + anchor.XMax) * 0.5f - width * 0.5f;
+                top = anchor.YMax + spacing + height;
                 break;
             default:
                 left = anchor.XMin;

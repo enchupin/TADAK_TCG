@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class BuffUI : MonoBehaviour
 {
@@ -17,11 +16,21 @@ public class BuffUI : MonoBehaviour
     private static readonly HashSet<int> HandRankMemberBuffIds = new() { 1007, 1009, 1010, 1024 };
 
     [Header("버프 아이콘 설정")]
-    // 계층의 나열 순서와 무관하게 실제 배치된 위치를 좌측 상단부터 행 순서로 사용
-    // 이 순서로 이미지를 인스펙터에 직접 연결하며 런타임에는 좌표를 계산하지 않음
-    public List<Image> iconSlots = new();
     [SerializeField] private BuffTarget target = BuffTarget.Player;
     [SerializeField] private Monster targetMonster;
+
+    [Header("아이콘 목록")]
+    // 필요한 만큼 아이콘을 만들어 재사용하고, 남는 아이콘은 끄기만 함
+    [Tooltip("버프 아이콘 프리팹 (StatusIconView), 비어 있으면 기본 아이콘을 만들어 사용")]
+    [SerializeField] private StatusIconView iconPrefab;
+    [Tooltip("아이콘을 놓을 영역, 비어 있으면 이 오브젝트. 좌측 상단부터 채우고 폭을 넘으면 다음 줄")]
+    [SerializeField] private RectTransform iconContainer;
+    [SerializeField] private float iconSize = 30f;
+    [SerializeField] private float iconSpacing = 2f;
+    [Tooltip("기본 아이콘의 중첩 숫자 글자 크기 (프리팹을 쓰면 프리팹 설정 사용)")]
+    [SerializeField] private float stackFontSize = 16f;
+    [Tooltip("연결하면 이 영역(체력 바)의 좌우 길이를 아이콘 영역 폭으로 사용")]
+    [SerializeField] private RectTransform widthSource;
 
     [Header("툴팁")]
     // 슬롯에 TooltipTrigger가 없으면 실행 시 추가하고 이 간격으로 아이콘 하단에 표시
@@ -31,12 +40,13 @@ public class BuffUI : MonoBehaviour
     private readonly Dictionary<int, Sprite> iconCache = new();
     // 슬롯 순서대로 표시 중인 버프 ID (툴팁 조회용)
     private readonly List<int> displayedBuffIds = new();
-    private bool hasSetupTooltipTriggers;
+    // 만들어 둔 아이콘, 앞에서부터 표시 중인 버프 수만큼 사용
+    private readonly List<StatusIconView> iconPool = new();
     private string currentBuffSignature;
+    private float laidOutWidth = -1f;
 
     private void OnEnable()
     {
-        SetupTooltipTriggers();
         currentBuffSignature = null;
         RefreshIfNeeded();
     }
@@ -55,7 +65,8 @@ public class BuffUI : MonoBehaviour
 
     private void OnDisable()
     {
-        ClearSlots();
+        // 비활성화 도중에는 자식 활성 상태를 바꾸지 않고 내용만 비움
+        ClearSlots(false);
         currentBuffSignature = null;
     }
 
@@ -66,9 +77,18 @@ public class BuffUI : MonoBehaviour
 
     public void Refresh()
     {
-        List<int> activeBuffIds = CollectActiveBuffIds();
-        UpdateSlots(activeBuffIds);
-        currentBuffSignature = BuildBuffSignature(activeBuffIds);
+        List<BuffIconEntry> activeBuffs = CollectActiveBuffs();
+        UpdateSlots(activeBuffs);
+        currentBuffSignature = BuildBuffSignature(activeBuffs);
+    }
+
+    // 몬스터 버프 영역은 상태 컨트롤러가 체력 바를 지정 (인스펙터에 연결한 값이 우선)
+    public void SetWidthSourceIfEmpty(RectTransform source)
+    {
+        if (widthSource == null)
+        {
+            widthSource = source;
+        }
     }
 
     public void BindMonster(Monster monster)
@@ -101,26 +121,47 @@ public class BuffUI : MonoBehaviour
 
     private void RefreshIfNeeded()
     {
-        List<int> activeBuffIds = CollectActiveBuffIds();
-        string nextBuffSignature = BuildBuffSignature(activeBuffIds);
+        bool widthChanged = SyncContainerWidth();
+        List<BuffIconEntry> activeBuffs = CollectActiveBuffs();
+        string nextBuffSignature = BuildBuffSignature(activeBuffs);
         if (currentBuffSignature == nextBuffSignature)
         {
+            if (widthChanged)
+            {
+                LayoutIcons();
+            }
             return;
         }
 
-        UpdateSlots(activeBuffIds);
+        UpdateSlots(activeBuffs);
         currentBuffSignature = nextBuffSignature;
     }
 
-    private List<int> CollectActiveBuffIds()
+    // 표시할 버프 하나 (중첩 숫자는 중첩 가능한 버프만)
+    private readonly struct BuffIconEntry
     {
-        List<int> activeBuffIds = new();
+        public readonly int BuffId;
+        public readonly int Stack;
+        public readonly bool ShowStack;
+
+        public BuffIconEntry(int buffId, int stack, bool showStack)
+        {
+            BuffId = buffId;
+            Stack = stack;
+            ShowStack = showStack;
+        }
+    }
+
+    private List<BuffIconEntry> CollectActiveBuffs()
+    {
+        List<BuffIconEntry> activeBuffs = new();
         List<Buff> sourceBuffs = ResolveSourceBuffs();
         if (sourceBuffs == null)
         {
-            return activeBuffIds;
+            return activeBuffs;
         }
 
+        bool hasHandRank = false;
         foreach (Buff buff in sourceBuffs)
         {
             int buffId = GetBuffId(buff);
@@ -131,17 +172,20 @@ public class BuffUI : MonoBehaviour
 
             if (target == BuffTarget.Player && HandRankMemberBuffIds.Contains(buffId))
             {
-                if (!activeBuffIds.Contains(HandRankBuffId))
+                if (!hasHandRank)
                 {
-                    activeBuffIds.Add(HandRankBuffId);
+                    hasHandRank = true;
+                    // 족보 묶음은 여러 버프를 합친 아이콘이라 숫자 없음
+                    activeBuffs.Add(new BuffIconEntry(HandRankBuffId, 0, false));
                 }
                 continue;
             }
 
-            activeBuffIds.Add(buffId);
+            // 툴팁의 {stack}과 같은 값(buff.stack)을 표시
+            activeBuffs.Add(new BuffIconEntry(buffId, buff.stack, !BuffData.IsNonStackableBuffId(buffId)));
         }
 
-        return activeBuffIds;
+        return activeBuffs;
     }
 
     private List<Buff> ResolveSourceBuffs()
@@ -168,66 +212,161 @@ public class BuffUI : MonoBehaviour
         return buff.data.buffId;
     }
 
-    private static string BuildBuffSignature(List<int> activeBuffIds)
+    private static string BuildBuffSignature(List<BuffIconEntry> activeBuffs)
     {
-        if (activeBuffIds == null || activeBuffIds.Count == 0)
+        if (activeBuffs == null || activeBuffs.Count == 0)
         {
             return string.Empty;
         }
 
+        // 중첩이 바뀌어도 숫자를 다시 그리도록 중첩까지 포함
         StringBuilder builder = new();
-        foreach (int buffId in activeBuffIds)
+        foreach (BuffIconEntry entry in activeBuffs)
         {
-            builder.Append(buffId);
+            builder.Append(entry.BuffId);
+            builder.Append(':');
+            builder.Append(entry.ShowStack ? entry.Stack : 0);
             builder.Append('|');
         }
 
         return builder.ToString();
     }
 
-    private void UpdateSlots(List<int> activeBuffIds)
+    private void UpdateSlots(List<BuffIconEntry> activeBuffs)
     {
-        ClearSlots();
+        // 호버 중인 아이콘이 꺼졌다 켜지면 툴팁이 닫히므로 쓰는 아이콘은 끄지 않고 내용만 바꿈
+        displayedBuffIds.Clear();
 
-        if (activeBuffIds == null)
+        if (activeBuffs == null)
         {
+            HideIconsFrom(0);
             return;
         }
 
         // 유효한 버프를 첫 슬롯부터 다시 채워 중간에 사라진 버프의 빈칸을 당김
-        int visibleCount = Mathf.Min(activeBuffIds.Count, iconSlots.Count);
-        for (int i = 0; i < visibleCount; i++)
+        // 칸 수 제한 없이 부족한 아이콘은 새로 만듦
+        for (int i = 0; i < activeBuffs.Count; i++)
         {
-            SetIconSprite(activeBuffIds[i], iconSlots[i]);
-            displayedBuffIds.Add(activeBuffIds[i]);
+            StatusIconView icon = GetOrCreateIcon(i);
+            if (icon == null)
+            {
+                break;
+            }
+
+            BuffIconEntry entry = activeBuffs[i];
+            if (!icon.gameObject.activeSelf)
+            {
+                icon.gameObject.SetActive(true);
+            }
+
+            icon.Set(LoadIconSprite(entry.BuffId), entry.ShowStack ? entry.Stack.ToString() : null);
+            displayedBuffIds.Add(entry.BuffId);
+        }
+
+        HideIconsFrom(displayedBuffIds.Count);
+        LayoutIcons();
+    }
+
+    private void HideIconsFrom(int startIndex, bool deactivate = true)
+    {
+        for (int i = Mathf.Max(0, startIndex); i < iconPool.Count; i++)
+        {
+            StatusIconView icon = iconPool[i];
+            if (icon != null && icon.gameObject.activeSelf)
+            {
+                icon.Set(null, null);
+                if (deactivate)
+                {
+                    icon.gameObject.SetActive(false);
+                }
+            }
         }
     }
 
-    // 슬롯마다 툴팁 트리거를 연결하고 슬롯 번호로 현재 버프 문구를 조회
-    private void SetupTooltipTriggers()
+    private RectTransform ResolveContainer()
     {
-        if (hasSetupTooltipTriggers)
+        return iconContainer != null ? iconContainer : transform as RectTransform;
+    }
+
+    // 아이콘마다 툴팁 트리거를 한 번만 연결하고 아이콘 번호로 현재 버프 문구를 조회
+    private StatusIconView GetOrCreateIcon(int index)
+    {
+        while (iconPool.Count <= index)
+        {
+            RectTransform container = ResolveContainer();
+            if (container == null)
+            {
+                return null;
+            }
+
+            StatusIconView icon = iconPrefab != null
+                ? Instantiate(iconPrefab, container, false)
+                : StatusIconView.CreateDefault(container, "BuffIcon", iconSize, stackFontSize);
+            icon.name = $"BuffIcon ({iconPool.Count})";
+
+            RectTransform rect = icon.RectTransform;
+            rect.anchorMin = new Vector2(0f, 1f);
+            rect.anchorMax = new Vector2(0f, 1f);
+            rect.pivot = new Vector2(0f, 1f);
+            icon.SetSize(iconSize);
+
+            if (!icon.TryGetComponent(out TooltipTrigger trigger))
+            {
+                trigger = icon.gameObject.AddComponent<TooltipTrigger>();
+                trigger.SetPlacement(TooltipPlacement.Bottom, tooltipSpacing);
+            }
+
+            trigger.SetSource(new BuffSlotTooltipSource(this, iconPool.Count));
+            icon.gameObject.SetActive(false);
+            iconPool.Add(icon);
+        }
+
+        return iconPool[index];
+    }
+
+    // 컨테이너 폭에 맞춰 좌측 상단부터 줄바꿈 배치
+    private void LayoutIcons()
+    {
+        RectTransform container = ResolveContainer();
+        if (container == null)
         {
             return;
         }
 
-        hasSetupTooltipTriggers = true;
-        for (int i = 0; i < iconSlots.Count; i++)
+        int columns = IconRowLayout.ResolveColumns(container.rect.width, iconSize, iconSpacing);
+        for (int i = 0; i < displayedBuffIds.Count && i < iconPool.Count; i++)
         {
-            Image slot = iconSlots[i];
-            if (slot == null)
-            {
-                continue;
-            }
-
-            if (!slot.TryGetComponent(out TooltipTrigger trigger))
-            {
-                trigger = slot.gameObject.AddComponent<TooltipTrigger>();
-                trigger.SetPlacement(TooltipPlacement.Bottom, tooltipSpacing);
-            }
-
-            trigger.SetSource(new BuffSlotTooltipSource(this, i));
+            (float x, float y) = IconRowLayout.WrapCellTopLeft(i, columns, iconSize, iconSpacing);
+            iconPool[i].RectTransform.anchoredPosition = new Vector2(x, y);
         }
+    }
+
+    // 폭 기준 영역(체력 바)과 아이콘 영역의 좌우 길이를 맞춤, 바뀌었으면 true
+    private bool SyncContainerWidth()
+    {
+        RectTransform container = ResolveContainer();
+        if (container == null)
+        {
+            return false;
+        }
+
+        if (widthSource != null)
+        {
+            float sourceWidth = widthSource.rect.width;
+            if (sourceWidth > 0f && !Mathf.Approximately(container.rect.width, sourceWidth))
+            {
+                container.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, sourceWidth);
+            }
+        }
+
+        float width = container.rect.width;
+        if (Mathf.Approximately(laidOutWidth, width))
+        {
+            return false;
+        }
+
+        laidOutWidth = width;
+        return true;
     }
 
     private string GetSlotTooltipText(int slotIndex)
@@ -278,17 +417,16 @@ public class BuffUI : MonoBehaviour
         }
     }
 
-    private void SetIconSprite(int buffId, Image iconImage)
+    private Sprite LoadIconSprite(int buffId)
     {
-        if (iconImage == null || buffId <= 0)
+        if (buffId <= 0)
         {
-            return;
+            return null;
         }
 
         if (iconCache.TryGetValue(buffId, out Sprite cachedSprite) && cachedSprite != null)
         {
-            ApplySprite(iconImage, cachedSprite);
-            return;
+            return cachedSprite;
         }
 
         Sprite loadedSprite = Resources.Load<Sprite>(BuildIconResourcePath(buffId));
@@ -301,11 +439,11 @@ public class BuffUI : MonoBehaviour
         if (loadedSprite == null)
         {
             Debug.LogError($"버프 아이콘을 찾을 수 없습니다: {buffId}");
-            return;
+            return null;
         }
 
         iconCache[buffId] = loadedSprite;
-        ApplySprite(iconImage, loadedSprite);
+        return loadedSprite;
     }
 
     private string BuildIconResourcePath(int buffId)
@@ -313,34 +451,9 @@ public class BuffUI : MonoBehaviour
         return $"Image/BuffIcon/{buffId}";
     }
 
-    private static void ApplySprite(Image image, Sprite sprite)
-    {
-        if (image == null || sprite == null)
-        {
-            return;
-        }
-
-        image.sprite = sprite;
-        image.enabled = true;
-        image.color = Color.white;
-        // 툴팁 호버를 받도록 표시 중인 아이콘만 레이캐스트를 켬
-        image.raycastTarget = true;
-        image.preserveAspect = true;
-    }
-
-    private void ClearSlots()
+    private void ClearSlots(bool deactivateIcons = true)
     {
         displayedBuffIds.Clear();
-        foreach (Image image in iconSlots)
-        {
-            if (image != null)
-            {
-                image.enabled = false;
-                image.sprite = null;
-                image.raycastTarget = false;
-                // 편집용 구분색이 전투 중 아이콘과 선택 강조에 남지 않도록 초기화
-                image.color = Color.white;
-            }
-        }
+        HideIconsFrom(0, deactivateIcons);
     }
 }
