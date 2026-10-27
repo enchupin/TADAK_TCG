@@ -61,7 +61,7 @@
             "polarity": "beneficial",
             "stackable": false,
             "name": "스트레이트",
-            "description": "한 턴에 비용 1·2·3 카드를 모두 쓰면 에너지를 2 얻고 카드를 1장 뽑습니다. (턴당 1회)"
+            "description": "한 턴에 비용 1·2·3 카드를 모두 쓰면 에너지를 2 얻고 카드를 1장 뽑습니다. (매 턴 1회)"
         },
         {
             "buffId": 1013,
@@ -124,7 +124,7 @@
             "polarity": "beneficial",
             "stackable": false,
             "name": "이중 깃털",
-            "description": "(깃털) 카드가 반복을 얻습니다."
+            "description": "깃털 카드가 반복을 얻습니다."
         },
         {
             "buffId": 1024,
@@ -531,7 +531,7 @@
             "polarity": "beneficial",
             "stackable": true,
             "name": "은신",
-            "description": "받는 피해가 25% 감소합니다. 피격될 때마다 1 감소합니다."
+            "description": "받는 피해가 25% 감소합니다. 피해를 받을 때마다 1 감소합니다."
         },
         {
             "buffId": 3066,
@@ -721,7 +721,7 @@
             "polarity": "passive",
             "stackable": true,
             "name": "공허 껍질",
-            "description": "매 턴 처음 피해를 입을 때 보호막을 {stack} 얻습니다."
+            "description": "매 턴 처음 피해를 입은 후에 보호막을 {stack} 얻습니다."
         },
         {
             "buffId": 5003,

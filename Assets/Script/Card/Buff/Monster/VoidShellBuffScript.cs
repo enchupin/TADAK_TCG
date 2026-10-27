@@ -42,7 +42,8 @@ public sealed class VoidShellBuffScript : MonsterBuffScript
         }
     }
 
-    public override void OnMonsterBeforeTakeDamage(TrainingBattleManager battleManager, Monster monster, int incomingDamage, int stack)
+    // 매 턴 첫 피해를 입은 뒤 보호막을 얻어 다음 피해부터 막음 (첫 피해로 사망하면 발동 안 함)
+    public override void OnMonsterAfterTakeDamage(TrainingBattleManager battleManager, Monster monster, int incomingDamage, int damageAfterDefense, int stack)
     {
         if (monster == null || incomingDamage <= 0 || stack <= 0 || monster.IsDead())
         {
