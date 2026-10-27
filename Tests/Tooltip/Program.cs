@@ -10,6 +10,7 @@ class Program {
  static void Near(float actual,float expected,string message)=>Check(Math.Abs(actual-expected)<0.001f,$"{message} (기대 {expected}, 실제 {actual})");
  static void Main(string[] args){
   Layout();
+  IconLayout();
   RichText();
   BuffFormat();
   BuffData(args[0]);
@@ -64,6 +65,31 @@ class Program {
   (x,y)=TooltipLayout.ResolveTopLeft(TooltipPlacement.Bottom,flipped,200,80,4,screen,8);
   Near(x,-100,"사각형 정규화 x");
   Near(y,96,"사각형 정규화 y");
+  // 의도 목록: 영역 위, 가로 중앙
+  (x,y)=TooltipLayout.ResolveTopLeft(TooltipPlacement.Top,icon,200,80,6,screen,8);
+  Near(x,-180,"상단 배치 가로 중앙");
+  Near(y,226,"상단 배치 간격 + 높이");
+  // 화면 위를 넘으면 아래로 밀어 넣음
+  (x,y)=TooltipLayout.ResolveTopLeft(TooltipPlacement.Top,topEdge,200,80,6,screen,8);
+  Near(y,292,"상단 배치 경계 클램프");
+ }
+
+ static void IconLayout(){
+  // 체력 바 150 폭, 30 아이콘 · 간격 2 → 4열 (4×30+3×2=126)
+  Check(IconRowLayout.ResolveColumns(150,30,2)==4,"150 폭 4열");
+  Check(IconRowLayout.ResolveColumns(126,30,2)==4,"딱 맞는 폭 4열");
+  Check(IconRowLayout.ResolveColumns(125,30,2)==3,"모자라면 3열");
+  Check(IconRowLayout.ResolveColumns(10,30,2)==1,"좁아도 최소 1열");
+  Check(IconRowLayout.ResolveColumns(350,30,2)==11,"플레이어 350 폭 11열 (11×30+10×2=350)");
+  var (cx,cy)=IconRowLayout.WrapCellTopLeft(5,4,30,2);
+  Near(cx,32,"줄바꿈 x");
+  Near(cy,-32,"줄바꿈 y (아래로)");
+  Check(IconRowLayout.RowCount(0,4)==0&&IconRowLayout.RowCount(4,4)==1&&IconRowLayout.RowCount(5,4)==2,"줄 수");
+  Near(IconRowLayout.CenteredRowWidth(3,50,4),158,"한 줄 폭");
+  Near(IconRowLayout.CenteredRowWidth(0,50,4),0,"빈 목록 폭");
+  Near(IconRowLayout.CenteredCellCenterX(0,3,50,4),-54,"가운데 정렬 첫 칸");
+  Near(IconRowLayout.CenteredCellCenterX(1,3,50,4),0,"가운데 정렬 중앙 칸");
+  Near(IconRowLayout.CenteredCellCenterX(0,1,50,4),0,"아이콘 하나는 중앙");
  }
 
  static void RichText(){

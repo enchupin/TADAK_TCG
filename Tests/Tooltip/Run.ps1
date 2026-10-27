@@ -10,6 +10,7 @@ $project = @"
   <ItemGroup>
     <Compile Include="$escapedRoot/Tests/Tooltip/*.cs" />
     <Compile Include="$escapedRoot/Assets/Script/UI/Tooltip/TooltipLayout.cs" />
+    <Compile Include="$escapedRoot/Assets/Script/UI/IconRowLayout.cs" />
     <Compile Include="$escapedRoot/Assets/Script/UI/Tooltip/TooltipRichText.cs" />
     <Compile Include="$escapedRoot/Assets/Script/UI/Tooltip/BuffTooltipFormatter.cs" />
     <Compile Include="$escapedRoot/Assets/Script/Localization/Core/KoreanJosa.cs" />

@@ -68,6 +68,12 @@ class Program {
   Check(Near(a.scale,0.6f)&&Near(a.width,540),$"상태별 고정 배율 오류 {a.scale}");
   Check(Near(a.bottom,10+30-40*0.6f)&&Near(a.centerX,5),$"띄움 · 좌우 보정 오류 {a.bottom}");
   Check(Near(a.idleContentTop,40+550*0.6f),$"의도 기준 오류 {a.idleContentTop}");
+  // 체력 바 폭 기준: 현재 상태와 관계없이 Idle 그림 폭 (344×0.6)
+  Check(Near(a.idleContentWidth,344*0.6f)&&Near(l.idleContentWidth,344*0.3f),$"Idle 그림 폭 오류 {a.idleContentWidth}");
+  Check(Near(MonsterSpriteLayout.ResolveHealthBarWidth(150,103.2f,0,0),150),"체력 바 최소 폭 유지 오류");
+  Check(Near(MonsterSpriteLayout.ResolveHealthBarWidth(150,206.4f,10,0),216.4f),"체력 바 그림 폭 + 여유 오류");
+  Check(Near(MonsterSpriteLayout.ResolveHealthBarWidth(150,400,0,250),250),"체력 바 최대 폭 제한 오류");
+  Check(Near(MonsterSpriteLayout.ResolveHealthBarWidth(150,400,0,100),150),"최대 폭이 최소보다 작으면 최소 폭 오류");
   // 상태별 보정: 공격 이미지만 배율 · 위치 추가, 의도 기준은 Idle 보정 사용
   var entry=new MonsterDisplayEntry{scale=2,offsetY=30};
   entry.attack.scale=0.5f;entry.attack.offsetX=7;entry.attack.offsetY=-4;entry.idle.offsetY=6;

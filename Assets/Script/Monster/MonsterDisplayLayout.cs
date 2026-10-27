@@ -139,6 +139,8 @@ public struct MonsterSpriteLayoutResult
     public float contentHeightRatio;
     // 의도 영역 기준이 되는 Idle 그림 상단 높이 (상태가 바뀌어도 고정)
     public float idleContentTop;
+    // 체력 바 폭 기준이 되는 Idle 그림 폭 (상태가 바뀌어도 고정)
+    public float idleContentWidth;
 }
 
 public static class MonsterSpriteLayout
@@ -175,7 +177,8 @@ public static class MonsterSpriteLayout
             height = current.height * scale,
             centerX = offsetX + state.offsetX,
             bottom = feet - current.BottomPadding * scale,
-            idleContentTop = idleFeet + (idle.IsEmpty ? idle.height : idle.h) * idleScale
+            idleContentTop = idleFeet + (idle.IsEmpty ? idle.height : idle.h) * idleScale,
+            idleContentWidth = (idle.IsEmpty ? idle.width : idle.w) * idleScale
         };
 
         if (current.IsEmpty)
@@ -192,5 +195,17 @@ public static class MonsterSpriteLayout
         }
 
         return result;
+    }
+
+    // 체력 바 폭: 프리팹 폭이 최소, 그림이 더 넓으면 그림 폭 + 여유, 최대값이 0 이하면 제한 없음
+    public static float ResolveHealthBarWidth(float minWidth, float contentWidth, float padding, float maxWidth)
+    {
+        float width = Math.Max(minWidth, contentWidth + padding);
+        if (maxWidth > 0f)
+        {
+            width = Math.Min(width, Math.Max(minWidth, maxWidth));
+        }
+
+        return width;
     }
 }
