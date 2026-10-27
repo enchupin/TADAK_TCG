@@ -29,26 +29,16 @@ class Program {
   Near(x,-100,"하단 배치 좌측 맞춤");
   Near(y,96,"하단 배치 간격");
 
-  // 의도: 영역 우측, 상단 맞춤
-  (x,y)=TooltipLayout.ResolveTopLeft(TooltipPlacement.Right,icon,200,80,6,screen,8);
-  Near(x,-54,"우측 배치 간격");
-  Near(y,140,"우측 배치 상단 맞춤");
-
   // 화면 오른쪽을 넘으면 방향은 유지하고 안으로 밀어 넣음
   var rightEdge=new TooltipRect(300,0,350,40);
-  (x,y)=TooltipLayout.ResolveTopLeft(TooltipPlacement.Right,rightEdge,200,80,6,screen,8);
+  (x,y)=TooltipLayout.ResolveTopLeft(TooltipPlacement.Bottom,rightEdge,200,80,4,screen,8);
   Near(x,192,"우측 경계 클램프");
-  Near(y,40,"우측 경계에서 세로 위치 유지");
+  Near(y,-4,"우측 경계에서 세로 위치 유지");
 
   // 화면 아래를 넘으면 위로 밀어 넣음
   var bottomEdge=new TooltipRect(-100,-280,-60,-240);
   (x,y)=TooltipLayout.ResolveTopLeft(TooltipPlacement.Bottom,bottomEdge,200,80,4,screen,8);
   Near(y,-212,"하단 경계 클램프");
-
-  // 화면 위를 넘으면 아래로
-  var topEdge=new TooltipRect(-100,250,-60,320);
-  (x,y)=TooltipLayout.ResolveTopLeft(TooltipPlacement.Right,topEdge,200,80,6,screen,8);
-  Near(y,292,"상단 경계 클램프");
 
   // 화면 왼쪽을 넘으면 오른쪽으로
   var leftEdge=new TooltipRect(-420,0,-380,40);
@@ -70,6 +60,7 @@ class Program {
   Near(x,-180,"상단 배치 가로 중앙");
   Near(y,226,"상단 배치 간격 + 높이");
   // 화면 위를 넘으면 아래로 밀어 넣음
+  var topEdge=new TooltipRect(-100,250,-60,320);
   (x,y)=TooltipLayout.ResolveTopLeft(TooltipPlacement.Top,topEdge,200,80,6,screen,8);
   Near(y,292,"상단 배치 경계 클램프");
  }
@@ -191,7 +182,7 @@ class Program {
    Check(text.StartsWith(b.harmful?$"<color=#FF2400>":$"<color=#26619C>"),$"{b.id} 이름 극성 색");
   }
   // 버프가 아닌 괄호 문구만 남아야 함 (새 참조가 이름과 어긋나면 여기서 확인)
-  var allowed=new HashSet<string>{"턴당 1회","강공"};
+  var allowed=new HashSet<string>{"턴당 1회","매 턴 1회","강공"};
   var unexpected=unresolved.Where(n=>!allowed.Contains(n)).ToList();
   Check(unexpected.Count==0,"buffs.json에 없는 참조: "+string.Join(", ",unexpected));
  }

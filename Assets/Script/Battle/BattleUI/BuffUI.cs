@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class BuffUI : MonoBehaviour
 {
@@ -17,10 +16,6 @@ public class BuffUI : MonoBehaviour
     private static readonly HashSet<int> HandRankMemberBuffIds = new() { 1007, 1009, 1010, 1024 };
 
     [Header("버프 아이콘 설정")]
-    // 계층의 나열 순서와 무관하게 실제 배치된 위치를 좌측 상단부터 행 순서로 사용
-    // 이 순서로 이미지를 인스펙터에 직접 연결하며 런타임에는 좌표를 계산하지 않음
-    // 아이콘 풀 방식으로 바뀌어 기존 격자 슬롯은 실행 시 숨기기만 함 (프리팹 · 씬 정리 후 비워도 됨)
-    public List<Image> iconSlots = new();
     [SerializeField] private BuffTarget target = BuffTarget.Player;
     [SerializeField] private Monster targetMonster;
 
@@ -52,7 +47,6 @@ public class BuffUI : MonoBehaviour
 
     private void OnEnable()
     {
-        HideLegacySlots();
         currentBuffSignature = null;
         RefreshIfNeeded();
     }
@@ -242,7 +236,6 @@ public class BuffUI : MonoBehaviour
     {
         // 호버 중인 아이콘이 꺼졌다 켜지면 툴팁이 닫히므로 쓰는 아이콘은 끄지 않고 내용만 바꿈
         displayedBuffIds.Clear();
-        HideLegacySlots();
 
         if (activeBuffs == null)
         {
@@ -462,21 +455,5 @@ public class BuffUI : MonoBehaviour
     {
         displayedBuffIds.Clear();
         HideIconsFrom(0, deactivateIcons);
-        HideLegacySlots();
-    }
-
-    private void HideLegacySlots()
-    {
-        foreach (Image image in iconSlots)
-        {
-            if (image != null)
-            {
-                image.enabled = false;
-                image.sprite = null;
-                image.raycastTarget = false;
-                // 편집용 구분색이 전투 중 아이콘과 선택 강조에 남지 않도록 초기화
-                image.color = Color.white;
-            }
-        }
     }
 }

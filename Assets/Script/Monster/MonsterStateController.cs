@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -80,25 +79,10 @@ public class MonsterStateController : MonoBehaviour
     // 프리팹 내부의 BuffUI와 버프 이미지 순서를 인스펙터에 연결
     public BuffUI buffUI;
 
-    [Header("의도 이미지 슬롯")]
-    [Tooltip("좌측 상단부터 표시할 순서대로 프리팹의 Intend 이미지를 연결")]
-    public List<Image> intendSlots = new();
-
-    [Tooltip("의도 이미지 슬롯과 같은 순서로 각 Intend의 수치 텍스트를 연결")]
-    public List<TextMeshProUGUI> intendValueTexts = new();
-
-    [Header("의도 툴팁")]
-    // 의도 아이콘은 추후 1개로 통합 예정이라 영역 전체를 호버 대상으로 사용
-    // 아이콘 사이 빈틈까지 호버하려면 영역에 투명 Image(레이캐스트 켬)를 두면 됨
-    [Tooltip("의도 툴팁 호버 영역, 툴팁은 이 영역 우측에 표시. 비어 있으면 아이콘마다 각자 우측에 표시")]
-    [SerializeField] private RectTransform intentTooltipArea;
-    [Tooltip("의도 영역과 툴팁 사이 간격 (TooltipTrigger를 직접 붙인 경우 그 설정 사용)")]
-    [SerializeField] private float intentTooltipSpacing = 6f;
-
     [Header("의도 아이콘 목록")]
-    // 격자 대신 고정 위치에 한 줄 가운데 정렬로 표시하고 툴팁은 목록 바로 위 중앙에 표시
-    // 목록 모드에서는 intendSlots · intendValueTexts · intentTooltipArea를 쓰지 않음 (격자는 숨김)
-    [Tooltip("의도 아이콘을 한 줄로 놓을 영역 (가로 중앙 피벗), 비어 있으면 의도 영역(intentRoot) 하단에 만들어 사용. 둘 다 없으면 기존 격자 슬롯 사용")]
+    // 고정 위치에 한 줄 가운데 정렬로 표시하고 툴팁은 목록 바로 위 중앙에 표시
+    // 영역 크기는 바꾸지 않고 하단 중앙에 아이콘 크기만 한 목록(IntentIconList)을 만들어 그 안에 배치
+    [Tooltip("의도 아이콘 목록을 놓을 영역, 하단 중앙에 목록을 만듦. 비어 있으면 의도 영역(intentRoot) 사용")]
     [SerializeField] private RectTransform intentIconContainer;
     [Tooltip("의도 아이콘 프리팹 (StatusIconView), 비어 있으면 기본 아이콘을 만들어 사용")]
     [SerializeField] private StatusIconView intentIconPrefab;
@@ -106,6 +90,8 @@ public class MonsterStateController : MonoBehaviour
     [SerializeField] private float intentIconSpacing = 4f;
     [Tooltip("기본 아이콘의 수치 글자 크기 (프리팹을 쓰면 프리팹 설정 사용)")]
     [SerializeField] private float intentValueFontSize = 20f;
+    [Tooltip("의도 목록과 툴팁 사이 간격 (TooltipTrigger를 직접 붙인 경우 그 설정 사용)")]
+    [SerializeField] private float intentTooltipSpacing = 6f;
 
     [Header("의도 아이콘")]
     [SerializeField] private Sprite attackIntendSprite;
@@ -134,6 +120,8 @@ public class MonsterStateController : MonoBehaviour
     private readonly Dictionary<MonsterStateType, Sprite> stateSpriteCache = new();
     private readonly List<TooltipTrigger> intentTooltipTriggers = new();
     private readonly List<StatusIconView> intentIconPool = new();
+    // 아이콘이 차지한 범위만큼의 목록 영역 (툴팁 기준)
+    private RectTransform intentIconList;
     private float healthBarMinWidth = -1f;
 
     public MonsterStateType CurrentState { get; private set; } = MonsterStateType.Idle;
@@ -175,49 +163,7 @@ public class MonsterStateController : MonoBehaviour
         int? attackValue = null, int? protectionValue = null)
     {
         int iconCount = iconTypes != null && isActiveAndEnabled ? iconTypes.Count : 0;
-        if (UsesIntentIconList())
-        {
-            HideIntentGridSlots();
-            UpdateIntentIconList(iconTypes, iconCount, attackValue, protectionValue);
-            return;
-        }
-
-        for (int i = 0; i < intendSlots.Count; i++)
-        {
-            Image slot = intendSlots[i];
-            if (slot == null)
-            {
-                continue;
-            }
-
-            MonsterIntentIconType iconType = i < iconCount ? iconTypes[i] : MonsterIntentIconType.None;
-            Sprite sprite = ResolveIntentSprite(iconType);
-
-            slot.sprite = sprite;
-            slot.enabled = sprite != null;
-            // 파스텔 구분색은 편집용으로 사용하고 전투에서는 아이콘 원래 색상을 표시
-            slot.color = Color.white;
-            slot.preserveAspect = true;
-            // 의도 툴팁 호버를 받도록 표시 중인 아이콘만 레이캐스트를 켬
-            slot.raycastTarget = sprite != null;
-        }
-
-        for (int i = 0; i < intendValueTexts.Count; i++)
-        {
-            TextMeshProUGUI valueText = intendValueTexts[i];
-            if (valueText == null)
-            {
-                continue;
-            }
-
-            MonsterIntentIconType iconType = i < iconCount ? iconTypes[i] : MonsterIntentIconType.None;
-            int? value = ResolveIntentValue(iconType, attackValue, protectionValue);
-            bool showValue = value.HasValue && i < intendSlots.Count
-                && intendSlots[i] != null && intendSlots[i].enabled;
-            valueText.text = showValue ? value.Value.ToString() : string.Empty;
-            valueText.enabled = showValue;
-            valueText.raycastTarget = false;
-        }
+        UpdateIntentIconList(iconTypes, iconCount, attackValue, protectionValue);
     }
 
     private static int? ResolveIntentValue(MonsterIntentIconType iconType, int? attackValue, int? protectionValue)
@@ -257,37 +203,34 @@ public class MonsterStateController : MonoBehaviour
         return sprite;
     }
 
-    private bool UsesIntentIconList()
-    {
-        return intentIconContainer != null || intentRoot != null;
-    }
-
-    // 목록 영역이 없으면 의도 영역 하단 중앙에 만듦 (의도 영역은 Idle 그림 상단 위로 옮겨짐)
+    // 목록 영역을 놓을 영역 하단 중앙에 만듦 (의도 영역은 Idle 그림 상단 위로 옮겨짐)
+    // 놓을 영역 자체 크기를 바꾸면 의도 영역 위치 계산이 흔들리므로 별도 목록을 둠
     private RectTransform ResolveIntentIconContainer()
     {
-        if (intentIconContainer != null || intentRoot == null)
+        RectTransform parent = intentIconContainer != null ? intentIconContainer : intentRoot;
+        if (intentIconList != null || parent == null)
         {
-            return intentIconContainer;
+            return intentIconList;
         }
 
         GameObject listObject = new("IntentIconList", typeof(RectTransform));
-        listObject.layer = intentRoot.gameObject.layer;
+        listObject.layer = parent.gameObject.layer;
         RectTransform listRect = listObject.GetComponent<RectTransform>();
-        listRect.SetParent(intentRoot, false);
+        listRect.SetParent(parent, false);
         listRect.anchorMin = new Vector2(0.5f, 0f);
         listRect.anchorMax = new Vector2(0.5f, 0f);
         listRect.pivot = new Vector2(0.5f, 0f);
         listRect.anchoredPosition = Vector2.zero;
         listRect.sizeDelta = new Vector2(0f, intentIconSize);
-        intentIconContainer = listRect;
-        return intentIconContainer;
+        intentIconList = listRect;
+        return intentIconList;
     }
 
     private void UpdateIntentIconList(IReadOnlyList<MonsterIntentIconType> iconTypes, int iconCount,
         int? attackValue, int? protectionValue)
     {
         // 비활성화 중에는 계층을 바꿀 수 없으므로 표시할 아이콘이 없으면 목록을 새로 만들지 않음
-        if (iconCount == 0 && intentIconContainer == null)
+        if (iconCount == 0 && intentIconList == null)
         {
             return;
         }
@@ -351,29 +294,6 @@ public class MonsterStateController : MonoBehaviour
         return intentIconPool[index];
     }
 
-    private void HideIntentGridSlots()
-    {
-        foreach (Image slot in intendSlots)
-        {
-            if (slot != null)
-            {
-                slot.sprite = null;
-                slot.enabled = false;
-                slot.raycastTarget = false;
-            }
-        }
-
-        foreach (TextMeshProUGUI valueText in intendValueTexts)
-        {
-            if (valueText != null)
-            {
-                valueText.text = string.Empty;
-                valueText.enabled = false;
-                valueText.raycastTarget = false;
-            }
-        }
-    }
-
     // 몬스터가 연결될 때 의도 툴팁 문구 제공자를 지정
     public void BindIntentTooltip(ITooltipSource source)
     {
@@ -390,44 +310,20 @@ public class MonsterStateController : MonoBehaviour
 
     private void SetupIntentTooltipTriggers()
     {
-        // 목록 모드: 목록 영역 전체를 호버 대상으로 쓰고 툴팁은 목록 바로 위 중앙
-        RectTransform listContainer = UsesIntentIconList() ? ResolveIntentIconContainer() : null;
-        if (listContainer != null)
+        // 목록 영역 전체를 호버 대상으로 쓰고 툴팁은 목록 바로 위 중앙
+        RectTransform listContainer = ResolveIntentIconContainer();
+        if (listContainer == null)
         {
-            if (!listContainer.TryGetComponent(out TooltipTrigger listTrigger))
-            {
-                listTrigger = listContainer.gameObject.AddComponent<TooltipTrigger>();
-                listTrigger.SetPlacement(TooltipPlacement.Top, intentTooltipSpacing);
-            }
-
-            intentTooltipTriggers.Add(listTrigger);
             return;
         }
 
-        if (intentTooltipArea != null)
+        if (!listContainer.TryGetComponent(out TooltipTrigger listTrigger))
         {
-            intentTooltipTriggers.Add(GetOrAddTooltipTrigger(intentTooltipArea.gameObject));
-            return;
+            listTrigger = listContainer.gameObject.AddComponent<TooltipTrigger>();
+            listTrigger.SetPlacement(TooltipPlacement.Top, intentTooltipSpacing);
         }
 
-        foreach (Image slot in intendSlots)
-        {
-            if (slot != null)
-            {
-                intentTooltipTriggers.Add(GetOrAddTooltipTrigger(slot.gameObject));
-            }
-        }
-    }
-
-    private TooltipTrigger GetOrAddTooltipTrigger(GameObject target)
-    {
-        if (!target.TryGetComponent(out TooltipTrigger trigger))
-        {
-            trigger = target.AddComponent<TooltipTrigger>();
-            trigger.SetPlacement(TooltipPlacement.Right, intentTooltipSpacing);
-        }
-
-        return trigger;
+        intentTooltipTriggers.Add(listTrigger);
     }
 
     // 비교 씬용: 효과음 · 자동 복귀 없이 상태 이미지만 고정 표시
