@@ -49,6 +49,8 @@ public class MonsterStateController : MonoBehaviour
     // 슬롯별 목록 대신 프리팹 내부의 체력바와 Fill 이미지를 연결
     public Slider hpSlider;
     public Image hpFillImage;
+    // 체력 바 중앙 수치와 좌측 보호막 표시 (비어 있으면 표시 생략)
+    public HealthBarView healthBarView;
 
     [Header("스폰 위치별 버프 UI")]
     // 스폰 위치 목록과 같은 순서로 각 Buff 오브젝트의 BuffUI를 연결

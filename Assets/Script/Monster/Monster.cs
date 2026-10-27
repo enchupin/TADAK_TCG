@@ -27,10 +27,10 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     private static readonly Color SelectionTintColor = new Color(0.45f, 0.75f, 1f, 1f);
 
     [Header("UI Reference")]
-    [SerializeField] private TextMeshProUGUI hpText;
-    [SerializeField] private TextMeshProUGUI defenseText;
     public Slider hpSlider;
     public Image hpFillImage;
+    // 체력 바 중앙 수치와 좌측 보호막 표시
+    public HealthBarView healthBarView;
     public BuffUI buffUI;
     [SerializeField] private Color barrierHPFillColor = new Color32(135, 206, 235, 255);
 
@@ -138,12 +138,6 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
 
     public void UpdateUI()
     {
-        if (hpText != null)
-            hpText.text = GameText.Ui("ui.combat.monsterHp", new Dictionary<string, object> { { "hp", hp }, { "maxHp", maxHP } });
-
-        if (defenseText != null)
-            defenseText.text = defense > 0 ? $"DEF {defense}" : string.Empty;
-
         UpdateHealthBarUI();
         UpdateBuffUI();
         UpdateIntentUI();
@@ -889,6 +883,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         hpSlider.minValue = 0f;
         hpSlider.maxValue = safeMaxHp;
         hpSlider.SetValueWithoutNotify(Mathf.Clamp(hp, 0, safeMaxHp));
+        healthBarView?.Refresh(hp, maxHP, defense);
 
         if (hpFillImage == null)
         {
