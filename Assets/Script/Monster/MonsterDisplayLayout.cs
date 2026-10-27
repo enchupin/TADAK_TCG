@@ -7,18 +7,18 @@ using System.Text;
 /// 몬스터 이미지 배치 설정 (JsonData/monsterDisplay.json)
 /// 기준 칸 · 지면 높이는 공통, 배율 · 위치 보정은 몬스터 이미지 이름별
 /// 상태(Idle · Attack · Hit)별 캔버스가 달라 상태마다 추가 보정 가능 (버전 2)
+/// 이미지를 같은 밀도로 다시 만든 뒤 기본 배율을 UI 1단위당 픽셀 수로 고정 (버전 3)
 /// 비교 씬 저장 · 검증 테스트가 같은 서식을 쓰도록 Unity 의존 없이 작성
 /// </summary>
 [Serializable]
 public class MonsterDisplayData
 {
     public const string ResourcePath = "JsonData/monsterDisplay";
-    public const int CurrentVersion = 2;
+    public const int CurrentVersion = 3;
 
     public int version = CurrentVersion;
-    // Idle 캔버스를 이 칸에 비율 유지로 맞춘 배율이 기본 배율 (기존 MonsterImage 150×300 칸)
-    public float referenceWidth = 150f;
-    public float referenceHeight = 300f;
+    // 이미지 픽셀 수 ÷ 이 값 = UI 크기 (1920×1080 기준 화면 1px = UI 1단위)
+    public float pixelsPerUnit = 1f;
     // 스폰 위치 하단(체력 바 상단 부근)에서 발까지의 높이
     public float groundOffset = 10f;
     // 그림 상단에서 의도 영역 하단까지의 간격
@@ -49,8 +49,7 @@ public class MonsterDisplayData
         StringBuilder builder = new();
         builder.Append("{\n");
         builder.Append($"  \"version\": {version},\n");
-        builder.Append($"  \"referenceWidth\": {Format(referenceWidth)},\n");
-        builder.Append($"  \"referenceHeight\": {Format(referenceHeight)},\n");
+        builder.Append($"  \"pixelsPerUnit\": {Format(pixelsPerUnit)},\n");
         builder.Append($"  \"groundOffset\": {Format(groundOffset)},\n");
         builder.Append($"  \"intentGap\": {Format(intentGap)},\n");
         builder.Append("  \"monsters\": [\n");
@@ -144,7 +143,7 @@ public struct MonsterSpriteLayoutResult
 
 public static class MonsterSpriteLayout
 {
-    // current: 현재 상태 이미지 측정값, idle: Idle 이미지 측정값 (배율 · 의도 위치 기준)
+    // current: 현재 상태 이미지 측정값, idle: Idle 이미지 측정값 (의도 위치 기준)
     // stateSuffix: 현재 상태 이름, 상태별 보정 선택용
     public static MonsterSpriteLayoutResult Compute(MonsterSpriteBoundsEntry current, MonsterSpriteBoundsEntry idle,
         MonsterDisplayData settings, MonsterDisplayEntry entry, string stateSuffix = MonsterImagePaths.IdleImageSuffix)
@@ -155,8 +154,7 @@ public static class MonsterSpriteLayout
         }
 
         idle ??= current;
-        float referenceWidth = settings != null ? settings.referenceWidth : 150f;
-        float referenceHeight = settings != null ? settings.referenceHeight : 300f;
+        float pixelsPerUnit = settings != null && settings.pixelsPerUnit > 0f ? settings.pixelsPerUnit : 1f;
         float groundOffset = settings != null ? settings.groundOffset : 0f;
         float entryScale = entry != null && entry.scale > 0f ? entry.scale : 1f;
         float offsetX = entry?.offsetX ?? 0f;
@@ -164,7 +162,7 @@ public static class MonsterSpriteLayout
 
         MonsterDisplayStateEntry state = entry?.GetState(stateSuffix) ?? new MonsterDisplayStateEntry();
         MonsterDisplayStateEntry idleState = entry?.GetState(MonsterImagePaths.IdleImageSuffix) ?? new MonsterDisplayStateEntry();
-        float baseScale = Math.Min(referenceWidth / Math.Max(1, idle.width), referenceHeight / Math.Max(1, idle.height)) * entryScale;
+        float baseScale = entryScale / pixelsPerUnit;
         float scale = baseScale * (state.scale > 0f ? state.scale : 1f);
         float idleScale = baseScale * (idleState.scale > 0f ? idleState.scale : 1f);
         float feet = groundOffset + offsetY + state.offsetY;

@@ -354,8 +354,7 @@ public class MonsterStateController : MonoBehaviour
         {
             settings = new MonsterDisplayData
             {
-                referenceWidth = settings.referenceWidth,
-                referenceHeight = settings.referenceHeight,
+                pixelsPerUnit = settings.pixelsPerUnit,
                 groundOffset = inspectorGroundOffset,
                 intentGap = settings.intentGap
             };

@@ -51,16 +51,18 @@ class Program {
  }
 
  static void LayoutRule(){
-  var settings=new MonsterDisplayData();
+  var defaults=MonsterSpriteLayout.Compute(new MonsterSpriteBoundsEntry{path="d",width=200,height=100,w=200,h=100},null,new MonsterDisplayData(),null);
+  Check(Near(defaults.scale,1)&&Near(defaults.width,200),"기본 밀도(UI 1단위 = 1px) 오류");
+  // 기본 배율 = 1 / pixelsPerUnit = 0.3
+  var settings=new MonsterDisplayData{pixelsPerUnit=10f/3f};
   var idle=new MonsterSpriteBoundsEntry{path="i",width=500,height=600,x=79,y=26,w=344,h=550};
-  // 기본 배율 = min(150/500, 300/600) = 0.3
   var l=MonsterSpriteLayout.Compute(idle,idle,settings,null);
   Check(Near(l.scale,0.3f)&&Near(l.width,150)&&Near(l.height,180),$"기본 배율 오류 {l.scale}");
   // 발(하단 여백 위) = 지면 높이 10 → 캔버스 하단 = 10 - 26×0.3
   Check(Near(l.bottom,10-7.8f),$"하단 정렬 오류 {l.bottom}");
   Check(Near(l.idleContentTop,10+550*0.3f),$"그림 상단 오류 {l.idleContentTop}");
   Check(Near(l.contentXRatio,79/500f)&&Near(l.contentYRatio,26/600f)&&Near(l.contentWidthRatio,344/500f)&&Near(l.contentHeightRatio,550/600f),"그림 영역 비율 오류");
-  // 다른 캔버스의 공격 이미지도 Idle 배율 유지, 의도 기준은 Idle 그림 상단
+  // 다른 캔버스의 공격 이미지도 같은 배율, 의도 기준은 Idle 그림 상단
   var attack=new MonsterSpriteBoundsEntry{path="a",width=900,height=600,x=10,y=40,w=880,h=500};
   var a=MonsterSpriteLayout.Compute(attack,idle,settings,new MonsterDisplayEntry{scale=2,offsetX=5,offsetY=30});
   Check(Near(a.scale,0.6f)&&Near(a.width,540),$"상태별 고정 배율 오류 {a.scale}");
@@ -143,10 +145,14 @@ class Program {
  }
 
  static void CanvasRules(MonsterSpriteBoundsData measured){
-  // MutantFlower는 상태별 캔버스를 1536×1536으로 통일 (2026-10-27 결정)
-  foreach(string suffix in MonsterImagePaths.StateSuffixes){
-   var e=measured.Find(MonsterImagePaths.BuildResourcePath("MutantFlower",suffix));
-   Check(e!=null&&e.width==1536&&e.height==1536,$"MutantFlower_{suffix} 캔버스가 1536×1536이 아님");
+  // 5단계 가공 후 이미지는 그림 영역 + 가장자리 여유 4px로 잘려 있음 (새 이미지도 같은 규칙으로 넣어야 함)
+  const int maxMargin=6;
+  foreach(var e in measured.images){
+   if(e.IsEmpty)continue;
+   int right=e.width-e.x-e.w,top=e.height-e.y-e.h;
+   Check(e.x<=maxMargin&&e.y<=maxMargin&&right<=maxMargin&&top<=maxMargin,
+    $"{e.path} 투명 여백이 큼 (좌 {e.x} 하 {e.y} 우 {right} 상 {top}), .claude-work/imagebake 규칙으로 가공 필요");
+   Check(e.width<=2048&&e.height<=2048,$"{e.path} 크기가 임포트 최대 크기 2048을 넘음");
   }
  }
 
@@ -156,7 +162,7 @@ class Program {
   string text=File.ReadAllText(path);
   var data=JsonSerializer.Deserialize<MonsterDisplayData>(text,new JsonSerializerOptions{IncludeFields=true});
   Check(data.version==MonsterDisplayData.CurrentVersion,"배치 설정 버전 불일치");
-  Check(data.referenceWidth>0&&data.referenceHeight>0,"기준 칸 크기 오류");
+  Check(data.pixelsPerUnit>0,"UI 1단위당 픽셀 수 오류");
   Check(text.Replace("\r\n","\n")==data.ToJson(),"배치 설정 서식이 저장 도구 출력과 다름");
   var names=data.monsters.Select(m=>m.image).ToList();
   Check(names.Distinct().Count()==names.Count,"배치 설정에 중복 몬스터");
