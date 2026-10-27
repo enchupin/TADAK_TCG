@@ -42,6 +42,18 @@ public class MonsterStateController : MonoBehaviour
     [SerializeField] private bool preserveImageAspect = true;
     [SerializeField] private bool logMissingImage = true;
 
+    [Header("이미지 배치")]
+    [Tooltip("여백 측정값으로 발을 지면에 맞추고 상태가 바뀌어도 같은 배율 유지, 끄면 프리팹의 이미지 칸 그대로 사용")]
+    [SerializeField] private bool layoutByMeasuredBounds = true;
+    [Tooltip("켜면 아래 값으로 monsterDisplay.json의 지면 높이와 이 몬스터의 배율 · 위치 보정을 덮어씀 (QA용)")]
+    [SerializeField] private bool overrideDisplayWithInspector;
+    [SerializeField] private float inspectorGroundOffset = 10f;
+    [SerializeField] private float inspectorScale = 1f;
+    [SerializeField] private float inspectorOffsetX;
+    [SerializeField] private float inspectorOffsetY;
+    [Tooltip("의도 영역, 연결하면 Idle 그림 상단 위로 옮김 (몬스터 이미지와 같은 부모여야 함)")]
+    [SerializeField] private RectTransform intentRoot;
+
     [Header("스폰 위치별 체력 UI")]
     // 스폰 위치 목록과 같은 순서로 각 HPSlider를 연결
     // 각 HPSlider의 Fill 이미지를 같은 순서로 연결
@@ -89,10 +101,12 @@ public class MonsterStateController : MonoBehaviour
     private Coroutine returnToIdleCoroutine;
     private string monsterImageName;
     private bool hasLoggedMissingImageTarget;
+    private readonly HashSet<string> loggedMissingBounds = new();
     private readonly Dictionary<MonsterStateType, Sprite> stateSpriteCache = new();
     private readonly List<TooltipTrigger> intentTooltipTriggers = new();
 
     public MonsterStateType CurrentState { get; private set; } = MonsterStateType.Idle;
+    public string MonsterImageName => monsterImageName;
 
     private void Awake()
     {
@@ -292,6 +306,98 @@ public class MonsterStateController : MonoBehaviour
         monsterImage.preserveAspect = preserveImageAspect;
         monsterImage.enabled = true;
         monsterImage.raycastTarget = true;
+        ApplyImageLayout(state, stateSprite);
+    }
+
+    // 비교 씬에서 배치 값을 바꾼 뒤 다시 적용
+    public void RefreshImageLayout()
+    {
+        if (!isActiveAndEnabled || monsterImage == null || monsterImage.sprite == null)
+        {
+            return;
+        }
+
+        ApplyImageLayout(CurrentState, monsterImage.sprite);
+    }
+
+    private void ApplyImageLayout(MonsterStateType state, Sprite stateSprite)
+    {
+        if (!layoutByMeasuredBounds)
+        {
+            return;
+        }
+
+        RectTransform imageRect = monsterImage.rectTransform;
+        RectTransform parentRect = imageRect.parent as RectTransform;
+        if (parentRect == null)
+        {
+            return;
+        }
+
+        MonsterSpriteBoundsData boundsData = MonsterDisplayDatabase.Bounds;
+        MonsterSpriteBoundsEntry current = FindBounds(boundsData, BuildStateImageResourcePath(state), stateSprite);
+        MonsterSpriteBoundsEntry idle = state == MonsterStateType.Idle
+            ? current
+            : FindBounds(boundsData, BuildStateImageResourcePath(MonsterStateType.Idle), null) ?? current;
+
+        MonsterDisplayData settings = MonsterDisplayDatabase.Display;
+        MonsterDisplayEntry entry = settings.Find(monsterImageName);
+        if (overrideDisplayWithInspector)
+        {
+            settings = new MonsterDisplayData
+            {
+                referenceWidth = settings.referenceWidth,
+                referenceHeight = settings.referenceHeight,
+                groundOffset = inspectorGroundOffset,
+                intentGap = settings.intentGap
+            };
+            entry = new MonsterDisplayEntry { image = monsterImageName, scale = inspectorScale, offsetX = inspectorOffsetX, offsetY = inspectorOffsetY };
+        }
+
+        MonsterSpriteLayoutResult layout = MonsterSpriteLayout.Compute(current, idle, settings, entry);
+
+        // 스폰 위치 하단 중앙 기준으로 이미지 캔버스를 배치 (하단 여백만큼 지면 아래로)
+        imageRect.anchorMin = new Vector2(0.5f, 0f);
+        imageRect.anchorMax = new Vector2(0.5f, 0f);
+        imageRect.pivot = new Vector2(0.5f, 0f);
+        imageRect.sizeDelta = new Vector2(layout.width, layout.height);
+        imageRect.anchoredPosition = new Vector2(layout.centerX, layout.bottom);
+
+        MonsterImageHitArea hitArea = monsterImage.GetComponent<MonsterImageHitArea>();
+        if (hitArea == null)
+        {
+            hitArea = monsterImage.gameObject.AddComponent<MonsterImageHitArea>();
+        }
+
+        hitArea.SetContentRatio(layout.contentXRatio, layout.contentYRatio, layout.contentWidthRatio, layout.contentHeightRatio);
+
+        if (intentRoot != null && intentRoot.parent == parentRect)
+        {
+            // 의도 영역 하단을 Idle 그림 상단 + 간격에 맞춤
+            Vector3 intentPosition = intentRoot.localPosition;
+            intentPosition.y = parentRect.rect.yMin + layout.idleContentTop + settings.intentGap
+                + intentRoot.rect.height * intentRoot.pivot.y;
+            intentRoot.localPosition = intentPosition;
+        }
+    }
+
+    private MonsterSpriteBoundsEntry FindBounds(MonsterSpriteBoundsData boundsData, string resourcePath, Sprite fallbackSprite)
+    {
+        MonsterSpriteBoundsEntry entry = boundsData.Find(resourcePath);
+        if (entry != null || fallbackSprite == null)
+        {
+            return entry;
+        }
+
+        if (loggedMissingBounds.Add(resourcePath))
+        {
+            Debug.LogWarning($"[MonsterStateController] 여백 측정값이 없어 이미지 전체를 그림으로 취급합니다. Tools/Monster/이미지 여백 측정을 실행하세요. path={resourcePath}", this);
+        }
+
+        // 측정값이 없으면 여백 없는 이미지로 취급
+        int width = Mathf.RoundToInt(fallbackSprite.rect.width);
+        int height = Mathf.RoundToInt(fallbackSprite.rect.height);
+        return new MonsterSpriteBoundsEntry { path = resourcePath, width = width, height = height, w = width, h = height };
     }
 
     private Sprite LoadStateSprite(MonsterStateType state)

@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "referenceWidth": 150,
+  "referenceHeight": 300,
+  "groundOffset": 10,
+  "intentGap": 10,
+  "monsters": [
+    { "image": "Cactus", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "FireSpirit", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "FlashyScythe", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "GiantFlowerSpiderBoss", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "HauntedCloth", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "IceAndFireBoss", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "JackORipper", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "Mirror", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "MushroomHost", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "MutantCarnivorousPlant", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "MutantCarrot", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "MutantFlower", "scale": 1.5, "offsetX": 0, "offsetY": 0 },
+    { "image": "MutantMushroom", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "MutantSweetPotato", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "Priestess", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "ProphetBoss", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "RotwoodWarden", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "StoneShieldGolem", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "StoneStealGolem", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "StoneThrowGolem", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "VoidBeast", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "VoidBug", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "VoidLordBoss", "scale": 1, "offsetX": 0, "offsetY": 0 },
+    { "image": "WoodenPuppet", "scale": 1, "offsetX": 0, "offsetY": 0 }
+  ]
+}

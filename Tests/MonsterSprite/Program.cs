@@ -6,19 +6,23 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 // 몬스터 이미지 여백 측정 데이터 검증: 측정 규칙 · 이미지와 데이터 일치 · 몬스터별 이미지 경로
+// 배치 설정 검증: 배치 계산 · monsterDisplay.json 서식 · 몬스터별 항목
 // --write 인자를 주면 측정 데이터를 다시 생성 (에디터 메뉴 Tools/Monster/이미지 여백 측정과 같은 결과)
 class Program {
  static int count;
  static readonly List<string> warnings=new();
  static void Check(bool ok,string message){if(!ok)throw new Exception(message);count++;}
  // 아직 이미지가 없는 몬스터 (경고만 출력)
- static readonly HashSet<string> PendingImages=new(){"Priestess"};
+ static readonly HashSet<string> PendingImages=new(){"ScareCrow"};
+ // monsters.json 밖에서 생성되는 몬스터 (랭킹 모드 허수아비)
+ static readonly string[] ExtraMonsterClasses={"ScareCrowMonster"};
 
  static int Main(string[] args){
   string root=args[0];
   bool write=args.Contains("--write");
   MeasureRule();
   PathRule();
+  LayoutRule();
   MonsterSpriteBoundsData measured=MeasureAll(root);
   string jsonPath=Path.Combine(root,"Assets/Resources",MonsterSpriteBoundsData.ResourcePath+".json");
   if(write){
@@ -29,6 +33,7 @@ class Program {
   Stored(jsonPath,measured);
   MonsterImages(root,measured);
   CanvasRules(measured);
+  Display(root,measured);
   foreach(string warning in warnings)Console.WriteLine("경고: "+warning);
   Console.WriteLine($"몬스터 이미지 검증 {count}개 통과");
   return 0;
@@ -44,6 +49,27 @@ class Program {
   var empty=MonsterSpriteBoundsEntry.Measure("t",2,2,(x,y)=>0,16);
   Check(empty.IsEmpty&&empty.BottomPadding==0,"빈 이미지 처리 오류");
  }
+
+ static void LayoutRule(){
+  var settings=new MonsterDisplayData();
+  var idle=new MonsterSpriteBoundsEntry{path="i",width=500,height=600,x=79,y=26,w=344,h=550};
+  // 기본 배율 = min(150/500, 300/600) = 0.3
+  var l=MonsterSpriteLayout.Compute(idle,idle,settings,null);
+  Check(Near(l.scale,0.3f)&&Near(l.width,150)&&Near(l.height,180),$"기본 배율 오류 {l.scale}");
+  // 발(하단 여백 위) = 지면 높이 10 → 캔버스 하단 = 10 - 26×0.3
+  Check(Near(l.bottom,10-7.8f),$"하단 정렬 오류 {l.bottom}");
+  Check(Near(l.idleContentTop,10+550*0.3f),$"그림 상단 오류 {l.idleContentTop}");
+  Check(Near(l.contentXRatio,79/500f)&&Near(l.contentYRatio,26/600f)&&Near(l.contentWidthRatio,344/500f)&&Near(l.contentHeightRatio,550/600f),"그림 영역 비율 오류");
+  // 다른 캔버스의 공격 이미지도 Idle 배율 유지, 의도 기준은 Idle 그림 상단
+  var attack=new MonsterSpriteBoundsEntry{path="a",width=900,height=600,x=10,y=40,w=880,h=500};
+  var a=MonsterSpriteLayout.Compute(attack,idle,settings,new MonsterDisplayEntry{scale=2,offsetX=5,offsetY=30});
+  Check(Near(a.scale,0.6f)&&Near(a.width,540),$"상태별 고정 배율 오류 {a.scale}");
+  Check(Near(a.bottom,10+30-40*0.6f)&&Near(a.centerX,5),$"띄움 · 좌우 보정 오류 {a.bottom}");
+  Check(Near(a.idleContentTop,40+550*0.6f),$"의도 기준 오류 {a.idleContentTop}");
+  var empty=MonsterSpriteLayout.Compute(new MonsterSpriteBoundsEntry{path="e",width=100,height=100},null,settings,null);
+  Check(Near(empty.contentWidthRatio,1)&&Near(empty.bottom,10),"빈 이미지 배치 오류");
+ }
+ static bool Near(float a,float b)=>Math.Abs(a-b)<0.001f;
 
  static void PathRule(){
   Check(MonsterImagePaths.NormalizeImageName("CactusMonster")=="Cactus","이름 정규화 오류");
@@ -95,7 +121,7 @@ class Program {
  static void MonsterImages(string root,MonsterSpriteBoundsData measured){
   string json=File.ReadAllText(Path.Combine(root,"Assets/Resources/JsonData/monsters.json"));
   using var doc=JsonDocument.Parse(json.TrimStart('\uFEFF'));
-  var classNames=doc.RootElement.GetProperty("monsters").EnumerateArray().Select(m=>m.GetProperty("className").GetString()).Distinct().OrderBy(n=>n,StringComparer.Ordinal);
+  var classNames=doc.RootElement.GetProperty("monsters").EnumerateArray().Select(m=>m.GetProperty("className").GetString()).Concat(ExtraMonsterClasses).Distinct().OrderBy(n=>n,StringComparer.Ordinal);
   foreach(string className in classNames){
    string imageName=MonsterImagePaths.NormalizeImageName(className);
    foreach(string suffix in MonsterImagePaths.StateSuffixes){
@@ -114,6 +140,26 @@ class Program {
    var e=measured.Find(MonsterImagePaths.BuildResourcePath("MutantFlower",suffix));
    Check(e!=null&&e.width==1536&&e.height==1536,$"MutantFlower_{suffix} 캔버스가 1536×1536이 아님");
   }
+ }
+
+ static void Display(string root,MonsterSpriteBoundsData measured){
+  string path=Path.Combine(root,"Assets/Resources",MonsterDisplayData.ResourcePath+".json");
+  Check(File.Exists(path),$"배치 설정이 없습니다: {path}");
+  string text=File.ReadAllText(path);
+  var data=JsonSerializer.Deserialize<MonsterDisplayData>(text,new JsonSerializerOptions{IncludeFields=true});
+  Check(data.version==MonsterDisplayData.CurrentVersion,"배치 설정 버전 불일치");
+  Check(data.referenceWidth>0&&data.referenceHeight>0,"기준 칸 크기 오류");
+  Check(text.Replace("\r\n","\n")==data.ToJson(),"배치 설정 서식이 저장 도구 출력과 다름");
+  var names=data.monsters.Select(m=>m.image).ToList();
+  Check(names.Distinct().Count()==names.Count,"배치 설정에 중복 몬스터");
+  string json=File.ReadAllText(Path.Combine(root,"Assets/Resources/JsonData/monsters.json"));
+  using var doc=JsonDocument.Parse(json.TrimStart('\uFEFF'));
+  var imaged=doc.RootElement.GetProperty("monsters").EnumerateArray().Select(m=>MonsterImagePaths.NormalizeImageName(m.GetProperty("className").GetString()))
+   .Concat(ExtraMonsterClasses.Select(MonsterImagePaths.NormalizeImageName)).Distinct()
+   .Where(n=>measured.Find(MonsterImagePaths.BuildResourcePath(n,MonsterImagePaths.IdleImageSuffix))!=null).ToList();
+  foreach(string name in imaged)Check(names.Contains(name),$"배치 설정에 없는 몬스터: {name}");
+  foreach(string name in names)Check(imaged.Contains(name),$"이미지 없는 몬스터의 배치 설정: {name}");
+  foreach(var m in data.monsters)Check(m.scale>0,$"{m.image} 배율이 0 이하");
  }
 
  // JSON 역직렬화로만 채워지는 필드

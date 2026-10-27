@@ -5,6 +5,7 @@ $testRoot = Join-Path $projectRoot 'Temp/MonsterSpriteCheck'
 New-Item -ItemType Directory -Force $testRoot | Out-Null
 $escapedRoot = [Security.SecurityElement]::Escape($projectRoot)
 # Unity 의존이 없는 몬스터 이미지 경로 · 여백 측정 소스만 컴파일
+# 배치 계산 · 배치 설정 서식 소스도 함께 컴파일
 $project = @"
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0</TargetFramework><EnableDefaultCompileItems>false</EnableDefaultCompileItems><Nullable>disable</Nullable></PropertyGroup>
@@ -12,6 +13,7 @@ $project = @"
     <Compile Include="$escapedRoot/Tests/MonsterSprite/*.cs" />
     <Compile Include="$escapedRoot/Assets/Script/Monster/MonsterImagePaths.cs" />
     <Compile Include="$escapedRoot/Assets/Script/Monster/MonsterSpriteBounds.cs" />
+    <Compile Include="$escapedRoot/Assets/Script/Monster/MonsterDisplayLayout.cs" />
   </ItemGroup>
 </Project>
 "@
