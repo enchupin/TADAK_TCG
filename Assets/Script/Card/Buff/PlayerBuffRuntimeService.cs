@@ -88,7 +88,6 @@ public class PlayerBuffRuntimeService
         Register(new RoyalBuffScript());
         Register(new ExecutionerBuffScript());
         Register(new CatalystBuffScript());
-        Register(new CounterBuffScript());
         Register(new EffectiveHitBuffScript());
         Register(new StealthBuffScript());
         Register(new HighTideBuffScript());

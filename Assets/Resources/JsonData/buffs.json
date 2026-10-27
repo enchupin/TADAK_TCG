@@ -506,13 +506,6 @@
             "description": "다음에 사용하는 포션은 추가로 대상이 보유한 반응 상태를 각각 {stack}만큼 부여합니다."
         },
         {
-            "buffId": 3062,
-            "polarity": "beneficial",
-            "stackable": true,
-            "name": "반격",
-            "description": "이번 턴 동안 공격을 완전히 막을 때마다 공격자에게 피해를 {stack} 입힙니다."
-        },
-        {
             "buffId": 3063,
             "polarity": "beneficial",
             "stackable": true,
@@ -701,13 +694,6 @@
             "stackable": true,
             "name": "소용돌이",
             "description": "턴 시작 시 (익사)를 {stack} 얻습니다."
-        },
-        {
-            "buffId": 4018,
-            "polarity": "harmful",
-            "stackable": true,
-            "name": "표식",
-            "description": "공격 피해를 받으면 표식을 모두 소모하고 최대 체력의 {stack}%만큼 추가 피해를 받습니다."
         },
         {
             "buffId": 5001,

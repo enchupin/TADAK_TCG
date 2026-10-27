@@ -46,7 +46,6 @@ public class MonsterBuffRuntimeService
         Register(new MonsterBuffs.WhirlpoolBuffScript());
         Register(new MonsterBuffs.TrapStateBuffScript());
         Register(new MonsterBuffs.CurseRecoveryBuffScript());
-        Register(new MonsterBuffs.MarkBuffScript());
     }
 
     public int GetActivationCount(Monster monster, int buffId)
