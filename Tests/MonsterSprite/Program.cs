@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.Json;
 // 몬스터 이미지 여백 측정 데이터 검증: 측정 규칙 · 이미지와 데이터 일치 · 몬스터별 이미지 경로
 // 배치 설정 검증: 배치 계산 · monsterDisplay.json 서식 · 몬스터별 항목
-// --write 인자를 주면 측정 데이터를 다시 생성 (에디터 메뉴 Tools/Monster/이미지 여백 측정과 같은 결과)
+// --write 인자를 주면 측정 데이터를 다시 생성
 class Program {
  static int count;
  static readonly List<string> warnings=new();
@@ -110,7 +110,7 @@ class Program {
  }
 
  static void Stored(string jsonPath,MonsterSpriteBoundsData measured){
-  Check(File.Exists(jsonPath),$"측정 데이터가 없습니다: {jsonPath} (Tools/Monster/이미지 여백 측정 실행)");
+  Check(File.Exists(jsonPath),$"측정 데이터가 없습니다: {jsonPath} (Run.ps1 -Write 실행)");
   string text=File.ReadAllText(jsonPath);
   var stored=JsonSerializer.Deserialize<StoredData>(text,new JsonSerializerOptions{IncludeFields=true});
   Check(stored.version==MonsterSpriteBoundsData.CurrentVersion,"측정 데이터 버전 불일치");

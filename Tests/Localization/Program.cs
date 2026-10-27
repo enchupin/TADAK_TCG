@@ -317,8 +317,6 @@ class Program {
  static void HardcodedKorean(string root){
   // 파일 전체가 데이터 키 · 조사 규칙인 곳
   var allowedFiles=new HashSet<string>{"Battle/BattleRuntimeDefinitions.cs","Card/Effects/KeywordEffect.cs","Localization/Core/KoreanJosa.cs","UI/Tooltip/BuffTooltipFormatter.cs","UI/Tooltip/IntentTooltipFormatter.cs"};
-  // 개발용 몬스터 크기 비교 씬 (플레이어에게 보이지 않음)
-  allowedFiles.Add("Monster/Preview/MonsterLineupPreview.cs");
   // 저장 데이터의 기본 덱 이름(표시할 때 GameText.DeckDisplayName으로 변환) · 로그 문구 · 누락 버프 임시 이름
   var allowedLiterals=new HashSet<string>{
    "Localization/GameText.cs|기본 덱","Localization/GameText.cs|새 덱","Localization/GameText.cs|이름 없는 덱",

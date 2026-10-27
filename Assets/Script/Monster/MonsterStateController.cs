@@ -406,7 +406,7 @@ public class MonsterStateController : MonoBehaviour
 
         if (loggedMissingBounds.Add(resourcePath))
         {
-            Debug.LogWarning($"[MonsterStateController] 여백 측정값이 없어 이미지 전체를 그림으로 취급합니다. Tools/Monster/이미지 여백 측정을 실행하세요. path={resourcePath}", this);
+            Debug.LogWarning($"[MonsterStateController] 여백 측정값이 없어 이미지 전체를 그림으로 취급합니다. Tests/MonsterSprite/Run.ps1 -Write를 실행하세요. path={resourcePath}", this);
         }
 
         // 측정값이 없으면 여백 없는 이미지로 취급
