@@ -68,8 +68,6 @@ public class TrainingBattleManager : MonoBehaviour
     [Tooltip("손패 선택 확인 버튼 (중앙에 놓인 카드 아래, 비우면 DeckPanel 아래 CheckBtn을 찾음)")]
     [SerializeField] private Button handSelectionConfirmButton;
     private HandCardSelectionController handCardSelection;
-    // R-46 네임드 승리 보상(복제 / 제거) 선택 창, 비어 있으면 복제로 진행
-    [SerializeField] private NamedRewardChoicePanel namedRewardChoicePanel;
 
     [Header("Turn Settings")]
     // 드로우 수, 손패 상한, 턴당 에너지는 기본적으로 rules.json의 combat 항목에서 읽음
@@ -2026,24 +2024,21 @@ public class TrainingBattleManager : MonoBehaviour
         isDeckRewardInProgress = true;
         try
         {
-            NamedRewardChoicePanel.Choice? choice = null;
-            if (namedRewardChoicePanel != null && namedRewardChoicePanel.Show(selected => choice = selected))
+            // 복제 · 제거 중 하나를 랜덤으로 제공 (고를 카드가 없으면 다른 쪽으로)
+            bool isDuplicate = UnityEngine.Random.Range(0, 2) == 0;
+            List<Card> candidates = GetNamedRewardCandidates(isDuplicate);
+            if (candidates.Count == 0)
             {
-                yield return new WaitUntil(() => choice.HasValue);
-            }
-            else
-            {
-                Debug.LogWarning("[BattleManager] 네임드 보상 선택 창이 없어 카드 복제로 진행합니다");
-                choice = NamedRewardChoicePanel.Choice.Duplicate;
+                isDuplicate = !isDuplicate;
+                candidates = GetNamedRewardCandidates(isDuplicate);
             }
 
-            List<Card> candidates = choice == NamedRewardChoicePanel.Choice.Duplicate
-                ? TrainingDeckRewardService.GetDuplicateCandidates(buildingDeck.GetCards())
-                : TrainingDeckRewardService.GetRemovalCandidates(buildingDeck.GetCards());
             if (candidates.Count == 0)
             {
                 yield break;
             }
+
+            Debug.Log($"[BattleManager] 네임드 보상: {(isDuplicate ? "카드 복제" : "카드 제거")}");
 
             List<Card> pickedCards = null;
             yield return SelectCardsCoroutine(candidates, 1, false, cards => pickedCards = cards);
@@ -2053,7 +2048,7 @@ public class TrainingBattleManager : MonoBehaviour
                 yield break;
             }
 
-            if (choice == NamedRewardChoicePanel.Choice.Duplicate)
+            if (isDuplicate)
             {
                 if (buildingDeck.AddCardCopy(picked))
                 {
@@ -2069,6 +2064,13 @@ public class TrainingBattleManager : MonoBehaviour
         {
             isDeckRewardInProgress = false;
         }
+    }
+
+    private List<Card> GetNamedRewardCandidates(bool isDuplicate)
+    {
+        return isDuplicate
+            ? TrainingDeckRewardService.GetDuplicateCandidates(buildingDeck.GetCards())
+            : TrainingDeckRewardService.GetRemovalCandidates(buildingDeck.GetCards());
     }
 
     // R-15 캐릭터 카드가 상한을 넘으면 넘은 장수만큼 골라 저장 덱에서 제거
