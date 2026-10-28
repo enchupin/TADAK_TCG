@@ -92,6 +92,8 @@ public class SettingsManager : MonoBehaviour
         if (button != null && !settingsButtons.Contains(button)) {
             settingsButtons.Add(button);
         }
+        // 카드 목록 선택 중에도 설정은 열고 닫을 수 있음
+        UIBattleSpaceButtons.Register(button);
     }
 
     private void RefreshSettingsButtonPassThrough()

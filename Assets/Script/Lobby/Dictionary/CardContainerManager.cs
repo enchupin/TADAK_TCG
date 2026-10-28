@@ -312,6 +312,9 @@ public class CardContainerManager : MonoBehaviour {
         return new List<Card>(cardList);
     }
 
+    // 전투 카드 선택 목록을 다시 그린 뒤 고른 상태를 복원할 때 사용
+    public Transform CardContainer => cardContainer;
+
     public void SetCardClickHandler(Action<CardController> clickHandler) {
         onCardClicked = clickHandler;
     }

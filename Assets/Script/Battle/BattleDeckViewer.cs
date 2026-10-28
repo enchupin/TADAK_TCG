@@ -38,6 +38,9 @@ public class BattleDeckViewer : MonoBehaviour
     [SerializeField] private TrainingBattleManager battleManager;
     private bool isSelectionMode;
     public bool IsSelectionActive => isSelectionMode;
+    // 선택 중 덱 · 더미 버튼으로 같은 패널을 보기로 잠시 바꾼 상태 (닫으면 선택 목록 · 고른 상태 복원)
+    private bool isViewingDuringSelection;
+    private readonly List<Card> selectionCandidates = new List<Card>();
     private int requiredSelectionCount;
     private bool allowFewerSelection;
     private Action<List<Card>> onSelectionCompleted;
@@ -68,6 +71,16 @@ public class BattleDeckViewer : MonoBehaviour
         if (exhaustPileButton == null) exhaustPileButton = UIButtonLookup.FindByOnClick(this, nameof(OnClickExhaustPileButton));
         if (fullDeckButton == null) fullDeckButton = UIButtonLookup.FindByOnClick(this, nameof(OnClickFullDeckButton));
 
+        // 카드 목록 선택 중에도 열고 닫을 수 있는 전투 화면 버튼 (지도 버튼은 지도가 꺼져 있어도 찾도록 여기서 등록)
+        UIBattleSpaceButtons.Register(drawPileButton);
+        UIBattleSpaceButtons.Register(discardPileButton);
+        UIBattleSpaceButtons.Register(exhaustPileButton);
+        UIBattleSpaceButtons.Register(fullDeckButton);
+        TrainingMapController map = FindAnyObjectByType<TrainingMapController>(FindObjectsInactive.Include);
+        if (map != null) {
+            UIBattleSpaceButtons.Register(UIButtonLookup.FindByOnClick(map, nameof(TrainingMapController.OpenMapPreview)));
+        }
+
         if (selectionHideButton != null) {
             selectionHideButton.onClick.RemoveListener(ToggleSelectionHidden);
             selectionHideButton.onClick.AddListener(ToggleSelectionHidden);
@@ -76,13 +89,20 @@ public class BattleDeckViewer : MonoBehaviour
     }
 
     private void ToggleSelectionHidden() {
-        if (!isSelectionMode || deckModal == null) return;
+        if (!isSelectionMode || isViewingDuringSelection || deckModal == null) return;
         deckModal.ToggleHidden();
         SettingsManager.PlayPanelToggleSound();
     }
 
     private void ClosePilePanelFromEscape() {
-        if (isSelectionMode) return;
+        if (isSelectionMode) {
+            // 선택 중 열어 본 덱 · 더미 보기를 닫고 선택 목록으로 복귀
+            if (isViewingDuringSelection) {
+                ShowSelectionContent();
+                SettingsManager.PlayPanelToggleSound();
+            }
+            return;
+        }
         deckPanelRoot.SetActive(false);
         HideCardDetailPanel();
         currentViewType = DeckPanelViewType.None;
@@ -103,6 +123,8 @@ public class BattleDeckViewer : MonoBehaviour
     public void ResetForCombat()
     {
         isSelectionMode = false;
+        isViewingDuringSelection = false;
+        selectionCandidates.Clear();
         onSelectionCompleted = null;
         selectedCards.Clear();
         selectedControllers.Clear();
@@ -130,17 +152,12 @@ public class BattleDeckViewer : MonoBehaviour
     /// 덱 버튼 OnClick에 연결해서 사용
     /// </summary>
     public void OnClickDeckButton() {
-        if (isSelectionMode) {
-            OnClickSelectionConfirm();
-            return;
-        }
-
         TogglePilePanel(DeckPanelViewType.DrawPile);
     }
 
     // 상단 덱 버튼은 전투 중 카드 위치와 관계없이 이번 게임의 전체 덱을 표시
     public void OnClickFullDeckButton() {
-        if (isSelectionMode || TrainingBattleManager.buildingDeck == null) return;
+        if (TrainingBattleManager.buildingDeck == null) return;
         TogglePilePanel(DeckPanelViewType.FullDeck);
     }
 
@@ -148,11 +165,6 @@ public class BattleDeckViewer : MonoBehaviour
     /// 버린 카드 더미 버튼 OnClick에 연결해서 사용
     /// </summary>
     public void OnClickDiscardPileButton() {
-        if (isSelectionMode) {
-            OnClickSelectionConfirm();
-            return;
-        }
-
         TogglePilePanel(DeckPanelViewType.DiscardPile);
     }
 
@@ -160,16 +172,11 @@ public class BattleDeckViewer : MonoBehaviour
     /// 소멸 카드 더미 버튼 OnClick에 연결해서 사용
     /// </summary>
     public void OnClickExhaustPileButton() {
-        if (isSelectionMode) {
-            OnClickSelectionConfirm();
-            return;
-        }
-
         TogglePilePanel(DeckPanelViewType.ExhaustPile);
     }
 
     public void OnClickSelectionConfirm() {
-        if (!isSelectionMode) {
+        if (!isSelectionMode || isViewingDuringSelection) {
             return;
         }
 
@@ -187,11 +194,24 @@ public class BattleDeckViewer : MonoBehaviour
         }
 
         if (deckPanelRoot.activeSelf && currentViewType == viewType) {
+            // 선택 중 열어 본 보기는 닫는 대신 선택 목록으로 복귀
+            if (isSelectionMode) {
+                ShowSelectionContent();
+                SettingsManager.PlayPanelToggleSound();
+                return;
+            }
+
             deckPanelRoot.SetActive(false);
             HideCardDetailPanel();
             currentViewType = DeckPanelViewType.None;
             SettingsManager.PlayPanelToggleSound();
             return;
+        }
+
+        // 선택 중이면 같은 패널을 보기로 잠시 바꿈 (숨겨 둔 상태여도 보기는 표시)
+        if (isSelectionMode) {
+            isViewingDuringSelection = true;
+            deckModal.SetHidden(false);
         }
 
         // 보기 모드: ESC로 닫히고, 이 패널을 연 버튼만 차단막을 통과
@@ -200,6 +220,7 @@ public class BattleDeckViewer : MonoBehaviour
         deckModal.SetPassThrough(openButton != null ? (RectTransform)openButton.transform : null);
         deckPanelRoot.SetActive(true);
         RefreshPileCards(viewType);
+        UpdateConfirmButtonState();
         SettingsManager.PlayPanelToggleSound();
     }
 
@@ -210,32 +231,63 @@ public class BattleDeckViewer : MonoBehaviour
             return false;
         }
 
-        // 선택 모드: 필수 패널 (ESC 무시, 통과 버튼 없음, 숨김 버튼으로만 잠시 숨김)
-        deckModal.SetKind(UIModalKind.Required);
-        deckModal.SetPassThrough();
-        deckModal.SetHidden(false);
-        deckPanelRoot.SetActive(true);
-
         isSelectionMode = true;
         requiredSelectionCount = Mathf.Max(0, selectCount);
         allowFewerSelection = allowFewer;
         onSelectionCompleted = onComplete;
+        selectionCandidates.Clear();
+        selectionCandidates.AddRange(selectableCards);
         selectedCards.Clear();
         selectedControllers.Clear();
-        HideCardDetailPanel();
-        UpdateConfirmButtonState();
-
-        cardContainerManager.ClearHand();
-        cardContainerManager.SetCardClickHandler(null);
-        cardContainerManager.SetCardClickHandler(HandleSelectableCardClicked);
-        cardContainerManager.AddCardWithoutInputController(selectableCards);
-        UpdateConfirmButtonState();
+        deckModal.SetHidden(false);
+        ShowSelectionContent();
 
         if (requiredSelectionCount == 0) {
             CompleteSelection(new List<Card>());
         }
 
         return true;
+    }
+
+    // 선택 목록 표시: 필수 패널 (ESC로 닫히지 않음, 숨김 버튼으로 잠시 숨김)
+    // 선택은 전투 화면에 귀속되므로 상단 지도 · 덱 · 설정, 하단 더미 버튼은 차단막을 통과
+    private void ShowSelectionContent() {
+        isViewingDuringSelection = false;
+        currentViewType = DeckPanelViewType.None;
+        deckModal.SetKind(UIModalKind.Required);
+        deckModal.SetPassThrough(UIBattleSpaceButtons.GetTargets());
+        deckPanelRoot.SetActive(true);
+        HideCardDetailPanel();
+
+        cardContainerManager.ClearHand();
+        cardContainerManager.SetCardClickHandler(HandleSelectableCardClicked);
+        // 파괴 예약된 이전 카드가 남아 있으므로 새로 만든 카드는 뒤쪽 자식
+        Transform container = cardContainerManager.CardContainer;
+        int firstNewIndex = container != null ? container.childCount : 0;
+        cardContainerManager.AddCardWithoutInputController(selectionCandidates);
+
+        // 다시 그린 카드에 고른 상태 복원 (고른 순서 유지)
+        selectedControllers.Clear();
+        if (container != null) {
+            foreach (Card selectedCard in selectedCards) {
+                for (int i = firstNewIndex; i < container.childCount; i++) {
+                    CardController controller = container.GetChild(i).GetComponent<CardController>();
+                    if (controller != null && ReferenceEquals(controller.Card, selectedCard)) {
+                        selectedControllers.Add(controller);
+                        SetSelectedVisual(controller, true);
+                        break;
+                    }
+                }
+            }
+        }
+        // 찾지 못한 카드가 있으면 두 목록의 순서가 어긋나지 않게 다시 맞춤
+        if (selectedControllers.Count != selectedCards.Count) {
+            selectedCards.Clear();
+            foreach (CardController controller in selectedControllers) {
+                selectedCards.Add(controller.Card);
+            }
+        }
+        UpdateConfirmButtonState();
     }
 
     private void RefreshPileCards(DeckPanelViewType viewType) {
@@ -316,7 +368,7 @@ public class BattleDeckViewer : MonoBehaviour
     }
 
     private void HandleViewedCardClicked(CardController controller) {
-        if (isSelectionMode || controller == null || controller.Card == null) {
+        if ((isSelectionMode && !isViewingDuringSelection) || controller == null || controller.Card == null) {
             return;
         }
 
@@ -327,6 +379,8 @@ public class BattleDeckViewer : MonoBehaviour
         Action<List<Card>> callback = onSelectionCompleted;
 
         isSelectionMode = false;
+        isViewingDuringSelection = false;
+        selectionCandidates.Clear();
         requiredSelectionCount = 0;
         allowFewerSelection = false;
         onSelectionCompleted = null;
@@ -479,10 +533,12 @@ public class BattleDeckViewer : MonoBehaviour
             return;
         }
 
-        selectionConfirmButton.gameObject.SetActive(isSelectionMode);
-        selectionConfirmButton.interactable = isSelectionMode && CanConfirmSelection();
+        // 선택 중 보기로 바꾼 동안에는 확인 · 숨김 버튼을 감춤
+        bool showSelectionButtons = isSelectionMode && !isViewingDuringSelection;
+        selectionConfirmButton.gameObject.SetActive(showSelectionButtons);
+        selectionConfirmButton.interactable = showSelectionButtons && CanConfirmSelection();
         if (selectionHideButton != null) {
-            selectionHideButton.gameObject.SetActive(isSelectionMode);
+            selectionHideButton.gameObject.SetActive(showSelectionButtons);
         }
     }
 
