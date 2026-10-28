@@ -6649,10 +6649,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DictionaryPanelController
   starterCardPanel: {fileID: 215074583}
   savedDeckPanel: {fileID: 777104185}
-  deckTabButton: {fileID: 0}
-  illustrationTabButton: {fileID: 0}
-  illustrationImage: {fileID: 0}
-  cardDetailPanelRoot: {fileID: 0}
+  deckTabButton: {fileID: 2072953820}
+  illustrationTabButton: {fileID: 1233763612}
+  illustrationImage: {fileID: 1712699926}
+  cardDetailPanelRoot: {fileID: 987213167}
   cardDetailCardPrefab: {fileID: 0}
 --- !u!1 &478697090
 GameObject:
@@ -29471,7 +29471,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2089138570
 MonoBehaviour:
   m_ObjectHideFlags: 0
