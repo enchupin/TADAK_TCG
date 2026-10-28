@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+// 도감 오른쪽 구역: 캐릭터의 기본 카드(x010 · x020)와 고유 카드(x030 ~ x070) 기본형
 public class DictionaryStarterCardPanel : MonoBehaviour
 {
     private const int StarterCardCount = 7;
+    private static readonly int[] BasicCardOffsets = { 10, 20 };
 
     [Header("기본카드 표시 설정")]
     [SerializeField] private RectTransform cardPanel;
@@ -12,7 +15,12 @@ public class DictionaryStarterCardPanel : MonoBehaviour
 
     private readonly List<GameObject> createdCards = new List<GameObject>();
 
-    public void ShowStarterCards(Character character)
+    // 카드를 누르면 카드 확인 패널을 열도록 알림
+    public event Action<Card> CardClicked;
+
+    public GameObject CardPrefab => cardPrefab;
+
+    public void ShowCharacterCards(Character character)
     {
         if (!ValidateReferences())
         {
@@ -21,7 +29,7 @@ public class DictionaryStarterCardPanel : MonoBehaviour
 
         ClearCards();
 
-        List<int> starterCardIds = CharacterManager.GetStarterCardIds(character);
+        List<int> starterCardIds = BuildCharacterCardIds(character);
         if (starterCardIds == null || starterCardIds.Count == 0)
         {
             Debug.LogWarning($"[RankingModeStarterCardPanel] 기본카드 목록을 찾을 수 없습니다: {character}");
@@ -40,6 +48,19 @@ public class DictionaryStarterCardPanel : MonoBehaviour
 
             CreateCard(card, createdCards.Count);
         }
+    }
+
+    private static List<int> BuildCharacterCardIds(Character character)
+    {
+        List<int> cardIds = new List<int>();
+        int characterId = CharacterManager.GetIdByCharacterEnum(character);
+        foreach (int offset in BasicCardOffsets)
+        {
+            cardIds.Add(characterId * 1000 + offset);
+        }
+
+        cardIds.AddRange(CharacterManager.GetUniqueBaseCardIds(character));
+        return cardIds;
     }
 
     public void ClearCards()
@@ -101,6 +122,7 @@ public class DictionaryStarterCardPanel : MonoBehaviour
 
         SetupCardController(cardObject, card);
         CaptureCardScale(cardObject);
+        BindCardClick(cardObject, card);
 
         createdCards.Add(cardObject);
     }
@@ -129,6 +151,18 @@ public class DictionaryStarterCardPanel : MonoBehaviour
         }
 
         Debug.LogWarning("[RankingModeStarterCardPanel] 카드 프리팹에서 CardController 또는 CardUI를 찾을 수 없습니다");
+    }
+
+    private void BindCardClick(GameObject cardObject, Card card)
+    {
+        CardController controller = cardObject.GetComponent<CardController>();
+        CardSelectionClickHandler clickHandler = cardObject.GetComponent<CardSelectionClickHandler>();
+        if (clickHandler == null)
+        {
+            clickHandler = cardObject.AddComponent<CardSelectionClickHandler>();
+        }
+
+        clickHandler.Bind(controller, () => CardClicked?.Invoke(card));
     }
 
     private void CaptureCardScale(GameObject cardObject)

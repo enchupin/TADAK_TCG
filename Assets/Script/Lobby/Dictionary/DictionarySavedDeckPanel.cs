@@ -90,6 +90,29 @@ public class DictionarySavedDeckPanel : MonoBehaviour
         }
     }
 
+    // 도감 일러스트 탭: 저장덱 칸을 숨기고 같은 자리에 일러스트 표시
+    public void SetDeckPanelsVisible(bool visible)
+    {
+        if (!visible)
+        {
+            CancelRename();
+            CancelDeleteDeck();
+        }
+
+        if (cardPanels == null)
+        {
+            return;
+        }
+
+        foreach (RectTransform panel in cardPanels)
+        {
+            if (panel != null)
+            {
+                panel.gameObject.SetActive(visible);
+            }
+        }
+    }
+
     public void DeleteDeck(int panelIndex)
     {
         CancelDeleteDeck();

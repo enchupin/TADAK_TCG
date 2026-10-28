@@ -62,7 +62,6 @@ public class CardDetailSlider : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         }
 
         centerIndex = Mathf.Clamp(clickedIndex, 0, Mathf.Max(0, cardViews.Count - 1));
-        Debug.Log($"[CardDetailSlider] {clickedCard.cardName}({clickedCard.cardId}) 계열 {cardViews.Count}장, 가운데 {centerIndex}번");
         ApplyLayout(true);
     }
 

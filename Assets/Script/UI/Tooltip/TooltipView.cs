@@ -245,9 +245,17 @@ public class TooltipView : MonoBehaviour
             return null;
         }
 
+        // 패널에 이 컴포넌트가 함께 있으면 복제본이 Awake에서 Instance를 가져가므로
+        // 원본을 잠시 끈 상태로 복제해 Awake를 막고 복제본의 TooltipView는 바로 제거
+        bool wasActive = panel.gameObject.activeSelf;
+        panel.gameObject.SetActive(false);
         GameObject copy = Instantiate(panel.gameObject, parent, false);
+        panel.gameObject.SetActive(wasActive);
+        foreach (TooltipView copiedView in copy.GetComponentsInChildren<TooltipView>(true))
+        {
+            DestroyImmediate(copiedView);
+        }
         copy.name = panel.name + "_Copy";
-        copy.SetActive(false);
         RectTransform copyRect = (RectTransform)copy.transform;
         copyRect.pivot = new Vector2(0f, 1f);
         copyRect.anchorMin = new Vector2(0.5f, 0.5f);

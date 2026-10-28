@@ -3,8 +3,8 @@ guid: 51b2e8ade989a5f42ad95ee78d1e0bf2
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -14438391805430216
-    second: "\uCE90\uB9AD\uD130 \uC2A4\uD0E0\uB529_\uCE78_0"
+      213: 4852737365412824863
+    second: CharacterStanding_Khan_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,30 +96,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\uCE90\uB9AD\uD130 \uC2A4\uD0E0\uB529_\uCE78_0"
+      name: CharacterStanding_Khan_0
       rect:
         serializedVersion: 2
-        x: 135
-        y: 85
-        width: 937
-        height: 2705
+        x: 83
+        y: 42
+        width: 722
+        height: 1758
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8363f41fb54bccff0800000000000000
-      internalID: -14438391805430216
+      spriteID: f1742b54ce2685340800000000000000
+      internalID: 4852737365412824863
       vertices: []
       indices: 
       edges: []
@@ -148,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\uCE90\uB9AD\uD130 \uC2A4\uD0E0\uB529_\uCE78_0": -14438391805430216
+      CharacterStanding_Khan_0: 4852737365412824863
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
