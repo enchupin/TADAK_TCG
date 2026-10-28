@@ -110,6 +110,17 @@ public sealed class InputInspectorOverlay : MonoBehaviour
         builder.AppendLine($"설정 패널: {(settings != null ? settings.IsSettingsPanelOpen().ToString() : "매니저 없음")}"
             + $"   카드 드래그 중: {CardInteractionHandler.IsAnyCardDragging}");
 
+        // 패널 스택 (위에서부터)
+        IReadOnlyList<UIModalEntry> modals = UIModalStack.Layer.Entries;
+        builder.Append($"패널 스택 {modals.Count}개:");
+        for (int i = modals.Count - 1; i >= 0; i--)
+        {
+            UIModalEntry modal = modals[i];
+            string name = modal.Owner is Component component ? component.name : modal.Owner.ToString();
+            builder.Append($" {name}({(modal.Kind == UIModalKind.Required ? "필수" : "일반")}{(modal.AlwaysOnTop ? " · 최상위" : string.Empty)})");
+        }
+        builder.AppendLine();
+
         TrainingBattleManager battle = TrainingBattleManager.Instance;
         if (battle == null)
         {
