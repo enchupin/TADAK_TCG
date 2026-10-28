@@ -97,49 +97,8 @@ public class PartyEffect : ICardEffect
             return;
         }
 
-        List<Monster> livingMonsters = battleManager.GetLivingMonsters();
-        if (livingMonsters == null || livingMonsters.Count < 2)
-        {
-            Debug.LogWarning("[PartyEffect] 파티를 만들 적이 부족합니다");
-            return;
-        }
-
-        battleManager.OpenMonsterSelection(livingMonsters, 2, selectedMonsters => ApplyParty(battleManager, selectedMonsters));
-    }
-
-    private static void ApplyParty(TrainingBattleManager battleManager, List<Monster> selectedMonsters)
-    {
-        if (battleManager == null || selectedMonsters == null)
-        {
-            return;
-        }
-
-        List<Monster> validTargets = new List<Monster>();
-        foreach (Monster monster in selectedMonsters)
-        {
-            if (monster == null || monster.IsDead() || validTargets.Contains(monster))
-            {
-                continue;
-            }
-
-            validTargets.Add(monster);
-        }
-
-        if (validTargets.Count < 2)
-        {
-            return;
-        }
-
-        Monster firstMonster = validTargets[0];
-        Monster secondMonster = validTargets[1];
-        Monster survivor = ResolvePartySurvivor(firstMonster, secondMonster);
-        Monster absorbedMonster = survivor == firstMonster ? secondMonster : firstMonster;
-
-        MergeMonsterState(survivor, absorbedMonster);
-        absorbedMonster.currentBuffs.Clear();
-        absorbedMonster.Kill();
-        survivor.UpdateUI();
-        battleManager.UpdateAllUI();
+        // 적 전체 합치기(All)만 지원
+        Debug.LogWarning($"[PartyEffect] 지원하지 않는 operation입니다: {operation}");
     }
 
     private static void MergeAll(TrainingBattleManager battleManager)
