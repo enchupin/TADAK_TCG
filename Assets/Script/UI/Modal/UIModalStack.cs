@@ -50,7 +50,8 @@ public static class UIModalStack
         return action;
     }
 
-    internal static void Register(UIModalEntry entry)
+    // 패널 오브젝트가 없는 선택 상태(몬스터 직접 선택 · 지도 미리보기)는 직접 등록
+    public static void Register(UIModalEntry entry)
     {
         if (layer.Contains(entry.Owner))
         {
@@ -61,7 +62,7 @@ public static class UIModalStack
         Changed?.Invoke();
     }
 
-    internal static void Unregister(object owner)
+    public static void Unregister(object owner)
     {
         if (layer.Remove(owner))
         {

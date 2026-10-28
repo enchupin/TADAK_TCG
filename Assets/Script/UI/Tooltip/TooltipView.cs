@@ -45,6 +45,12 @@ public class TooltipView : MonoBehaviour
 
     public static void Show(TooltipTrigger trigger)
     {
+        // 패널이 열려 있으면 전투 화면 툴팁(버프 · 의도) 표시 안 함 (몬스터 직접 선택 중은 허용)
+        if (!UIModalStack.AllowsBattleTooltips)
+        {
+            return;
+        }
+
         if (Instance != null && trigger != null)
         {
             Instance.ShowInternal(trigger);
@@ -77,9 +83,24 @@ public class TooltipView : MonoBehaviour
         HideInternal();
     }
 
+    private void OnEnable()
+    {
+        UIModalStack.Changed += HandleModalChanged;
+    }
+
     private void OnDisable()
     {
+        UIModalStack.Changed -= HandleModalChanged;
         HideInternal();
+    }
+
+    // 툴팁을 띄운 채 패널이 열리면 닫음
+    private void HandleModalChanged()
+    {
+        if (!UIModalStack.AllowsBattleTooltips)
+        {
+            HideInternal();
+        }
     }
 
     private void OnDestroy()

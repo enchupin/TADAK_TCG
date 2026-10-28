@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class SettingsManager : MonoBehaviour
@@ -51,6 +50,7 @@ public class SettingsManager : MonoBehaviour
 
         BindOpenSettingsButton(openSettingsButton);
         BindResolutionButtons();
+        RegisterSettingsModal();
         InitializeResolutionState();
         InitializeLanguageDropdown();
     }
@@ -89,26 +89,28 @@ public class SettingsManager : MonoBehaviour
         }
     }
 
+    // ESC는 UIEscapeRouter가 처리 (열린 패널이 없으면 설정 열기, 설정이 맨 위면 닫기)
     private void Update()
     {
         HandleWindowResizeSnap();
+    }
 
-        if (Keyboard.current == null) {
+    // 설정은 늦게 열린 패널보다도 항상 위 (시스템 캔버스가 가장 위에 그려지므로 ESC 순서도 맞춤)
+    private void RegisterSettingsModal()
+    {
+        if (settingsPanel == null) {
             return;
         }
-        if (!Keyboard.current.escapeKey.wasPressedThisFrame) {
-            return;
+
+        Canvas canvas = settingsPanel.GetComponentInParent<Canvas>(true);
+        if (canvas != null) {
+            canvas.rootCanvas.sortingOrder = UICanvasOrder.Settings;
         }
-        if (TrainingMapController.TryHandlePreviewEscape(IsSettingsPanelOpen())) {
-            return;
-        }
-        if (RestSceneController.IsEventEscapeContextActive) {
-            return;
-        }
-        if (!IsSettingsPanelOpen() && BattleDeckViewer.TryHandlePanelEscape()) {
-            return;
-        }
-        ToggleSettingPanel();
+
+        UIModalPanel.Ensure(settingsPanel, new UIModalPanel.Options {
+            alwaysOnTop = true,
+            close = ToggleSettingPanel
+        });
     }
 
     public void ToggleSettingPanel()

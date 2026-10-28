@@ -156,11 +156,28 @@ public class TrainingBattleManager : MonoBehaviour
     private void OnEnable()
     {
         LocalizationManager.LanguageChanged += HandleLanguageChanged;
+        UIModalStack.Changed += HandleModalChanged;
     }
 
     private void OnDisable()
     {
         LocalizationManager.LanguageChanged -= HandleLanguageChanged;
+        UIModalStack.Changed -= HandleModalChanged;
+        // 선택 도중 씬을 벗어나도 다음 씬에 몬스터 선택 등록이 남지 않게 함
+        UIModalStack.Unregister(MonsterSelectionModalOwner);
+    }
+
+    // 패널이 열리면 진행 중인 드래그를 취소하고 카드 · 턴 종료 · 고유 스킬 버튼 상태를 다시 계산
+    private void HandleModalChanged()
+    {
+        if (UIModalStack.BlocksBattleInput)
+        {
+            CardInteractionHandler.CancelActiveDrag();
+        }
+
+        UpdateEndTurnButtonState();
+        RefreshHandPlayableState();
+        battleUI?.UpdateAllUI();
     }
 
     private void Start()
@@ -213,7 +230,7 @@ public class TrainingBattleManager : MonoBehaviour
             return;
 
 #if ENABLE_INPUT_SYSTEM
-        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
+        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame && CanEndPlayerTurn())
         {
             EndTurn();
         }
@@ -991,19 +1008,24 @@ public class TrainingBattleManager : MonoBehaviour
         SceneManager.LoadScene("LobbyScene");
     }
 
+    private const string MonsterSelectionModalOwner = "MonsterSelection";
+
     public bool HasPendingSelection => isMonsterSelectionActive
         || (battleDeckViewer != null && battleDeckViewer.IsSelectionActive);
 
     public bool CanPlayerPlayCard()
     {
-        return !(trainingMap != null && trainingMap.IsVisible)
+        // 패널(설정 · 덱 목록 · 선택 · 지도 미리보기 등)이 열려 있으면 전투 진행 정지
+        return !UIModalStack.BlocksBattleInput
+            && !(trainingMap != null && trainingMap.IsVisible)
             && !HasPendingSelection && !isDeckRewardInProgress && !(combatResolver?.IsResolvingCardPlay ?? false)
             && turnSystem.CanPlayerPlayCard();
     }
 
     public bool CanEndPlayerTurn()
     {
-        return !(trainingMap != null && trainingMap.IsVisible)
+        return !UIModalStack.BlocksBattleInput
+            && !(trainingMap != null && trainingMap.IsVisible)
             && !HasPendingSelection && !isDeckRewardInProgress && !(combatResolver?.IsResolvingCardPlay ?? false)
             && turnSystem.CanEndPlayerTurn();
     }
@@ -2253,6 +2275,8 @@ public class TrainingBattleManager : MonoBehaviour
         requiredMonsterSelectionCount = selectCount;
         pendingMonsterSelectionCallback = onSelected;
         isMonsterSelectionActive = true;
+        // 몬스터 직접 선택: 패널 없는 필수 선택 (ESC 무시, 전투 조작 정지, 버프 · 의도 툴팁 허용)
+        UIModalStack.Register(new UIModalEntry(MonsterSelectionModalOwner, UIModalKind.Required, false, true, null));
         RefreshHandPlayableState();
         UpdateEndTurnButtonState();
         return true;
@@ -2321,6 +2345,7 @@ public class TrainingBattleManager : MonoBehaviour
         pendingMonsterSelectionCallback = null;
         requiredMonsterSelectionCount = 0;
         isMonsterSelectionActive = false;
+        UIModalStack.Unregister(MonsterSelectionModalOwner);
         RefreshHandPlayableState();
         UpdateEndTurnButtonState();
     }

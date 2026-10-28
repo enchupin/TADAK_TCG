@@ -53,6 +53,11 @@ public class BattleUI : MonoBehaviour
     private void Awake()
     {
         CacheHPFillDefaultColor();
+        // 패배 패널: 필수 패널 (ESC 무시, 홈 버튼으로만 진행), 자체 배경이 전체 화면을 덮어 차단막 없음
+        UIModalPanel.Ensure(defeatPanel, new UIModalPanel.Options {
+            kind = UIModalKind.Required,
+            useDimmer = false
+        });
         HideDefeatPanel();
         UpdateIdentityGauges();
     }

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -45,8 +44,6 @@ public class RestSceneController : MonoBehaviour
     private bool isEscaping;
     private bool isFinalEventNode;
 
-    public static bool IsEventEscapeContextActive { get; private set; }
-
     private void Start()
     {
         if (!TryInitializeScene(out TrainingMapNodeData pendingNode))
@@ -57,7 +54,6 @@ public class RestSceneController : MonoBehaviour
 
         sceneMode = ResolveSceneMode(pendingNode.nodeType);
         isFinalEventNode = sceneMode == RestSceneMode.Event && IsTerminalNode(pendingNode);
-        IsEventEscapeContextActive = sceneMode == RestSceneMode.Event;
         EnsureRunDeck();
 
         enhanceListView = new RestSceneEnhanceSlotLayoutView(
@@ -75,21 +71,6 @@ public class RestSceneController : MonoBehaviour
         RefreshActionButtons();
     }
 
-    private void Update()
-    {
-        if (!IsEventEscapeContextActive || isEscaping || Keyboard.current == null)
-        {
-            return;
-        }
-
-        if (!Keyboard.current.escapeKey.wasPressedThisFrame)
-        {
-            return;
-        }
-
-        OnClickEscape();
-    }
-
     private void OnEnable()
     {
         LocalizationManager.LanguageChanged += RefreshLocalizedTexts;
@@ -98,11 +79,6 @@ public class RestSceneController : MonoBehaviour
     private void OnDisable()
     {
         LocalizationManager.LanguageChanged -= RefreshLocalizedTexts;
-    }
-
-    private void OnDestroy()
-    {
-        IsEventEscapeContextActive = false;
     }
 
     // 언어 변경 시 체력 · 버튼 문구 갱신

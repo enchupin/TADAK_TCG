@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 /// <summary>
@@ -27,6 +26,14 @@ public class BattleDeckViewer : MonoBehaviour
     [SerializeField] private Transform cardDetailCardParent;
     [SerializeField] private GameObject cardDetailCardPrefab;
 
+    [Header("여는 버튼 (패널이 열려 있어도 차단막을 통과해 다시 눌러 닫음, 비우면 OnClick 연결로 찾음)")]
+    [SerializeField] private Button drawPileButton;
+    [SerializeField] private Button discardPileButton;
+    [SerializeField] private Button exhaustPileButton;
+    [SerializeField] private Button fullDeckButton;
+    [Tooltip("카드 선택 중 패널을 잠시 숨기고 다시 펼치는 버튼 (패널 안에 배치, 비우면 숨김 기능 없음)")]
+    [SerializeField] private Button selectionHideButton;
+
     [Header("참조")]
     [SerializeField] private TrainingBattleManager battleManager;
     private bool isSelectionMode;
@@ -39,35 +46,58 @@ public class BattleDeckViewer : MonoBehaviour
     private DeckPanelViewType currentViewType;
     private CardController cardDetailPreviewController;
     private CardUI cardDetailPreviewUI;
-    private static BattleDeckViewer activeViewer;
+    private UIModalPanel deckModal;
 
-    private void OnEnable() {
-        activeViewer = this;
-    }
+    // 덱 목록 · 카드 확인 패널을 패널 스택에 등록 (ESC는 UIEscapeRouter가 맨 위 패널부터 닫음)
+    private void RegisterModals() {
+        deckModal = UIModalPanel.Ensure(deckPanelRoot, new UIModalPanel.Options {
+            close = ClosePilePanelFromEscape
+        });
 
-    private void OnDisable() {
-        if (activeViewer == this) activeViewer = null;
-    }
-
-    private void Update() {
-        // 전투 씬을 직접 실행해 설정 매니저가 없는 경우에도 ESC 닫기를 지원
-        if (SettingsManager.Instance != null || Keyboard.current == null
-            || !Keyboard.current.escapeKey.wasPressedThisFrame) return;
-        if (TrainingMapController.TryHandlePreviewEscape()) return;
-        TryHandlePanelEscape();
-    }
-
-    public static bool TryHandlePanelEscape() {
-        if (activeViewer == null || activeViewer.isSelectionMode) return false;
-
-        if (activeViewer.cardDetailPanelRoot != null && activeViewer.cardDetailPanelRoot.activeInHierarchy) {
-            activeViewer.CloseCardDetailPanel();
-            return true;
+        // 카드 확인 패널은 자체 배경이 전체 화면을 덮으므로 차단막 없이 등록
+        if (cardDetailPanelRoot != null) {
+            UIModalPanel.Ensure(cardDetailPanelRoot, new UIModalPanel.Options {
+                useDimmer = false,
+                close = CloseCardDetailPanel
+            });
         }
 
-        if (activeViewer.deckPanelRoot == null || !activeViewer.deckPanelRoot.activeInHierarchy) return false;
-        activeViewer.TogglePilePanel(activeViewer.currentViewType);
-        return true;
+        // 에디터의 빈 직렬화 참조는 가짜 null이라 ??= 대신 == 비교
+        if (drawPileButton == null) drawPileButton = UIButtonLookup.FindByOnClick(this, nameof(OnClickDeckButton));
+        if (discardPileButton == null) discardPileButton = UIButtonLookup.FindByOnClick(this, nameof(OnClickDiscardPileButton));
+        if (exhaustPileButton == null) exhaustPileButton = UIButtonLookup.FindByOnClick(this, nameof(OnClickExhaustPileButton));
+        if (fullDeckButton == null) fullDeckButton = UIButtonLookup.FindByOnClick(this, nameof(OnClickFullDeckButton));
+
+        if (selectionHideButton != null) {
+            selectionHideButton.onClick.RemoveListener(ToggleSelectionHidden);
+            selectionHideButton.onClick.AddListener(ToggleSelectionHidden);
+            deckModal.KeepVisibleWhenHidden(selectionHideButton.gameObject);
+        }
+    }
+
+    private void ToggleSelectionHidden() {
+        if (!isSelectionMode || deckModal == null) return;
+        deckModal.ToggleHidden();
+        SettingsManager.PlayPanelToggleSound();
+    }
+
+    private void ClosePilePanelFromEscape() {
+        if (isSelectionMode) return;
+        deckPanelRoot.SetActive(false);
+        HideCardDetailPanel();
+        currentViewType = DeckPanelViewType.None;
+        SettingsManager.PlayPanelToggleSound();
+    }
+
+    private Button ResolveOpenButton(DeckPanelViewType viewType) {
+        return viewType switch
+        {
+            DeckPanelViewType.DrawPile => drawPileButton,
+            DeckPanelViewType.DiscardPile => discardPileButton,
+            DeckPanelViewType.ExhaustPile => exhaustPileButton,
+            DeckPanelViewType.FullDeck => fullDeckButton,
+            _ => null
+        };
     }
 
     public void ResetForCombat()
@@ -90,6 +120,7 @@ public class BattleDeckViewer : MonoBehaviour
     }
     private void Awake() {
         ValidateRequiredReferences();
+        RegisterModals();
         deckPanelRoot.SetActive(false);
         HideCardDetailPanel();
         UpdateConfirmButtonState();
@@ -163,6 +194,10 @@ public class BattleDeckViewer : MonoBehaviour
             return;
         }
 
+        // 보기 모드: ESC로 닫히고, 이 패널을 연 버튼만 차단막을 통과
+        deckModal.SetKind(UIModalKind.Normal);
+        Button openButton = ResolveOpenButton(viewType);
+        deckModal.SetPassThrough(openButton != null ? (RectTransform)openButton.transform : null);
         deckPanelRoot.SetActive(true);
         RefreshPileCards(viewType);
         SettingsManager.PlayPanelToggleSound();
@@ -175,6 +210,10 @@ public class BattleDeckViewer : MonoBehaviour
             return false;
         }
 
+        // 선택 모드: 필수 패널 (ESC 무시, 통과 버튼 없음, 숨김 버튼으로만 잠시 숨김)
+        deckModal.SetKind(UIModalKind.Required);
+        deckModal.SetPassThrough();
+        deckModal.SetHidden(false);
         deckPanelRoot.SetActive(true);
 
         isSelectionMode = true;
@@ -442,6 +481,9 @@ public class BattleDeckViewer : MonoBehaviour
 
         selectionConfirmButton.gameObject.SetActive(isSelectionMode);
         selectionConfirmButton.interactable = isSelectionMode && CanConfirmSelection();
+        if (selectionHideButton != null) {
+            selectionHideButton.gameObject.SetActive(isSelectionMode);
+        }
     }
 
     private void ValidateRequiredReferences() {

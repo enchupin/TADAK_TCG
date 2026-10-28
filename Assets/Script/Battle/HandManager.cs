@@ -679,6 +679,17 @@ public class HandManager : MonoBehaviour
             UpdateHandCardPositions();
         }
 
+        return PlayUseAnimation(cardUI);
+    }
+
+    // 손패 목록은 그대로 두고 사용 연출만 실행 (연출 불가 시 즉시 제거)
+    public Coroutine PlayUseAnimation(CardUI cardUI)
+    {
+        if (cardUI == null)
+        {
+            return null;
+        }
+
         Coroutine useAnimation = drawUI != null
             ? drawUI.PlayUseToDiscard(cardUI.gameObject)
             : null;
