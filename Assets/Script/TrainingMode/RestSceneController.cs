@@ -64,6 +64,7 @@ public class RestSceneController : MonoBehaviour
             enhanceSlotAnchors);
 
         BindButtons();
+        RegisterEnhanceListModal();
         enhanceListView.Configure();
 
         RefreshEnhanceCandidates();
@@ -111,10 +112,44 @@ public class RestSceneController : MonoBehaviour
         CompleteRestAction();
     }
 
+    // 강화 목록은 일반 패널 (ESC로 닫힘), 강화 버튼만 차단막을 통과해 다시 눌러 닫음
+    private void RegisterEnhanceListModal()
+    {
+        if (enhanceScrollView == null)
+        {
+            return;
+        }
+
+        UIModalPanel modal = UIModalPanel.Ensure(enhanceScrollView.gameObject, new UIModalPanel.Options {
+            close = CloseEnhanceList
+        });
+        if (modal != null && enhanceButton != null)
+        {
+            modal.SetPassThrough((RectTransform)enhanceButton.transform);
+        }
+    }
+
+    private bool IsEnhanceListOpen()
+    {
+        return enhanceScrollView != null && enhanceScrollView.gameObject.activeSelf;
+    }
+
+    private void CloseEnhanceList()
+    {
+        enhanceListView.Hide();
+        SettingsManager.PlayPanelToggleSound();
+    }
+
     public void OnClickEnhance()
     {
         if (sceneMode != RestSceneMode.Rest || actionResolved)
         {
+            return;
+        }
+
+        if (IsEnhanceListOpen())
+        {
+            CloseEnhanceList();
             return;
         }
 

@@ -49,6 +49,10 @@ public class DictionarySavedDeckPanel : MonoBehaviour
     private void Awake()
     {
         HideRenameInputFields();
+        // 삭제 확인은 일반 패널 (ESC = 취소), 뒤 클릭은 차단막으로 막음
+        UIModalPanel.Ensure(deleteConfirmationPanel, new UIModalPanel.Options {
+            close = CancelDeleteDeck
+        });
         CancelDeleteDeck();
     }
 
