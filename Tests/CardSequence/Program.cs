@@ -137,6 +137,19 @@ static class Program
             Assert(!resolver.IsResolvingCardPlay && m.currentTarget == null && m.DrawCalls == 2, "반복 완료 후 잠금 해제");
             Assert(m.usableDeckManager.Discard.Contains(c), "모든 효과 완료 후 카드 이동");
         });
+        Test("선택 패널이 열리면 사용 연출 선행, 카드 이동은 효과 완료 후", () => {
+            var c = Load(102053); var m = Setup(c);
+            var resolver = new CombatResolver(m); resolver.TryPlayCard(Event(c)); m.Tick();
+            Assert(m.handManager.EarlyUseAnimations == 1 && m.handManager.Cards.Contains(c), "선택 중 연출 시작, 손패 목록 유지");
+            m.Confirm(); m.Tick(); m.Tick();
+            Assert(!resolver.IsResolvingCardPlay && !m.handManager.Cards.Contains(c) && m.usableDeckManager.Discard.Contains(c), "효과 완료 후 손패 제거와 이동");
+            Assert(m.handManager.EarlyUseAnimations == 1, "연출 중복 실행 금지");
+        });
+        Test("선택 없는 카드는 기존 순서대로 연출", () => {
+            var c = new Card(); c.effects.Add(new ActionEffect(_ => { })); var m = Setup(c);
+            var resolver = new CombatResolver(m); resolver.TryPlayCard(Event(c)); m.Tick(); m.Tick();
+            Assert(!resolver.IsResolvingCardPlay && m.handManager.EarlyUseAnimations == 0 && !m.handManager.Cards.Contains(c), "선행 연출 없음");
+        });
         Test("덱 자동 사용: 선택을 마친 뒤 다음 카드 사용", () => {
             var first = Load(102053); var parent = new Card(); var m = Setup(parent, 5);
             var next = new Card(); int playedNext = 0; next.effects.Add(new ActionEffect(_ => playedNext++));

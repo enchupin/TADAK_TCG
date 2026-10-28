@@ -23,6 +23,59 @@ public class CardInteractionHandler : UIHoverEffect,
 
     // 버프 · 의도 툴팁이 카드 드래그 중에는 표시되지 않도록 공개
     public static bool IsAnyCardDragging => isAnyCardDragging;
+    // ESC · 패널 열림으로 드래그를 취소할 대상
+    private static CardInteractionHandler activeDragHandler;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetDragStatics()
+    {
+        isAnyCardDragging = false;
+        activeDragHandler = null;
+    }
+
+    /// <summary>
+    /// 진행 중인 카드 드래그를 사용하지 않고 손으로 되돌림 (취소한 드래그가 있으면 true)
+    /// 마우스를 계속 누르고 있어도 이후 드래그 이벤트는 무시됨
+    /// </summary>
+    public static bool CancelActiveDrag()
+    {
+        CardInteractionHandler handler = activeDragHandler;
+        activeDragHandler = null;
+        if (handler == null || !handler.isDragging)
+        {
+            isAnyCardDragging = false;
+            return false;
+        }
+
+        handler.CancelDrag();
+        return true;
+    }
+
+    private void CancelDrag()
+    {
+        isDragging = false;
+        isAnyCardDragging = false;
+
+        if (isTargetingMode)
+        {
+            if (targetingArrow != null)
+            {
+                targetingArrow.gameObject.SetActive(false);
+            }
+            ClearPreviewTarget();
+        }
+        else
+        {
+            DestroyPlaceholder();
+            layoutElement.ignoreLayout = false;
+        }
+
+        canvasGroup.blocksRaycasts = true;
+        ReturnToHand();
+        RestoreDragRotationZ();
+        StopAnimation();
+        StartCoroutine(AnimateScale(originalScale));
+    }
 
     [Header("Debug")]
     public bool showPlayThreshold = true;
@@ -57,6 +110,8 @@ public class CardInteractionHandler : UIHoverEffect,
     private GameObject placeholder;
 
     public CardPlayEvent OnCardPlayRequested => onCardPlayRequested;
+    // 호버 시 확대 크기 (손패 호버 배치 · 손패 선택 중앙 배치에서 사용)
+    public Vector3 HoverTargetScale => originalScale * cardHoverScale;
 
     protected override void Awake()
     {
@@ -301,6 +356,7 @@ public class CardInteractionHandler : UIHoverEffect,
 
         isDragging = true;
         isAnyCardDragging = true;
+        activeDragHandler = this;
         originalParent = rectTransform.parent;
         originalSiblingIndex = ConsumeHoverSiblingIndex();
         ResolveHandManager()?.ClearHoveredCard(rectTransform, false);
@@ -390,6 +446,7 @@ public class CardInteractionHandler : UIHoverEffect,
 
         isDragging = false;
         isAnyCardDragging = false;
+        activeDragHandler = null;
         bool playAccepted = false;
 
         if (isTargetingMode)

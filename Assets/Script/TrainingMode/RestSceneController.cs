@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -45,8 +44,6 @@ public class RestSceneController : MonoBehaviour
     private bool isEscaping;
     private bool isFinalEventNode;
 
-    public static bool IsEventEscapeContextActive { get; private set; }
-
     private void Start()
     {
         if (!TryInitializeScene(out TrainingMapNodeData pendingNode))
@@ -57,7 +54,6 @@ public class RestSceneController : MonoBehaviour
 
         sceneMode = ResolveSceneMode(pendingNode.nodeType);
         isFinalEventNode = sceneMode == RestSceneMode.Event && IsTerminalNode(pendingNode);
-        IsEventEscapeContextActive = sceneMode == RestSceneMode.Event;
         EnsureRunDeck();
 
         enhanceListView = new RestSceneEnhanceSlotLayoutView(
@@ -68,26 +64,12 @@ public class RestSceneController : MonoBehaviour
             enhanceSlotAnchors);
 
         BindButtons();
+        RegisterEnhanceListModal();
         enhanceListView.Configure();
 
         RefreshEnhanceCandidates();
         RefreshHpText();
         RefreshActionButtons();
-    }
-
-    private void Update()
-    {
-        if (!IsEventEscapeContextActive || isEscaping || Keyboard.current == null)
-        {
-            return;
-        }
-
-        if (!Keyboard.current.escapeKey.wasPressedThisFrame)
-        {
-            return;
-        }
-
-        OnClickEscape();
     }
 
     private void OnEnable()
@@ -98,11 +80,6 @@ public class RestSceneController : MonoBehaviour
     private void OnDisable()
     {
         LocalizationManager.LanguageChanged -= RefreshLocalizedTexts;
-    }
-
-    private void OnDestroy()
-    {
-        IsEventEscapeContextActive = false;
     }
 
     // 언어 변경 시 체력 · 버튼 문구 갱신
@@ -135,10 +112,44 @@ public class RestSceneController : MonoBehaviour
         CompleteRestAction();
     }
 
+    // 강화 목록은 일반 패널 (ESC로 닫힘), 강화 버튼만 차단막을 통과해 다시 눌러 닫음
+    private void RegisterEnhanceListModal()
+    {
+        if (enhanceScrollView == null)
+        {
+            return;
+        }
+
+        UIModalPanel modal = UIModalPanel.Ensure(enhanceScrollView.gameObject, new UIModalPanel.Options {
+            close = CloseEnhanceList
+        });
+        if (modal != null && enhanceButton != null)
+        {
+            modal.SetPassThrough((RectTransform)enhanceButton.transform);
+        }
+    }
+
+    private bool IsEnhanceListOpen()
+    {
+        return enhanceScrollView != null && enhanceScrollView.gameObject.activeSelf;
+    }
+
+    private void CloseEnhanceList()
+    {
+        enhanceListView.Hide();
+        SettingsManager.PlayPanelToggleSound();
+    }
+
     public void OnClickEnhance()
     {
         if (sceneMode != RestSceneMode.Rest || actionResolved)
         {
+            return;
+        }
+
+        if (IsEnhanceListOpen())
+        {
+            CloseEnhanceList();
             return;
         }
 

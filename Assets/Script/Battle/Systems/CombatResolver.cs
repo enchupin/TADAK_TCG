@@ -95,8 +95,19 @@ public class CombatResolver
         }
     }
 
+    // 사용 연출 상태 (선택 패널이 열리면 효과 처리 도중 먼저 시작)
+    private class UseAnimationState
+    {
+        public CardUI CardUI;
+        public Coroutine Animation;
+        public bool Started;
+        public bool Finished;
+    }
+
     private IEnumerator FinishPlayedCardSequence(CardUI playedCardUI, Card playedCard, Monster originalTarget, int repeatCount, int cardUseAllEnemiesDamage)
     {
+        UseAnimationState useState = new UseAnimationState { CardUI = playedCardUI };
+        battleManager.StartCoroutine(StartUseAnimationWhenSelectionOpens(useState));
         try
         {
             battleManager.currentTarget = originalTarget;
@@ -113,10 +124,20 @@ public class CombatResolver
             battleManager.UpdateAllUI();
             yield return null;
 
+            useState.Finished = true;
             Coroutine useAnimation = null;
             if (battleManager.handManager != null)
             {
-                useAnimation = battleManager.handManager.RemoveCardFromHandWithUseAnimation(playedCardUI);
+                if (useState.Started)
+                {
+                    // 연출은 이미 진행 중이므로 손패 목록에서만 제거
+                    battleManager.handManager.RemoveCard(playedCard);
+                    useAnimation = useState.Animation;
+                }
+                else
+                {
+                    useAnimation = battleManager.handManager.RemoveCardFromHandWithUseAnimation(playedCardUI);
+                }
             }
 
             if (useAnimation != null)
@@ -135,8 +156,30 @@ public class CombatResolver
         }
         finally
         {
+            useState.Finished = true;
             battleManager.currentTarget = null;
             CompleteCardResolution();
+        }
+    }
+
+    // 선택 패널이 열리면 사용된 카드가 화면에 멈춰 선택지를 가리지 않도록 사용 연출을 먼저 시작
+    // 손패 목록 제거와 카드 이동 처리는 효과가 모두 끝난 뒤 그대로 진행
+    private IEnumerator StartUseAnimationWhenSelectionOpens(UseAnimationState useState)
+    {
+        while (!useState.Finished)
+        {
+            if (battleManager.HasPendingSelection)
+            {
+                if (battleManager.handManager != null && useState.CardUI != null)
+                {
+                    useState.Started = true;
+                    useState.Animation = battleManager.handManager.PlayUseAnimation(useState.CardUI);
+                }
+
+                yield break;
+            }
+
+            yield return null;
         }
     }
 

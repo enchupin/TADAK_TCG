@@ -22,6 +22,26 @@ namespace Lobby
         private void Awake()
         {
             LoadButtonClickSound();
+            RegisterSubPanels();
+        }
+
+        // 훈련 · 보스 · 도감은 일반 패널로 등록해 ESC로 메인에 돌아감 (메인에서 ESC는 설정 열기)
+        // 전체 화면 패널이라 차단막 없이 등록
+        private void RegisterSubPanels()
+        {
+            foreach (GameObject panel in new[] { trainingModePanel, bossModePanel, dictionaryPanel })
+            {
+                UIModalPanel.Ensure(panel, new UIModalPanel.Options {
+                    useDimmer = false,
+                    close = CloseCurrentPanelFromEscape
+                });
+            }
+        }
+
+        private void CloseCurrentPanelFromEscape()
+        {
+            PlayButtonClickSound();
+            CloseCurrentPanel();
         }
 
         private void Start()

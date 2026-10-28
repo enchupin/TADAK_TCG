@@ -42,7 +42,8 @@ public static class CharacterStandingButtonImageUtility
         standingImage.transform.SetAsFirstSibling();
     }
 
-    private static Sprite LoadStandingSprite(Character character)
+    // 도감 일러스트 탭에서도 사용
+    public static Sprite LoadStandingSprite(Character character)
     {
         if (spriteCache.TryGetValue(character, out Sprite cachedSprite))
         {
@@ -50,11 +51,6 @@ public static class CharacterStandingButtonImageUtility
         }
 
         Sprite standingSprite = LoadSpriteFromResource(BuildStandingResourcePath(character.ToString()));
-        if (standingSprite == null && character == Character.Polar)
-        {
-            standingSprite = LoadSpriteFromResource(BuildStandingResourcePath("Pola"));
-        }
-
         spriteCache[character] = standingSprite;
         return standingSprite;
     }

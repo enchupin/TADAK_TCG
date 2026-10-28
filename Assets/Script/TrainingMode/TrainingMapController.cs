@@ -3,7 +3,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.InputSystem;
 
 /// <summary>
 /// Runtime map presenter for training mode.
@@ -26,6 +25,8 @@ public class TrainingMapController : MonoBehaviour
     [SerializeField] private float floorSpacing = 200f;
     [SerializeField] private CanvasGroup combatInteraction;
     [SerializeField] private TrainingBattleManager battleManager;
+    [Tooltip("전투 화면 지도 버튼 (미리보기 중 지도 위로 올려 다시 눌러 닫음, 비우면 OnClick 연결로 찾음)")]
+    [SerializeField] private Button mapButton;
 
     [Header("Visuals")]
     [SerializeField] private Color selectableNodeColor = new Color(0.26f, 0.73f, 0.29f);
@@ -46,49 +47,62 @@ public class TrainingMapController : MonoBehaviour
     private readonly Dictionary<(int from, int to), Image> connectionImages = new Dictionary<(int, int), Image>();
 
     private bool isPreview;
-    private static TrainingMapController activePreview;
-    private static int escapeConsumedFrame = -1;
+    private Canvas mapButtonCanvas;
+    private CanvasGroup mapButtonGroup;
     public bool IsVisible => gameObject.activeInHierarchy;
     private int? DisplayedCurrentNode => isPreview ? TrainingRunState.PendingNodeId : TrainingRunState.CurrentNodeId;
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetPreviewState()
+    private void Awake()
     {
-        activePreview = null;
-        escapeConsumedFrame = -1;
+        // 전투 캔버스와 정렬 순서가 같으면 위아래가 활성 순서에 의존하므로 명시
+        Canvas canvas = GetComponent<Canvas>();
+        if (canvas != null) canvas.sortingOrder = UICanvasOrder.Map;
+        if (mapButton == null) mapButton = UIButtonLookup.FindByOnClick(this, nameof(OpenMapPreview));
     }
 
+    // 지도 버튼: 미리보기가 열려 있으면 닫기
     public void OpenMapPreview()
     {
+        if (isPreview && IsVisible)
+        {
+            ClosePreview();
+            return;
+        }
         if (IsVisible) return;
         if (BossModeSession.IsActive || !TrainingRunState.PendingNodeId.HasValue
             || battleManager.CurrentTurnState == BattleTurnState.CombatEnd) return;
         isPreview = true;
-        activePreview = this;
         DisplayMap();
+        // 미리보기는 일반 패널 (ESC로 닫힘), 전투 후 노드 선택 지도는 기본 화면이라 등록하지 않음
+        UIModalStack.Register(new UIModalEntry(this, UIModalKind.Normal, ClosePreview));
+        SetMapButtonRaised(true);
         SettingsManager.PlayPanelToggleSound();
     }
 
-    private void Update()
+    private void ClosePreview()
     {
-        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame
-            && !(SettingsManager.Instance != null && SettingsManager.Instance.IsSettingsPanelOpen()))
-            TryHandlePreviewEscape();
+        ShowBattle();
+        SettingsManager.PlayPanelToggleSound();
     }
 
-    public static bool TryHandlePreviewEscape(bool settingsPanelOpen = false)
+    // 미리보기 중 지도 버튼을 지도 위로 올려 다시 눌러 닫을 수 있게 함 (전투 캔버스 입력 차단도 무시)
+    private void SetMapButtonRaised(bool raised)
     {
-        if (escapeConsumedFrame == Time.frameCount) return true;
-        if (settingsPanelOpen)
+        if (mapButton == null) return;
+
+        if (raised && mapButtonCanvas == null)
         {
-            escapeConsumedFrame = Time.frameCount;
-            return false;
+            mapButtonCanvas = mapButton.GetComponent<Canvas>();
+            if (mapButtonCanvas == null) mapButtonCanvas = mapButton.gameObject.AddComponent<Canvas>();
+            if (mapButton.GetComponent<GraphicRaycaster>() == null) mapButton.gameObject.AddComponent<GraphicRaycaster>();
+            mapButtonGroup = mapButton.GetComponent<CanvasGroup>();
+            if (mapButtonGroup == null) mapButtonGroup = mapButton.gameObject.AddComponent<CanvasGroup>();
         }
-        if (activePreview == null || !activePreview.isPreview || !activePreview.IsVisible) return false;
-        escapeConsumedFrame = Time.frameCount;
-        activePreview.ShowBattle();
-        SettingsManager.PlayPanelToggleSound();
-        return true;
+        if (mapButtonCanvas == null) return;
+
+        mapButtonCanvas.overrideSorting = raised;
+        mapButtonCanvas.sortingOrder = raised ? UICanvasOrder.Map + 1 : 0;
+        mapButtonGroup.ignoreParentGroups = raised;
     }
 
     private void OnEnable()
@@ -99,7 +113,8 @@ public class TrainingMapController : MonoBehaviour
     private void OnDisable()
     {
         LocalizationManager.LanguageChanged -= RefreshLocalizedTexts;
-        if (activePreview == this) activePreview = null;
+        UIModalStack.Unregister(this);
+        SetMapButtonRaised(false);
     }
 
     // 언어 변경 시 노드 이름 · 상태 문구 갱신
@@ -119,7 +134,8 @@ public class TrainingMapController : MonoBehaviour
     public void ShowMap()
     {
         isPreview = false;
-        if (activePreview == this) activePreview = null;
+        UIModalStack.Unregister(this);
+        SetMapButtonRaised(false);
         DisplayMap();
     }
 
@@ -148,6 +164,8 @@ public class TrainingMapController : MonoBehaviour
     public void ShowBattle()
     {
         isPreview = false;
+        UIModalStack.Unregister(this);
+        SetMapButtonRaised(false);
         combatInteraction.interactable = true;
         combatInteraction.blocksRaycasts = true;
         gameObject.SetActive(false);

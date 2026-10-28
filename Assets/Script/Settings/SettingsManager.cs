@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class SettingsManager : MonoBehaviour
@@ -34,6 +33,15 @@ public class SettingsManager : MonoBehaviour
     // 드롭다운 항목 순서의 언어 코드 (0번은 시스템 언어)
     private readonly List<string> languageDropdownCodes = new();
     private static AudioClip buttonClickSound;
+    // 씬마다 바뀌는 설정 버튼 (전투 · 로비)
+    private static readonly List<Button> settingsButtons = new();
+    private UIModalPanel settingsModal;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        settingsButtons.Clear();
+    }
     private Vector2Int lastObservedResolution;
     private Vector2Int pendingResizeResolution;
     private float pendingResizeChangedAt = -1f;
@@ -51,6 +59,7 @@ public class SettingsManager : MonoBehaviour
 
         BindOpenSettingsButton(openSettingsButton);
         BindResolutionButtons();
+        RegisterSettingsModal();
         InitializeResolutionState();
         InitializeLanguageDropdown();
     }
@@ -72,11 +81,39 @@ public class SettingsManager : MonoBehaviour
         // 로비 재진입 시 유지 중인 매니저에 새 씬의 버튼을 연결
         button.onClick.RemoveListener(OpenSettingsPanelFromButton);
         button.onClick.AddListener(OpenSettingsPanelFromButton);
+        RegisterSettingsButton(button);
     }
 
+    // 설정 버튼은 설정 차단막을 통과해 다시 눌러 닫을 수 있음 (덱 · 지도 버튼과 같은 규칙)
+    public static void RegisterSettingsButton(Button button)
+    {
+        // 씬이 바뀌며 파괴된 버튼 정리
+        settingsButtons.RemoveAll(existing => existing == null);
+        if (button != null && !settingsButtons.Contains(button)) {
+            settingsButtons.Add(button);
+        }
+        // 카드 목록 선택 중에도 설정은 열고 닫을 수 있음
+        UIBattleSpaceButtons.Register(button);
+    }
+
+    private void RefreshSettingsButtonPassThrough()
+    {
+        if (settingsModal == null) {
+            return;
+        }
+
+        settingsButtons.RemoveAll(existing => existing == null);
+        RectTransform[] targets = new RectTransform[settingsButtons.Count];
+        for (int i = 0; i < settingsButtons.Count; i++) {
+            targets[i] = (RectTransform)settingsButtons[i].transform;
+        }
+        settingsModal.SetPassThrough(targets);
+    }
+
+    // 설정 버튼은 열기 · 닫기 전환
     public void OpenSettingsPanelFromButton()
     {
-        OpenSettingsPanel();
+        ToggleSettingPanel();
     }
 
     public static void PlayPanelToggleSound()
@@ -89,26 +126,27 @@ public class SettingsManager : MonoBehaviour
         }
     }
 
+    // ESC는 UIEscapeRouter가 처리 (닫을 수 있는 패널이 없으면 설정 열기)
     private void Update()
     {
         HandleWindowResizeSnap();
+    }
 
-        if (Keyboard.current == null) {
+    // 설정은 다른 패널과 같은 일반 패널 (시스템 캔버스 정렬 순서만 명시)
+    private void RegisterSettingsModal()
+    {
+        if (settingsPanel == null) {
             return;
         }
-        if (!Keyboard.current.escapeKey.wasPressedThisFrame) {
-            return;
+
+        Canvas canvas = settingsPanel.GetComponentInParent<Canvas>(true);
+        if (canvas != null) {
+            canvas.rootCanvas.sortingOrder = UICanvasOrder.Settings;
         }
-        if (TrainingMapController.TryHandlePreviewEscape(IsSettingsPanelOpen())) {
-            return;
-        }
-        if (RestSceneController.IsEventEscapeContextActive) {
-            return;
-        }
-        if (!IsSettingsPanelOpen() && BattleDeckViewer.TryHandlePanelEscape()) {
-            return;
-        }
-        ToggleSettingPanel();
+
+        settingsModal = UIModalPanel.Ensure(settingsPanel, new UIModalPanel.Options {
+            close = ToggleSettingPanel
+        });
     }
 
     public void ToggleSettingPanel()
@@ -134,6 +172,7 @@ public class SettingsManager : MonoBehaviour
 
         SyncSoundSliders();
         BindResolutionButtons();
+        RefreshSettingsButtonPassThrough();
         settingsPanel.SetActive(true);
         PlayPanelToggleSound();
     }

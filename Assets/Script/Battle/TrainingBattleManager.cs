@@ -65,8 +65,9 @@ public class TrainingBattleManager : MonoBehaviour
     public BattleUI battleUI;
     public MonsterSpawner monsterSpawner;
     [SerializeField] private BattleDeckViewer battleDeckViewer;
-    // R-46 네임드 승리 보상(복제 / 제거) 선택 창, 비어 있으면 복제로 진행
-    [SerializeField] private NamedRewardChoicePanel namedRewardChoicePanel;
+    [Tooltip("손패 선택 확인 버튼 (중앙에 놓인 카드 아래, 비우면 DeckPanel 아래 CheckBtn을 찾음)")]
+    [SerializeField] private Button handSelectionConfirmButton;
+    private HandCardSelectionController handCardSelection;
 
     [Header("Turn Settings")]
     // 드로우 수, 손패 상한, 턴당 에너지는 기본적으로 rules.json의 combat 항목에서 읽음
@@ -94,11 +95,6 @@ public class TrainingBattleManager : MonoBehaviour
     // Temporary target used while card effects are executing.
     public Monster currentTarget;
     private Monster previewDescriptionTarget;
-    private Action<List<Monster>> pendingMonsterSelectionCallback;
-    private readonly List<Monster> selectableMonsters = new List<Monster>();
-    private readonly List<Monster> selectedMonsters = new List<Monster>();
-    private int requiredMonsterSelectionCount;
-    private bool isMonsterSelectionActive;
 
     [Header("Run Data")]
     public static BuildingDeck buildingDeck;
@@ -151,16 +147,64 @@ public class TrainingBattleManager : MonoBehaviour
         {
             battleDeckViewer = FindAnyObjectByType<BattleDeckViewer>();
         }
+
+        SetupHandCardSelection();
+    }
+
+    // 확인 버튼 자동 찾기: 지정한 부모 바로 아래의 CheckBtn
+    private static Button FindConfirmButtonUnder(string parentName)
+    {
+        foreach (Button button in FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            if (button.name == "CheckBtn" && button.transform.parent != null && button.transform.parent.name == parentName)
+            {
+                return button;
+            }
+        }
+        return null;
+    }
+
+    // 손패에서 고르는 선택은 패널 없이 전투 화면에서 진행 (확인 버튼은 씬 배치, 중앙 위치는 카드 사용 연출 지점)
+    private void SetupHandCardSelection()
+    {
+        if (handSelectionConfirmButton == null)
+        {
+            handSelectionConfirmButton = FindConfirmButtonUnder("DeckPanel");
+        }
+
+        if (handSelectionConfirmButton == null)
+        {
+            Debug.LogWarning("[BattleManager] 손패 선택 확인 버튼이 없어 손패 선택도 목록으로 표시합니다");
+            return;
+        }
+
+        handCardSelection = gameObject.AddComponent<HandCardSelectionController>();
+        handCardSelection.Configure(handManager, handSelectionConfirmButton, handManager != null ? handManager.PlayCenterPosition : null);
     }
 
     private void OnEnable()
     {
         LocalizationManager.LanguageChanged += HandleLanguageChanged;
+        UIModalStack.Changed += HandleModalChanged;
     }
 
     private void OnDisable()
     {
         LocalizationManager.LanguageChanged -= HandleLanguageChanged;
+        UIModalStack.Changed -= HandleModalChanged;
+    }
+
+    // 패널이 열리면 진행 중인 드래그를 취소하고 카드 · 턴 종료 · 고유 스킬 버튼 상태를 다시 계산
+    private void HandleModalChanged()
+    {
+        if (UIModalStack.BlocksBattleInput)
+        {
+            CardInteractionHandler.CancelActiveDrag();
+        }
+
+        UpdateEndTurnButtonState();
+        RefreshHandPlayableState();
+        battleUI?.UpdateAllUI();
     }
 
     private void Start()
@@ -185,7 +229,7 @@ public class TrainingBattleManager : MonoBehaviour
     {
         if (hasStartedEncounter) return;
         StopAllCoroutines();
-        CancelMonsterSelection();
+        handCardSelection?.Cancel();
         battleDeckViewer?.ResetForCombat();
         handManager?.ClearHand();
         monsterSpawner?.ClearEncounter();
@@ -213,7 +257,7 @@ public class TrainingBattleManager : MonoBehaviour
             return;
 
 #if ENABLE_INPUT_SYSTEM
-        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
+        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame && CanEndPlayerTurn())
         {
             EndTurn();
         }
@@ -991,19 +1035,22 @@ public class TrainingBattleManager : MonoBehaviour
         SceneManager.LoadScene("LobbyScene");
     }
 
-    public bool HasPendingSelection => isMonsterSelectionActive
+    public bool HasPendingSelection => (handCardSelection != null && handCardSelection.IsActive)
         || (battleDeckViewer != null && battleDeckViewer.IsSelectionActive);
 
     public bool CanPlayerPlayCard()
     {
-        return !(trainingMap != null && trainingMap.IsVisible)
+        // 패널(설정 · 덱 목록 · 선택 · 지도 미리보기 등)이 열려 있으면 전투 진행 정지
+        return !UIModalStack.BlocksBattleInput
+            && !(trainingMap != null && trainingMap.IsVisible)
             && !HasPendingSelection && !isDeckRewardInProgress && !(combatResolver?.IsResolvingCardPlay ?? false)
             && turnSystem.CanPlayerPlayCard();
     }
 
     public bool CanEndPlayerTurn()
     {
-        return !(trainingMap != null && trainingMap.IsVisible)
+        return !UIModalStack.BlocksBattleInput
+            && !(trainingMap != null && trainingMap.IsVisible)
             && !HasPendingSelection && !isDeckRewardInProgress && !(combatResolver?.IsResolvingCardPlay ?? false)
             && turnSystem.CanEndPlayerTurn();
     }
@@ -1031,6 +1078,13 @@ public class TrainingBattleManager : MonoBehaviour
     {
         if (handManager == null)
             return;
+
+        // 손패 선택 중에는 낼 수 있는지 대신 선택 후보 여부로 표시 (후보만 색 유지)
+        if (handCardSelection != null && handCardSelection.IsActive)
+        {
+            handManager.RefreshCardPlayability(handCardSelection.IsCandidate, true);
+            return;
+        }
 
         bool canInteract = CanPlayerPlayCard();
 
@@ -1505,8 +1559,6 @@ public class TrainingBattleManager : MonoBehaviour
             previewDescriptionTarget = null;
         }
 
-        HandleMonsterUnavailableForSelection(monster);
-
         UnregisterMonster(monster);
 
         if (monster.gameObject.activeSelf)
@@ -1536,8 +1588,6 @@ public class TrainingBattleManager : MonoBehaviour
         {
             previewDescriptionTarget = null;
         }
-
-        HandleMonsterUnavailableForSelection(monster);
 
         UnregisterMonster(monster);
 
@@ -1974,24 +2024,21 @@ public class TrainingBattleManager : MonoBehaviour
         isDeckRewardInProgress = true;
         try
         {
-            NamedRewardChoicePanel.Choice? choice = null;
-            if (namedRewardChoicePanel != null && namedRewardChoicePanel.Show(selected => choice = selected))
+            // 복제 · 제거 중 하나를 랜덤으로 제공 (고를 카드가 없으면 다른 쪽으로)
+            bool isDuplicate = UnityEngine.Random.Range(0, 2) == 0;
+            List<Card> candidates = GetNamedRewardCandidates(isDuplicate);
+            if (candidates.Count == 0)
             {
-                yield return new WaitUntil(() => choice.HasValue);
-            }
-            else
-            {
-                Debug.LogWarning("[BattleManager] 네임드 보상 선택 창이 없어 카드 복제로 진행합니다");
-                choice = NamedRewardChoicePanel.Choice.Duplicate;
+                isDuplicate = !isDuplicate;
+                candidates = GetNamedRewardCandidates(isDuplicate);
             }
 
-            List<Card> candidates = choice == NamedRewardChoicePanel.Choice.Duplicate
-                ? TrainingDeckRewardService.GetDuplicateCandidates(buildingDeck.GetCards())
-                : TrainingDeckRewardService.GetRemovalCandidates(buildingDeck.GetCards());
             if (candidates.Count == 0)
             {
                 yield break;
             }
+
+            Debug.Log($"[BattleManager] 네임드 보상: {(isDuplicate ? "카드 복제" : "카드 제거")}");
 
             List<Card> pickedCards = null;
             yield return SelectCardsCoroutine(candidates, 1, false, cards => pickedCards = cards);
@@ -2001,7 +2048,7 @@ public class TrainingBattleManager : MonoBehaviour
                 yield break;
             }
 
-            if (choice == NamedRewardChoicePanel.Choice.Duplicate)
+            if (isDuplicate)
             {
                 if (buildingDeck.AddCardCopy(picked))
                 {
@@ -2017,6 +2064,13 @@ public class TrainingBattleManager : MonoBehaviour
         {
             isDeckRewardInProgress = false;
         }
+    }
+
+    private List<Card> GetNamedRewardCandidates(bool isDuplicate)
+    {
+        return isDuplicate
+            ? TrainingDeckRewardService.GetDuplicateCandidates(buildingDeck.GetCards())
+            : TrainingDeckRewardService.GetRemovalCandidates(buildingDeck.GetCards());
     }
 
     // R-15 캐릭터 카드가 상한을 넘으면 넘은 장수만큼 골라 저장 덱에서 제거
@@ -2216,6 +2270,12 @@ public class TrainingBattleManager : MonoBehaviour
 
     public bool OpenSelectCardPanel(List<Card> selectableCards, int selectCount, Action<List<Card>> onSelected, bool allowFewer = false)
     {
+        // 후보가 모두 손패 카드면 손패에서 고르기, 더미 · 덱 · 생성 후보가 섞이면 목록에서 고르기
+        if (handCardSelection != null && handCardSelection.CanSelectFromHand(selectableCards))
+        {
+            return handCardSelection.Open(selectableCards, selectCount, allowFewer, onSelected);
+        }
+
         if (battleDeckViewer == null)
         {
             Debug.LogWarning("[BattleManager] BattleDeckViewer is missing. Fallback to auto selection.");
@@ -2225,121 +2285,9 @@ public class TrainingBattleManager : MonoBehaviour
         return battleDeckViewer.OpenSelectionPanel(selectableCards, selectCount, onSelected, allowFewer);
     }
 
-    public bool OpenMonsterSelection(List<Monster> selectionTargets, int selectCount, Action<List<Monster>> onSelected)
-    {
-        if (selectionTargets == null || selectCount <= 0 || onSelected == null)
-        {
-            return false;
-        }
-
-        CancelMonsterSelection();
-
-        foreach (Monster monster in selectionTargets)
-        {
-            if (monster == null || monster.IsDead() || selectableMonsters.Contains(monster))
-            {
-                continue;
-            }
-
-            selectableMonsters.Add(monster);
-        }
-
-        if (selectableMonsters.Count < selectCount)
-        {
-            selectableMonsters.Clear();
-            return false;
-        }
-
-        requiredMonsterSelectionCount = selectCount;
-        pendingMonsterSelectionCallback = onSelected;
-        isMonsterSelectionActive = true;
-        RefreshHandPlayableState();
-        UpdateEndTurnButtonState();
-        return true;
-    }
-
-    public void HandleMonsterClicked(Monster monster)
-    {
-        if (!isMonsterSelectionActive || monster == null || monster.IsDead() || !selectableMonsters.Contains(monster))
-        {
-            return;
-        }
-
-        if (selectedMonsters.Contains(monster))
-        {
-            selectedMonsters.Remove(monster);
-            monster.SetSelectionHighlight(false);
-            return;
-        }
-
-        if (selectedMonsters.Count >= requiredMonsterSelectionCount)
-        {
-            return;
-        }
-
-        selectedMonsters.Add(monster);
-        monster.SetSelectionHighlight(true);
-
-        if (selectedMonsters.Count >= requiredMonsterSelectionCount)
-        {
-            CompleteMonsterSelection();
-        }
-    }
-
     public void RegisterMonsterHpLossHealPlayerThisTurn(Monster monster)
     {
         battleBuffController?.RegisterMonsterHpLossHealPlayerThisTurn(monster);
-    }
-
-    private void CompleteMonsterSelection()
-    {
-        List<Monster> resolvedSelection = new List<Monster>(selectedMonsters);
-        Action<List<Monster>> callback = pendingMonsterSelectionCallback;
-        ClearMonsterSelectionState();
-        callback?.Invoke(resolvedSelection);
-    }
-
-    private void CancelMonsterSelection()
-    {
-        if (!isMonsterSelectionActive && selectableMonsters.Count == 0 && selectedMonsters.Count == 0)
-        {
-            return;
-        }
-
-        ClearMonsterSelectionState();
-    }
-
-    private void ClearMonsterSelectionState()
-    {
-        foreach (Monster selectedMonster in selectedMonsters)
-        {
-            selectedMonster?.SetSelectionHighlight(false);
-        }
-
-        selectableMonsters.Clear();
-        selectedMonsters.Clear();
-        pendingMonsterSelectionCallback = null;
-        requiredMonsterSelectionCount = 0;
-        isMonsterSelectionActive = false;
-        RefreshHandPlayableState();
-        UpdateEndTurnButtonState();
-    }
-
-    private void HandleMonsterUnavailableForSelection(Monster monster)
-    {
-        if (monster == null)
-        {
-            return;
-        }
-
-        monster.SetSelectionHighlight(false);
-        selectableMonsters.Remove(monster);
-        selectedMonsters.Remove(monster);
-
-        if (isMonsterSelectionActive && selectableMonsters.Count < requiredMonsterSelectionCount)
-        {
-            CancelMonsterSelection();
-        }
     }
 
     private void ApplyDebugEnergy()

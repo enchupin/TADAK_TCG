@@ -83,6 +83,9 @@ public class HandManager
     public bool RemoveCard(Card card) => Cards.Remove(card);
     public void RefreshCardDisplay(Card card) {}
     public UnityEngine.Coroutine RemoveCardFromHandWithUseAnimation(CardUI ui) { Cards.Remove(ui.Card); return null; }
+    // 손패 목록을 건드리지 않는 사용 연출 호출 횟수
+    public int EarlyUseAnimations;
+    public UnityEngine.Coroutine PlayUseAnimation(CardUI ui) { EarlyUseAnimations++; return null; }
 }
 public sealed class CharacterIdentityState { public Character Character { get; set; } }
 public class UsableDeckManager

@@ -41,18 +41,31 @@ public class BattleUI : MonoBehaviour
     [SerializeField] private TrainingBattleManager battleManager;
     [SerializeField] private GameObject defeatPanel;
     [SerializeField] private string lobbySceneName = "LobbyScene";
+    [Tooltip("설정 버튼 (비워 두면 OnClick에 OnClickSettingsButton이 연결된 버튼을 찾음)")]
+    [SerializeField] private Button settingsButton;
     private Color defaultHPFillColor = Color.white;
     private bool hasDefaultHPFillColor;
 
+    // 설정 버튼은 열기 · 닫기 전환
     public void OnClickSettingsButton()
     {
         if (SettingsManager.Instance != null)
-            SettingsManager.Instance.OpenSettingsPanel();
+            SettingsManager.Instance.ToggleSettingPanel();
     }
 
     private void Awake()
     {
         CacheHPFillDefaultColor();
+        if (settingsButton == null)
+        {
+            settingsButton = UIButtonLookup.FindByOnClick(this, nameof(OnClickSettingsButton));
+        }
+        SettingsManager.RegisterSettingsButton(settingsButton);
+        // 패배 패널: 필수 패널 (ESC 무시, 홈 버튼으로만 진행), 자체 배경이 전체 화면을 덮어 차단막 없음
+        UIModalPanel.Ensure(defeatPanel, new UIModalPanel.Options {
+            kind = UIModalKind.Required,
+            useDimmer = false
+        });
         HideDefeatPanel();
         UpdateIdentityGauges();
     }
