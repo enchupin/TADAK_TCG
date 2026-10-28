@@ -74,7 +74,7 @@ public class TrainingMapController : MonoBehaviour
         isPreview = true;
         DisplayMap();
         // 미리보기는 일반 패널 (ESC로 닫힘), 전투 후 노드 선택 지도는 기본 화면이라 등록하지 않음
-        UIModalStack.Register(new UIModalEntry(this, UIModalKind.Normal, false, false, ClosePreview));
+        UIModalStack.Register(new UIModalEntry(this, UIModalKind.Normal, ClosePreview));
         SetMapButtonRaised(true);
         SettingsManager.PlayPanelToggleSound();
     }

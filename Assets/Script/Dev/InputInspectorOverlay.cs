@@ -117,7 +117,7 @@ public sealed class InputInspectorOverlay : MonoBehaviour
         {
             UIModalEntry modal = modals[i];
             string name = modal.Owner is Component component ? component.name : modal.Owner.ToString();
-            builder.Append($" {name}({(modal.Kind == UIModalKind.Required ? "필수" : "일반")}{(modal.AlwaysOnTop ? " · 최상위" : string.Empty)})");
+            builder.Append($" {name}({(modal.Kind == UIModalKind.Required ? "필수" : "일반")}{(modal.Hidden ? " · 숨김" : string.Empty)})");
         }
         builder.AppendLine();
 

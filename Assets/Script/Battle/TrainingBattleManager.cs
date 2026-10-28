@@ -2275,8 +2275,8 @@ public class TrainingBattleManager : MonoBehaviour
         requiredMonsterSelectionCount = selectCount;
         pendingMonsterSelectionCallback = onSelected;
         isMonsterSelectionActive = true;
-        // 몬스터 직접 선택: 패널 없는 필수 선택 (ESC 무시, 전투 조작 정지, 버프 · 의도 툴팁 허용)
-        UIModalStack.Register(new UIModalEntry(MonsterSelectionModalOwner, UIModalKind.Required, false, true, null));
+        // 몬스터 직접 선택: 패널 없는 필수 선택 (ESC로 닫히지 않음, 전투 조작 · 툴팁 정지)
+        UIModalStack.Register(new UIModalEntry(MonsterSelectionModalOwner, UIModalKind.Required, null));
         RefreshHandPlayableState();
         UpdateEndTurnButtonState();
         return true;

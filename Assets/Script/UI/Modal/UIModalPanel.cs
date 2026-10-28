@@ -12,8 +12,6 @@ public sealed class UIModalPanel : MonoBehaviour
     public sealed class Options
     {
         public UIModalKind kind = UIModalKind.Normal;
-        public bool alwaysOnTop;
-        public bool allowBattleTooltips;
         public bool useDimmer = true;
         // ESC로 닫을 때 실행 (비우면 패널 비활성)
         public Action close;
@@ -113,6 +111,12 @@ public sealed class UIModalPanel : MonoBehaviour
         }
 
         isHidden = hidden;
+        // 숨긴 동안에만 툴팁 허용
+        if (entry != null)
+        {
+            entry.Hidden = hidden;
+            UIModalStack.NotifyChanged();
+        }
         if (hideGroup == null)
         {
             hideGroup = GetComponent<CanvasGroup>();
@@ -187,7 +191,7 @@ public sealed class UIModalPanel : MonoBehaviour
             return;
         }
 
-        entry = new UIModalEntry(this, options.kind, options.alwaysOnTop, options.allowBattleTooltips, CloseFromEscape);
+        entry = new UIModalEntry(this, options.kind, CloseFromEscape) { Hidden = isHidden };
         UIModalStack.Register(entry);
         RefreshDimmer();
     }

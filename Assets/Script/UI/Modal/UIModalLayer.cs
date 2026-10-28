@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-// 패널 종류: 일반은 ESC로 닫힘, 필수는 선택을 마칠 때까지 ESC 무시
+// 패널 종류: 일반은 ESC로 닫힘, 필수(반드시 선택해야 하는 상황)는 ESC로 닫히지 않고 건너뜀
 public enum UIModalKind
 {
     Normal,
@@ -13,11 +13,9 @@ public enum UIEscapeAction
 {
     // 진행 중인 카드 드래그 취소에 ESC 소모
     CancelDrag,
-    // 맨 위 패널 닫기
-    CloseTop,
-    // 맨 위 패널이 필수라 무시
-    Ignore,
-    // 열린 패널이 없어 씬 기본 동작 (전투 = 설정 열기 등)
+    // 닫을 수 있는 패널 중 가장 최근 것 닫기
+    CloseLatest,
+    // 닫을 수 있는 패널이 없어 씬 기본 동작 (전투 = 설정 열기 등)
     SceneDefault
 }
 
@@ -26,18 +24,14 @@ public sealed class UIModalEntry
     public object Owner { get; }
     // 같은 패널을 보기 · 선택으로 번갈아 쓰므로 열린 상태에서도 바뀔 수 있음
     public UIModalKind Kind { get; set; }
-    // 나중에 열린 패널보다도 항상 위에 둠 (설정)
-    public bool AlwaysOnTop { get; }
-    // 맨 위일 때 전투 화면 툴팁(버프 · 의도) 허용 (몬스터 직접 선택)
-    public bool AllowBattleTooltips { get; }
+    // 숨김 버튼으로 잠시 숨긴 상태 (전투 조작은 계속 정지, 툴팁만 허용)
+    public bool Hidden { get; set; }
     public Action Close { get; }
 
-    public UIModalEntry(object owner, UIModalKind kind, bool alwaysOnTop, bool allowBattleTooltips, Action close)
+    public UIModalEntry(object owner, UIModalKind kind, Action close)
     {
         Owner = owner;
         Kind = kind;
-        AlwaysOnTop = alwaysOnTop;
-        AllowBattleTooltips = allowBattleTooltips;
         Close = close;
     }
 }
@@ -57,7 +51,38 @@ public sealed class UIModalLayer
 
     // 패널이 하나라도 열려 있으면 전투 진행 정지
     public bool BlocksBattleInput => HasAny;
-    public bool AllowsBattleTooltips => !HasAny || Top.AllowBattleTooltips;
+
+    // 툴팁은 열린 패널이 없거나 모두 숨김 상태일 때만 허용
+    public bool AllowsBattleTooltips
+    {
+        get
+        {
+            foreach (UIModalEntry entry in entries)
+            {
+                if (!entry.Hidden)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    // ESC로 닫을 대상: 필수 항목을 건너뛰고 가장 최근에 열린 일반 패널
+    public UIModalEntry LatestClosable
+    {
+        get
+        {
+            for (int i = entries.Count - 1; i >= 0; i--)
+            {
+                if (entries[i].Kind == UIModalKind.Normal)
+                {
+                    return entries[i];
+                }
+            }
+            return null;
+        }
+    }
 
     public IReadOnlyList<UIModalEntry> Entries => entries;
 
@@ -68,7 +93,6 @@ public sealed class UIModalLayer
 
     /// <summary>
     /// 패널 등록. 이미 등록된 패널은 그대로 두고 기존 항목 반환
-    /// 항상 위 패널이 아니면 항상 위 패널들 바로 아래에 끼워 넣음
     /// </summary>
     public UIModalEntry Push(UIModalEntry entry)
     {
@@ -83,16 +107,7 @@ public sealed class UIModalLayer
             return entries[existing];
         }
 
-        int insertIndex = entries.Count;
-        if (!entry.AlwaysOnTop)
-        {
-            while (insertIndex > 0 && entries[insertIndex - 1].AlwaysOnTop)
-            {
-                insertIndex--;
-            }
-        }
-
-        entries.Insert(insertIndex, entry);
+        entries.Add(entry);
         return entry;
     }
 
@@ -120,13 +135,7 @@ public sealed class UIModalLayer
             return UIEscapeAction.CancelDrag;
         }
 
-        UIModalEntry top = Top;
-        if (top == null)
-        {
-            return UIEscapeAction.SceneDefault;
-        }
-
-        return top.Kind == UIModalKind.Required ? UIEscapeAction.Ignore : UIEscapeAction.CloseTop;
+        return LatestClosable != null ? UIEscapeAction.CloseLatest : UIEscapeAction.SceneDefault;
     }
 
     private int IndexOf(object owner)

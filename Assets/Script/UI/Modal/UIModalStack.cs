@@ -30,7 +30,7 @@ public static class UIModalStack
     }
 
     /// <summary>
-    /// ESC 처리: 드래그 취소 → 맨 위 패널 닫기 → (필수 패널이면 무시) → 씬 기본 동작
+    /// ESC 처리: 드래그 취소 → 닫을 수 있는 패널 중 가장 최근 것 닫기 → 없으면 씬 기본 동작 (필수 항목은 건너뜀)
     /// </summary>
     public static UIEscapeAction HandleEscape(bool isDragging, Action cancelDrag, Action sceneDefault)
     {
@@ -40,8 +40,8 @@ public static class UIModalStack
             case UIEscapeAction.CancelDrag:
                 cancelDrag?.Invoke();
                 break;
-            case UIEscapeAction.CloseTop:
-                layer.Top.Close?.Invoke();
+            case UIEscapeAction.CloseLatest:
+                layer.LatestClosable.Close?.Invoke();
                 break;
             case UIEscapeAction.SceneDefault:
                 sceneDefault?.Invoke();
