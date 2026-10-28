@@ -47,9 +47,9 @@ public class BattleDeckViewer : MonoBehaviour
     private readonly List<Card> selectedCards = new List<Card>();
     private readonly List<CardController> selectedControllers = new List<CardController>();
     private DeckPanelViewType currentViewType;
-    private CardController cardDetailPreviewController;
-    private CardUI cardDetailPreviewUI;
     private UIModalPanel deckModal;
+    // 카드 확인 패널: 기본형 + 강화형 슬라이드
+    private CardDetailSlider cardDetailSlider;
 
     // 덱 목록 · 카드 확인 패널을 패널 스택에 등록 (ESC는 UIEscapeRouter가 맨 위 패널부터 닫음)
     private void RegisterModals() {
@@ -59,10 +59,15 @@ public class BattleDeckViewer : MonoBehaviour
 
         // 카드 확인 패널은 자체 배경이 전체 화면을 덮으므로 차단막 없이 등록
         if (cardDetailPanelRoot != null) {
-            UIModalPanel.Ensure(cardDetailPanelRoot, new UIModalPanel.Options {
+            UIModalPanel detailModal = UIModalPanel.Ensure(cardDetailPanelRoot, new UIModalPanel.Options {
                 useDimmer = false,
                 close = CloseCardDetailPanel
             });
+            cardDetailSlider = cardDetailPanelRoot.GetComponent<CardDetailSlider>();
+            if (cardDetailSlider == null) {
+                cardDetailSlider = cardDetailPanelRoot.AddComponent<CardDetailSlider>();
+            }
+            cardDetailSlider.Configure(cardDetailCardPrefab, cardDetailCardParent, detailModal);
         }
 
         // 에디터의 빈 직렬화 참조는 가짜 null이라 ??= 대신 == 비교
@@ -406,7 +411,7 @@ public class BattleDeckViewer : MonoBehaviour
     }
 
     private void HideCardDetailPanel() {
-        ResolveCardDetailPreviewUI()?.HideBuffTooltip();
+        cardDetailSlider?.HideTooltips();
         if (cardDetailPanelRoot != null) {
             cardDetailPanelRoot.SetActive(false);
         }
@@ -417,92 +422,20 @@ public class BattleDeckViewer : MonoBehaviour
             return;
         }
 
-        if (!TryEnsureCardDetailPreview()) {
-            return;
-        }
-
-        if (cardDetailPanelRoot != null) {
-            cardDetailPanelRoot.SetActive(true);
-            SettingsManager.PlayPanelToggleSound();
-        }
-
-        if (cardDetailPreviewController != null) {
-            cardDetailPreviewController.Initialize(sourceController.Card);
-            cardDetailPreviewController.isPlayable = true;
-        } else if (cardDetailPreviewUI != null) {
-            cardDetailPreviewUI.UpdateDisplay(sourceController.Card);
-            cardDetailPreviewUI.SetPlayable(true);
-        }
-
-        CardUI detailPreviewUI = ResolveCardDetailPreviewUI();
-        if (detailPreviewUI != null) {
-            Canvas.ForceUpdateCanvases();
-            detailPreviewUI.ShowBuffTooltip();
-        }
-    }
-
-    private bool TryEnsureCardDetailPreview() {
-        if (cardDetailPreviewController != null || cardDetailPreviewUI != null) {
-            return true;
-        }
-
-        Transform previewParent = cardDetailCardParent != null ? cardDetailCardParent : cardDetailPanelRoot != null ? cardDetailPanelRoot.transform : null;
-        if (previewParent == null) {
+        if (cardDetailPanelRoot == null || cardDetailSlider == null) {
             Debug.LogWarning("[BattleDeckViewer] 카드 상세 패널 부모가 연결되지 않았습니다");
-            return false;
+            return;
         }
 
         if (cardDetailCardPrefab == null) {
             Debug.LogError("[BattleDeckViewer] 카드 상세 프리뷰 프리팹이 연결되지 않았습니다");
-            return false;
+            return;
         }
 
-        GameObject detailCardObject = Instantiate(cardDetailCardPrefab, previewParent);
-        cardDetailPreviewController = detailCardObject.GetComponent<CardController>();
-        cardDetailPreviewUI = detailCardObject.GetComponent<CardUI>();
-
-        RectTransform detailCardRect = detailCardObject.transform as RectTransform;
-        if (detailCardRect != null) {
-            detailCardRect.anchorMin = new Vector2(0.5f, 0.5f);
-            detailCardRect.anchorMax = new Vector2(0.5f, 0.5f);
-            detailCardRect.pivot = new Vector2(0.5f, 0.5f);
-            detailCardRect.anchoredPosition = Vector2.zero;
-            detailCardRect.localRotation = Quaternion.identity;
-            detailCardRect.localScale = Vector3.one;
-        }
-
-        if (cardDetailPreviewController != null) {
-            cardDetailPreviewController.useInteractionHandler = false;
-
-            if (cardDetailPreviewController.interactionHandler != null) {
-                cardDetailPreviewController.interactionHandler.showPlayThreshold = false;
-                cardDetailPreviewController.interactionHandler.enabled = false;
-            }
-        }
-
-        CardSelectionClickHandler clickHandler = detailCardObject.GetComponent<CardSelectionClickHandler>();
-        if (clickHandler != null) {
-            Destroy(clickHandler);
-        }
-
-        if (cardDetailPreviewController == null && cardDetailPreviewUI == null) {
-            Debug.LogWarning("[BattleDeckViewer] 카드 상세 프리뷰 프리팹에 CardController 또는 CardUI가 없습니다");
-            return false;
-        }
-
-        return true;
-    }
-
-    private CardUI ResolveCardDetailPreviewUI() {
-        if (cardDetailPreviewUI != null) {
-            return cardDetailPreviewUI;
-        }
-
-        if (cardDetailPreviewController != null) {
-            return cardDetailPreviewController.cardUI;
-        }
-
-        return null;
+        cardDetailPanelRoot.SetActive(true);
+        SettingsManager.PlayPanelToggleSound();
+        // 클릭한 카드의 현재 상태를 가운데에 두고 같은 계열(기본형 · 강화형)을 좌우에 배치
+        cardDetailSlider.Show(sourceController.Card);
     }
 
     private static void SetSelectedVisual(CardController controller, bool isSelected) {

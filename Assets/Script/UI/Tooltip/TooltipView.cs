@@ -231,26 +231,61 @@ public class TooltipView : MonoBehaviour
     private void ApplyText(string value)
     {
         shownText = value;
-        text.text = value;
+        FitPanel(panel, text, value);
+    }
+
+    /// <summary>
+    /// 전투 툴팁과 같은 모양의 패널 복제본 (카드 확인 패널처럼 여러 개를 나열할 때 사용, 비활성 상태로 반환)
+    /// </summary>
+    public RectTransform CreatePanelCopy(Transform parent, out TextMeshProUGUI copyText)
+    {
+        copyText = null;
+        if (panel == null || text == null || parent == null)
+        {
+            return null;
+        }
+
+        GameObject copy = Instantiate(panel.gameObject, parent, false);
+        copy.name = panel.name + "_Copy";
+        copy.SetActive(false);
+        RectTransform copyRect = (RectTransform)copy.transform;
+        copyRect.pivot = new Vector2(0f, 1f);
+        copyRect.anchorMin = new Vector2(0.5f, 0.5f);
+        copyRect.anchorMax = new Vector2(0.5f, 0.5f);
+        copyText = copy.GetComponentInChildren<TextMeshProUGUI>(true);
+        return copyRect;
+    }
+
+    // 문구에 맞춰 패널 · 텍스트 크기 계산 (전투 툴팁과 같은 최대 너비 · 최소 크기 · 여백)
+    public void FitPanel(RectTransform targetPanel, TextMeshProUGUI targetText, string value)
+    {
+        if (targetPanel == null || targetText == null)
+        {
+            return;
+        }
+
+        targetText.text = value;
 
         // 한 줄 너비가 최대 너비보다 작으면 그 너비에 맞추고, 크면 최대 너비에서 줄바꿈
         float limit = Mathf.Max(1f, maxTextWidth);
-        Vector2 natural = text.GetPreferredValues(value, Mathf.Infinity, Mathf.Infinity);
+        Vector2 natural = targetText.GetPreferredValues(value, Mathf.Infinity, Mathf.Infinity);
         float width = Mathf.Min(Mathf.Ceil(natural.x) + 1f, limit);
-        float height = Mathf.Ceil(text.GetPreferredValues(value, width, Mathf.Infinity).y);
+        float height = Mathf.Ceil(targetText.GetPreferredValues(value, width, Mathf.Infinity).y);
 
         // 최소 크기를 적용한 뒤 텍스트는 늘어난 너비 안에서 좌측 상단부터 배치 (줄바꿈 위치는 그대로)
         float panelWidth = Mathf.Max(width + padding.x * 2f, minPanelSize.x);
         float panelHeight = Mathf.Max(height + padding.y * 2f, minPanelSize.y);
 
-        RectTransform textRect = text.rectTransform;
+        RectTransform textRect = targetText.rectTransform;
         textRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Max(width, panelWidth - padding.x * 2f));
         textRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
         textRect.anchoredPosition = new Vector2(padding.x, -padding.y);
 
-        panel.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, panelWidth);
-        panel.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, panelHeight);
+        targetPanel.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, panelWidth);
+        targetPanel.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, panelHeight);
     }
+
+    public float ScreenMargin => screenMargin;
 
     private void Reposition()
     {
