@@ -37,6 +37,10 @@ public class HandManager : MonoBehaviour
     private RectTransform hoveredCardRect;
     private Coroutine handLayoutAnimation;
 
+    // 손패 선택에서 후보 카드 UI를 찾고 되돌릴 부모
+    public Transform HandContainer => handContainer;
+    public Transform PlayCenterPosition => drawUI != null ? drawUI.PlayCenterPosition : null;
+
     private void OnEnable()
     {
         if (!ActiveManagers.Contains(this))
@@ -338,6 +342,13 @@ public class HandManager : MonoBehaviour
             cardRect.pivot = new Vector2(0.5f, 0.5f);
             cardRect.SetSiblingIndex(i);
 
+            // 호버한 카드는 회전 없이 확대된 카드의 아래 끝을 화면 바닥에 맞춰 전신이 보이게 함
+            if (i == hoveredIndex)
+            {
+                y = GetHoveredCardY(cardRect, y);
+                rotationZ = 0f;
+            }
+
             Vector2 targetPosition = new Vector2(x, y);
             Quaternion targetRotation = Quaternion.Euler(0f, 0f, rotationZ);
 
@@ -357,6 +368,28 @@ public class HandManager : MonoBehaviour
         {
             StartHandLayoutAnimation(handCardRects, targetPositions, targetRotations);
         }
+    }
+
+    private float GetHoveredCardY(RectTransform cardRect, float fallbackY)
+    {
+        RectTransform containerRect = handContainer as RectTransform;
+        Canvas canvas = handContainer.GetComponentInParent<Canvas>();
+        if (containerRect == null || canvas == null)
+        {
+            return fallbackY;
+        }
+
+        Vector3[] corners = new Vector3[4];
+        ((RectTransform)canvas.rootCanvas.transform).GetWorldCorners(corners);
+        float screenBottomY = handContainer.InverseTransformPoint(corners[0]).y;
+
+        // 호버 확대는 배치 직후 적용되므로 확대 후 크기로 계산
+        CardInteractionHandler handler = cardRect.GetComponent<CardInteractionHandler>();
+        float scaleY = handler != null ? handler.HoverTargetScale.y : cardRect.localScale.y;
+        float halfHeight = cardRect.rect.height * scaleY * 0.5f;
+
+        // 앵커가 부모 중앙이므로 부모 중앙 기준 위치로 변환
+        return screenBottomY + halfHeight - containerRect.rect.center.y;
     }
 
     public void SetHoveredCard(RectTransform cardRect)

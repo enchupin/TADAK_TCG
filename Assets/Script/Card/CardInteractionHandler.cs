@@ -110,6 +110,8 @@ public class CardInteractionHandler : UIHoverEffect,
     private GameObject placeholder;
 
     public CardPlayEvent OnCardPlayRequested => onCardPlayRequested;
+    // 호버 시 확대 크기 (손패 호버 배치 · 손패 선택 중앙 배치에서 사용)
+    public Vector3 HoverTargetScale => originalScale * cardHoverScale;
 
     protected override void Awake()
     {

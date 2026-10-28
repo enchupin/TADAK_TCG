@@ -65,6 +65,9 @@ public class TrainingBattleManager : MonoBehaviour
     public BattleUI battleUI;
     public MonsterSpawner monsterSpawner;
     [SerializeField] private BattleDeckViewer battleDeckViewer;
+    [Tooltip("손패 선택 확인 버튼 (중앙에 놓인 카드 아래, 비우면 이름이 CheckBtn인 버튼을 찾음)")]
+    [SerializeField] private Button handSelectionConfirmButton;
+    private HandCardSelectionController handCardSelection;
     // R-46 네임드 승리 보상(복제 / 제거) 선택 창, 비어 있으면 복제로 진행
     [SerializeField] private NamedRewardChoicePanel namedRewardChoicePanel;
 
@@ -151,6 +154,33 @@ public class TrainingBattleManager : MonoBehaviour
         {
             battleDeckViewer = FindAnyObjectByType<BattleDeckViewer>();
         }
+
+        SetupHandCardSelection();
+    }
+
+    // 손패에서 고르는 선택은 패널 없이 전투 화면에서 진행 (확인 버튼은 씬 배치, 중앙 위치는 카드 사용 연출 지점)
+    private void SetupHandCardSelection()
+    {
+        if (handSelectionConfirmButton == null)
+        {
+            foreach (Button button in FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (button.name == "CheckBtn")
+                {
+                    handSelectionConfirmButton = button;
+                    break;
+                }
+            }
+        }
+
+        if (handSelectionConfirmButton == null)
+        {
+            Debug.LogWarning("[BattleManager] 손패 선택 확인 버튼이 없어 손패 선택도 목록으로 표시합니다");
+            return;
+        }
+
+        handCardSelection = gameObject.AddComponent<HandCardSelectionController>();
+        handCardSelection.Configure(handManager, handSelectionConfirmButton, handManager != null ? handManager.PlayCenterPosition : null);
     }
 
     private void OnEnable()
@@ -203,6 +233,7 @@ public class TrainingBattleManager : MonoBehaviour
         if (hasStartedEncounter) return;
         StopAllCoroutines();
         CancelMonsterSelection();
+        handCardSelection?.Cancel();
         battleDeckViewer?.ResetForCombat();
         handManager?.ClearHand();
         monsterSpawner?.ClearEncounter();
@@ -1011,6 +1042,7 @@ public class TrainingBattleManager : MonoBehaviour
     private const string MonsterSelectionModalOwner = "MonsterSelection";
 
     public bool HasPendingSelection => isMonsterSelectionActive
+        || (handCardSelection != null && handCardSelection.IsActive)
         || (battleDeckViewer != null && battleDeckViewer.IsSelectionActive);
 
     public bool CanPlayerPlayCard()
@@ -1053,6 +1085,13 @@ public class TrainingBattleManager : MonoBehaviour
     {
         if (handManager == null)
             return;
+
+        // 손패 선택 중에는 낼 수 있는지 대신 선택 후보 여부로 표시 (후보만 색 유지)
+        if (handCardSelection != null && handCardSelection.IsActive)
+        {
+            handManager.RefreshCardPlayability(handCardSelection.IsCandidate, true);
+            return;
+        }
 
         bool canInteract = CanPlayerPlayCard();
 
@@ -2238,6 +2277,12 @@ public class TrainingBattleManager : MonoBehaviour
 
     public bool OpenSelectCardPanel(List<Card> selectableCards, int selectCount, Action<List<Card>> onSelected, bool allowFewer = false)
     {
+        // 후보가 모두 손패 카드면 손패에서 고르기, 더미 · 덱 · 생성 후보가 섞이면 목록에서 고르기
+        if (handCardSelection != null && handCardSelection.CanSelectFromHand(selectableCards))
+        {
+            return handCardSelection.Open(selectableCards, selectCount, allowFewer, onSelected);
+        }
+
         if (battleDeckViewer == null)
         {
             Debug.LogWarning("[BattleManager] BattleDeckViewer is missing. Fallback to auto selection.");
