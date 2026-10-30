@@ -5,9 +5,10 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-public class RestSceneController : MonoBehaviour
+// 전투 씬의 전체 화면 휴식 패널 (휴식 · 탈출 이벤트 노드), 지도처럼 상단 바는 덮지 않음
+public class RestPanelController : MonoBehaviour
 {
-    private enum RestSceneMode
+    private enum RestPanelMode
     {
         None,
         Rest,
@@ -26,50 +27,51 @@ public class RestSceneController : MonoBehaviour
     [SerializeField] private bool overrideHealAmountFromInspector;
     [SerializeField] private string escapeSceneName = "LobbyScene";
 
-    [Header("강화 목록")]
-    [FormerlySerializedAs("upgradeScrollView")]
-    [SerializeField] private ScrollRect enhanceScrollView;
-    [FormerlySerializedAs("upgradeListContent")]
-    [SerializeField] private RectTransform enhanceListContent;
-
-    [Header("강화 카드 프리팹")]
-    [SerializeField] private GameObject enhanceCardPrefab;
-    [SerializeField] private float enhanceCardScale = 0.65f;
-    [SerializeField] private RectTransform[] enhanceSlotAnchors = new RectTransform[8];
-
+    // 패널을 연 지도 · 전투 매니저 (Open에서 받음)
+    private TrainingMapController trainingMap;
+    private TrainingBattleManager battleManager;
     private bool actionResolved;
-    private RestSceneMode sceneMode;
+    private RestPanelMode panelMode;
     private List<RestDeckEnhanceCandidate> enhanceCandidates = new List<RestDeckEnhanceCandidate>();
-    private RestSceneEnhanceSlotLayoutView enhanceListView;
     private bool isEscaping;
     private bool isFinalEventNode;
 
-    private void Start()
+    public bool IsOpen => gameObject.activeInHierarchy;
+
+    public static bool IsRestNode(TrainingMapNodeData node)
     {
-        if (!TryInitializeScene(out TrainingMapNodeData pendingNode))
+        return node != null && ResolvePanelMode(node.nodeType) != RestPanelMode.None;
+    }
+
+    // 지도에서 고른 휴식 · 이벤트 노드로 패널을 엶 (열 때마다 상태 초기화)
+    public bool Open(TrainingMapNodeData node, TrainingMapController map, TrainingBattleManager battle)
+    {
+        RestPanelMode mode = node != null ? ResolvePanelMode(node.nodeType) : RestPanelMode.None;
+        if (mode == RestPanelMode.None)
         {
-            ReturnToMap();
-            return;
+            Debug.LogWarning("[RestPanelController] 휴식 또는 이벤트 노드가 아닙니다");
+            return false;
         }
 
-        sceneMode = ResolveSceneMode(pendingNode.nodeType);
-        isFinalEventNode = sceneMode == RestSceneMode.Event && IsTerminalNode(pendingNode);
-        EnsureRunDeck();
+        trainingMap = map;
+        battleManager = battle;
+        panelMode = mode;
+        actionResolved = false;
+        isEscaping = false;
+        isFinalEventNode = panelMode == RestPanelMode.Event && IsTerminalNode(node);
 
-        enhanceListView = new RestSceneEnhanceSlotLayoutView(
-            enhanceScrollView,
-            enhanceListContent,
-            enhanceCardPrefab,
-            enhanceCardScale,
-            enhanceSlotAnchors);
-
+        gameObject.SetActive(true);
         BindButtons();
-        RegisterEnhanceListModal();
-        enhanceListView.Configure();
-
         RefreshEnhanceCandidates();
         RefreshHpText();
         RefreshActionButtons();
+        return true;
+    }
+
+    private void Close()
+    {
+        panelMode = RestPanelMode.None;
+        gameObject.SetActive(false);
     }
 
     private void OnEnable()
@@ -91,14 +93,14 @@ public class RestSceneController : MonoBehaviour
 
     public void OnClickHeal()
     {
-        if (sceneMode != RestSceneMode.Rest || actionResolved)
+        if (panelMode != RestPanelMode.Rest || actionResolved)
         {
             return;
         }
 
         if (!TrainingRunState.TryGetPlayerHealthState(out int hp, out int maxHp))
         {
-            Debug.LogWarning("[RestSceneController] 저장된 체력 정보가 없습니다");
+            Debug.LogWarning("[RestPanelController] 저장된 체력 정보가 없습니다");
             return;
         }
 
@@ -112,80 +114,26 @@ public class RestSceneController : MonoBehaviour
         CompleteRestAction();
     }
 
-    // 강화 목록은 일반 패널 (ESC로 닫힘), 강화 버튼만 차단막을 통과해 다시 눌러 닫음
-    private void RegisterEnhanceListModal()
-    {
-        if (enhanceScrollView == null)
-        {
-            return;
-        }
-
-        UIModalPanel modal = UIModalPanel.Ensure(enhanceScrollView.gameObject, new UIModalPanel.Options {
-            close = CloseEnhanceList
-        });
-        if (modal != null && enhanceButton != null)
-        {
-            modal.SetPassThrough((RectTransform)enhanceButton.transform);
-        }
-    }
-
-    private bool IsEnhanceListOpen()
-    {
-        return enhanceScrollView != null && enhanceScrollView.gameObject.activeSelf;
-    }
-
-    private void CloseEnhanceList()
-    {
-        enhanceListView.Hide();
-        SettingsManager.PlayPanelToggleSound();
-    }
-
-    public void OnClickEnhance()
-    {
-        if (sceneMode != RestSceneMode.Rest || actionResolved)
-        {
-            return;
-        }
-
-        if (IsEnhanceListOpen())
-        {
-            CloseEnhanceList();
-            return;
-        }
-
-        RefreshEnhanceCandidates();
-        if (enhanceCandidates.Count <= 0)
-        {
-            enhanceListView.Hide();
-            RefreshActionButtons();
-            return;
-        }
-
-        if (!enhanceListView.Show(enhanceCandidates, ApplySelectedEnhance))
-        {
-            enhanceListView.Hide();
-        }
-    }
-
     public void OnClickNext()
     {
-        if (sceneMode == RestSceneMode.Event && isFinalEventNode)
+        if (panelMode == RestPanelMode.Event && isFinalEventNode)
         {
             return;
         }
 
-        if (sceneMode == RestSceneMode.Rest && !actionResolved)
+        if (panelMode == RestPanelMode.Rest && !actionResolved)
         {
             return;
         }
 
         TrainingRunState.CompletePendingNode(true);
-        ReturnToMap();
+        Close();
+        trainingMap.ShowMap();
     }
 
     public void OnClickEscape()
     {
-        if (sceneMode != RestSceneMode.Event || isEscaping)
+        if (panelMode != RestPanelMode.Event || isEscaping)
         {
             return;
         }
@@ -205,62 +153,27 @@ public class RestSceneController : MonoBehaviour
         catch (System.Exception exception)
         {
             isEscaping = false;
-            Debug.LogError($"[RestSceneController] 덱 저장에 실패했습니다. 현재 진행을 유지하며 다시 시도할 수 있습니다: {exception.Message}");
+            Debug.LogError($"[RestPanelController] 덱 저장에 실패했습니다. 현재 진행을 유지하며 다시 시도할 수 있습니다: {exception.Message}");
             return;
         }
 
-        enhanceListView.Hide();
         TrainingBattleManager.buildingDeck = null;
         PlayerData.Reset();
         TrainingRunState.ResetRun();
         SceneManager.LoadScene(string.IsNullOrEmpty(escapeSceneName) ? "LobbyScene" : escapeSceneName);
     }
 
-    private bool TryInitializeScene(out TrainingMapNodeData pendingNode)
-    {
-        pendingNode = null;
-        if (!TrainingRunState.IsRunActive || !TrainingRunState.PendingNodeId.HasValue)
-        {
-            return false;
-        }
-
-        if (!TrainingRunState.TryGetNode(TrainingRunState.PendingNodeId.Value, out pendingNode))
-        {
-            return false;
-        }
-
-        RestSceneMode mode = ResolveSceneMode(pendingNode.nodeType);
-        if (mode == RestSceneMode.None)
-        {
-            Debug.LogWarning("[RestSceneController] 휴식 또는 이벤트 노드가 아닙니다");
-            return false;
-        }
-
-        return true;
-    }
-
-    private RestSceneMode ResolveSceneMode(TrainingNodeType nodeType)
+    private static RestPanelMode ResolvePanelMode(TrainingNodeType nodeType)
     {
         switch (nodeType)
         {
             case TrainingNodeType.Rest:
-                return RestSceneMode.Rest;
+                return RestPanelMode.Rest;
             case TrainingNodeType.Event:
-                return RestSceneMode.Event;
+                return RestPanelMode.Event;
             default:
-                return RestSceneMode.None;
+                return RestPanelMode.None;
         }
-    }
-
-    private void EnsureRunDeck()
-    {
-        if (TrainingBattleManager.buildingDeck != null)
-        {
-            return;
-        }
-
-        TrainingBattleManager.buildingDeck = TrainingRunDeckPersistence.CreateRunDeck(SelectedButtonControl.selectedCharacterList);
-        Debug.Log("[RestSceneController] 사용덱이 비어 있어 저장덱 기준으로 다시 구성했습니다");
     }
 
     private void RefreshHpText()
@@ -272,6 +185,11 @@ public class RestSceneController : MonoBehaviour
                 hpText.text = GameText.Ui("ui.rest.hp", new Dictionary<string, object> { { "hp", hp }, { "maxHp", maxHp } });
             }
 
+            // 상단 바 체력도 런 체력으로 갱신
+            if (battleManager != null && battleManager.battleUI != null)
+            {
+                battleManager.battleUI.UpdateRunHealth(hp, maxHp);
+            }
             return;
         }
 
@@ -288,8 +206,8 @@ public class RestSceneController : MonoBehaviour
 
     private void RefreshActionButtons()
     {
-        bool isRest = sceneMode == RestSceneMode.Rest;
-        bool isEvent = sceneMode == RestSceneMode.Event;
+        bool isRest = panelMode == RestPanelMode.Rest;
+        bool isEvent = panelMode == RestPanelMode.Event;
 
         if (healButton != null)
         {
@@ -300,7 +218,8 @@ public class RestSceneController : MonoBehaviour
         if (enhanceButton != null)
         {
             enhanceButton.gameObject.SetActive(isRest);
-            enhanceButton.interactable = isRest && !actionResolved && enhanceCandidates.Count > 0;
+            // 3단계에서 카드 선택 패널을 연결하기 전까지 비활성
+            enhanceButton.interactable = false;
         }
 
         if (escapeButton != null)
@@ -319,44 +238,13 @@ public class RestSceneController : MonoBehaviour
             nextButton.interactable = !isFinalEventNode && (isEvent || actionResolved);
             SetButtonLabel(nextButton, GameText.Ui(isEvent ? "ui.rest.continue" : "ui.rest.next"));
         }
-
-        if (!isRest || actionResolved)
-        {
-            enhanceListView.Hide();
-        }
     }
 
     private void CompleteRestAction()
     {
         actionResolved = true;
         RefreshEnhanceCandidates();
-        enhanceListView.Hide();
         RefreshActionButtons();
-    }
-
-    private void ApplySelectedEnhance(RestDeckEnhanceCandidate candidate, int enhanceCardId)
-    {
-        if (!RestDeckEnhanceService.TryApplyEnhance(TrainingBattleManager.buildingDeck, candidate, enhanceCardId))
-        {
-            RefreshEnhanceCandidates();
-            RefreshActionButtons();
-            if (enhanceCandidates.Count > 0)
-            {
-                enhanceListView.Show(enhanceCandidates, ApplySelectedEnhance);
-            }
-
-            return;
-        }
-
-        CompleteRestAction();
-    }
-
-    private void ReturnToMap()
-    {
-        if (!string.IsNullOrEmpty(TrainingRunState.BattleSceneName))
-        {
-            SceneManager.LoadScene(TrainingRunState.BattleSceneName);
-        }
     }
 
     private void BindButtons()
@@ -365,12 +253,6 @@ public class RestSceneController : MonoBehaviour
         {
             healButton.onClick.RemoveListener(OnClickHeal);
             healButton.onClick.AddListener(OnClickHeal);
-        }
-
-        if (enhanceButton != null)
-        {
-            enhanceButton.onClick.RemoveListener(OnClickEnhance);
-            enhanceButton.onClick.AddListener(OnClickEnhance);
         }
 
         if (escapeButton != null)

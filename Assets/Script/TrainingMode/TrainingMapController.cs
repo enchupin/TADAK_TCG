@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -10,10 +9,6 @@ using UnityEngine.UI;
 /// </summary>
 public class TrainingMapController : MonoBehaviour
 {
-    [Header("Run Setup")]
-    [SerializeField] private string restSceneName = "TrainingRestScene";
-    [SerializeField] private string eventSceneName = "TrainingRestScene";
-
     [Header("Node UI")]
     [SerializeField] private RectTransform nodeRoot;
     [SerializeField] private RectTransform connectionRoot;
@@ -27,6 +22,8 @@ public class TrainingMapController : MonoBehaviour
     [Tooltip("CombatCanvas/BattleField의 CanvasGroup (상단 바 · 팝업이 포함되지 않은 전투 영역)")]
     [SerializeField] private CanvasGroup combatInteraction;
     [SerializeField] private TrainingBattleManager battleManager;
+    [Tooltip("휴식 · 탈출 이벤트 노드를 고르면 여는 전체 화면 패널")]
+    [SerializeField] private RestPanelController restPanel;
 
     [Header("Visuals")]
     [SerializeField] private Color selectableNodeColor = new Color(0.26f, 0.73f, 0.29f);
@@ -48,6 +45,9 @@ public class TrainingMapController : MonoBehaviour
 
     private bool isPreview;
     public bool IsVisible => gameObject.activeInHierarchy;
+    private bool IsRestOpen => restPanel != null && restPanel.IsOpen;
+    // 지도 또는 휴식 패널이 전투 영역을 덮고 있는지 (전투 조작 차단 판정)
+    public bool CoversBattle => IsVisible || IsRestOpen;
     private int? DisplayedCurrentNode => isPreview ? TrainingRunState.PendingNodeId : TrainingRunState.CurrentNodeId;
 
     // 지도 버튼: 미리보기가 열려 있으면 닫기
@@ -59,8 +59,9 @@ public class TrainingMapController : MonoBehaviour
             return;
         }
         if (IsVisible) return;
+        // 전투 종료 후(보상 진행 중)에는 막고, 휴식 중에는 휴식 위에 미리보기
         if (BossModeSession.IsActive || !TrainingRunState.PendingNodeId.HasValue
-            || battleManager.CurrentTurnState == BattleTurnState.CombatEnd) return;
+            || (battleManager.CurrentTurnState == BattleTurnState.CombatEnd && !IsRestOpen)) return;
         isPreview = true;
         DisplayMap();
         // 미리보기는 일반 패널 (ESC로 닫힘), 전투 후 노드 선택 지도는 기본 화면이라 등록하지 않음
@@ -70,8 +71,40 @@ public class TrainingMapController : MonoBehaviour
 
     private void ClosePreview()
     {
-        ShowBattle();
+        if (IsRestOpen)
+        {
+            // 휴식 중 미리보기는 지도만 닫고 휴식 화면으로 복귀 (전투 영역 입력은 계속 꺼 둠)
+            isPreview = false;
+            UIModalStack.Unregister(this);
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            ShowBattle();
+        }
         SettingsManager.PlayPanelToggleSound();
+    }
+
+    // 씬을 다시 불러왔을 때 대기 중인 노드가 휴식 · 이벤트면 전투 대신 휴식 패널을 엶
+    public bool TryOpenPendingRest()
+    {
+        if (restPanel == null || !TrainingRunState.PendingNodeId.HasValue
+            || !TrainingRunState.TryGetNode(TrainingRunState.PendingNodeId.Value, out TrainingMapNodeData node)
+            || !RestPanelController.IsRestNode(node))
+            return false;
+
+        OpenRestPanel(node);
+        return true;
+    }
+
+    private void OpenRestPanel(TrainingMapNodeData node)
+    {
+        if (!restPanel.Open(node, this, battleManager)) return;
+        isPreview = false;
+        UIModalStack.Unregister(this);
+        gameObject.SetActive(false);
+        combatInteraction.interactable = false;
+        combatInteraction.blocksRaycasts = false;
     }
 
     private void OnEnable()
@@ -173,30 +206,16 @@ public class TrainingMapController : MonoBehaviour
 
         Debug.Log($"[TrainingMapController] Node selected: {node.nodeId} ({node.nodeType})");
 
-        if (node.nodeType == TrainingNodeType.Rest)
+        if (RestPanelController.IsRestNode(node))
         {
-            if (string.IsNullOrEmpty(restSceneName))
+            if (restPanel == null)
             {
-                Debug.LogWarning("[TrainingMapController] Rest scene is empty. Resolving rest node immediately.");
+                Debug.LogWarning("[TrainingMapController] 휴식 패널이 연결되지 않아 노드를 바로 완료합니다");
                 CompleteNodeOnMap();
                 return;
             }
 
-            SceneManager.LoadScene(restSceneName);
-            return;
-        }
-
-        if (node.nodeType == TrainingNodeType.Event)
-        {
-            string targetSceneName = string.IsNullOrEmpty(eventSceneName) ? restSceneName : eventSceneName;
-            if (string.IsNullOrEmpty(targetSceneName))
-            {
-                Debug.LogWarning("[TrainingMapController] Event scene is empty. Resolving event node immediately.");
-                CompleteNodeOnMap();
-                return;
-            }
-
-            SceneManager.LoadScene(targetSceneName);
+            OpenRestPanel(node);
             return;
         }
 

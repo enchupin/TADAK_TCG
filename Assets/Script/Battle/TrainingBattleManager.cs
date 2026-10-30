@@ -215,13 +215,14 @@ public class TrainingBattleManager : MonoBehaviour
         if (!BossModeSession.IsActive && trainingMap != null)
         {
             if (!TrainingRunState.HasMapData)
-                TrainingRunState.StartNewRun(SceneManager.GetActiveScene().name);
+                TrainingRunState.StartNewRun();
             PrepareRunOverview();
             if (!TrainingRunState.PendingNodeId.HasValue)
             {
                 trainingMap.ShowMap();
                 return;
             }
+            if (trainingMap.TryOpenPendingRest()) return;
         }
         BeginSelectedBattle();
     }
@@ -1068,7 +1069,7 @@ public class TrainingBattleManager : MonoBehaviour
     {
         // 패널(설정 · 덱 목록 · 선택 · 지도 미리보기 등)이 열려 있으면 전투 진행 정지
         return !UIModalStack.BlocksBattleInput
-            && !(trainingMap != null && trainingMap.IsVisible)
+            && !(trainingMap != null && trainingMap.CoversBattle)
             && !HasPendingSelection && !isDeckRewardInProgress && !(combatResolver?.IsResolvingCardPlay ?? false)
             && turnSystem.CanPlayerPlayCard();
     }
@@ -1076,7 +1077,7 @@ public class TrainingBattleManager : MonoBehaviour
     public bool CanEndPlayerTurn()
     {
         return !UIModalStack.BlocksBattleInput
-            && !(trainingMap != null && trainingMap.IsVisible)
+            && !(trainingMap != null && trainingMap.CoversBattle)
             && !HasPendingSelection && !isDeckRewardInProgress && !(combatResolver?.IsResolvingCardPlay ?? false)
             && turnSystem.CanEndPlayerTurn();
     }
