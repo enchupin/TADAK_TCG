@@ -204,7 +204,13 @@ public class BuffUI : MonoBehaviour
     private static int GetBuffId(Buff buff)
     {
         // 힘처럼 음수 중첩을 가진 효과도 표시
-        if (buff == null || buff.stack == 0 || buff.data == null)
+        if (buff == null || buff.data == null)
+        {
+            return 0;
+        }
+
+        // 0 중첩은 숨기되, 0으로 보유를 유지하는 패시브(거울)는 표시
+        if (buff.stack == 0 && !BuffData.IsPassiveBuffId(buff.data.buffId))
         {
             return 0;
         }

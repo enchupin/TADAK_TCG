@@ -97,7 +97,10 @@ public abstract class Monster {
  public bool IsDead()=>hp<=0;
  public void AddBuff(int id,int n)=>buffs[id]=GetBuffStack(id)+n;
  public int GetBuffStack(int id)=>buffs.GetValueOrDefault(id);
- public void ConsumeBuffStack(int id,int n){int count=GetBuffStack(id)-n;if(count<=0)buffs.Remove(id);else buffs[id]=count;}
+ public void ConsumeBuffStack(int id,int n){int count=GetBuffStack(id)-n;if(count<=0&&!heldAtZero.Contains(id))buffs.Remove(id);else buffs[id]=Math.Max(0,count);}
+ // 0 중첩으로 보유를 유지하는 시작 패시브
+ private readonly HashSet<int> heldAtZero=new();
+ public void HoldBuffAtZero(int id){heldAtZero.Add(id);buffs[id]=GetBuffStack(id);}
  public void Heal(int n)=>hp=Math.Min(BaseMaxHp,hp+n);
  public void AddDefense(int n)=>defense+=n;
  public void AddPermanentDefense(int n){AddDefense(n);permanentDefense+=n;}

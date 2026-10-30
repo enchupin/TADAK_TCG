@@ -68,6 +68,8 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     private bool hasDefaultHPFillColor = false;
     private readonly Dictionary<Graphic, Color> originalGraphicColors = new();
     private readonly Dictionary<SpriteRenderer, Color> originalSpriteColors = new();
+    // 중첩이 0이 되어도 제거하지 않고 표시하는 시작 패시브 (거울 0으로 시작)
+    private readonly HashSet<int> zeroStackHeldBuffIds = new();
 
     public bool HasAttackIntent => hasAttackIntent;
     // 이번 턴 행동을 쉬는 기절 상태
@@ -416,6 +418,23 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     public void SetDefense(int amount)
     {
         SetDefenseValue(amount);
+        UpdateUI();
+    }
+
+    // 0 중첩으로 보유를 시작하고, 이후 소모로 0이 되어도 효과를 유지
+    public void HoldBuffAtZero(int buffId)
+    {
+        if (buffId <= 0)
+        {
+            return;
+        }
+
+        zeroStackHeldBuffIds.Add(buffId);
+        if (!currentBuffs.Exists(b => b.data != null && b.data.buffId == buffId))
+        {
+            currentBuffs.Add(new Buff(BuffMetadataResolver.Resolve(buffId), 0));
+        }
+
         UpdateUI();
     }
 
@@ -926,6 +945,12 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
         buff.stack -= amount;
         if (buff.stack <= 0)
         {
+            if (zeroStackHeldBuffIds.Contains(buffId))
+            {
+                buff.stack = 0;
+                return;
+            }
+
             currentBuffs.Remove(buff);
         }
     }
@@ -941,6 +966,7 @@ public abstract class Monster : MonoBehaviour, IPointerClickHandler
     {
         currentBuffs ??= new List<Buff>();
         currentBuffs.Clear();
+        zeroStackHeldBuffIds.Clear();
 
         maxHP = UnityEngine.Mathf.Max(0, BaseMaxHp);
         hp = maxHP;
