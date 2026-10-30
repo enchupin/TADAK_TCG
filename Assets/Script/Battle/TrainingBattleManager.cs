@@ -65,6 +65,7 @@ public class TrainingBattleManager : MonoBehaviour
     public BattleUI battleUI;
     public MonsterSpawner monsterSpawner;
     [SerializeField] private BattleDeckViewer battleDeckViewer;
+    public BattleDeckViewer DeckViewer => battleDeckViewer;
     [Tooltip("손패 선택 확인 버튼 (중앙에 놓인 카드 아래, 비우면 DeckPanel 아래 CheckBtn을 찾음)")]
     [SerializeField] private Button handSelectionConfirmButton;
     private HandCardSelectionController handCardSelection;
@@ -1893,18 +1894,7 @@ public class TrainingBattleManager : MonoBehaviour
             yield break;
         }
 
-        List<int> upgradeIds = new List<int>(curiousCard.enforceCardIds ?? new List<int>());
-        List<Card> options = new List<Card>();
-        while (upgradeIds.Count > 0 && options.Count < GameRules.Deck.choiceCount)
-        {
-            int index = UnityEngine.Random.Range(0, upgradeIds.Count);
-            Card option = CardManager.GetCardAsCard(upgradeIds[index]);
-            upgradeIds.RemoveAt(index);
-            if (option != null)
-            {
-                options.Add(option);
-            }
-        }
+        List<Card> options = CardUpgradeOptions.PickRandom(curiousCard.enforceCardIds);
 
         curiousCard.isCurious = false;
         curiousCard.resolvedAsCuriosity = true;

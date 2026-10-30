@@ -114,6 +114,107 @@ public class RestPanelController : MonoBehaviour
         CompleteRestAction();
     }
 
+    // 강화 1단계: 덱의 강화 가능 카드 목록을 카드 선택 패널로 표시 (취소하면 휴식 선택지로 복귀)
+    public void OnClickEnhance()
+    {
+        if (panelMode != RestPanelMode.Rest || actionResolved)
+        {
+            return;
+        }
+
+        BattleDeckViewer deckViewer = battleManager != null ? battleManager.DeckViewer : null;
+        if (deckViewer == null)
+        {
+            Debug.LogWarning("[RestPanelController] 카드 선택 패널을 찾을 수 없습니다");
+            return;
+        }
+
+        // 강화 선택이 열려 있으면 다시 눌러 취소
+        if (deckViewer.IsCancelableSelectionActive)
+        {
+            deckViewer.CancelSelection();
+            return;
+        }
+
+        // 강화 선택지(2단계)가 떠 있으면 무시
+        if (deckViewer.IsSelectionActive)
+        {
+            return;
+        }
+
+        if (OpenEnhanceCardSelection(deckViewer))
+        {
+            SettingsManager.PlayPanelToggleSound();
+        }
+    }
+
+    private bool OpenEnhanceCardSelection(BattleDeckViewer deckViewer)
+    {
+        RefreshEnhanceCandidates();
+        if (enhanceCandidates.Count <= 0 || TrainingBattleManager.buildingDeck == null)
+        {
+            RefreshActionButtons();
+            return false;
+        }
+
+        // 영구 피해 증가 등 덱 카드 상태를 그대로 보여주도록 덱 사본에서 후보 위치의 카드를 사용
+        Dictionary<int, Card> deckCardsByIndex = new Dictionary<int, Card>();
+        foreach (Card deckCard in TrainingBattleManager.buildingDeck.CopyDeck())
+        {
+            deckCardsByIndex[deckCard.sourceDeckIndex] = deckCard;
+        }
+
+        List<Card> cards = new List<Card>();
+        Dictionary<Card, RestDeckEnhanceCandidate> candidateByCard = new Dictionary<Card, RestDeckEnhanceCandidate>();
+        foreach (RestDeckEnhanceCandidate candidate in enhanceCandidates)
+        {
+            if (deckCardsByIndex.TryGetValue(candidate.deckIndex, out Card card))
+            {
+                cards.Add(card);
+                candidateByCard[card] = candidate;
+            }
+        }
+
+        return deckViewer.OpenCancelableSelectionPanel(cards, 1, selected =>
+        {
+            if (selected.Count > 0 && candidateByCard.TryGetValue(selected[0], out RestDeckEnhanceCandidate picked))
+            {
+                OpenEnhanceRouteSelection(deckViewer, picked);
+            }
+        }, null, enhanceButton);
+    }
+
+    // 강화 2단계: 고른 카드의 강화 선택지 (필수 선택, 카드를 고른 뒤에는 되돌릴 수 없음)
+    private void OpenEnhanceRouteSelection(BattleDeckViewer deckViewer, RestDeckEnhanceCandidate candidate)
+    {
+        List<Card> options = CardUpgradeOptions.PickRandom(candidate.enhanceCardIds);
+        if (options.Count <= 0)
+        {
+            OpenEnhanceCardSelection(deckViewer);
+            return;
+        }
+
+        deckViewer.OpenSelectionPanel(options, 1, selected =>
+        {
+            if (selected.Count > 0)
+            {
+                ApplySelectedEnhance(candidate, selected[0].cardId);
+            }
+        });
+    }
+
+    private void ApplySelectedEnhance(RestDeckEnhanceCandidate candidate, int enhanceCardId)
+    {
+        if (!RestDeckEnhanceService.TryApplyEnhance(TrainingBattleManager.buildingDeck, candidate, enhanceCardId))
+        {
+            RefreshEnhanceCandidates();
+            RefreshActionButtons();
+            return;
+        }
+
+        CompleteRestAction();
+    }
+
     public void OnClickNext()
     {
         if (panelMode == RestPanelMode.Event && isFinalEventNode)
@@ -218,8 +319,7 @@ public class RestPanelController : MonoBehaviour
         if (enhanceButton != null)
         {
             enhanceButton.gameObject.SetActive(isRest);
-            // 3단계에서 카드 선택 패널을 연결하기 전까지 비활성
-            enhanceButton.interactable = false;
+            enhanceButton.interactable = isRest && !actionResolved && enhanceCandidates.Count > 0;
         }
 
         if (escapeButton != null)
@@ -253,6 +353,12 @@ public class RestPanelController : MonoBehaviour
         {
             healButton.onClick.RemoveListener(OnClickHeal);
             healButton.onClick.AddListener(OnClickHeal);
+        }
+
+        if (enhanceButton != null)
+        {
+            enhanceButton.onClick.RemoveListener(OnClickEnhance);
+            enhanceButton.onClick.AddListener(OnClickEnhance);
         }
 
         if (escapeButton != null)

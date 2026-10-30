@@ -66,6 +66,7 @@ public class TrainingMapController : MonoBehaviour
         DisplayMap();
         // 미리보기는 일반 패널 (ESC로 닫힘), 전투 후 노드 선택 지도는 기본 화면이라 등록하지 않음
         UIModalStack.Register(new UIModalEntry(this, UIModalKind.Normal, ClosePreview));
+        SetSelectionHiddenForPreview(true);
         SettingsManager.PlayPanelToggleSound();
     }
 
@@ -76,6 +77,7 @@ public class TrainingMapController : MonoBehaviour
             // 휴식 중 미리보기는 지도만 닫고 휴식 화면으로 복귀 (전투 영역 입력은 계속 꺼 둠)
             isPreview = false;
             UIModalStack.Unregister(this);
+            SetSelectionHiddenForPreview(false);
             gameObject.SetActive(false);
         }
         else
@@ -83,6 +85,13 @@ public class TrainingMapController : MonoBehaviour
             ShowBattle();
         }
         SettingsManager.PlayPanelToggleSound();
+    }
+
+    // 선택 패널이 지도보다 위에 그려지므로 미리보기 동안 숨김
+    private void SetSelectionHiddenForPreview(bool hidden)
+    {
+        BattleDeckViewer deckViewer = battleManager != null ? battleManager.DeckViewer : null;
+        if (deckViewer != null) deckViewer.SetHiddenForMapPreview(hidden);
     }
 
     // 씬을 다시 불러왔을 때 대기 중인 노드가 휴식 · 이벤트면 전투 대신 휴식 패널을 엶
@@ -102,6 +111,7 @@ public class TrainingMapController : MonoBehaviour
         if (!restPanel.Open(node, this, battleManager)) return;
         isPreview = false;
         UIModalStack.Unregister(this);
+        SetSelectionHiddenForPreview(false);
         gameObject.SetActive(false);
         combatInteraction.interactable = false;
         combatInteraction.blocksRaycasts = false;
@@ -136,6 +146,7 @@ public class TrainingMapController : MonoBehaviour
     {
         isPreview = false;
         UIModalStack.Unregister(this);
+        SetSelectionHiddenForPreview(false);
         DisplayMap();
     }
 
@@ -165,6 +176,7 @@ public class TrainingMapController : MonoBehaviour
     {
         isPreview = false;
         UIModalStack.Unregister(this);
+        SetSelectionHiddenForPreview(false);
         combatInteraction.interactable = true;
         combatInteraction.blocksRaycasts = true;
         gameObject.SetActive(false);
