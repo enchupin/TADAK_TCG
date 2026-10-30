@@ -52,6 +52,16 @@ public class CombatResolver
             return;
         }
 
+        // 호기심 강화는 카드 사용이 아니므로 비용 · 사용 횟수 · 사용 시 효과 없이 강화만 하고 카드는 손으로 되돌림
+        // 사용을 수락하지 않아 드래그한 카드가 손패 자리로 돌아감
+        if (playedCard.isCurious)
+        {
+            isResolvingCardPlay = true;
+            battleManager.UpdateEndTurnButtonState();
+            battleManager.StartCoroutine(CardEffectSequence.Run(UpgradeCuriousCardSequence(playedCard), battleManager));
+            return;
+        }
+
         if (!battleManager.CanPayCardCost(playedCard))
         {
             Debug.LogWarning($"[CombatResolver] 카드 비용을 지불할 수 없습니다: {playedCard.cardName} ({effectiveCost})");
@@ -72,8 +82,7 @@ public class CombatResolver
         controller.PrepareAcceptedPlayAnimationStart();
         battleManager.battleContext?.RecordPaidCost(playedCard, effectiveCost);
 
-        // 호기심 카드는 강화만 하므로 반복·재사용을 소모하지 않음
-        int repeatCount = playedCard.isCurious ? 0 : battleManager.ConsumeRepeatedPlayCount(playedCard, false);
+        int repeatCount = battleManager.ConsumeRepeatedPlayCount(playedCard, false);
         int cardUseAllEnemiesDamage = battleManager.GetCardUseAllEnemiesDamage();
         Debug.Log($"[Player] 카드 사용: {playedCard.cardName}");
 
@@ -99,7 +108,6 @@ public class CombatResolver
     private class UseAnimationState
     {
         public CardUI CardUI;
-        public Coroutine Animation;
         public bool Started;
         public bool Finished;
     }
@@ -125,26 +133,21 @@ public class CombatResolver
             yield return null;
 
             useState.Finished = true;
-            Coroutine useAnimation = null;
             if (battleManager.handManager != null)
             {
                 if (useState.Started)
                 {
                     // 연출은 이미 진행 중이므로 손패 목록에서만 제거
                     battleManager.handManager.RemoveCard(playedCard);
-                    useAnimation = useState.Animation;
                 }
                 else
                 {
-                    useAnimation = battleManager.handManager.RemoveCardFromHandWithUseAnimation(playedCardUI);
+                    battleManager.handManager.RemoveCardFromHandWithUseAnimation(playedCardUI);
                 }
             }
 
-            if (useAnimation != null)
-            {
-                yield return useAnimation;
-            }
-
+            // 사용 연출이 끝나기를 기다리지 않고 행선지 · 키워드를 바로 처리해 다음 카드를 곧바로 사용할 수 있게 함
+            // 연출은 DrawUI에서 따로 진행되고 끝나면 카드 오브젝트를 정리
             CardPlayCompletion.ResolveDestination(battleManager, playedCard);
             if (battleManager.TryHandleCombatEnd())
             {
@@ -173,13 +176,29 @@ public class CombatResolver
                 if (battleManager.handManager != null && useState.CardUI != null)
                 {
                     useState.Started = true;
-                    useState.Animation = battleManager.handManager.PlayUseAnimation(useState.CardUI);
+                    battleManager.handManager.PlayUseAnimation(useState.CardUI);
                 }
 
                 yield break;
             }
 
             yield return null;
+        }
+    }
+
+    // 호기심 카드 강화: 강화 선택 후 손에 있는 카드 표시만 새로 고침
+    private IEnumerator UpgradeCuriousCardSequence(Card curiousCard)
+    {
+        try
+        {
+            yield return battleManager.PlayCuriositySequence(curiousCard);
+            // 행선지 고정용 표시는 사용 경로에서만 쓰므로 손에 남는 카드에서는 해제
+            curiousCard.resolvedAsCuriosity = false;
+            battleManager.handManager?.RefreshCardDisplay(curiousCard);
+        }
+        finally
+        {
+            CompleteCardResolution();
         }
     }
 

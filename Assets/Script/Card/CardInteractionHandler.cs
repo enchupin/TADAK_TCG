@@ -208,6 +208,8 @@ public class CardInteractionHandler : UIHoverEffect,
 
         CardController cc = cardUI.GetComponent<CardController>();
         if (cc == null || cc.Card == null || cc.Card.effects == null) return false;
+        // 호기심 카드는 본래 효과 없이 강화만 하므로 대상 지정 없음
+        if (cc.Card.isCurious) return false;
 
         bool hasSingleEnemyTarget = false;
         CollectTargetingFlags(cc.Card.effects, ref hasSingleEnemyTarget);

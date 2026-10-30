@@ -135,12 +135,15 @@ static class CardMechanicTests
         Assert(manager.CuriosityPlays == 1, "호기심 카드는 강화 절차 1회");
         Assert(OrderEffect.Log.Count == 0, "호기심 카드는 본래 효과를 발동하지 않음");
         Assert(manager.Repeats == 2, "호기심 사용은 재사용을 소모하지 않음");
-        Assert(manager.usableDeckManager.Discard.Count(c => c == card) == 1 && manager.usableDeckManager.Exhaust.Count == 0, "소멸 키워드와 무관하게 버린 더미로 이동");
+        // 강화는 카드 사용이 아니므로 손으로 되돌아오고 비용 · 사용 집계 없음
+        Assert(!request.Accepted, "사용으로 수락하지 않아 드래그한 카드가 손으로 돌아감");
+        Assert(manager.handManager.Cards.Count(c => c == card) == 1 && manager.usableDeckManager.Discard.Count == 0 && manager.usableDeckManager.Exhaust.Count == 0, "강화한 카드는 손에 남음");
         Assert(!manager.Ended && manager.handManager.Cards.Count(c => c != card) == 0, "그림자·종언 키워드 미적용");
-        Assert(manager.battleContext.GetCardsPlayedThisCombatCount(null) == 1 && manager.IdentityCharges == 1, "카드 사용으로 집계");
+        Assert(manager.battleContext.GetCardsPlayedThisCombatCount(null) == 0 && manager.IdentityCharges == 0 && manager.Payments == 0, "카드 사용으로 집계하지 않음");
+        Assert(manager.PowerCalls == 0, "사용 시 발동 효과 미적용");
         Assert(!card.resolvedAsCuriosity && !card.isCurious, "처리 후 호기심 상태 해제");
         OrderEffect.Log.Clear();
-        Console.WriteLine("PASS 호기심 사용: 강화만 진행하고 버린 더미로");
+        Console.WriteLine("PASS 호기심 강화: 사용 없이 강화하고 손으로");
     }
 
     private static void Finish(IEnumerator sequence)
