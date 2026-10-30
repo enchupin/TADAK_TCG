@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 425224320246794245}
   - component: {fileID: 9178011243559094876}
   - component: {fileID: 8947926882913876343}
+  - component: {fileID: 1913268666253389475}
   - component: {fileID: 949242994117032938}
   m_Layer: 5
   m_Name: CharacterSelectButton
@@ -134,6 +135,19 @@ MonoBehaviour:
           m_StringArgument: Warrior
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1913268666253389475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 190741038153893105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad82ca3a26e24c3887002060819911ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterLocalizedButtonLabel
+  characterId: 0
 --- !u!114 &949242994117032938
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146,8 +160,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4033192d1c0ca7a4db0321d2349d239d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SelectedButtonControl
-  characterType: 0
-  buttonClickSound: {fileID: 8300000, guid: 52a3279df4d881644adca1487c8b9cc7, type: 3}
 --- !u!1 &6486638747072497124
 GameObject:
   m_ObjectHideFlags: 0
@@ -215,8 +227,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Isla
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 19af3c75d57839941827b61d0153c210, type: 2}
+  m_sharedMaterial: {fileID: 8656956014132801528, guid: 19af3c75d57839941827b61d0153c210, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
