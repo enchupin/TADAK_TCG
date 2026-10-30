@@ -6390,6 +6390,7 @@ GameObject:
   - component: {fileID: 1014661637}
   - component: {fileID: 1014661639}
   - component: {fileID: 1014661638}
+  - component: {fileID: 1014661640}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -6413,8 +6414,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -30}
+  m_SizeDelta: {x: 0, y: -60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1014661638
 MonoBehaviour:
@@ -6454,6 +6455,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1014661636}
   m_CullTransparentMesh: 1
+--- !u!114 &1014661640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1014661636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28f46181b3bd4c04b8a2a814b994b834, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AspectCoverImage
+  image: {fileID: 0}
+  fallbackAspect: 1.7777778
 --- !u!1 &1015569267
 GameObject:
   m_ObjectHideFlags: 0
@@ -7715,8 +7730,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -30}
-  m_SizeDelta: {x: 0, y: -60}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1211223251
 GameObject:
@@ -9569,6 +9584,7 @@ GameObject:
   - component: {fileID: 1487892411}
   - component: {fileID: 1487892413}
   - component: {fileID: 1487892412}
+  - component: {fileID: 1487892414}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -9633,6 +9649,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1487892410}
   m_CullTransparentMesh: 1
+--- !u!114 &1487892414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1487892410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28f46181b3bd4c04b8a2a814b994b834, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AspectCoverImage
+  image: {fileID: 0}
+  fallbackAspect: 1.7777778
 --- !u!1 &1505419267
 GameObject:
   m_ObjectHideFlags: 0
@@ -13758,6 +13788,7 @@ MonoBehaviour:
   - {fileID: 486919500}
   - {fileID: 819191321}
   floorSpacing: 200
+  referenceViewportWidth: 1920
   combatInteraction: {fileID: 11197375}
   battleManager: {fileID: 1545498654}
   restPanel: {fileID: 1236686085}

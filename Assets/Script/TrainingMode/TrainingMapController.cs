@@ -12,12 +12,16 @@ public class TrainingMapController : MonoBehaviour
     [Header("Node UI")]
     [SerializeField] private RectTransform nodeRoot;
     [SerializeField] private RectTransform connectionRoot;
+    [Tooltip("Content 안의 지도 배경 (Content를 채워 지도 길이만큼 늘어나고 노드와 함께 스크롤, 연결선 · 노드보다 뒤에 그림)")]
+    [SerializeField] private RectTransform scrollBackground;
     [SerializeField] private Button monsterNodeButtonPrefab;
     [SerializeField] private Button namedNodeButtonPrefab;
     [SerializeField] private Button restNodeButtonPrefab;
     [SerializeField] private Button bossNodeButtonPrefab;
     [SerializeField] private RectTransform[] positionTemplates = new RectTransform[10];
     [SerializeField] private float floorSpacing = 200f;
+    [Tooltip("첫 층 기준점을 정하는 16:9 화면 폭 (21:9에서 넓어진 폭은 오른쪽 층을 더 보여주는 데 사용)")]
+    [SerializeField] private float referenceViewportWidth = 1920f;
     // 지도 · 휴식이 열려 있는 동안 입력을 끄는 전투 영역 (상단 바 · 팝업은 제외)
     [Tooltip("CombatCanvas/BattleField의 CanvasGroup (상단 바 · 팝업이 포함되지 않은 전투 영역)")]
     [SerializeField] private CanvasGroup combatInteraction;
@@ -39,6 +43,8 @@ public class TrainingMapController : MonoBehaviour
     [SerializeField] private TMP_Text statusText;
 
     private Vector2 nodeAnchor;
+    // 노드를 배치할 때의 화면 폭 (해상도가 바뀌면 다시 배치)
+    private float builtViewportWidth;
     private Vector2 layoutNodeSize;
     private readonly Dictionary<int, Button> nodeButtons = new Dictionary<int, Button>();
     private readonly Dictionary<(int from, int to), Image> connectionImages = new Dictionary<(int, int), Image>();
@@ -155,7 +161,7 @@ public class TrainingMapController : MonoBehaviour
         gameObject.SetActive(true);
         combatInteraction.interactable = false;
         combatInteraction.blocksRaycasts = false;
-        if (nodeButtons.Count == 0) BuildMapUI();
+        if (nodeButtons.Count == 0 || !Mathf.Approximately(builtViewportWidth, GetViewportWidth())) BuildMapUI();
         else
         {
             foreach (var entry in nodeButtons)
@@ -257,6 +263,9 @@ public class TrainingMapController : MonoBehaviour
         connectionRoot.offsetMin = Vector2.zero;
         connectionRoot.offsetMax = Vector2.zero;
         connectionRoot.SetAsFirstSibling();
+        // 지도 배경은 연결선보다 뒤
+        if (scrollBackground != null && scrollBackground.parent == nodeRoot)
+            scrollBackground.SetAsFirstSibling();
     }
 
     private void SpawnNodeButtons(IReadOnlyList<TrainingMapNodeData> nodes, IReadOnlyDictionary<int, Vector2> nodePositions)
@@ -541,18 +550,29 @@ public class TrainingMapController : MonoBehaviour
 
     private void UpdateLayoutMetrics(IReadOnlyList<TrainingMapNodeData> nodes)
     {
-        ScrollRect scroll = nodeRoot.GetComponentInParent<ScrollRect>();
-        RectTransform viewport = scroll != null ? scroll.viewport : nodeRoot.parent as RectTransform;
-        float viewportWidth = viewport.rect.width;
-        float originX = viewportWidth * 0.5f;
+        float viewportWidth = GetViewportWidth();
+        builtViewportWidth = viewportWidth;
+        // 기준 버튼 좌표 원점은 16:9 화면 중앙 (넓은 화면에서도 첫 층 위치는 왼쪽 기준으로 같음)
+        float originX = Mathf.Min(viewportWidth, referenceViewportWidth) * 0.5f;
         int lastStage = 0;
         foreach (TrainingMapNodeData node in nodes) lastStage = Mathf.Max(lastStage, node.stageIndex);
         layoutNodeSize = positionTemplates[0].sizeDelta;
+        // 오른쪽 끝 여유를 첫 층 왼쪽 여유와 같게 맞춤 (지도 배경 좌우 여백 일치)
+        float firstNodeLeft = originX + positionTemplates[0].anchoredPosition.x - layoutNodeSize.x * 0.5f;
+        float sideMargin = Mathf.Max(0f, firstNodeLeft);
         float width = Mathf.Max(viewportWidth,
-            originX + positionTemplates[0].anchoredPosition.x + lastStage * floorSpacing + layoutNodeSize.x * 0.5f + 60f);
+            originX + positionTemplates[0].anchoredPosition.x + lastStage * floorSpacing + layoutNodeSize.x * 0.5f + sideMargin);
         nodeRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
         // Content 확장 후에도 기준 버튼의 좌표 원점을 첫 화면 중앙에 유지
         nodeAnchor = new Vector2(originX / width, 0.5f);
+    }
+
+    private float GetViewportWidth()
+    {
+        if (nodeRoot == null) return 0f;
+        ScrollRect scroll = nodeRoot.GetComponentInParent<ScrollRect>();
+        RectTransform viewport = scroll != null ? scroll.viewport : nodeRoot.parent as RectTransform;
+        return viewport != null ? viewport.rect.width : 0f;
     }
 
     private void ResetScrollPosition()
