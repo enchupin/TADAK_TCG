@@ -49,6 +49,10 @@ public class DictionarySavedDeckPanel : MonoBehaviour
     private void Awake()
     {
         HideRenameInputFields();
+        // 삭제 확인은 일반 패널 (ESC = 취소), 뒤 클릭은 차단막으로 막음
+        UIModalPanel.Ensure(deleteConfirmationPanel, new UIModalPanel.Options {
+            close = CancelDeleteDeck
+        });
         CancelDeleteDeck();
     }
 
@@ -87,6 +91,29 @@ public class DictionarySavedDeckPanel : MonoBehaviour
         if (decks.Count > MaxDeckPanelCount)
         {
             Debug.LogWarning($"[RankingModeSavedDeckPanel] 표시 가능한 저장덱 수를 초과했습니다: {decks.Count}/{MaxDeckPanelCount}");
+        }
+    }
+
+    // 도감 일러스트 탭: 저장덱 칸을 숨기고 같은 자리에 일러스트 표시
+    public void SetDeckPanelsVisible(bool visible)
+    {
+        if (!visible)
+        {
+            CancelRename();
+            CancelDeleteDeck();
+        }
+
+        if (cardPanels == null)
+        {
+            return;
+        }
+
+        foreach (RectTransform panel in cardPanels)
+        {
+            if (panel != null)
+            {
+                panel.gameObject.SetActive(visible);
+            }
         }
     }
 

@@ -34,6 +34,9 @@ public class DrawUI : MonoBehaviour
     [SerializeField] private Vector2 debugPathPointSize = new Vector2(8f, 8f);
     [SerializeField] private float debugPathLifetime = 2f;
 
+    // 카드 사용 연출의 중앙 지점 (손패 선택에서 고른 카드를 놓는 위치로도 사용)
+    public Transform PlayCenterPosition => playCenterPosition;
+
     private Transform cachedFallbackDrawStartPosition;
     private GameObject debugPathRoot;
     private Coroutine clearDebugPathCoroutine;

@@ -86,35 +86,33 @@ public class CardUI : MonoBehaviour
         ApplyPlayableVisual();
     }
 
-    public void ShowBuffTooltip()
+    // 카드 확인 패널의 효과 툴팁 위치 기준 (카드 안 툴팁 패널 자리)
+    public RectTransform TooltipAnchor => tooltipPanel != null ? tooltipPanel.transform as RectTransform : null;
+
+    /// <summary>
+    /// 카드의 키워드 · 버프 효과 툴팁 문구를 효과마다 하나씩 반환 (전투 화면 버프 툴팁과 같은 서식)
+    /// </summary>
+    public List<string> BuildTooltipEntries()
     {
-        if (tooltipPanel == null)
-        {
-            HideBuffTooltip();
-            return;
-        }
-
-        if (tooltipText == null)
-        {
-            HideBuffTooltip();
-            return;
-        }
-
+        List<string> entries = new();
         if (currentCard == null)
         {
-            HideBuffTooltip();
-            return;
+            return entries;
         }
 
-        string buffTooltipText = BuildBuffTooltipText(currentCard);
-        if (string.IsNullOrWhiteSpace(buffTooltipText))
-        {
-            HideBuffTooltip();
-            return;
-        }
+        TooltipColors colors = TooltipView.Colors;
 
-        tooltipText.text = buffTooltipText;
-        tooltipPanel.SetActive(true);
+        List<int> keywordIds = new();
+        CollectKeywordIds(currentCard.keywords, keywordIds);
+        AppendKeywordTooltipText(entries, keywordIds, colors);
+
+        List<int> buffIds = new();
+        CollectBuffIds(currentCard.effects, buffIds);
+        CollectBuffIds(currentCard.keepEffects, buffIds);
+        CollectBuffIds(currentCard.endTurnInHandEffects, buffIds);
+        AppendBuffTooltipText(entries, buffIds, colors);
+
+        return entries;
     }
 
     public void HideBuffTooltip()
@@ -187,28 +185,6 @@ public class CardUI : MonoBehaviour
     private static string GetKeywordDisplayName(int keywordId)
     {
         return KeywordDatabase.GetKeywordName(keywordId);
-    }
-
-    private string BuildBuffTooltipText(Card card)
-    {
-        if (card == null)
-        {
-            return string.Empty;
-        }
-
-        StringBuilder builder = new();
-
-        List<int> keywordIds = new();
-        CollectKeywordIds(card.keywords, keywordIds);
-        AppendKeywordTooltipText(builder, keywordIds);
-
-        List<int> buffIds = new();
-        CollectBuffIds(card.effects, buffIds);
-        CollectBuffIds(card.keepEffects, buffIds);
-        CollectBuffIds(card.endTurnInHandEffects, buffIds);
-        AppendBuffTooltipText(builder, buffIds);
-
-        return builder.ToString();
     }
 
     private void CollectKeywordIds(List<int> sourceIds, List<int> keywordIds)
@@ -318,9 +294,9 @@ public class CardUI : MonoBehaviour
         keywordIds.Add(keywordId);
     }
 
-    private void AppendKeywordTooltipText(StringBuilder builder, List<int> keywordIds)
+    private void AppendKeywordTooltipText(List<string> entries, List<int> keywordIds, TooltipColors colors)
     {
-        if (builder == null || keywordIds == null)
+        if (entries == null || keywordIds == null)
         {
             return;
         }
@@ -329,13 +305,13 @@ public class CardUI : MonoBehaviour
         {
             string keywordName = GetKeywordDisplayName(keywordId);
             string keywordDescription = KeywordDatabase.GetKeywordDescription(keywordId);
-            AppendTooltipEntry(builder, keywordName, keywordDescription);
+            AppendTooltipEntry(entries, keywordName, keywordDescription, false, colors);
         }
     }
 
-    private void AppendBuffTooltipText(StringBuilder builder, List<int> buffIds)
+    private void AppendBuffTooltipText(List<string> entries, List<int> buffIds, TooltipColors colors)
     {
-        if (builder == null || buffIds == null)
+        if (entries == null || buffIds == null)
         {
             return;
         }
@@ -343,13 +319,13 @@ public class CardUI : MonoBehaviour
         HashSet<int> appendedBuffIds = new();
         foreach (int buffId in buffIds)
         {
-            AppendBuffTooltipEntryRecursive(builder, buffId, appendedBuffIds);
+            AppendBuffTooltipEntryRecursive(entries, buffId, appendedBuffIds, colors);
         }
     }
 
-    private void AppendBuffTooltipEntryRecursive(StringBuilder builder, int buffId, HashSet<int> appendedBuffIds)
+    private void AppendBuffTooltipEntryRecursive(List<string> entries, int buffId, HashSet<int> appendedBuffIds, TooltipColors colors)
     {
-        if (builder == null || appendedBuffIds == null || buffId <= 0 || appendedBuffIds.Contains(buffId))
+        if (entries == null || appendedBuffIds == null || buffId <= 0 || appendedBuffIds.Contains(buffId))
         {
             return;
         }
@@ -360,18 +336,19 @@ public class CardUI : MonoBehaviour
         }
 
         appendedBuffIds.Add(buffId);
-        AppendTooltipEntry(builder, buffData.name, FormatBuffTooltipDescription(buffData.description));
+        AppendTooltipEntry(entries, buffData.name, FormatBuffTooltipDescription(buffData.description), BuffData.IsHarmfulBuffId(buffId), colors);
 
         List<int> referencedBuffIds = ExtractReferencedBuffIds(buffData.description);
         foreach (int referencedBuffId in referencedBuffIds)
         {
-            AppendBuffTooltipEntryRecursive(builder, referencedBuffId, appendedBuffIds);
+            AppendBuffTooltipEntryRecursive(entries, referencedBuffId, appendedBuffIds, colors);
         }
     }
 
-    private void AppendTooltipEntry(StringBuilder builder, string title, string description)
+    // 전투 버프 툴팁과 같은 서식: 극성 색 이름 한 줄 + 설명, 설명 안 (버프명) 참조는 그 버프의 극성 색
+    private static void AppendTooltipEntry(List<string> entries, string title, string description, bool harmful, TooltipColors colors)
     {
-        if (builder == null)
+        if (entries == null)
         {
             return;
         }
@@ -381,26 +358,13 @@ public class CardUI : MonoBehaviour
             return;
         }
 
-        if (builder.Length > 0)
-        {
-            builder.AppendLine();
-            builder.AppendLine();
-        }
-
-        if (!string.IsNullOrWhiteSpace(title))
-        {
-            builder.Append(title);
-        }
-
-        if (!string.IsNullOrWhiteSpace(description))
-        {
-            if (!string.IsNullOrWhiteSpace(title))
-            {
-                builder.AppendLine();
-            }
-
-            builder.Append(description);
-        }
+        entries.Add(BuffTooltipFormatter.FormatEntry(
+            title,
+            description,
+            0,
+            harmful,
+            colors,
+            BuffTooltipTextBuilder.TryResolveReference));
     }
 
     private static string FormatBuffTooltipDescription(string description)
