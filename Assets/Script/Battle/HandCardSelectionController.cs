@@ -48,10 +48,11 @@ public class HandCardSelectionController : MonoBehaviour
         if (confirmButton != null)
         {
             // 패널 아래에 배치돼 있어도 패널 없이 보이도록 같은 위치를 유지한 채 루트 캔버스로 옮김
-            Canvas canvas = confirmButton.GetComponentInParent<Canvas>(true);
-            if (canvas != null && confirmButton.transform.parent != canvas.rootCanvas.transform)
+            // 루트 대신 전투 영역(손패의 부모)으로 옮겨 지도 · 휴식 · 상단 바 · 패널 아래에 그림
+            Transform battleLayer = ResolveBattleLayer(confirmButton.transform);
+            if (battleLayer != null && confirmButton.transform.parent != battleLayer)
             {
-                confirmButton.transform.SetParent(canvas.rootCanvas.transform, true);
+                confirmButton.transform.SetParent(battleLayer, true);
             }
 
             confirmButton.onClick.RemoveListener(OnClickConfirm);
@@ -349,10 +350,10 @@ public class HandCardSelectionController : MonoBehaviour
             return selectionRow;
         }
 
-        Canvas canvas = handManager != null && handManager.HandContainer != null
-            ? handManager.HandContainer.GetComponentInParent<Canvas>()
+        Transform battleLayer = handManager != null && handManager.HandContainer != null
+            ? ResolveBattleLayer(handManager.HandContainer)
             : null;
-        if (canvas == null)
+        if (battleLayer == null)
         {
             Debug.LogWarning("[HandCardSelection] 손패 캔버스를 찾지 못해 선택한 카드를 중앙에 놓을 수 없습니다");
             return null;
@@ -360,13 +361,25 @@ public class HandCardSelectionController : MonoBehaviour
 
         GameObject rowObject = new GameObject("HandSelectionRow", typeof(RectTransform));
         selectionRow = (RectTransform)rowObject.transform;
-        selectionRow.SetParent(canvas.rootCanvas.transform, false);
+        selectionRow.SetParent(battleLayer, false);
         selectionRow.sizeDelta = Vector2.zero;
         if (centerAnchor == null)
         {
             Debug.LogWarning("[HandCardSelection] 중앙 위치가 없어 캔버스 중앙에 놓습니다");
         }
         return selectionRow;
+    }
+
+    // 전투 영역 = 손패의 부모 (손패가 루트 캔버스 바로 아래면 루트 캔버스)
+    private Transform ResolveBattleLayer(Transform fallback)
+    {
+        if (handManager != null && handManager.HandContainer != null && handManager.HandContainer.parent != null)
+        {
+            return handManager.HandContainer.parent;
+        }
+
+        Canvas canvas = fallback != null ? fallback.GetComponentInParent<Canvas>(true) : null;
+        return canvas != null ? canvas.rootCanvas.transform : null;
     }
 
     // 선택 화면은 전투 화면의 일부이므로 전투 UI 위, 덱 · 더미 등 패널(과 차단막) 아래에 그림
