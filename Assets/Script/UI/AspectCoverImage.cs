@@ -100,15 +100,7 @@ public class AspectCoverImage : MonoBehaviour
         }
 
         float aspect = GetImageAspect();
-        float width = parentSize.x;
-        float height = parentSize.y;
-        float parentAspect = width / height;
-
-        if (parentAspect > aspect) {
-            height = width / aspect;
-        } else {
-            width = height * aspect;
-        }
+        AspectLayoutMath.Cover(parentSize.x, parentSize.y, aspect, out float width, out float height);
 
         isApplyingLayout = true;
         try

@@ -88,15 +88,7 @@ public class FixedAspectRectTransform : MonoBehaviour
             return;
         }
 
-        float width = parentSize.x;
-        float height = parentSize.y;
-        float parentAspect = width / height;
-
-        if (parentAspect > targetAspect) {
-            width = height * targetAspect;
-        } else {
-            height = width / targetAspect;
-        }
+        AspectLayoutMath.Contain(parentSize.x, parentSize.y, targetAspect, out float width, out float height);
 
         isApplyingLayout = true;
         try
