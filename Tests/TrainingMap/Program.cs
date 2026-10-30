@@ -11,7 +11,7 @@ class Program {
   var map=GameRules.Training.map;
   var tierPools=MonsterDatabase.AllEncounters.ToDictionary(e=>MonsterSpawner.BuildEncounterSignature(e.monsters)+"|"+e.kind,e=>e);
   for(int run=0;run<200;run++){
-   TrainingRunState.StartNewRun("Battle");
+   TrainingRunState.StartNewRun();
    var nodes=TrainingRunState.GetAllNodes();
    var byId=nodes.ToDictionary(n=>n.nodeId);
    var floors=nodes.GroupBy(n=>n.FloorNumber).OrderBy(g=>g.Key).ToList();

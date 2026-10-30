@@ -9,9 +9,10 @@ using UnityEngine.UI;
 // 패널은 화면 전체를 덮는 캔버스 아래 마지막 순서에 배치
 // 이 컴포넌트는 항상 활성화된 오브젝트에 두고 패널만 켜고 끔
 // 크기는 문구에 맞춰 코드에서 계산하므로 패널에 ContentSizeFitter · LayoutGroup이 없어도 됨
-public class TooltipView : MonoBehaviour
+// 로비에서 생성되어 씬이 바뀌어도 유지 (자체 루트 캔버스, 로비 · 전투 공용), 같은 오브젝트가 또 생기면 나중 것을 제거
+public class TooltipManager : MonoBehaviour
 {
-    public static TooltipView Instance { get; private set; }
+    public static TooltipManager Instance { get; private set; }
 
     [Header("툴팁 패널")]
     [Tooltip("배경 이미지가 있는 패널 (피벗은 좌측 상단으로 자동 설정)")]
@@ -70,13 +71,30 @@ public class TooltipView : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Debug.LogWarning($"[TooltipView] 툴팁 뷰가 여러 개입니다. {gameObject.name}을(를) 사용합니다.");
+            Destroy(gameObject);
+            return;
         }
 
         Instance = this;
+        if (transform.parent == null)
+        {
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Debug.LogError("[TooltipManager] 씬이 바뀌어도 유지되도록 루트 오브젝트에 배치해야 합니다");
+        }
+
+        // 툴팁은 모든 화면 위에 그림
+        Canvas canvas = GetComponent<Canvas>();
+        if (canvas != null && canvas.isRootCanvas)
+        {
+            canvas.sortingOrder = UICanvasOrder.Tooltip;
+        }
+
         if (panel != null && panel.gameObject == gameObject)
         {
-            Debug.LogError("[TooltipView] 패널을 끄면 이 컴포넌트도 멈추므로 패널과 다른 오브젝트에 배치해야 합니다");
+            Debug.LogError("[TooltipManager] 패널을 끄면 이 컴포넌트도 멈추므로 패널과 다른 오브젝트에 배치해야 합니다");
         }
 
         PreparePanel();
@@ -115,6 +133,11 @@ public class TooltipView : MonoBehaviour
     {
         if (currentTrigger == null)
         {
+            // 씬이 바뀌어 대상이 사라지면 패널도 닫음
+            if (panel != null && panel.gameObject.activeSelf)
+            {
+                HideInternal();
+            }
             return;
         }
 
@@ -159,7 +182,7 @@ public class TooltipView : MonoBehaviour
             if (!hasLoggedMissingReference)
             {
                 hasLoggedMissingReference = true;
-                Debug.LogError("[TooltipView] 툴팁 패널 또는 텍스트가 인스펙터에 연결되지 않았습니다");
+                Debug.LogError("[TooltipManager] 툴팁 패널 또는 텍스트가 인스펙터에 연결되지 않았습니다");
             }
 
             return;
@@ -246,12 +269,12 @@ public class TooltipView : MonoBehaviour
         }
 
         // 패널에 이 컴포넌트가 함께 있으면 복제본이 Awake에서 Instance를 가져가므로
-        // 원본을 잠시 끈 상태로 복제해 Awake를 막고 복제본의 TooltipView는 바로 제거
+        // 원본을 잠시 끈 상태로 복제해 Awake를 막고 복제본의 TooltipManager는 바로 제거
         bool wasActive = panel.gameObject.activeSelf;
         panel.gameObject.SetActive(false);
         GameObject copy = Instantiate(panel.gameObject, parent, false);
         panel.gameObject.SetActive(wasActive);
-        foreach (TooltipView copiedView in copy.GetComponentsInChildren<TooltipView>(true))
+        foreach (TooltipManager copiedView in copy.GetComponentsInChildren<TooltipManager>(true))
         {
             DestroyImmediate(copiedView);
         }

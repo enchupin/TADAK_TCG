@@ -38,12 +38,19 @@ public class BattleDeckViewer : MonoBehaviour
     [SerializeField] private TrainingBattleManager battleManager;
     private bool isSelectionMode;
     public bool IsSelectionActive => isSelectionMode;
+    public bool IsCancelableSelectionActive => isSelectionMode && onSelectionCanceled != null;
     // 선택 중 덱 · 더미 버튼으로 같은 패널을 보기로 잠시 바꾼 상태 (닫으면 선택 목록 · 고른 상태 복원)
     private bool isViewingDuringSelection;
     private readonly List<Card> selectionCandidates = new List<Card>();
     private int requiredSelectionCount;
     private bool allowFewerSelection;
     private Action<List<Card>> onSelectionCompleted;
+    // 취소할 수 있는 선택(휴식 강화)의 취소 콜백 · 패널을 연 버튼 (필수 선택은 null)
+    private Action onSelectionCanceled;
+    private Button selectionOpenButton;
+    // 지도 미리보기가 선택 패널 아래에 그려지므로 미리보기 동안 선택 패널을 숨김
+    private bool isHiddenForMapPreview;
+    private bool wasHiddenBeforeMapPreview;
     private readonly List<Card> selectedCards = new List<Card>();
     private readonly List<CardController> selectedControllers = new List<CardController>();
     private DeckPanelViewType currentViewType;
@@ -94,7 +101,7 @@ public class BattleDeckViewer : MonoBehaviour
     }
 
     private void ToggleSelectionHidden() {
-        if (!isSelectionMode || isViewingDuringSelection || deckModal == null) return;
+        if (!isSelectionMode || isViewingDuringSelection || isHiddenForMapPreview || deckModal == null) return;
         deckModal.ToggleHidden();
         SettingsManager.PlayPanelToggleSound();
     }
@@ -105,6 +112,9 @@ public class BattleDeckViewer : MonoBehaviour
             if (isViewingDuringSelection) {
                 ShowSelectionContent();
                 SettingsManager.PlayPanelToggleSound();
+            }
+            else if (onSelectionCanceled != null) {
+                CancelSelection();
             }
             return;
         }
@@ -135,6 +145,9 @@ public class BattleDeckViewer : MonoBehaviour
         selectedControllers.Clear();
         requiredSelectionCount = 0;
         allowFewerSelection = false;
+        onSelectionCanceled = null;
+        selectionOpenButton = null;
+        isHiddenForMapPreview = false;
         currentViewType = DeckPanelViewType.None;
         if (cardContainerManager != null)
         {
@@ -230,6 +243,46 @@ public class BattleDeckViewer : MonoBehaviour
     }
 
     public bool OpenSelectionPanel(List<Card> selectableCards, int selectCount, Action<List<Card>> onComplete, bool allowFewer = false) {
+        return OpenSelection(selectableCards, selectCount, onComplete, allowFewer, null, null);
+    }
+
+    // 취소할 수 있는 선택 (휴식 강화): 일반 패널로 열어 ESC · 패널을 연 버튼으로 취소
+    public bool OpenCancelableSelectionPanel(List<Card> selectableCards, int selectCount, Action<List<Card>> onComplete, Action onCancel, Button openButton) {
+        return OpenSelection(selectableCards, selectCount, onComplete, false, onCancel ?? (() => { }), openButton);
+    }
+
+    public void CancelSelection() {
+        if (!IsCancelableSelectionActive) {
+            return;
+        }
+
+        Action callback = onSelectionCanceled;
+        ClearSelection();
+        SettingsManager.PlayPanelToggleSound();
+        callback?.Invoke();
+    }
+
+    // 지도 미리보기를 여닫을 때 선택 패널 숨김 · 복원 (보기 · 필수 숨김 상태는 유지)
+    public void SetHiddenForMapPreview(bool hidden) {
+        if (deckModal == null || isHiddenForMapPreview == hidden) {
+            return;
+        }
+        if (hidden && (!isSelectionMode || deckPanelRoot == null || !deckPanelRoot.activeSelf)) {
+            return;
+        }
+
+        isHiddenForMapPreview = hidden;
+        if (hidden) {
+            wasHiddenBeforeMapPreview = deckModal.IsHidden;
+            deckModal.SetHidden(true);
+        }
+        else {
+            deckModal.SetHidden(wasHiddenBeforeMapPreview);
+        }
+        UpdateConfirmButtonState();
+    }
+
+    private bool OpenSelection(List<Card> selectableCards, int selectCount, Action<List<Card>> onComplete, bool allowFewer, Action onCancel, Button openButton) {
         ValidateRequiredReferences();
 
         if (selectableCards == null) {
@@ -240,6 +293,8 @@ public class BattleDeckViewer : MonoBehaviour
         requiredSelectionCount = Mathf.Max(0, selectCount);
         allowFewerSelection = allowFewer;
         onSelectionCompleted = onComplete;
+        onSelectionCanceled = onCancel;
+        selectionOpenButton = openButton;
         selectionCandidates.Clear();
         selectionCandidates.AddRange(selectableCards);
         selectedCards.Clear();
@@ -259,8 +314,13 @@ public class BattleDeckViewer : MonoBehaviour
     private void ShowSelectionContent() {
         isViewingDuringSelection = false;
         currentViewType = DeckPanelViewType.None;
-        deckModal.SetKind(UIModalKind.Required);
-        deckModal.SetPassThrough(UIBattleSpaceButtons.GetTargets());
+        // 취소할 수 있는 선택은 일반 패널, 패널을 연 버튼도 차단막을 통과해 다시 눌러 취소
+        deckModal.SetKind(onSelectionCanceled != null ? UIModalKind.Normal : UIModalKind.Required);
+        List<RectTransform> passThrough = new List<RectTransform>(UIBattleSpaceButtons.GetTargets());
+        if (onSelectionCanceled != null && selectionOpenButton != null) {
+            passThrough.Add((RectTransform)selectionOpenButton.transform);
+        }
+        deckModal.SetPassThrough(passThrough.ToArray());
         deckPanelRoot.SetActive(true);
         HideCardDetailPanel();
 
@@ -291,6 +351,10 @@ public class BattleDeckViewer : MonoBehaviour
             foreach (CardController controller in selectedControllers) {
                 selectedCards.Add(controller.Card);
             }
+        }
+        // 지도 미리보기 중 보기에서 선택으로 돌아오면 다시 숨김
+        if (isHiddenForMapPreview) {
+            deckModal.SetHidden(true);
         }
         UpdateConfirmButtonState();
     }
@@ -382,6 +446,14 @@ public class BattleDeckViewer : MonoBehaviour
 
     private void CompleteSelection(List<Card> result) {
         Action<List<Card>> callback = onSelectionCompleted;
+        ClearSelection();
+        callback?.Invoke(result ?? new List<Card>());
+    }
+
+    private void ClearSelection() {
+        if (isHiddenForMapPreview) {
+            SetHiddenForMapPreview(false);
+        }
 
         isSelectionMode = false;
         isViewingDuringSelection = false;
@@ -389,6 +461,8 @@ public class BattleDeckViewer : MonoBehaviour
         requiredSelectionCount = 0;
         allowFewerSelection = false;
         onSelectionCompleted = null;
+        onSelectionCanceled = null;
+        selectionOpenButton = null;
         selectedCards.Clear();
         selectedControllers.Clear();
         HideCardDetailPanel();
@@ -400,8 +474,6 @@ public class BattleDeckViewer : MonoBehaviour
             deckPanelRoot.SetActive(false);
         }
         currentViewType = DeckPanelViewType.None;
-
-        callback?.Invoke(result ?? new List<Card>());
     }
 
     public void CloseCardDetailPanel() {
@@ -471,7 +543,8 @@ public class BattleDeckViewer : MonoBehaviour
         selectionConfirmButton.gameObject.SetActive(showSelectionButtons);
         selectionConfirmButton.interactable = showSelectionButtons && CanConfirmSelection();
         if (selectionHideButton != null) {
-            selectionHideButton.gameObject.SetActive(showSelectionButtons);
+            // 숨김 버튼은 화면을 가리는 필수 선택에만 (지도 미리보기 중에는 감춤)
+            selectionHideButton.gameObject.SetActive(showSelectionButtons && onSelectionCanceled == null && !isHiddenForMapPreview);
         }
     }
 

@@ -65,6 +65,7 @@ public class TrainingBattleManager : MonoBehaviour
     public BattleUI battleUI;
     public MonsterSpawner monsterSpawner;
     [SerializeField] private BattleDeckViewer battleDeckViewer;
+    public BattleDeckViewer DeckViewer => battleDeckViewer;
     [Tooltip("손패 선택 확인 버튼 (중앙에 놓인 카드 아래, 비우면 DeckPanel 아래 CheckBtn을 찾음)")]
     [SerializeField] private Button handSelectionConfirmButton;
     private HandCardSelectionController handCardSelection;
@@ -215,12 +216,14 @@ public class TrainingBattleManager : MonoBehaviour
         if (!BossModeSession.IsActive && trainingMap != null)
         {
             if (!TrainingRunState.HasMapData)
-                TrainingRunState.StartNewRun(SceneManager.GetActiveScene().name);
+                TrainingRunState.StartNewRun();
+            PrepareRunOverview();
             if (!TrainingRunState.PendingNodeId.HasValue)
             {
                 trainingMap.ShowMap();
                 return;
             }
+            if (trainingMap.TryOpenPendingRest()) return;
         }
         BeginSelectedBattle();
     }
@@ -383,16 +386,9 @@ public class TrainingBattleManager : MonoBehaviour
         }
     }
 
-    private void InitializeBattle()
+    private static int CalculatePartyMaxHp()
     {
-        if (playerData == null)
-        {
-            playerData = PlayerData.Create();
-        }
-
         int totalMaxHp = 0;
-        int totalDefense = 0;
-
         foreach (Character character in SelectedButtonControl.selectedCharacterList)
         {
             CharacterData data = CharacterManager.GetCharacterByEnum(character);
@@ -405,6 +401,38 @@ public class TrainingBattleManager : MonoBehaviour
                 Debug.LogWarning($"[BattleManager] CharacterData not found: {character}");
             }
         }
+
+        return totalMaxHp;
+    }
+
+    // 지도 · 휴식 화면에서도 상단 바(체력 · 덱 버튼)를 쓸 수 있게 첫 전투 전에 런 덱 · 체력을 준비
+    private void PrepareRunOverview()
+    {
+        InitializeCharacterSelection();
+        if (buildingDeck == null && CardManager.IsInitialized())
+        {
+            buildingDeck = TrainingRunDeckPersistence.CreateRunDeck(SelectedButtonControl.selectedCharacterList);
+        }
+
+        if (!TrainingRunState.TryGetPlayerHealthState(out int hp, out int maxHp))
+        {
+            maxHp = CalculatePartyMaxHp();
+            hp = maxHp;
+            TrainingRunState.SetPlayerHealthState(hp, maxHp);
+        }
+
+        battleUI?.UpdateRunHealth(hp, maxHp);
+    }
+
+    private void InitializeBattle()
+    {
+        if (playerData == null)
+        {
+            playerData = PlayerData.Create();
+        }
+
+        int totalMaxHp = CalculatePartyMaxHp();
+        int totalDefense = 0;
 
         playerData.Initialize(totalMaxHp, totalDefense, PlayerBaseEnergyPerTurn);
         characterIdentityService?.Initialize(SelectedButtonControl.selectedCharacterList);
@@ -1042,7 +1070,7 @@ public class TrainingBattleManager : MonoBehaviour
     {
         // 패널(설정 · 덱 목록 · 선택 · 지도 미리보기 등)이 열려 있으면 전투 진행 정지
         return !UIModalStack.BlocksBattleInput
-            && !(trainingMap != null && trainingMap.IsVisible)
+            && !(trainingMap != null && trainingMap.CoversBattle)
             && !HasPendingSelection && !isDeckRewardInProgress && !(combatResolver?.IsResolvingCardPlay ?? false)
             && turnSystem.CanPlayerPlayCard();
     }
@@ -1050,7 +1078,7 @@ public class TrainingBattleManager : MonoBehaviour
     public bool CanEndPlayerTurn()
     {
         return !UIModalStack.BlocksBattleInput
-            && !(trainingMap != null && trainingMap.IsVisible)
+            && !(trainingMap != null && trainingMap.CoversBattle)
             && !HasPendingSelection && !isDeckRewardInProgress && !(combatResolver?.IsResolvingCardPlay ?? false)
             && turnSystem.CanEndPlayerTurn();
     }
@@ -1866,18 +1894,7 @@ public class TrainingBattleManager : MonoBehaviour
             yield break;
         }
 
-        List<int> upgradeIds = new List<int>(curiousCard.enforceCardIds ?? new List<int>());
-        List<Card> options = new List<Card>();
-        while (upgradeIds.Count > 0 && options.Count < GameRules.Deck.choiceCount)
-        {
-            int index = UnityEngine.Random.Range(0, upgradeIds.Count);
-            Card option = CardManager.GetCardAsCard(upgradeIds[index]);
-            upgradeIds.RemoveAt(index);
-            if (option != null)
-            {
-                options.Add(option);
-            }
-        }
+        List<Card> options = CardUpgradeOptions.PickRandom(curiousCard.enforceCardIds);
 
         curiousCard.isCurious = false;
         curiousCard.resolvedAsCuriosity = true;

@@ -11,7 +11,7 @@ public class SceneChanger : MonoBehaviour
         BossModeSession.Reset();
         TrainingBattleManager.buildingDeck = null;
         PlayerData.Reset();
-        TrainingRunState.StartNewRun(trainingBattleSceneName);
+        TrainingRunState.StartNewRun();
         SceneManager.LoadScene(trainingBattleSceneName);
     }
 

@@ -94,6 +94,13 @@ public class BattleUI : MonoBehaviour
         playerHealthBarView?.Refresh(playerData.hp, playerData.maxHP, playerData.defense);
     }
 
+    // 전투 밖(지도 · 휴식)에서 상단 바 체력을 런 체력으로 표시
+    public void UpdateRunHealth(int hp, int maxHp)
+    {
+        if (playerHPText != null)
+            playerHPText.text = $"{hp}/{maxHp}";
+    }
+
     /// <summary>
     /// 에너지 업데이트
     /// </summary>

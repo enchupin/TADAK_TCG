@@ -100,7 +100,7 @@ public class CardUI : MonoBehaviour
             return entries;
         }
 
-        TooltipColors colors = TooltipView.Colors;
+        TooltipColors colors = TooltipManager.Colors;
 
         List<int> keywordIds = new();
         CollectKeywordIds(currentCard.keywords, keywordIds);

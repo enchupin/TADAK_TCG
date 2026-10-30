@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -10,23 +9,25 @@ using UnityEngine.UI;
 /// </summary>
 public class TrainingMapController : MonoBehaviour
 {
-    [Header("Run Setup")]
-    [SerializeField] private string restSceneName = "TrainingRestScene";
-    [SerializeField] private string eventSceneName = "TrainingRestScene";
-
     [Header("Node UI")]
     [SerializeField] private RectTransform nodeRoot;
     [SerializeField] private RectTransform connectionRoot;
+    [Tooltip("Content 안의 지도 배경 (Content를 채워 지도 길이만큼 늘어나고 노드와 함께 스크롤, 연결선 · 노드보다 뒤에 그림)")]
+    [SerializeField] private RectTransform scrollBackground;
     [SerializeField] private Button monsterNodeButtonPrefab;
     [SerializeField] private Button namedNodeButtonPrefab;
     [SerializeField] private Button restNodeButtonPrefab;
     [SerializeField] private Button bossNodeButtonPrefab;
     [SerializeField] private RectTransform[] positionTemplates = new RectTransform[10];
     [SerializeField] private float floorSpacing = 200f;
+    [Tooltip("첫 층 기준점을 정하는 16:9 화면 폭 (21:9에서 넓어진 폭은 오른쪽 층을 더 보여주는 데 사용)")]
+    [SerializeField] private float referenceViewportWidth = 1920f;
+    // 지도 · 휴식이 열려 있는 동안 입력을 끄는 전투 영역 (상단 바 · 팝업은 제외)
+    [Tooltip("CombatCanvas/BattleField의 CanvasGroup (상단 바 · 팝업이 포함되지 않은 전투 영역)")]
     [SerializeField] private CanvasGroup combatInteraction;
     [SerializeField] private TrainingBattleManager battleManager;
-    [Tooltip("전투 화면 지도 버튼 (미리보기 중 지도 위로 올려 다시 눌러 닫음, 비우면 OnClick 연결로 찾음)")]
-    [SerializeField] private Button mapButton;
+    [Tooltip("휴식 · 탈출 이벤트 노드를 고르면 여는 전체 화면 패널")]
+    [SerializeField] private RestPanelController restPanel;
 
     [Header("Visuals")]
     [SerializeField] private Color selectableNodeColor = new Color(0.26f, 0.73f, 0.29f);
@@ -42,23 +43,18 @@ public class TrainingMapController : MonoBehaviour
     [SerializeField] private TMP_Text statusText;
 
     private Vector2 nodeAnchor;
+    // 노드를 배치할 때의 화면 폭 (해상도가 바뀌면 다시 배치)
+    private float builtViewportWidth;
     private Vector2 layoutNodeSize;
     private readonly Dictionary<int, Button> nodeButtons = new Dictionary<int, Button>();
     private readonly Dictionary<(int from, int to), Image> connectionImages = new Dictionary<(int, int), Image>();
 
     private bool isPreview;
-    private Canvas mapButtonCanvas;
-    private CanvasGroup mapButtonGroup;
     public bool IsVisible => gameObject.activeInHierarchy;
+    private bool IsRestOpen => restPanel != null && restPanel.IsOpen;
+    // 지도 또는 휴식 패널이 전투 영역을 덮고 있는지 (전투 조작 차단 판정)
+    public bool CoversBattle => IsVisible || IsRestOpen;
     private int? DisplayedCurrentNode => isPreview ? TrainingRunState.PendingNodeId : TrainingRunState.CurrentNodeId;
-
-    private void Awake()
-    {
-        // 전투 캔버스와 정렬 순서가 같으면 위아래가 활성 순서에 의존하므로 명시
-        Canvas canvas = GetComponent<Canvas>();
-        if (canvas != null) canvas.sortingOrder = UICanvasOrder.Map;
-        if (mapButton == null) mapButton = UIButtonLookup.FindByOnClick(this, nameof(OpenMapPreview));
-    }
 
     // 지도 버튼: 미리보기가 열려 있으면 닫기
     public void OpenMapPreview()
@@ -69,40 +65,62 @@ public class TrainingMapController : MonoBehaviour
             return;
         }
         if (IsVisible) return;
+        // 전투 종료 후(보상 진행 중)에는 막고, 휴식 중에는 휴식 위에 미리보기
         if (BossModeSession.IsActive || !TrainingRunState.PendingNodeId.HasValue
-            || battleManager.CurrentTurnState == BattleTurnState.CombatEnd) return;
+            || (battleManager.CurrentTurnState == BattleTurnState.CombatEnd && !IsRestOpen)) return;
         isPreview = true;
         DisplayMap();
         // 미리보기는 일반 패널 (ESC로 닫힘), 전투 후 노드 선택 지도는 기본 화면이라 등록하지 않음
         UIModalStack.Register(new UIModalEntry(this, UIModalKind.Normal, ClosePreview));
-        SetMapButtonRaised(true);
+        SetSelectionHiddenForPreview(true);
         SettingsManager.PlayPanelToggleSound();
     }
 
     private void ClosePreview()
     {
-        ShowBattle();
+        if (IsRestOpen)
+        {
+            // 휴식 중 미리보기는 지도만 닫고 휴식 화면으로 복귀 (전투 영역 입력은 계속 꺼 둠)
+            isPreview = false;
+            UIModalStack.Unregister(this);
+            SetSelectionHiddenForPreview(false);
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            ShowBattle();
+        }
         SettingsManager.PlayPanelToggleSound();
     }
 
-    // 미리보기 중 지도 버튼을 지도 위로 올려 다시 눌러 닫을 수 있게 함 (전투 캔버스 입력 차단도 무시)
-    private void SetMapButtonRaised(bool raised)
+    // 선택 패널이 지도보다 위에 그려지므로 미리보기 동안 숨김
+    private void SetSelectionHiddenForPreview(bool hidden)
     {
-        if (mapButton == null) return;
+        BattleDeckViewer deckViewer = battleManager != null ? battleManager.DeckViewer : null;
+        if (deckViewer != null) deckViewer.SetHiddenForMapPreview(hidden);
+    }
 
-        if (raised && mapButtonCanvas == null)
-        {
-            mapButtonCanvas = mapButton.GetComponent<Canvas>();
-            if (mapButtonCanvas == null) mapButtonCanvas = mapButton.gameObject.AddComponent<Canvas>();
-            if (mapButton.GetComponent<GraphicRaycaster>() == null) mapButton.gameObject.AddComponent<GraphicRaycaster>();
-            mapButtonGroup = mapButton.GetComponent<CanvasGroup>();
-            if (mapButtonGroup == null) mapButtonGroup = mapButton.gameObject.AddComponent<CanvasGroup>();
-        }
-        if (mapButtonCanvas == null) return;
+    // 씬을 다시 불러왔을 때 대기 중인 노드가 휴식 · 이벤트면 전투 대신 휴식 패널을 엶
+    public bool TryOpenPendingRest()
+    {
+        if (restPanel == null || !TrainingRunState.PendingNodeId.HasValue
+            || !TrainingRunState.TryGetNode(TrainingRunState.PendingNodeId.Value, out TrainingMapNodeData node)
+            || !RestPanelController.IsRestNode(node))
+            return false;
 
-        mapButtonCanvas.overrideSorting = raised;
-        mapButtonCanvas.sortingOrder = raised ? UICanvasOrder.Map + 1 : 0;
-        mapButtonGroup.ignoreParentGroups = raised;
+        OpenRestPanel(node);
+        return true;
+    }
+
+    private void OpenRestPanel(TrainingMapNodeData node)
+    {
+        if (!restPanel.Open(node, this, battleManager)) return;
+        isPreview = false;
+        UIModalStack.Unregister(this);
+        SetSelectionHiddenForPreview(false);
+        gameObject.SetActive(false);
+        combatInteraction.interactable = false;
+        combatInteraction.blocksRaycasts = false;
     }
 
     private void OnEnable()
@@ -114,7 +132,6 @@ public class TrainingMapController : MonoBehaviour
     {
         LocalizationManager.LanguageChanged -= RefreshLocalizedTexts;
         UIModalStack.Unregister(this);
-        SetMapButtonRaised(false);
     }
 
     // 언어 변경 시 노드 이름 · 상태 문구 갱신
@@ -135,7 +152,7 @@ public class TrainingMapController : MonoBehaviour
     {
         isPreview = false;
         UIModalStack.Unregister(this);
-        SetMapButtonRaised(false);
+        SetSelectionHiddenForPreview(false);
         DisplayMap();
     }
 
@@ -144,7 +161,7 @@ public class TrainingMapController : MonoBehaviour
         gameObject.SetActive(true);
         combatInteraction.interactable = false;
         combatInteraction.blocksRaycasts = false;
-        if (nodeButtons.Count == 0) BuildMapUI();
+        if (nodeButtons.Count == 0 || !Mathf.Approximately(builtViewportWidth, GetViewportWidth())) BuildMapUI();
         else
         {
             foreach (var entry in nodeButtons)
@@ -165,7 +182,7 @@ public class TrainingMapController : MonoBehaviour
     {
         isPreview = false;
         UIModalStack.Unregister(this);
-        SetMapButtonRaised(false);
+        SetSelectionHiddenForPreview(false);
         combatInteraction.interactable = true;
         combatInteraction.blocksRaycasts = true;
         gameObject.SetActive(false);
@@ -207,30 +224,16 @@ public class TrainingMapController : MonoBehaviour
 
         Debug.Log($"[TrainingMapController] Node selected: {node.nodeId} ({node.nodeType})");
 
-        if (node.nodeType == TrainingNodeType.Rest)
+        if (RestPanelController.IsRestNode(node))
         {
-            if (string.IsNullOrEmpty(restSceneName))
+            if (restPanel == null)
             {
-                Debug.LogWarning("[TrainingMapController] Rest scene is empty. Resolving rest node immediately.");
+                Debug.LogWarning("[TrainingMapController] 휴식 패널이 연결되지 않아 노드를 바로 완료합니다");
                 CompleteNodeOnMap();
                 return;
             }
 
-            SceneManager.LoadScene(restSceneName);
-            return;
-        }
-
-        if (node.nodeType == TrainingNodeType.Event)
-        {
-            string targetSceneName = string.IsNullOrEmpty(eventSceneName) ? restSceneName : eventSceneName;
-            if (string.IsNullOrEmpty(targetSceneName))
-            {
-                Debug.LogWarning("[TrainingMapController] Event scene is empty. Resolving event node immediately.");
-                CompleteNodeOnMap();
-                return;
-            }
-
-            SceneManager.LoadScene(targetSceneName);
+            OpenRestPanel(node);
             return;
         }
 
@@ -260,6 +263,9 @@ public class TrainingMapController : MonoBehaviour
         connectionRoot.offsetMin = Vector2.zero;
         connectionRoot.offsetMax = Vector2.zero;
         connectionRoot.SetAsFirstSibling();
+        // 지도 배경은 연결선보다 뒤
+        if (scrollBackground != null && scrollBackground.parent == nodeRoot)
+            scrollBackground.SetAsFirstSibling();
     }
 
     private void SpawnNodeButtons(IReadOnlyList<TrainingMapNodeData> nodes, IReadOnlyDictionary<int, Vector2> nodePositions)
@@ -544,18 +550,29 @@ public class TrainingMapController : MonoBehaviour
 
     private void UpdateLayoutMetrics(IReadOnlyList<TrainingMapNodeData> nodes)
     {
-        ScrollRect scroll = nodeRoot.GetComponentInParent<ScrollRect>();
-        RectTransform viewport = scroll != null ? scroll.viewport : nodeRoot.parent as RectTransform;
-        float viewportWidth = viewport.rect.width;
-        float originX = viewportWidth * 0.5f;
+        float viewportWidth = GetViewportWidth();
+        builtViewportWidth = viewportWidth;
+        // 기준 버튼 좌표 원점은 16:9 화면 중앙 (넓은 화면에서도 첫 층 위치는 왼쪽 기준으로 같음)
+        float originX = Mathf.Min(viewportWidth, referenceViewportWidth) * 0.5f;
         int lastStage = 0;
         foreach (TrainingMapNodeData node in nodes) lastStage = Mathf.Max(lastStage, node.stageIndex);
         layoutNodeSize = positionTemplates[0].sizeDelta;
+        // 오른쪽 끝 여유를 첫 층 왼쪽 여유와 같게 맞춤 (지도 배경 좌우 여백 일치)
+        float firstNodeLeft = originX + positionTemplates[0].anchoredPosition.x - layoutNodeSize.x * 0.5f;
+        float sideMargin = Mathf.Max(0f, firstNodeLeft);
         float width = Mathf.Max(viewportWidth,
-            originX + positionTemplates[0].anchoredPosition.x + lastStage * floorSpacing + layoutNodeSize.x * 0.5f + 60f);
+            originX + positionTemplates[0].anchoredPosition.x + lastStage * floorSpacing + layoutNodeSize.x * 0.5f + sideMargin);
         nodeRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
         // Content 확장 후에도 기준 버튼의 좌표 원점을 첫 화면 중앙에 유지
         nodeAnchor = new Vector2(originX / width, 0.5f);
+    }
+
+    private float GetViewportWidth()
+    {
+        if (nodeRoot == null) return 0f;
+        ScrollRect scroll = nodeRoot.GetComponentInParent<ScrollRect>();
+        RectTransform viewport = scroll != null ? scroll.viewport : nodeRoot.parent as RectTransform;
+        return viewport != null ? viewport.rect.width : 0f;
     }
 
     private void ResetScrollPosition()

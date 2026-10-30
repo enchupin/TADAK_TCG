@@ -321,7 +321,7 @@ class Program {
   var allowedLiterals=new HashSet<string>{
    "Localization/GameText.cs|기본 덱","Localization/GameText.cs|새 덱","Localization/GameText.cs|이름 없는 덱",
    "Save/CharacterDeckSave.cs|새 덱","Save/ProfileSaveManager.cs|기본 덱","Save/ProfileSaveManager.cs|이름 없는 덱","Battle/BuildingDeck.cs|기본 덱",
-   "Battle/BuildingDeck.cs|저장덱을 갱신했습니다","Battle/TrainingBattleManager.cs|보스 클리어로 저장덱을 갱신했습니다","TrainingMode/RestSceneController.cs|이벤트 탈출로 저장덱을 갱신했습니다",
+   "Battle/BuildingDeck.cs|저장덱을 갱신했습니다","Battle/TrainingBattleManager.cs|보스 클리어로 저장덱을 갱신했습니다","TrainingMode/RestPanelController.cs|이벤트 탈출로 저장덱을 갱신했습니다",
    "Battle/PlayerData.cs|턴 시작: 보호막 유지 발동, 에너지 회복","Battle/PlayerData.cs|턴 시작: 방어력 리셋, 에너지 회복","Card/Buff/BuffMetadataResolver.cs|버프 {buffId}"};
   var literal=new System.Text.RegularExpressions.Regex("\"((?:[^\"\\\\]|\\\\.)*)\"");
   var skipLine=new System.Text.RegularExpressions.Regex(@"Debug\.Log|throw new|\[Header\(|\[Tooltip\(|Exception\(");

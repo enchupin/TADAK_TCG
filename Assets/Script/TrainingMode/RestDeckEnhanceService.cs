@@ -47,28 +47,6 @@ public static class RestDeckEnhanceService
         return candidates;
     }
 
-    public static List<int> GetRandomEnhanceOptions(RestDeckEnhanceCandidate candidate, int optionCount = 3)
-    {
-        List<int> options = candidate?.enhanceCardIds != null
-            ? new List<int>(candidate.enhanceCardIds)
-            : new List<int>();
-
-        for (int i = 0; i < options.Count; i++)
-        {
-            int swapIndex = Random.Range(i, options.Count);
-            int temp = options[i];
-            options[i] = options[swapIndex];
-            options[swapIndex] = temp;
-        }
-
-        if (options.Count > optionCount)
-        {
-            options.RemoveRange(optionCount, options.Count - optionCount);
-        }
-
-        return options;
-    }
-
     public static bool TryApplyEnhance(BuildingDeck useDeck, RestDeckEnhanceCandidate candidate, int enhanceCardId)
     {
         if (useDeck == null || candidate == null || enhanceCardId <= 0)

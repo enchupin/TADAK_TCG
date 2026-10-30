@@ -45,6 +45,7 @@ $project = '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</Out
     '<Compile Include="' + $escapedRoot + '/Assets/Script/Data/GameRules.cs" />' +
     '<Compile Include="' + $escapedRoot + '/Assets/Script/Character/Character.cs" />' +
     '<Compile Include="' + $escapedRoot + '/Assets/Script/Card/CardKeywordIds.cs" />' +
+    '<Compile Include="' + $escapedRoot + '/Assets/Script/Card/CardUpgradeOptions.cs" />' +
     '<Compile Include="' + $escapedRoot + '/Assets/Script/Character/Identity/CharacterIdentityDefinition.cs" />' +
     '<Compile Include="' + $escapedRoot + '/Assets/Script/Character/Identity/CharacterIdentityState.cs" />' +
     '<Compile Include="' + $escapedRoot + '/Assets/Script/Character/Identity/CharacterIdentityService.cs" />' +

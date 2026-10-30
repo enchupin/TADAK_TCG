@@ -38,7 +38,7 @@ public static class IntentTooltipTextBuilder
             formattedLines.Add((BuildIntentName(line.IconTypes), line.Sentence));
         }
 
-        return IntentTooltipFormatter.FormatLines(formattedLines, TooltipView.Colors, BuffTooltipTextBuilder.TryResolveReference, BuffTooltipTextBuilder.TryResolveBuffId);
+        return IntentTooltipFormatter.FormatLines(formattedLines, TooltipManager.Colors, BuffTooltipTextBuilder.TryResolveReference, BuffTooltipTextBuilder.TryResolveBuffId);
     }
 
     // 특수 패턴처럼 한 문장에 여러 의도가 섞이면 이름을 이어서 표시

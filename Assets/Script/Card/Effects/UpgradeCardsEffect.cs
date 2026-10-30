@@ -83,18 +83,7 @@ public class UpgradeCardsEffect : ICardEffect
             return;
         }
 
-        List<int> upgradeIds = new List<int>(card.enforceCardIds);
-        List<Card> options = new List<Card>();
-        while (upgradeIds.Count > 0 && options.Count < GameRules.Deck.choiceCount)
-        {
-            int index = UnityEngine.Random.Range(0, upgradeIds.Count);
-            Card option = CardManager.GetCardAsCard(upgradeIds[index]);
-            upgradeIds.RemoveAt(index);
-            if (option != null)
-            {
-                options.Add(option);
-            }
-        }
+        List<Card> options = CardUpgradeOptions.PickRandom(card.enforceCardIds);
 
         if (options.Count == 0)
         {

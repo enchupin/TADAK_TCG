@@ -32,7 +32,6 @@ public static class TrainingRunState
     public static bool IsRunCompleted { get; private set; }
     public static bool IsRunFailed { get; private set; }
 
-    public static string BattleSceneName { get; private set; } = string.Empty;
 
     public static int? CurrentNodeId { get; private set; }
     public static int? PendingNodeId { get; private set; }
@@ -103,11 +102,9 @@ public static class TrainingRunState
         return identityGaugeByCharacter;
     }
 
-    public static void StartNewRun(string battleSceneName)
+    public static void StartNewRun()
     {
         ResetRun();
-
-        BattleSceneName = battleSceneName;
 
         BuildSimpleMap();
 
@@ -132,7 +129,6 @@ public static class TrainingRunState
         PlayerMaxHp = 0;
         identityGaugeByCharacter.Clear();
 
-        BattleSceneName = string.Empty;
 
         IsRunActive = false;
         IsRunCompleted = false;
