@@ -40,6 +40,8 @@ public class HandManager : MonoBehaviour
     // 손패 선택에서 후보 카드 UI를 찾고 되돌릴 부모
     public Transform HandContainer => handContainer;
     public Transform PlayCenterPosition => drawUI != null ? drawUI.PlayCenterPosition : null;
+    // 중앙 대기 · 버린 더미 이동 중인 사용 연출이 남아 있는지 (턴 종료 대기 판정)
+    public bool HasPendingUseAnimations => drawUI != null && drawUI.HasPendingUseAnimations;
 
     private void OnEnable()
     {
@@ -429,7 +431,7 @@ public class HandManager : MonoBehaviour
         return handCardRects.IndexOf(hoveredCardRect);
     }
 
-    private bool OwnsCardRect(RectTransform cardRect)
+    public bool OwnsCardRect(RectTransform cardRect)
     {
         return cardRect != null && handContainer != null && cardRect.parent == handContainer;
     }
@@ -688,12 +690,12 @@ public class HandManager : MonoBehaviour
         Destroy(cardUI.gameObject);
     }
 
-    public Coroutine RemoveCardFromHandWithUseAnimation(CardUI cardUI)
+    public void RemoveCardFromHandWithUseAnimation(CardUI cardUI)
     {
         if (cardUI == null)
         {
             Debug.LogWarning("[HandManager] CardUI is null.");
-            return null;
+            return;
         }
 
         CardController controller = cardUI.GetComponent<CardController>();
@@ -701,7 +703,7 @@ public class HandManager : MonoBehaviour
         {
             Debug.LogWarning("[HandManager] CardController or Card is missing.");
             Destroy(cardUI.gameObject);
-            return null;
+            return;
         }
 
         Card card = controller.Card;
@@ -712,27 +714,22 @@ public class HandManager : MonoBehaviour
             UpdateHandCardPositions();
         }
 
-        return PlayUseAnimation(cardUI);
+        PlayUseAnimation(cardUI);
     }
 
     // 손패 목록은 그대로 두고 사용 연출만 실행 (연출 불가 시 즉시 제거)
-    public Coroutine PlayUseAnimation(CardUI cardUI)
+    // 연출은 DrawUI 대기열에서 순서대로 진행
+    public void PlayUseAnimation(CardUI cardUI)
     {
         if (cardUI == null)
         {
-            return null;
+            return;
         }
 
-        Coroutine useAnimation = drawUI != null
-            ? drawUI.PlayUseToDiscard(cardUI.gameObject)
-            : null;
-
-        if (useAnimation == null)
+        if (drawUI == null || !drawUI.PlayUseToDiscard(cardUI.gameObject))
         {
             Destroy(cardUI.gameObject);
         }
-
-        return useAnimation;
     }
 
     public bool RemoveCard(Card card)

@@ -208,6 +208,8 @@ public class CardInteractionHandler : UIHoverEffect,
 
         CardController cc = cardUI.GetComponent<CardController>();
         if (cc == null || cc.Card == null || cc.Card.effects == null) return false;
+        // 호기심 카드는 본래 효과 없이 강화만 하므로 대상 지정 없음
+        if (cc.Card.isCurious) return false;
 
         bool hasSingleEnemyTarget = false;
         CollectTargetingFlags(cc.Card.effects, ref hasSingleEnemyTarget);
@@ -719,8 +721,17 @@ public class CardInteractionHandler : UIHoverEffect,
             return;
         }
 
-        SetLocalRotationZ(originalLocalRotationZ);
         hasOriginalLocalRotationZ = false;
+
+        // 잡을 때 저장한 각도는 호버로 0이 된 값일 수 있으므로 손패 안의 카드는 손패 배치 각도로 복구
+        HandManager owner = ResolveHandManager();
+        if (owner != null && owner.OwnsCardRect(rectTransform))
+        {
+            owner.UpdateHandCardPositions();
+            return;
+        }
+
+        SetLocalRotationZ(originalLocalRotationZ);
     }
 
     private void SetLocalRotationZ(float rotationZ)

@@ -303,6 +303,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1679401951}
   - component: {fileID: 2200000108}
+  - component: {fileID: 9189344250175657266}
   m_Layer: 5
   m_Name: Buff
   m_TagString: Untagged
@@ -341,16 +342,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44ff65327ac65ca44bb4eeb6efefdc9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuffUI
-  iconSlots:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   target: 1
   targetMonster: {fileID: 0}
   iconPrefab: {fileID: 282176561743681855, guid: 7bae7f7268bcea549bab4687c271c17e, type: 3}
@@ -360,6 +351,21 @@ MonoBehaviour:
   stackFontSize: 16
   widthSource: {fileID: 61577713}
   tooltipSpacing: 4
+--- !u!114 &9189344250175657266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1679401950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0c8df7190ecefa4c9fe1410a69231a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TooltipTrigger
+  anchor: {fileID: 0}
+  placement: 0
+  spacing: 4
 --- !u!1 &2300000000
 GameObject:
   m_ObjectHideFlags: 0
@@ -897,27 +903,12 @@ MonoBehaviour:
   healthBarWidthPadding: 0
   healthBarMaxWidth: 0
   buffUI: {fileID: 2200000108}
-  intendSlots:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  intendValueTexts:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  intentTooltipArea: {fileID: 6950993072022065549}
-  intentTooltipSpacing: 6
   intentIconContainer: {fileID: 6950993072022065549}
   intentIconPrefab: {fileID: 4033430989106270898, guid: 8a158762daee8674b8448710203eea52, type: 3}
   intentIconSize: 50
   intentIconSpacing: 4
   intentValueFontSize: 20
+  intentTooltipSpacing: 6
   attackIntendSprite: {fileID: 21300000, guid: 732fd195e838aad43b9659e043250e61, type: 3}
   protectionIntendSprite: {fileID: 21300000, guid: 879211450ea49a244b79d89889db89aa, type: 3}
   beneficialIntendSprite: {fileID: 21300000, guid: c42d67339a06a23498c4bc03a0d44dba, type: 3}

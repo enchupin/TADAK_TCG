@@ -2342,17 +2342,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 327824005}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1573243720}
+  m_Children:
+  - {fileID: 403357183}
+  m_Father: {fileID: 1903063035}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 240, y: 0}
-  m_SizeDelta: {x: 50, y: 50}
+  m_AnchoredPosition: {x: 160, y: 130}
+  m_SizeDelta: {x: 75, y: 75}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &327824007
 MonoBehaviour:
@@ -2538,7 +2539,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8a26f1d912a4d8590963d457ff68d32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHoverSpriteEffect
-  targetImage: {fileID: 0}
+  targetImage: {fileID: 348479878}
   hoverSprite: {fileID: 8479970880628446919, guid: ea7fcd93682fe1441a78c5a6a4cdeb49, type: 3}
 --- !u!1 &360743173
 GameObject:
@@ -2824,7 +2825,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8a26f1d912a4d8590963d457ff68d32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHoverSpriteEffect
-  targetImage: {fileID: 0}
+  targetImage: {fileID: 380076998}
   hoverSprite: {fileID: 8479970880628446919, guid: ea7fcd93682fe1441a78c5a6a4cdeb49, type: 3}
 --- !u!1 &403357182
 GameObject:
@@ -2851,16 +2852,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 403357182}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1573243720}
+  m_Father: {fileID: 327824006}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 300, y: 0}
+  m_AnchoredPosition: {x: 80, y: 0}
   m_SizeDelta: {x: 80, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &403357184
@@ -2916,7 +2917,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -3635,7 +3636,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8a26f1d912a4d8590963d457ff68d32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHoverSpriteEffect
-  targetImage: {fileID: 0}
+  targetImage: {fileID: 502347059}
   hoverSprite: {fileID: 8479970880628446919, guid: ea7fcd93682fe1441a78c5a6a4cdeb49, type: 3}
 --- !u!1 &508993662
 GameObject:
@@ -3707,10 +3708,10 @@ MonoBehaviour:
   cardDetailPanelRoot: {fileID: 1880759998}
   cardDetailCardParent: {fileID: 1880759999}
   cardDetailCardPrefab: {fileID: 3192966017208014355, guid: df592ae6592a32d4b8266e0a5479e78e, type: 3}
-  drawPileButton: {fileID: 0}
-  discardPileButton: {fileID: 0}
-  exhaustPileButton: {fileID: 0}
-  fullDeckButton: {fileID: 0}
+  drawPileButton: {fileID: 348479877}
+  discardPileButton: {fileID: 502347058}
+  exhaustPileButton: {fileID: 1178847205}
+  fullDeckButton: {fileID: 380076997}
   selectionHideButton: {fileID: 0}
   battleManager: {fileID: 1545498654}
 --- !u!114 &508993667
@@ -3767,7 +3768,7 @@ MonoBehaviour:
   battleManager: {fileID: 1545498654}
   defeatPanel: {fileID: 467760686}
   lobbySceneName: LobbyScene
-  settingsButton: {fileID: 0}
+  settingsButton: {fileID: 732822067}
 --- !u!114 &508993669
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3810,6 +3811,7 @@ MonoBehaviour:
   playCenterMoveDuration: 0.2
   playCenterPauseDuration: 0.2
   discardMoveDuration: 0.35
+  playQueueStackOffset: {x: 16, y: -8}
   showDebugPathOnMove: 1
   debugTargetPosition: {fileID: 1133701496}
   debugPathColor: {r: 0, g: 1, b: 1, a: 1}
@@ -5093,7 +5095,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8a26f1d912a4d8590963d457ff68d32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHoverSpriteEffect
-  targetImage: {fileID: 0}
+  targetImage: {fileID: 732822068}
   hoverSprite: {fileID: -4646867088270418589, guid: df7782a656f972b449bd8502b00e3b54, type: 3}
 --- !u!1 &779922503
 GameObject:
@@ -7329,7 +7331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8a26f1d912a4d8590963d457ff68d32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHoverSpriteEffect
-  targetImage: {fileID: 0}
+  targetImage: {fileID: 1178847206}
   hoverSprite: {fileID: 118611341925778174, guid: 74d5e4807371c8b4aa57ae5628d2befe, type: 3}
 --- !u!1 &1188217565
 GameObject:
@@ -9332,7 +9334,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28f46181b3bd4c04b8a2a814b994b834, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AspectCoverImage
-  image: {fileID: 0}
+  image: {fileID: 1487892412}
   fallbackAspect: 1.7777778
 --- !u!1 &1505419267
 GameObject:
@@ -9419,7 +9421,7 @@ MonoBehaviour:
   battleUI: {fileID: 508993668}
   monsterSpawner: {fileID: 2073456888}
   battleDeckViewer: {fileID: 508993666}
-  handSelectionConfirmButton: {fileID: 0}
+  handSelectionConfirmButton: {fileID: 535886427}
   overrideTurnSettingsFromInspector: 0
   drawCardCount: 5
   maxHandCardCount: 10
@@ -9469,8 +9471,6 @@ RectTransform:
   m_Children:
   - {fileID: 283992554}
   - {fileID: 1109473046}
-  - {fileID: 327824006}
-  - {fileID: 403357183}
   - {fileID: 732822066}
   - {fileID: 380076996}
   - {fileID: 1381567908}
@@ -11701,6 +11701,7 @@ RectTransform:
   - {fileID: 2101220817}
   - {fileID: 348479876}
   - {fileID: 584888245}
+  - {fileID: 327824006}
   m_Father: {fileID: 11197374}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

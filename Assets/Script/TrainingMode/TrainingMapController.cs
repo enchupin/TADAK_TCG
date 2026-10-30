@@ -123,9 +123,29 @@ public class TrainingMapController : MonoBehaviour
         combatInteraction.blocksRaycasts = false;
     }
 
+    private void Awake()
+    {
+        BindWheelRouter();
+    }
+
     private void OnEnable()
     {
         LocalizationManager.LanguageChanged += RefreshLocalizedTexts;
+    }
+
+    // 휠을 아래로 굴리면 지도가 오른쪽(다음 층)으로 이동하도록 휠 입력을 가로 스크롤로 전달
+    private void BindWheelRouter()
+    {
+        ScrollRect scrollRect = nodeRoot != null ? nodeRoot.GetComponentInParent<ScrollRect>(true) : null;
+        // ScrollRect와 같은 오브젝트에 붙이면 휠 입력이 두 번 처리되므로 Viewport에만 붙임
+        if (scrollRect == null || scrollRect.viewport == null || scrollRect.viewport == scrollRect.transform)
+            return;
+
+        GameObject wheelTarget = scrollRect.viewport.gameObject;
+        ScrollRectWheelRouter wheelRouter = wheelTarget.GetComponent<ScrollRectWheelRouter>();
+        if (wheelRouter == null)
+            wheelRouter = wheelTarget.AddComponent<ScrollRectWheelRouter>();
+        wheelRouter.Bind(scrollRect);
     }
 
     private void OnDisable()

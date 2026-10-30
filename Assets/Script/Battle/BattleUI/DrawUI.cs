@@ -24,6 +24,8 @@ public class DrawUI : MonoBehaviour
     [SerializeField] private float playCenterMoveDuration = 0.2f;
     [SerializeField] private float playCenterPauseDuration = 0.2f;
     [SerializeField] private float discardMoveDuration = 0.35f;
+    [Tooltip("중앙에서 사용 대기 중인 카드가 앞 카드 뒤로 한 장마다 밀리는 거리 (0이면 완전히 겹침)")]
+    [SerializeField] private Vector2 playQueueStackOffset = new Vector2(16f, -8f);
 
     [Header("Debug")]
     [SerializeField] private bool showDebugPathOnMove;
@@ -36,6 +38,23 @@ public class DrawUI : MonoBehaviour
 
     // 카드 사용 연출의 중앙 지점 (손패 선택에서 고른 카드를 놓는 위치로도 사용)
     public Transform PlayCenterPosition => playCenterPosition;
+
+    // 사용 연출 대기열 항목 (중앙에 겹쳐 대기하다가 순서대로 버린 더미로 이동)
+    private class UseAnimationEntry
+    {
+        public GameObject CardObject;
+        public CanvasGroup CanvasGroup;
+        public Coroutine Move;
+        public bool Arrived;
+    }
+
+    private readonly System.Collections.Generic.List<UseAnimationEntry> useAnimationQueue = new System.Collections.Generic.List<UseAnimationEntry>();
+    private Coroutine useAnimationQueueRoutine;
+    // 대기열을 떠나 버린 더미로 날아가는 중인 카드 수
+    private int useDiscardFlightCount;
+
+    // 중앙 대기 중이거나 버린 더미로 이동 중인 사용 연출이 있는지
+    public bool HasPendingUseAnimations => isActiveAndEnabled && (useAnimationQueue.Count > 0 || useDiscardFlightCount > 0);
 
     private Transform cachedFallbackDrawStartPosition;
     private GameObject debugPathRoot;
@@ -154,16 +173,23 @@ public class DrawUI : MonoBehaviour
         }
     }
 
-    public Coroutine PlayUseToDiscard(GameObject cardObject)
+    // 사용 연출을 대기열에 넣음 (연출을 시작하지 못하면 false)
+    public bool PlayUseToDiscard(GameObject cardObject)
     {
         if (cardObject == null || !isActiveAndEnabled || drawAnimationPrefab == null || discardTargetPosition == null)
         {
-            return null;
+            return false;
         }
 
         Transform target = cardObject.transform;
         target.SetParent(ResolveAnimationRoot(target), true);
         target.SetAsLastSibling();
+        // 먼저 사용한 카드가 위에 보이도록 대기 카드는 앞 카드 뒤에 겹침
+        GameObject lastQueuedCard = useAnimationQueue.Count > 0 ? useAnimationQueue[useAnimationQueue.Count - 1].CardObject : null;
+        if (lastQueuedCard != null && lastQueuedCard.transform.parent == target.parent)
+        {
+            target.SetSiblingIndex(lastQueuedCard.transform.GetSiblingIndex());
+        }
         target.localRotation = Quaternion.identity;
         DisableAnimationCardInput(cardObject);
 
@@ -177,7 +203,31 @@ public class DrawUI : MonoBehaviour
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;
 
-        return StartCoroutine(PlayUseToDiscardRoutine(cardObject, canvasGroup, discardTargetPosition));
+        UseAnimationEntry entry = new UseAnimationEntry { CardObject = cardObject, CanvasGroup = canvasGroup };
+        useAnimationQueue.Add(entry);
+        MoveUseEntryToSlot(entry, useAnimationQueue.Count - 1);
+        if (useAnimationQueueRoutine == null)
+        {
+            useAnimationQueueRoutine = StartCoroutine(RunUseAnimationQueue());
+        }
+
+        return true;
+    }
+
+    // 비활성화로 연출 코루틴이 멈추면 대기 중인 카드가 화면에 남지 않도록 정리
+    private void OnDisable()
+    {
+        foreach (UseAnimationEntry entry in useAnimationQueue)
+        {
+            if (entry.CardObject != null)
+            {
+                Destroy(entry.CardObject);
+            }
+        }
+
+        useAnimationQueue.Clear();
+        useAnimationQueueRoutine = null;
+        useDiscardFlightCount = 0;
     }
 
     private IEnumerator MoveCard(
@@ -243,22 +293,80 @@ public class DrawUI : MonoBehaviour
         }
     }
 
-    private IEnumerator PlayUseToDiscardRoutine(GameObject cardObject, CanvasGroup cardCanvasGroup, Transform discardTarget)
+    // 대기열 칸 위치 (0번 칸이 중앙, 뒤 칸일수록 playQueueStackOffset만큼 밀림)
+    private Vector3 ResolveUseQueueSlotPosition(Transform cardTransform, int slotIndex)
     {
-        if (cardObject == null)
-        {
-            yield break;
-        }
-
-        Transform cardTransform = cardObject.transform;
         Vector3 centerPosition = ResolvePlayCenterPosition(cardTransform.position);
-        yield return MoveStraight(cardTransform, centerPosition, playCenterMoveDuration);
-
-        if (playCenterPauseDuration > 0f)
+        if (slotIndex <= 0 || cardTransform.parent == null)
         {
-            yield return new WaitForSeconds(playCenterPauseDuration);
+            return centerPosition;
         }
 
+        return centerPosition + cardTransform.parent.TransformVector(playQueueStackOffset * slotIndex);
+    }
+
+    private void MoveUseEntryToSlot(UseAnimationEntry entry, int slotIndex)
+    {
+        if (entry.CardObject == null)
+        {
+            return;
+        }
+
+        if (entry.Move != null)
+        {
+            StopCoroutine(entry.Move);
+        }
+
+        entry.Arrived = false;
+        entry.Move = StartCoroutine(MoveUseEntry(entry, ResolveUseQueueSlotPosition(entry.CardObject.transform, slotIndex)));
+    }
+
+    private IEnumerator MoveUseEntry(UseAnimationEntry entry, Vector3 slotPosition)
+    {
+        Transform cardTransform = entry.CardObject != null ? entry.CardObject.transform : null;
+        // 이미 그 칸에 있으면 이동 시간 없이 바로 도착 처리
+        if (cardTransform != null && (cardTransform.position - slotPosition).sqrMagnitude > 0.0001f)
+        {
+            yield return MoveStraight(cardTransform, slotPosition, playCenterMoveDuration);
+        }
+
+        entry.Move = null;
+        entry.Arrived = true;
+    }
+
+    // 맨 앞 카드가 중앙에 도착하면 잠시 멈췄다가 버린 더미로 보내고, 다음 카드를 한 칸씩 앞당김
+    private IEnumerator RunUseAnimationQueue()
+    {
+        while (useAnimationQueue.Count > 0)
+        {
+            UseAnimationEntry entry = useAnimationQueue[0];
+            while (entry.CardObject != null && !entry.Arrived)
+            {
+                yield return null;
+            }
+
+            if (entry.CardObject != null && playCenterPauseDuration > 0f)
+            {
+                yield return new WaitForSeconds(playCenterPauseDuration);
+            }
+
+            useAnimationQueue.RemoveAt(0);
+            if (entry.CardObject != null)
+            {
+                StartCoroutine(MoveUsedCardToDiscard(entry.CardObject, entry.CanvasGroup, discardTargetPosition));
+            }
+
+            for (int i = 0; i < useAnimationQueue.Count; i++)
+            {
+                MoveUseEntryToSlot(useAnimationQueue[i], i);
+            }
+        }
+
+        useAnimationQueueRoutine = null;
+    }
+
+    private IEnumerator MoveUsedCardToDiscard(GameObject cardObject, CanvasGroup cardCanvasGroup, Transform discardTarget)
+    {
         if (cardObject == null || discardTarget == null)
         {
             if (cardObject != null)
@@ -269,22 +377,29 @@ public class DrawUI : MonoBehaviour
             yield break;
         }
 
-        GameObject discardAnimationCard = CreateUseDiscardAnimationCard(cardTransform);
+        GameObject discardAnimationCard = CreateUseDiscardAnimationCard(cardObject.transform);
         if (cardCanvasGroup != null)
         {
             cardCanvasGroup.alpha = 0f;
         }
 
-        yield return MoveToDiscard(discardAnimationCard.transform, discardTarget);
-
-        if (discardAnimationCard != null)
+        useDiscardFlightCount++;
+        try
         {
-            Destroy(discardAnimationCard);
+            yield return MoveToDiscard(discardAnimationCard.transform, discardTarget);
         }
-
-        if (cardObject != null)
+        finally
         {
-            Destroy(cardObject);
+            useDiscardFlightCount = Mathf.Max(0, useDiscardFlightCount - 1);
+            if (discardAnimationCard != null)
+            {
+                Destroy(discardAnimationCard);
+            }
+
+            if (cardObject != null)
+            {
+                Destroy(cardObject);
+            }
         }
     }
 
