@@ -20,6 +20,8 @@ public class ScrollRectWheelRouter : MonoBehaviour, IScrollHandler
             return;
         }
         if (Mathf.Abs(eventData.scrollDelta.y) <= Mathf.Abs(eventData.scrollDelta.x)) {
+            // 가로 입력(터치패드 · 틸트 휠)은 그대로 전달
+            scrollRect.OnScroll(eventData);
             return;
         }
 
@@ -27,8 +29,9 @@ public class ScrollRectWheelRouter : MonoBehaviour, IScrollHandler
             return;
         }
 
+        // 휠을 아래로 굴리면 오른쪽으로 이동 (ScrollRect 기본 동작은 왼쪽)
         PointerEventData routedEventData = new PointerEventData(EventSystem.current) {
-            scrollDelta = new Vector2(-eventData.scrollDelta.y, 0f)
+            scrollDelta = new Vector2(eventData.scrollDelta.y, 0f)
         };
         scrollRect.OnScroll(routedEventData);
     }
