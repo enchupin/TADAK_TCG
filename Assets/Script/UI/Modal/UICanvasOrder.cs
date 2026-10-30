@@ -5,8 +5,6 @@ public static class UICanvasOrder
 {
     // 전투 · 로비 등 씬 기본 화면
     public const int Scene = 0;
-    // 전투 중 지도
-    public const int Map = 5;
     // 설정 (DontDestroyOnLoad 시스템 캔버스)
     public const int Settings = 10;
 }

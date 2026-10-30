@@ -23,10 +23,10 @@ public class TrainingMapController : MonoBehaviour
     [SerializeField] private Button bossNodeButtonPrefab;
     [SerializeField] private RectTransform[] positionTemplates = new RectTransform[10];
     [SerializeField] private float floorSpacing = 200f;
+    // 지도 · 휴식이 열려 있는 동안 입력을 끄는 전투 영역 (상단 바 · 팝업은 제외)
+    [Tooltip("CombatCanvas/BattleField의 CanvasGroup (상단 바 · 팝업이 포함되지 않은 전투 영역)")]
     [SerializeField] private CanvasGroup combatInteraction;
     [SerializeField] private TrainingBattleManager battleManager;
-    [Tooltip("전투 화면 지도 버튼 (미리보기 중 지도 위로 올려 다시 눌러 닫음, 비우면 OnClick 연결로 찾음)")]
-    [SerializeField] private Button mapButton;
 
     [Header("Visuals")]
     [SerializeField] private Color selectableNodeColor = new Color(0.26f, 0.73f, 0.29f);
@@ -47,18 +47,8 @@ public class TrainingMapController : MonoBehaviour
     private readonly Dictionary<(int from, int to), Image> connectionImages = new Dictionary<(int, int), Image>();
 
     private bool isPreview;
-    private Canvas mapButtonCanvas;
-    private CanvasGroup mapButtonGroup;
     public bool IsVisible => gameObject.activeInHierarchy;
     private int? DisplayedCurrentNode => isPreview ? TrainingRunState.PendingNodeId : TrainingRunState.CurrentNodeId;
-
-    private void Awake()
-    {
-        // 전투 캔버스와 정렬 순서가 같으면 위아래가 활성 순서에 의존하므로 명시
-        Canvas canvas = GetComponent<Canvas>();
-        if (canvas != null) canvas.sortingOrder = UICanvasOrder.Map;
-        if (mapButton == null) mapButton = UIButtonLookup.FindByOnClick(this, nameof(OpenMapPreview));
-    }
 
     // 지도 버튼: 미리보기가 열려 있으면 닫기
     public void OpenMapPreview()
@@ -75,7 +65,6 @@ public class TrainingMapController : MonoBehaviour
         DisplayMap();
         // 미리보기는 일반 패널 (ESC로 닫힘), 전투 후 노드 선택 지도는 기본 화면이라 등록하지 않음
         UIModalStack.Register(new UIModalEntry(this, UIModalKind.Normal, ClosePreview));
-        SetMapButtonRaised(true);
         SettingsManager.PlayPanelToggleSound();
     }
 
@@ -83,26 +72,6 @@ public class TrainingMapController : MonoBehaviour
     {
         ShowBattle();
         SettingsManager.PlayPanelToggleSound();
-    }
-
-    // 미리보기 중 지도 버튼을 지도 위로 올려 다시 눌러 닫을 수 있게 함 (전투 캔버스 입력 차단도 무시)
-    private void SetMapButtonRaised(bool raised)
-    {
-        if (mapButton == null) return;
-
-        if (raised && mapButtonCanvas == null)
-        {
-            mapButtonCanvas = mapButton.GetComponent<Canvas>();
-            if (mapButtonCanvas == null) mapButtonCanvas = mapButton.gameObject.AddComponent<Canvas>();
-            if (mapButton.GetComponent<GraphicRaycaster>() == null) mapButton.gameObject.AddComponent<GraphicRaycaster>();
-            mapButtonGroup = mapButton.GetComponent<CanvasGroup>();
-            if (mapButtonGroup == null) mapButtonGroup = mapButton.gameObject.AddComponent<CanvasGroup>();
-        }
-        if (mapButtonCanvas == null) return;
-
-        mapButtonCanvas.overrideSorting = raised;
-        mapButtonCanvas.sortingOrder = raised ? UICanvasOrder.Map + 1 : 0;
-        mapButtonGroup.ignoreParentGroups = raised;
     }
 
     private void OnEnable()
@@ -114,7 +83,6 @@ public class TrainingMapController : MonoBehaviour
     {
         LocalizationManager.LanguageChanged -= RefreshLocalizedTexts;
         UIModalStack.Unregister(this);
-        SetMapButtonRaised(false);
     }
 
     // 언어 변경 시 노드 이름 · 상태 문구 갱신
@@ -135,7 +103,6 @@ public class TrainingMapController : MonoBehaviour
     {
         isPreview = false;
         UIModalStack.Unregister(this);
-        SetMapButtonRaised(false);
         DisplayMap();
     }
 
@@ -165,7 +132,6 @@ public class TrainingMapController : MonoBehaviour
     {
         isPreview = false;
         UIModalStack.Unregister(this);
-        SetMapButtonRaised(false);
         combatInteraction.interactable = true;
         combatInteraction.blocksRaycasts = true;
         gameObject.SetActive(false);

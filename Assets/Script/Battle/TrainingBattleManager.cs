@@ -216,6 +216,7 @@ public class TrainingBattleManager : MonoBehaviour
         {
             if (!TrainingRunState.HasMapData)
                 TrainingRunState.StartNewRun(SceneManager.GetActiveScene().name);
+            PrepareRunOverview();
             if (!TrainingRunState.PendingNodeId.HasValue)
             {
                 trainingMap.ShowMap();
@@ -383,16 +384,9 @@ public class TrainingBattleManager : MonoBehaviour
         }
     }
 
-    private void InitializeBattle()
+    private static int CalculatePartyMaxHp()
     {
-        if (playerData == null)
-        {
-            playerData = PlayerData.Create();
-        }
-
         int totalMaxHp = 0;
-        int totalDefense = 0;
-
         foreach (Character character in SelectedButtonControl.selectedCharacterList)
         {
             CharacterData data = CharacterManager.GetCharacterByEnum(character);
@@ -405,6 +399,38 @@ public class TrainingBattleManager : MonoBehaviour
                 Debug.LogWarning($"[BattleManager] CharacterData not found: {character}");
             }
         }
+
+        return totalMaxHp;
+    }
+
+    // 지도 · 휴식 화면에서도 상단 바(체력 · 덱 버튼)를 쓸 수 있게 첫 전투 전에 런 덱 · 체력을 준비
+    private void PrepareRunOverview()
+    {
+        InitializeCharacterSelection();
+        if (buildingDeck == null && CardManager.IsInitialized())
+        {
+            buildingDeck = TrainingRunDeckPersistence.CreateRunDeck(SelectedButtonControl.selectedCharacterList);
+        }
+
+        if (!TrainingRunState.TryGetPlayerHealthState(out int hp, out int maxHp))
+        {
+            maxHp = CalculatePartyMaxHp();
+            hp = maxHp;
+            TrainingRunState.SetPlayerHealthState(hp, maxHp);
+        }
+
+        battleUI?.UpdateRunHealth(hp, maxHp);
+    }
+
+    private void InitializeBattle()
+    {
+        if (playerData == null)
+        {
+            playerData = PlayerData.Create();
+        }
+
+        int totalMaxHp = CalculatePartyMaxHp();
+        int totalDefense = 0;
 
         playerData.Initialize(totalMaxHp, totalDefense, PlayerBaseEnergyPerTurn);
         characterIdentityService?.Initialize(SelectedButtonControl.selectedCharacterList);
