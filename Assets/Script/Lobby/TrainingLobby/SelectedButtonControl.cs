@@ -119,7 +119,9 @@ public class SelectedButtonControl : MonoBehaviour
 
         // 리스트에 추가
         selectedCharacterList.Add(characterType);
-        
+        // 고른 순서와 관계없이 ID 순서로 배치 (탱커가 앞에 서도록)
+        selectedCharacterList.Sort();
+
         // 선택 상태로 변경
         isSelected = true;
         

@@ -36,6 +36,8 @@ public static class BossModeSession
         PlayerData.Reset();
         TrainingBattleManager.buildingDeck = null;
         SelectedButtonControl.selectedCharacterList = new List<Character>(characters);
+        // 훈련 모드와 같이 ID 순서로 배치
+        SelectedButtonControl.selectedCharacterList.Sort();
         cardIds.AddRange(selectedCardIds);
         TrainingRunDeckPersistence.ResetPermanentDamageBonuses();
         SelectedBossId = bossId;
