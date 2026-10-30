@@ -397,7 +397,7 @@
     "card.203062.name": "Reconnaissance+",
     "card.203063.desc": "Gain 1 [buff:3065].",
     "card.203063.name": "Reconnaissance+",
-    "card.203064.desc": "If the target is Stunned or Trapped, double its [buff:4014] stacks.",
+    "card.203064.desc": "If the target is Stunned or [buff:2003], double its [buff:4014] stacks.",
     "card.203064.name": "Reconnaissance+",
     "card.203065.desc": "Draw 1 card. If it is an Imprint card, it costs 1 less.",
     "card.203065.name": "Reconnaissance+",

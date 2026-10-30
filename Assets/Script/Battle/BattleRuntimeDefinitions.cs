@@ -107,7 +107,6 @@ public static class BattleRuntimeDefinitions
     public static int HandRankBuffId => GetBuffId(nameof(HandRankBuffId));
     public static int TrapStateBuffId => GetBuffId(nameof(TrapStateBuffId));
     public static int CatalystBuffId => GetBuffId(nameof(CatalystBuffId));
-    public static int CounterBuffId => GetBuffId(nameof(CounterBuffId));
     public static int ScoreBuffId => GetBuffId(nameof(ScoreBuffId));
     public static int EffectiveHitBuffId => GetBuffId(nameof(EffectiveHitBuffId));
     public static int StealthBuffId => GetBuffId(nameof(StealthBuffId));
@@ -121,7 +120,6 @@ public static class BattleRuntimeDefinitions
     public static int TrapSetBuffId => GetBuffId(nameof(TrapSetBuffId));
     public static int OwlEyeBuffId => GetBuffId(nameof(OwlEyeBuffId));
     public static int CurseRecoveryBuffId => GetBuffId(nameof(CurseRecoveryBuffId));
-    public static int MarkBuffId => GetBuffId(nameof(MarkBuffId));
 
     public static void Initialize()
     {
@@ -244,7 +242,6 @@ public static class BattleRuntimeDefinitions
         Register(nameof(HandRankBuffId), "족보", 1028);
         Register(nameof(TrapStateBuffId), "덫 상태", 2003);
         Register(nameof(CatalystBuffId), "촉매", 3061);
-        Register(nameof(CounterBuffId), "반격", 3062);
         Register(nameof(ScoreBuffId), "득점", 3063);
         Register(nameof(EffectiveHitBuffId), "유효타", 3064);
         Register(nameof(StealthBuffId), "은신", 3065);
@@ -258,7 +255,6 @@ public static class BattleRuntimeDefinitions
         Register(nameof(TrapSetBuffId), "덫 설치", 3073);
         Register(nameof(OwlEyeBuffId), "부엉이의 눈", 3074);
         Register(nameof(CurseRecoveryBuffId), "저주 회복", 3075);
-        Register(nameof(MarkBuffId), "표식", 4018);
     }
 
     private static void Register(string key, string buffName, int fallbackId)

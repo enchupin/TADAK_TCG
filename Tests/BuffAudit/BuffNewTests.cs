@@ -35,8 +35,7 @@ static class BuffNewTests
         (int id, BuffPolarity polarity, bool stackable)[] specs =
         {
             (1024, BuffPolarity.Beneficial, false), (1025, BuffPolarity.Beneficial, false), (1026, BuffPolarity.Beneficial, false),
-            (1027, BuffPolarity.Beneficial, false), (1028, BuffPolarity.Beneficial, false), (2003, BuffPolarity.Harmful, false),
-            (4018, BuffPolarity.Harmful, true)
+            (1027, BuffPolarity.Beneficial, false), (1028, BuffPolarity.Beneficial, false), (2003, BuffPolarity.Harmful, false)
         };
         foreach (var (id, polarity, stackable) in specs)
         {
@@ -178,16 +177,6 @@ static class BuffNewTests
         Eq(player.TakeDamage(5), 5, "공격이 아닌 피해는 성역 미적용");
         battle.playerService.OnPlayerTurnStart();
         Eq(player.GetBuffStack(SanctuaryBuffId), 0, "성역은 다음 내 턴 시작 시 제거");
-
-        battle = new TrainingBattleManager();
-        player = battle.playerData;
-        attacker = new Monster();
-        player.AddBuff(CounterBuffId, 4);
-        player.defense = 10;
-        player.TakeDamage(6, attacker);
-        Eq(attacker.hp, 96, "보호막으로 완전히 막으면 반격");
-        player.TakeDamage(10, attacker);
-        Eq(attacker.hp, 96, "체력을 잃으면 반격 없음");
 
         battle = new TrainingBattleManager();
         player = battle.playerData;

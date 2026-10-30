@@ -519,7 +519,7 @@
             "name": "정보 탐색+",
             "characterId": 203,
             "cost": 0,
-            "description": "대상이 기절·덫 상태라면 (깃털) 중첩을 2배로 늘립니다.",
+            "description": "대상이 기절·(덫 상태)라면 (깃털) 중첩을 2배로 늘립니다.",
             "effects": [
                 {
                     "condition": {

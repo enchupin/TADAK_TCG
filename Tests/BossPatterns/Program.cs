@@ -168,6 +168,9 @@ class Program {
 
   // 같은 패턴이면 다음 칸으로
   Fresh();var mirror=New<TestDataMonster>(1114);mirror.Plan();Check(mirror.DelayIntent(1)&&mirror.pattern==111402,"같은 패턴은 건너뜀");
+  // 거울 괴물은 거울 0을 보유한 채 시작하고, 소모로 0이 되어도 유지
+  Fresh();mirror=New<TestDataMonster>(1114);Check(mirror.buffs.TryGetValue(5012,out int mirrorStack)&&mirrorStack==0,"거울 0으로 시작");
+  mirror.AddBuff(5012,5);mirror.ConsumeBuffStack(5012,5);Check(mirror.buffs.ContainsKey(5012)&&mirror.GetBuffStack(5012)==0,"거울 소모 후 0으로 유지");
 
   // 공격 의도 복사: 큐에서 가장 빠른 공격 의도
   Fresh();bug=New<TestDataMonster>(1109);bug.Plan();bug.Act();bug.Plan();Check(bug.pattern==110903,"공허 벌레 힘 패턴");

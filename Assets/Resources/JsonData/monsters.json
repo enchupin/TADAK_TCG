@@ -2537,6 +2537,12 @@
             "tier": 1,
             "kind": "normal",
             "hp": 40,
+            "start": [
+                {
+                    "buffId": 5012,
+                    "amount": 0
+                }
+            ],
             "patterns": [
                 {
                     "key": "P01",
@@ -2585,6 +2591,12 @@
             "tier": 2,
             "kind": "normal",
             "hp": 71,
+            "start": [
+                {
+                    "buffId": 5012,
+                    "amount": 0
+                }
+            ],
             "patterns": [
                 {
                     "key": "P01",
@@ -2633,6 +2645,12 @@
             "tier": 3,
             "kind": "normal",
             "hp": 85,
+            "start": [
+                {
+                    "buffId": 5012,
+                    "amount": 0
+                }
+            ],
             "patterns": [
                 {
                     "key": "P01",
@@ -2681,6 +2699,12 @@
             "tier": 4,
             "kind": "normal",
             "hp": 126,
+            "start": [
+                {
+                    "buffId": 5012,
+                    "amount": 0
+                }
+            ],
             "patterns": [
                 {
                     "key": "P01",
@@ -2729,6 +2753,12 @@
             "tier": 5,
             "kind": "normal",
             "hp": 39,
+            "start": [
+                {
+                    "buffId": 5012,
+                    "amount": 0
+                }
+            ],
             "patterns": [
                 {
                     "key": "P01",

@@ -489,6 +489,9 @@ public static class CardDescriptionFormatter
     private const string CuriosityDescriptionKey = "ui.card.curious";
     // 조각 줄 (ko: 조각: {description})
     private const string FragmentDescriptionKey = "ui.card.fragment";
+    // 설명 속 효과명([buff:id] · {runeBuff}) 강조 색, 바네사 배경의 탁한 노랑보다 밝고 선명한 노랑
+    // [buff:id] 참조만 칠하므로 일반 텍스트인 "깃털 카드"는 칠하지 않음
+    private const string BuffNameHighlightHex = "FFE066";
 
     public static string Format(Card card, TrainingBattleManager battleManager)
     {
@@ -514,7 +517,29 @@ public static class CardDescriptionFormatter
             return string.Empty;
         }
 
-        return GameText.Ui(FragmentDescriptionKey, new Dictionary<string, object> { { "description", GameText.FormatPlain(card.fragmentDescription) } });
+        return GameText.Ui(FragmentDescriptionKey, new Dictionary<string, object> { { "description", FormatWithBuffHighlight(card.fragmentDescription, new Dictionary<string, object>()) } });
+    }
+
+    // 버프 참조와 동력 계열 이름만 강조 색으로 해석 (조사는 색 태그를 빼고 판정)
+    private static string FormatWithBuffHighlight(string template, Dictionary<string, object> args)
+    {
+        args[GameText.RuneBuffArgument] = TooltipRichText.Colorize(GameText.GetCurrentRuneBuffName(), BuffNameHighlightHex);
+        return LocalizationManager.Format(template, args, ResolveHighlightedReference);
+    }
+
+    private static bool ResolveHighlightedReference(LocalizedReference reference, out string text)
+    {
+        if (!GameText.ResolvePlainReference(reference, out text))
+        {
+            return false;
+        }
+
+        if (reference.Kind == LocalizedReference.Buff)
+        {
+            text = TooltipRichText.Colorize(text, BuffNameHighlightHex);
+        }
+
+        return true;
     }
 
     private static string FormatBody(Card card, TrainingBattleManager battleManager)
@@ -529,7 +554,7 @@ public static class CardDescriptionFormatter
         string description = ReplaceKindPlaceholders(card.description, card, battleManager, args);
         if (description.IndexOf("{amount", System.StringComparison.Ordinal) < 0)
         {
-            return GameText.FormatPlain(description, args);
+            return FormatWithBuffHighlight(description, args);
         }
 
         List<int> amounts = ResolveAmounts(card.effects, battleManager, card);
@@ -558,7 +583,7 @@ public static class CardDescriptionFormatter
             return amounts[amountIndex].ToString();
         });
 
-        return GameText.FormatPlain(formattedDescription, args);
+        return FormatWithBuffHighlight(formattedDescription, args);
     }
 
     private static string ReplaceKindPlaceholders(string description, Card card, TrainingBattleManager battleManager, Dictionary<string, object> args)

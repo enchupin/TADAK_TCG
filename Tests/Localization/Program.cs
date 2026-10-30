@@ -354,7 +354,7 @@ class Program {
    Check(diff.Count==0,$"ko/{table.Key}.json이 JsonData와 다릅니다. Tools/Localization/한국어 원문 동기화 필요: {string.Join(", ",diff.Take(5))}");
   }
   Check(tables["cards"].Keys.Count(k=>k.EndsWith(".name"))==343,"카드 343장");
-  Check(tables["buffs"].Keys.Count(k=>k.EndsWith(".name"))==115,"버프 115개");
+  Check(tables["buffs"].Keys.Count(k=>k.EndsWith(".name"))==113,"버프 113개");
   Check(tables["characters"].Keys.Count(k=>k.EndsWith(".identity"))==10,"아이덴티티 10개");
   // 모든 언어 표의 참조 버프는 존재하는 ID
   var buffIds=new HashSet<int>(tables["buffs"].Keys.Select(k=>int.Parse(k.Split('.')[1])));

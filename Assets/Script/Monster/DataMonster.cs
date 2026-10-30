@@ -103,7 +103,17 @@ public abstract class DataMonster : Monster, IMonsterAIContext
 
         foreach (MonsterStartEffect effect in definition.start ?? new List<MonsterStartEffect>())
         {
-            if (effect != null && effect.buffId > 0 && effect.amount != 0)
+            if (effect == null || effect.buffId <= 0)
+            {
+                continue;
+            }
+
+            // 0으로 시작하는 패시브는 중첩 없이 보유만 함 (거울)
+            if (effect.amount == 0)
+            {
+                HoldBuffAtZero(effect.buffId);
+            }
+            else
             {
                 AddBuff(effect.buffId, effect.amount);
             }
