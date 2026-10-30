@@ -49,16 +49,16 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        TooltipView.Show(this);
+        TooltipManager.Show(this);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        TooltipView.Hide(this);
+        TooltipManager.Hide(this);
     }
 
     private void OnDisable()
     {
-        TooltipView.Hide(this);
+        TooltipManager.Hide(this);
     }
 }

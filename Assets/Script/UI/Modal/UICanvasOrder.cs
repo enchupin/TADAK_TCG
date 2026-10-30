@@ -7,4 +7,6 @@ public static class UICanvasOrder
     public const int Scene = 0;
     // 설정 (DontDestroyOnLoad 시스템 캔버스)
     public const int Settings = 10;
+    // 툴팁 (DontDestroyOnLoad 툴팁 캔버스, 모든 화면 위)
+    public const int Tooltip = 20;
 }

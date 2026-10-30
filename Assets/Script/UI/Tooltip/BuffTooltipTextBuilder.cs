@@ -30,14 +30,14 @@ public static class BuffTooltipTextBuilder
             return string.Empty;
         }
 
-        return BuildEntry(buff.data, buff.stack, TooltipView.Colors);
+        return BuildEntry(buff.data, buff.stack, TooltipManager.Colors);
     }
 
     // 족보 툴팁: 족보 이름 한 줄 아래 보유 중인 족보마다 이름: 조건 → 보상 한 줄
     // 각 족보의 설명은 결국 진행도와 보상이므로 설명 대신 진행도로 표시 (사용자 확인)
     public static string BuildHandRank(IReadOnlyList<Buff> buffs)
     {
-        TooltipColors colors = TooltipView.Colors;
+        TooltipColors colors = TooltipManager.Colors;
         StringBuilder builder = new();
         if (BuffMetadataDatabase.TryGetBuffData(HandRankBuffId, out BuffData handRankData) && handRankData != null)
         {

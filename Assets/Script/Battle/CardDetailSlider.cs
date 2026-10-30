@@ -32,7 +32,7 @@ public class CardDetailSlider : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     private RectTransform tooltipRoot;
     private readonly List<(RectTransform panel, TextMeshProUGUI text)> tooltipPanels = new List<(RectTransform, TextMeshProUGUI)>();
     private int shownTooltipCount;
-    private bool hasLoggedMissingTooltipView;
+    private bool hasLoggedMissingTooltipManager;
 
     // 드래그는 패널 전체에서 받고, 카드는 지정한 부모(비우면 패널) 아래에 놓음
     public void Configure(GameObject prefab, Transform parent, UIModalPanel panel)
@@ -318,12 +318,12 @@ public class CardDetailSlider : MonoBehaviour, IBeginDragHandler, IDragHandler, 
             return;
         }
 
-        TooltipView view = TooltipView.Instance;
+        TooltipManager view = TooltipManager.Instance;
         if (view == null)
         {
-            if (!hasLoggedMissingTooltipView)
+            if (!hasLoggedMissingTooltipManager)
             {
-                hasLoggedMissingTooltipView = true;
+                hasLoggedMissingTooltipManager = true;
                 Debug.LogWarning("[CardDetailSlider] 전투 툴팁 뷰가 없어 카드 효과 툴팁을 표시하지 않습니다");
             }
             return;
@@ -386,7 +386,7 @@ public class CardDetailSlider : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         if (canvas != null)
         {
             ((RectTransform)canvas.rootCanvas.transform).GetWorldCorners(corners);
-            float margin = TooltipView.Instance != null ? TooltipView.Instance.ScreenMargin : 8f;
+            float margin = TooltipManager.Instance != null ? TooltipManager.Instance.ScreenMargin : 8f;
             float screenBottom = tooltipRoot.InverseTransformPoint(corners[0]).y + margin;
             float screenTop = tooltipRoot.InverseTransformPoint(corners[1]).y - margin;
             topLeft.y = Mathf.Min(screenTop, Mathf.Max(topLeft.y, screenBottom + totalHeight));
