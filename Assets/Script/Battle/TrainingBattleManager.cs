@@ -113,6 +113,8 @@ public class TrainingBattleManager : MonoBehaviour
     private readonly List<PendingMonsterRevive> pendingMonsterRevives = new List<PendingMonsterRevive>();
     // 저장 덱 보상(획득·초과 제거) 진행 중에는 카드 사용과 턴 종료, 전투 종료 처리를 대기
     private bool isDeckRewardInProgress;
+    // 카드 사용 연출 도중 턴 종료를 누름: 연출이 모두 끝날 때까지 카드 사용을 막고 기다렸다가 턴 종료
+    private bool isEndTurnQueued;
     // R-47a 이번 전투에서 이탈한 몬스터가 훔쳐 간 카드 (승리 시 저장 덱에서 영구 제거)
     private readonly List<Card> pendingPermanentlyRemovedCards = new List<Card>();
 
@@ -875,9 +877,44 @@ public class TrainingBattleManager : MonoBehaviour
 
     public void EndTurn()
     {
+        if (CanEndPlayerTurn() && handManager != null && handManager.HasPendingUseAnimations)
+        {
+            StartCoroutine(EndTurnAfterUseAnimations());
+            return;
+        }
+
         if (!CanEndPlayerTurn() || !turnSystem.TryEndPlayerTurn())
         {
             Debug.LogWarning("[BattleManager] EndTurn ignored. It is not the player's actionable state.");
+        }
+    }
+
+    // 사용 연출이 남아 있으면 누른 시점부터 카드 사용 · 턴 종료 입력을 막고, 연출이 모두 끝나면 턴 종료
+    private System.Collections.IEnumerator EndTurnAfterUseAnimations()
+    {
+        isEndTurnQueued = true;
+        UpdateEndTurnButtonState();
+        RefreshHandPlayableState();
+        UpdateAllUI();
+        try
+        {
+            // 기다리는 동안 설정 등 패널이 열리면 닫힐 때까지 턴 종료도 대기
+            while ((handManager != null && handManager.HasPendingUseAnimations) || UIModalStack.BlocksBattleInput)
+            {
+                yield return null;
+            }
+        }
+        finally
+        {
+            isEndTurnQueued = false;
+        }
+
+        if (!turnSystem.TryEndPlayerTurn())
+        {
+            Debug.LogWarning("[BattleManager] 사용 연출 후 턴 종료를 진행할 수 없는 상태입니다");
+            UpdateEndTurnButtonState();
+            RefreshHandPlayableState();
+            UpdateAllUI();
         }
     }
 
@@ -1072,6 +1109,7 @@ public class TrainingBattleManager : MonoBehaviour
         return !UIModalStack.BlocksBattleInput
             && !(trainingMap != null && trainingMap.CoversBattle)
             && !HasPendingSelection && !isDeckRewardInProgress && !(combatResolver?.IsResolvingCardPlay ?? false)
+            && !isEndTurnQueued
             && turnSystem.CanPlayerPlayCard();
     }
 
@@ -1080,6 +1118,7 @@ public class TrainingBattleManager : MonoBehaviour
         return !UIModalStack.BlocksBattleInput
             && !(trainingMap != null && trainingMap.CoversBattle)
             && !HasPendingSelection && !isDeckRewardInProgress && !(combatResolver?.IsResolvingCardPlay ?? false)
+            && !isEndTurnQueued
             && turnSystem.CanEndPlayerTurn();
     }
 
