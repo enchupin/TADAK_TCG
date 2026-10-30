@@ -431,7 +431,7 @@ public class HandManager : MonoBehaviour
         return handCardRects.IndexOf(hoveredCardRect);
     }
 
-    private bool OwnsCardRect(RectTransform cardRect)
+    public bool OwnsCardRect(RectTransform cardRect)
     {
         return cardRect != null && handContainer != null && cardRect.parent == handContainer;
     }

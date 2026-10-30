@@ -16,11 +16,14 @@ public class TrainingModeButtonCreateManager : MonoBehaviour {
         public RectTransform content;
         public RectTransform scrollView;
         public GameObject buttonPrefab;
-        [HideInInspector] public Vector3 startPosition;
-        [HideInInspector] public float buttonSpacing;
-        [HideInInspector] public float trailingPadding;
-        [HideInInspector] public float scrollSensitivity;
-        [HideInInspector] public Scrolltype scrolltype;
+        [Tooltip("첫 버튼 중심 위치 (가로 스크롤이면 x - 버튼 폭 절반이 왼쪽 여백)")]
+        public Vector3 startPosition = new Vector3(110f, 0f, 0f);
+        [Tooltip("버튼 중심 간 거리 (버튼 폭을 빼면 버튼 사이 간격)")]
+        public float buttonSpacing = 190f;
+        [Tooltip("마지막 버튼 뒤 여백")]
+        public float trailingPadding = 30f;
+        public float scrollSensitivity = 7.5f;
+        public Scrolltype scrolltype = Scrolltype.horizontal;
     }
 
     private const float DefaultScrollViewWidth = 800f;
@@ -31,7 +34,6 @@ public class TrainingModeButtonCreateManager : MonoBehaviour {
     private readonly HashSet<RectTransform> createdContents = new();
 
     private void Start() {
-        InitiatePanelCofig();
         StartCoroutine(CreateButtonsAfterLayout());
     }
 
@@ -40,18 +42,6 @@ public class TrainingModeButtonCreateManager : MonoBehaviour {
         Canvas.ForceUpdateCanvases();
         CreateButtons(trainingPanelConfig);
     }
-
-    private void InitiatePanelCofig() {
-        trainingPanelConfig ??= new ButtonPanelConfig();
-
-        trainingPanelConfig.startPosition = new Vector3(160f, 0f, 0f);
-        trainingPanelConfig.buttonSpacing = 240f;
-        trainingPanelConfig.trailingPadding = 80f;
-        trainingPanelConfig.scrollSensitivity = 7.5f;
-        trainingPanelConfig.scrolltype = Scrolltype.horizontal;
-
-    }
-
 
     public void CreateButtons(ButtonPanelConfig buttonPanelConfig) {
         if (!ValidatePanelConfig(buttonPanelConfig)) {

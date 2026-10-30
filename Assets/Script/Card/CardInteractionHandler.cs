@@ -721,8 +721,17 @@ public class CardInteractionHandler : UIHoverEffect,
             return;
         }
 
-        SetLocalRotationZ(originalLocalRotationZ);
         hasOriginalLocalRotationZ = false;
+
+        // 잡을 때 저장한 각도는 호버로 0이 된 값일 수 있으므로 손패 안의 카드는 손패 배치 각도로 복구
+        HandManager owner = ResolveHandManager();
+        if (owner != null && owner.OwnsCardRect(rectTransform))
+        {
+            owner.UpdateHandCardPositions();
+            return;
+        }
+
+        SetLocalRotationZ(originalLocalRotationZ);
     }
 
     private void SetLocalRotationZ(float rotationZ)
