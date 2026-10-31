@@ -139,3 +139,7 @@ Assets/Resources/CharacterCollection.asset.meta
 
 # 로컬라이징 CSV 내보내기 (번역 전달용)
 /LocalizationExport/
+
+# 사용하지 않는 빈 입력 액션 파일
+/Assets/Script/Monster/New Actions.inputactions
+/Assets/Script/Monster/New Actions.inputactions.meta
