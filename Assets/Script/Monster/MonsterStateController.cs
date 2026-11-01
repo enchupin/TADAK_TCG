@@ -418,6 +418,26 @@ public class MonsterStateController : MonoBehaviour
         ApplyImageLayout(CurrentState, monsterImage.sprite);
     }
 
+    // 몬스터 그림 영역(투명 여백 제외) 네 모서리 월드 좌표, 측정 영역이 없으면 이미지 사각형 전체
+    public bool TryGetImageContentWorldCorners(Vector3[] corners)
+    {
+        if (monsterImage == null || corners == null || corners.Length < 4)
+        {
+            return false;
+        }
+
+        if (monsterImage.TryGetComponent(out MonsterImageHitArea hitArea))
+        {
+            hitArea.GetContentWorldCorners(corners);
+        }
+        else
+        {
+            monsterImage.rectTransform.GetWorldCorners(corners);
+        }
+
+        return true;
+    }
+
     private void ApplyImageLayout(MonsterStateType state, Sprite stateSprite)
     {
         if (!layoutByMeasuredBounds)
