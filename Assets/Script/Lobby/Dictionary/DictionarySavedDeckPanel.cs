@@ -34,6 +34,8 @@ public class DictionarySavedDeckPanel : MonoBehaviour
     private TMP_InputField activeRenameInputField;
     private CharacterDeckSave pendingDeleteDeck;
     private Character pendingDeleteCharacter;
+    // 일러스트 탭이면 false (저장 덱이 있는 칸도 숨김)
+    private bool deckPanelsVisible = true;
     public event Action DecksChanged;
 
     public bool TryGetDisplayedDeck(int index, out Character character, out CharacterDeckSave deck)
@@ -87,6 +89,7 @@ public class DictionarySavedDeckPanel : MonoBehaviour
             BindDeckToPanel(panelBindings[i], character, decks[i]);
         }
 
+        RefreshDeckPanelActive();
         DecksChanged?.Invoke();
         if (decks.Count > MaxDeckPanelCount)
         {
@@ -103,6 +106,13 @@ public class DictionarySavedDeckPanel : MonoBehaviour
             CancelDeleteDeck();
         }
 
+        deckPanelsVisible = visible;
+        RefreshDeckPanelActive();
+    }
+
+    // 저장된 덱이 있는 칸만 활성, 빈 칸은 비활성
+    private void RefreshDeckPanelActive()
+    {
         if (cardPanels == null)
         {
             return;
@@ -112,9 +122,22 @@ public class DictionarySavedDeckPanel : MonoBehaviour
         {
             if (panel != null)
             {
-                panel.gameObject.SetActive(visible);
+                panel.gameObject.SetActive(deckPanelsVisible && HasDeck(panel));
             }
         }
+    }
+
+    private bool HasDeck(RectTransform panel)
+    {
+        foreach (DeckPanelBinding binding in panelBindings)
+        {
+            if (binding.panel == panel)
+            {
+                return binding.deck != null;
+            }
+        }
+
+        return false;
     }
 
     public void DeleteDeck(int panelIndex)
