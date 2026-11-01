@@ -90,14 +90,15 @@ class Program {
  static void PathRule(){
   Check(MonsterImagePaths.NormalizeImageName("CactusMonster")=="Cactus","이름 정규화 오류");
   Check(MonsterImagePaths.BuildResourcePath("Cactus","Idle")=="Image/Monster/Cactus_Idle","일반 경로 오류");
-  Check(MonsterImagePaths.BuildResourcePath("ProphetBoss","Hit")=="Image/BossMonster/Prophet/Prophet_Hit","보스 경로 오류");
+  Check(MonsterImagePaths.BuildResourcePath("ProphetBoss","Hit")=="Image/Monster/BossMonster/Prophet/Prophet_Hit","보스 경로 오류");
   Check(MonsterImagePaths.BuildResourcePath("","Idle")=="","빈 이름 처리 오류");
  }
 
  static MonsterSpriteBoundsData MeasureAll(string root){
   string resources=Path.Combine(root,"Assets/Resources");
   var paths=new List<string>();
-  foreach(string folder in new[]{MonsterImagePaths.ImageResourceFolder,MonsterImagePaths.BossImageResourceFolder}){
+  // 보스 폴더는 일반 몬스터 폴더 하위라 하위 폴더까지 한 번만 탐색
+  foreach(string folder in new[]{MonsterImagePaths.ImageResourceFolder}){
    string full=Path.Combine(resources,folder);
    if(!Directory.Exists(full))continue;
    foreach(string file in Directory.GetFiles(full,"*.png",SearchOption.AllDirectories)){
