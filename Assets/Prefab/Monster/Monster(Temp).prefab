@@ -909,17 +909,17 @@ MonoBehaviour:
   intentIconSpacing: 4
   intentValueFontSize: 20
   intentTooltipSpacing: 6
-  attackIntendSprite: {fileID: 21300000, guid: 732fd195e838aad43b9659e043250e61, type: 3}
-  protectionIntendSprite: {fileID: 21300000, guid: 879211450ea49a244b79d89889db89aa, type: 3}
-  beneficialIntendSprite: {fileID: 21300000, guid: c42d67339a06a23498c4bc03a0d44dba, type: 3}
-  harmfulIntendSprite: {fileID: 21300000, guid: c6cf637739264f74bae92230bcb9a399, type: 3}
+  attackIntendSprite: {fileID: -7858168532174633491, guid: 36f7560dd9bb1324abe55c2a716b6122, type: 3}
+  protectionIntendSprite: {fileID: -6214233011433067110, guid: 262e80a7a6acee749aa775f59099137a, type: 3}
+  beneficialIntendSprite: {fileID: -6390916073698325199, guid: 1f0082462d83d484b91692a1b2fb351c, type: 3}
+  harmfulIntendSprite: {fileID: -5186392416357600270, guid: 40db8ae11b144bc42b49bee82ae82842, type: 3}
   defaultIntendSprite: {fileID: -771048440805795301, guid: 66d1592cbd38ad04092dad5a53084b17, type: 3}
-  summonIntendSprite: {fileID: 0}
-  bombIntendSprite: {fileID: 0}
-  disruptCardIntendSprite: {fileID: 0}
-  healIntendSprite: {fileID: 0}
-  stunIntendSprite: {fileID: 0}
-  leaveIntendSprite: {fileID: 0}
+  summonIntendSprite: {fileID: 8293320731865141850, guid: c7b6274284c50f8468062117e9f9f3cd, type: 3}
+  bombIntendSprite: {fileID: 6950514099583243133, guid: 4c85071369c422d47942797e5059b2d2, type: 3}
+  disruptCardIntendSprite: {fileID: -5705567960622195219, guid: e420069f7b47c084591b557ff505ecfc, type: 3}
+  healIntendSprite: {fileID: 1062324845579154893, guid: b67a681d7ba8de3468ae3e59d0427c0f, type: 3}
+  stunIntendSprite: {fileID: -8332125718833699075, guid: aa1a5f20e32f77542b296fb946a460ef, type: 3}
+  leaveIntendSprite: {fileID: 6400030919667269724, guid: 194ad78d4b8f3bd4e94f7525acbc706e, type: 3}
   attackSound: {fileID: 0}
   hitSound: {fileID: 0}
   attackSoundVolumeScale: 1
