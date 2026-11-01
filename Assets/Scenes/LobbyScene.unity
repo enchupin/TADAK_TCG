@@ -24568,7 +24568,7 @@ MonoBehaviour:
   - {fileID: 561660612}
   - {fileID: 478474502}
   - {fileID: 463007363}
-  bossPopupRoot: {fileID: 0}
+  bossPopupRoot: {fileID: 473871178}
   bossButtons:
   - {fileID: 1179574138}
   - {fileID: 926602787}
