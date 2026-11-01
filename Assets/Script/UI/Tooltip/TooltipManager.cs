@@ -7,6 +7,7 @@ using UnityEngine.UI;
 /// 버프 · 의도 툴팁 패널 하나를 관리합니다
 /// </summary>
 // 패널은 화면 전체를 덮는 캔버스 아래 마지막 순서에 배치
+// 텍스트가 패널 밖(형제)에 있으면 실행 시 패널 자식으로 옮김
 // 이 컴포넌트는 항상 활성화된 오브젝트에 두고 패널만 켜고 끔
 // 크기는 문구에 맞춰 코드에서 계산하므로 패널에 ContentSizeFitter · LayoutGroup이 없어도 됨
 // 로비에서 생성되어 씬이 바뀌어도 유지 (자체 루트 캔버스, 로비 · 전투 공용), 같은 오브젝트가 또 생기면 나중 것을 제거
@@ -214,6 +215,12 @@ public class TooltipManager : MonoBehaviour
         panel.pivot = new Vector2(0f, 1f);
 
         RectTransform textRect = text.rectTransform;
+        // 배경과 텍스트를 형제로 나눠 둔 구성도 지원: 텍스트를 배경 자식으로 옮겨 함께 이동 · 표시 · 복제
+        if (!textRect.IsChildOf(panel))
+        {
+            textRect.SetParent(panel, false);
+            textRect.SetAsLastSibling();
+        }
         textRect.anchorMin = new Vector2(0f, 1f);
         textRect.anchorMax = new Vector2(0f, 1f);
         textRect.pivot = new Vector2(0f, 1f);
