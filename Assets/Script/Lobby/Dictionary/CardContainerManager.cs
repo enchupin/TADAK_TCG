@@ -18,18 +18,20 @@ public class CardContainerManager : MonoBehaviour {
 
 
     [Header("Grid 레이아웃 설정")]
-    private Vector2 cellSize = new Vector2(200, 280); // 각 셀의 크기
-    private Vector2 spacing = new Vector2(10, 10); // 카드 간 간격
-    private int paddingLeft = 5;
-    private int paddingRight = 5;
-    private int paddingTop = 10;
-    private int paddingBottom = 10;
+    // 기본값은 전체 덱 묶음 화면과 같은 크기 (카드 확인 크기, 이전 고정 값은 간격 10 · 여백 5/10 · 배율 0.65)
+    [SerializeField] private Vector2 cellSize = new Vector2(200, 280); // 각 셀의 크기
+    [SerializeField] private Vector2 spacing = new Vector2(16, 16); // 카드 간 간격
+    [SerializeField] private int paddingLeft = 16;
+    [SerializeField] private int paddingRight = 16;
+    [SerializeField] private int paddingTop = 16;
+    [SerializeField] private int paddingBottom = 16;
 
     [Header("스크롤 설정")]
-    [Range(1f, 100f)] private float scrollSensitivity = 7.5f; // 스크롤 휠 감도
+    [SerializeField, Range(1f, 100f)] private float scrollSensitivity = 7.5f; // 스크롤 휠 감도
 
     [Header("카드 설정")]
-    [Range(0.1f, 2f)] private float cardScale = 0.65f; // 카드 크기 조절
+    [Tooltip("카드 배율 (카드 확인 화면 크기 = 1), 셀 크기도 함께 맞춰야 겹치지 않음")]
+    [SerializeField, Range(0.1f, 2f)] private float cardScale = 1f; // 카드 크기 조절
 
     [Header("카드 컨테이너")]
     private List<Card> cardList = new List<Card>(); // 카드 컨테이너를 Card 객체로 관리
@@ -56,7 +58,11 @@ public class CardContainerManager : MonoBehaviour {
     private void CalculateColumnCount() {
         if (cardContainer == null || gridLayout == null) return;
 
-        RectTransform rectTransform = cardContainerScrollView.GetComponent<RectTransform>();
+        // 스크롤바를 뺀 실제 보이는 폭(Viewport) 기준, 없으면 스크롤 뷰 폭
+        RectTransform rectTransform = cardContainer.parent as RectTransform;
+        if (rectTransform == null) {
+            rectTransform = cardContainerScrollView.GetComponent<RectTransform>();
+        }
         if (rectTransform == null) {
             Debug.LogError("[CardContainerManager] cardContainer에 RectTransform이 없습니다!");
             return;
@@ -120,7 +126,7 @@ public class CardContainerManager : MonoBehaviour {
         // Grid Layout 설정
         gridLayout.startCorner = GridLayoutGroup.Corner.UpperLeft; // 좌측 상단부터 시작
         gridLayout.startAxis = GridLayoutGroup.Axis.Horizontal; // 가로 방향으로 채움
-        gridLayout.childAlignment = TextAnchor.UpperLeft; // 좌측 상단 정렬
+        gridLayout.childAlignment = TextAnchor.UpperCenter; // 상단 가운데 정렬 (남는 폭을 좌우로 나눔)
         gridLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount; // 열 개수 고정
         gridLayout.cellSize = cellSize; // 셀 크기
         gridLayout.spacing = spacing; // 간격
@@ -208,6 +214,9 @@ public class CardContainerManager : MonoBehaviour {
             Debug.LogError("CardUI 프리팹 또는 Hand Container가 설정되지 않았습니다!");
             return;
         }
+
+        // 패널 크기 · 화면비가 바뀌었을 수 있어 열 수 다시 계산
+        CalculateColumnCount();
 
         // 카드 추가
         int addedCount = 0;
