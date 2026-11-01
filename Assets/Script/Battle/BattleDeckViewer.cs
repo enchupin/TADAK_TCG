@@ -32,11 +32,13 @@ public class BattleDeckViewer : MonoBehaviour
     [SerializeField] private Transform cardDetailCardParent;
     [SerializeField] private GameObject cardDetailCardPrefab;
 
-    [Header("여는 버튼 (패널이 열려 있어도 차단막을 통과해 다시 눌러 닫음, 비우면 OnClick 연결로 찾음)")]
+    [Header("여는 버튼 (패널이 열려 있어도 차단막을 통과해 다시 눌러 닫음)")]
     [SerializeField] private Button drawPileButton;
     [SerializeField] private Button discardPileButton;
     [SerializeField] private Button exhaustPileButton;
     [SerializeField] private Button fullDeckButton;
+    [Tooltip("상단 바 지도 버튼 (카드 선택 중에도 지도 미리보기를 여닫음)")]
+    [SerializeField] private Button mapButton;
     [Tooltip("카드 선택 중 패널을 잠시 숨기고 다시 펼치는 버튼 (패널 안에 배치, 비우면 숨김 기능 없음)")]
     [SerializeField] private Button selectionHideButton;
 
@@ -93,26 +95,30 @@ public class BattleDeckViewer : MonoBehaviour
             cardDetailSlider.Configure(cardDetailCardPrefab, cardDetailCardParent, detailModal);
         }
 
-        // 에디터의 빈 직렬화 참조는 가짜 null이라 ??= 대신 == 비교
-        if (drawPileButton == null) drawPileButton = UIButtonLookup.FindByOnClick(this, nameof(OnClickDeckButton));
-        if (discardPileButton == null) discardPileButton = UIButtonLookup.FindByOnClick(this, nameof(OnClickDiscardPileButton));
-        if (exhaustPileButton == null) exhaustPileButton = UIButtonLookup.FindByOnClick(this, nameof(OnClickExhaustPileButton));
-        if (fullDeckButton == null) fullDeckButton = UIButtonLookup.FindByOnClick(this, nameof(OnClickFullDeckButton));
+        // 여는 버튼은 인스펙터 연결 (비어 있으면 오류 로그, 해당 버튼은 차단막 통과 · 선택 중 사용 불가)
+        LogIfMissing(drawPileButton, nameof(drawPileButton));
+        LogIfMissing(discardPileButton, nameof(discardPileButton));
+        LogIfMissing(exhaustPileButton, nameof(exhaustPileButton));
+        LogIfMissing(fullDeckButton, nameof(fullDeckButton));
+        LogIfMissing(mapButton, nameof(mapButton));
 
-        // 카드 목록 선택 중에도 열고 닫을 수 있는 전투 화면 버튼 (지도 버튼은 지도가 꺼져 있어도 찾도록 여기서 등록)
+        // 카드 목록 선택 중에도 열고 닫을 수 있는 전투 화면 버튼
         UIBattleSpaceButtons.Register(drawPileButton);
         UIBattleSpaceButtons.Register(discardPileButton);
         UIBattleSpaceButtons.Register(exhaustPileButton);
         UIBattleSpaceButtons.Register(fullDeckButton);
-        TrainingMapController map = FindAnyObjectByType<TrainingMapController>(FindObjectsInactive.Include);
-        if (map != null) {
-            UIBattleSpaceButtons.Register(UIButtonLookup.FindByOnClick(map, nameof(TrainingMapController.OpenMapPreview)));
-        }
+        UIBattleSpaceButtons.Register(mapButton);
 
         if (selectionHideButton != null) {
             selectionHideButton.onClick.RemoveListener(ToggleSelectionHidden);
             selectionHideButton.onClick.AddListener(ToggleSelectionHidden);
             deckModal.KeepVisibleWhenHidden(selectionHideButton.gameObject);
+        }
+    }
+
+    private void LogIfMissing(Button button, string fieldName) {
+        if (button == null) {
+            Debug.LogError($"[BattleDeckViewer] {fieldName}이(가) 인스펙터에 연결되지 않았습니다", this);
         }
     }
 

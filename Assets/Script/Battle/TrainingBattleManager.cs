@@ -146,7 +146,7 @@ public class TrainingBattleManager : MonoBehaviour
 
         if (battleDeckViewer == null)
         {
-            battleDeckViewer = FindAnyObjectByType<BattleDeckViewer>();
+            Debug.LogError("[BattleManager] BattleDeckViewer가 인스펙터에 연결되지 않았습니다 (덱 · 카드 선택 패널 사용 불가)", this);
         }
 
         SetupHandCardSelection();

@@ -8,7 +8,6 @@ public class DrawUI : MonoBehaviour
     [SerializeField] private GameObject drawAnimationPrefab;
     [SerializeField] private Transform drawStartPosition;
     [SerializeField] private Transform animationRoot;
-    [SerializeField] private string fallbackDrawStartObjectName = "DeckBtn";
     [SerializeField] private float duration = 0.35f;
     [SerializeField] private float staggerDelay = 0.08f;
     [FormerlySerializedAs("firstPosition")]
@@ -56,7 +55,6 @@ public class DrawUI : MonoBehaviour
     // 중앙 대기 중이거나 버린 더미로 이동 중인 사용 연출이 있는지
     public bool HasPendingUseAnimations => isActiveAndEnabled && (useAnimationQueue.Count > 0 || useDiscardFlightCount > 0);
 
-    private Transform cachedFallbackDrawStartPosition;
     private GameObject debugPathRoot;
     private Coroutine clearDebugPathCoroutine;
 
@@ -679,11 +677,8 @@ public class DrawUI : MonoBehaviour
 
     private Vector3 ResolveDrawStartPosition(Vector3 fallbackPosition)
     {
-        Transform startPosition = drawStartPosition != null
-            ? drawStartPosition
-            : ResolveFallbackDrawStartPosition();
-
-        return startPosition != null ? startPosition.position : fallbackPosition;
+        // 인스펙터 연결이 없으면 대체 위치에서 시작 (이름으로 찾지 않음)
+        return drawStartPosition != null ? drawStartPosition.position : fallbackPosition;
     }
 
     private Vector3 ResolvePlayCenterPosition(Vector3 fallbackPosition)
@@ -701,21 +696,5 @@ public class DrawUI : MonoBehaviour
         return secondDiscardPosition != null ? secondDiscardPosition.position : endPos;
     }
 
-    private Transform ResolveFallbackDrawStartPosition()
-    {
-        if (cachedFallbackDrawStartPosition != null)
-        {
-            return cachedFallbackDrawStartPosition;
-        }
-
-        if (string.IsNullOrEmpty(fallbackDrawStartObjectName))
-        {
-            return null;
-        }
-
-        GameObject fallbackObject = GameObject.Find(fallbackDrawStartObjectName);
-        cachedFallbackDrawStartPosition = fallbackObject != null ? fallbackObject.transform : null;
-        return cachedFallbackDrawStartPosition;
-    }
 
 }

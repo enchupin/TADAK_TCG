@@ -16,13 +16,13 @@ public class DictionaryPanelController : MonoBehaviour
     [Tooltip("캐릭터 소개 (CardPanel/DescriptionRect, 비우면 소개 표시 안 함)")]
     [SerializeField] private DictionaryCharacterIntro characterIntro;
 
-    [Header("가운데 구역 탭 (비우면 저장덱 패널 아래 DeckBtn · IllustBtn을 찾음)")]
+    [Header("가운데 구역 탭")]
     [SerializeField] private Button deckTabButton;
     [SerializeField] private Button illustrationTabButton;
-    [Tooltip("일러스트 탭에서 캐릭터 일러스트를 표시할 이미지 (비우면 저장덱 패널 아래 CharacterIllust를 찾음)")]
+    [Tooltip("일러스트 탭에서 캐릭터 일러스트를 표시할 이미지")]
     [SerializeField] private Image illustrationImage;
 
-    [Header("카드 확인 패널 (비우면 이름이 DetailPanel인 자식을 찾음)")]
+    [Header("카드 확인 패널")]
     [SerializeField] private GameObject cardDetailPanelRoot;
     [Tooltip("카드 확인에 쓸 카드 프리팹 (비우면 오른쪽 구역 카드 프리팹 사용)")]
     [SerializeField] private GameObject cardDetailCardPrefab;
@@ -152,8 +152,10 @@ public class DictionaryPanelController : MonoBehaviour
             return;
         }
 
-        if (deckTabButton == null) deckTabButton = FindChildButton(deckPanel, "DeckBtn");
-        if (illustrationTabButton == null) illustrationTabButton = FindChildButton(deckPanel, "IllustBtn");
+        if (deckTabButton == null || illustrationTabButton == null)
+        {
+            Debug.LogError("[DictionaryPanelController] 덱 · 일러스트 탭 버튼이 인스펙터에 연결되지 않았습니다", this);
+        }
 
         foreach (Button tabButton in new[] { deckTabButton, illustrationTabButton })
         {
@@ -177,13 +179,7 @@ public class DictionaryPanelController : MonoBehaviour
 
         if (illustrationImage == null)
         {
-            GameObject illustrationObject = FindChildObject(deckPanel, "CharacterIllust");
-            illustrationImage = illustrationObject != null ? illustrationObject.GetComponent<Image>() : null;
-        }
-
-        if (illustrationImage == null)
-        {
-            Debug.LogWarning("[DictionaryPanelController] 일러스트 이미지(CharacterIllust)를 찾지 못해 일러스트 탭에 그림을 표시하지 않습니다", this);
+            Debug.LogWarning("[DictionaryPanelController] 일러스트 이미지가 인스펙터에 연결되지 않아 일러스트 탭에 그림을 표시하지 않습니다", this);
         }
     }
 
@@ -279,7 +275,7 @@ public class DictionaryPanelController : MonoBehaviour
     {
         if (cardDetailPanelRoot == null)
         {
-            cardDetailPanelRoot = FindChildObject(transform, "DetailPanel");
+            Debug.LogWarning("[DictionaryPanelController] 카드 확인 패널이 인스펙터에 연결되지 않아 카드 확인을 열 수 없습니다", this);
         }
 
         if (cardDetailCardPrefab == null && starterCardPanel != null)
@@ -355,21 +351,4 @@ public class DictionaryPanelController : MonoBehaviour
         }
     }
 
-    private static Button FindChildButton(Transform root, string objectName)
-    {
-        GameObject found = FindChildObject(root, objectName);
-        return found != null ? found.GetComponent<Button>() : null;
-    }
-
-    private static GameObject FindChildObject(Transform root, string objectName)
-    {
-        foreach (Transform child in root.GetComponentsInChildren<Transform>(true))
-        {
-            if (child != root && child.name == objectName)
-            {
-                return child.gameObject;
-            }
-        }
-        return null;
-    }
 }

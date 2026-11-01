@@ -11,6 +11,8 @@ public class DictionarySavedDeckPanel : MonoBehaviour
 
     [Header("저장덱 패널 설정")]
     [SerializeField] private RectTransform[] cardPanels = new RectTransform[MaxDeckPanelCount];
+    [Tooltip("칸마다 덱 이름 텍스트 (cardPanels와 같은 순서)")]
+    [SerializeField] private TMP_Text[] deckNameTexts = new TMP_Text[MaxDeckPanelCount];
     [SerializeField] private GameObject cardPrefab;
 
     [Header("저장덱 이름 변경 설정")]
@@ -28,11 +30,13 @@ public class DictionarySavedDeckPanel : MonoBehaviour
         public DictionaryCardLayout cardLayout;
         public readonly List<GameObject> createdCards = new List<GameObject>();
         public TMP_InputField renameInputField;
+        public TMP_Text nameText;
         public Character character;
         public CharacterDeckSave deck;
     }
 
     private readonly List<DeckPanelBinding> panelBindings = new List<DeckPanelBinding>();
+    private bool hasLoggedMissingNameText;
     private DeckPanelBinding activeRenameBinding;
     private TMP_InputField activeRenameInputField;
     private CharacterDeckSave pendingDeleteDeck;
@@ -313,8 +317,14 @@ public class DictionarySavedDeckPanel : MonoBehaviour
             {
                 panel = panel,
                 cardLayout = panel.GetComponent<DictionaryCardLayout>(),
-                renameInputField = renameInputFields != null && i < renameInputFields.Length ? renameInputFields[i] : null
+                renameInputField = renameInputFields != null && i < renameInputFields.Length ? renameInputFields[i] : null,
+                nameText = deckNameTexts != null && i < deckNameTexts.Length ? deckNameTexts[i] : null
             };
+            if (binding.nameText == null && !hasLoggedMissingNameText)
+            {
+                hasLoggedMissingNameText = true;
+                Debug.LogWarning($"[DictionarySavedDeckPanel] {i}번 칸의 덱 이름 텍스트가 인스펙터에 연결되지 않았습니다", this);
+            }
 
             panelBindings.Add(binding);
         }
@@ -337,7 +347,7 @@ public class DictionarySavedDeckPanel : MonoBehaviour
 
         binding.character = Character.Monster;
         binding.deck = null;
-        SetPanelText(binding.panel, string.Empty);
+        SetPanelText(binding, string.Empty);
         if (binding.renameInputField != null)
         {
             binding.renameInputField.SetTextWithoutNotify(string.Empty);
@@ -386,7 +396,7 @@ public class DictionarySavedDeckPanel : MonoBehaviour
 
         binding.character = character;
         binding.deck = deck;
-        SetPanelText(binding.panel, ResolveDeckName(deck));
+        SetPanelText(binding, ResolveDeckName(deck));
         if (binding.renameInputField != null)
         {
             binding.renameInputField.SetTextWithoutNotify(ResolveDeckName(deck));
@@ -555,7 +565,7 @@ public class DictionarySavedDeckPanel : MonoBehaviour
         activeRenameInputField.SetTextWithoutNotify(ResolveDeckName(binding.deck));
         activeRenameInputField.gameObject.SetActive(true);
 
-        SetDeckNameTextActive(binding.panel, false);
+        SetDeckNameTextActive(binding, false);
         activeRenameInputField.Select();
         activeRenameInputField.ActivateInputField();
         activeRenameInputField.MoveTextEnd(false);
@@ -576,7 +586,7 @@ public class DictionarySavedDeckPanel : MonoBehaviour
 
         if (binding != null)
         {
-            SetDeckNameTextActive(binding.panel, true);
+            SetDeckNameTextActive(binding, true);
             if (binding.renameInputField != null)
             {
                 binding.renameInputField.SetTextWithoutNotify(ResolveDeckName(binding.deck));
@@ -643,8 +653,8 @@ public class DictionarySavedDeckPanel : MonoBehaviour
             catch (Exception exception)
             {
                 binding.deck.name = previousName;
-                SetPanelText(binding.panel, previousName);
-                SetDeckNameTextActive(binding.panel, true);
+                SetPanelText(binding, previousName);
+                SetDeckNameTextActive(binding, true);
                 if (binding.renameInputField != null)
                 {
                     binding.renameInputField.SetTextWithoutNotify(previousName);
@@ -656,8 +666,8 @@ public class DictionarySavedDeckPanel : MonoBehaviour
             Debug.Log($"[RankingModeSavedDeckPanel] 저장덱 이름을 변경했습니다: {deckName}");
         }
 
-        SetPanelText(binding.panel, ResolveDeckName(binding.deck));
-        SetDeckNameTextActive(binding.panel, true);
+        SetPanelText(binding, ResolveDeckName(binding.deck));
+        SetDeckNameTextActive(binding, true);
         if (binding.renameInputField != null)
         {
             binding.renameInputField.SetTextWithoutNotify(ResolveDeckName(binding.deck));
@@ -692,57 +702,20 @@ public class DictionarySavedDeckPanel : MonoBehaviour
         activeRenameInputField.DeactivateInputField();
     }
 
-    private void SetDeckNameTextActive(RectTransform panel, bool isActive)
+    private static void SetDeckNameTextActive(DeckPanelBinding binding, bool isActive)
     {
-        TMP_Text tmpText = FindDeckNameText<TMP_Text>(panel);
-        if (tmpText != null)
+        if (binding?.nameText != null)
         {
-            tmpText.gameObject.SetActive(isActive);
-            return;
-        }
-
-        Text legacyText = FindDeckNameText<Text>(panel);
-        if (legacyText != null)
-        {
-            legacyText.gameObject.SetActive(isActive);
+            binding.nameText.gameObject.SetActive(isActive);
         }
     }
 
-    private void SetPanelText(RectTransform panel, string text)
+    private static void SetPanelText(DeckPanelBinding binding, string text)
     {
-        TMP_Text tmpText = FindDeckNameText<TMP_Text>(panel);
-        if (tmpText != null)
+        if (binding?.nameText != null)
         {
-            tmpText.text = text ?? string.Empty;
-            return;
+            binding.nameText.text = text ?? string.Empty;
         }
-
-        Text legacyText = FindDeckNameText<Text>(panel);
-        if (legacyText != null)
-        {
-            legacyText.text = text ?? string.Empty;
-        }
-    }
-
-    private T FindDeckNameText<T>(RectTransform panel) where T : Component
-    {
-        if (panel == null)
-        {
-            return null;
-        }
-
-        T[] texts = panel.GetComponentsInChildren<T>(true);
-        foreach (T text in texts)
-        {
-            if (text == null || text.gameObject.name != "DeckName")
-            {
-                continue;
-            }
-
-            return text;
-        }
-
-        return null;
     }
 
     private string ResolveDeckName(CharacterDeckSave deck)
