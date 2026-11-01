@@ -125,10 +125,11 @@ public class GroupedDeckView : MonoBehaviour
 
         vertical.padding = padding;
         vertical.spacing = sectionSpacing;
+        // 격자는 정해 둔 열 수의 폭으로 가운데, 머리줄은 전체 폭으로 늘림
         vertical.childAlignment = TextAnchor.UpperCenter;
         vertical.childControlWidth = true;
         vertical.childControlHeight = true;
-        vertical.childForceExpandWidth = true;
+        vertical.childForceExpandWidth = false;
         vertical.childForceExpandHeight = false;
 
         ContentSizeFitter fitter = GetComponent<ContentSizeFitter>();
@@ -157,6 +158,7 @@ public class GroupedDeckView : MonoBehaviour
             element = header.gameObject.AddComponent<LayoutElement>();
             element.preferredHeight = ((RectTransform)headerPrefab.transform).rect.height;
         }
+        element.flexibleWidth = Mathf.Max(1f, element.flexibleWidth);
 
         CreatedObjects.Add(header.gameObject);
         return header;
@@ -175,7 +177,8 @@ public class GroupedDeckView : MonoBehaviour
         grid.spacing = cardSpacing;
         grid.startCorner = GridLayoutGroup.Corner.UpperLeft;
         grid.startAxis = GridLayoutGroup.Axis.Horizontal;
-        grid.childAlignment = TextAnchor.UpperCenter;
+        // 열 수 고정: 카드가 한 줄보다 적어도 같은 열 위치에서 왼쪽부터 채움
+        grid.childAlignment = TextAnchor.UpperLeft;
         grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
         grid.constraintCount = Mathf.Max(1, columns);
 

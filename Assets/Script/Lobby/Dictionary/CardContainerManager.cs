@@ -20,6 +20,8 @@ public class CardContainerManager : MonoBehaviour {
     [Header("Grid 레이아웃 설정")]
     // 기본값은 전체 덱 묶음 화면과 같은 크기 (카드 확인 크기, 이전 고정 값은 간격 10 · 여백 5/10 · 배율 0.65)
     [SerializeField] private Vector2 cellSize = new Vector2(200, 280); // 각 셀의 크기
+    [Tooltip("한 줄 카드 수 (화면비 · 패널 폭과 관계없이 고정)")]
+    [SerializeField] private int columns = 4;
     [SerializeField] private Vector2 spacing = new Vector2(16, 16); // 카드 간 간격
     [SerializeField] private int paddingLeft = 16;
     [SerializeField] private int paddingRight = 16;
@@ -45,45 +47,30 @@ public class CardContainerManager : MonoBehaviour {
     }
 
     private void Start() {
-        // RectTransform이 완전히 초기화된 후 열 개수 재계산
-        CalculateColumnCount();
+        // RectTransform이 완전히 초기화된 후 열 배치 적용
+        ApplyColumnLayout();
         
         // 스크롤 감도 설정
         SetupScrollSensitivity();
     }
 
     /// <summary>
-    /// 컨테이너 너비에 맞게 열 개수 자동 계산
+    /// 정해 둔 열 수로 배치, 남는 폭은 좌우 여백으로 나눠 격자 묶음을 가운데에 둠
+    /// 카드가 한 줄보다 적어도 열 위치가 같고 왼쪽부터 채움
     /// </summary>
-    private void CalculateColumnCount() {
+    private void ApplyColumnLayout() {
         if (cardContainer == null || gridLayout == null) return;
 
-        // 스크롤바를 뺀 실제 보이는 폭(Viewport) 기준, 없으면 스크롤 뷰 폭
-        RectTransform rectTransform = cardContainer.parent as RectTransform;
-        if (rectTransform == null) {
-            rectTransform = cardContainerScrollView.GetComponent<RectTransform>();
-        }
-        if (rectTransform == null) {
-            Debug.LogError("[CardContainerManager] cardContainer에 RectTransform이 없습니다!");
-            return;
-        }
+        int columnCount = Mathf.Max(1, columns);
+        gridLayout.constraintCount = columnCount;
+        gridLayout.childAlignment = TextAnchor.UpperLeft;
 
-        // 사용 가능한 너비 계산
-        float availableWidth = rectTransform.rect.width - paddingLeft - paddingRight;
-        
-        // 한 장의 카드가 차지하는 너비 (셀 크기 + 간격)
-        float cardWidthWithSpacing = cellSize.x + spacing.x;
-        
-        // 한 줄에 들어갈 수 있는 최대 카드 개수 계산
-        // 마지막 카드 뒤에는 spacing이 필요 없으므로 spacing.x를 더해줌
-        int calculatedColumnCount = Mathf.FloorToInt((availableWidth + spacing.x) / cardWidthWithSpacing);
-        
-        // 최소 1개는 보장
-        calculatedColumnCount = Mathf.Max(1, calculatedColumnCount);
-        
-        gridLayout.constraintCount = calculatedColumnCount;
-        
-        Debug.Log($"[CardContainerManager] 자동 계산된 열 개수: {calculatedColumnCount} (컨테이너 너비: {rectTransform.rect.width}, 사용가능 너비: {availableWidth})");
+        // 스크롤바를 뺀 실제 보이는 폭(Viewport) 기준
+        RectTransform viewport = cardContainer.parent as RectTransform;
+        float gridWidth = columnCount * cellSize.x + (columnCount - 1) * spacing.x;
+        float extra = viewport != null ? Mathf.Max(0f, viewport.rect.width - paddingLeft - paddingRight - gridWidth) : 0f;
+        int extraLeft = Mathf.FloorToInt(extra * 0.5f);
+        gridLayout.padding = new RectOffset(paddingLeft + extraLeft, paddingRight + Mathf.FloorToInt(extra) - extraLeft, paddingTop, paddingBottom);
     }
 
     /// <summary>
@@ -126,7 +113,7 @@ public class CardContainerManager : MonoBehaviour {
         // Grid Layout 설정
         gridLayout.startCorner = GridLayoutGroup.Corner.UpperLeft; // 좌측 상단부터 시작
         gridLayout.startAxis = GridLayoutGroup.Axis.Horizontal; // 가로 방향으로 채움
-        gridLayout.childAlignment = TextAnchor.UpperCenter; // 상단 가운데 정렬 (남는 폭을 좌우로 나눔)
+        gridLayout.childAlignment = TextAnchor.UpperLeft; // 좌측 상단 정렬 (남는 폭은 ApplyColumnLayout에서 좌우 여백으로)
         gridLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount; // 열 개수 고정
         gridLayout.cellSize = cellSize; // 셀 크기
         gridLayout.spacing = spacing; // 간격
@@ -215,8 +202,8 @@ public class CardContainerManager : MonoBehaviour {
             return;
         }
 
-        // 패널 크기 · 화면비가 바뀌었을 수 있어 열 수 다시 계산
-        CalculateColumnCount();
+        // 패널 크기 · 화면비가 바뀌었을 수 있어 좌우 여백 다시 계산 (열 수는 고정)
+        ApplyColumnLayout();
 
         // 카드 추가
         int addedCount = 0;
