@@ -41,7 +41,6 @@
     "ui.rest.saveDeck": "デッキを保存",
     "ui.selection.addToDeck": "選択したカードをデッキに加える。",
     "ui.selection.addToHand": "選択したカードを手札に加える。",
-    "ui.selection.bind": "選択したカードをこのカードに束ねる。",
     "ui.selection.chooseUpgrade": "選択したカードにアップグレードされる。",
     "ui.selection.copyToHand": "選択したカードを複製して手札に加える。",
     "ui.selection.discard": "選択したカードは捨てられる。",

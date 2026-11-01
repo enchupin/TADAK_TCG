@@ -241,22 +241,8 @@ public class CardInteractionHandler : UIHoverEffect,
             return;
         }
 
-        if (effect is KillEffect killEffect) {
-            if (killEffect.target == TargetType.SingleEnemy) {
-                hasSingleEnemyTarget = true;
-            }
-            return;
-        }
-
         if (effect is RemoveBuffEffect removeBuffEffect) {
             if (removeBuffEffect.target == TargetType.SingleEnemy) {
-                hasSingleEnemyTarget = true;
-            }
-            return;
-        }
-
-        if (effect is MixBuffEffect mixBuffEffect) {
-            if (mixBuffEffect.target == TargetType.SingleEnemy) {
                 hasSingleEnemyTarget = true;
             }
             return;

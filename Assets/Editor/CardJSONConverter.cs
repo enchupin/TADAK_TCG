@@ -568,7 +568,6 @@ public class CardJSONConverter : EditorWindow
         };
 
         ValidateCopyEffectSchema(effectObject, effectType, fromRaw, toRaw, targetRaw);
-        ValidateKillEffectSchema(effectObject, effectType);
         ValidateLegacyMoveKeywords(effect);
 
         /*
@@ -911,14 +910,10 @@ public class CardJSONConverter : EditorWindow
             case "Copy": return EffectType.Copy;
             case "RandGenerate": return EffectType.RandGenerate;
             case "Keep": return EffectType.Keep;
-            case "Cost": return EffectType.Cost;
             case "CreateCard": return EffectType.Repeat; // 추후 삭제 또는 수정 예정
             case "SelectCard": return EffectType.SelectCard;
-            case "Upgrade": return EffectType.Upgrade;
-            case "MixBuff": return EffectType.MixBuff;
             case "ModifyCards": return EffectType.ModifyCards;
             case "ModifyCard": return EffectType.ModifyCard;
-            case "Kill": return EffectType.Kill;
             case "TakeDamage":
                 throw new ArgumentException("[CardJSONConverter] TakeDamage effect is no longer supported. Use Damage.");
             case "ChangeStat": return EffectType.ChangeStat;
@@ -927,18 +922,13 @@ public class CardJSONConverter : EditorWindow
             case "MultiplyBarrier": return EffectType.MultiplyBarrier;
             case "Trigger": return EffectType.Trigger;
             case "RemoveBuff": return EffectType.RemoveBuff;
-            case "Scry": return EffectType.Scry;
             case "TransformCards":
             case "TransformMonsterCards": return EffectType.TransformCards;
             case "UpgradeCards": return EffectType.UpgradeCards;
             case "SwapCardCosts": return EffectType.SwapCardCosts;
             case "MultiplyEnemyDebuffs": return EffectType.MultiplyEnemyDebuffs;
             case "ScaleIntent": return EffectType.ScaleIntent;
-            case "ReplanIntent": return EffectType.ReplanIntent;
             case "IntentQueue": return EffectType.IntentQueue;
-            case "ReplayExhaustedCards": return EffectType.ReplayExhaustedCards;
-            case "UseTopDeckCards": return EffectType.UseTopDeckCards;
-            case "BindCard": return EffectType.BindCard;
             case "Fragment": return EffectType.Fragment;
             case "RemoveRandomBuff": return EffectType.RemoveRandomBuff;
             case "ChargeIdentity": return EffectType.ChargeIdentity;
@@ -1078,19 +1068,6 @@ public class CardJSONConverter : EditorWindow
             if (effectObject["cardIds"] is not JArray cardIds || cardIds.Count == 0) {
                 throw new ArgumentException("[CardJSONConverter] Copy effect with from=\"CardId\" requires non-empty 'cardIds'.");
             }
-        }
-    }
-
-    private static void ValidateKillEffectSchema(JObject effectObject, EffectType effectType)
-    {
-        if (effectType != EffectType.Kill) {
-            return;
-        }
-
-        bool hasAmount = HasJsonValue(effectObject, "amount");
-        bool hasAmountFormula = !string.IsNullOrWhiteSpace(ReadJsonString(effectObject, "amountFormula"));
-        if (hasAmount || hasAmountFormula) {
-            throw new ArgumentException("[CardJSONConverter] Kill effect no longer supports amount or amountFormula. Use Damage before Kill if you need self damage.");
         }
     }
 

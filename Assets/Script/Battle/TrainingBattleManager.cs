@@ -798,24 +798,16 @@ public class TrainingBattleManager : MonoBehaviour
                 return effect is RepeatEffect;
             case EffectType.Trigger:
                 return effect is TriggerEffect;
-            case EffectType.Kill:
-                return effect is KillEffect;
             case EffectType.ChangeStat:
                 return effect is ChangeStatEffect;
             case EffectType.ReduceCost:
                 return effect is ReduceCostEffect;
-            case EffectType.Cost:
-                return effect is CostEffect;
             case EffectType.ModifyCard:
                 return effect is ModifyCardEffect;
             case EffectType.ModifyCards:
                 return effect is ModifyCardsEffect;
-            case EffectType.Upgrade:
-                return effect is UpgradeEffect;
             case EffectType.ExtraTurn:
                 return effect is ExtraTurnEffect;
-            case EffectType.MixBuff:
-                return effect is MixBuffEffect;
             case EffectType.EnemyHpLossHealPlayer:
                 return effect is EnemyHpLossHealPlayerEffect;
             case EffectType.Party:
@@ -832,8 +824,6 @@ public class TrainingBattleManager : MonoBehaviour
                 return effect is HealEffect;
             case EffectType.Buff:
                 return effect is BuffEffect;
-            case EffectType.Scry:
-                return effect is ScryEffect;
             default:
                 return false;
         }

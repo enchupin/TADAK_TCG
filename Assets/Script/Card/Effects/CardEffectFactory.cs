@@ -143,14 +143,6 @@ public static class CardEffectFactory
                     onActions = BuildRuntimeEffects(effectData.onAction, resolvedSubject)
                 };
 
-            case EffectType.Cost:
-                return new CostEffect
-                {
-                    amount = effectData.amount,
-                    amountFormula = effectData.amountFormula,
-                    subject = resolvedSubject
-                };
-
             case EffectType.Damage:
                 return new DamageEffect
                 {
@@ -241,12 +233,6 @@ public static class CardEffectFactory
                     operation = effectData.operation
                 };
 
-            case EffectType.Kill:
-                return new KillEffect
-                {
-                    target = effectData.target
-                };
-
             case EffectType.Keep:
                 return null;
 
@@ -255,12 +241,6 @@ public static class CardEffectFactory
                 {
                     amount = effectData.amount,
                     amountFormula = effectData.amountFormula
-                };
-
-            case EffectType.MixBuff:
-                return new MixBuffEffect
-                {
-                    target = effectData.target
                 };
 
             case EffectType.Move:
@@ -313,12 +293,6 @@ public static class CardEffectFactory
                     target = effectData.target
                 };
 
-            case EffectType.Scry:
-                return new ScryEffect
-                {
-                    count = effectData.count > 0 ? effectData.count : effectData.amount
-                };
-
             case EffectType.SelectCard:
                 return new SelectCardEffect
                 {
@@ -365,13 +339,6 @@ public static class CardEffectFactory
                 {
                     amount = effectData.amount,
                     amountFormula = effectData.amountFormula
-                };
-
-            case EffectType.Upgrade:
-                return new UpgradeEffect
-                {
-                    subject = resolvedSubject,
-                    upgrade = effectData.upgrade
                 };
 
             case EffectType.Trigger:
@@ -424,12 +391,6 @@ public static class CardEffectFactory
                     multiplier = effectData.multiplier
                 };
 
-            case EffectType.ReplanIntent:
-                return new ReplanIntentEffect
-                {
-                    target = effectData.target
-                };
-
             case EffectType.IntentQueue:
                 return new IntentQueueEffect
                 {
@@ -437,26 +398,6 @@ public static class CardEffectFactory
                     operation = effectData.operation,
                     amount = effectData.amount > 0 ? effectData.amount : 1,
                     maxAmount = effectData.count
-                };
-
-            case EffectType.ReplayExhaustedCards:
-                return new ReplayExhaustedCardsEffect
-                {
-                    amount = effectData.amount,
-                    amountFormula = effectData.amountFormula
-                };
-
-            case EffectType.UseTopDeckCards:
-                return new UseTopDeckCardsEffect
-                {
-                    amount = effectData.amount,
-                    amountFormula = effectData.amountFormula
-                };
-
-            case EffectType.BindCard:
-                return new BindCardEffect
-                {
-                    count = effectData.count > 0 ? effectData.count : effectData.amount
                 };
 
             case EffectType.Fragment:

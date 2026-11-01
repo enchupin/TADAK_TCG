@@ -9,7 +9,6 @@ $sources = @(
     'Card/Effects/ICardEffect.cs', 'Card/Effects/CardEffectSequence.cs', 'Card/Effects/CardPlayCompletion.cs',
     'Card/Effects/SelectCardEffect.cs', 'Card/Effects/RepeatEffect.cs',
     'Card/Effects/ConditionalEffect.cs', 'Card/Effects/TriggeredCardExecutionUtility.cs',
-    'Card/Effects/UseTopDeckCardsEffect.cs', 'Card/Effects/ReplayExhaustedCardsEffect.cs',
     'Card/Effects/MoveEffect.cs', 'Card/Effects/DrawEffect.cs', 'Card/Effects/RandGenerateEffect.cs',
     'Card/Effects/FragmentEffect.cs',
     'Battle/CardSelectionOutcome.cs', 'Card/Effects/CardSelectionOutcomeResolver.cs'

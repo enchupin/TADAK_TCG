@@ -41,7 +41,6 @@
     "ui.rest.saveDeck": "Сохранить колоду",
     "ui.selection.addToDeck": "Выбранная карта добавляется в колоду.",
     "ui.selection.addToHand": "Выбранная карта добавляется в руку.",
-    "ui.selection.bind": "Выбранная карта привязывается к этой карте.",
     "ui.selection.chooseUpgrade": "Карта улучшается до выбранной.",
     "ui.selection.copyToHand": "Копия выбранной карты добавляется в руку.",
     "ui.selection.discard": "Выбранная карта сбрасывается.",
