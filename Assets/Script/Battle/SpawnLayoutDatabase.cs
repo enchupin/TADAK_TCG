@@ -10,11 +10,6 @@ public static class SpawnLayoutDatabase
 
     public static SpawnLayoutData Data => data ??= Load();
 
-    public static void SetData(SpawnLayoutData value)
-    {
-        data = value;
-    }
-
     public static void Reload()
     {
         data = null;

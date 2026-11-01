@@ -88,11 +88,6 @@ public sealed class LocalizationCatalog
         return FindBySystemLanguage(systemLanguageName) ?? DefaultLanguage;
     }
 
-    public bool HasLanguage(string languageCode)
-    {
-        return !string.IsNullOrEmpty(languageCode) && languageByCode.ContainsKey(languageCode);
-    }
-
     public LocalizationLanguageInfo FindLanguage(string languageCode)
     {
         return !string.IsNullOrEmpty(languageCode) && languageByCode.TryGetValue(languageCode, out LocalizationLanguageInfo language)
@@ -208,13 +203,6 @@ public sealed class LocalizationCatalog
     public bool TryGetText(string languageCode, string key, out string text)
     {
         return TryGetText(languageCode, key, out text, out _);
-    }
-
-    public IEnumerable<string> GetKeys(string languageCode)
-    {
-        return !string.IsNullOrEmpty(languageCode) && entriesByLanguage.TryGetValue(NormalizeCode(languageCode) ?? languageCode, out Dictionary<string, string> table)
-            ? table.Keys
-            : Array.Empty<string>();
     }
 
     // 요청 언어 → languages.json의 fallback → 원문 언어 (중복 · 순환 제거)

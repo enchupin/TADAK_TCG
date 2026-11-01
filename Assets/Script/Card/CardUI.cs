@@ -752,10 +752,6 @@ public static class CardDescriptionFormatter
                 AddAmount(amounts, ResolveStaminaAmount(staminaEffect, battleManager));
                 return;
 
-            case ScryEffect scryEffect:
-                AddAmount(amounts, ResolveScryAmount(scryEffect));
-                return;
-
             case BuffEffect buffEffect:
                 AddAmount(amounts, ResolveBuffAmount(buffEffect, battleManager));
                 return;
@@ -798,10 +794,6 @@ public static class CardDescriptionFormatter
 
             case ReduceCostEffect reduceCostEffect:
                 AddAmount(amounts, Mathf.Abs(ResolveCardValueAmount(reduceCostEffect.amount, reduceCostEffect.amountFormula, battleManager, 0)));
-                return;
-
-            case CostEffect costEffect:
-                AddAmount(amounts, Mathf.Abs(ResolveCardValueAmount(costEffect.amount, costEffect.amountFormula, battleManager, 0)));
                 return;
 
             case ChangeStatEffect changeStatEffect:
@@ -1095,16 +1087,6 @@ public static class CardDescriptionFormatter
         }
 
         return Mathf.Max(0, ResolveCardValueAmount(effect.amount, effect.amountFormula, battleManager, 0));
-    }
-
-    private static int ResolveScryAmount(ScryEffect effect)
-    {
-        if (effect == null)
-        {
-            return 0;
-        }
-
-        return Mathf.Max(0, effect.count);
     }
 
     private static int ResolveBuffAmount(BuffEffect effect, TrainingBattleManager battleManager)

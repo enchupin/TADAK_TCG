@@ -446,11 +446,6 @@ public class UsableDeckManager : MonoBehaviour
         return discardPile != null ? discardPile.Count : 0;
     }
 
-    public int GetExhaustPileCount()
-    {
-        return exhaustPile != null ? exhaustPile.Count : 0;
-    }
-
     /// <summary>
     /// 현재 드로우 더미 순서를 그대로 설정
     /// </summary>

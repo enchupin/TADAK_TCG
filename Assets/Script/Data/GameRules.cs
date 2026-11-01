@@ -114,12 +114,6 @@ public static class GameRules
     public static IdentityRulesData Identity => Current.identity ?? (Current.identity = new IdentityRulesData());
     public static TrainingRulesData Training => Current.training ?? (Current.training = new TrainingRulesData());
 
-    // 테스트나 에디터에서 다른 수치를 주입할 때 사용
-    public static void Override(GameRulesData rules)
-    {
-        current = rules;
-    }
-
     public static void Reload()
     {
         current = null;

@@ -150,21 +150,6 @@ static class Program
             var resolver = new CombatResolver(m); resolver.TryPlayCard(Event(c)); m.Tick(); m.Tick();
             Assert(!resolver.IsResolvingCardPlay && m.handManager.EarlyUseAnimations == 0 && !m.handManager.Cards.Contains(c), "선행 연출 없음");
         });
-        Test("덱 자동 사용: 선택을 마친 뒤 다음 카드 사용", () => {
-            var first = Load(102053); var parent = new Card(); var m = Setup(parent, 5);
-            var next = new Card(); int playedNext = 0; next.effects.Add(new ActionEffect(_ => playedNext++));
-            m.usableDeckManager.Draw.Insert(0, next); m.usableDeckManager.Draw.Insert(0, first);
-            first.effects.RemoveAt(1);
-            parent.effects.Add(new UseTopDeckCardsEffect { amount = 2 });
-            var r = Run(parent, m); r.MoveNext(); Assert(playedNext == 0 && !m.usableDeckManager.Discard.Contains(first), "자동 사용 대기");
-            m.Confirm(); Finish(r); Assert(playedNext == 1 && m.usableDeckManager.Discard.Contains(first), "자동 사용 완료");
-        });
-        Test("바인딩된 카드의 선택도 완료 대기", () => {
-            var parent = new Card(); var child = Load(102053); CardManager.Cards[child.cardId] = child;
-            parent.boundCardIds.Add(child.cardId); var m = Setup(parent, 5); var r = Run(parent, m);
-            r.MoveNext(); Assert(m.battleContext.GetContextCard("ThisCard") == child, "바인딩 카드 컨텍스트");
-            m.Confirm(); Finish(r); Assert(m.DrawCalls == 1 && m.battleContext.GetContextCard("ThisCard") == null, "부모 종료");
-        });
         Test("효과 예외 발생 시 컨텍스트와 입력 잠금 복구", () => {
             var c = Load(102053); c.effects.Add(new ActionEffect(_ => throw new InvalidOperationException("검증 예외")));
             var m = Setup(c); var resolver = new CombatResolver(m); resolver.TryPlayCard(Event(c, new Monster())); m.Confirm();
@@ -206,7 +191,7 @@ static class Program
             Assert(CardSelectionOutcomeText.Key(CardSelectionOutcome.MoveToDrawTop) == "ui.selection.moveToDrawTop", "키 규칙");
             string text = CardSelectionOutcomeText.Build(new[] { CardSelectionOutcome.MoveToHand, CardSelectionOutcome.CopyToHand, CardSelectionOutcome.MoveToHand }, key => key == "ui.selection.moveToHand" ? "가져옵니다." : "복제합니다.");
             Assert(text == "가져옵니다. 복제합니다.", "이어 붙이기 · 중복 제거: " + text);
-            Assert(CardSelectionOutcomeText.Build(null, key => key) == "" && CardSelectionOutcomeText.Build(new[] { CardSelectionOutcome.Bind }, key => null) == "", "없으면 빈 문구");
+            Assert(CardSelectionOutcomeText.Build(null, key => key) == "" && CardSelectionOutcomeText.Build(new[] { CardSelectionOutcome.Fragment }, key => null) == "", "없으면 빈 문구");
         });
         Test("SelectCard가 결과를 선택 창에 전달", () => {
             var effect = new SelectCardEffect { count = 1, from = MoveZoneType.Hand, onActions = new List<ICardEffect> { new ExhaustCardEffect() } };

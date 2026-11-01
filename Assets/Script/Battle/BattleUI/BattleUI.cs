@@ -41,7 +41,7 @@ public class BattleUI : MonoBehaviour
     [SerializeField] private TrainingBattleManager battleManager;
     [SerializeField] private GameObject defeatPanel;
     [SerializeField] private string lobbySceneName = "LobbyScene";
-    [Tooltip("설정 버튼 (비워 두면 OnClick에 OnClickSettingsButton이 연결된 버튼을 찾음)")]
+    [Tooltip("설정 버튼 (설정 차단막을 통과해 다시 눌러 닫음)")]
     [SerializeField] private Button settingsButton;
     private Color defaultHPFillColor = Color.white;
     private bool hasDefaultHPFillColor;
@@ -58,7 +58,7 @@ public class BattleUI : MonoBehaviour
         CacheHPFillDefaultColor();
         if (settingsButton == null)
         {
-            settingsButton = UIButtonLookup.FindByOnClick(this, nameof(OnClickSettingsButton));
+            Debug.LogError("[BattleUI] 설정 버튼이 인스펙터에 연결되지 않았습니다 (설정 차단막 통과 · 선택 중 사용 불가)", this);
         }
         SettingsManager.RegisterSettingsButton(settingsButton);
         // 패배 패널: 필수 패널 (ESC 무시, 홈 버튼으로만 진행), 자체 배경이 전체 화면을 덮어 차단막 없음

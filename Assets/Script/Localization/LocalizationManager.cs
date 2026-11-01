@@ -38,12 +38,6 @@ public static class LocalizationManager
         EnsureInitialized();
     }
 
-    public static LocalizationLanguage GetCurrentLanguage()
-    {
-        EnsureInitialized();
-        return currentLanguage;
-    }
-
     public static string GetCurrentLanguageCode()
     {
         EnsureInitialized();

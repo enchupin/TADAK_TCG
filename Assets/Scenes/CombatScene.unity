@@ -3747,6 +3747,7 @@ MonoBehaviour:
   discardPileButton: {fileID: 502347058}
   exhaustPileButton: {fileID: 1178847205}
   fullDeckButton: {fileID: 380076997}
+  mapButton: {fileID: 1381567909}
   selectionHideButton: {fileID: 0}
   fullDeckView: {fileID: 1126510459}
   battleManager: {fileID: 1545498654}
@@ -3835,7 +3836,6 @@ MonoBehaviour:
   drawAnimationPrefab: {fileID: 4646722155488392507, guid: f6781dfdc7d264f4a9c6c5757866a747, type: 3}
   drawStartPosition: {fileID: 348479876}
   animationRoot: {fileID: 1133701496}
-  fallbackDrawStartObjectName: DeckBtn
   duration: 0.35
   staggerDelay: 0.08
   firstDrawPosition: {fileID: 584888245}

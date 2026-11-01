@@ -19,7 +19,6 @@ public enum CardSelectionOutcome
     ReduceCost,
     Transform,
     Fragment,
-    Bind,
     AddToDeck,
     RemoveFromDeck,
     DuplicateInDeck

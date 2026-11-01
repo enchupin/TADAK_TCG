@@ -41,8 +41,6 @@ public class Card
 
     // 손에 남았을 때 턴 종료 시 실행 효과 목록
     public List<ICardEffect> endTurnInHandEffects = new();
-    public List<int> boundCardIds = new();
-    public List<int> pendingBoundCardIds = new();
 
     // 조각: 사용 시 본래 효과 다음에 발동할 효과와 그 문구 (카드당 1개, 이번 전투 동안 유지, R-73)
     public List<ICardEffect> fragmentEffects;
@@ -98,7 +96,6 @@ public class Card
     public IEnumerator PlaySequence(TrainingBattleManager battlemanager)
     {
         Debug.Log($"[{cardName}] 카드 사용!");
-        PromotePendingBoundCardIds();
         resolvedAsCuriosity = false;
         skipExhaustOnce = false;
 
@@ -127,28 +124,6 @@ public class Card
             }
 
             yield return CardEffectSequence.Execute(effects, battlemanager);
-
-            if (boundCardIds != null && boundCardIds.Count > 0)
-            {
-                List<int> boundCardIdSnapshot = new List<int>(boundCardIds);
-                foreach (int boundCardId in boundCardIdSnapshot)
-                {
-                    Card boundCard = CardManager.GetCardAsCard(boundCardId);
-                    if (boundCard == null)
-                    {
-                        continue;
-                    }
-
-                    yield return TriggeredCardExecutionUtility.ExecuteTriggeredCardSequence(
-                        battlemanager,
-                        boundCard,
-                        battlemanager != null ? battlemanager.currentTarget : null,
-                        resolveDestination: false,
-                        triggerPowerEffects: false,
-                        allowRepeats: false,
-                        applyPostPlayKeywords: false);
-                }
-            }
 
             if (HasFragment)
             {
@@ -246,12 +221,6 @@ public class Card
         clonedCard.endTurnInHandEffects = endTurnInHandEffects != null
             ? new List<ICardEffect>(endTurnInHandEffects)
             : new List<ICardEffect>();
-        clonedCard.boundCardIds = boundCardIds != null
-            ? new List<int>(boundCardIds)
-            : new List<int>();
-        clonedCard.pendingBoundCardIds = pendingBoundCardIds != null
-            ? new List<int>(pendingBoundCardIds)
-            : new List<int>();
         // 복제 카드는 조각을 이어받지만 호기심과 저장 덱 위치는 이어받지 않음
         clonedCard.fragmentEffects = fragmentEffects != null ? new List<ICardEffect>(fragmentEffects) : null;
         clonedCard.fragmentDescription = fragmentDescription;
@@ -421,17 +390,6 @@ public class Card
 
     }
 
-    public void AddPendingBoundCardId(int cardId)
-    {
-        if (cardId <= 0)
-        {
-            return;
-        }
-
-        pendingBoundCardIds ??= new List<int>();
-        pendingBoundCardIds.Add(cardId);
-    }
-
     public void ApplyTemplate(Card templateCard)
     {
         if (templateCard == null) {
@@ -461,27 +419,12 @@ public class Card
         endTurnInHandEffects = templateCard.endTurnInHandEffects != null
             ? new List<ICardEffect>(templateCard.endTurnInHandEffects)
             : new List<ICardEffect>();
-        boundCardIds = new List<int>();
-        pendingBoundCardIds = new List<int>();
-
         baseCost = Mathf.Max(0, templateCard.baseCost);
         turnCostDelta = 0;
         hasTurnCostOverride = false;
         turnCostOverride = 0;
         ResetUntilPlayedModifiers();
         RecalculateCost();
-    }
-
-    private void PromotePendingBoundCardIds()
-    {
-        if (pendingBoundCardIds == null || pendingBoundCardIds.Count == 0)
-        {
-            return;
-        }
-
-        boundCardIds ??= new List<int>();
-        boundCardIds.AddRange(pendingBoundCardIds);
-        pendingBoundCardIds.Clear();
     }
 
     private void RecalculateCost()

@@ -180,9 +180,6 @@ public static class Program
             Check(effect["amount"] != null || !string.IsNullOrWhiteSpace((string)effect["amountFormula"]), $"{tag} Repeat에 amount 없음");
             Check(effect["count"] == null && effect["effects"] == null && effect["onAction"] == null && effect["subject"] == null, $"{tag} Repeat에 지원하지 않는 필드");
         }
-        if (type == "Kill") {
-            Check(effect["amount"] == null && effect["amountFormula"] == null, $"{tag} Kill에 amount");
-        }
         string formula = (string)effect["amountFormula"];
         Check(formula == null || formula.IndexOf("discarded", StringComparison.OrdinalIgnoreCase) < 0, $"{tag} 이전 수식 키워드 discarded");
         Check(!string.Equals((string)effect["subject"], "DiscardedCount", StringComparison.OrdinalIgnoreCase), $"{tag} 이전 subject DiscardedCount");
