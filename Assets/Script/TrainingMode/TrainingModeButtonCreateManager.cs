@@ -17,12 +17,12 @@ public class TrainingModeButtonCreateManager : MonoBehaviour {
         public RectTransform scrollView;
         public GameObject buttonPrefab;
         [Tooltip("첫 버튼 중심 위치 (가로 스크롤이면 x - 버튼 폭 절반이 왼쪽 여백)")]
-        public Vector3 startPosition = new Vector3(110f, 0f, 0f);
+        public Vector3 startPosition = new Vector3(190f, 0f, 0f);
         [Tooltip("버튼 중심 간 거리 (버튼 폭을 빼면 버튼 사이 간격)")]
-        public float buttonSpacing = 190f;
+        public float buttonSpacing = 350f;
         [Tooltip("마지막 버튼 뒤 여백")]
         public float trailingPadding = 30f;
-        public float scrollSensitivity = 7.5f;
+        public float scrollSensitivity =30f;
         public Scrolltype scrolltype = Scrolltype.horizontal;
     }
 
