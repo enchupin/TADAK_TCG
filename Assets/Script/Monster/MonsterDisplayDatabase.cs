@@ -12,12 +12,6 @@ public static class MonsterDisplayDatabase
     public static MonsterSpriteBoundsData Bounds => bounds ??= Load<MonsterSpriteBoundsData>(MonsterSpriteBoundsData.ResourcePath);
     public static MonsterDisplayData Display => display ??= Load<MonsterDisplayData>(MonsterDisplayData.ResourcePath);
 
-    // 실행 중 값을 바꾼 경우 (비교 씬 조정) 바로 반영
-    public static void SetDisplay(MonsterDisplayData data)
-    {
-        display = data;
-    }
-
     public static void Reload()
     {
         bounds = null;

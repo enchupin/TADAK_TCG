@@ -109,11 +109,10 @@ class Program {
   Check(summoners.Count>0,"소환 몬스터를 찾지 못함");
  }
 
- // 소환 몬스터가 있는 조우는 상한만큼, 나머지는 몬스터 수만큼, 허수아비 1칸
+ // 소환 몬스터가 있는 조우는 상한만큼, 나머지는 몬스터 수만큼
  static Dictionary<string,int> ExpectedSlotCounts(List<EncounterDefinition> encounters,HashSet<int> summoners,int maxEnemies){
   var result=new Dictionary<string,int>();
   foreach(var e in encounters)result[e.id]=e.monsters.Any(summoners.Contains)?Math.Max(maxEnemies,e.monsters.Count):e.monsters.Count;
-  result[SpawnLayoutData.RankingScareCrowId]=1;
   return result;
  }
 

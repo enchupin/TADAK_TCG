@@ -54,33 +54,6 @@ public static class MouseProvider
     }
     
     /// <summary>
-    /// 포인터 아래의 모든 2D 오브젝트 감지
-    /// </summary>
-    public static RaycastHit2D[] GetAllHits2D(LayerMask layerMask)
-    {
-        Vector2 worldPos = GetWorldPosition();
-        return Physics2D.RaycastAll(worldPos, Vector2.zero, 0f, layerMask);
-    }
-    
-    /// <summary>
-    /// 클릭/터치 중인지 확인
-    /// </summary>
-    public static bool IsPressed()
-    {
-        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)
-        {
-            return true;
-        }
-        
-        if (Mouse.current != null && Mouse.current.leftButton.isPressed)
-        {
-            return true;
-        }
-        
-        return false;
-    }
-    
-    /// <summary>
     /// 이번 프레임에 클릭/터치가 시작되었는지 확인
     /// </summary>
     public static bool WasPressedThisFrame()

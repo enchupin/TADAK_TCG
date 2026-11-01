@@ -177,11 +177,6 @@ public class SettingsManager : MonoBehaviour
         PlayPanelToggleSound();
     }
 
-    public bool IsSettingsPanelOpen()
-    {
-        return settingsPanel != null && settingsPanel.activeSelf;
-    }
-
     private void SyncSoundSliders()
     {
         if (bgmSlider != null && BGMControl.Instance != null) {

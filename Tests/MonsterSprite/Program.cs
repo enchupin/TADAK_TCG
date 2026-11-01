@@ -13,9 +13,7 @@ class Program {
  static readonly List<string> warnings=new();
  static void Check(bool ok,string message){if(!ok)throw new Exception(message);count++;}
  // 아직 이미지가 없는 몬스터 (경고만 출력)
- static readonly HashSet<string> PendingImages=new(){"ScareCrow"};
- // monsters.json 밖에서 생성되는 몬스터 (랭킹 모드 허수아비)
- static readonly string[] ExtraMonsterClasses={"ScareCrowMonster"};
+ static readonly HashSet<string> PendingImages=new();
 
  static int Main(string[] args){
   string root=args[0];
@@ -138,7 +136,7 @@ class Program {
  static void MonsterImages(string root,MonsterSpriteBoundsData measured){
   string json=File.ReadAllText(Path.Combine(root,"Assets/Resources/JsonData/monsters.json"));
   using var doc=JsonDocument.Parse(json.TrimStart('\uFEFF'));
-  var classNames=doc.RootElement.GetProperty("monsters").EnumerateArray().Select(m=>m.GetProperty("className").GetString()).Concat(ExtraMonsterClasses).Distinct().OrderBy(n=>n,StringComparer.Ordinal);
+  var classNames=doc.RootElement.GetProperty("monsters").EnumerateArray().Select(m=>m.GetProperty("className").GetString()).Distinct().OrderBy(n=>n,StringComparer.Ordinal);
   foreach(string className in classNames){
    string imageName=MonsterImagePaths.NormalizeImageName(className);
    foreach(string suffix in MonsterImagePaths.StateSuffixes){
@@ -175,8 +173,7 @@ class Program {
   Check(names.Distinct().Count()==names.Count,"배치 설정에 중복 몬스터");
   string json=File.ReadAllText(Path.Combine(root,"Assets/Resources/JsonData/monsters.json"));
   using var doc=JsonDocument.Parse(json.TrimStart('\uFEFF'));
-  var imaged=doc.RootElement.GetProperty("monsters").EnumerateArray().Select(m=>MonsterImagePaths.NormalizeImageName(m.GetProperty("className").GetString()))
-   .Concat(ExtraMonsterClasses.Select(MonsterImagePaths.NormalizeImageName)).Distinct()
+  var imaged=doc.RootElement.GetProperty("monsters").EnumerateArray().Select(m=>MonsterImagePaths.NormalizeImageName(m.GetProperty("className").GetString())).Distinct()
    .Where(n=>measured.Find(MonsterImagePaths.BuildResourcePath(n,MonsterImagePaths.IdleImageSuffix))!=null).ToList();
   foreach(string name in imaged)Check(names.Contains(name),$"배치 설정에 없는 몬스터: {name}");
   foreach(string name in names)Check(imaged.Contains(name),$"이미지 없는 몬스터의 배치 설정: {name}");

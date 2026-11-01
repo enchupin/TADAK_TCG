@@ -46,14 +46,6 @@ public static class CardEffectFactory
         return keepEffects;
     }
 
-    /// <summary>
-    /// CardEffectData를 단일 런타임 이펙트로 변환
-    /// </summary>
-    public static ICardEffect CreateEffect(CardEffectData effectData)
-    {
-        return CreateStandaloneEffect(effectData, null);
-    }
-
     private static ICardEffect CreateStandaloneEffect(CardEffectData effectData, string inheritedSubject)
     {
         if (effectData == null)

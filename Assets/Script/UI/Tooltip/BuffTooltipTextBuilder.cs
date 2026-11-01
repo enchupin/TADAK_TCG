@@ -18,11 +18,6 @@ public static class BuffTooltipTextBuilder
     // 족보(1028)에 묶여 표시되는 버프 (더블 · 풀하우스 · 스트레이트 · 로열 순서)
     private static readonly int[] HandRankMemberOrder = { DoubleJackBuffId, HighCostRepeatBuffId, StraightBuffId, RoyalBuffId };
 
-    public static bool IsHandRankMember(int buffId)
-    {
-        return System.Array.IndexOf(HandRankMemberOrder, buffId) >= 0;
-    }
-
     public static string Build(Buff buff)
     {
         if (buff?.data == null)

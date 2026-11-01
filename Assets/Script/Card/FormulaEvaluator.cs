@@ -10,15 +10,6 @@ using UnityEngine;
 /// </summary>
 public static class FormulaEvaluator
 {
-    /// <summary>
-    /// 문자열이 수식인지 확인
-    /// </summary>
-    public static bool IsFormula(string value)
-    {
-        if (string.IsNullOrEmpty(value)) return false;
-        if (int.TryParse(value, out _)) return false;
-        return true;
-    }
 
     /// <summary>
     /// 수식 문자열을 평가하여 정수 반환

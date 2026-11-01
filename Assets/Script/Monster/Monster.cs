@@ -184,15 +184,6 @@ public abstract class Monster : MonoBehaviour
         UpdateIntentUI();
     }
 
-    /// <summary>
-    /// Compatibility method for existing calls.
-    /// </summary>
-    public void EnemyTurn(PlayerData target)
-    {
-        PlanNextAction();
-        ExecutePlannedAction(target);
-    }
-
     public void ExecutePlannedAction(PlayerData target)
     {
         EnsureBattleStartInitialized();

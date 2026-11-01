@@ -63,14 +63,4 @@ public abstract class CharacterIdentitySkill
         AddCardsToHand(battleManager, cardIds);
     }
 
-    protected static void AddRandomCardToHand(TrainingBattleManager battleManager, IReadOnlyList<int> candidateCardIds)
-    {
-        if (candidateCardIds == null || candidateCardIds.Count == 0)
-        {
-            return;
-        }
-
-        int randomIndex = Random.Range(0, candidateCardIds.Count);
-        AddRepeatedCardToHand(battleManager, candidateCardIds[randomIndex], 1);
-    }
 }

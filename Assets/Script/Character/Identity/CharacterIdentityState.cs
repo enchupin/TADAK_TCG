@@ -7,7 +7,6 @@ public sealed class CharacterIdentityState
     public CharacterIdentitySkill Skill { get; }
     public int CurrentGauge { get; private set; }
     public int MaxGauge => Mathf.Max(0, CharacterData?.identity?.cost ?? 0);
-    public string Description => CharacterData?.identity?.description ?? string.Empty;
     // 이번 전투에서 스킬을 사용한 횟수와 카드 획득 보상 지급 여부
     public int UsesThisBattle { get; private set; }
     public bool HasReceivedCardRewardThisBattle { get; private set; }

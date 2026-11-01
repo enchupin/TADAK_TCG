@@ -561,16 +561,6 @@ public class DictionarySavedDeckPanel : MonoBehaviour
         activeRenameInputField.MoveTextEnd(false);
     }
 
-    public void ConfirmRename()
-    {
-        if (activeRenameInputField == null)
-        {
-            return;
-        }
-
-        CompleteRename(activeRenameInputField.text, activeRenameInputField.wasCanceled);
-    }
-
     public void CancelRename()
     {
         if (activeRenameBinding == null && activeRenameInputField == null)

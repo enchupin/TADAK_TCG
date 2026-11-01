@@ -180,12 +180,6 @@ public sealed class CharacterIdentityService
         return state != null ? state.MaxGauge : 0;
     }
 
-    public string GetDescription(Character character)
-    {
-        CharacterIdentityState state = GetState(character);
-        return state != null ? state.Description : string.Empty;
-    }
-
     private CharacterIdentitySkill ResolveSkill(Character character)
     {
         if (skills.TryGetValue(character, out CharacterIdentitySkill skill))

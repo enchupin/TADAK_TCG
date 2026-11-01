@@ -195,19 +195,6 @@ public class MonsterBuffRuntimeService
         return resolvedCardId;
     }
 
-    public bool HasAnyLivingMonsterWithBuff(int buffId)
-    {
-        foreach (Monster monster in battleManager.GetLivingMonsters())
-        {
-            if (monster != null && !monster.IsDead() && monster.GetBuffStack(buffId) > 0)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public void OnMonsterBeforeTakeDamage(Monster monster, int incomingDamage)
     {
         if (monster == null || incomingDamage <= 0)

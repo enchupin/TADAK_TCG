@@ -13,8 +13,6 @@ public sealed class RoyalBuffScript : PlayerBuffScript
     public int PlayedCharacterCount => playedCharacters.Count;
     // 툴팁 진행도: 이번 바퀴에 카드를 쓴 캐릭터
     public bool HasPlayedCharacter(Character character) => playedCharacters.Contains(character);
-    // 툴팁 진행도의 목표 인원
-    public int GetRequiredCharacterCount(TrainingBattleManager battleManager) => battleManager != null ? GetPartySize(battleManager) : GameRules.Deck.partySize;
 
     public override void ResetForCombat(TrainingBattleManager battleManager, PlayerData player)
     {

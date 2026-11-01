@@ -96,23 +96,6 @@ public class MonsterSpawner : MonoBehaviour
     }
 
     /// <summary>
-    /// 랭킹 모드 테스트용 허수아비 몬스터를 생성합니다
-    /// </summary>
-    public List<Monster> SpawnRankingScareCrow()
-    {
-        List<Monster> spawnedMonsters = new List<Monster>(1);
-        ApplyEncounterLayout(SpawnLayoutData.RankingScareCrowId, 1);
-        Monster scareCrow = SpawnMonsterToAvailableSlot(typeof(ScareCrowMonster), 0);
-
-        if (scareCrow != null)
-        {
-            spawnedMonsters.Add(scareCrow);
-        }
-
-        return spawnedMonsters;
-    }
-
-    /// <summary>
     /// 노드 타입과 층수에 맞는 몬스터 조합 계획을 생성합니다
     /// </summary>
     public static List<int> CreateEncounterPlan(TrainingNodeType nodeType, int floorNumber)

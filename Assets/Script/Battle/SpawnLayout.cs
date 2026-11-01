@@ -14,8 +14,6 @@ public class SpawnLayoutData
 {
     public const string ResourcePath = "JsonData/spawnLayouts";
     public const int CurrentVersion = 1;
-    // 랭킹 모드 허수아비 항목 ID (조우 데이터 밖에서 생성)
-    public const string RankingScareCrowId = "RANKING";
 
     public int version = CurrentVersion;
     public List<SpawnLayoutEntry> layouts = new();
@@ -75,7 +73,7 @@ public class SpawnLayoutData
 [Serializable]
 public class SpawnLayoutEntry
 {
-    // 조우 ID (E101 · NM02-1 · BS01) 또는 RankingScareCrowId
+    // 조우 ID (E101 · NM02-1 · BS01)
     public string id;
     public List<SpawnSlot> slots = new();
 }

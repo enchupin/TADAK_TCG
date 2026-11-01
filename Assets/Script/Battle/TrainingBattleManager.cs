@@ -535,19 +535,6 @@ public class TrainingBattleManager : MonoBehaviour
         });
     }
 
-    public System.Collections.IEnumerator DrawBasicCardsCoroutine(int count, Character? characterFilter = null, bool ignoreRootAbsorption = false, Action<List<Card>> onComplete = null)
-    {
-        yield return DrawCardsSequentiallyCoroutine(
-            count,
-            ignoreRootAbsorption,
-            () =>
-            {
-                List<Card> drawnCards = usableDeckManager?.DrawBasicCards(1, characterFilter);
-                return drawnCards != null && drawnCards.Count > 0 ? drawnCards[0] : null;
-            },
-            onComplete);
-    }
-
     public void DrawCharacterCards(int count, Character? characterFilter = null, bool ignoreRootAbsorption = false)
     {
         DrawCharacterCardsAndGet(count, characterFilter, ignoreRootAbsorption);
@@ -573,24 +560,6 @@ public class TrainingBattleManager : MonoBehaviour
         });
     }
 
-    public System.Collections.IEnumerator DrawCharacterCardsCoroutine(int count, Character? characterFilter = null, bool ignoreRootAbsorption = false, Action<List<Card>> onComplete = null)
-    {
-        yield return DrawCardsSequentiallyCoroutine(
-            count,
-            ignoreRootAbsorption,
-            () =>
-            {
-                if (!characterFilter.HasValue)
-                {
-                    return null;
-                }
-
-                List<Card> drawnCards = usableDeckManager?.DrawCharacterCards(1, characterFilter);
-                return drawnCards != null && drawnCards.Count > 0 ? drawnCards[0] : null;
-            },
-            onComplete);
-    }
-
     [ContextMenu("Debug Draw Matching Cards")]
     public void DebugDrawMatchingCards()
     {
@@ -613,11 +582,6 @@ public class TrainingBattleManager : MonoBehaviour
 
         RefreshHandPlayableState();
         UpdateAllUI();
-    }
-
-    public void DebugDrawCardsByEffect()
-    {
-        DebugDrawMatchingCards();
     }
 
     private List<Card> CollectDebugMatchingCards()
@@ -2173,16 +2137,6 @@ public class TrainingBattleManager : MonoBehaviour
         return TryUseIdentitySkill(CharacterManager.GetCharacterEnumById(characterId));
     }
 
-    public bool CanUseIdentitySkillBySlot(int slotIndex)
-    {
-        if (!TryGetSelectedCharacterBySlot(slotIndex, out Character character))
-        {
-            return false;
-        }
-
-        return CanUseIdentitySkill(character);
-    }
-
     public bool TryUseIdentitySkillBySlot(int slotIndex)
     {
         if (!TryGetSelectedCharacterBySlot(slotIndex, out Character character))
@@ -2216,11 +2170,6 @@ public class TrainingBattleManager : MonoBehaviour
     public int GetIdentityCost(Character character)
     {
         return characterIdentityService != null ? characterIdentityService.GetCost(character) : 0;
-    }
-
-    public string GetIdentityDescription(Character character)
-    {
-        return characterIdentityService != null ? characterIdentityService.GetDescription(character) : string.Empty;
     }
 
     public IReadOnlyList<CharacterIdentityState> GetIdentityStates()
