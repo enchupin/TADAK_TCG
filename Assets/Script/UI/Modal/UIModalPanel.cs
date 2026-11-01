@@ -13,6 +13,8 @@ public sealed class UIModalPanel : MonoBehaviour
     {
         public UIModalKind kind = UIModalKind.Normal;
         public bool useDimmer = true;
+        // 차단막 클릭으로 닫기 (ESC와 같은 close 실행, 기본은 클릭해도 동작 없음)
+        public bool closeOnDimmerClick;
         // ESC로 닫을 때 실행 (비우면 패널 비활성)
         public Action close;
     }
@@ -240,6 +242,7 @@ public sealed class UIModalPanel : MonoBehaviour
             dimmer.SetPassThrough(passThroughTargets);
         }
 
+        dimmer.SetClickAction(options.closeOnDimmerClick ? CloseFromEscape : null);
         // 패널 바로 아래 형제로 유지 (패널 순서가 바뀌어도 패널 뒤를 덮음)
         dimmer.gameObject.SetActive(true);
         dimmer.PlaceBehind(transform);

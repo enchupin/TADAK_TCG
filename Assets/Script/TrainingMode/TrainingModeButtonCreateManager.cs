@@ -153,39 +153,12 @@ public class TrainingModeButtonCreateManager : MonoBehaviour {
     }
 
     private void BindCharacterData(GameObject buttonObject, CharacterData characterData, bool shouldApplyStandingImage) {
-        BindCharacterLabel(buttonObject, characterData);
-        SetButtonText(buttonObject, characterData.characterName);
-        BindRoleIcon(buttonObject, characterData.characterId);
+        CharacterButtonVisuals.Apply(buttonObject, characterData, shouldApplyStandingImage);
         if (!Enum.IsDefined(typeof(Character), characterData.characterId)) {
             Debug.LogWarning($"[ButtonCreateManager] Character enum에 없는 characterId입니다: {characterData.characterId}");
             return;
         }
-        Character character = (Character)characterData.characterId;
-        if (shouldApplyStandingImage) {
-            CharacterStandingButtonImageUtility.Apply(buttonObject, character);
-        }
-        BindTrainingButton(buttonObject, character);
-    }
-
-    private static void BindCharacterLabel(GameObject buttonObject, CharacterData characterData) {
-        if (buttonObject == null || characterData == null) {
-            return;
-        }
-
-        CharacterLocalizedButtonLabel localizedLabel = buttonObject.GetComponent<CharacterLocalizedButtonLabel>();
-        if (localizedLabel == null) {
-            localizedLabel = buttonObject.AddComponent<CharacterLocalizedButtonLabel>();
-        }
-
-        localizedLabel.Bind(characterData.characterId);
-    }
-
-    // 좌측 상단 역할 아이콘 (프리팹에 CharacterRoleIcon이 없으면 생략)
-    private static void BindRoleIcon(GameObject buttonObject, int characterId) {
-        CharacterRoleIcon roleIcon = buttonObject != null ? buttonObject.GetComponentInChildren<CharacterRoleIcon>(true) : null;
-        if (roleIcon != null) {
-            roleIcon.Bind(characterId);
-        }
+        BindTrainingButton(buttonObject, (Character)characterData.characterId);
     }
 
     private static void BindTrainingButton(GameObject buttonObject, Character character) {
@@ -194,19 +167,6 @@ public class TrainingModeButtonCreateManager : MonoBehaviour {
             return;
         }
         selectedButtonControl.Initialize(character);
-    }
-
-    private static void SetButtonText(GameObject buttonObject, string characterName) {
-        TMP_Text tmpText = buttonObject.GetComponentInChildren<TMP_Text>(true);
-        if (tmpText != null) {
-            tmpText.text = characterName;
-            return;
-        }
-
-        Text legacyText = buttonObject.GetComponentInChildren<Text>(true);
-        if (legacyText != null) {
-            legacyText.text = characterName;
-        }
     }
 
     private void UpdateContentSize(int buttonCount, ButtonPanelConfig buttonPanelConfig) {

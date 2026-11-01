@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class DictionaryPanelController : MonoBehaviour
@@ -46,6 +47,33 @@ public class DictionaryPanelController : MonoBehaviour
     private void OnDisable()
     {
         HideCardDetailPanel();
+        ClearShownCharacter();
+    }
+
+    // 도감을 닫으면 마지막으로 고른 캐릭터 선택 취소 (다시 열면 아무것도 고르지 않은 상태)
+    private void ClearShownCharacter()
+    {
+        shownCharacter = null;
+        if (starterCardPanel != null)
+        {
+            starterCardPanel.ClearCards();
+        }
+
+        if (savedDeckPanel != null)
+        {
+            savedDeckPanel.ClearDecks();
+        }
+
+        if (characterIntro != null)
+        {
+            characterIntro.Show(0);
+        }
+
+        // 선택 색이 남지 않도록 캐릭터 버튼 선택 해제
+        if (EventSystem.current != null)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
     private void OnDestroy()
