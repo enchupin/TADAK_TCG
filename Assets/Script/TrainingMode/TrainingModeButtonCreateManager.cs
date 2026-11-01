@@ -155,6 +155,7 @@ public class TrainingModeButtonCreateManager : MonoBehaviour {
     private void BindCharacterData(GameObject buttonObject, CharacterData characterData, bool shouldApplyStandingImage) {
         BindCharacterLabel(buttonObject, characterData);
         SetButtonText(buttonObject, characterData.characterName);
+        BindRoleIcon(buttonObject, characterData.characterId);
         if (!Enum.IsDefined(typeof(Character), characterData.characterId)) {
             Debug.LogWarning($"[ButtonCreateManager] Character enum에 없는 characterId입니다: {characterData.characterId}");
             return;
@@ -177,6 +178,14 @@ public class TrainingModeButtonCreateManager : MonoBehaviour {
         }
 
         localizedLabel.Bind(characterData.characterId);
+    }
+
+    // 좌측 상단 역할 아이콘 (프리팹에 CharacterRoleIcon이 없으면 생략)
+    private static void BindRoleIcon(GameObject buttonObject, int characterId) {
+        CharacterRoleIcon roleIcon = buttonObject != null ? buttonObject.GetComponentInChildren<CharacterRoleIcon>(true) : null;
+        if (roleIcon != null) {
+            roleIcon.Bind(characterId);
+        }
     }
 
     private static void BindTrainingButton(GameObject buttonObject, Character character) {

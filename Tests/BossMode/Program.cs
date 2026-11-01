@@ -56,6 +56,11 @@ static class Program {
   selection.SelectBoss(303);
   Show(Character.Isla);selection.ToggleDeck(0);Show(Character.Jack);selection.ToggleDeck(0);Show(Character.Mio);selection.ToggleDeck(0);
   selection.ToggleDeck(0);Check(!button.interactable,"재클릭 선택 해제");selection.ToggleDeck(0);panel.Decks.Clear();panel.Refresh();Check(!button.interactable,"선택된 덱 삭제 시 시작 취소");
+  // 캐릭터 버튼 역할 아이콘: ID 백의 자리 (1xx 서포터 · 2xx 딜러 · 3xx 탱커)
+  Check(CharacterRoles.FromCharacterId(101)==CharacterRole.Supporter&&CharacterRoles.FromCharacterId(103)==CharacterRole.Supporter,"서포터 판정");
+  Check(CharacterRoles.FromCharacterId(201)==CharacterRole.Dealer&&CharacterRoles.FromCharacterId(204)==CharacterRole.Dealer,"딜러 판정");
+  Check(CharacterRoles.FromCharacterId(301)==CharacterRole.Tank&&CharacterRoles.FromCharacterId(303)==CharacterRole.Tank,"탱커 판정");
+  Check(CharacterRoles.FromCharacterId(0)==CharacterRole.None&&CharacterRoles.FromCharacterId(401)==CharacterRole.None&&CharacterRoles.FromCharacterId(1101)==CharacterRole.None,"역할 없는 ID");
   Console.WriteLine($"보스모드 동작 검증 {passed}개 통과");
  }
 }

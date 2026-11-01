@@ -12,6 +12,7 @@ $project = @"
     <Compile Include="$escapedRoot/Assets/Script/Lobby/BossMode/BossModeDeckSelection.cs" />
     <Compile Include="$escapedRoot/Assets/Script/Save/CharacterDeckSave.cs" />
     <Compile Include="$escapedRoot/Assets/Script/Character/Character.cs" />
+    <Compile Include="$escapedRoot/Assets/Script/Character/CharacterRole.cs" />
   </ItemGroup>
 </Project>
 "@
