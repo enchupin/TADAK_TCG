@@ -119,12 +119,12 @@ TextureImporter:
       name: "\uB450\uB8E8\uB9C8\uB9AC__0"
       rect:
         serializedVersion: 2
-        x: 3
-        y: 0
-        width: 1523
-        height: 1024
+        x: 307
+        y: 376
+        width: 942
+        height: 344
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -137,33 +137,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: "\uB450\uB8E8\uB9C8\uB9AC__1"
-      rect:
-        serializedVersion: 2
-        x: 82
-        y: 622
-        width: 6
-        height: 6
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c860e72e3bc994b70800000000000000
-      internalID: 8883804036378003084
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -175,6 +153,7 @@ TextureImporter:
     nameFileIdTable:
       "\uB450\uB8E8\uB9C8\uB9AC__0": 3349074997973103307
       "\uB450\uB8E8\uB9C8\uB9AC__1": 8883804036378003084
+      "\uB450\uB8E8\uB9C8\uB9AC__2": -1421163522
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

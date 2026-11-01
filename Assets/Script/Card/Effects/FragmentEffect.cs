@@ -27,7 +27,7 @@ public class FragmentEffect : ICardEffect
 
         string description = ExtractQuotedText(hostCard?.description);
         int sourceCardId = hostCard != null ? hostCard.cardId : 0;
-        if (battleManager.OpenSelectCardPanel(candidates, 1, selectedCards => ApplyFragment(battleManager, selectedCards, description, sourceCardId)))
+        if (battleManager.OpenSelectCardPanel(candidates, 1, selectedCards => ApplyFragment(battleManager, selectedCards, description, sourceCardId), outcomes: new[] { CardSelectionOutcome.Fragment }))
         {
             return;
         }

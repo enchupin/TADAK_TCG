@@ -5,7 +5,8 @@
 public static class MonsterImagePaths
 {
     public const string ImageResourceFolder = "Image/Monster";
-    public const string BossImageResourceFolder = "Image/BossMonster";
+    // 보스 이미지는 일반 몬스터 폴더 하위에 있음
+    public const string BossImageResourceFolder = ImageResourceFolder + "/BossMonster";
     public const string IdleImageSuffix = "Idle";
     public const string AttackImageSuffix = "Attack";
     public const string HitImageSuffix = "Hit";

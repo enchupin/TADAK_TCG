@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class DictionaryPanelController : MonoBehaviour
@@ -12,6 +13,8 @@ public class DictionaryPanelController : MonoBehaviour
 
     [SerializeField] private DictionaryStarterCardPanel starterCardPanel;
     [SerializeField] private DictionarySavedDeckPanel savedDeckPanel;
+    [Tooltip("캐릭터 소개 (CardPanel/DescriptionRect, 비우면 소개 표시 안 함)")]
+    [SerializeField] private DictionaryCharacterIntro characterIntro;
 
     [Header("가운데 구역 탭 (비우면 저장덱 패널 아래 DeckBtn · IllustBtn을 찾음)")]
     [SerializeField] private Button deckTabButton;
@@ -44,6 +47,33 @@ public class DictionaryPanelController : MonoBehaviour
     private void OnDisable()
     {
         HideCardDetailPanel();
+        ClearShownCharacter();
+    }
+
+    // 도감을 닫으면 마지막으로 고른 캐릭터 선택 취소 (다시 열면 아무것도 고르지 않은 상태)
+    private void ClearShownCharacter()
+    {
+        shownCharacter = null;
+        if (starterCardPanel != null)
+        {
+            starterCardPanel.ClearCards();
+        }
+
+        if (savedDeckPanel != null)
+        {
+            savedDeckPanel.ClearDecks();
+        }
+
+        if (characterIntro != null)
+        {
+            characterIntro.Show(0);
+        }
+
+        // 선택 색이 남지 않도록 캐릭터 버튼 선택 해제
+        if (EventSystem.current != null)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
     private void OnDestroy()
@@ -61,6 +91,10 @@ public class DictionaryPanelController : MonoBehaviour
         ShowStarterCards(character);
         ShowSavedDecks(character);
         RefreshIllustration();
+        if (characterIntro != null)
+        {
+            characterIntro.Show(characterId);
+        }
     }
 
     private void ShowStarterCards(Character character)

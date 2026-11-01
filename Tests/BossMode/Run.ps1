@@ -9,9 +9,10 @@ $project = @"
   <ItemGroup>
     <Compile Include="$escapedRoot/Tests/BossMode/*.cs" />
     <Compile Include="$escapedRoot/Assets/Script/Battle/BossMode/BossModeSession.cs" />
-    <Compile Include="$escapedRoot/Assets/Script/Lobby/BossMode/BossModeDeckSelection.cs" />
+    <Compile Include="$escapedRoot/Assets/Script/Lobby/BossMode/BossModeSelectionState.cs" />
     <Compile Include="$escapedRoot/Assets/Script/Save/CharacterDeckSave.cs" />
     <Compile Include="$escapedRoot/Assets/Script/Character/Character.cs" />
+    <Compile Include="$escapedRoot/Assets/Script/Character/CharacterRole.cs" />
   </ItemGroup>
 </Project>
 "@

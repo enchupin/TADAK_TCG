@@ -175,6 +175,8 @@ public class RestPanelController : MonoBehaviour
             }
         }
 
+        // 선택 결과 문구: 강화
+        TrainingBattleManager.Instance?.SetSelectionOutcomes(new[] { CardSelectionOutcome.Upgrade });
         return deckViewer.OpenCancelableSelectionPanel(cards, 1, selected =>
         {
             if (selected.Count > 0 && candidateByCard.TryGetValue(selected[0], out RestDeckEnhanceCandidate picked))
@@ -194,6 +196,7 @@ public class RestPanelController : MonoBehaviour
             return;
         }
 
+        TrainingBattleManager.Instance?.SetSelectionOutcomes(new[] { CardSelectionOutcome.ChooseUpgrade });
         deckViewer.OpenSelectionPanel(options, 1, selected =>
         {
             if (selected.Count > 0)

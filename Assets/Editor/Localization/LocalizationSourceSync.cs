@@ -619,6 +619,9 @@ public static class LocalizationSourceSync
             string prefix = $"character.{characterId.ToString(CultureInfo.InvariantCulture)}";
             AddEntry(table, prefix + ".name", character.Value<string>("name"), report);
             AddEntry(table, prefix + ".identity", ConvertSourceText(character.Value<string>("identityDescription"), buffIdByName, report, prefix), report);
+            // 도감 캐릭터 소개 · 고유 효과 (괄호 버프명은 [buff:id]로 변환)
+            AddEntry(table, prefix + ".intro", character.Value<string>("introduction"), report);
+            AddEntry(table, prefix + ".traits", ConvertSourceText(character.Value<string>("traits"), buffIdByName, report, prefix), report);
         }
     }
 

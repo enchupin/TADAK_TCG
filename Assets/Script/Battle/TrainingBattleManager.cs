@@ -66,8 +66,6 @@ public class TrainingBattleManager : MonoBehaviour
     public MonsterSpawner monsterSpawner;
     [SerializeField] private BattleDeckViewer battleDeckViewer;
     public BattleDeckViewer DeckViewer => battleDeckViewer;
-    [Tooltip("손패 선택 확인 버튼 (중앙에 놓인 카드 아래, 비우면 DeckPanel 아래 CheckBtn을 찾음)")]
-    [SerializeField] private Button handSelectionConfirmButton;
     private HandCardSelectionController handCardSelection;
 
     [Header("Turn Settings")]
@@ -154,34 +152,22 @@ public class TrainingBattleManager : MonoBehaviour
         SetupHandCardSelection();
     }
 
-    // 확인 버튼 자동 찾기: 지정한 부모 바로 아래의 CheckBtn
-    private static Button FindConfirmButtonUnder(string parentName)
-    {
-        foreach (Button button in FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-        {
-            if (button.name == "CheckBtn" && button.transform.parent != null && button.transform.parent.name == parentName)
-            {
-                return button;
-            }
-        }
-        return null;
-    }
-
     // 손패에서 고르는 선택은 패널 없이 전투 화면에서 진행 (확인 버튼은 씬 배치, 중앙 위치는 카드 사용 연출 지점)
     private void SetupHandCardSelection()
     {
-        if (handSelectionConfirmButton == null)
-        {
-            handSelectionConfirmButton = FindConfirmButtonUnder("DeckPanel");
-        }
-
+        // 확인 버튼은 목록 선택(덱 패널)과 공용
+        Button handSelectionConfirmButton = battleDeckViewer != null ? battleDeckViewer.SelectionConfirmButton : null;
         if (handSelectionConfirmButton == null)
         {
             Debug.LogWarning("[BattleManager] 손패 선택 확인 버튼이 없어 손패 선택도 목록으로 표시합니다");
             return;
         }
 
-        handCardSelection = gameObject.AddComponent<HandCardSelectionController>();
+        // 씬에서 미리 붙여 둔 컴포넌트가 있으면 그 인스펙터 값(고른 카드 배율 · 간격) 사용
+        if (!TryGetComponent(out handCardSelection))
+        {
+            handCardSelection = gameObject.AddComponent<HandCardSelectionController>();
+        }
         handCardSelection.Configure(handManager, handSelectionConfirmButton, handManager != null ? handManager.PlayCenterPosition : null);
     }
 
@@ -1100,8 +1086,23 @@ public class TrainingBattleManager : MonoBehaviour
         SceneManager.LoadScene("LobbyScene");
     }
 
+    public bool IsHandCardSelectionActive => handCardSelection != null && handCardSelection.IsActive;
+
     public bool HasPendingSelection => (handCardSelection != null && handCardSelection.IsActive)
         || (battleDeckViewer != null && battleDeckViewer.IsSelectionActive);
+
+    // 선택 결과 문구 (SelectionOutcomeView가 표시), 선택을 열 때마다 새로 지정
+    public IReadOnlyList<CardSelectionOutcome> SelectionOutcomes { get; private set; }
+
+    // 손패 선택 줄 · 목록 선택 패널이 실제로 보이는 동안 (숨김 · 선택 중 덱 보기 · 지도 미리보기 제외)
+    public bool IsCardSelectionVisible => (handCardSelection != null && handCardSelection.IsActive)
+        || (battleDeckViewer != null && battleDeckViewer.IsSelectionListVisible);
+
+    // 전투 밖 선택(휴식 강화)처럼 덱 패널을 직접 여는 곳에서 사용
+    public void SetSelectionOutcomes(IReadOnlyList<CardSelectionOutcome> outcomes)
+    {
+        SelectionOutcomes = outcomes;
+    }
 
     public bool CanPlayerPlayCard()
     {
@@ -1944,7 +1945,7 @@ public class TrainingBattleManager : MonoBehaviour
         }
 
         List<Card> pickedCards = null;
-        yield return SelectCardsCoroutine(options, 1, false, cards => pickedCards = cards);
+        yield return SelectCardsCoroutine(options, 1, false, cards => pickedCards = cards, CardSelectionOutcome.ChooseUpgrade);
         Card picked = pickedCards != null && pickedCards.Count > 0 ? pickedCards[0] : options[0];
 
         int originalCardId = curiousCard.cardId;
@@ -1997,7 +1998,7 @@ public class TrainingBattleManager : MonoBehaviour
             }
 
             List<Card> pickedCards = null;
-            yield return SelectCardsCoroutine(options, 1, false, cards => pickedCards = cards);
+            yield return SelectCardsCoroutine(options, 1, false, cards => pickedCards = cards, CardSelectionOutcome.AddToDeck);
             Card pickedCard = pickedCards != null && pickedCards.Count > 0 ? pickedCards[0] : options[0];
             if (buildingDeck.AddCard(pickedCard.cardId))
             {
@@ -2097,7 +2098,8 @@ public class TrainingBattleManager : MonoBehaviour
             Debug.Log($"[BattleManager] 네임드 보상: {(isDuplicate ? "카드 복제" : "카드 제거")}");
 
             List<Card> pickedCards = null;
-            yield return SelectCardsCoroutine(candidates, 1, false, cards => pickedCards = cards);
+            yield return SelectCardsCoroutine(candidates, 1, false, cards => pickedCards = cards,
+                isDuplicate ? CardSelectionOutcome.DuplicateInDeck : CardSelectionOutcome.RemoveFromDeck);
             Card picked = pickedCards != null && pickedCards.Count > 0 ? pickedCards[0] : null;
             if (picked == null)
             {
@@ -2145,7 +2147,7 @@ public class TrainingBattleManager : MonoBehaviour
 
         List<Card> characterCards = TrainingDeckRewardService.GetCharacterCards(buildingDeck.GetCards(), character);
         List<Card> removedCards = null;
-        yield return SelectCardsCoroutine(characterCards, overflowCount, false, cards => removedCards = cards);
+        yield return SelectCardsCoroutine(characterCards, overflowCount, false, cards => removedCards = cards, CardSelectionOutcome.RemoveFromDeck);
         if (removedCards == null || removedCards.Count < overflowCount)
         {
             // 선택 창이 없으면 가장 최근에 얻은 카드부터 제거
@@ -2158,7 +2160,7 @@ public class TrainingBattleManager : MonoBehaviour
         }
     }
 
-    private System.Collections.IEnumerator SelectCardsCoroutine(List<Card> cards, int selectCount, bool allowFewer, Action<List<Card>> onSelected)
+    private System.Collections.IEnumerator SelectCardsCoroutine(List<Card> cards, int selectCount, bool allowFewer, Action<List<Card>> onSelected, params CardSelectionOutcome[] outcomes)
     {
         bool isCompleted = false;
         List<Card> selectedCards = null;
@@ -2166,7 +2168,7 @@ public class TrainingBattleManager : MonoBehaviour
         {
             selectedCards = result;
             isCompleted = true;
-        }, allowFewer);
+        }, allowFewer, outcomes);
 
         if (opened)
         {
@@ -2324,8 +2326,9 @@ public class TrainingBattleManager : MonoBehaviour
         }
     }
 
-    public bool OpenSelectCardPanel(List<Card> selectableCards, int selectCount, Action<List<Card>> onSelected, bool allowFewer = false)
+    public bool OpenSelectCardPanel(List<Card> selectableCards, int selectCount, Action<List<Card>> onSelected, bool allowFewer = false, IReadOnlyList<CardSelectionOutcome> outcomes = null)
     {
+        SelectionOutcomes = outcomes;
         // 후보가 모두 손패 카드면 손패에서 고르기, 더미 · 덱 · 생성 후보가 섞이면 목록에서 고르기
         if (handCardSelection != null && handCardSelection.CanSelectFromHand(selectableCards))
         {

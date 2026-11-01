@@ -77,6 +77,12 @@ public abstract class Monster : MonoBehaviour
         ? stateController.CurrentState
         : throw new System.InvalidOperationException($"[Monster] {gameObject.name}의 MonsterStateController가 인스펙터에 연결되지 않았습니다");
     public abstract int MonsterId { get; }
+
+    // 과녁 등 몬스터 그림 위에 겹쳐 그릴 때 사용
+    public bool TryGetImageContentWorldCorners(Vector3[] corners)
+    {
+        return stateController != null && stateController.TryGetImageContentWorldCorners(corners);
+    }
     protected virtual string MonsterName => GetType().Name;
     // 표시용 이름 (데이터 몬스터는 계층 포함 이름)
     public string DisplayName => MonsterName;

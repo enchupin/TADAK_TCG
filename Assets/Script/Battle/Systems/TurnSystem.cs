@@ -434,7 +434,7 @@ public class TurnSystem
             }
 
             selectionCompleted = true;
-        });
+        }, outcomes: new[] { CardSelectionOutcome.Retain });
 
         if (opened)
         {

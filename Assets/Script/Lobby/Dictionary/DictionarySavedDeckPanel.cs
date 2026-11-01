@@ -19,6 +19,9 @@ public class DictionarySavedDeckPanel : MonoBehaviour
     [Header("저장덱 삭제 확인 설정")]
     [SerializeField] private GameObject deleteConfirmationPanel;
 
+    [Header("읽기 전용 (보스 모드 덱 선택 팝업: 이름 변경 · 삭제 불가)")]
+    [SerializeField] private bool readOnly;
+
     private sealed class DeckPanelBinding
     {
         public RectTransform panel;
@@ -34,6 +37,8 @@ public class DictionarySavedDeckPanel : MonoBehaviour
     private TMP_InputField activeRenameInputField;
     private CharacterDeckSave pendingDeleteDeck;
     private Character pendingDeleteCharacter;
+    // 일러스트 탭이면 false (저장 덱이 있는 칸도 숨김)
+    private bool deckPanelsVisible = true;
     public event Action DecksChanged;
 
     public bool TryGetDisplayedDeck(int index, out Character character, out CharacterDeckSave deck)
@@ -49,6 +54,12 @@ public class DictionarySavedDeckPanel : MonoBehaviour
     private void Awake()
     {
         HideRenameInputFields();
+        // 읽기 전용 복제본이 도감의 삭제 확인 패널을 공유하면 도감 쪽 ESC 동작을 덮어쓰므로 연결을 끊음
+        if (readOnly && deleteConfirmationPanel != null)
+        {
+            Debug.LogWarning("[DictionarySavedDeckPanel] 읽기 전용 패널에는 삭제 확인 패널을 연결하지 않습니다", this);
+            deleteConfirmationPanel = null;
+        }
         // 삭제 확인은 일반 패널 (ESC = 취소), 뒤 클릭은 차단막으로 막음
         UIModalPanel.Ensure(deleteConfirmationPanel, new UIModalPanel.Options {
             close = CancelDeleteDeck
@@ -87,11 +98,22 @@ public class DictionarySavedDeckPanel : MonoBehaviour
             BindDeckToPanel(panelBindings[i], character, decks[i]);
         }
 
+        RefreshDeckPanelActive();
         DecksChanged?.Invoke();
         if (decks.Count > MaxDeckPanelCount)
         {
             Debug.LogWarning($"[RankingModeSavedDeckPanel] 표시 가능한 저장덱 수를 초과했습니다: {decks.Count}/{MaxDeckPanelCount}");
         }
+    }
+
+    // 표시 중인 덱을 모두 비움 (도감을 닫을 때 선택 초기화)
+    public void ClearDecks()
+    {
+        CancelDeleteDeck();
+        CancelRename();
+        ClearPanelBindings();
+        RefreshDeckPanelActive();
+        DecksChanged?.Invoke();
     }
 
     // 도감 일러스트 탭: 저장덱 칸을 숨기고 같은 자리에 일러스트 표시
@@ -103,6 +125,13 @@ public class DictionarySavedDeckPanel : MonoBehaviour
             CancelDeleteDeck();
         }
 
+        deckPanelsVisible = visible;
+        RefreshDeckPanelActive();
+    }
+
+    // 저장된 덱이 있는 칸만 활성, 빈 칸은 비활성
+    private void RefreshDeckPanelActive()
+    {
         if (cardPanels == null)
         {
             return;
@@ -112,14 +141,32 @@ public class DictionarySavedDeckPanel : MonoBehaviour
         {
             if (panel != null)
             {
-                panel.gameObject.SetActive(visible);
+                panel.gameObject.SetActive(deckPanelsVisible && HasDeck(panel));
             }
         }
+    }
+
+    private bool HasDeck(RectTransform panel)
+    {
+        foreach (DeckPanelBinding binding in panelBindings)
+        {
+            if (binding.panel == panel)
+            {
+                return binding.deck != null;
+            }
+        }
+
+        return false;
     }
 
     public void DeleteDeck(int panelIndex)
     {
         CancelDeleteDeck();
+        if (readOnly)
+        {
+            return;
+        }
+
         if (panelIndex < 0 || panelIndex >= panelBindings.Count)
         {
             Debug.LogWarning($"[RankingModeSavedDeckPanel] 삭제할 저장덱 패널 인덱스가 올바르지 않습니다: {panelIndex}");
@@ -476,6 +523,11 @@ public class DictionarySavedDeckPanel : MonoBehaviour
 
     public void BeginRename(int panelIndex)
     {
+        if (readOnly)
+        {
+            return;
+        }
+
         if (panelIndex < 0 || panelIndex >= panelBindings.Count)
         {
             Debug.LogWarning($"[RankingModeSavedDeckPanel] 이름을 변경할 저장덱 패널 인덱스가 올바르지 않습니다: {panelIndex}");

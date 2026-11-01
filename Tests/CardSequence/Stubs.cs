@@ -134,8 +134,10 @@ public class TrainingBattleManager
         foreach (var routine in routines.ToArray())
             if (!routine.MoveNext()) routines.Remove(routine);
     }
-    public bool OpenSelectCardPanel(List<Card> cards, int count, Action<List<Card>> action, bool allowFewer = false)
+    public IReadOnlyList<CardSelectionOutcome> LastOutcomes;
+    public bool OpenSelectCardPanel(List<Card> cards, int count, Action<List<Card>> action, bool allowFewer = false, IReadOnlyList<CardSelectionOutcome> outcomes = null)
     {
+        LastOutcomes = outcomes;
         if (!PanelAvailable) return false;
         if (HasPendingSelection) throw new Exception("선택창 중복 실행");
         Candidates = cards; RequiredCount = count; callback = action; OpenCount++;
@@ -195,3 +197,10 @@ public class PlayerBuffRuntimeService
     public PlayerBuffRuntimeService(TrainingBattleManager manager) { this.manager = manager; }
     public void OnCardPlayed(Card card, Monster target, bool repeat) => manager.PowerCalls++;
 }
+
+// 선택 결과 판정용 효과 대역 (실제 클래스는 전투 의존이 많아 필드만)
+public class CopyEffect : ICardEffect { public MoveZoneType to; public void Execute(TrainingBattleManager m) { } }
+public class ExhaustCardEffect : ICardEffect { public void Execute(TrainingBattleManager m) { } }
+public class UpgradeCardsEffect : ICardEffect { public string upgrade; public void Execute(TrainingBattleManager m) { } }
+public class ReduceCostEffect : ICardEffect { public void Execute(TrainingBattleManager m) { } }
+public class TransformCardsEffect : ICardEffect { public void Execute(TrainingBattleManager m) { } }

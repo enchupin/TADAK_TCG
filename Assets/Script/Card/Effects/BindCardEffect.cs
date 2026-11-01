@@ -26,7 +26,7 @@ public class BindCardEffect : ICardEffect
         }
 
         int selectCount = Mathf.Clamp(count > 0 ? count : 1, 1, candidates.Count);
-        if (battleManager.OpenSelectCardPanel(candidates, selectCount, selectedCards => BindSelectedCards(battleManager, hostCard, selectedCards)))
+        if (battleManager.OpenSelectCardPanel(candidates, selectCount, selectedCards => BindSelectedCards(battleManager, hostCard, selectedCards), outcomes: new[] { CardSelectionOutcome.Bind }))
         {
             return;
         }

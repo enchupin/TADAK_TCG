@@ -18,6 +18,21 @@ public class MonsterImageHitArea : MonoBehaviour, ICanvasRaycastFilter
         contentRatio = new Rect(x, y, width, height);
     }
 
+    // 그림 영역 네 모서리 월드 좌표 (좌하 · 좌상 · 우상 · 우하, GetWorldCorners와 같은 순서)
+    public void GetContentWorldCorners(Vector3[] corners)
+    {
+        RectTransform rectTransform = (RectTransform)transform;
+        Rect rect = rectTransform.rect;
+        float xMin = rect.xMin + rect.width * contentRatio.x;
+        float yMin = rect.yMin + rect.height * contentRatio.y;
+        float xMax = xMin + rect.width * contentRatio.width;
+        float yMax = yMin + rect.height * contentRatio.height;
+        corners[0] = rectTransform.TransformPoint(new Vector3(xMin, yMin, 0f));
+        corners[1] = rectTransform.TransformPoint(new Vector3(xMin, yMax, 0f));
+        corners[2] = rectTransform.TransformPoint(new Vector3(xMax, yMax, 0f));
+        corners[3] = rectTransform.TransformPoint(new Vector3(xMax, yMin, 0f));
+    }
+
     public bool IsRaycastLocationValid(Vector2 screenPoint, Camera eventCamera)
     {
         RectTransform rectTransform = (RectTransform)transform;

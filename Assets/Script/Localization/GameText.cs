@@ -6,6 +6,7 @@ using static BattleRuntimeDefinitions;
 /// 게임 데이터(카드 · 버프 · 키워드 · 캐릭터)와 UI 문구의 현재 언어 조회
 /// </summary>
 // 키 규칙: card.<id>.name/.desc, buff.<id>.name/.desc, keyword.<id>.name/.desc, character.<id>.name/.identity
+// 도감 소개: character.<id>.intro/.traits
 // 직접 작성하는 문구는 ui. · intent. 접두어 (card. 등 생성 표 접두어와 겹치지 않게)
 public static class GameText
 {
@@ -51,6 +52,18 @@ public static class GameText
     public static string IdentityDescription(int characterId, string fallback = "")
     {
         return Lookup("character." + ToKeyId(characterId) + ".identity", fallback);
+    }
+
+    // 도감 캐릭터 소개
+    public static string CharacterIntro(int characterId, string fallback = "")
+    {
+        return Lookup("character." + ToKeyId(characterId) + ".intro", fallback);
+    }
+
+    // 도감 고유 효과 목록 (참조 토큰이 남은 틀)
+    public static string CharacterTraits(int characterId, string fallback = "")
+    {
+        return Lookup("character." + ToKeyId(characterId) + ".traits", fallback);
     }
 
     public static string MonsterName(int monsterId, string fallback = "")

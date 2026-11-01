@@ -1,15 +1,19 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
 /// 패널 뒤 전체 화면 어두운 차단막 (클릭해도 동작 없음)
 /// 지정한 통과 대상 위에서는 레이캐스트를 통과시켜 뒤쪽 버튼이 눌리게 함
 /// </summary>
+// 바깥 클릭으로 닫는 패널(보스 모드 덱 선택 팝업)만 클릭 동작을 지정
 [RequireComponent(typeof(RectTransform))]
-public sealed class UIModalDimmer : MonoBehaviour, ICanvasRaycastFilter
+public sealed class UIModalDimmer : MonoBehaviour, ICanvasRaycastFilter, IPointerClickHandler
 {
     private readonly List<RectTransform> passThroughTargets = new List<RectTransform>();
+    private Action clickAction;
     private RectTransform rectTransform;
     private Canvas rootCanvas;
     private Vector2 lastRootSize;
@@ -42,6 +46,20 @@ public sealed class UIModalDimmer : MonoBehaviour, ICanvasRaycastFilter
         if (targets != null)
         {
             passThroughTargets.AddRange(targets);
+        }
+    }
+
+    // 비우면 클릭해도 동작 없음 (기본)
+    public void SetClickAction(Action action)
+    {
+        clickAction = action;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            clickAction?.Invoke();
         }
     }
 

@@ -17,12 +17,12 @@ public class TrainingModeButtonCreateManager : MonoBehaviour {
         public RectTransform scrollView;
         public GameObject buttonPrefab;
         [Tooltip("첫 버튼 중심 위치 (가로 스크롤이면 x - 버튼 폭 절반이 왼쪽 여백)")]
-        public Vector3 startPosition = new Vector3(110f, 0f, 0f);
+        public Vector3 startPosition = new Vector3(190f, 0f, 0f);
         [Tooltip("버튼 중심 간 거리 (버튼 폭을 빼면 버튼 사이 간격)")]
-        public float buttonSpacing = 190f;
+        public float buttonSpacing = 350f;
         [Tooltip("마지막 버튼 뒤 여백")]
         public float trailingPadding = 30f;
-        public float scrollSensitivity = 7.5f;
+        public float scrollSensitivity =30f;
         public Scrolltype scrolltype = Scrolltype.horizontal;
     }
 
@@ -153,30 +153,12 @@ public class TrainingModeButtonCreateManager : MonoBehaviour {
     }
 
     private void BindCharacterData(GameObject buttonObject, CharacterData characterData, bool shouldApplyStandingImage) {
-        BindCharacterLabel(buttonObject, characterData);
-        SetButtonText(buttonObject, characterData.characterName);
+        CharacterButtonVisuals.Apply(buttonObject, characterData, shouldApplyStandingImage);
         if (!Enum.IsDefined(typeof(Character), characterData.characterId)) {
             Debug.LogWarning($"[ButtonCreateManager] Character enum에 없는 characterId입니다: {characterData.characterId}");
             return;
         }
-        Character character = (Character)characterData.characterId;
-        if (shouldApplyStandingImage) {
-            CharacterStandingButtonImageUtility.Apply(buttonObject, character);
-        }
-        BindTrainingButton(buttonObject, character);
-    }
-
-    private static void BindCharacterLabel(GameObject buttonObject, CharacterData characterData) {
-        if (buttonObject == null || characterData == null) {
-            return;
-        }
-
-        CharacterLocalizedButtonLabel localizedLabel = buttonObject.GetComponent<CharacterLocalizedButtonLabel>();
-        if (localizedLabel == null) {
-            localizedLabel = buttonObject.AddComponent<CharacterLocalizedButtonLabel>();
-        }
-
-        localizedLabel.Bind(characterData.characterId);
+        BindTrainingButton(buttonObject, (Character)characterData.characterId);
     }
 
     private static void BindTrainingButton(GameObject buttonObject, Character character) {
@@ -185,19 +167,6 @@ public class TrainingModeButtonCreateManager : MonoBehaviour {
             return;
         }
         selectedButtonControl.Initialize(character);
-    }
-
-    private static void SetButtonText(GameObject buttonObject, string characterName) {
-        TMP_Text tmpText = buttonObject.GetComponentInChildren<TMP_Text>(true);
-        if (tmpText != null) {
-            tmpText.text = characterName;
-            return;
-        }
-
-        Text legacyText = buttonObject.GetComponentInChildren<Text>(true);
-        if (legacyText != null) {
-            legacyText.text = characterName;
-        }
     }
 
     private void UpdateContentSize(int buttonCount, ButtonPanelConfig buttonPanelConfig) {

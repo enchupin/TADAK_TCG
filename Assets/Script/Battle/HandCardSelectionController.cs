@@ -8,14 +8,26 @@ using UnityEngine.UI;
 /// 손패에서 카드를 고르는 필수 선택 (패널 없이 전투 화면에서 진행)
 /// 후보 카드만 누를 수 있고, 고른 카드는 화면 중앙에 나란히 놓이며 확인 버튼으로 완료
 /// </summary>
+// 전투 매니저 오브젝트에 미리 붙여 두면 인스펙터 값 사용, 없으면 실행 시 기본값으로 추가
 public class HandCardSelectionController : MonoBehaviour
 {
-    private const float RowSpacing = 20f;
+    [Tooltip("중앙에 놓인 고른 카드 배율 (0이면 손패 호버 확대 크기)")]
+    [SerializeField] private float selectedCardScale;
+    [Tooltip("고른 카드 사이 간격")]
+    [SerializeField] private float rowSpacing = 20f;
+    [Tooltip("고른 카드 줄과 확인 버튼 사이 간격")]
+    [SerializeField] private float confirmButtonGap = 16f;
 
     private HandManager handManager;
     private Button confirmButton;
     private Transform centerAnchor;
     private RectTransform selectionRow;
+    // 확인 버튼은 목록 선택(덱 패널)과 공용: 손패 선택 동안만 전투 영역으로 옮기고 끝나면 원래 자리 · 문구로 복구
+    private Transform buttonHomeParent;
+    private int buttonHomeIndex;
+    private Vector2 buttonHomeAnchorMin, buttonHomeAnchorMax, buttonHomePivot, buttonHomePosition;
+    private string buttonHomeLabel;
+    private bool isButtonBorrowed;
 
     private Action<List<Card>> onCompleted;
     private int requiredCount;
@@ -47,17 +59,9 @@ public class HandCardSelectionController : MonoBehaviour
         confirmButton = targetConfirmButton;
         if (confirmButton != null)
         {
-            // 패널 아래에 배치돼 있어도 패널 없이 보이도록 같은 위치를 유지한 채 루트 캔버스로 옮김
-            // 루트 대신 전투 영역(손패의 부모)으로 옮겨 지도 · 휴식 · 상단 바 · 패널 아래에 그림
-            Transform battleLayer = ResolveBattleLayer(confirmButton.transform);
-            if (battleLayer != null && confirmButton.transform.parent != battleLayer)
-            {
-                confirmButton.transform.SetParent(battleLayer, true);
-            }
-
+            // 목록 선택과 같은 버튼이라 여기서 옮기거나 끄지 않음 (손패 선택을 열 때 빌려 씀)
             confirmButton.onClick.RemoveListener(OnClickConfirm);
             confirmButton.onClick.AddListener(OnClickConfirm);
-            confirmButton.gameObject.SetActive(false);
         }
     }
 
@@ -274,7 +278,12 @@ public class HandCardSelectionController : MonoBehaviour
         controller.transform.SetParent(row, true);
         controller.transform.localRotation = Quaternion.identity;
         // 중앙에는 호버 확대 크기로 표시 (프리팹 기본 크기는 작음)
-        if (handler != null)
+        // 인스펙터 배율을 지정하면 그 크기로
+        if (selectedCardScale > 0f)
+        {
+            controller.transform.localScale = Vector3.one * selectedCardScale;
+        }
+        else if (handler != null)
         {
             controller.transform.localScale = handler.HoverTargetScale;
         }
@@ -330,7 +339,7 @@ public class HandCardSelectionController : MonoBehaviour
             totalWidth += cardRect.rect.width * cardRect.localScale.x;
         }
 
-        totalWidth += RowSpacing * Mathf.Max(0, cards.Count - 1);
+        totalWidth += rowSpacing * Mathf.Max(0, cards.Count - 1);
         float x = -totalWidth * 0.5f;
         foreach (RectTransform cardRect in cards)
         {
@@ -339,7 +348,7 @@ public class HandCardSelectionController : MonoBehaviour
             cardRect.anchorMax = new Vector2(0.5f, 0.5f);
             cardRect.pivot = new Vector2(0.5f, 0.5f);
             cardRect.anchoredPosition = new Vector2(x + width * 0.5f, 0f);
-            x += width + RowSpacing;
+            x += width + rowSpacing;
         }
     }
 
@@ -415,15 +424,112 @@ public class HandCardSelectionController : MonoBehaviour
             return;
         }
 
-        confirmButton.gameObject.SetActive(IsActive);
         if (!IsActive)
+        {
+            ReturnConfirmButton();
+            return;
+        }
+
+        BorrowConfirmButton();
+        confirmButton.gameObject.SetActive(true);
+        PlaceBelowPanels(confirmButton.transform);
+        PlaceConfirmButtonBelowRow();
+        confirmButton.interactable = CanConfirm();
+        RefreshConfirmLabel();
+    }
+
+    // 손패 선택 동안 확인 버튼을 전투 영역(지도 · 휴식 · 상단 바 · 패널 아래)으로 옮김
+    private void BorrowConfirmButton()
+    {
+        if (isButtonBorrowed)
         {
             return;
         }
 
-        PlaceBelowPanels(confirmButton.transform);
-        confirmButton.interactable = CanConfirm();
-        RefreshConfirmLabel();
+        RectTransform rect = (RectTransform)confirmButton.transform;
+        buttonHomeParent = rect.parent;
+        buttonHomeIndex = rect.GetSiblingIndex();
+        buttonHomeAnchorMin = rect.anchorMin;
+        buttonHomeAnchorMax = rect.anchorMax;
+        buttonHomePivot = rect.pivot;
+        buttonHomePosition = rect.anchoredPosition;
+        TMP_Text label = confirmButton.GetComponentInChildren<TMP_Text>(true);
+        buttonHomeLabel = label != null ? label.text : null;
+
+        Transform battleLayer = ResolveBattleLayer(rect);
+        if (battleLayer != null && rect.parent != battleLayer)
+        {
+            rect.SetParent(battleLayer, false);
+        }
+        isButtonBorrowed = true;
+    }
+
+    private void ReturnConfirmButton()
+    {
+        if (!isButtonBorrowed)
+        {
+            return;
+        }
+
+        isButtonBorrowed = false;
+        RectTransform rect = (RectTransform)confirmButton.transform;
+        if (buttonHomeParent != null)
+        {
+            rect.SetParent(buttonHomeParent, false);
+            rect.SetSiblingIndex(Mathf.Min(buttonHomeIndex, buttonHomeParent.childCount - 1));
+        }
+        rect.anchorMin = buttonHomeAnchorMin;
+        rect.anchorMax = buttonHomeAnchorMax;
+        rect.pivot = buttonHomePivot;
+        rect.anchoredPosition = buttonHomePosition;
+        TMP_Text label = confirmButton.GetComponentInChildren<TMP_Text>(true);
+        if (label != null && buttonHomeLabel != null)
+        {
+            label.text = buttonHomeLabel;
+        }
+        confirmButton.gameObject.SetActive(false);
+    }
+
+    // 고른 카드 줄(중앙 위치) 아래에 버튼 배치, 카드 높이는 줄에 놓일 크기 기준 (아직 고른 카드가 없어도 같은 자리)
+    private void PlaceConfirmButtonBelowRow()
+    {
+        RectTransform rect = (RectTransform)confirmButton.transform;
+        RectTransform parent = rect.parent as RectTransform;
+        if (parent == null)
+        {
+            return;
+        }
+
+        Vector3 centerWorld = centerAnchor != null ? centerAnchor.position : parent.TransformPoint(parent.rect.center);
+        Vector2 center = parent.InverseTransformPoint(centerWorld);
+        float cardHeight = EstimateRowCardHeight();
+        rect.anchorMin = new Vector2(0.5f, 0.5f);
+        rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.pivot = new Vector2(0.5f, 1f);
+        rect.anchoredPosition = new Vector2(center.x, center.y - cardHeight * 0.5f - confirmButtonGap) - parent.rect.center;
+    }
+
+    private float EstimateRowCardHeight()
+    {
+        foreach (Card card in candidateCards)
+        {
+            CardUI cardUI = handManager != null ? handManager.GetCardUI(card) : null;
+            if (cardUI == null)
+            {
+                continue;
+            }
+
+            RectTransform cardRect = (RectTransform)cardUI.transform;
+            float scale = selectedCardScale;
+            if (scale <= 0f)
+            {
+                CardController controller = cardUI.GetComponent<CardController>();
+                CardInteractionHandler handler = controller != null ? controller.interactionHandler : null;
+                scale = handler != null ? handler.HoverTargetScale.y : cardRect.localScale.y;
+            }
+            return cardRect.rect.height * scale;
+        }
+        return 0f;
     }
 
     private void RefreshConfirmLabel()
