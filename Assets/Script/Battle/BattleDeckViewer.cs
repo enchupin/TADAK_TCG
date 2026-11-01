@@ -34,6 +34,10 @@ public class BattleDeckViewer : MonoBehaviour
     [Tooltip("카드 선택 중 패널을 잠시 숨기고 다시 펼치는 버튼 (패널 안에 배치, 비우면 숨김 기능 없음)")]
     [SerializeField] private Button selectionHideButton;
 
+    [Header("전체 덱 묶음 화면 (상단 바 덱 버튼, 비우면 더미와 같은 격자)")]
+    [Tooltip("덱 패널 Viewport 안 별도 Content에 붙인 GroupedDeckView")]
+    [SerializeField] private GroupedDeckView fullDeckView;
+
     [Header("참조")]
     [SerializeField] private TrainingBattleManager battleManager;
     private bool isSelectionMode;
@@ -55,6 +59,9 @@ public class BattleDeckViewer : MonoBehaviour
     private readonly List<CardController> selectedControllers = new List<CardController>();
     private DeckPanelViewType currentViewType;
     private UIModalPanel deckModal;
+    // 덱 패널 스크롤과 더미 · 선택 목록 Content (전체 덱을 볼 때만 묶음 Content로 바꿈)
+    private ScrollRect deckScroll;
+    private RectTransform pileContent;
     // 카드 확인 패널: 기본형 + 강화형 슬라이드
     private CardDetailSlider cardDetailSlider;
 
@@ -324,6 +331,7 @@ public class BattleDeckViewer : MonoBehaviour
         deckPanelRoot.SetActive(true);
         HideCardDetailPanel();
 
+        UseGroupedContent(false);
         cardContainerManager.ClearHand();
         cardContainerManager.SetCardClickHandler(HandleSelectableCardClicked);
         // 파괴 예약된 이전 카드가 남아 있으므로 새로 만든 카드는 뒤쪽 자식
@@ -383,12 +391,46 @@ public class BattleDeckViewer : MonoBehaviour
         cardContainerManager.ClearHand();
         cardContainerManager.SetCardClickHandler(HandleViewedCardClicked);
         currentViewType = viewType;
+
+        // 전체 덱만 파티 캐릭터별 묶음으로 표시
+        bool grouped = viewType == DeckPanelViewType.FullDeck && fullDeckView != null;
+        UseGroupedContent(grouped);
+        if (grouped) {
+            fullDeckView.Show(cards, SelectedButtonControl.selectedCharacterList, HandleViewedCardClicked);
+            return;
+        }
+
         if (cards == null || cards.Count == 0) {
             return;
         }
 
         // 캐릭터북과 동일하게 입력 비활성 카드 UI 사용
         cardContainerManager.AddCardWithoutInputController(cards);
+    }
+
+    // 스크롤 Content를 묶음 화면 · 기존 격자 중 하나로 전환 (안 쓰는 쪽은 숨기고 비움)
+    private void UseGroupedContent(bool grouped) {
+        if (fullDeckView == null) {
+            return;
+        }
+
+        if (deckScroll == null && deckPanelRoot != null) {
+            deckScroll = deckPanelRoot.GetComponentInChildren<ScrollRect>(true);
+            pileContent = deckScroll != null ? deckScroll.content : null;
+        }
+
+        fullDeckView.gameObject.SetActive(grouped);
+        if (!grouped) {
+            fullDeckView.Clear();
+        }
+        if (pileContent != null) {
+            pileContent.gameObject.SetActive(!grouped);
+        }
+        if (deckScroll != null) {
+            deckScroll.content = grouped ? fullDeckView.Content : pileContent;
+            deckScroll.StopMovement();
+            deckScroll.verticalNormalizedPosition = 1f;
+        }
     }
 
     private static int CompareCardsById(Card left, Card right) {

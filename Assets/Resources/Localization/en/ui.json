@@ -15,6 +15,7 @@
     "ui.deck.default": "Starter Deck",
     "ui.deck.namePlaceholder": "Enter deck name",
     "ui.deck.new": "New Deck",
+    "ui.deck.otherCards": "Other",
     "ui.deck.unnamed": "Unnamed Deck",
     "ui.dictionary.identity": "Identity Skill ({cost})",
     "ui.dictionary.traits": "Unique Effects",

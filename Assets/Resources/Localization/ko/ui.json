@@ -15,6 +15,7 @@
     "ui.deck.default": "기본 덱",
     "ui.deck.namePlaceholder": "덱 이름 입력",
     "ui.deck.new": "새 덱",
+    "ui.deck.otherCards": "기타",
     "ui.deck.unnamed": "이름 없는 덱",
     "ui.dictionary.identity": "아이덴티티 스킬({cost})",
     "ui.dictionary.traits": "고유 효과",

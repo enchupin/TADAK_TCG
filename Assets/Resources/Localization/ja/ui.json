@@ -15,6 +15,7 @@
     "ui.deck.default": "初期デッキ",
     "ui.deck.namePlaceholder": "デッキ名を入力",
     "ui.deck.new": "新しいデッキ",
+    "ui.deck.otherCards": "その他",
     "ui.deck.unnamed": "名前のないデッキ",
     "ui.dictionary.identity": "アイデンティティスキル（{cost}）",
     "ui.dictionary.traits": "固有効果",

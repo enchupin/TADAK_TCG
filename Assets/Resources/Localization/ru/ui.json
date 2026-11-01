@@ -15,6 +15,7 @@
     "ui.deck.default": "Начальная колода",
     "ui.deck.namePlaceholder": "Введите название колоды",
     "ui.deck.new": "Новая колода",
+    "ui.deck.otherCards": "Прочее",
     "ui.deck.unnamed": "Колода без названия",
     "ui.dictionary.identity": "Навык идентичности ({cost})",
     "ui.dictionary.traits": "Уникальные эффекты",
