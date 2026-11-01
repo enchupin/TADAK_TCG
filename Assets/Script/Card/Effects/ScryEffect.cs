@@ -23,7 +23,7 @@ public class ScryEffect : ICardEffect
         }
 
         List<Card> viewedCards = drawPile.GetRange(0, scryCount);
-        if (battleManager.OpenSelectCardPanel(viewedCards, 1, selectedCards => ApplySelection(battleManager, selectedCards)))
+        if (battleManager.OpenSelectCardPanel(viewedCards, 1, selectedCards => ApplySelection(battleManager, selectedCards), outcomes: new[] { CardSelectionOutcome.MoveToHand }))
         {
             return;
         }

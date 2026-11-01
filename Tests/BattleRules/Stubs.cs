@@ -189,7 +189,7 @@ public partial class TrainingBattleManager
     public Func<List<Card>, int, List<Card>> PickSelection = (cards, selectCount) => cards.GetRange(0, selectCount);
     public void RefreshHandPlayableState() => RefreshFlags.Add(isDeckRewardInProgress);
     public void UpdateEndTurnButtonState() { }
-    public bool OpenSelectCardPanel(List<Card> cards, int selectCount, Action<List<Card>> onSelected, bool allowFewer = false)
+    public bool OpenSelectCardPanel(List<Card> cards, int selectCount, Action<List<Card>> onSelected, bool allowFewer = false, IReadOnlyList<CardSelectionOutcome> outcomes = null)
     {
         if (!PanelAvailable) return false;
         PanelOpenCount++;

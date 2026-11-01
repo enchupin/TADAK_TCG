@@ -23,13 +23,15 @@ public class GroupedDeckView : MonoBehaviour
     [SerializeField] private Vector2 cardSpacing = new Vector2(16f, 16f);
 
     [Header("묶음 배치")]
-    [SerializeField] private RectOffset padding = new RectOffset(16, 16, 16, 16);
+    // RectOffset은 필드 초기화에서 만들 수 없어(Unity 예외) 정수로 보관
+    [SerializeField] private int paddingLeft = 16;
+    [SerializeField] private int paddingRight = 16;
+    [SerializeField] private int paddingTop = 16;
+    [SerializeField] private int paddingBottom = 16;
     [Tooltip("머리줄과 카드 사이 · 묶음 사이 간격")]
     [SerializeField] private float sectionSpacing = 16f;
 
-    // 실행 중 스크립트 재컴파일 등으로 비어 있을 수 있어 사용할 때 생성
-    private List<GameObject> createdObjects;
-    private List<GameObject> CreatedObjects => createdObjects ??= new List<GameObject>();
+    private readonly List<GameObject> createdObjects = new List<GameObject>();
     private bool isLayoutReady;
 
     public RectTransform Content => (RectTransform)transform;
@@ -91,11 +93,6 @@ public class GroupedDeckView : MonoBehaviour
 
     public void Clear()
     {
-        if (createdObjects == null)
-        {
-            return;
-        }
-
         foreach (GameObject created in createdObjects)
         {
             if (created != null)
@@ -123,7 +120,7 @@ public class GroupedDeckView : MonoBehaviour
             vertical = gameObject.AddComponent<VerticalLayoutGroup>();
         }
 
-        vertical.padding = padding;
+        vertical.padding = new RectOffset(paddingLeft, paddingRight, paddingTop, paddingBottom);
         vertical.spacing = sectionSpacing;
         // 격자는 정해 둔 열 수의 폭으로 가운데, 머리줄은 전체 폭으로 늘림
         vertical.childAlignment = TextAnchor.UpperCenter;
@@ -160,7 +157,7 @@ public class GroupedDeckView : MonoBehaviour
         }
         element.flexibleWidth = Mathf.Max(1f, element.flexibleWidth);
 
-        CreatedObjects.Add(header.gameObject);
+        createdObjects.Add(header.gameObject);
         return header;
     }
 
@@ -169,7 +166,7 @@ public class GroupedDeckView : MonoBehaviour
         GameObject gridObject = new GameObject("CardGrid", typeof(RectTransform), typeof(GridLayoutGroup));
         gridObject.layer = gameObject.layer;
         gridObject.transform.SetParent(Content, false);
-        CreatedObjects.Add(gridObject);
+        createdObjects.Add(gridObject);
 
         Vector2 cellSize = cardSize * cardScale;
         GridLayoutGroup grid = gridObject.GetComponent<GridLayoutGroup>();

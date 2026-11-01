@@ -180,6 +180,41 @@ static class Program
             var c = new Card(); int count = 0; c.effects.Add(new ActionEffect(_ => count++)); var m = Setup(c);
             c.Play(m); Assert(count == 1 && m.battleContext.GetContextCard("ThisCard") == null, "동기 효과 호환");
         });
+        // 선택 결과 문구: 선택 후 동작으로 판정, 여러 동작은 순서대로 이어 붙임
+        Test("선택 결과 판정", () => {
+            var o = CardSelectionOutcomeResolver.FromSelectActions(MoveZoneType.Hand, new List<ICardEffect> { new ExhaustCardEffect() });
+            Assert(o.Count == 1 && o[0] == CardSelectionOutcome.Exhaust, "소멸");
+            o = CardSelectionOutcomeResolver.FromSelectActions(MoveZoneType.DrawPile, new List<ICardEffect> {
+                new MoveEffect { to = MoveZoneType.Hand }, new CopyEffect { to = MoveZoneType.Hand } });
+            Assert(o.Count == 2 && o[0] == CardSelectionOutcome.MoveToHand && o[1] == CardSelectionOutcome.CopyToHand, "가져오기 + 복제 순서");
+            o = CardSelectionOutcomeResolver.FromSelectActions(MoveZoneType.Unique, new List<ICardEffect> { new CopyEffect { to = MoveZoneType.Hand } });
+            Assert(o.Count == 1 && o[0] == CardSelectionOutcome.AddToHand, "카드 풀에서 고른 카드는 획득");
+            o = CardSelectionOutcomeResolver.FromSelectActions(MoveZoneType.Hand, new List<ICardEffect> { new MoveEffect { to = MoveZoneType.DrawPile, position = MovePositionType.Top } });
+            Assert(o.Count == 1 && o[0] == CardSelectionOutcome.MoveToDrawTop, "뽑을 더미 위");
+            o = CardSelectionOutcomeResolver.FromSelectActions(MoveZoneType.Hand, new List<ICardEffect> { new MoveEffect { to = MoveZoneType.DiscardPile } });
+            Assert(o.Count == 1 && o[0] == CardSelectionOutcome.Discard, "버리기");
+            var conditional = new ConditionalEffect();
+            conditional.successEffects.Add(new UpgradeCardsEffect { upgrade = "Choose" });
+            conditional.failEffects.Add(new UpgradeCardsEffect { upgrade = "Random" });
+            o = CardSelectionOutcomeResolver.FromSelectActions(MoveZoneType.Hand, new List<ICardEffect> { conditional });
+            Assert(o.Count == 1 && o[0] == CardSelectionOutcome.Upgrade, "조건 양쪽이 같은 결과면 한 번");
+            o = CardSelectionOutcomeResolver.FromSelectActions(MoveZoneType.Hand, new List<ICardEffect> { new RandGenerateEffect(), new ExhaustCardEffect() });
+            Assert(o.Count == 1 && o[0] == CardSelectionOutcome.Exhaust, "고른 카드와 무관한 생성은 제외");
+            Assert(CardSelectionOutcomeResolver.FromSelectActions(MoveZoneType.Hand, null).Count == 0, "동작 없음 = 문구 숨김");
+        });
+        Test("선택 결과 문구 조합", () => {
+            Assert(CardSelectionOutcomeText.Key(CardSelectionOutcome.MoveToDrawTop) == "ui.selection.moveToDrawTop", "키 규칙");
+            string text = CardSelectionOutcomeText.Build(new[] { CardSelectionOutcome.MoveToHand, CardSelectionOutcome.CopyToHand, CardSelectionOutcome.MoveToHand }, key => key == "ui.selection.moveToHand" ? "가져옵니다." : "복제합니다.");
+            Assert(text == "가져옵니다. 복제합니다.", "이어 붙이기 · 중복 제거: " + text);
+            Assert(CardSelectionOutcomeText.Build(null, key => key) == "" && CardSelectionOutcomeText.Build(new[] { CardSelectionOutcome.Bind }, key => null) == "", "없으면 빈 문구");
+        });
+        Test("SelectCard가 결과를 선택 창에 전달", () => {
+            var effect = new SelectCardEffect { count = 1, from = MoveZoneType.Hand, onActions = new List<ICardEffect> { new ExhaustCardEffect() } };
+            var c = new Card(); c.effects.Add(effect); var m = Setup(c);
+            m.handManager.AddCard(new Card());
+            c.Play(m); m.Tick();
+            Assert(m.LastOutcomes != null && m.LastOutcomes.Count == 1 && m.LastOutcomes[0] == CardSelectionOutcome.Exhaust, "소멸 결과 전달");
+        });
         passed += CardCompletionTests.Run();
         passed += CardMechanicTests.Run();
         Console.WriteLine($"{passed} tests passed");

@@ -34,7 +34,7 @@ public sealed class JackIdentitySkill : CharacterIdentitySkill
             }
         }
 
-        if (!battleManager.OpenSelectCardPanel(candidates, 1, CopySelected))
+        if (!battleManager.OpenSelectCardPanel(candidates, 1, CopySelected, outcomes: new[] { CardSelectionOutcome.CopyToHand }))
         {
             CopySelected(null);
         }

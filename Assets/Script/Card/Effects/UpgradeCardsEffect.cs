@@ -100,7 +100,7 @@ public class UpgradeCardsEffect : ICardEffect
             battleManager.UpdateAllUI();
         }
 
-        if (!battleManager.OpenSelectCardPanel(options, 1, Apply))
+        if (!battleManager.OpenSelectCardPanel(options, 1, Apply, outcomes: new[] { CardSelectionOutcome.ChooseUpgrade }))
         {
             Apply(null);
         }

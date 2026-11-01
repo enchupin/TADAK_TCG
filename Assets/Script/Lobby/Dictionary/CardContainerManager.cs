@@ -15,6 +15,10 @@ public class CardContainerManager : MonoBehaviour {
     [Header("레이아웃")]
     [SerializeField] private Transform cardContainer;
     [SerializeField] private Transform cardContainerScrollView;
+    [Tooltip("일부 카드 중 선택(강화 선택지 등)을 화면 가운데에 놓을 영역 (스크롤 밖, 비우면 기본 격자 사용)")]
+    [SerializeField] private RectTransform centeredContainer;
+    [Tooltip("가운데 영역의 한 줄 카드 수 (고유 카드 5장이 한 줄에 보이도록)")]
+    [SerializeField] private int centeredColumns = 5;
 
 
     [Header("Grid 레이아웃 설정")]
@@ -39,6 +43,9 @@ public class CardContainerManager : MonoBehaviour {
     private List<Card> cardList = new List<Card>(); // 카드 컨테이너를 Card 객체로 관리
     
     private GridLayoutGroup gridLayout;
+    private bool useCenteredContainer;
+    // 카드를 만들 현재 영역 (가운데 영역을 쓰는 동안은 그쪽)
+    private Transform ActiveContainer => useCenteredContainer && centeredContainer != null ? centeredContainer : cardContainer;
     private Action<CardController> onCardClicked;
     
 
@@ -171,7 +178,7 @@ public class CardContainerManager : MonoBehaviour {
     /// 카드 UI 생성
     /// </summary>
     private void InstantiateCardUI(Card card) {
-        GameObject cardObj = Instantiate(cardUIPrefab, cardContainer);
+        GameObject cardObj = Instantiate(cardUIPrefab, ActiveContainer);
         
         // 카드 크기 조정
         cardObj.transform.localScale = Vector3.one * cardScale;
@@ -204,6 +211,9 @@ public class CardContainerManager : MonoBehaviour {
 
         // 패널 크기 · 화면비가 바뀌었을 수 있어 좌우 여백 다시 계산 (열 수는 고정)
         ApplyColumnLayout();
+        if (useCenteredContainer) {
+            FitCenteredContainer(cards.Count);
+        }
 
         // 카드 추가
         int addedCount = 0;
@@ -223,7 +233,7 @@ public class CardContainerManager : MonoBehaviour {
     private void InstantiateCardUIWithoutInputController(Card card) {
         Debug.Log($"[CardContainerManager] InstantiateCardUIWithoutInputController 시작 - 카드: {card.cardName}");
         
-        GameObject cardObj = Instantiate(cardUIPrefab, cardContainer);
+        GameObject cardObj = Instantiate(cardUIPrefab, ActiveContainer);
         Debug.Log($"[CardContainerManager] 카드 오브젝트 생성 완료: {cardObj.name}");
         
         // 카드 크기 조정
@@ -288,6 +298,11 @@ public class CardContainerManager : MonoBehaviour {
         foreach (Transform child in cardContainer) {
             Destroy(child.gameObject);
         }
+        if (centeredContainer != null) {
+            foreach (Transform child in centeredContainer) {
+                Destroy(child.gameObject);
+            }
+        }
 
         return discardedCards;
     }
@@ -309,7 +324,62 @@ public class CardContainerManager : MonoBehaviour {
     }
 
     // 전투 카드 선택 목록을 다시 그린 뒤 고른 상태를 복원할 때 사용
-    public Transform CardContainer => cardContainer;
+    public Transform CardContainer => ActiveContainer;
+
+    /// <summary>
+    /// 일부 카드 중 선택은 가운데 영역에 같은 크기 · 열 수로 가운데 정렬, 그 외(더미 · 덱 목록)는 스크롤 격자
+    /// </summary>
+    public void SetCenteredLayout(bool centered) {
+        useCenteredContainer = centered && centeredContainer != null;
+        if (centeredContainer != null) {
+            if (useCenteredContainer) {
+                SetupCenteredGrid();
+            }
+            centeredContainer.gameObject.SetActive(useCenteredContainer);
+        }
+        if (cardContainer != null) {
+            cardContainer.gameObject.SetActive(!useCenteredContainer);
+        }
+    }
+
+    // 가운데 영역 크기를 카드 수에 맞춤 (확인 버튼을 영역 바로 아래에 붙이기 위해)
+    private void FitCenteredContainer(int cardCount) {
+        int perRow = Mathf.Max(1, centeredColumns);
+        int columnCount = Mathf.Clamp(cardCount, 1, perRow);
+        int rowCount = Mathf.Max(1, Mathf.CeilToInt(cardCount / (float)perRow));
+        float width = columnCount * cellSize.x + (columnCount - 1) * spacing.x;
+        float height = rowCount * cellSize.y + (rowCount - 1) * spacing.y;
+        // 씬에서 정한 영역의 중심(Pos 포함)은 그대로 두고 양쪽을 똑같이 줄이고 늘림 (앵커 · 피벗과 무관)
+        RectTransform parent = centeredContainer.parent as RectTransform;
+        Vector2 parentSize = parent != null ? parent.rect.size : Vector2.zero;
+        Vector2 anchorSpan = Vector2.Scale(parentSize, centeredContainer.anchorMax - centeredContainer.anchorMin);
+        Vector2 pivotOffset = centeredContainer.pivot - new Vector2(0.5f, 0.5f);
+        Vector2 centerOffset = centeredContainer.anchoredPosition - Vector2.Scale(pivotOffset, centeredContainer.sizeDelta);
+        Vector2 sizeDelta = new Vector2(width, height) - anchorSpan;
+        centeredContainer.sizeDelta = sizeDelta;
+        centeredContainer.anchoredPosition = centerOffset + Vector2.Scale(pivotOffset, sizeDelta);
+    }
+
+    // 지금 카드가 놓인 영역 (가운데 영역 또는 스크롤 Viewport), 확인 버튼 배치 기준
+    public RectTransform VisibleContentArea => useCenteredContainer && centeredContainer != null
+        ? centeredContainer
+        : cardContainer != null ? cardContainer.parent as RectTransform : null;
+
+    private void SetupCenteredGrid() {
+        GridLayoutGroup centeredGrid = centeredContainer.GetComponent<GridLayoutGroup>();
+        if (centeredGrid == null) {
+            centeredGrid = centeredContainer.gameObject.AddComponent<GridLayoutGroup>();
+        }
+
+        centeredGrid.startCorner = GridLayoutGroup.Corner.UpperLeft;
+        centeredGrid.startAxis = GridLayoutGroup.Axis.Horizontal;
+        centeredGrid.childAlignment = TextAnchor.MiddleCenter;
+        centeredGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        centeredGrid.constraintCount = Mathf.Max(1, centeredColumns);
+        centeredGrid.cellSize = cellSize;
+        centeredGrid.spacing = spacing;
+        centeredGrid.padding = new RectOffset();
+    }
 
     public void SetCardClickHandler(Action<CardController> clickHandler) {
         onCardClicked = clickHandler;

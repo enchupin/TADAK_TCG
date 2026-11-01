@@ -22,6 +22,12 @@ public class BattleDeckViewer : MonoBehaviour
     [SerializeField] private GameObject deckPanelRoot;
     [SerializeField] private CardContainerManager cardContainerManager;
     [SerializeField] private Button selectionConfirmButton;
+    [Tooltip("선택 확인 버튼을 카드 영역(가운데 영역 · 스크롤 Viewport) 바로 아래에 붙임")]
+    [SerializeField] private bool attachConfirmBelowContent = true;
+    [SerializeField] private float confirmButtonGap = 16f;
+    [Tooltip("확인 버튼 Pos Y 범위 (씬의 앵커 · 피벗 기준 인스펙터 수치)")]
+    [SerializeField] private float confirmButtonMinPosY = 20f;
+    [SerializeField] private float confirmButtonMaxPosY = 280f;
     [SerializeField] private GameObject cardDetailPanelRoot;
     [SerializeField] private Transform cardDetailCardParent;
     [SerializeField] private GameObject cardDetailCardPrefab;
@@ -42,6 +48,9 @@ public class BattleDeckViewer : MonoBehaviour
     [SerializeField] private TrainingBattleManager battleManager;
     private bool isSelectionMode;
     public bool IsSelectionActive => isSelectionMode;
+    // 선택 목록이 실제로 보이는 동안 (숨김 버튼 · 선택 중 덱 보기 · 지도 미리보기 제외, 결과 문구 표시용)
+    public bool IsSelectionListVisible => isSelectionMode && !isViewingDuringSelection
+        && deckModal != null && !deckModal.IsHidden && deckPanelRoot != null && deckPanelRoot.activeInHierarchy;
     public bool IsCancelableSelectionActive => isSelectionMode && onSelectionCanceled != null;
     // 선택 중 덱 · 더미 버튼으로 같은 패널을 보기로 잠시 바꾼 상태 (닫으면 선택 목록 · 고른 상태 복원)
     private bool isViewingDuringSelection;
@@ -333,11 +342,13 @@ public class BattleDeckViewer : MonoBehaviour
 
         UseGroupedContent(false);
         cardContainerManager.ClearHand();
+        cardContainerManager.SetCenteredLayout(IsOptionSelection());
         cardContainerManager.SetCardClickHandler(HandleSelectableCardClicked);
         // 파괴 예약된 이전 카드가 남아 있으므로 새로 만든 카드는 뒤쪽 자식
         Transform container = cardContainerManager.CardContainer;
         int firstNewIndex = container != null ? container.childCount : 0;
         cardContainerManager.AddCardWithoutInputController(selectionCandidates);
+        PlaceConfirmButtonBelowContent();
 
         // 다시 그린 카드에 고른 상태 복원 (고른 순서 유지)
         selectedControllers.Clear();
@@ -389,6 +400,7 @@ public class BattleDeckViewer : MonoBehaviour
 
         HideCardDetailPanel();
         cardContainerManager.ClearHand();
+        cardContainerManager.SetCenteredLayout(false);
         cardContainerManager.SetCardClickHandler(HandleViewedCardClicked);
         currentViewType = viewType;
 
@@ -406,6 +418,51 @@ public class BattleDeckViewer : MonoBehaviour
 
         // 캐릭터북과 동일하게 입력 비활성 카드 UI 사용
         cardContainerManager.AddCardWithoutInputController(cards);
+    }
+
+    // 확인 버튼을 지금 카드 영역의 아래 가운데에 붙임 (영역 크기가 바뀌어도 자연스럽게 이어지도록)
+    private void PlaceConfirmButtonBelowContent() {
+        if (!attachConfirmBelowContent || selectionConfirmButton == null
+            || (battleManager != null && battleManager.IsHandCardSelectionActive)) {
+            return;
+        }
+
+        RectTransform area = cardContainerManager.VisibleContentArea;
+        RectTransform buttonRect = (RectTransform)selectionConfirmButton.transform;
+        RectTransform parent = buttonRect.parent as RectTransform;
+        if (area == null || parent == null) {
+            return;
+        }
+
+        Canvas.ForceUpdateCanvases();
+        Vector3[] corners = new Vector3[4];
+        area.GetWorldCorners(corners);
+        float areaBottomY = parent.InverseTransformPoint(corners[0]).y;
+
+        // 씬의 앵커 · 피벗 · Pos X는 그대로, 버튼 윗변이 영역 아래 간격만큼에 오도록 Pos Y만 계산 후 범위 제한
+        Rect parentRect = parent.rect;
+        float anchorY = Mathf.Lerp(buttonRect.anchorMin.y, buttonRect.anchorMax.y, buttonRect.pivot.y);
+        float anchorReferenceY = parentRect.yMin + parentRect.height * anchorY;
+        float topOffset = (1f - buttonRect.pivot.y) * buttonRect.rect.height;
+        float posY = areaBottomY - confirmButtonGap - topOffset - anchorReferenceY;
+        float minPosY = Mathf.Min(confirmButtonMinPosY, confirmButtonMaxPosY);
+        posY = Mathf.Clamp(posY, minPosY, confirmButtonMaxPosY);
+        buttonRect.anchoredPosition = new Vector2(buttonRect.anchoredPosition.x, posY);
+    }
+
+    // 일부 카드 중 선택 (강화 선택지 · 보상 후보 · 카드 풀에서 획득): 화면 가운데 영역에 표시
+    private bool IsOptionSelection() {
+        IReadOnlyList<CardSelectionOutcome> outcomes = battleManager != null ? battleManager.SelectionOutcomes : null;
+        if (outcomes == null) {
+            return false;
+        }
+
+        foreach (CardSelectionOutcome outcome in outcomes) {
+            if (outcome == CardSelectionOutcome.ChooseUpgrade || outcome == CardSelectionOutcome.AddToDeck || outcome == CardSelectionOutcome.AddToHand) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // 스크롤 Content를 묶음 화면 · 기존 격자 중 하나로 전환 (안 쓰는 쪽은 숨기고 비움)
@@ -512,6 +569,7 @@ public class BattleDeckViewer : MonoBehaviour
 
         cardContainerManager.SetCardClickHandler(null);
         cardContainerManager.ClearHand();
+        cardContainerManager.SetCenteredLayout(false);
         if (deckPanelRoot != null) {
             deckPanelRoot.SetActive(false);
         }
@@ -575,8 +633,11 @@ public class BattleDeckViewer : MonoBehaviour
         return selectedCards.Count >= requiredSelectionCount;
     }
 
+    // 손패 선택과 같은 확인 버튼을 쓰므로 손패 선택 중에는 버튼을 건드리지 않음
+    public Button SelectionConfirmButton => selectionConfirmButton;
+
     private void UpdateConfirmButtonState() {
-        if (selectionConfirmButton == null) {
+        if (selectionConfirmButton == null || (battleManager != null && battleManager.IsHandCardSelectionActive)) {
             return;
         }
 

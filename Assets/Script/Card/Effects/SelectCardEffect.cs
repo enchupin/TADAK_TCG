@@ -49,7 +49,7 @@ public class SelectCardEffect : ICardEffect
                 {
                     result = cards ?? new List<Card>();
                     confirmed = true;
-                }, allowFewerSelection);
+                }, allowFewerSelection, CardSelectionOutcomeResolver.FromSelectActions(from, onActions));
                 if (opened)
                 {
                     while (!confirmed)
