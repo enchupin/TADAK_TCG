@@ -16,6 +16,8 @@
     "ui.deck.namePlaceholder": "デッキ名を入力",
     "ui.deck.new": "新しいデッキ",
     "ui.deck.unnamed": "名前のないデッキ",
+    "ui.dictionary.identity": "アイデンティティスキル（{cost}）",
+    "ui.dictionary.traits": "固有効果",
     "ui.lobby.bossMode": "ボスモード",
     "ui.lobby.dictionary": "図鑑",
     "ui.lobby.gameStart": "ゲームスタート",

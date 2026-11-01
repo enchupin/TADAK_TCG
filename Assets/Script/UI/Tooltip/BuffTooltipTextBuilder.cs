@@ -85,6 +85,18 @@ public static class BuffTooltipTextBuilder
             TryResolveBuffId);
     }
 
+    // 버프 참조가 든 일반 문구 (도감 캐릭터 소개 등): 버프 이름을 툴팁과 같은 극성 색으로 표시
+    public static string FormatReferences(string text)
+    {
+        return BuffTooltipFormatter.FormatDescription(
+            text,
+            0,
+            TooltipManager.Colors,
+            TryResolveReference,
+            TryResolveDynamicName,
+            TryResolveBuffId);
+    }
+
     // [buff:id] 참조: 현재 언어 이름 · 극성
     internal static bool TryResolveBuffId(int buffId, out string buffName, out bool harmful)
     {

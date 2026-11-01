@@ -16,6 +16,8 @@
     "ui.deck.namePlaceholder": "덱 이름 입력",
     "ui.deck.new": "새 덱",
     "ui.deck.unnamed": "이름 없는 덱",
+    "ui.dictionary.identity": "아이덴티티 스킬({cost})",
+    "ui.dictionary.traits": "고유 효과",
     "ui.lobby.bossMode": "보스 모드",
     "ui.lobby.dictionary": "도감",
     "ui.lobby.gameStart": "게임 시작",

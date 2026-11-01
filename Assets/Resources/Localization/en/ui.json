@@ -16,6 +16,8 @@
     "ui.deck.namePlaceholder": "Enter deck name",
     "ui.deck.new": "New Deck",
     "ui.deck.unnamed": "Unnamed Deck",
+    "ui.dictionary.identity": "Identity Skill ({cost})",
+    "ui.dictionary.traits": "Unique Effects",
     "ui.lobby.bossMode": "Boss Mode",
     "ui.lobby.dictionary": "Compendium",
     "ui.lobby.gameStart": "Start Game",

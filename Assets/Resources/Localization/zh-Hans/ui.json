@@ -16,6 +16,8 @@
     "ui.deck.namePlaceholder": "输入牌组名称",
     "ui.deck.new": "新牌组",
     "ui.deck.unnamed": "未命名牌组",
+    "ui.dictionary.identity": "身份技能（{cost}）",
+    "ui.dictionary.traits": "专属效果",
     "ui.lobby.bossMode": "首领模式",
     "ui.lobby.dictionary": "图鉴",
     "ui.lobby.gameStart": "开始游戏",

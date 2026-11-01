@@ -16,6 +16,8 @@
     "ui.deck.namePlaceholder": "Введите название колоды",
     "ui.deck.new": "Новая колода",
     "ui.deck.unnamed": "Колода без названия",
+    "ui.dictionary.identity": "Навык идентичности ({cost})",
+    "ui.dictionary.traits": "Уникальные эффекты",
     "ui.lobby.bossMode": "Режим боссов",
     "ui.lobby.dictionary": "Компендиум",
     "ui.lobby.gameStart": "Начать игру",

@@ -12,6 +12,8 @@ public class DictionaryPanelController : MonoBehaviour
 
     [SerializeField] private DictionaryStarterCardPanel starterCardPanel;
     [SerializeField] private DictionarySavedDeckPanel savedDeckPanel;
+    [Tooltip("캐릭터 소개 (CardPanel/DescriptionRect, 비우면 소개 표시 안 함)")]
+    [SerializeField] private DictionaryCharacterIntro characterIntro;
 
     [Header("가운데 구역 탭 (비우면 저장덱 패널 아래 DeckBtn · IllustBtn을 찾음)")]
     [SerializeField] private Button deckTabButton;
@@ -61,6 +63,10 @@ public class DictionaryPanelController : MonoBehaviour
         ShowStarterCards(character);
         ShowSavedDecks(character);
         RefreshIllustration();
+        if (characterIntro != null)
+        {
+            characterIntro.Show(characterId);
+        }
     }
 
     private void ShowStarterCards(Character character)
